@@ -68,17 +68,22 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter className="p-4 border-t border-sidebar-border">
         {isExpanded ? (
-          <Button 
-            className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-            asChild
-          >
-            <a href="/signup">
-              Sign up
-              <span className="ml-2 text-xs">
-                Already a user? <span className="underline">Log in</span>
-              </span>
+          <div className="flex flex-col gap-2">
+            <Button 
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/90 py-6 text-base font-semibold"
+              asChild
+            >
+              <a href="/signup">
+                Sign up
+              </a>
+            </Button>
+            <a 
+              href="/login" 
+              className="text-sm text-center text-sidebar-foreground hover:text-sidebar-accent-foreground underline underline-offset-4"
+            >
+              Already a user? Log in
             </a>
-          </Button>
+          </div>
         ) : (
           <Button
             size="icon"
