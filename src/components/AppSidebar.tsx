@@ -66,11 +66,11 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="p-4 border-t border-sidebar-border mb-4">
+      <SidebarFooter className="p-4 border-t border-sidebar-accent mb-4">
         {isExpanded ? (
           <div className="flex flex-col gap-2">
             <Button 
-              className="w-full bg-primary text-primary-foreground hover:bg-primary/90 py-6 text-base font-semibold rounded-md"
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/90 py-6 text-base font-semibold rounded-full"
               asChild
             >
               <a href="/signup">
