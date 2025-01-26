@@ -2,10 +2,11 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
-import { Search, ArrowRight } from "lucide-react";
+import { Search, ArrowRight, Sparkles, Star, Flame, Target, DollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Typewriter from 'typewriter-effect';
+import { Badge } from "@/components/ui/badge";
 import {
   Carousel,
   CarouselContent,
@@ -63,6 +64,14 @@ const typewriterStrings = [
   "Jobs To Earn"
 ];
 
+const badges = [
+  { label: "Most addicting", icon: Sparkles },
+  { label: "Templates", icon: Star },
+  { label: "Prompts", icon: Flame },
+  { label: "Experts", icon: Target },
+  { label: "Jobs", icon: DollarSign }
+];
+
 const Index = () => {
   const isMobile = useIsMobile();
 
@@ -98,33 +107,50 @@ const Index = () => {
             </div>
           </div>
           <div className="p-6 border-b border-gray-200">
-            {isMobile ? (
-              <Carousel className="w-full">
-                <CarouselContent>
+            <div className="space-y-6">
+              {isMobile ? (
+                <Carousel className="w-full">
+                  <CarouselContent>
+                    {banners.map((banner, index) => (
+                      <CarouselItem key={index}>
+                        <div className="bg-accent rounded-lg p-3 relative group cursor-pointer hover:bg-accent/90 transition-colors">
+                          <h3 className="text-lg font-semibold mb-1">{banner.title}</h3>
+                          <p className="text-muted-foreground text-sm pr-6">{banner.description}</p>
+                          <ArrowRight className="absolute bottom-3 right-3 h-4 w-4 text-muted-foreground/50 group-hover:text-muted-foreground transition-colors" />
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious />
+                  <CarouselNext />
+                </Carousel>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {banners.map((banner, index) => (
-                    <CarouselItem key={index}>
-                      <div className="bg-accent rounded-lg p-3 relative group cursor-pointer hover:bg-accent/90 transition-colors">
-                        <h3 className="text-lg font-semibold mb-1">{banner.title}</h3>
-                        <p className="text-muted-foreground text-sm pr-6">{banner.description}</p>
-                        <ArrowRight className="absolute bottom-3 right-3 h-4 w-4 text-muted-foreground/50 group-hover:text-muted-foreground transition-colors" />
-                      </div>
-                    </CarouselItem>
+                    <div key={index} className="bg-accent rounded-lg p-3 relative group cursor-pointer hover:bg-accent/90 transition-colors">
+                      <h3 className="text-lg font-semibold mb-1">{banner.title}</h3>
+                      <p className="text-muted-foreground text-sm pr-6">{banner.description}</p>
+                      <ArrowRight className="absolute bottom-3 right-3 h-4 w-4 text-muted-foreground/50 group-hover:text-muted-foreground transition-colors" />
+                    </div>
                   ))}
-                </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
-              </Carousel>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {banners.map((banner, index) => (
-                  <div key={index} className="bg-accent rounded-lg p-3 relative group cursor-pointer hover:bg-accent/90 transition-colors">
-                    <h3 className="text-lg font-semibold mb-1">{banner.title}</h3>
-                    <p className="text-muted-foreground text-sm pr-6">{banner.description}</p>
-                    <ArrowRight className="absolute bottom-3 right-3 h-4 w-4 text-muted-foreground/50 group-hover:text-muted-foreground transition-colors" />
-                  </div>
-                ))}
+                </div>
+              )}
+              <div className="flex flex-wrap gap-3">
+                {badges.map((badge, index) => {
+                  const Icon = badge.icon;
+                  return (
+                    <Badge
+                      key={index}
+                      variant="secondary"
+                      className="px-4 py-2 text-sm font-medium cursor-pointer hover:bg-secondary/80 transition-colors"
+                    >
+                      <Icon className="w-4 h-4 mr-2" />
+                      {badge.label}
+                    </Badge>
+                  );
+                })}
               </div>
-            )}
+            </div>
           </div>
           <div className="p-6">
             <div className="flex items-center justify-between mb-8">
