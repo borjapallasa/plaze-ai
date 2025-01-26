@@ -74,8 +74,8 @@ const Index = () => {
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2 flex-1">
-                <h2 className="text-2xl font-bold whitespace-nowrap">The Best AI & Automation</h2>
-                <div className="text-lg text-muted-foreground">
+                <h2 className="text-2xl font-semibold whitespace-nowrap">The Best AI & Automation</h2>
+                <div className="text-2xl font-semibold text-muted-foreground">
                   <Typewriter
                     options={{
                       strings: typewriterStrings,
@@ -87,11 +87,11 @@ const Index = () => {
                   />
                 </div>
               </div>
-              <div className="relative w-full max-w-md">
+              <div className="relative w-64">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
                   className="pl-10"
-                  placeholder="Search products..."
+                  placeholder="Search"
                   type="search"
                 />
               </div>
