@@ -1,4 +1,13 @@
-import { Home, Search, Heart, ShoppingCart } from "lucide-react";
+import {
+  Home,
+  Heart,
+  Users,
+  BookOpen,
+  Briefcase,
+  Mail,
+  HelpCircle,
+  ShoppingCart,
+} from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -13,8 +22,12 @@ import {
 
 const menuItems = [
   { title: "Home", icon: Home, url: "/" },
-  { title: "Search", icon: Search, url: "#search" },
   { title: "Favorites", icon: Heart, url: "#favorites" },
+  { title: "Affiliates", icon: Users, url: "#affiliates" },
+  { title: "Blog", icon: BookOpen, url: "#blog" },
+  { title: "Careers", icon: Briefcase, url: "#careers" },
+  { title: "Newsletter", icon: Mail, url: "#newsletter" },
+  { title: "Help", icon: HelpCircle, url: "#help" },
   { title: "Cart", icon: ShoppingCart, url: "#cart" },
 ];
 
