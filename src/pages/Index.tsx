@@ -4,6 +4,14 @@ import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 const products = [
   {
@@ -32,7 +40,27 @@ const products = [
   }
 ];
 
+const banners = [
+  {
+    title: "Free Shipping",
+    description: "Get free shipping on all orders over $50. Limited time offer.",
+    action: "Learn More"
+  },
+  {
+    title: "New Collection",
+    description: "Check out our latest arrivals. Fresh styles added weekly.",
+    action: "Shop Now"
+  },
+  {
+    title: "Member Discount",
+    description: "Join our membership program and save 15% on every purchase.",
+    action: "Join Now"
+  }
+];
+
 const Index = () => {
+  const isMobile = useIsMobile();
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
@@ -49,23 +77,33 @@ const Index = () => {
             </div>
           </div>
           <div className="p-6 border-b border-gray-200">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-accent rounded-lg p-6">
-                <h3 className="text-xl font-semibold mb-2">Free Shipping</h3>
-                <p className="text-muted-foreground mb-4">Get free shipping on all orders over $50. Limited time offer.</p>
-                <Button variant="secondary">Learn More</Button>
+            {isMobile ? (
+              <Carousel className="w-full">
+                <CarouselContent>
+                  {banners.map((banner, index) => (
+                    <CarouselItem key={index}>
+                      <div className="bg-accent rounded-lg p-6">
+                        <h3 className="text-xl font-semibold mb-2">{banner.title}</h3>
+                        <p className="text-muted-foreground mb-4">{banner.description}</p>
+                        <Button variant="secondary">{banner.action}</Button>
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {banners.map((banner, index) => (
+                  <div key={index} className="bg-accent rounded-lg p-6">
+                    <h3 className="text-xl font-semibold mb-2">{banner.title}</h3>
+                    <p className="text-muted-foreground mb-4">{banner.description}</p>
+                    <Button variant="secondary">{banner.action}</Button>
+                  </div>
+                ))}
               </div>
-              <div className="bg-accent rounded-lg p-6">
-                <h3 className="text-xl font-semibold mb-2">New Collection</h3>
-                <p className="text-muted-foreground mb-4">Check out our latest arrivals. Fresh styles added weekly.</p>
-                <Button variant="secondary">Shop Now</Button>
-              </div>
-              <div className="bg-accent rounded-lg p-6">
-                <h3 className="text-xl font-semibold mb-2">Member Discount</h3>
-                <p className="text-muted-foreground mb-4">Join our membership program and save 15% on every purchase.</p>
-                <Button variant="secondary">Join Now</Button>
-              </div>
-            </div>
+            )}
           </div>
           <div className="p-6">
             <div className="flex items-center justify-between mb-8">
