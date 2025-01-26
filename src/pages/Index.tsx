@@ -23,7 +23,8 @@ const products = [
     seller: "Video AI",
     description: "Edit your videos automatically with AI powered tools and effects.",
     tags: ["marketing", "social media", "e-commerce"],
-    fromPrice: "$49.95"
+    fromPrice: "$49.95",
+    category: "template"
   },
   {
     title: "ChatGPT Prompts",
@@ -32,7 +33,8 @@ const products = [
     seller: "Prompt Engineering",
     description: "Access a curated collection of effective prompts for ChatGPT.",
     tags: ["marketing", "social media", "e-commerce"],
-    fromPrice: "$49.95"
+    fromPrice: "$49.95",
+    category: "prompts"
   },
   {
     title: "AI Templates",
@@ -41,7 +43,8 @@ const products = [
     seller: "Template Hub",
     description: "Ready-to-use AI templates for various business needs.",
     tags: ["marketing", "social media", "e-commerce"],
-    fromPrice: "$49.95"
+    fromPrice: "$49.95",
+    category: "template"
   },
   {
     title: "Expert Network",
@@ -50,7 +53,8 @@ const products = [
     seller: "AI Experts",
     description: "Connect with AI experts for guidance and consultation.",
     tags: ["marketing", "social media", "e-commerce"],
-    fromPrice: "$49.95"
+    fromPrice: "$49.95",
+    category: "experts"
   }
 ];
 
@@ -180,4 +184,5 @@ const Index = () => {
 };
 
 export default Index;
+
 

@@ -9,9 +9,10 @@ interface ProductCardProps {
   description: string;
   tags: string[];
   fromPrice?: string;
+  category: string;
 }
 
-export const ProductCard = ({ title, price, image, seller, description, tags, fromPrice }: ProductCardProps) => {
+export const ProductCard = ({ title, price, image, seller, description, tags, fromPrice, category }: ProductCardProps) => {
   return (
     <Card className="product-card hover:shadow-lg transition-shadow">
       <CardContent className="p-6">
@@ -31,8 +32,8 @@ export const ProductCard = ({ title, price, image, seller, description, tags, fr
               )}
             </div>
           </div>
-          <Badge variant="secondary" className="font-medium">
-            {price}
+          <Badge variant="outline" className="font-medium capitalize">
+            {category}
           </Badge>
         </div>
         <p className="text-muted-foreground text-sm mb-3">{description}</p>
