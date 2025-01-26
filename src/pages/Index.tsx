@@ -3,6 +3,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const products = [
   {
@@ -45,6 +46,25 @@ const Index = () => {
                 placeholder="Search products..."
                 type="search"
               />
+            </div>
+          </div>
+          <div className="p-6 border-b border-gray-200">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-accent rounded-lg p-6">
+                <h3 className="text-xl font-semibold mb-2">Free Shipping</h3>
+                <p className="text-muted-foreground mb-4">Get free shipping on all orders over $50. Limited time offer.</p>
+                <Button variant="secondary">Learn More</Button>
+              </div>
+              <div className="bg-accent rounded-lg p-6">
+                <h3 className="text-xl font-semibold mb-2">New Collection</h3>
+                <p className="text-muted-foreground mb-4">Check out our latest arrivals. Fresh styles added weekly.</p>
+                <Button variant="secondary">Shop Now</Button>
+              </div>
+              <div className="bg-accent rounded-lg p-6">
+                <h3 className="text-xl font-semibold mb-2">Member Discount</h3>
+                <p className="text-muted-foreground mb-4">Join our membership program and save 15% on every purchase.</p>
+                <Button variant="secondary">Join Now</Button>
+              </div>
             </div>
           </div>
           <div className="p-6">
