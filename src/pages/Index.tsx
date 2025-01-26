@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Search, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import Typewriter from 'typewriter-effect';
 import {
   Carousel,
   CarouselContent,
@@ -55,6 +56,13 @@ const banners = [
   }
 ];
 
+const typewriterStrings = [
+  "Experts To Hire",
+  "Communities To Learn",
+  "Templates To Use",
+  "Jobs To Earn"
+];
+
 const Index = () => {
   const isMobile = useIsMobile();
 
@@ -64,13 +72,29 @@ const Index = () => {
         <AppSidebar />
         <main className="flex-1">
           <div className="p-6 border-b border-gray-200">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input
-                className="pl-10 w-full max-w-md"
-                placeholder="Search products..."
-                type="search"
-              />
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex-1">
+                <h2 className="text-2xl font-bold mb-2">The Best AI & Automation</h2>
+                <div className="text-lg text-muted-foreground h-8">
+                  <Typewriter
+                    options={{
+                      strings: typewriterStrings,
+                      autoStart: true,
+                      loop: true,
+                      delay: 50,
+                      deleteSpeed: 30,
+                    }}
+                  />
+                </div>
+              </div>
+              <div className="relative w-full max-w-md">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Input
+                  className="pl-10"
+                  placeholder="Search products..."
+                  type="search"
+                />
+              </div>
             </div>
           </div>
           <div className="p-6 border-b border-gray-200">
