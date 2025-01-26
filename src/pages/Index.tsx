@@ -73,9 +73,9 @@ const Index = () => {
         <main className="flex-1">
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-center justify-between gap-4">
-              <div className="flex-1">
-                <h2 className="text-2xl font-bold mb-2">The Best AI & Automation</h2>
-                <div className="text-lg text-muted-foreground h-8">
+              <div className="flex items-center gap-2 flex-1">
+                <h2 className="text-2xl font-bold whitespace-nowrap">The Best AI & Automation</h2>
+                <div className="text-lg text-muted-foreground">
                   <Typewriter
                     options={{
                       strings: typewriterStrings,
