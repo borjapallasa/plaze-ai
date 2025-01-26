@@ -1,6 +1,8 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { ProductCard } from "@/components/ProductCard";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 
 const products = [
   {
@@ -34,14 +36,26 @@ const Index = () => {
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
         <AppSidebar />
-        <main className="flex-1 p-6">
-          <div className="flex items-center justify-between mb-8">
-            <h1 className="text-3xl font-bold">Marketplace</h1>
+        <main className="flex-1">
+          <div className="p-6 border-b border-gray-200">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                className="pl-10 w-full max-w-md"
+                placeholder="Search products..."
+                type="search"
+              />
+            </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {products.map((product, index) => (
-              <ProductCard key={index} {...product} />
-            ))}
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-8">
+              <h1 className="text-3xl font-bold">Marketplace</h1>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {products.map((product, index) => (
+                <ProductCard key={index} {...product} />
+              ))}
+            </div>
           </div>
         </main>
       </div>
