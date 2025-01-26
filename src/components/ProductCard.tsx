@@ -1,4 +1,4 @@
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 interface ProductCardProps {
@@ -22,7 +22,7 @@ export const ProductCard = ({ title, price, image, seller, description, tags, fr
               <img
                 src={image}
                 alt={title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover rounded-full"
               />
             </div>
             <div className="flex flex-col items-start">

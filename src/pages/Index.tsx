@@ -2,7 +2,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
-import { Search, ArrowRight, Sparkles, Star, Flame, Target, DollarSign, Users } from "lucide-react";
+import { Search, ArrowRight, Sparkles, Star, Flame, Target, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Typewriter from 'typewriter-effect';
@@ -35,7 +35,7 @@ const products = [
     description: "Access a curated collection of effective prompts for ChatGPT.",
     tags: ["marketing", "social media", "e-commerce"],
     fromPrice: "$49.95",
-    category: "prompts"
+    category: "prompt"
   },
   {
     title: "AI Templates",
@@ -55,7 +55,7 @@ const products = [
     description: "Connect with AI experts for guidance and consultation.",
     tags: ["marketing", "social media", "e-commerce"],
     fromPrice: "$49.95",
-    category: "experts"
+    category: "expert"
   },
   {
     title: "AI Community Hub",
@@ -75,7 +75,7 @@ const products = [
     description: "Master the art of prompt engineering with hands-on exercises.",
     tags: ["education", "prompts", "course"],
     fromPrice: "$149",
-    category: "prompts"
+    category: "prompt"
   },
   {
     title: "AI Developers Community",
@@ -112,12 +112,11 @@ const typewriterStrings = [
 ];
 
 const badges = [
-  { label: "Trending", icon: Sparkles },
-  { label: "Templates", icon: Star },
-  { label: "Prompts", icon: Flame },
-  { label: "Experts", icon: Target },
-  { label: "Jobs", icon: DollarSign },
-  { label: "Communities", icon: Users }
+  { label: "Trending", icon: Sparkles, category: null },
+  { label: "Templates", icon: Star, category: "template" },
+  { label: "Prompt", icon: Flame, category: "prompt" },
+  { label: "Communities", icon: Users, category: "community" },
+  { label: "Experts", icon: Target, category: "expert" }
 ];
 
 const Index = () => {
@@ -125,15 +124,12 @@ const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const filteredProducts = selectedCategory
-    ? products.filter(product => 
-        product.category.toLowerCase() === selectedCategory.toLowerCase() ||
-        product.tags.includes(selectedCategory.toLowerCase())
-      )
+    ? products.filter(product => product.category === selectedCategory)
     : products;
 
-  const handleBadgeClick = (label: string) => {
+  const handleBadgeClick = (category: string | null) => {
     setSelectedCategory(prevCategory => 
-      prevCategory === label.toLowerCase() ? null : label.toLowerCase()
+      prevCategory === category ? null : category
     );
   };
 
@@ -145,8 +141,8 @@ const Index = () => {
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2 flex-1">
-                <h2 className="text-2xl font-semibold whitespace-nowrap">The Best AI & Automation</h2>
-                <div className="text-2xl font-semibold text-muted-foreground">
+                <h2 className="text-xl font-semibold whitespace-nowrap">The Best AI & Automation</h2>
+                <div className="text-xl font-semibold text-muted-foreground">
                   <Typewriter
                     options={{
                       strings: typewriterStrings,
@@ -200,7 +196,7 @@ const Index = () => {
               <div className="flex flex-wrap gap-3">
                 {badges.map((badge, index) => {
                   const Icon = badge.icon;
-                  const isSelected = selectedCategory === badge.label.toLowerCase();
+                  const isSelected = selectedCategory === badge.category;
                   return (
                     <Badge
                       key={index}
@@ -208,7 +204,7 @@ const Index = () => {
                       className={`px-4 py-2 text-sm font-medium cursor-pointer hover:bg-secondary/80 transition-colors ${
                         isSelected ? 'bg-primary text-primary-foreground' : ''
                       }`}
-                      onClick={() => handleBadgeClick(badge.label)}
+                      onClick={() => handleBadgeClick(badge.category)}
                     >
                       <Icon className="w-4 h-4 mr-2" />
                       {badge.label}
