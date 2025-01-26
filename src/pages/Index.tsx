@@ -2,7 +2,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Search, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
@@ -44,17 +44,14 @@ const banners = [
   {
     title: "Special Offer",
     description: "Get 20% off on your first purchase when you sign up today.",
-    action: "Sign Up"
   },
   {
     title: "Special Offer",
     description: "Get 20% off on your first purchase when you sign up today.",
-    action: "Sign Up"
   },
   {
     title: "Special Offer",
     description: "Get 20% off on your first purchase when you sign up today.",
-    action: "Sign Up"
   }
 ];
 
@@ -82,10 +79,10 @@ const Index = () => {
                 <CarouselContent>
                   {banners.map((banner, index) => (
                     <CarouselItem key={index}>
-                      <div className="bg-accent rounded-lg p-4">
+                      <div className="bg-accent rounded-lg p-3 relative group cursor-pointer hover:bg-accent/90 transition-colors">
                         <h3 className="text-lg font-semibold mb-1">{banner.title}</h3>
-                        <p className="text-muted-foreground text-sm mb-3">{banner.description}</p>
-                        <Button size="sm" variant="secondary">{banner.action}</Button>
+                        <p className="text-muted-foreground text-sm pr-6">{banner.description}</p>
+                        <ArrowRight className="absolute bottom-3 right-3 h-4 w-4 text-muted-foreground/50 group-hover:text-muted-foreground transition-colors" />
                       </div>
                     </CarouselItem>
                   ))}
@@ -96,10 +93,10 @@ const Index = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {banners.map((banner, index) => (
-                  <div key={index} className="bg-accent rounded-lg p-4">
+                  <div key={index} className="bg-accent rounded-lg p-3 relative group cursor-pointer hover:bg-accent/90 transition-colors">
                     <h3 className="text-lg font-semibold mb-1">{banner.title}</h3>
-                    <p className="text-muted-foreground text-sm mb-3">{banner.description}</p>
-                    <Button size="sm" variant="secondary">{banner.action}</Button>
+                    <p className="text-muted-foreground text-sm pr-6">{banner.description}</p>
+                    <ArrowRight className="absolute bottom-3 right-3 h-4 w-4 text-muted-foreground/50 group-hover:text-muted-foreground transition-colors" />
                   </div>
                 ))}
               </div>
