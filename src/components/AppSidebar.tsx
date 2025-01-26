@@ -7,6 +7,7 @@ import {
   Mail,
   HelpCircle,
   ShoppingCart,
+  LogIn,
 } from "lucide-react";
 import {
   Sidebar,
@@ -18,7 +19,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarTrigger,
+  SidebarFooter,
 } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
+import { useSidebar } from "@/components/ui/sidebar";
 
 const menuItems = [
   { title: "Home", icon: Home, url: "/" },
@@ -32,6 +36,9 @@ const menuItems = [
 ];
 
 export function AppSidebar() {
+  const { state } = useSidebar();
+  const isExpanded = state === "expanded";
+
   return (
     <Sidebar variant="sidebar" collapsible="icon">
       <SidebarContent>
@@ -45,7 +52,10 @@ export function AppSidebar() {
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url} className="flex items-center gap-2">
+                    <a 
+                      href={item.url} 
+                      className="flex items-center gap-2 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                    >
                       <item.icon className="h-5 w-5" />
                       <span>{item.title}</span>
                     </a>
@@ -56,6 +66,32 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter className="p-4 border-t border-sidebar-border">
+        {isExpanded ? (
+          <Button 
+            className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+            asChild
+          >
+            <a href="/signup">
+              Sign up
+              <span className="ml-2 text-xs">
+                Already a user? <span className="underline">Log in</span>
+              </span>
+            </a>
+          </Button>
+        ) : (
+          <Button
+            size="icon"
+            variant="ghost"
+            className="w-full flex justify-center hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+            asChild
+          >
+            <a href="/signup">
+              <LogIn className="h-5 w-5" />
+            </a>
+          </Button>
+        )}
+      </SidebarFooter>
     </Sidebar>
   );
 }
