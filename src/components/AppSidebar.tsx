@@ -1,4 +1,4 @@
-import { Home, Search, Heart, ShoppingCart, Menu } from "lucide-react";
+import { Home, Search, Heart, ShoppingCart } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -8,6 +8,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarProvider,
 } from "@/components/ui/sidebar";
 
 const menuItems = [
@@ -19,7 +20,7 @@ const menuItems = [
 
 export function AppSidebar() {
   return (
-    <Sidebar defaultCollapsed>
+    <Sidebar variant="sidebar" collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Menu</SidebarGroupLabel>
@@ -41,4 +42,4 @@ export function AppSidebar() {
       </SidebarContent>
     </Sidebar>
   );
-};
+}
