@@ -19,30 +19,38 @@ const products = [
   {
     title: "AI Video Editor",
     price: "Free",
-    image: "/placeholder.svg",
+    image: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9",
     seller: "Video AI",
-    description: "Edit your videos automatically with AI powered tools and effects."
+    description: "Edit your videos automatically with AI powered tools and effects.",
+    tags: ["marketing", "social media", "e-commerce"],
+    fromPrice: "$49.95"
   },
   {
     title: "ChatGPT Prompts",
     price: "Free",
-    image: "/placeholder.svg",
+    image: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
     seller: "Prompt Engineering",
-    description: "Access a curated collection of effective prompts for ChatGPT."
+    description: "Access a curated collection of effective prompts for ChatGPT.",
+    tags: ["marketing", "social media", "e-commerce"],
+    fromPrice: "$49.95"
   },
   {
     title: "AI Templates",
     price: "Free",
-    image: "/placeholder.svg",
+    image: "https://images.unsplash.com/photo-1498936178812-4b2e558d2937",
     seller: "Template Hub",
-    description: "Ready-to-use AI templates for various business needs."
+    description: "Ready-to-use AI templates for various business needs.",
+    tags: ["marketing", "social media", "e-commerce"],
+    fromPrice: "$49.95"
   },
   {
     title: "Expert Network",
     price: "Free",
-    image: "/placeholder.svg",
+    image: "https://images.unsplash.com/photo-1501286353178-1ec881214838",
     seller: "AI Experts",
-    description: "Connect with AI experts for guidance and consultation."
+    description: "Connect with AI experts for guidance and consultation.",
+    tags: ["marketing", "social media", "e-commerce"],
+    fromPrice: "$49.95"
   }
 ];
 
@@ -156,16 +164,15 @@ const Index = () => {
               </div>
             </div>
           </div>
+
           <div className="p-6">
-            <div className="flex items-center justify-between mb-8">
-              <h1 className="text-3xl font-bold">Marketplace</h1>
-            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {products.map((product, index) => (
                 <ProductCard key={index} {...product} />
               ))}
             </div>
           </div>
+
         </main>
       </div>
     </SidebarProvider>
@@ -173,3 +180,4 @@ const Index = () => {
 };
 
 export default Index;
+
