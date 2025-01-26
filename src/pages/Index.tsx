@@ -2,11 +2,12 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
-import { Search, ArrowRight, Sparkles, Star, Flame, Target, DollarSign } from "lucide-react";
+import { Search, ArrowRight, Sparkles, Star, Flame, Target, DollarSign, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Typewriter from 'typewriter-effect';
 import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
 import {
   Carousel,
   CarouselContent,
@@ -55,6 +56,36 @@ const products = [
     tags: ["marketing", "social media", "e-commerce"],
     fromPrice: "$49.95",
     category: "experts"
+  },
+  {
+    title: "AI Community Hub",
+    price: "Free",
+    image: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81",
+    seller: "Community Leaders",
+    description: "Join a vibrant community of AI enthusiasts and professionals.",
+    tags: ["community", "networking", "learning"],
+    fromPrice: "$0",
+    category: "community"
+  },
+  {
+    title: "Prompt Engineering Course",
+    price: "Free",
+    image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
+    seller: "AI Academy",
+    description: "Master the art of prompt engineering with hands-on exercises.",
+    tags: ["education", "prompts", "course"],
+    fromPrice: "$149",
+    category: "prompts"
+  },
+  {
+    title: "AI Developers Community",
+    price: "Free",
+    image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
+    seller: "Dev Network",
+    description: "Connect with other AI developers and share knowledge.",
+    tags: ["community", "development", "networking"],
+    fromPrice: "$0",
+    category: "community"
   }
 ];
 
@@ -81,15 +112,30 @@ const typewriterStrings = [
 ];
 
 const badges = [
-  { label: "Most addicting", icon: Sparkles },
+  { label: "Trending", icon: Sparkles },
   { label: "Templates", icon: Star },
   { label: "Prompts", icon: Flame },
   { label: "Experts", icon: Target },
-  { label: "Jobs", icon: DollarSign }
+  { label: "Jobs", icon: DollarSign },
+  { label: "Communities", icon: Users }
 ];
 
 const Index = () => {
   const isMobile = useIsMobile();
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  const filteredProducts = selectedCategory
+    ? products.filter(product => 
+        product.category.toLowerCase() === selectedCategory.toLowerCase() ||
+        product.tags.includes(selectedCategory.toLowerCase())
+      )
+    : products;
+
+  const handleBadgeClick = (label: string) => {
+    setSelectedCategory(prevCategory => 
+      prevCategory === label.toLowerCase() ? null : label.toLowerCase()
+    );
+  };
 
   return (
     <SidebarProvider>
@@ -154,11 +200,15 @@ const Index = () => {
               <div className="flex flex-wrap gap-3">
                 {badges.map((badge, index) => {
                   const Icon = badge.icon;
+                  const isSelected = selectedCategory === badge.label.toLowerCase();
                   return (
                     <Badge
                       key={index}
-                      variant="secondary"
-                      className="px-4 py-2 text-sm font-medium cursor-pointer hover:bg-secondary/80 transition-colors"
+                      variant={isSelected ? "default" : "secondary"}
+                      className={`px-4 py-2 text-sm font-medium cursor-pointer hover:bg-secondary/80 transition-colors ${
+                        isSelected ? 'bg-primary text-primary-foreground' : ''
+                      }`}
+                      onClick={() => handleBadgeClick(badge.label)}
                     >
                       <Icon className="w-4 h-4 mr-2" />
                       {badge.label}
@@ -171,7 +221,7 @@ const Index = () => {
 
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {products.map((product, index) => (
+              {filteredProducts.map((product, index) => (
                 <ProductCard key={index} {...product} />
               ))}
             </div>
@@ -184,5 +234,3 @@ const Index = () => {
 };
 
 export default Index;
-
-
