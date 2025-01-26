@@ -42,19 +42,19 @@ const products = [
 
 const banners = [
   {
-    title: "Free Shipping",
-    description: "Get free shipping on all orders over $50. Limited time offer.",
-    action: "Learn More"
+    title: "Special Offer",
+    description: "Get 20% off on your first purchase when you sign up today.",
+    action: "Sign Up"
   },
   {
-    title: "New Collection",
-    description: "Check out our latest arrivals. Fresh styles added weekly.",
-    action: "Shop Now"
+    title: "Special Offer",
+    description: "Get 20% off on your first purchase when you sign up today.",
+    action: "Sign Up"
   },
   {
-    title: "Member Discount",
-    description: "Join our membership program and save 15% on every purchase.",
-    action: "Join Now"
+    title: "Special Offer",
+    description: "Get 20% off on your first purchase when you sign up today.",
+    action: "Sign Up"
   }
 ];
 
@@ -82,10 +82,10 @@ const Index = () => {
                 <CarouselContent>
                   {banners.map((banner, index) => (
                     <CarouselItem key={index}>
-                      <div className="bg-accent rounded-lg p-6">
-                        <h3 className="text-xl font-semibold mb-2">{banner.title}</h3>
-                        <p className="text-muted-foreground mb-4">{banner.description}</p>
-                        <Button variant="secondary">{banner.action}</Button>
+                      <div className="bg-accent rounded-lg p-4">
+                        <h3 className="text-lg font-semibold mb-1">{banner.title}</h3>
+                        <p className="text-muted-foreground text-sm mb-3">{banner.description}</p>
+                        <Button size="sm" variant="secondary">{banner.action}</Button>
                       </div>
                     </CarouselItem>
                   ))}
@@ -96,10 +96,10 @@ const Index = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {banners.map((banner, index) => (
-                  <div key={index} className="bg-accent rounded-lg p-6">
-                    <h3 className="text-xl font-semibold mb-2">{banner.title}</h3>
-                    <p className="text-muted-foreground mb-4">{banner.description}</p>
-                    <Button variant="secondary">{banner.action}</Button>
+                  <div key={index} className="bg-accent rounded-lg p-4">
+                    <h3 className="text-lg font-semibold mb-1">{banner.title}</h3>
+                    <p className="text-muted-foreground text-sm mb-3">{banner.description}</p>
+                    <Button size="sm" variant="secondary">{banner.action}</Button>
                   </div>
                 ))}
               </div>
