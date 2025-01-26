@@ -15,8 +15,11 @@ interface ProductCardProps {
 export const ProductCard = ({ title, price, image, seller, description, tags, fromPrice, category }: ProductCardProps) => {
   return (
     <Card className="product-card hover:shadow-lg transition-shadow">
-      <CardContent className="p-6">
-        <div className="flex items-start justify-between mb-4">
+      <CardContent className="p-6 relative">
+        <Badge variant="outline" className="font-medium capitalize flex-shrink-0 absolute top-4 right-4">
+          {category}
+        </Badge>
+        <div className="flex items-start mb-4 mt-4">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center overflow-hidden flex-shrink-0">
               <img
@@ -32,9 +35,6 @@ export const ProductCard = ({ title, price, image, seller, description, tags, fr
               )}
             </div>
           </div>
-          <Badge variant="outline" className="font-medium capitalize flex-shrink-0">
-            {category}
-          </Badge>
         </div>
         <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{description}</p>
         <div className="flex gap-1.5 overflow-x-auto whitespace-nowrap pb-2 hide-scrollbar">
