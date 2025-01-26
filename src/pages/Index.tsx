@@ -17,28 +17,32 @@ import {
 
 const products = [
   {
-    title: "Vintage Camera",
-    price: "$299.99",
-    image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e",
-    seller: "Retro Collectibles"
+    title: "AI Video Editor",
+    price: "Free",
+    image: "/placeholder.svg",
+    seller: "Video AI",
+    description: "Edit your videos automatically with AI powered tools and effects."
   },
   {
-    title: "Modern Laptop",
-    price: "$1,299.99",
-    image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
-    seller: "Tech Haven"
+    title: "ChatGPT Prompts",
+    price: "Free",
+    image: "/placeholder.svg",
+    seller: "Prompt Engineering",
+    description: "Access a curated collection of effective prompts for ChatGPT."
   },
   {
-    title: "Professional Setup",
-    price: "$2,499.99",
-    image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
-    seller: "WorkSpace Solutions"
+    title: "AI Templates",
+    price: "Free",
+    image: "/placeholder.svg",
+    seller: "Template Hub",
+    description: "Ready-to-use AI templates for various business needs."
   },
   {
-    title: "Home Office Bundle",
-    price: "$899.99",
-    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
-    seller: "Modern Essentials"
+    title: "Expert Network",
+    price: "Free",
+    image: "/placeholder.svg",
+    seller: "AI Experts",
+    description: "Connect with AI experts for guidance and consultation."
   }
 ];
 
