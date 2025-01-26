@@ -36,11 +36,11 @@ export const ProductCard = ({ title, price, image, seller, description, tags, fr
           </Badge>
         </div>
         <p className="text-muted-foreground text-sm mb-3">{description}</p>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex gap-2 overflow-x-auto whitespace-nowrap pb-2 hide-scrollbar">
           {tags.map((tag, index) => (
             <span
               key={index}
-              className="text-blue-600 bg-blue-100 px-3 py-1 rounded-full text-sm"
+              className="text-blue-600 bg-blue-100 px-3 py-1 rounded-full text-sm flex-shrink-0"
             >
               #{tag}
             </span>
