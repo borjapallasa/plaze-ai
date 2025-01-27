@@ -15,16 +15,16 @@ interface ProductCardProps {
 export const ProductCard = ({ title, price, image, seller, description, tags, fromPrice, category }: ProductCardProps) => {
   return (
     <Card className="product-card hover:shadow-lg transition-shadow">
-      <CardContent className="p-6 relative">
+      <CardContent className="p-4 relative">
         <Badge 
           variant="secondary" 
-          className="absolute top-4 right-4 font-medium capitalize bg-blue-50 text-blue-600 hover:bg-blue-50"
+          className="absolute top-3 right-3 font-medium capitalize bg-blue-50 text-blue-600 hover:bg-blue-50 text-xs"
         >
           {category}
         </Badge>
-        <div className="flex flex-col gap-4">
-          <div className="flex items-start gap-4">
-            <div className="w-14 h-14 rounded-xl bg-accent flex items-center justify-center overflow-hidden flex-shrink-0">
+        <div className="flex flex-col gap-3">
+          <div className="flex items-start gap-3">
+            <div className="w-12 h-12 rounded-lg bg-accent flex items-center justify-center overflow-hidden flex-shrink-0">
               <img
                 src={image}
                 alt={title}
@@ -32,14 +32,14 @@ export const ProductCard = ({ title, price, image, seller, description, tags, fr
               />
             </div>
             <div className="flex flex-col min-w-0">
-              <h3 className="font-semibold text-lg leading-tight truncate w-full max-w-[200px]">{title}</h3>
+              <h3 className="font-semibold text-base leading-tight truncate w-full max-w-[180px]">{title}</h3>
               {fromPrice && (
-                <span className="text-sm text-muted-foreground mt-0.5">from {fromPrice}</span>
+                <span className="text-xs text-muted-foreground">from {fromPrice}</span>
               )}
             </div>
           </div>
-          <p className="text-muted-foreground text-sm line-clamp-2">{description}</p>
-          <div className="flex gap-1.5 overflow-x-auto whitespace-nowrap pb-2 hide-scrollbar">
+          <p className="text-muted-foreground text-xs line-clamp-2">{description}</p>
+          <div className="flex gap-2 flex-wrap pt-1">
             {tags.map((tag, index) => (
               <span
                 key={index}
