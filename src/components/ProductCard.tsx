@@ -24,7 +24,7 @@ export const ProductCard = ({ title, price, image, seller, description, tags, fr
         </Badge>
         <div className="flex flex-col gap-3">
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-lg bg-accent flex items-center justify-center overflow-hidden flex-shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center overflow-hidden flex-shrink-0">
               <img
                 src={image}
                 alt={title}
@@ -32,7 +32,7 @@ export const ProductCard = ({ title, price, image, seller, description, tags, fr
               />
             </div>
             <div className="flex flex-col min-w-0">
-              <h3 className="font-semibold text-base leading-tight truncate w-full max-w-[180px]">{title}</h3>
+              <h3 className="font-semibold text-xs leading-tight truncate w-full max-w-[180px]">{title}</h3>
               {fromPrice && (
                 <span className="text-xs text-muted-foreground">from {fromPrice}</span>
               )}
