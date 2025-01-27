@@ -16,12 +16,9 @@ export const ProductCard = ({ title, price, image, seller, description, tags, fr
   return (
     <Card className="product-card hover:shadow-lg transition-shadow">
       <CardContent className="p-6 relative">
-        <Badge variant="outline" className="font-medium capitalize flex-shrink-0 absolute top-6 right-6">
-          {category}
-        </Badge>
-        <div className="flex items-start mb-6 mt-6">
+        <div className="flex items-start mb-4 mt-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center overflow-hidden flex-shrink-0">
+            <div className="w-16 h-16 rounded-full bg-accent flex items-center justify-center overflow-hidden flex-shrink-0">
               <img
                 src={image}
                 alt={title}
@@ -33,10 +30,13 @@ export const ProductCard = ({ title, price, image, seller, description, tags, fr
               {fromPrice && (
                 <span className="text-sm text-muted-foreground">from {fromPrice}</span>
               )}
+              <Badge variant="outline" className="font-medium capitalize flex-shrink-0 mt-1">
+                {category}
+              </Badge>
             </div>
           </div>
         </div>
-        <p className="text-muted-foreground text-sm mb-4 line-clamp-2">{description}</p>
+        <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{description}</p>
         <div className="flex gap-1.5 overflow-x-auto whitespace-nowrap pb-2 hide-scrollbar">
           {tags.map((tag, index) => (
             <span
