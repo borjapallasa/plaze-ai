@@ -24,7 +24,7 @@ export const ProductCard = ({ title, price, image, seller, description, tags, fr
         </Badge>
         <div className="flex flex-col gap-3">
           <div className="flex items-start gap-3">
-            <div className="w-12 h-12 rounded-lg bg-accent flex items-center justify-center overflow-hidden flex-shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-accent flex items-center justify-center overflow-hidden flex-shrink-0">
               <img
                 src={image}
                 alt={title}
