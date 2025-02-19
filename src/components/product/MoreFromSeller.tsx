@@ -33,17 +33,17 @@ export function MoreFromSeller({ products, className }: MoreFromSellerProps) {
       <div className={className}>
         <h2 className="text-xl font-semibold mb-8">More from seller</h2>
         
-        {/* Mobile Layout (2 visible + 6 hidden) */}
+        {/* Mobile Layout (1 visible) */}
         <div className="lg:hidden">
           <Carousel className="w-full">
-            <CarouselContent className="-ml-2 md:-ml-4">
+            <CarouselContent>
               {products.map((product, index) => (
-                <CarouselItem key={index} className="pl-2 md:pl-4 basis-1/2">
+                <CarouselItem key={index} className="pl-0 basis-full">
                   <ProductCard product={product} />
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="hidden" />
+            <CarouselPrevious />
             <CarouselNext />
           </Carousel>
         </div>
@@ -67,7 +67,24 @@ export function MoreFromSeller({ products, className }: MoreFromSellerProps) {
       {/* Related Products Section */}
       <div className="mt-16">
         <h2 className="text-xl font-semibold mb-8">Related products</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        {/* Mobile Layout (Carousel) */}
+        <div className="lg:hidden">
+          <Carousel className="w-full">
+            <CarouselContent>
+              {products.map((product, index) => (
+                <CarouselItem key={index} className="pl-0 basis-full">
+                  <ProductCard product={product} />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
+        </div>
+
+        {/* Desktop Layout (Grid) */}
+        <div className="hidden lg:grid lg:grid-cols-4 gap-4">
           {products.map((product, index) => (
             <ProductCard key={index} product={product} />
           ))}
