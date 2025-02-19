@@ -63,10 +63,10 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
                       ))}
                     </div>
                     <h3 className="font-medium text-base">{review.content}</h3>
-                    <p className="text-sm text-muted-foreground mb-12">{review.description}</p>
+                    <p className="text-sm text-muted-foreground">{review.description}</p>
                     
-                    {/* Desktop User Info - Moved up */}
-                    <div className="flex items-center gap-2">
+                    {/* Desktop User Info - Moved up with 10px padding */}
+                    <div className="flex items-center gap-2 pt-2.5">
                       <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
                         <img 
                           src={review.avatar} 
@@ -122,7 +122,7 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
 
                   {/* Mobile User Info and Ratings */}
                   <div className="space-y-3 mt-3">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 pt-2.5">
                       <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
                         <img 
                           src={review.avatar} 
