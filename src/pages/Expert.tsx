@@ -511,19 +511,7 @@ export default function Expert() {
           </div>
 
           <div className="grid grid-cols-5 gap-6 mb-8">
-            <Card className="col-span-1">
-              <CardContent className="p-6 space-y-4">
-                <div className="flex items-center gap-2">
-                  <Users className="w-5 h-5" />
-                  <h2 className="text-lg font-semibold">Community</h2>
-                </div>
-                <p className="text-muted-foreground">
-                  Join our vibrant UX design community to learn, share, and grow together with fellow designers.
-                </p>
-              </CardContent>
-            </Card>
-
-            <div className="col-span-4">
+            <div className="col-span-4 col-start-2">
               <Card>
                 <CardContent className="p-6 space-y-6">
                   <div className="flex items-center gap-2">
@@ -569,19 +557,7 @@ export default function Expert() {
           </div>
 
           <div className="grid grid-cols-5 gap-6">
-            <Card className="col-span-1">
-              <CardContent className="p-6 space-y-4">
-                <div className="flex items-center gap-2">
-                  <Info className="w-5 h-5" />
-                  <h2 className="text-lg font-semibold">More Courses</h2>
-                </div>
-                <p className="text-muted-foreground">
-                  Explore more UX design courses and resources from this expert.
-                </p>
-              </CardContent>
-            </Card>
-
-            <div className="col-span-4">
+            <div className="col-span-4 col-start-2">
               <MoreFromSeller products={moreProducts} />
             </div>
           </div>
