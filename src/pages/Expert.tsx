@@ -89,8 +89,9 @@ export default function Expert() {
         </Card>
       </div>
 
-      <div className="container mx-auto px-4 space-y-8">
-        <div className="grid grid-cols-5 gap-6">
+      <div className="container mx-auto px-4">
+        {/* Info and Description Grid */}
+        <div className="grid grid-cols-5 gap-6 mb-8">
           {/* Info Section */}
           <Card className="col-span-1">
             <CardContent className="p-6 space-y-4">
@@ -138,8 +139,8 @@ export default function Expert() {
           </Card>
         </div>
 
-        {/* Services Section */}
-        <div className="space-y-6">
+        {/* Services Section - Directly below description */}
+        <div className="space-y-6 mb-8">
           <h2 className="text-2xl font-semibold">Services</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Basic Tier */}
@@ -240,6 +241,9 @@ export default function Expert() {
             </Card>
           </div>
         </div>
+
+        {/* Empty space between services and community */}
+        <div className="h-8"></div>
 
         {/* Community Section */}
         <Card>
