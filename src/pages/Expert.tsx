@@ -139,121 +139,16 @@ export default function Expert() {
           </Card>
         </div>
 
-        {/* Services and Stats Grid */}
+        {/* Stats and Services Grid */}
         <div className="grid grid-cols-5 gap-6 mb-8">
-          {/* Services Section */}
-          <Card className="col-span-4">
-            <CardContent className="p-6 space-y-6">
-              <h2 className="text-2xl font-semibold">Services</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Basic Tier */}
-                <Card className="relative overflow-hidden">
-                  <div className="absolute inset-x-0 top-0 h-2 bg-blue-100" />
-                  <CardContent className="pt-6 space-y-6">
-                    <div className="space-y-2">
-                      <h3 className="text-xl font-semibold">Basic Consultation</h3>
-                      <div className="flex items-center gap-1">
-                        <DollarSign className="w-5 h-5 text-muted-foreground" />
-                        <span className="text-2xl font-bold">99</span>
-                        <span className="text-muted-foreground">/session</span>
-                      </div>
-                      <p className="text-muted-foreground">Perfect for startups and small projects needing expert UX guidance.</p>
-                    </div>
-                    <div className="space-y-3">
-                      {["1-hour consultation", "Basic UX review", "Written recommendations", "1 revision round"].map((feature) => (
-                        <div key={feature} className="flex items-center gap-2">
-                          <Check className="w-4 h-4 text-blue-500" />
-                          <span className="text-sm">{feature}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <Button className="w-full">
-                      <MessageCircle className="w-4 h-4 mr-2" />
-                      Hire Expert
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                {/* Professional Tier */}
-                <Card className="relative overflow-hidden">
-                  <div className="absolute inset-x-0 top-0 h-2 bg-purple-100" />
-                  <CardContent className="pt-6 space-y-6">
-                    <div className="space-y-2">
-                      <h3 className="text-xl font-semibold">Professional Package</h3>
-                      <div className="flex items-center gap-1">
-                        <DollarSign className="w-5 h-5 text-muted-foreground" />
-                        <span className="text-2xl font-bold">299</span>
-                        <span className="text-muted-foreground">/project</span>
-                      </div>
-                      <p className="text-muted-foreground">Comprehensive UX design solution for established businesses.</p>
-                    </div>
-                    <div className="space-y-3">
-                      {[
-                        "3 consultation sessions",
-                        "Detailed UX audit",
-                        "Interactive prototypes",
-                        "3 revision rounds",
-                        "Priority support"
-                      ].map((feature) => (
-                        <div key={feature} className="flex items-center gap-2">
-                          <Check className="w-4 h-4 text-purple-500" />
-                          <span className="text-sm">{feature}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <Button className="w-full">
-                      <MessageCircle className="w-4 h-4 mr-2" />
-                      Hire Expert
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                {/* Enterprise Tier */}
-                <Card className="relative overflow-hidden">
-                  <div className="absolute inset-x-0 top-0 h-2 bg-indigo-100" />
-                  <CardContent className="pt-6 space-y-6">
-                    <div className="space-y-2">
-                      <h3 className="text-xl font-semibold">Enterprise Solution</h3>
-                      <div className="flex items-center gap-1">
-                        <DollarSign className="w-5 h-5 text-muted-foreground" />
-                        <span className="text-2xl font-bold">999</span>
-                        <span className="text-muted-foreground">/month</span>
-                      </div>
-                      <p className="text-muted-foreground">Full-service UX design and consultation for large organizations.</p>
-                    </div>
-                    <div className="space-y-3">
-                      {[
-                        "Unlimited consultations",
-                        "Complete UX overhaul",
-                        "User research & testing",
-                        "Custom design system",
-                        "Dedicated support team",
-                        "Monthly progress reports"
-                      ].map((feature) => (
-                        <div key={feature} className="flex items-center gap-2">
-                          <Check className="w-4 h-4 text-indigo-500" />
-                          <span className="text-sm">{feature}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <Button className="w-full">
-                      <MessageCircle className="w-4 h-4 mr-2" />
-                      Hire Expert
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Stats Section */}
-          <Card className="col-span-1">
+          <Card className="col-span-4">
             <CardContent className="p-6 space-y-4">
               <div className="flex items-center gap-2">
                 <Star className="w-5 h-5" />
                 <h2 className="text-lg font-semibold">Stats</h2>
               </div>
-              <div className="space-y-4">
+              <div className="grid grid-cols-3 gap-6">
                 <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">Projects Completed</p>
                   <p className="text-2xl font-bold">150+</p>
@@ -265,6 +160,33 @@ export default function Expert() {
                 <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">Response Rate</p>
                   <p className="text-2xl font-bold">100%</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Services Section */}
+          <Card className="col-span-1">
+            <CardContent className="p-6 space-y-6">
+              <div className="flex items-center gap-2">
+                <DollarSign className="w-5 h-5" />
+                <h2 className="text-lg font-semibold">Services</h2>
+              </div>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <h3 className="font-medium">Basic Consultation</h3>
+                  <p className="text-2xl font-bold">$99</p>
+                  <p className="text-sm text-muted-foreground">per session</p>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="font-medium">Professional Package</h3>
+                  <p className="text-2xl font-bold">$299</p>
+                  <p className="text-sm text-muted-foreground">per project</p>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="font-medium">Enterprise Solution</h3>
+                  <p className="text-2xl font-bold">$999</p>
+                  <p className="text-sm text-muted-foreground">per month</p>
                 </div>
               </div>
             </CardContent>
