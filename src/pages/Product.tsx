@@ -1,13 +1,37 @@
 import { Card } from "@/components/ui/card";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { ProductHeader } from "@/components/product/ProductHeader";
 import { ProductVariants } from "@/components/product/ProductVariants";
 import { ProductReviews } from "@/components/product/ProductReviews";
 import { MoreFromSeller } from "@/components/product/MoreFromSeller";
+import { StickyATC } from "@/components/product/StickyATC";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function Product() {
   const [selectedVariant, setSelectedVariant] = useState("premium");
+  const [showStickyATC, setShowStickyATC] = useState(false);
+  const variantsRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (variantsRef.current) {
+        const variantsBottom = variantsRef.current.getBoundingClientRect().bottom;
+        setShowStickyATC(variantsBottom < 0);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const handleAddToCart = () => {
+    toast({
+      title: "Added to cart",
+      description: "Your item has been added to the cart.",
+    });
+  };
 
   const product = {
     title: "Professional UI/UX Design Course",
@@ -222,12 +246,15 @@ export default function Product() {
           rating={product.rating}
           className="mb-6"
         />
-        <ProductVariants
-          variants={variants}
-          selectedVariant={selectedVariant}
-          onVariantChange={setSelectedVariant}
-          className="mb-6"
-        />
+        <div ref={variantsRef}>
+          <ProductVariants
+            variants={variants}
+            selectedVariant={selectedVariant}
+            onVariantChange={setSelectedVariant}
+            onAddToCart={handleAddToCart}
+            className="mb-6"
+          />
+        </div>
       </div>
 
       {/* Desktop Layout */}
@@ -261,11 +288,14 @@ export default function Product() {
             seller={product.seller}
             rating={product.rating}
           />
-          <ProductVariants
-            variants={variants}
-            selectedVariant={selectedVariant}
-            onVariantChange={setSelectedVariant}
-          />
+          <div ref={variantsRef}>
+            <ProductVariants
+              variants={variants}
+              selectedVariant={selectedVariant}
+              onVariantChange={setSelectedVariant}
+              onAddToCart={handleAddToCart}
+            />
+          </div>
           <Card className="p-6">
             <h3 className="font-semibold mb-4">Additional Information</h3>
             <div className="space-y-4">
@@ -315,6 +345,14 @@ export default function Product() {
       <ProductReviews reviews={reviews} className="p-6 mb-16" />
 
       <MoreFromSeller products={moreFromSeller} className="mt-16" />
+
+      <StickyATC 
+        variants={variants}
+        selectedVariant={selectedVariant}
+        onVariantChange={setSelectedVariant}
+        visible={showStickyATC}
+        onAddToCart={handleAddToCart}
+      />
     </div>
   );
 }

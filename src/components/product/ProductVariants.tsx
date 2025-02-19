@@ -20,14 +20,18 @@ interface ProductVariantsProps {
   selectedVariant: string;
   onVariantChange: (value: string) => void;
   className?: string;
+  onAddToCart?: () => void;
 }
 
 export function ProductVariants({ 
   variants, 
   selectedVariant, 
   onVariantChange,
-  className 
+  className,
+  onAddToCart 
 }: ProductVariantsProps) {
+  const currentVariant = variants.find(v => v.id === selectedVariant);
+  
   return (
     <div className={className}>
       <RadioGroup 
@@ -39,13 +43,13 @@ export function ProductVariants({
           <div 
             key={variant.id} 
             className={`relative rounded-lg p-4 transition-all ${
-              variant.highlight 
+              variant.id === selectedVariant
                 ? 'border-2 border-primary shadow-lg' 
                 : 'border border-border'
             }`}
           >
             <Badge 
-              variant={variant.highlight ? "default" : "secondary"}
+              variant={variant.id === selectedVariant ? "default" : "secondary"}
               className="absolute -top-2 left-4 z-10"
             >
               {variant.label}
@@ -75,7 +79,7 @@ export function ProductVariants({
       </RadioGroup>
 
       <div className="space-y-4 mt-4">
-        <Button className="w-full">
+        <Button className="w-full" onClick={onAddToCart}>
           <ShoppingCart className="w-4 h-4 mr-2" />
           Add to Cart
         </Button>
