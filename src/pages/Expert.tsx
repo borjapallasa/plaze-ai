@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, Users, Mail, Info, BookOpen, MessageCircle, DollarSign, Calendar, MapPin, Share2, Save, Check } from "lucide-react";
+import { Star, Users, Mail, Info, BookOpen, MessageCircle, DollarSign, Calendar, MapPin, Share2, Save, Check, HandShake } from "lucide-react";
 
 export default function Expert() {
   return (
@@ -174,99 +174,123 @@ export default function Expert() {
               <CardContent className="p-6 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {/* Basic Tier */}
-                  <Card className="relative overflow-hidden">
+                  <Card className="relative overflow-hidden flex flex-col">
                     <div className="absolute inset-x-0 top-0 h-2 bg-blue-100" />
-                    <CardContent className="pt-6 space-y-6">
-                      <div className="space-y-2">
-                        <h3 className="text-xl font-semibold">Basic Consultation</h3>
-                        <div className="flex items-center gap-1">
-                          <DollarSign className="w-5 h-5 text-muted-foreground" />
-                          <span className="text-2xl font-bold">99</span>
-                          <span className="text-muted-foreground">/session</span>
-                        </div>
-                        <p className="text-muted-foreground">Perfect for startups and small projects needing expert UX guidance.</p>
-                      </div>
-                      <div className="space-y-3">
-                        {["1-hour consultation", "Basic UX review", "Written recommendations", "1 revision round"].map((feature) => (
-                          <div key={feature} className="flex items-center gap-2">
-                            <Check className="w-4 h-4 text-blue-500" />
-                            <span className="text-sm">{feature}</span>
+                    <CardContent className="pt-6 flex-1 flex flex-col">
+                      <div className="space-y-6 flex-1">
+                        <div className="space-y-2">
+                          <h3 className="text-xl font-semibold">Basic Consultation</h3>
+                          <div className="flex items-center gap-1">
+                            <DollarSign className="w-5 h-5 text-muted-foreground" />
+                            <span className="text-2xl font-bold">99</span>
+                            <span className="text-muted-foreground">/session</span>
                           </div>
-                        ))}
+                          <p className="text-muted-foreground">Perfect for startups and small projects needing expert UX guidance.</p>
+                        </div>
+                        <div className="space-y-3">
+                          {["1-hour consultation", "Basic UX review", "Written recommendations", "1 revision round"].map((feature) => (
+                            <div key={feature} className="flex items-center gap-2">
+                              <Check className="w-4 h-4 text-blue-500" />
+                              <span className="text-sm">{feature}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                      <Button className="w-full">
-                        <MessageCircle className="w-4 h-4 mr-2" />
-                        Hire Expert
-                      </Button>
+                      <div className="flex gap-2 pt-6">
+                        <Button className="flex-1">
+                          <HandShake className="w-4 h-4 mr-2" />
+                          Hire Expert
+                        </Button>
+                        <Button variant="outline" className="flex-1">
+                          <Mail className="w-4 h-4 mr-2" />
+                          Contact
+                        </Button>
+                      </div>
                     </CardContent>
                   </Card>
 
                   {/* Professional Tier */}
-                  <Card className="relative overflow-hidden">
+                  <Card className="relative overflow-hidden flex flex-col">
                     <div className="absolute inset-x-0 top-0 h-2 bg-purple-100" />
-                    <CardContent className="pt-6 space-y-6">
-                      <div className="space-y-2">
-                        <h3 className="text-xl font-semibold">Professional Package</h3>
-                        <div className="flex items-center gap-1">
-                          <DollarSign className="w-5 h-5 text-muted-foreground" />
-                          <span className="text-2xl font-bold">299</span>
-                          <span className="text-muted-foreground">/project</span>
-                        </div>
-                        <p className="text-muted-foreground">Comprehensive UX design solution for established businesses.</p>
-                      </div>
-                      <div className="space-y-3">
-                        {[
-                          "3 consultation sessions",
-                          "Detailed UX audit",
-                          "Interactive prototypes",
-                          "3 revision rounds",
-                          "Priority support"
-                        ].map((feature) => (
-                          <div key={feature} className="flex items-center gap-2">
-                            <Check className="w-4 h-4 text-purple-500" />
-                            <span className="text-sm">{feature}</span>
+                    <CardContent className="pt-6 flex-1 flex flex-col">
+                      <div className="space-y-6 flex-1">
+                        <div className="space-y-2">
+                          <h3 className="text-xl font-semibold">Professional Package</h3>
+                          <div className="flex items-center gap-1">
+                            <DollarSign className="w-5 h-5 text-muted-foreground" />
+                            <span className="text-2xl font-bold">299</span>
+                            <span className="text-muted-foreground">/project</span>
                           </div>
-                        ))}
+                          <p className="text-muted-foreground">Comprehensive UX design solution for established businesses.</p>
+                        </div>
+                        <div className="space-y-3">
+                          {[
+                            "3 consultation sessions",
+                            "Detailed UX audit",
+                            "Interactive prototypes",
+                            "3 revision rounds",
+                            "Priority support"
+                          ].map((feature) => (
+                            <div key={feature} className="flex items-center gap-2">
+                              <Check className="w-4 h-4 text-purple-500" />
+                              <span className="text-sm">{feature}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                      <Button className="w-full">
-                        <MessageCircle className="w-4 h-4 mr-2" />
-                        Hire Expert
-                      </Button>
+                      <div className="flex gap-2 pt-6">
+                        <Button className="flex-1">
+                          <HandShake className="w-4 h-4 mr-2" />
+                          Hire Expert
+                        </Button>
+                        <Button variant="outline" className="flex-1">
+                          <Mail className="w-4 h-4 mr-2" />
+                          Contact
+                        </Button>
+                      </div>
                     </CardContent>
                   </Card>
 
                   {/* Enterprise Tier */}
-                  <Card className="relative overflow-hidden">
+                  <Card className="relative overflow-hidden flex flex-col">
                     <div className="absolute inset-x-0 top-0 h-2 bg-indigo-100" />
-                    <CardContent className="pt-6 space-y-6">
-                      <div className="space-y-2">
-                        <h3 className="text-xl font-semibold">Enterprise Solution</h3>
-                        <div className="flex items-center gap-1">
-                          <DollarSign className="w-5 h-5 text-muted-foreground" />
-                          <span className="text-2xl font-bold">999</span>
-                          <span className="text-muted-foreground">/month</span>
-                        </div>
-                        <p className="text-muted-foreground">Full-service UX design and consultation for large organizations.</p>
-                      </div>
-                      <div className="space-y-3">
-                        {[
-                          "Unlimited consultations",
-                          "Complete UX overhaul",
-                          "User research & testing",
-                          "Custom design system",
-                          "Dedicated support team",
-                          "Monthly progress reports"
-                        ].map((feature) => (
-                          <div key={feature} className="flex items-center gap-2">
-                            <Check className="w-4 h-4 text-indigo-500" />
-                            <span className="text-sm">{feature}</span>
+                    <CardContent className="pt-6 flex-1 flex flex-col">
+                      <div className="space-y-6 flex-1">
+                        <div className="space-y-2">
+                          <h3 className="text-xl font-semibold">Enterprise Solution</h3>
+                          <div className="flex items-center gap-1">
+                            <DollarSign className="w-5 h-5 text-muted-foreground" />
+                            <span className="text-2xl font-bold">999</span>
+                            <span className="text-muted-foreground">/month</span>
                           </div>
-                        ))}
+                          <p className="text-muted-foreground">Full-service UX design and consultation for large organizations.</p>
+                        </div>
+                        <div className="space-y-3">
+                          {[
+                            "Unlimited consultations",
+                            "Complete UX overhaul",
+                            "User research & testing",
+                            "Custom design system",
+                            "Dedicated support team",
+                            "Monthly progress reports"
+                          ].map((feature) => (
+                            <div key={feature} className="flex items-center gap-2">
+                              <Check className="w-4 h-4 text-indigo-500" />
+                              <span className="text-sm">{feature}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                      <Button className="w-full">
-                        <MessageCircle className="w-4 h-4 mr-2" />
-                        Hire Expert
-                      </Button>
+                      <div className="flex gap-2 pt-6">
+                        <Button className="flex-1">
+                          <HandShake className="w-4 h-4 mr-2" />
+                          Hire Expert
+                        </Button>
+                        <Button variant="outline" className="flex-1">
+                          <Mail className="w-4 h-4 mr-2" />
+                          Contact
+                        </Button>
+                      </div>
                     </CardContent>
                   </Card>
                 </div>
