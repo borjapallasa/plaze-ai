@@ -31,7 +31,7 @@ export default function Expert() {
                     </div>
                   </div>
                   
-                  <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 mt-2">
+                  <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 mt-2 max-w-[fit-content]">
                     <p className="text-lg md:text-xl text-muted-foreground">John Doe</p>
                     <div className="text-muted-foreground">•</div>
                     <div className="flex items-center gap-2">
