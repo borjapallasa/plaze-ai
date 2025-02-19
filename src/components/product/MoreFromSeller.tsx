@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import {
   Carousel,
@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { type CarouselApi } from "@/components/ui/carousel";
 
 interface Product {
   title: string;
@@ -28,13 +29,26 @@ interface MoreFromSellerProps {
 }
 
 export function MoreFromSeller({ products, className }: MoreFromSellerProps) {
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+
+  React.useEffect(() => {
+    if (!api) {
+      return;
+    }
+
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap());
+    });
+  }, [api]);
+
   return (
-    <div className={className}>
+    <div>
       <h2 className="text-xl font-semibold mb-8">More from seller</h2>
       
       {/* Mobile Layout (1 visible) */}
       <div className="lg:hidden">
-        <Carousel className="w-full">
+        <Carousel setApi={setApi} className="w-full">
           <CarouselContent className="-ml-4">
             {products.map((product, index) => (
               <CarouselItem key={index} className="pl-4 basis-full">
@@ -42,14 +56,14 @@ export function MoreFromSeller({ products, className }: MoreFromSellerProps) {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious />
+          {current > 0 && <CarouselPrevious />}
           <CarouselNext />
         </Carousel>
       </div>
 
       {/* Desktop Layout (4 visible + 4 hidden) */}
       <div className="hidden lg:block">
-        <Carousel className="w-full">
+        <Carousel setApi={setApi} className="w-full">
           <CarouselContent className="-ml-4">
             {products.map((product, index) => (
               <CarouselItem key={index} className="pl-4 basis-1/4">
@@ -57,7 +71,7 @@ export function MoreFromSeller({ products, className }: MoreFromSellerProps) {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious />
+          {current > 0 && <CarouselPrevious />}
           <CarouselNext />
         </Carousel>
       </div>

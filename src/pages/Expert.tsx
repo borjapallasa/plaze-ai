@@ -398,8 +398,8 @@ export default function Expert() {
           </CardContent>
         </Card>
 
-        {/* More From Seller Section with added padding */}
-        <div className="container mx-auto px-4 pt-[15px]">
+        {/* More From Seller Section with consistent alignment */}
+        <div className="pt-[15px]">
           <MoreFromSeller products={moreProducts} />
         </div>
       </div>
