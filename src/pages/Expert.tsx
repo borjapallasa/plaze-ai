@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, Users, Mail, Info, BookOpen, MessageCircle, DollarSign, Calendar, MapPin, Share2, Save, Check, Handshake } from "lucide-react";
+import { Star, Users, Info, Calendar, MapPin, Share2, Save, Check, Handshake, DollarSign } from "lucide-react";
 import { MoreFromSeller } from "@/components/product/MoreFromSeller";
 
 export default function Expert() {
@@ -401,26 +401,6 @@ export default function Expert() {
         <div className="container mx-auto px-4 pt-[15px]">
           <MoreFromSeller products={moreProducts} />
         </div>
-
-        {/* Contact Section */}
-        <Card>
-          <CardContent className="p-6 space-y-4">
-            <div className="flex items-center gap-2">
-              <Mail className="w-5 h-5" />
-              <h2 className="text-lg font-semibold">Contact</h2>
-            </div>
-            <div className="flex gap-4">
-              <Button className="w-full sm:w-auto">
-                <Mail className="w-4 h-4 mr-2" />
-                Send Message
-              </Button>
-              <Button variant="outline" className="w-full sm:w-auto">
-                <BookOpen className="w-4 h-4 mr-2" />
-                View Profile
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
