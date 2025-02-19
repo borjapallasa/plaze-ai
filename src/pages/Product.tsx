@@ -72,6 +72,27 @@ export default function Product() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="lg:hidden">
+        <div className="mb-6">
+          <div className="bg-card rounded-lg overflow-hidden mb-4 aspect-square">
+            <img 
+              src={product.image} 
+              alt={product.title}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          
+          <div className="flex gap-4 overflow-x-auto hide-scrollbar">
+            {Array(5).fill(0).map((_, i) => (
+              <img 
+                key={i}
+                src={product.image} 
+                alt={`Preview ${i + 1}`}
+                className="w-24 h-24 rounded-lg object-cover flex-shrink-0"
+              />
+            ))}
+          </div>
+        </div>
+
         <h1 className="text-2xl font-semibold mb-4">{product.title}</h1>
         
         <div className="flex items-center gap-2 mb-4">
@@ -139,27 +160,6 @@ export default function Product() {
               <MessageSquare className="w-4 h-4 mr-2" />
               Contact Seller
             </Button>
-          </div>
-        </div>
-
-        <div className="mb-6">
-          <div className="bg-card rounded-lg overflow-hidden mb-4 aspect-square">
-            <img 
-              src={product.image} 
-              alt={product.title}
-              className="w-full h-full object-cover"
-            />
-          </div>
-          
-          <div className="flex gap-4 overflow-x-auto hide-scrollbar">
-            {Array(5).fill(0).map((_, i) => (
-              <img 
-                key={i}
-                src={product.image} 
-                alt={`Preview ${i + 1}`}
-                className="w-24 h-24 rounded-lg object-cover flex-shrink-0"
-              />
-            ))}
           </div>
         </div>
       </div>
