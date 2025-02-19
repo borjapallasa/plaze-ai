@@ -12,6 +12,9 @@ export function ProductGallery({ image, className }: ProductGalleryProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const totalImages = 5;
 
+  // Create an array of the same image repeated 5 times
+  const images = Array(totalImages).fill(image);
+
   return (
     <div className={className}>
       {/* Mobile Layout */}
@@ -19,7 +22,7 @@ export function ProductGallery({ image, className }: ProductGalleryProps) {
         {/* Main Image */}
         <div className="bg-card rounded-lg overflow-hidden aspect-square">
           <img 
-            src={image} 
+            src={images[currentImageIndex]} 
             alt="Product"
             className="w-full h-full object-cover"
           />
@@ -40,7 +43,7 @@ export function ProductGallery({ image, className }: ProductGalleryProps) {
 
             {/* Image Indicators */}
             <div className="flex gap-2">
-              {Array(totalImages).fill(0).map((_, i) => (
+              {images.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => setCurrentImageIndex(i)}
@@ -70,10 +73,10 @@ export function ProductGallery({ image, className }: ProductGalleryProps) {
       <div className="hidden lg:flex gap-4">
         {/* Thumbnails on the left */}
         <div className="flex flex-col gap-4 w-24">
-          {Array(totalImages).fill(0).map((_, i) => (
+          {images.map((img, i) => (
             <img 
               key={i}
-              src={image} 
+              src={img} 
               alt={`Preview ${i + 1}`}
               className={`w-24 h-24 rounded-lg object-cover flex-shrink-0 cursor-pointer transition-opacity ${
                 i === currentImageIndex ? 'ring-2 ring-primary' : 'hover:opacity-80'
@@ -86,7 +89,7 @@ export function ProductGallery({ image, className }: ProductGalleryProps) {
         {/* Main image */}
         <div className="flex-1 bg-card rounded-lg overflow-hidden aspect-square">
           <img 
-            src={image} 
+            src={images[currentImageIndex]} 
             alt="Product"
             className="w-full h-full object-cover"
           />

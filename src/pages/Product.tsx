@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import { useState, useEffect, useRef } from "react";
 import { ProductGallery } from "@/components/product/ProductGallery";
@@ -9,6 +8,19 @@ import { MoreFromSeller } from "@/components/product/MoreFromSeller";
 import { StickyATC } from "@/components/product/StickyATC";
 import { useToast } from "@/components/ui/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+
+const placeholderImages = [
+  "https://images.unsplash.com/photo-1649972904349-6e44c42644a7",
+  "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
+  "https://images.unsplash.com/photo-1518770660439-4636190af475",
+  "https://images.unsplash.com/photo-1461749280684-dccba630e2f6",
+  "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d"
+];
+
+const getRandomImage = () => {
+  const randomIndex = Math.floor(Math.random() * placeholderImages.length);
+  return placeholderImages[randomIndex];
+};
 
 export default function Product() {
   const [selectedVariant, setSelectedVariant] = useState("premium");
@@ -21,7 +33,6 @@ export default function Product() {
     const handleScroll = () => {
       if (variantsRef.current) {
         const variantsRect = variantsRef.current.getBoundingClientRect();
-        // Show sticky ATC when variants section is above viewport
         setShowStickyATC(variantsRect.bottom < -100);
       }
     };
@@ -39,12 +50,14 @@ export default function Product() {
     });
   };
 
+  const mainProductImage = getRandomImage();
+
   const product = {
     title: "Professional UI/UX Design Course",
     views: "9,995",
     seller: "Design Master",
     rating: 4.8,
-    image: "/placeholder.svg",
+    image: mainProductImage,
     price: "$99.99",
     description: "Complete guide to mastering UI/UX design principles and tools.",
     tags: ["design", "ui", "ux"],
@@ -86,7 +99,7 @@ export default function Product() {
       rating: 5, 
       content: "Excellent course, very detailed",
       description: "The course content is well structured and easy to follow. I learned a lot about UI/UX design principles.",
-      avatar: "/placeholder.svg",
+      avatar: getRandomImage(),
       date: "2 days ago",
       itemQuality: 5,
       shipping: 5,
@@ -98,7 +111,7 @@ export default function Product() {
       rating: 4, 
       content: "Great content, well structured",
       description: "Very comprehensive material with practical examples. Could use more exercises.",
-      avatar: "/placeholder.svg",
+      avatar: getRandomImage(),
       date: "1 week ago",
       itemQuality: 4,
       shipping: 5,
@@ -110,7 +123,7 @@ export default function Product() {
       rating: 5, 
       content: "Best design course I've taken!",
       description: "The instructor explains complex concepts in a very clear and engaging way.",
-      avatar: "/placeholder.svg",
+      avatar: getRandomImage(),
       date: "2 weeks ago",
       itemQuality: 5,
       shipping: 4,
@@ -122,7 +135,7 @@ export default function Product() {
       rating: 4, 
       content: "Very comprehensive",
       description: "Excellent course materials and resources. The practical examples were particularly helpful.",
-      avatar: "/placeholder.svg",
+      avatar: getRandomImage(),
       date: "3 weeks ago",
       itemQuality: 4,
       shipping: 4,
@@ -134,7 +147,7 @@ export default function Product() {
     {
       title: "Advanced UX Research Methods",
       price: "$89.99",
-      image: "/placeholder.svg",
+      image: getRandomImage(),
       seller: "Design Master",
       description: "Learn professional UX research techniques and methodologies.",
       tags: ["research", "ux"],
@@ -143,7 +156,7 @@ export default function Product() {
     {
       title: "UI Animation Masterclass",
       price: "$79.99",
-      image: "/placeholder.svg",
+      image: getRandomImage(),
       seller: "Design Master",
       description: "Create engaging interface animations and micro-interactions.",
       tags: ["animation", "ui"],
@@ -152,7 +165,7 @@ export default function Product() {
     {
       title: "Design Systems Workshop",
       price: "$129.99",
-      image: "/placeholder.svg",
+      image: getRandomImage(),
       seller: "Design Master",
       description: "Build and maintain scalable design systems for large applications.",
       tags: ["systems", "workflow"],
@@ -161,7 +174,7 @@ export default function Product() {
     {
       title: "Figma Advanced Techniques",
       price: "$69.99",
-      image: "/placeholder.svg",
+      image: getRandomImage(),
       seller: "Design Master",
       description: "Master advanced Figma features and workflows for professional design.",
       tags: ["figma", "tools"],
@@ -170,7 +183,7 @@ export default function Product() {
     {
       title: "User Testing Fundamentals",
       price: "$94.99",
-      image: "/placeholder.svg",
+      image: getRandomImage(),
       seller: "Design Master",
       description: "Learn effective user testing methods and result analysis.",
       tags: ["testing", "research"],
@@ -179,7 +192,7 @@ export default function Product() {
     {
       title: "Design Psychology",
       price: "$84.99",
-      image: "/placeholder.svg",
+      image: getRandomImage(),
       seller: "Design Master",
       description: "Understanding human behavior and cognitive principles in UX design.",
       tags: ["psychology", "ux"],
@@ -188,7 +201,7 @@ export default function Product() {
     {
       title: "Mobile UX Design",
       price: "$99.99",
-      image: "/placeholder.svg",
+      image: getRandomImage(),
       seller: "Design Master",
       description: "Create exceptional mobile user experiences and interfaces.",
       tags: ["mobile", "ux"],
@@ -197,7 +210,7 @@ export default function Product() {
     {
       title: "Design Portfolio Workshop",
       price: "$59.99",
-      image: "/placeholder.svg",
+      image: getRandomImage(),
       seller: "Design Master",
       description: "Build a standout design portfolio that attracts clients.",
       tags: ["portfolio", "career"],
@@ -206,7 +219,7 @@ export default function Product() {
     {
       title: "Enterprise UX Strategy",
       price: "$149.99",
-      image: "/placeholder.svg",
+      image: getRandomImage(),
       seller: "Design Master",
       description: "Strategic approaches to enterprise-level UX design challenges.",
       tags: ["enterprise", "strategy"],
@@ -215,7 +228,7 @@ export default function Product() {
     {
       title: "Design Leadership",
       price: "$129.99",
-      image: "/placeholder.svg",
+      image: getRandomImage(),
       seller: "Design Master",
       description: "Lead design teams and manage design processes effectively.",
       tags: ["leadership", "management"],
@@ -224,7 +237,7 @@ export default function Product() {
     {
       title: "Accessibility in Design",
       price: "$89.99",
-      image: "/placeholder.svg",
+      image: getRandomImage(),
       seller: "Design Master",
       description: "Create inclusive designs that work for everyone.",
       tags: ["accessibility", "inclusive"],
@@ -233,7 +246,7 @@ export default function Product() {
     {
       title: "Design Ethics",
       price: "$74.99",
-      image: "/placeholder.svg",
+      image: getRandomImage(),
       seller: "Design Master",
       description: "Ethical considerations and practices in UX/UI design.",
       tags: ["ethics", "principles"],
@@ -243,7 +256,6 @@ export default function Product() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Mobile Layout */}
       <div className="lg:hidden">
         <ProductGallery image={product.image} className="mb-6" />
         <ProductHeader 
@@ -263,7 +275,6 @@ export default function Product() {
         </div>
       </div>
 
-      {/* Desktop Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
         <div className="lg:col-span-2">
           <div className="hidden lg:block">
