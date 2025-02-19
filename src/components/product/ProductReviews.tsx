@@ -43,9 +43,9 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
       </div>
       
       <Card className={className}>
-        <div className="space-y-6">
+        <div className="space-y-4">
           {reviews.map((review) => (
-            <div key={review.id} className="border-b pb-6 last:border-b-0">
+            <div key={review.id} className="border-b last:border-b-0 last:pb-0 pb-4">
               <div className="flex flex-col gap-2">
                 {/* Desktop Layout */}
                 <div className="hidden md:flex justify-between">
@@ -65,12 +65,12 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
                     <h3 className="font-medium text-base">{review.content}</h3>
                     <p className="text-sm text-muted-foreground">{review.description}</p>
                   </div>
-                  <div className="space-y-1.5 min-w-[180px]">
+                  <div className="space-y-2 min-w-[180px]">
                     <div className="flex items-center text-xs text-green-600 whitespace-nowrap justify-end">
                       <Check className="w-3 h-3 mr-0.5" />
                       <span>Recommends this item</span>
                     </div>
-                    <div className="space-y-0.5">
+                    <div className="space-y-1">
                       <RatingCategory label="Item quality" rating={review.itemQuality} />
                       <RatingCategory label="Shipping" rating={review.shipping} />
                       <RatingCategory label="Customer service" rating={review.customerService} />
