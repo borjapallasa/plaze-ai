@@ -57,23 +57,17 @@ export function MoreFromSeller({ products, className }: MoreFromSellerProps) {
             ))}
           </CarouselContent>
           {current > 0 && <CarouselPrevious />}
-          <CarouselNext />
+          {current < products.length - 1 && <CarouselNext />}
         </Carousel>
       </div>
 
-      {/* Desktop Layout (4 visible + 4 hidden) */}
+      {/* Desktop Layout (3 visible) */}
       <div className="hidden lg:block">
-        <Carousel setApi={setApi} className="w-full">
-          <CarouselContent className="-ml-4">
-            {products.map((product, index) => (
-              <CarouselItem key={index} className="pl-4 basis-1/4">
-                <ProductCard product={product} />
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          {current > 0 && <CarouselPrevious />}
-          <CarouselNext />
-        </Carousel>
+        <div className="grid grid-cols-3 gap-6">
+          {products.map((product, index) => (
+            <ProductCard key={index} product={product} />
+          ))}
+        </div>
       </div>
     </div>
   );

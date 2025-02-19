@@ -59,51 +59,6 @@ export default function Expert() {
       description: "Build and maintain scalable design systems for large applications.",
       tags: ["systems", "workflow"],
       category: "design"
-    },
-    {
-      title: "Figma Advanced Techniques",
-      price: "$69.99",
-      image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
-      seller: "John Doe",
-      description: "Master advanced Figma features and workflows for professional design.",
-      tags: ["figma", "tools"],
-      category: "design"
-    },
-    {
-      title: "Design Thinking Workshop",
-      price: "$149.99",
-      image: "https://images.unsplash.com/photo-1531403009284-440f080d1e12",
-      seller: "John Doe",
-      description: "Learn the fundamentals of design thinking and problem-solving methodologies.",
-      tags: ["thinking", "workshop"],
-      category: "design"
-    },
-    {
-      title: "Mobile UX Patterns",
-      price: "$99.99",
-      image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c",
-      seller: "John Doe",
-      description: "Master essential mobile UX patterns and best practices for app design.",
-      tags: ["mobile", "patterns"],
-      category: "design"
-    },
-    {
-      title: "Accessibility in Design",
-      price: "$119.99",
-      image: "https://images.unsplash.com/photo-1517433670267-08bbd4be890f",
-      seller: "John Doe",
-      description: "Create inclusive designs that work for everyone with accessibility best practices.",
-      tags: ["a11y", "inclusive"],
-      category: "design"
-    },
-    {
-      title: "Data Visualization Design",
-      price: "$139.99",
-      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f",
-      seller: "John Doe",
-      description: "Learn to create effective and beautiful data visualizations for complex information.",
-      tags: ["data", "viz"],
-      category: "design"
     }
   ];
 
@@ -630,6 +585,10 @@ export default function Expert() {
               <MoreFromSeller products={moreProducts} />
             </div>
           </div>
+        </div>
+
+        <div className="lg:hidden">
+          <MoreFromSeller products={moreProducts} />
         </div>
       </div>
     </div>
