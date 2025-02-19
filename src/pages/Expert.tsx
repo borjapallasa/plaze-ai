@@ -19,29 +19,31 @@ export default function Expert() {
                   <AvatarFallback>JD</AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
-                  <h1 className="text-2xl md:text-3xl font-bold">Expert in UX Design</h1>
-                </div>
-              </div>
-              
-              <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
-                <p className="text-lg md:text-xl text-muted-foreground">John Doe</p>
-                <div className="text-muted-foreground">•</div>
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">San Francisco, CA</span>
-                </div>
-                <div className="text-muted-foreground">•</div>
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">Expert since 2020</span>
-                </div>
-                <div className="flex gap-1.5 ml-auto">
-                  <Button variant="ghost" size="icon" className="h-6 w-6">
-                    <Share2 className="h-3.5 w-3.5" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-6 w-6">
-                    <Save className="h-3.5 w-3.5" />
-                  </Button>
+                  <div className="flex justify-between items-start">
+                    <h1 className="text-2xl md:text-3xl font-bold">Expert in UX Design</h1>
+                    <div className="flex gap-1.5">
+                      <Button variant="ghost" size="icon" className="h-6 w-6">
+                        <Share2 className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-6 w-6">
+                        <Save className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 mt-2">
+                    <p className="text-lg md:text-xl text-muted-foreground">John Doe</p>
+                    <div className="text-muted-foreground">•</div>
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">San Francisco, CA</span>
+                    </div>
+                    <div className="text-muted-foreground">•</div>
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">Expert since 2020</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
