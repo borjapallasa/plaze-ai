@@ -129,28 +129,30 @@ export default function Product() {
       </div>
 
       {/* Full-width Demo Section */}
-      <div className="bg-card p-6 rounded-lg mb-8">
+      <Card className="p-6 mb-8">
         <h2 className="text-xl font-semibold mb-4">Demo</h2>
         <div className="aspect-video bg-accent rounded-lg"></div>
-      </div>
+      </Card>
 
       {/* Full-width Reviews Section */}
-      <div className="space-y-4 mb-16">
+      <Card className="p-6 mb-16">
         <h2 className="text-xl font-semibold mb-4">Reviews</h2>
-        {reviews.map((review) => (
-          <Card key={review.id} className="p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="flex items-center gap-1">
-                {Array(review.rating).fill(0).map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                ))}
+        <div className="space-y-4">
+          {reviews.map((review) => (
+            <Card key={review.id} className="p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="flex items-center gap-1">
+                  {Array(review.rating).fill(0).map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <span className="font-medium">{review.author}</span>
               </div>
-              <span className="font-medium">{review.author}</span>
-            </div>
-            <p className="text-muted-foreground">{review.content}</p>
-          </Card>
-        ))}
-      </div>
+              <p className="text-muted-foreground">{review.content}</p>
+            </Card>
+          ))}
+        </div>
+      </Card>
 
       {/* More from seller */}
       <div className="mt-16">
