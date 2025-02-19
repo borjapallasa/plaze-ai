@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { useState, useEffect, useRef } from "react";
 import { ProductGallery } from "@/components/product/ProductGallery";
@@ -20,7 +21,8 @@ export default function Product() {
     const handleScroll = () => {
       if (variantsRef.current) {
         const variantsRect = variantsRef.current.getBoundingClientRect();
-        setShowStickyATC(variantsRect.bottom < 0);
+        const threshold = isMobile ? 100 : 0; // Add some threshold for mobile
+        setShowStickyATC(variantsRect.bottom < threshold);
       }
     };
 
@@ -28,7 +30,7 @@ export default function Product() {
     handleScroll(); // Initial check
     
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isMobile]);
 
   const handleAddToCart = () => {
     toast({
