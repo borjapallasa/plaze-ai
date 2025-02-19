@@ -86,7 +86,6 @@ function ProductCard({ product }: { product: Product }) {
           >
             {product.category}
           </Badge>
-          <p className="text-sm text-muted-foreground mt-1">{product.seller}</p>
         </div>
       </div>
 
