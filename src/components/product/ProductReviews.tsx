@@ -65,10 +65,15 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
                     <h3 className="font-medium text-base">{review.content}</h3>
                     <p className="text-sm text-muted-foreground">{review.description}</p>
                   </div>
-                  <div className="flex justify-end">
-                    <div className="flex items-start text-xs text-green-600 whitespace-nowrap">
+                  <div className="space-y-1.5 min-w-[180px]">
+                    <div className="flex items-center text-xs text-green-600 whitespace-nowrap justify-end">
                       <Check className="w-3 h-3 mr-0.5" />
                       <span>Recommends this item</span>
+                    </div>
+                    <div className="space-y-0.5">
+                      <RatingCategory label="Item quality" rating={review.itemQuality} />
+                      <RatingCategory label="Shipping" rating={review.shipping} />
+                      <RatingCategory label="Customer service" rating={review.customerService} />
                     </div>
                   </div>
                 </div>
@@ -100,27 +105,19 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
                   </div>
                 </div>
 
-                {/* Desktop User Info and Ratings */}
-                <div className="hidden md:flex justify-between items-start mt-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
-                      <img 
-                        src={review.avatar} 
-                        alt={review.author}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-sm">{review.author}</span>
-                      <span className="text-xs text-muted-foreground">•</span>
-                      <div className="text-xs text-muted-foreground">{review.date}</div>
-                    </div>
+                {/* Desktop User Info */}
+                <div className="hidden md:flex items-center gap-2 mt-2">
+                  <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
+                    <img 
+                      src={review.avatar} 
+                      alt={review.author}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-
-                  <div className="space-y-0.5 min-w-[180px]">
-                    <RatingCategory label="Item quality" rating={review.itemQuality} />
-                    <RatingCategory label="Shipping" rating={review.shipping} />
-                    <RatingCategory label="Customer service" rating={review.customerService} />
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium text-sm">{review.author}</span>
+                    <span className="text-xs text-muted-foreground">•</span>
+                    <div className="text-xs text-muted-foreground">{review.date}</div>
                   </div>
                 </div>
 
