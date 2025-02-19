@@ -40,19 +40,7 @@ export function StickyATC({
   const currentVariant = variants.find(v => v.id === selectedVariant);
 
   return (
-    <div 
-      className={`
-        fixed bottom-0 left-0 right-0 
-        bg-background border-t shadow-lg p-4 
-        z-50 animate-[slide-up_0.3s_ease-out]
-      `}
-      style={{
-        '@keyframes slide-up': {
-          '0%': { transform: 'translateY(100%)' },
-          '100%': { transform: 'translateY(0)' }
-        }
-      }}
-    >
+    <div className="fixed bottom-0 left-0 right-0 bg-background border-t shadow-lg p-4 z-50 animate-slide-up">
       <div className="container mx-auto flex items-center justify-between gap-4">
         <div className="flex-1 flex items-center gap-4">
           <Select value={selectedVariant} onValueChange={onVariantChange}>
