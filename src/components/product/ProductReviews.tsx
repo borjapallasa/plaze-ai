@@ -47,7 +47,8 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
           {reviews.map((review) => (
             <div key={review.id} className="border-b pb-6 last:border-b-0">
               <div className="flex flex-col gap-2">
-                <div className="flex justify-between">
+                {/* Desktop Layout */}
+                <div className="hidden md:flex justify-between">
                   <div className="space-y-1.5 max-w-[65%]">
                     <div className="flex gap-1">
                       {Array(5).fill(0).map((_, i) => (
@@ -72,7 +73,34 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
                   </div>
                 </div>
 
-                <div className="flex justify-between items-start mt-2">
+                {/* Mobile Layout */}
+                <div className="md:hidden space-y-3">
+                  <div className="flex items-start text-xs text-green-600">
+                    <Check className="w-3 h-3 mr-0.5" />
+                    <span>Recommends this item</span>
+                  </div>
+                  
+                  <div className="flex gap-1">
+                    {Array(5).fill(0).map((_, i) => (
+                      <Star 
+                        key={i} 
+                        className={`w-3.5 h-3.5 ${
+                          i < review.rating 
+                            ? 'fill-yellow-400 text-yellow-400' 
+                            : 'fill-gray-200 text-gray-200'
+                        }`}
+                      />
+                    ))}
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <h3 className="font-medium text-base">{review.content}</h3>
+                    <p className="text-sm text-muted-foreground">{review.description}</p>
+                  </div>
+                </div>
+
+                {/* Desktop User Info and Ratings */}
+                <div className="hidden md:flex justify-between items-start mt-2">
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
                       <img 
@@ -89,6 +117,30 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
                   </div>
 
                   <div className="space-y-0.5 min-w-[180px]">
+                    <RatingCategory label="Item quality" rating={review.itemQuality} />
+                    <RatingCategory label="Shipping" rating={review.shipping} />
+                    <RatingCategory label="Customer service" rating={review.customerService} />
+                  </div>
+                </div>
+
+                {/* Mobile User Info and Ratings */}
+                <div className="md:hidden space-y-3 mt-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
+                      <img 
+                        src={review.avatar} 
+                        alt={review.author}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-sm">{review.author}</span>
+                      <span className="text-xs text-muted-foreground">•</span>
+                      <div className="text-xs text-muted-foreground">{review.date}</div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-0.5">
                     <RatingCategory label="Item quality" rating={review.itemQuality} />
                     <RatingCategory label="Shipping" rating={review.shipping} />
                     <RatingCategory label="Customer service" rating={review.customerService} />
