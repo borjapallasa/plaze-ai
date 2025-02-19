@@ -1,3 +1,4 @@
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -58,25 +59,77 @@ export default function Product() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-        <div className="lg:col-span-2">
-          <div className="bg-card rounded-lg overflow-hidden mb-8 aspect-square">
+      {/* Gallery Section */}
+      <div className="lg:hidden mb-6">
+        <div className="bg-card rounded-lg overflow-hidden mb-4 aspect-square">
+          <img 
+            src={product.image} 
+            alt={product.title}
+            className="w-full h-full object-cover"
+          />
+        </div>
+        
+        <div className="flex gap-4 overflow-x-auto hide-scrollbar">
+          {Array(5).fill(0).map((_, i) => (
             <img 
+              key={i}
               src={product.image} 
-              alt={product.title}
-              className="w-full h-full object-cover"
+              alt={`Preview ${i + 1}`}
+              className="w-24 h-24 rounded-lg object-cover flex-shrink-0"
             />
+          ))}
+        </div>
+      </div>
+
+      {/* Mobile Price and Title Section */}
+      <Card className="p-6 mb-6 lg:hidden">
+        <div className="flex items-baseline gap-2 mb-4">
+          <span className="text-2xl font-bold">${currentVariant.price}</span>
+          {currentVariant.comparePrice && (
+            <span className="text-sm text-muted-foreground line-through">
+              ${currentVariant.comparePrice}
+            </span>
+          )}
+        </div>
+
+        <h1 className="text-xl font-semibold mb-4">{product.title}</h1>
+        
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-full bg-accent" />
+          <div>
+            <h3 className="font-medium">{product.seller}</h3>
+            <div className="flex items-center gap-1">
+              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+              <span className="text-sm">{product.rating}</span>
+            </div>
           </div>
-          
-          <div className="flex gap-4 overflow-x-auto hide-scrollbar mb-8">
-            {Array(5).fill(0).map((_, i) => (
+        </div>
+      </Card>
+
+      {/* Main Grid Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        {/* Main Content */}
+        <div className="lg:col-span-2">
+          {/* Desktop Gallery - Hidden on Mobile */}
+          <div className="hidden lg:block">
+            <div className="bg-card rounded-lg overflow-hidden mb-8 aspect-square">
               <img 
-                key={i}
                 src={product.image} 
-                alt={`Preview ${i + 1}`}
-                className="w-24 h-24 rounded-lg object-cover flex-shrink-0"
+                alt={product.title}
+                className="w-full h-full object-cover"
               />
-            ))}
+            </div>
+            
+            <div className="flex gap-4 overflow-x-auto hide-scrollbar mb-8">
+              {Array(5).fill(0).map((_, i) => (
+                <img 
+                  key={i}
+                  src={product.image} 
+                  alt={`Preview ${i + 1}`}
+                  className="w-24 h-24 rounded-lg object-cover flex-shrink-0"
+                />
+              ))}
+            </div>
           </div>
 
           <Card className="p-6 mb-8">
@@ -98,8 +151,9 @@ export default function Product() {
           </Card>
         </div>
 
+        {/* Sidebar - Hidden on Mobile when Price/Title shown at top */}
         <div className="space-y-6">
-          <Card className="p-6">
+          <Card className="hidden lg:block p-6">
             <div className="flex items-baseline gap-2 mb-4">
               <span className="text-2xl font-bold">${currentVariant.price}</span>
               {currentVariant.comparePrice && (
@@ -122,6 +176,36 @@ export default function Product() {
               </div>
             </div>
 
+            <div className="mb-6">
+              <h3 className="font-medium mb-3">Select Package</h3>
+              <RadioGroup 
+                value={selectedVariant} 
+                onValueChange={setSelectedVariant}
+                className="space-y-3"
+              >
+                {variants.map((variant) => (
+                  <div key={variant.id} className="flex items-center space-x-2">
+                    <RadioGroupItem value={variant.id} id={variant.id} />
+                    <Label htmlFor={variant.id}>{variant.name}</Label>
+                  </div>
+                ))}
+              </RadioGroup>
+            </div>
+
+            <div className="space-y-4">
+              <Button className="w-full">
+                <ShoppingCart className="w-4 h-4 mr-2" />
+                Add to Cart
+              </Button>
+              <Button variant="outline" className="w-full">
+                <MessageSquare className="w-4 h-4 mr-2" />
+                Contact Seller
+              </Button>
+            </div>
+          </Card>
+
+          {/* Mobile Action Card */}
+          <Card className="lg:hidden p-6">
             <div className="mb-6">
               <h3 className="font-medium mb-3">Select Package</h3>
               <RadioGroup 
