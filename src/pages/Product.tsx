@@ -1,4 +1,3 @@
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -81,7 +80,7 @@ export default function Product() {
         </div>
       </div>
 
-      {/* Mobile Price and Title Section */}
+      {/* Mobile Price, Title, and Actions Section */}
       <Card className="p-6 mb-6 lg:hidden">
         <div className="flex items-baseline gap-2 mb-4">
           <span className="text-2xl font-bold">${currentVariant.price}</span>
@@ -94,7 +93,7 @@ export default function Product() {
 
         <h1 className="text-xl font-semibold mb-4">{product.title}</h1>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 mb-6">
           <div className="w-8 h-8 rounded-full bg-accent" />
           <div>
             <h3 className="font-medium">{product.seller}</h3>
@@ -103,6 +102,35 @@ export default function Product() {
               <span className="text-sm">{product.rating}</span>
             </div>
           </div>
+        </div>
+
+        {/* Variants Selection */}
+        <div className="mb-6">
+          <h3 className="font-medium mb-3">Select Package</h3>
+          <RadioGroup 
+            value={selectedVariant} 
+            onValueChange={setSelectedVariant}
+            className="space-y-3"
+          >
+            {variants.map((variant) => (
+              <div key={variant.id} className="flex items-center space-x-2">
+                <RadioGroupItem value={variant.id} id={variant.id} />
+                <Label htmlFor={variant.id}>{variant.name}</Label>
+              </div>
+            ))}
+          </RadioGroup>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="space-y-4">
+          <Button className="w-full">
+            <ShoppingCart className="w-4 h-4 mr-2" />
+            Add to Cart
+          </Button>
+          <Button variant="outline" className="w-full">
+            <MessageSquare className="w-4 h-4 mr-2" />
+            Contact Seller
+          </Button>
         </div>
       </Card>
 
@@ -151,7 +179,7 @@ export default function Product() {
           </Card>
         </div>
 
-        {/* Sidebar - Hidden on Mobile when Price/Title shown at top */}
+        {/* Sidebar - Hidden on Mobile */}
         <div className="space-y-6">
           <Card className="hidden lg:block p-6">
             <div className="flex items-baseline gap-2 mb-4">
@@ -204,39 +232,8 @@ export default function Product() {
             </div>
           </Card>
 
-          {/* Mobile Action Card */}
-          <Card className="lg:hidden p-6">
-            <div className="mb-6">
-              <h3 className="font-medium mb-3">Select Package</h3>
-              <RadioGroup 
-                value={selectedVariant} 
-                onValueChange={setSelectedVariant}
-                className="space-y-3"
-              >
-                {variants.map((variant) => (
-                  <div key={variant.id} className="flex items-center space-x-2">
-                    <RadioGroupItem value={variant.id} id={variant.id} />
-                    <Label htmlFor={variant.id}>{variant.name}</Label>
-                  </div>
-                ))}
-              </RadioGroup>
-            </div>
-
-            <div className="space-y-4">
-              <Button className="w-full">
-                <ShoppingCart className="w-4 h-4 mr-2" />
-                Add to Cart
-              </Button>
-              <Button variant="outline" className="w-full">
-                <MessageSquare className="w-4 h-4 mr-2" />
-                Contact Seller
-              </Button>
-            </div>
-          </Card>
-
           <Card className="p-6">
             <h3 className="font-semibold mb-4">Additional Information</h3>
-            
             <div className="space-y-4">
               <div>
                 <h4 className="font-medium mb-2">Apps Involved</h4>
