@@ -555,52 +555,80 @@ export default function Expert() {
             </div>
           </div>
 
-          <div className="mb-8">
-            <Card>
+          <div className="grid grid-cols-5 gap-6 mb-8">
+            <Card className="col-span-1">
               <CardContent className="p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <Users className="w-5 h-5" />
-                  <h2 className="text-lg font-semibold">UX Design Community</h2>
+                  <h2 className="text-lg font-semibold">Community</h2>
                 </div>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <Globe className="w-5 h-5 text-muted-foreground" />
-                    <p className="text-base">Public Community</p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Users className="w-5 h-5 text-muted-foreground" />
-                    <p className="text-base">1,234 members</p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Badge variant="secondary" className="text-sm">Free Access</Badge>
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <p className="text-lg">Want to improve your UX design skills and connect with experts?</p>
-                  <p className="text-base text-muted-foreground">Get Free Access To:</p>
-                  <ul className="space-y-3">
-                    {[
-                      "Weekly UX Design Workshops",
-                      "Expert Design Reviews & Feedback",
-                      "UX Research Templates & Resources",
-                      "Live Q&A Sessions with Industry Leaders"
-                    ].map((item) => (
-                      <li key={item} className="flex items-center gap-2">
-                        <Check className="w-5 h-5 text-green-500" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Button className="w-full mt-4">
-                    Join Community
-                  </Button>
-                </div>
+                <p className="text-muted-foreground">
+                  Join our vibrant UX design community to learn, share, and grow together with fellow designers.
+                </p>
               </CardContent>
             </Card>
+
+            <div className="col-span-4">
+              <Card>
+                <CardContent className="p-6 space-y-6">
+                  <div className="flex items-center gap-2">
+                    <Users className="w-5 h-5" />
+                    <h2 className="text-lg font-semibold">UX Design Community</h2>
+                  </div>
+                  <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-3">
+                      <Globe className="w-5 h-5 text-muted-foreground" />
+                      <p className="text-base">Public Community</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Users className="w-5 h-5 text-muted-foreground" />
+                      <p className="text-base">1,234 members</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Badge variant="secondary" className="text-sm">Free Access</Badge>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <p className="text-lg">Want to improve your UX design skills and connect with experts?</p>
+                    <p className="text-base text-muted-foreground">Get Free Access To:</p>
+                    <ul className="space-y-3">
+                      {[
+                        "Weekly UX Design Workshops",
+                        "Expert Design Reviews & Feedback",
+                        "UX Research Templates & Resources",
+                        "Live Q&A Sessions with Industry Leaders"
+                      ].map((item) => (
+                        <li key={item} className="flex items-center gap-2">
+                          <Check className="w-5 h-5 text-green-500" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <Button className="w-full sm:w-auto mt-4">
+                      Join Community
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
 
-          <div>
-            <MoreFromSeller products={moreProducts} />
+          <div className="grid grid-cols-5 gap-6">
+            <Card className="col-span-1">
+              <CardContent className="p-6 space-y-4">
+                <div className="flex items-center gap-2">
+                  <Info className="w-5 h-5" />
+                  <h2 className="text-lg font-semibold">More Courses</h2>
+                </div>
+                <p className="text-muted-foreground">
+                  Explore more UX design courses and resources from this expert.
+                </p>
+              </CardContent>
+            </Card>
+
+            <div className="col-span-4">
+              <MoreFromSeller products={moreProducts} />
+            </div>
           </div>
         </div>
       </div>
