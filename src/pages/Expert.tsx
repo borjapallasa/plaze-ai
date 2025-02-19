@@ -22,10 +22,12 @@ export default function Expert() {
                   <h1 className="text-3xl font-bold">Expert in UX Design</h1>
                   <div className="flex flex-col md:flex-row md:items-center gap-2.5 w-full">
                     <p className="text-xl text-muted-foreground">John Doe</p>
+                    <div className="hidden md:block text-muted-foreground">•</div>
                     <div className="flex items-center gap-2">
                       <MapPin className="w-4 h-4 text-muted-foreground" />
                       <span className="text-muted-foreground">San Francisco, CA</span>
                     </div>
+                    <div className="hidden md:block text-muted-foreground">•</div>
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-muted-foreground" />
                       <span className="text-muted-foreground">Expert since 2020</span>
