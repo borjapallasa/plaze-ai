@@ -9,9 +9,9 @@ export default function Expert() {
   return (
     <div className="space-y-8">
       {/* Header with Stats - Full Width */}
-      <div className="w-full bg-card">
+      <div className="w-full bg-card border">
         <div className="container mx-auto px-4">
-          <div className="relative p-8">
+          <div className="p-8">
             <div className="flex flex-col md:flex-row gap-6 items-start">
               <div className="flex gap-4 items-start w-full">
                 <Avatar className="h-20 w-20">
@@ -21,30 +21,32 @@ export default function Expert() {
                 <div className="space-y-2 w-full">
                   <div className="space-y-1">
                     <h1 className="text-3xl font-bold">Expert in UX Design</h1>
-                    <div className="flex flex-col md:flex-row md:items-center gap-2.5 w-full">
-                      <p className="text-xl text-muted-foreground">John Doe</p>
-                      <div className="hidden md:block text-muted-foreground">•</div>
-                      <div className="flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">San Francisco, CA</span>
+                    <div className="flex flex-col md:flex-row md:items-center gap-2.5">
+                      <div className="flex-1 flex flex-col md:flex-row md:items-center gap-2.5">
+                        <p className="text-xl text-muted-foreground">John Doe</p>
+                        <div className="hidden md:block text-muted-foreground">•</div>
+                        <div className="flex items-center gap-2">
+                          <MapPin className="w-4 h-4 text-muted-foreground" />
+                          <span className="text-muted-foreground">San Francisco, CA</span>
+                        </div>
+                        <div className="hidden md:block text-muted-foreground">•</div>
+                        <div className="flex items-center gap-2">
+                          <Calendar className="w-4 h-4 text-muted-foreground" />
+                          <span className="text-muted-foreground">Expert since 2020</span>
+                        </div>
                       </div>
-                      <div className="hidden md:block text-muted-foreground">•</div>
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">Expert since 2020</span>
+                      <div className="flex gap-2 md:self-start">
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <Share2 className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <Save className="h-4 w-4" />
+                        </Button>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="absolute bottom-4 right-4 flex gap-2">
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <Share2 className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <Save className="h-4 w-4" />
-              </Button>
             </div>
           </div>
         </div>
