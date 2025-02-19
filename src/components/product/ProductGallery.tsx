@@ -27,7 +27,7 @@ export function ProductGallery({ image, className }: ProductGalleryProps) {
 
         {/* Navigation Controls */}
         <div className="flex flex-col items-center gap-3">
-          {/* Arrows */}
+          {/* Arrows and Indicators in one row */}
           <div className="flex items-center justify-between w-full px-2">
             <Button 
               variant="ghost" 
@@ -37,6 +37,23 @@ export function ProductGallery({ image, className }: ProductGalleryProps) {
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
+
+            {/* Image Indicators */}
+            <div className="flex gap-2">
+              {Array(totalImages).fill(0).map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentImageIndex(i)}
+                  className={`w-2 h-2 rounded-full transition-colors ${
+                    i === currentImageIndex 
+                      ? 'bg-primary' 
+                      : 'bg-muted hover:bg-muted-foreground/50'
+                  }`}
+                  aria-label={`Go to image ${i + 1}`}
+                />
+              ))}
+            </div>
+
             <Button 
               variant="ghost" 
               size="icon" 
@@ -45,22 +62,6 @@ export function ProductGallery({ image, className }: ProductGalleryProps) {
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
-          </div>
-
-          {/* Image Indicators */}
-          <div className="flex gap-2">
-            {Array(totalImages).fill(0).map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentImageIndex(i)}
-                className={`w-2 h-2 rounded-full transition-colors ${
-                  i === currentImageIndex 
-                    ? 'bg-primary' 
-                    : 'bg-muted hover:bg-muted-foreground/50'
-                }`}
-                aria-label={`Go to image ${i + 1}`}
-              />
-            ))}
           </div>
         </div>
       </div>
