@@ -1,5 +1,5 @@
+
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star, Users, Info, Calendar, MapPin, Share2, Save, Check, Handshake, DollarSign } from "lucide-react";
@@ -264,7 +264,7 @@ export default function Expert() {
                             </div>
                           ))}
                         </div>
-                        <div className="pt-4 space-y-2">
+                        <div className="pt-4">
                           <Button className="w-full">
                             <Handshake className="w-4 h-4 mr-2" />
                             Hire Expert
