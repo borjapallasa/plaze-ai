@@ -41,9 +41,9 @@ export default function Expert() {
       </div>
 
       <div className="container mx-auto px-4 space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-5 gap-6">
           {/* Info Section */}
-          <Card className="md:col-span-1">
+          <Card className="col-span-1">
             <CardContent className="p-6 space-y-4">
               <div className="flex items-center gap-2">
                 <Info className="w-5 h-5" />
@@ -57,7 +57,7 @@ export default function Expert() {
           </Card>
 
           {/* Description Section */}
-          <Card className="md:col-span-2">
+          <Card className="col-span-4">
             <CardContent className="p-6 space-y-4">
               <h2 className="text-lg font-semibold">Areas of Expertise</h2>
               <div className="space-y-6">
