@@ -9,6 +9,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 interface Product {
   title: string;
@@ -65,7 +66,7 @@ export function MoreFromSeller({ products, className }: MoreFromSellerProps) {
 
 function ProductCard({ product }: { product: Product }) {
   return (
-    <div className="group relative flex flex-col space-y-4 rounded-lg p-6 bg-card hover:bg-accent transition-colors">
+    <Card className="group relative flex flex-col space-y-4 p-6 hover:bg-accent transition-colors">
       <div className="flex items-start gap-4">
         <div className="w-12 h-12 rounded-lg bg-accent flex items-center justify-center overflow-hidden flex-shrink-0">
           <img
@@ -105,6 +106,6 @@ function ProductCard({ product }: { product: Product }) {
           <ArrowRight className="h-4 w-4" />
         </Button>
       </div>
-    </div>
+    </Card>
   );
 }
