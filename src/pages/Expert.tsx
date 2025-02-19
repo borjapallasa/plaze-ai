@@ -368,239 +368,76 @@ export default function Expert() {
             <Card className="col-span-1">
               <CardContent className="p-6 space-y-4">
                 <div className="flex items-center gap-2">
-                  <Info className="w-5 h-5" />
-                  <h2 className="text-lg font-semibold">Info</h2>
+                  <Users className="w-5 h-5" />
+                  <h2 className="text-lg font-semibold">Community</h2>
                 </div>
                 <p className="text-muted-foreground">
-                  Expert in UI/UX design with over 10 years of experience. Specialized in creating
-                  intuitive and beautiful user interfaces for web and mobile applications.
+                  Join our vibrant UX design community to learn, share, and grow together with fellow designers.
                 </p>
-              </CardContent>
-            </Card>
-
-            <Card className="col-span-4">
-              <CardContent className="p-6 space-y-6">
-                <p className="text-muted-foreground">
-                  Senior UX Designer with a passion for creating intuitive and engaging digital experiences. 
-                  Combining analytical thinking with creative design to solve complex user problems.
-                </p>
-                <ul className="space-y-2 text-muted-foreground">
-                  <li className="flex items-center gap-2 leading-normal">
-                    <span className="flex-shrink-0">🎨</span>
-                    <span>User Interface Design - Creating beautiful and functional interfaces that delight users</span>
-                  </li>
-                  <li className="flex items-center gap-2 leading-normal">
-                    <span className="flex-shrink-0">🔍</span>
-                    <span>User Research - Conducting in-depth research to understand user needs and behaviors</span>
-                  </li>
-                  <li className="flex items-center gap-2 leading-normal">
-                    <span className="flex-shrink-0">📊</span>
-                    <span>Information Architecture - Organizing content in a clear and logical manner</span>
-                  </li>
-                  <li className="flex items-center gap-2 leading-normal">
-                    <span className="flex-shrink-0">🤝</span>
-                    <span>Stakeholder Management - Collaborating effectively with cross-functional teams</span>
-                  </li>
-                  <li className="flex items-center gap-2 leading-normal">
-                    <span className="flex-shrink-0">📱</span>
-                    <span>Responsive Design - Creating seamless experiences across all devices</span>
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="grid grid-cols-5 gap-6 mb-8">
-            <Card className="col-span-1">
-              <CardContent className="p-6 space-y-4">
-                <div className="flex items-center gap-2">
-                  <Star className="w-5 h-5" />
-                  <h2 className="text-lg font-semibold">Stats</h2>
-                </div>
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <p className="text-sm text-muted-foreground">Projects Completed</p>
-                    <p className="text-2xl font-bold">150+</p>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-sm text-muted-foreground">Client Satisfaction</p>
-                    <p className="text-2xl font-bold">98%</p>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-sm text-muted-foreground">Response Rate</p>
-                    <p className="text-2xl font-bold">100%</p>
-                  </div>
-                </div>
               </CardContent>
             </Card>
 
             <div className="col-span-4">
               <Card>
                 <CardContent className="p-6 space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <Card className="relative overflow-hidden h-[500px] flex flex-col">
-                      <div className="absolute inset-x-0 top-0 h-2 bg-blue-100" />
-                      <CardContent className="p-6 flex flex-col h-full">
-                        <div className="space-y-4 flex-1">
-                          <div className="space-y-2">
-                            <h3 className="text-xl font-semibold">Basic Consultation</h3>
-                            <div className="flex items-center gap-1">
-                              <DollarSign className="w-5 h-5 text-muted-foreground" />
-                              <span className="text-2xl font-bold">$99</span>
-                            </div>
-                            <p className="text-muted-foreground">Perfect for startups and small projects needing expert UX guidance.</p>
-                          </div>
-                          <div className="space-y-3">
-                            {["1-hour consultation", "Basic UX review", "Written recommendations", "1 revision round"].map((feature) => (
-                              <div key={feature} className="flex items-center gap-2">
-                                <Check className="w-4 h-4 text-blue-500" />
-                                <span className="text-sm">{feature}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                        <div className="mt-auto space-y-2">
-                          <Button className="w-full">
-                            <Handshake className="w-4 h-4 mr-2" />
-                            Hire Expert
-                          </Button>
-                          <Button variant="outline" className="w-full">
-                            Contact Expert
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="relative overflow-hidden h-[500px] flex flex-col">
-                      <div className="absolute inset-x-0 top-0 h-2 bg-purple-100" />
-                      <CardContent className="p-6 flex flex-col h-full">
-                        <div className="space-y-4 flex-1">
-                          <div className="space-y-2">
-                            <h3 className="text-xl font-semibold">Professional Package</h3>
-                            <div className="flex items-center gap-1">
-                              <DollarSign className="w-5 h-5 text-muted-foreground" />
-                              <span className="text-2xl font-bold">$299</span>
-                            </div>
-                            <p className="text-muted-foreground">Comprehensive UX design solution for established businesses.</p>
-                          </div>
-                          <div className="space-y-3">
-                            {[
-                              "3 consultation sessions",
-                              "Detailed UX audit",
-                              "Interactive prototypes",
-                              "3 revision rounds",
-                              "Priority support"
-                            ].map((feature) => (
-                              <div key={feature} className="flex items-center gap-2">
-                                <Check className="w-4 h-4 text-purple-500" />
-                                <span className="text-sm">{feature}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                        <div className="mt-auto space-y-2">
-                          <Button className="w-full">
-                            <Handshake className="w-4 h-4 mr-2" />
-                            Hire Expert
-                          </Button>
-                          <Button variant="outline" className="w-full">
-                            Contact Expert
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="relative overflow-hidden h-[500px] flex flex-col">
-                      <div className="absolute inset-x-0 top-0 h-2 bg-indigo-100" />
-                      <CardContent className="p-6 flex flex-col h-full">
-                        <div className="space-y-4 flex-1">
-                          <div className="space-y-2">
-                            <h3 className="text-xl font-semibold">Enterprise Solution</h3>
-                            <div className="flex items-center gap-1">
-                              <DollarSign className="w-5 h-5 text-muted-foreground" />
-                              <span className="text-2xl font-bold">$999</span>
-                            </div>
-                            <p className="text-muted-foreground">Full-service UX design and consultation for large organizations.</p>
-                          </div>
-                          <div className="space-y-3">
-                            {[
-                              "Unlimited consultations",
-                              "Complete UX overhaul",
-                              "User research & testing",
-                              "Custom design system",
-                              "Dedicated support team",
-                              "Monthly progress reports"
-                            ].map((feature) => (
-                              <div key={feature} className="flex items-center gap-2">
-                                <Check className="w-4 h-4 text-indigo-500" />
-                                <span className="text-sm">{feature}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                        <div className="mt-auto space-y-2">
-                          <Button className="w-full">
-                            <Handshake className="w-4 h-4 mr-2" />
-                            Hire Expert
-                          </Button>
-                          <Button variant="outline" className="w-full">
-                            Contact Expert
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
+                  <div className="flex items-center gap-2">
+                    <Users className="w-5 h-5" />
+                    <h2 className="text-lg font-semibold">UX Design Community</h2>
+                  </div>
+                  <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-3">
+                      <Globe className="w-5 h-5 text-muted-foreground" />
+                      <p className="text-base">Public Community</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Users className="w-5 h-5 text-muted-foreground" />
+                      <p className="text-base">1,234 members</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Badge variant="secondary" className="text-sm">Free Access</Badge>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <p className="text-lg">Want to improve your UX design skills and connect with experts?</p>
+                    <p className="text-base text-muted-foreground">Get Free Access To:</p>
+                    <ul className="space-y-3">
+                      {[
+                        "Weekly UX Design Workshops",
+                        "Expert Design Reviews & Feedback",
+                        "UX Research Templates & Resources",
+                        "Live Q&A Sessions with Industry Leaders"
+                      ].map((item) => (
+                        <li key={item} className="flex items-center gap-2">
+                          <Check className="w-5 h-5 text-green-500" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <Button className="w-full sm:w-auto mt-4">
+                      Join Community
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
             </div>
           </div>
 
-          <div className="mb-8">
-            <Card>
+          <div className="grid grid-cols-5 gap-6">
+            <Card className="col-span-1">
               <CardContent className="p-6 space-y-4">
                 <div className="flex items-center gap-2">
-                  <Users className="w-5 h-5" />
-                  <h2 className="text-lg font-semibold">UX Design Community</h2>
+                  <Info className="w-5 h-5" />
+                  <h2 className="text-lg font-semibold">More Courses</h2>
                 </div>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <Globe className="w-5 h-5 text-muted-foreground" />
-                    <p className="text-base">Public Community</p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Users className="w-5 h-5 text-muted-foreground" />
-                    <p className="text-base">1,234 members</p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Badge variant="secondary" className="text-sm">Free Access</Badge>
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <p className="text-lg">Want to improve your UX design skills and connect with experts?</p>
-                  <p className="text-base text-muted-foreground">Get Free Access To:</p>
-                  <ul className="space-y-3">
-                    {[
-                      "Weekly UX Design Workshops",
-                      "Expert Design Reviews & Feedback",
-                      "UX Research Templates & Resources",
-                      "Live Q&A Sessions with Industry Leaders"
-                    ].map((item) => (
-                      <li key={item} className="flex items-center gap-2">
-                        <Check className="w-5 h-5 text-green-500" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Button className="w-full mt-4">
-                    Join Community
-                  </Button>
-                </div>
+                <p className="text-muted-foreground">
+                  Explore more UX design courses and resources from this expert.
+                </p>
               </CardContent>
             </Card>
-          </div>
 
-          <div>
-            <MoreFromSeller products={moreProducts} />
+            <div className="col-span-4">
+              <MoreFromSeller products={moreProducts} />
+            </div>
           </div>
         </div>
       </div>
