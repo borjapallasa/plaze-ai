@@ -9,7 +9,7 @@ export default function Expert() {
   return (
     <div className="space-y-8">
       {/* Header with Stats - Full Width */}
-      <div className="w-full bg-card border-b">
+      <div className="w-full bg-card">
         <div className="px-4 py-8">
           <div className="flex flex-col md:flex-row gap-6 items-start">
             <div className="flex gap-4 items-start w-full">
@@ -56,23 +56,37 @@ export default function Expert() {
             </CardContent>
           </Card>
 
-          {/* Services Section */}
+          {/* Description Section (formerly Services) */}
           <Card className="md:col-span-2">
             <CardContent className="p-6 space-y-4">
-              <h2 className="text-lg font-semibold">Services</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {[
-                  { title: "UI Design", price: "$100/hr" },
-                  { title: "UX Research", price: "$90/hr" },
-                  { title: "Consultation", price: "$120/hr" },
-                ].map((service) => (
-                  <Card key={service.title}>
-                    <CardContent className="p-4 space-y-2">
-                      <h3 className="font-medium">{service.title}</h3>
-                      <p className="text-sm text-muted-foreground">{service.price}</p>
-                    </CardContent>
-                  </Card>
-                ))}
+              <h2 className="text-lg font-semibold">Areas of Expertise</h2>
+              <div className="space-y-6">
+                <p className="text-muted-foreground leading-relaxed">
+                  Senior UX Designer with a passion for creating intuitive and engaging digital experiences. 
+                  Combining analytical thinking with creative design to solve complex user problems.
+                </p>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1">🎨</span>
+                    <span>User Interface Design - Creating beautiful and functional interfaces that delight users</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1">🔍</span>
+                    <span>User Research - Conducting in-depth research to understand user needs and behaviors</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1">📊</span>
+                    <span>Information Architecture - Organizing content in a clear and logical manner</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1">🤝</span>
+                    <span>Stakeholder Management - Collaborating effectively with cross-functional teams</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1">📱</span>
+                    <span>Responsive Design - Creating seamless experiences across all devices</span>
+                  </li>
+                </ul>
               </div>
             </CardContent>
           </Card>
