@@ -1,11 +1,11 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+
 import { Card } from "@/components/ui/card";
-import { Eye, MessageSquare, Star, ShoppingCart } from "lucide-react";
-import { ProductCard } from "@/components/ProductCard";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { useState } from "react";
+import { ProductGallery } from "@/components/product/ProductGallery";
+import { ProductHeader } from "@/components/product/ProductHeader";
+import { ProductVariants } from "@/components/product/ProductVariants";
+import { ProductReviews } from "@/components/product/ProductReviews";
+import { MoreFromSeller } from "@/components/product/MoreFromSeller";
 
 export default function Product() {
   const [selectedVariant, setSelectedVariant] = useState("premium");
@@ -91,124 +91,30 @@ export default function Product() {
     category: "education"
   });
 
-  const currentVariant = variants.find(v => v.id === selectedVariant) || variants[0];
-
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Mobile Layout */}
       <div className="lg:hidden">
-        <div className="mb-6">
-          <div className="bg-card rounded-lg overflow-hidden mb-4 aspect-square">
-            <img 
-              src={product.image} 
-              alt={product.title}
-              className="w-full h-full object-cover"
-            />
-          </div>
-          
-          <div className="flex gap-4 overflow-x-auto hide-scrollbar">
-            {Array(5).fill(0).map((_, i) => (
-              <img 
-                key={i}
-                src={product.image} 
-                alt={`Preview ${i + 1}`}
-                className="w-24 h-24 rounded-lg object-cover flex-shrink-0"
-              />
-            ))}
-          </div>
-        </div>
-
-        <h1 className="text-2xl font-semibold mb-4">{product.title}</h1>
-        
-        <div className="flex items-center gap-2 mb-4">
-          <div className="w-8 h-8 rounded-full bg-accent" />
-          <div>
-            <h3 className="font-medium">{product.seller}</h3>
-            <div className="flex items-center gap-1">
-              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-              <span className="text-sm">{product.rating}</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="mb-6">
-          <RadioGroup 
-            value={selectedVariant} 
-            onValueChange={setSelectedVariant}
-            className="space-y-4"
-          >
-            {variants.map((variant) => (
-              <div 
-                key={variant.id} 
-                className={`relative rounded-lg p-4 transition-all ${
-                  variant.highlight 
-                    ? 'border-2 border-primary shadow-lg' 
-                    : 'border border-border'
-                }`}
-              >
-                <Badge 
-                  variant={variant.highlight ? "default" : "secondary"}
-                  className="absolute -top-2 left-4 z-10"
-                >
-                  {variant.label}
-                </Badge>
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <RadioGroupItem value={variant.id} id={variant.id} />
-                    <h3 className="text-base font-semibold">{variant.name}</h3>
-                  </div>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-lg font-bold">${variant.price}</span>
-                    <span className="text-xs text-muted-foreground line-through">
-                      ${variant.comparePrice}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex gap-4 text-xs text-muted-foreground mt-2">
-                  {variant.features.slice(0, 2).map((feature, index) => (
-                    <div key={index} className="flex items-center gap-1">
-                      <Star className="w-3 h-3 text-primary flex-shrink-0" />
-                      <span>{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </RadioGroup>
-
-          <div className="space-y-4 mt-4">
-            <Button className="w-full">
-              <ShoppingCart className="w-4 h-4 mr-2" />
-              Add to Cart
-            </Button>
-            <Button variant="outline" className="w-full">
-              <MessageSquare className="w-4 h-4 mr-2" />
-              Contact Seller
-            </Button>
-          </div>
-        </div>
+        <ProductGallery image={product.image} className="mb-6" />
+        <ProductHeader 
+          title={product.title}
+          seller={product.seller}
+          rating={product.rating}
+          className="mb-6"
+        />
+        <ProductVariants
+          variants={variants}
+          selectedVariant={selectedVariant}
+          onVariantChange={setSelectedVariant}
+          className="mb-6"
+        />
       </div>
 
+      {/* Desktop Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
         <div className="lg:col-span-2">
           <div className="hidden lg:block">
-            <div className="bg-card rounded-lg overflow-hidden mb-8 aspect-square">
-              <img 
-                src={product.image} 
-                alt={product.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            
-            <div className="flex gap-4 overflow-x-auto hide-scrollbar mb-8">
-              {Array(5).fill(0).map((_, i) => (
-                <img 
-                  key={i}
-                  src={product.image} 
-                  alt={`Preview ${i + 1}`}
-                  className="w-24 h-24 rounded-lg object-cover flex-shrink-0"
-                />
-              ))}
-            </div>
+            <ProductGallery image={product.image} className="mb-8" />
           </div>
 
           <Card className="p-6 mb-8">
@@ -231,77 +137,16 @@ export default function Product() {
         </div>
 
         <div className="hidden lg:block space-y-6">
-          <div>
-            <h1 className="text-2xl font-semibold mb-4">{product.title}</h1>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-full bg-accent" />
-              <div>
-                <h3 className="font-medium">{product.seller}</h3>
-                <div className="flex items-center gap-1">
-                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  <span className="text-sm">{product.rating}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="mb-6">
-              <RadioGroup 
-                value={selectedVariant} 
-                onValueChange={setSelectedVariant}
-                className="space-y-4"
-              >
-                {variants.map((variant) => (
-                  <div 
-                    key={variant.id} 
-                    className={`relative rounded-lg p-4 transition-all ${
-                      variant.highlight 
-                        ? 'border-2 border-primary shadow-lg' 
-                        : 'border border-border'
-                    }`}
-                  >
-                    <Badge 
-                      variant={variant.highlight ? "default" : "secondary"}
-                      className="absolute -top-2 left-4 z-10"
-                    >
-                      {variant.label}
-                    </Badge>
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <RadioGroupItem value={variant.id} id={variant.id} />
-                        <h3 className="text-base font-semibold">{variant.name}</h3>
-                      </div>
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-lg font-bold">${variant.price}</span>
-                        <span className="text-xs text-muted-foreground line-through">
-                          ${variant.comparePrice}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex gap-4 text-xs text-muted-foreground mt-2">
-                      {variant.features.slice(0, 2).map((feature, index) => (
-                        <div key={index} className="flex items-center gap-1">
-                          <Star className="w-3 h-3 text-primary flex-shrink-0" />
-                          <span>{feature}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </RadioGroup>
-
-              <div className="space-y-4 mt-4">
-                <Button className="w-full">
-                  <ShoppingCart className="w-4 h-4 mr-2" />
-                  Add to Cart
-                </Button>
-                <Button variant="outline" className="w-full">
-                  <MessageSquare className="w-4 h-4 mr-2" />
-                  Contact Seller
-                </Button>
-              </div>
-            </div>
-          </div>
-
+          <ProductHeader 
+            title={product.title}
+            seller={product.seller}
+            rating={product.rating}
+          />
+          <ProductVariants
+            variants={variants}
+            selectedVariant={selectedVariant}
+            onVariantChange={setSelectedVariant}
+          />
           <Card className="p-6">
             <h3 className="font-semibold mb-4">Additional Information</h3>
             <div className="space-y-4">
@@ -348,49 +193,9 @@ export default function Product() {
         <div className="aspect-video bg-accent rounded-lg"></div>
       </Card>
 
-      <Card className="p-6 mb-16">
-        <h2 className="text-xl font-semibold mb-4">Reviews</h2>
-        <div className="space-y-6">
-          {reviews.map((review) => (
-            <div key={review.id} className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
-                <img 
-                  src={review.avatar} 
-                  alt={review.author}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <h3 className="font-medium">{review.author}</h3>
-                  <div className="flex items-center">
-                    {Array(5).fill(0).map((_, i) => (
-                      <Star 
-                        key={i} 
-                        className={`w-4 h-4 ${
-                          i < review.rating 
-                            ? 'fill-yellow-400 text-yellow-400' 
-                            : 'fill-gray-200 text-gray-200'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                </div>
-                <p className="text-muted-foreground text-sm">{review.content}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Card>
+      <ProductReviews reviews={reviews} className="p-6 mb-16" />
 
-      <div className="mt-16">
-        <h2 className="text-xl font-semibold mb-8">More from seller</h2>
-        <div className="product-grid">
-          {moreFromSeller.map((product, index) => (
-            <ProductCard key={index} {...product} />
-          ))}
-        </div>
-      </div>
+      <MoreFromSeller products={moreFromSeller} className="mt-16" />
     </div>
   );
 }
