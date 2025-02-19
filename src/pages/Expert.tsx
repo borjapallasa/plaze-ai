@@ -3,9 +3,34 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star, Users, Info, Calendar, MapPin, Share2, Save, Check, Handshake, DollarSign } from "lucide-react";
 import { MoreFromSeller } from "@/components/product/MoreFromSeller";
-import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
+import { 
+  Carousel, 
+  CarouselContent, 
+  CarouselItem, 
+  CarouselPrevious, 
+  CarouselNext,
+  type CarouselApi
+} from "@/components/ui/carousel";
+import { useState, useEffect } from "react";
 
 export default function Expert() {
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!api) {
+      return;
+    }
+
+    setCount(api.scrollSnapList().length);
+    setCurrent(api.selectedScrollSnap());
+
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap());
+    });
+  }, [api]);
+
   const moreProducts = [
     {
       title: "Advanced UX Research Methods",
@@ -212,7 +237,7 @@ export default function Expert() {
 
         <div className="lg:hidden mb-8">
           <h2 className="text-lg font-semibold mb-4">Services</h2>
-          <Carousel className="w-full">
+          <Carousel setApi={setApi} className="w-full">
             <CarouselContent>
               {[
                 {
@@ -269,6 +294,16 @@ export default function Expert() {
             </CarouselContent>
             <CarouselPrevious />
             <CarouselNext />
+            <div className="py-2 text-center flex justify-center gap-2">
+              {Array.from({ length: count }).map((_, index) => (
+                <span
+                  key={index}
+                  className={`h-2 w-2 rounded-full transition-colors duration-300 ${
+                    index === current ? "bg-primary" : "bg-muted"
+                  }`}
+                />
+              ))}
+            </div>
           </Carousel>
         </div>
 
@@ -320,7 +355,7 @@ export default function Expert() {
           </Card>
         </div>
 
-        <div className="lg:hidden">
+        <div className="lg:hidden block">
           <MoreFromSeller products={moreProducts} />
         </div>
 
