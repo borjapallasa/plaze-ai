@@ -22,14 +22,6 @@ export default function Expert() {
                 <div className="flex-1">
                   <div className="flex justify-between items-start">
                     <h1 className="text-2xl font-bold">Expert in UX Design</h1>
-                    <div className="flex gap-1.5">
-                      <Button variant="ghost" size="icon" className="h-6 w-6">
-                        <Share2 className="h-3.5 w-3.5" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-6 w-6">
-                        <Save className="h-3.5 w-3.5" />
-                      </Button>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -57,12 +49,12 @@ export default function Expert() {
                     <div className="text-muted-foreground">•</div>
                     <div className="flex items-center gap-2">
                       <MapPin className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-muted-foreground">San Francisco, CA</span>
+                      <span className="text-sm text-muted-foreground">San Francisco, CA</span>
                     </div>
                     <div className="text-muted-foreground">•</div>
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-muted-foreground">Expert since 2020</span>
+                      <span className="text-sm text-muted-foreground">Expert since 2020</span>
                     </div>
                   </div>
                 </div>
@@ -73,12 +65,22 @@ export default function Expert() {
                 <p className="text-lg text-muted-foreground">John Doe</p>
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">San Francisco, CA</span>
+                  <span className="text-sm text-muted-foreground">San Francisco, CA</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">Expert since 2020</span>
+                  <span className="text-sm text-muted-foreground">Expert since 2020</span>
                 </div>
+              </div>
+
+              {/* Mobile: share and save buttons */}
+              <div className="flex sm:hidden justify-end gap-1.5 mt-2">
+                <Button variant="ghost" size="icon" className="h-6 w-6">
+                  <Share2 className="h-3.5 w-3.5" />
+                </Button>
+                <Button variant="ghost" size="icon" className="h-6 w-6">
+                  <Save className="h-3.5 w-3.5" />
+                </Button>
               </div>
             </div>
           </CardContent>
