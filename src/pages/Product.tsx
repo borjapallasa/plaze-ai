@@ -1,6 +1,5 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Eye, MessageSquare, Star, ShoppingCart } from "lucide-react";
 import { ProductCard } from "@/components/ProductCard";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -273,16 +272,16 @@ export default function Product() {
         </div>
       </div>
 
-      <div className="p-6 mb-8">
+      <Card className="p-6 mb-8">
         <h2 className="text-xl font-semibold mb-4">Demo</h2>
         <div className="aspect-video bg-accent rounded-lg"></div>
-      </div>
+      </Card>
 
-      <div className="p-6 mb-16">
+      <Card className="p-6 mb-16">
         <h2 className="text-xl font-semibold mb-4">Reviews</h2>
         <div className="space-y-4">
           {reviews.map((review) => (
-            <div key={review.id} className="p-4 bg-background rounded-lg">
+            <Card key={review.id} className="p-4">
               <div className="flex items-center gap-2 mb-2">
                 <div className="flex items-center gap-1">
                   {Array(review.rating).fill(0).map((_, i) => (
@@ -292,10 +291,10 @@ export default function Product() {
                 <span className="font-medium">{review.author}</span>
               </div>
               <p className="text-muted-foreground">{review.content}</p>
-            </div>
+            </Card>
           ))}
         </div>
-      </div>
+      </Card>
 
       <div className="mt-16">
         <h2 className="text-xl font-semibold mb-8">More from seller</h2>
