@@ -307,6 +307,30 @@ export default function Expert() {
           </Carousel>
         </div>
 
+        {/* Community Section - Mobile */}
+        <div className="lg:hidden mb-8">
+          <Card>
+            <CardContent className="p-6 space-y-4">
+              <div className="flex items-center gap-2">
+                <Users className="w-5 h-5" />
+                <h2 className="text-lg font-semibold">Community</h2>
+              </div>
+              <div className="space-y-4">
+                {[
+                  { title: "Active Members", count: "1,234" },
+                  { title: "Posts", count: "456" },
+                  { title: "Resources", count: "89" },
+                ].map((stat) => (
+                  <div key={stat.title} className="space-y-2">
+                    <p className="text-sm text-muted-foreground">{stat.title}</p>
+                    <p className="text-2xl font-bold">{stat.count}</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         <div className="lg:hidden mb-8">
           <Card>
             <CardContent className="p-6 space-y-4">
@@ -407,8 +431,7 @@ export default function Expert() {
               </CardContent>
             </Card>
 
-            <div className="col-span-4 space-y-4">
-              <h2 className="text-lg font-semibold">Services</h2>
+            <div className="col-span-4">
               <Card>
                 <CardContent className="p-6 space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -520,8 +543,9 @@ export default function Expert() {
             </div>
           </div>
 
-          <div className="grid grid-cols-5 gap-6 mb-8">
-            <Card className="col-span-1">
+          {/* Community Section - Desktop */}
+          <div className="mb-8">
+            <Card>
               <CardContent className="p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <Users className="w-5 h-5" />
@@ -541,10 +565,10 @@ export default function Expert() {
                 </div>
               </CardContent>
             </Card>
+          </div>
 
-            <div className="col-span-4">
-              <MoreFromSeller products={moreProducts} />
-            </div>
+          <div>
+            <MoreFromSeller products={moreProducts} />
           </div>
         </div>
       </div>
