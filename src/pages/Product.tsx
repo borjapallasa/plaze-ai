@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { useState, useEffect, useRef } from "react";
 import { ProductGallery } from "@/components/product/ProductGallery";
@@ -7,26 +8,36 @@ import { ProductReviews } from "@/components/product/ProductReviews";
 import { MoreFromSeller } from "@/components/product/MoreFromSeller";
 import { StickyATC } from "@/components/product/StickyATC";
 import { useToast } from "@/components/ui/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function Product() {
   const [selectedVariant, setSelectedVariant] = useState("premium");
   const [showStickyATC, setShowStickyATC] = useState(false);
   const variantsRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const handleScroll = () => {
       if (variantsRef.current) {
         const variantsRect = variantsRef.current.getBoundingClientRect();
-        setShowStickyATC(variantsRect.bottom < 0);
+        const viewportHeight = window.innerHeight;
+        
+        if (isMobile) {
+          // On mobile, show when variants section is more than halfway out of view
+          setShowStickyATC(variantsRect.bottom < viewportHeight / 2);
+        } else {
+          // On desktop, show when variants section is completely above viewport
+          setShowStickyATC(variantsRect.bottom < 0);
+        }
       }
     };
 
     window.addEventListener('scroll', handleScroll);
-    handleScroll();
+    handleScroll(); // Initial check
     
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isMobile]);
 
   const handleAddToCart = () => {
     toast({
