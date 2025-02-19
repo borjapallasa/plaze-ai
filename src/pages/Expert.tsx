@@ -3,8 +3,48 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star, Users, Mail, Info, BookOpen, MessageCircle, DollarSign, Calendar, MapPin, Share2, Save, Check, Handshake } from "lucide-react";
+import { MoreFromSeller } from "@/components/product/MoreFromSeller";
 
 export default function Expert() {
+  const moreProducts = [
+    {
+      title: "Advanced UX Research Methods",
+      price: "$89.99",
+      image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
+      seller: "John Doe",
+      description: "Learn professional UX research techniques and methodologies.",
+      tags: ["research", "ux"],
+      category: "design"
+    },
+    {
+      title: "UI Animation Masterclass",
+      price: "$79.99",
+      image: "https://images.unsplash.com/photo-1518770660439-4636190af475",
+      seller: "John Doe",
+      description: "Create engaging interface animations and micro-interactions.",
+      tags: ["animation", "ui"],
+      category: "design"
+    },
+    {
+      title: "Design Systems Workshop",
+      price: "$129.99",
+      image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6",
+      seller: "John Doe",
+      description: "Build and maintain scalable design systems for large applications.",
+      tags: ["systems", "workflow"],
+      category: "design"
+    },
+    {
+      title: "Figma Advanced Techniques",
+      price: "$69.99",
+      image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
+      seller: "John Doe",
+      description: "Master advanced Figma features and workflows for professional design.",
+      tags: ["figma", "tools"],
+      category: "design"
+    }
+  ];
+
   return (
     <div className="space-y-8">
       {/* Header with Stats - Full Width */}
@@ -320,6 +360,11 @@ export default function Expert() {
             </div>
           </CardContent>
         </Card>
+
+        {/* More From Seller Section */}
+        <div className="container mx-auto px-4">
+          <MoreFromSeller products={moreProducts} />
+        </div>
 
         {/* Products Section */}
         <div className="space-y-4">
