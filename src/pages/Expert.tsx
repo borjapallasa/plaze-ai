@@ -67,20 +67,20 @@ export default function Expert() {
                   <MapPin className="w-4 h-4 text-muted-foreground" />
                   <span className="text-sm text-muted-foreground">San Francisco, CA</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">Expert since 2020</span>
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">Expert since 2020</span>
+                  </div>
+                  <div className="flex gap-1.5">
+                    <Button variant="ghost" size="icon" className="h-6 w-6">
+                      <Share2 className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-6 w-6">
+                      <Save className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
                 </div>
-              </div>
-
-              {/* Mobile: share and save buttons */}
-              <div className="flex sm:hidden justify-end gap-1.5 mt-2">
-                <Button variant="ghost" size="icon" className="h-6 w-6">
-                  <Share2 className="h-3.5 w-3.5" />
-                </Button>
-                <Button variant="ghost" size="icon" className="h-6 w-6">
-                  <Save className="h-3.5 w-3.5" />
-                </Button>
               </div>
             </div>
           </CardContent>
