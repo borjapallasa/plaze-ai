@@ -21,8 +21,8 @@ export default function Product() {
     const handleScroll = () => {
       if (variantsRef.current) {
         const variantsRect = variantsRef.current.getBoundingClientRect();
-        const threshold = isMobile ? 100 : 0; // Add some threshold for mobile
-        setShowStickyATC(variantsRect.bottom < threshold);
+        // Show sticky ATC when variants section is above viewport
+        setShowStickyATC(variantsRect.bottom < -100);
       }
     };
 
@@ -30,7 +30,7 @@ export default function Product() {
     handleScroll(); // Initial check
     
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isMobile]);
+  }, []);
 
   const handleAddToCart = () => {
     toast({
