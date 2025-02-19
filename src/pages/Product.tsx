@@ -51,10 +51,34 @@ export default function Product() {
   ];
 
   const reviews = [
-    { id: 1, author: "John Doe", rating: 5, content: "Excellent course, very detailed and practical." },
-    { id: 2, author: "Jane Smith", rating: 4, content: "Great content, well structured." },
-    { id: 3, author: "Mike Johnson", rating: 5, content: "Best design course I've taken so far!" },
-    { id: 4, author: "Sarah Williams", rating: 4, content: "Very comprehensive, great examples." }
+    { 
+      id: 1, 
+      author: "John Doe", 
+      rating: 5, 
+      content: "Excellent course, very detailed and practical.",
+      avatar: "/placeholder.svg"
+    },
+    { 
+      id: 2, 
+      author: "Jane Smith", 
+      rating: 4, 
+      content: "Great content, well structured.",
+      avatar: "/placeholder.svg"
+    },
+    { 
+      id: 3, 
+      author: "Mike Johnson", 
+      rating: 5, 
+      content: "Best design course I've taken so far!",
+      avatar: "/placeholder.svg"
+    },
+    { 
+      id: 4, 
+      author: "Sarah Williams", 
+      rating: 4, 
+      content: "Very comprehensive, great examples.",
+      avatar: "/placeholder.svg"
+    }
   ];
 
   const moreFromSeller = Array(5).fill({
@@ -326,19 +350,35 @@ export default function Product() {
 
       <Card className="p-6 mb-16">
         <h2 className="text-xl font-semibold mb-4">Reviews</h2>
-        <div className="space-y-4">
+        <div className="space-y-6">
           {reviews.map((review) => (
-            <Card key={review.id} className="p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="flex items-center gap-1">
-                  {Array(review.rating).fill(0).map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
-                <span className="font-medium">{review.author}</span>
+            <div key={review.id} className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                <img 
+                  src={review.avatar} 
+                  alt={review.author}
+                  className="w-full h-full object-cover"
+                />
               </div>
-              <p className="text-muted-foreground">{review.content}</p>
-            </Card>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="font-medium">{review.author}</h3>
+                  <div className="flex items-center">
+                    {Array(5).fill(0).map((_, i) => (
+                      <Star 
+                        key={i} 
+                        className={`w-4 h-4 ${
+                          i < review.rating 
+                            ? 'fill-yellow-400 text-yellow-400' 
+                            : 'fill-gray-200 text-gray-200'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <p className="text-muted-foreground text-sm">{review.content}</p>
+              </div>
+            </div>
           ))}
         </div>
       </Card>
