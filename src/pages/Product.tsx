@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import { useState } from "react";
 import { ProductGallery } from "@/components/product/ProductGallery";
@@ -55,29 +54,49 @@ export default function Product() {
       id: 1, 
       author: "John Doe", 
       rating: 5, 
-      content: "Excellent course, very detailed and practical.",
-      avatar: "/placeholder.svg"
+      content: "Excellent course, very detailed",
+      description: "The course content is well structured and easy to follow. I learned a lot about UI/UX design principles.",
+      avatar: "/placeholder.svg",
+      date: "2 days ago",
+      itemQuality: 5,
+      shipping: 5,
+      customerService: 5
     },
     { 
       id: 2, 
       author: "Jane Smith", 
       rating: 4, 
-      content: "Great content, well structured.",
-      avatar: "/placeholder.svg"
+      content: "Great content, well structured",
+      description: "Very comprehensive material with practical examples. Could use more exercises.",
+      avatar: "/placeholder.svg",
+      date: "1 week ago",
+      itemQuality: 4,
+      shipping: 5,
+      customerService: 4
     },
     { 
       id: 3, 
       author: "Mike Johnson", 
       rating: 5, 
-      content: "Best design course I've taken so far!",
-      avatar: "/placeholder.svg"
+      content: "Best design course I've taken!",
+      description: "The instructor explains complex concepts in a very clear and engaging way.",
+      avatar: "/placeholder.svg",
+      date: "2 weeks ago",
+      itemQuality: 5,
+      shipping: 4,
+      customerService: 5
     },
     { 
       id: 4, 
       author: "Sarah Williams", 
       rating: 4, 
-      content: "Very comprehensive, great examples.",
-      avatar: "/placeholder.svg"
+      content: "Very comprehensive",
+      description: "Excellent course materials and resources. The practical examples were particularly helpful.",
+      avatar: "/placeholder.svg",
+      date: "3 weeks ago",
+      itemQuality: 4,
+      shipping: 4,
+      customerService: 5
     }
   ];
 
