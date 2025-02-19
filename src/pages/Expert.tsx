@@ -294,7 +294,7 @@ export default function Expert() {
             </CarouselContent>
             <CarouselPrevious />
             <CarouselNext />
-            <div className="mt-[20px] pt-0 text-center flex justify-center gap-1">
+            <div className="mt-5 text-center flex justify-center gap-1">
               {Array.from({ length: count }).map((_, index) => (
                 <span
                   key={index}
