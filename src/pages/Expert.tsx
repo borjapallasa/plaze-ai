@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,36 +19,28 @@ export default function Expert() {
                 </Avatar>
                 <div className="flex-1">
                   <h1 className="text-2xl md:text-3xl font-bold">Expert in UX Design</h1>
-                  <div className="flex gap-2 mt-2 md:mt-0 md:hidden">
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <Share2 className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <Save className="h-4 w-4" />
-                    </Button>
-                  </div>
                 </div>
-                <div className="hidden md:flex gap-2 md:self-start">
+              </div>
+              
+              <div className="flex flex-wrap items-center gap-x-2.5 gap-y-2">
+                <p className="text-lg md:text-xl text-muted-foreground">John Doe</p>
+                <div className="text-muted-foreground">•</div>
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-muted-foreground">San Francisco, CA</span>
+                </div>
+                <div className="text-muted-foreground">•</div>
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-muted-foreground">Expert since 2020</span>
+                </div>
+                <div className="flex gap-2 ml-auto">
                   <Button variant="ghost" size="icon" className="h-8 w-8">
                     <Share2 className="h-4 w-4" />
                   </Button>
                   <Button variant="ghost" size="icon" className="h-8 w-8">
                     <Save className="h-4 w-4" />
                   </Button>
-                </div>
-              </div>
-              
-              <div className="flex flex-col text-sm md:text-base gap-2 md:flex-row md:items-center md:gap-2.5">
-                <p className="text-lg md:text-xl text-muted-foreground">John Doe</p>
-                <div className="hidden md:block text-muted-foreground">•</div>
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">San Francisco, CA</span>
-                </div>
-                <div className="hidden md:block text-muted-foreground">•</div>
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">Expert since 2020</span>
                 </div>
               </div>
             </div>
