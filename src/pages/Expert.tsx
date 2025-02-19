@@ -395,36 +395,59 @@ export default function Expert() {
           <div className="grid grid-cols-5 gap-6">
             <div className="col-span-4 col-start-2">
               <Card>
-                <CardContent className="p-6 space-y-6">
-                  <div className="flex items-center gap-2">
-                    <Users className="w-5 h-5" />
-                    <h2 className="text-lg font-semibold">UX Design Community</h2>
-                  </div>
-                  <div className="flex items-center gap-6">
-                    <div className="flex items-center gap-3">
-                      <Globe className="w-5 h-5 text-muted-foreground" />
-                      <p className="text-base">Public Community</p>
+                <CardContent className="p-6">
+                  <div className="flex gap-8">
+                    {/* Left side - Video and main info */}
+                    <div className="w-80 flex-shrink-0">
+                      <div className="aspect-video bg-muted rounded-lg overflow-hidden relative">
+                        <img 
+                          src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5"
+                          alt="Community thumbnail"
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                          <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center">
+                            <div className="w-4 h-4 border-8 border-transparent border-l-primary ml-1" style={{ transform: 'rotate(-45deg)' }} />
+                          </div>
+                        </div>
+                      </div>
+                      <h3 className="font-semibold mt-3 mb-1">UX Design Community</h3>
+                      <p className="text-sm text-muted-foreground">A community of UX designers sharing knowledge and experiences</p>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <Users className="w-5 h-5 text-muted-foreground" />
-                      <p className="text-base">1,234 members</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Badge variant="secondary" className="text-sm">Free Access</Badge>
-                    </div>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <p className="text-sm text-muted-foreground">Active Members</p>
-                      <p className="text-2xl font-bold">1,234</p>
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-sm text-muted-foreground">Posts</p>
-                      <p className="text-2xl font-bold">456</p>
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-sm text-muted-foreground">Resources</p>
-                      <p className="text-2xl font-bold">89</p>
+
+                    {/* Right side - Stats */}
+                    <div className="flex-1 space-y-6">
+                      <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+                        <div className="space-y-1">
+                          <p className="text-sm text-muted-foreground">Type</p>
+                          <div className="flex items-center gap-2">
+                            <Globe className="w-4 h-4 text-primary" />
+                            <p className="font-medium">Public Community</p>
+                          </div>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm text-muted-foreground">Access</p>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="secondary" className="text-sm">Free Access</Badge>
+                          </div>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm text-muted-foreground">Members</p>
+                          <p className="text-2xl font-bold">1,234</p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm text-muted-foreground">Classrooms</p>
+                          <p className="text-2xl font-bold">12</p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm text-muted-foreground">Posts</p>
+                          <p className="text-2xl font-bold">456</p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm text-muted-foreground">Products</p>
+                          <p className="text-2xl font-bold">89</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
