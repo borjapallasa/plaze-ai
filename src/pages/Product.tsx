@@ -137,7 +137,6 @@ export default function Product() {
           </div>
 
           <Card className="p-6 mb-8">
-            <h2 className="text-xl font-semibold mb-4">Description</h2>
             <p className="text-muted-foreground leading-relaxed">
               {product.description}
               <br /><br />
@@ -207,8 +206,8 @@ export default function Product() {
         </div>
       </div>
 
+      <h2 className="text-xl font-semibold mb-4">Demo</h2>
       <Card className="p-6 mb-8">
-        <h2 className="text-xl font-semibold mb-4">Demo</h2>
         <div className="aspect-video bg-accent rounded-lg"></div>
       </Card>
 
