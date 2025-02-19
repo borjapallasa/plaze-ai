@@ -29,66 +29,37 @@ interface MoreFromSellerProps {
 
 export function MoreFromSeller({ products, className }: MoreFromSellerProps) {
   return (
-    <div>
-      <div className={className}>
-        <h2 className="text-xl font-semibold mb-8">More from seller</h2>
-        
-        {/* Mobile Layout (1 visible) */}
-        <div className="lg:hidden">
-          <Carousel className="w-full">
-            <CarouselContent className="-ml-4">
-              {products.map((product, index) => (
-                <CarouselItem key={index} className="pl-4 basis-full">
-                  <ProductCard product={product} />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
-          </Carousel>
-        </div>
-
-        {/* Desktop Layout (4 visible + 4 hidden) */}
-        <div className="hidden lg:block">
-          <Carousel className="w-full">
-            <CarouselContent className="-ml-4">
-              {products.map((product, index) => (
-                <CarouselItem key={index} className="pl-4 basis-1/4">
-                  <ProductCard product={product} />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
-          </Carousel>
-        </div>
+    <div className={className}>
+      <h2 className="text-xl font-semibold mb-8">More from seller</h2>
+      
+      {/* Mobile Layout (1 visible) */}
+      <div className="lg:hidden">
+        <Carousel className="w-full">
+          <CarouselContent className="-ml-4">
+            {products.map((product, index) => (
+              <CarouselItem key={index} className="pl-4 basis-full">
+                <ProductCard product={product} />
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
       </div>
 
-      {/* Related Products Section */}
-      <div className="mt-16">
-        <h2 className="text-xl font-semibold mb-8">Related products</h2>
-        
-        {/* Mobile Layout (Carousel) */}
-        <div className="lg:hidden">
-          <Carousel className="w-full">
-            <CarouselContent className="-ml-4">
-              {products.map((product, index) => (
-                <CarouselItem key={index} className="pl-4 basis-full">
-                  <ProductCard product={product} />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
-          </Carousel>
-        </div>
-
-        {/* Desktop Layout (Grid) */}
-        <div className="hidden lg:grid lg:grid-cols-4 gap-4">
-          {products.map((product, index) => (
-            <ProductCard key={index} product={product} />
-          ))}
-        </div>
+      {/* Desktop Layout (4 visible + 4 hidden) */}
+      <div className="hidden lg:block">
+        <Carousel className="w-full">
+          <CarouselContent className="-ml-4">
+            {products.map((product, index) => (
+              <CarouselItem key={index} className="pl-4 basis-1/4">
+                <ProductCard product={product} />
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
       </div>
     </div>
   );

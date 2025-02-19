@@ -366,26 +366,6 @@ export default function Expert() {
           <MoreFromSeller products={moreProducts} />
         </div>
 
-        {/* Products Section */}
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold">Products</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[1, 2, 3, 4].map((product) => (
-              <Card key={product} className="overflow-hidden">
-                <img
-                  src={`https://images.unsplash.com/photo-${1500000000000 + product}?auto=format&fit=crop&w=300&q=80`}
-                  alt={`Product ${product}`}
-                  className="w-full aspect-video object-cover"
-                />
-                <CardContent className="p-4">
-                  <h3 className="font-medium">Product {product}</h3>
-                  <p className="text-sm text-muted-foreground">$99.99</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-
         {/* Contact Section */}
         <Card>
           <CardContent className="p-6 space-y-4">
