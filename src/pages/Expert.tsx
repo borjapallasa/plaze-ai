@@ -20,7 +20,7 @@ export default function Expert() {
               <div className="space-y-2 w-full">
                 <div className="space-y-1">
                   <h1 className="text-3xl font-bold">Expert in UX Design</h1>
-                  <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 w-full">
+                  <div className="flex flex-col md:flex-row md:items-center gap-2.5 w-full">
                     <p className="text-xl text-muted-foreground">John Doe</p>
                     <div className="flex items-center gap-2">
                       <MapPin className="w-4 h-4 text-muted-foreground" />
