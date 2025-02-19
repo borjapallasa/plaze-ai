@@ -77,7 +77,7 @@ function ProductCard({ product }: { product: Product }) {
           />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-sm leading-tight truncate mb-3">
+          <h3 className="font-semibold text-sm leading-tight truncate mb-[1.5px]">
             {product.title}
           </h3>
           <Badge 
