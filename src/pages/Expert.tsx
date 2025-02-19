@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,48 +8,46 @@ export default function Expert() {
   return (
     <div className="space-y-8">
       {/* Header with Stats - Full Width */}
-      <div className="w-full bg-card border">
-        <div className="container mx-auto px-4">
-          <div className="p-8">
-            <div className="flex flex-col md:flex-row gap-6 items-start">
-              <div className="flex gap-4 items-start w-full">
-                <Avatar className="h-20 w-20">
-                  <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" />
-                  <AvatarFallback>JD</AvatarFallback>
-                </Avatar>
-                <div className="space-y-2 w-full">
-                  <div className="space-y-1">
-                    <h1 className="text-3xl font-bold">Expert in UX Design</h1>
-                    <div className="flex flex-col md:flex-row md:items-center gap-2.5">
-                      <div className="flex-1 flex flex-col md:flex-row md:items-center gap-2.5">
-                        <p className="text-xl text-muted-foreground">John Doe</p>
-                        <div className="hidden md:block text-muted-foreground">•</div>
-                        <div className="flex items-center gap-2">
-                          <MapPin className="w-4 h-4 text-muted-foreground" />
-                          <span className="text-muted-foreground">San Francisco, CA</span>
-                        </div>
-                        <div className="hidden md:block text-muted-foreground">•</div>
-                        <div className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4 text-muted-foreground" />
-                          <span className="text-muted-foreground">Expert since 2020</span>
-                        </div>
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex flex-col md:flex-row gap-6 items-start">
+            <div className="flex gap-4 items-start w-full">
+              <Avatar className="h-20 w-20">
+                <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" />
+                <AvatarFallback>JD</AvatarFallback>
+              </Avatar>
+              <div className="space-y-2 w-full">
+                <div className="space-y-1">
+                  <h1 className="text-3xl font-bold">Expert in UX Design</h1>
+                  <div className="flex flex-col md:flex-row md:items-center gap-2.5">
+                    <div className="flex-1 flex flex-col md:flex-row md:items-center gap-2.5">
+                      <p className="text-xl text-muted-foreground">John Doe</p>
+                      <div className="hidden md:block text-muted-foreground">•</div>
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">San Francisco, CA</span>
                       </div>
-                      <div className="flex gap-2 md:self-start">
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <Share2 className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <Save className="h-4 w-4" />
-                        </Button>
+                      <div className="hidden md:block text-muted-foreground">•</div>
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Expert since 2020</span>
                       </div>
+                    </div>
+                    <div className="flex gap-2 md:self-start">
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <Share2 className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <Save className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       <div className="container mx-auto px-4 space-y-8">
         <div className="grid grid-cols-5 gap-6">
