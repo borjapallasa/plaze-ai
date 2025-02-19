@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, Users, Info, Calendar, MapPin, Share2, Save, Check, Handshake, DollarSign } from "lucide-react";
+import { Star, Users, Info, Calendar, MapPin, Share2, Save, Check, Handshake, DollarSign, Globe, Badge } from "lucide-react";
 import { MoreFromSeller } from "@/components/product/MoreFromSeller";
 import { 
   Carousel, 
@@ -559,19 +559,40 @@ export default function Expert() {
               <CardContent className="p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <Users className="w-5 h-5" />
-                  <h2 className="text-lg font-semibold">Community</h2>
+                  <h2 className="text-lg font-semibold">UX Design Community</h2>
                 </div>
                 <div className="space-y-4">
-                  {[
-                    { title: "Active Members", count: "1,234" },
-                    { title: "Posts", count: "456" },
-                    { title: "Resources", count: "89" },
-                  ].map((stat) => (
-                    <div key={stat.title} className="space-y-2">
-                      <p className="text-sm text-muted-foreground">{stat.title}</p>
-                      <p className="text-2xl font-bold">{stat.count}</p>
-                    </div>
-                  ))}
+                  <div className="flex items-center gap-3">
+                    <Globe className="w-5 h-5 text-muted-foreground" />
+                    <p className="text-base">Public Community</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Users className="w-5 h-5 text-muted-foreground" />
+                    <p className="text-base">1,234 members</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Badge variant="secondary" className="text-sm">Free Access</Badge>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <p className="text-lg">Want to improve your UX design skills and connect with experts?</p>
+                  <p className="text-base text-muted-foreground">Get Free Access To:</p>
+                  <ul className="space-y-3">
+                    {[
+                      "Weekly UX Design Workshops",
+                      "Expert Design Reviews & Feedback",
+                      "UX Research Templates & Resources",
+                      "Live Q&A Sessions with Industry Leaders"
+                    ].map((item) => (
+                      <li key={item} className="flex items-center gap-2">
+                        <Check className="w-5 h-5 text-green-500" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Button className="w-full mt-4">
+                    Join Community
+                  </Button>
                 </div>
               </CardContent>
             </Card>
