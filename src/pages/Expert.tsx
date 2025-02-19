@@ -415,37 +415,42 @@ export default function Expert() {
                       <p className="text-sm text-muted-foreground">A community of UX designers sharing knowledge and experiences</p>
                     </div>
 
-                    {/* Right side - Stats */}
+                    {/* Right side - Description and Stats */}
                     <div className="flex-1 space-y-6">
-                      <div className="grid grid-cols-2 gap-x-8 gap-y-4">
-                        <div className="space-y-1">
-                          <p className="text-sm text-muted-foreground">Type</p>
+                      <div className="space-y-4">
+                        <p className="text-sm leading-relaxed text-muted-foreground">
+                          Join our vibrant community of UX designers where we share insights, 
+                          collaborate on projects, and help each other grow. Get access to exclusive 
+                          resources, participate in discussions, and connect with fellow designers 
+                          from around the world.
+                        </p>
+                        <div className="flex flex-wrap gap-4">
                           <div className="flex items-center gap-2">
                             <Globe className="w-4 h-4 text-primary" />
-                            <p className="font-medium">Public Community</p>
+                            <span className="text-sm font-medium">Public Community</span>
                           </div>
-                        </div>
-                        <div className="space-y-1">
-                          <p className="text-sm text-muted-foreground">Access</p>
                           <div className="flex items-center gap-2">
-                            <Badge variant="secondary" className="text-sm">Free Access</Badge>
+                            <Badge variant="secondary" className="text-xs">Free Access</Badge>
                           </div>
                         </div>
-                        <div className="space-y-1">
-                          <p className="text-sm text-muted-foreground">Members</p>
-                          <p className="text-2xl font-bold">1,234</p>
+                      </div>
+
+                      <div className="grid grid-cols-3 gap-4">
+                        <div>
+                          <p className="text-xs text-muted-foreground mb-0.5">Members</p>
+                          <p className="text-lg font-semibold">1,234</p>
                         </div>
-                        <div className="space-y-1">
-                          <p className="text-sm text-muted-foreground">Classrooms</p>
-                          <p className="text-2xl font-bold">12</p>
+                        <div>
+                          <p className="text-xs text-muted-foreground mb-0.5">Classrooms</p>
+                          <p className="text-lg font-semibold">12</p>
                         </div>
-                        <div className="space-y-1">
-                          <p className="text-sm text-muted-foreground">Posts</p>
-                          <p className="text-2xl font-bold">456</p>
+                        <div>
+                          <p className="text-xs text-muted-foreground mb-0.5">Posts</p>
+                          <p className="text-lg font-semibold">456</p>
                         </div>
-                        <div className="space-y-1">
-                          <p className="text-sm text-muted-foreground">Products</p>
-                          <p className="text-2xl font-bold">89</p>
+                        <div>
+                          <p className="text-xs text-muted-foreground mb-0.5">Products</p>
+                          <p className="text-lg font-semibold">89</p>
                         </div>
                       </div>
                     </div>
