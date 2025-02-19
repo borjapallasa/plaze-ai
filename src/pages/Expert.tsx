@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -28,17 +27,6 @@ export default function Expert() {
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-4 md:text-right">
-              <div className="flex items-center gap-2">
-                <Star className="w-4 h-4 text-yellow-500" />
-                <span className="font-medium">4.9 Rating</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <DollarSign className="w-4 h-4 text-green-500" />
-                <span className="font-medium">$250K+ Made</span>
               </div>
             </div>
           </div>
