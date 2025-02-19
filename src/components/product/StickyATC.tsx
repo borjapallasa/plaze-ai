@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -35,12 +35,28 @@ export function StickyATC({
   visible,
   onAddToCart 
 }: StickyATCProps) {
-  if (!visible) return null;
+  const [isExiting, setIsExiting] = useState(false);
+  const [shouldRender, setShouldRender] = useState(visible);
+
+  useEffect(() => {
+    if (visible) {
+      setIsExiting(false);
+      setShouldRender(true);
+    } else {
+      setIsExiting(true);
+      const timer = setTimeout(() => {
+        setShouldRender(false);
+      }, 300); // Match animation duration
+      return () => clearTimeout(timer);
+    }
+  }, [visible]);
+
+  if (!shouldRender) return null;
 
   const currentVariant = variants.find(v => v.id === selectedVariant);
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-background border-t shadow-lg p-4 z-50 animate-slide-up">
+    <div className={`fixed bottom-0 left-0 right-0 bg-background border-t shadow-lg p-4 z-50 ${isExiting ? 'animate-slide-down' : 'animate-slide-up'}`}>
       <div className="container mx-auto flex items-center justify-between gap-4">
         <div className="flex-1 flex items-center gap-4">
           <Select value={selectedVariant} onValueChange={onVariantChange}>
@@ -50,7 +66,7 @@ export function StickyATC({
             <SelectContent>
               {variants.map((variant) => (
                 <SelectItem key={variant.id} value={variant.id}>
-                  {variant.name} - ${variant.price}
+                  {variant.name}
                 </SelectItem>
               ))}
             </SelectContent>
