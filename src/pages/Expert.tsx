@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star, Users, Info, Calendar, MapPin, Share2, Save, Check, Handshake, DollarSign } from "lucide-react";
 import { MoreFromSeller } from "@/components/product/MoreFromSeller";
+import { Mail } from "lucide-react";
 
 export default function Expert() {
   const moreProducts = [
