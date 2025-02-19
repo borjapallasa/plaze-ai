@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, Users, Mail, Info, BookOpen, MessageCircle, DollarSign, Calendar, MapPin, Share2, Save, Check, HandShake } from "lucide-react";
+import { Star, Users, Mail, Info, BookOpen, MessageCircle, DollarSign, Calendar, MapPin, Share2, Save, Check, Handshake } from "lucide-react";
 
 export default function Expert() {
   return (
@@ -198,7 +198,7 @@ export default function Expert() {
                       </div>
                       <div className="flex gap-2 pt-6">
                         <Button className="flex-1">
-                          <HandShake className="w-4 h-4 mr-2" />
+                          <Handshake className="w-4 h-4 mr-2" />
                           Hire Expert
                         </Button>
                         <Button variant="outline" className="flex-1">
@@ -240,7 +240,7 @@ export default function Expert() {
                       </div>
                       <div className="flex gap-2 pt-6">
                         <Button className="flex-1">
-                          <HandShake className="w-4 h-4 mr-2" />
+                          <Handshake className="w-4 h-4 mr-2" />
                           Hire Expert
                         </Button>
                         <Button variant="outline" className="flex-1">
@@ -283,7 +283,7 @@ export default function Expert() {
                       </div>
                       <div className="flex gap-2 pt-6">
                         <Button className="flex-1">
-                          <HandShake className="w-4 h-4 mr-2" />
+                          <Handshake className="w-4 h-4 mr-2" />
                           Hire Expert
                         </Button>
                         <Button variant="outline" className="flex-1">
