@@ -42,11 +42,12 @@ export function ProductVariants({
         {variants.map((variant) => (
           <div 
             key={variant.id} 
-            className={`relative rounded-lg p-4 transition-all ${
+            className={`relative rounded-lg p-4 transition-all cursor-pointer ${
               variant.id === selectedVariant
                 ? 'border-2 border-primary shadow-lg' 
                 : 'border border-border'
             }`}
+            onClick={() => onVariantChange(variant.id)}
           >
             <Badge 
               variant={variant.id === selectedVariant ? "default" : "secondary"}
