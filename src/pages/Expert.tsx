@@ -294,41 +294,17 @@ export default function Expert() {
             </CarouselContent>
             <CarouselPrevious />
             <CarouselNext />
-            <div className="py-2 text-center flex justify-center gap-2">
+            <div className="py-1 text-center flex justify-center gap-2">
               {Array.from({ length: count }).map((_, index) => (
                 <span
                   key={index}
-                  className={`h-2 w-2 rounded-full transition-colors duration-300 ${
-                    index === current ? "bg-primary" : "bg-muted"
+                  className={`h-2.5 w-2.5 rounded-full transition-colors duration-300 ${
+                    index === current ? "bg-primary" : "bg-muted/60"
                   }`}
                 />
               ))}
             </div>
           </Carousel>
-        </div>
-
-        {/* Community Section - Mobile */}
-        <div className="lg:hidden mb-8">
-          <Card>
-            <CardContent className="p-6 space-y-4">
-              <div className="flex items-center gap-2">
-                <Users className="w-5 h-5" />
-                <h2 className="text-lg font-semibold">Community</h2>
-              </div>
-              <div className="space-y-4">
-                {[
-                  { title: "Active Members", count: "1,234" },
-                  { title: "Posts", count: "456" },
-                  { title: "Resources", count: "89" },
-                ].map((stat) => (
-                  <div key={stat.title} className="space-y-2">
-                    <p className="text-sm text-muted-foreground">{stat.title}</p>
-                    <p className="text-2xl font-bold">{stat.count}</p>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         <div className="lg:hidden mb-8">
@@ -543,7 +519,6 @@ export default function Expert() {
             </div>
           </div>
 
-          {/* Community Section - Desktop */}
           <div className="mb-8">
             <Card>
               <CardContent className="p-6 space-y-4">
