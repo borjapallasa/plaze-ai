@@ -281,10 +281,13 @@ export default function Expert() {
                           ))}
                         </div>
                       </div>
-                      <div className="mt-auto pt-4">
+                      <div className="mt-auto space-y-2">
                         <Button className="w-full">
                           <Handshake className="w-4 h-4 mr-2" />
                           Hire Expert
+                        </Button>
+                        <Button variant="outline" className="w-full">
+                          Contact Expert
                         </Button>
                       </div>
                     </CardContent>
@@ -455,10 +458,13 @@ export default function Expert() {
                             ))}
                           </div>
                         </div>
-                        <div className="mt-auto pt-4">
+                        <div className="mt-auto space-y-2">
                           <Button className="w-full">
                             <Handshake className="w-4 h-4 mr-2" />
                             Hire Expert
+                          </Button>
+                          <Button variant="outline" className="w-full">
+                            Contact Expert
                           </Button>
                         </div>
                       </CardContent>
@@ -491,10 +497,13 @@ export default function Expert() {
                             ))}
                           </div>
                         </div>
-                        <div className="mt-auto pt-4">
+                        <div className="mt-auto space-y-2">
                           <Button className="w-full">
                             <Handshake className="w-4 h-4 mr-2" />
                             Hire Expert
+                          </Button>
+                          <Button variant="outline" className="w-full">
+                            Contact Expert
                           </Button>
                         </div>
                       </CardContent>
@@ -528,10 +537,13 @@ export default function Expert() {
                             ))}
                           </div>
                         </div>
-                        <div className="mt-auto pt-4">
+                        <div className="mt-auto space-y-2">
                           <Button className="w-full">
                             <Handshake className="w-4 h-4 mr-2" />
                             Hire Expert
+                          </Button>
+                          <Button variant="outline" className="w-full">
+                            Contact Expert
                           </Button>
                         </div>
                       </CardContent>
