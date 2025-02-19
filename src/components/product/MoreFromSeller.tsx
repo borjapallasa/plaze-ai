@@ -77,12 +77,12 @@ function ProductCard({ product }: { product: Product }) {
           />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-sm leading-tight truncate">
+          <h3 className="font-semibold text-sm leading-tight truncate mb-3">
             {product.title}
           </h3>
           <Badge 
             variant="secondary" 
-            className="mt-1 font-medium capitalize bg-blue-50 text-blue-600 hover:bg-blue-50 text-xs"
+            className="font-medium capitalize bg-blue-50 text-blue-600 hover:bg-blue-50 text-xs"
           >
             {product.category}
           </Badge>
