@@ -1,3 +1,4 @@
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -71,33 +72,11 @@ export default function Product() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Gallery Section */}
-      <div className="lg:hidden mb-6">
-        <div className="bg-card rounded-lg overflow-hidden mb-4 aspect-square">
-          <img 
-            src={product.image} 
-            alt={product.title}
-            className="w-full h-full object-cover"
-          />
-        </div>
-        
-        <div className="flex gap-4 overflow-x-auto hide-scrollbar">
-          {Array(5).fill(0).map((_, i) => (
-            <img 
-              key={i}
-              src={product.image} 
-              alt={`Preview ${i + 1}`}
-              className="w-24 h-24 rounded-lg object-cover flex-shrink-0"
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Mobile Product Info */}
-      <div className="lg:hidden mb-8">
+      {/* Mobile Product Info & Variants */}
+      <div className="lg:hidden">
         <h1 className="text-2xl font-semibold mb-4">{product.title}</h1>
         
-        <div className="flex items-center gap-2 mb-6">
+        <div className="flex items-center gap-2 mb-4">
           <div className="w-8 h-8 rounded-full bg-accent" />
           <div>
             <h3 className="font-medium">{product.seller}</h3>
@@ -107,63 +86,85 @@ export default function Product() {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Variants Selection - Mobile & Desktop */}
-      <div className="mb-8">
-        <RadioGroup 
-          value={selectedVariant} 
-          onValueChange={setSelectedVariant}
-          className="grid grid-cols-1 md:grid-cols-3 gap-4"
-        >
-          {variants.map((variant) => (
-            <div 
-              key={variant.id} 
-              className={`relative rounded-lg p-6 transition-all ${
-                variant.highlight 
-                  ? 'border-2 border-primary shadow-lg' 
-                  : 'border border-border'
-              }`}
-            >
-              <RadioGroupItem 
-                value={variant.id} 
-                id={variant.id} 
-                className="absolute right-4 top-4"
+        {/* Variants Selection - Mobile */}
+        <div className="mb-6">
+          <RadioGroup 
+            value={selectedVariant} 
+            onValueChange={setSelectedVariant}
+            className="grid grid-cols-1 gap-4"
+          >
+            {variants.map((variant) => (
+              <div 
+                key={variant.id} 
+                className={`relative rounded-lg p-6 transition-all ${
+                  variant.highlight 
+                    ? 'border-2 border-primary shadow-lg' 
+                    : 'border border-border'
+                }`}
+              >
+                <RadioGroupItem 
+                  value={variant.id} 
+                  id={variant.id} 
+                  className="absolute right-4 top-4"
+                />
+                <div className="mb-2">
+                  <Badge variant={variant.highlight ? "default" : "secondary"}>
+                    {variant.label}
+                  </Badge>
+                </div>
+                <h3 className="text-lg font-semibold mb-2">{variant.name}</h3>
+                <div className="flex items-baseline gap-2 mb-4">
+                  <span className="text-2xl font-bold">${variant.price}</span>
+                  <span className="text-sm text-muted-foreground line-through">
+                    ${variant.comparePrice}
+                  </span>
+                </div>
+                <ul className="space-y-2 mb-6">
+                  {variant.features.map((feature, index) => (
+                    <li key={index} className="flex items-center gap-2 text-sm">
+                      <Star className="w-4 h-4 text-primary" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </RadioGroup>
+
+          {/* Action Buttons */}
+          <div className="space-y-4">
+            <Button className="w-full">
+              <ShoppingCart className="w-4 h-4 mr-2" />
+              Add to Cart
+            </Button>
+            <Button variant="outline" className="w-full">
+              <MessageSquare className="w-4 h-4 mr-2" />
+              Contact Seller
+            </Button>
+          </div>
+        </div>
+
+        {/* Mobile Gallery */}
+        <div className="mb-6">
+          <div className="bg-card rounded-lg overflow-hidden mb-4 aspect-square">
+            <img 
+              src={product.image} 
+              alt={product.title}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          
+          <div className="flex gap-4 overflow-x-auto hide-scrollbar">
+            {Array(5).fill(0).map((_, i) => (
+              <img 
+                key={i}
+                src={product.image} 
+                alt={`Preview ${i + 1}`}
+                className="w-24 h-24 rounded-lg object-cover flex-shrink-0"
               />
-              <div className="mb-2">
-                <Badge variant={variant.highlight ? "default" : "secondary"}>
-                  {variant.label}
-                </Badge>
-              </div>
-              <h3 className="text-lg font-semibold mb-2">{variant.name}</h3>
-              <div className="flex items-baseline gap-2 mb-4">
-                <span className="text-2xl font-bold">${variant.price}</span>
-                <span className="text-sm text-muted-foreground line-through">
-                  ${variant.comparePrice}
-                </span>
-              </div>
-              <ul className="space-y-2 mb-6">
-                {variant.features.map((feature, index) => (
-                  <li key={index} className="flex items-center gap-2 text-sm">
-                    <Star className="w-4 h-4 text-primary" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </RadioGroup>
-
-        {/* Action Buttons */}
-        <div className="mt-6 space-y-4">
-          <Button className="w-full">
-            <ShoppingCart className="w-4 h-4 mr-2" />
-            Add to Cart
-          </Button>
-          <Button variant="outline" className="w-full">
-            <MessageSquare className="w-4 h-4 mr-2" />
-            Contact Seller
-          </Button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -214,9 +215,9 @@ export default function Product() {
 
         {/* Sidebar - Hidden on Mobile */}
         <div className="hidden lg:block space-y-6">
-          <div className="p-6">
+          <div>
             <h1 className="text-2xl font-semibold mb-4">{product.title}</h1>
-            <div className="flex items-center gap-2 mb-6">
+            <div className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 rounded-full bg-accent" />
               <div>
                 <h3 className="font-medium">{product.seller}</h3>
@@ -224,6 +225,64 @@ export default function Product() {
                   <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                   <span className="text-sm">{product.rating}</span>
                 </div>
+              </div>
+            </div>
+
+            {/* Variants Selection - Desktop */}
+            <div className="mb-6">
+              <RadioGroup 
+                value={selectedVariant} 
+                onValueChange={setSelectedVariant}
+                className="space-y-4"
+              >
+                {variants.map((variant) => (
+                  <div 
+                    key={variant.id} 
+                    className={`relative rounded-lg p-6 transition-all ${
+                      variant.highlight 
+                        ? 'border-2 border-primary shadow-lg' 
+                        : 'border border-border'
+                    }`}
+                  >
+                    <RadioGroupItem 
+                      value={variant.id} 
+                      id={variant.id} 
+                      className="absolute right-4 top-4"
+                    />
+                    <div className="mb-2">
+                      <Badge variant={variant.highlight ? "default" : "secondary"}>
+                        {variant.label}
+                      </Badge>
+                    </div>
+                    <h3 className="text-lg font-semibold mb-2">{variant.name}</h3>
+                    <div className="flex items-baseline gap-2 mb-4">
+                      <span className="text-2xl font-bold">${variant.price}</span>
+                      <span className="text-sm text-muted-foreground line-through">
+                        ${variant.comparePrice}
+                      </span>
+                    </div>
+                    <ul className="space-y-2 mb-6">
+                      {variant.features.map((feature, index) => (
+                        <li key={index} className="flex items-center gap-2 text-sm">
+                          <Star className="w-4 h-4 text-primary" />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </RadioGroup>
+
+              {/* Action Buttons */}
+              <div className="space-y-4 mt-6">
+                <Button className="w-full">
+                  <ShoppingCart className="w-4 h-4 mr-2" />
+                  Add to Cart
+                </Button>
+                <Button variant="outline" className="w-full">
+                  <MessageSquare className="w-4 h-4 mr-2" />
+                  Contact Seller
+                </Button>
               </div>
             </div>
           </div>
