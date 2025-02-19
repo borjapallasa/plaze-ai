@@ -166,10 +166,8 @@ export default function Expert() {
           </Card>
 
           <div className="col-span-4 space-y-4">
-            {/* Services Heading */}
             <h2 className="text-lg font-semibold">Services</h2>
             
-            {/* Services Section */}
             <Card>
               <CardContent className="p-6 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -196,12 +194,12 @@ export default function Expert() {
                           ))}
                         </div>
                       </div>
-                      <div className="flex gap-2 pt-6">
-                        <Button className="flex-1">
+                      <div className="space-y-2 pt-6">
+                        <Button className="w-full">
                           <Handshake className="w-4 h-4 mr-2" />
                           Hire Expert
                         </Button>
-                        <Button variant="outline" className="flex-1">
+                        <Button variant="outline" className="w-full">
                           <Mail className="w-4 h-4 mr-2" />
                           Contact
                         </Button>
@@ -238,12 +236,12 @@ export default function Expert() {
                           ))}
                         </div>
                       </div>
-                      <div className="flex gap-2 pt-6">
-                        <Button className="flex-1">
+                      <div className="space-y-2 pt-6">
+                        <Button className="w-full">
                           <Handshake className="w-4 h-4 mr-2" />
                           Hire Expert
                         </Button>
-                        <Button variant="outline" className="flex-1">
+                        <Button variant="outline" className="w-full">
                           <Mail className="w-4 h-4 mr-2" />
                           Contact
                         </Button>
@@ -281,12 +279,12 @@ export default function Expert() {
                           ))}
                         </div>
                       </div>
-                      <div className="flex gap-2 pt-6">
-                        <Button className="flex-1">
+                      <div className="space-y-2 pt-6">
+                        <Button className="w-full">
                           <Handshake className="w-4 h-4 mr-2" />
                           Hire Expert
                         </Button>
-                        <Button variant="outline" className="flex-1">
+                        <Button variant="outline" className="w-full">
                           <Mail className="w-4 h-4 mr-2" />
                           Contact
                         </Button>
