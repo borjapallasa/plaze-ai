@@ -44,48 +44,52 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
       <div className="space-y-8">
         {reviews.map((review) => (
           <div key={review.id} className="border-b pb-8 last:border-b-0">
-            <div className="flex items-start justify-between mb-3">
-              <div className="space-y-1">
-                <div className="flex gap-1">
-                  {Array(5).fill(0).map((_, i) => (
-                    <Star 
-                      key={i} 
-                      className={`w-3.5 h-3.5 ${
-                        i < review.rating 
-                          ? 'fill-yellow-400 text-yellow-400' 
-                          : 'fill-gray-200 text-gray-200'
-                      }`}
+            <div className="flex flex-col gap-3">
+              <div className="flex items-start justify-between">
+                <div className="space-y-1">
+                  <div className="flex gap-1">
+                    {Array(5).fill(0).map((_, i) => (
+                      <Star 
+                        key={i} 
+                        className={`w-3.5 h-3.5 ${
+                          i < review.rating 
+                            ? 'fill-yellow-400 text-yellow-400' 
+                            : 'fill-gray-200 text-gray-200'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <h3 className="font-medium text-base">{review.content}</h3>
+                </div>
+                <div className="flex items-center text-sm text-green-600">
+                  <Check className="w-3.5 h-3.5 mr-1" />
+                  <span>Recommends this item</span>
+                </div>
+              </div>
+
+              <p className="text-sm text-muted-foreground">{review.description}</p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
+                    <img 
+                      src={review.avatar} 
+                      alt={review.author}
+                      className="w-full h-full object-cover"
                     />
-                  ))}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium text-sm">{review.author}</span>
+                    <span className="text-xs text-muted-foreground">•</span>
+                    <div className="text-xs text-muted-foreground">{review.date}</div>
+                  </div>
                 </div>
-                <h3 className="font-medium text-base">{review.content}</h3>
-                <p className="text-sm text-muted-foreground">{review.description}</p>
-              </div>
-              <div className="flex items-center text-sm text-green-600">
-                <Check className="w-3.5 h-3.5 mr-1" />
-                <span>Recommends this item</span>
-              </div>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex items-start gap-2">
-                <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
-                  <img 
-                    src={review.avatar} 
-                    alt={review.author}
-                    className="w-full h-full object-cover"
-                  />
+                <div className="space-y-1">
+                  <RatingCategory label="Item quality" rating={review.itemQuality} />
+                  <RatingCategory label="Shipping" rating={review.shipping} />
+                  <RatingCategory label="Customer service" rating={review.customerService} />
                 </div>
-                <div>
-                  <span className="font-medium text-sm">{review.author}</span>
-                  <div className="text-xs text-muted-foreground">{review.date}</div>
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <RatingCategory label="Item quality" rating={review.itemQuality} />
-                <RatingCategory label="Shipping" rating={review.shipping} />
-                <RatingCategory label="Customer service" rating={review.customerService} />
               </div>
             </div>
           </div>
