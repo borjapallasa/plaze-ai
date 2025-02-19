@@ -60,6 +60,24 @@ export default function Product() {
             ))}
           </div>
 
+          <Card className="p-6 mb-8">
+            <h2 className="text-xl font-semibold mb-4">Description</h2>
+            <p className="text-muted-foreground leading-relaxed">
+              {product.description}
+              <br /><br />
+              This comprehensive course covers everything you need to know about UI/UX design. From fundamental principles 
+              to advanced techniques, you'll learn how to create beautiful and functional user interfaces. Topics include:
+              <br /><br />
+              • User Research and Analysis<br />
+              • Wireframing and Prototyping<br />
+              • Visual Design Principles<br />
+              • User Testing and Iteration<br />
+              • Industry Standard Tools<br />
+              <br />
+              Perfect for beginners and intermediate designers looking to enhance their skills and create professional-grade designs.
+            </p>
+          </Card>
+
           <div className="bg-card p-6 rounded-lg mb-8">
             <h2 className="text-xl font-semibold mb-4">Demo</h2>
             <div className="aspect-video bg-accent rounded-lg"></div>
