@@ -1,6 +1,5 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Eye, MessageSquare, Star, ShoppingCart } from "lucide-react";
 import { ProductCard } from "@/components/ProductCard";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -60,7 +59,7 @@ export default function Product() {
     <div className="container mx-auto px-4 py-8">
       {/* Gallery Section */}
       <div className="lg:hidden mb-6">
-        <div className="bg-card rounded-lg overflow-hidden mb-4 aspect-square">
+        <div className="rounded-lg overflow-hidden mb-4 aspect-square bg-secondary">
           <img 
             src={product.image} 
             alt={product.title}
@@ -81,7 +80,7 @@ export default function Product() {
       </div>
 
       {/* Mobile Price, Title, and Actions Section */}
-      <Card className="p-6 mb-6 lg:hidden">
+      <div className="p-6 mb-6 lg:hidden">
         <div className="flex items-baseline gap-2 mb-4">
           <span className="text-2xl font-bold">${currentVariant.price}</span>
           {currentVariant.comparePrice && (
@@ -132,7 +131,7 @@ export default function Product() {
             Contact Seller
           </Button>
         </div>
-      </Card>
+      </div>
 
       {/* Main Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
@@ -140,7 +139,7 @@ export default function Product() {
         <div className="lg:col-span-2">
           {/* Desktop Gallery - Hidden on Mobile */}
           <div className="hidden lg:block">
-            <div className="bg-card rounded-lg overflow-hidden mb-8 aspect-square">
+            <div className="rounded-lg overflow-hidden mb-8 aspect-square bg-secondary">
               <img 
                 src={product.image} 
                 alt={product.title}
@@ -160,7 +159,7 @@ export default function Product() {
             </div>
           </div>
 
-          <Card className="p-6 mb-8">
+          <div className="p-6 mb-8 bg-background">
             <h2 className="text-xl font-semibold mb-4">Description</h2>
             <p className="text-muted-foreground leading-relaxed">
               {product.description}
@@ -176,12 +175,12 @@ export default function Product() {
               <br />
               Perfect for beginners and intermediate designers looking to enhance their skills and create professional-grade designs.
             </p>
-          </Card>
+          </div>
         </div>
 
         {/* Sidebar - Hidden on Mobile */}
         <div className="space-y-6">
-          <Card className="hidden lg:block p-6">
+          <div className="hidden lg:block p-6 bg-background">
             <div className="flex items-baseline gap-2 mb-4">
               <span className="text-2xl font-bold">${currentVariant.price}</span>
               {currentVariant.comparePrice && (
@@ -230,9 +229,9 @@ export default function Product() {
                 Contact Seller
               </Button>
             </div>
-          </Card>
+          </div>
 
-          <Card className="p-6">
+          <div className="p-6 bg-background">
             <h3 className="font-semibold mb-4">Additional Information</h3>
             <div className="space-y-4">
               <div>
@@ -269,7 +268,7 @@ export default function Product() {
                 </span>
               </div>
             </div>
-          </Card>
+          </div>
         </div>
       </div>
 
