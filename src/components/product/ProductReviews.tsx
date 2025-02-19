@@ -45,8 +45,8 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
         {reviews.map((review) => (
           <div key={review.id} className="border-b pb-6 last:border-b-0">
             <div className="flex flex-col gap-2">
-              <div className="grid grid-cols-[60%_40%] gap-2">
-                <div className="space-y-1.5 max-w-[90%]">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5 max-w-[50%]">
                   <div className="flex gap-1">
                     {Array(5).fill(0).map((_, i) => (
                       <Star 
