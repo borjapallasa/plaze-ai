@@ -139,6 +139,9 @@ export default function Expert() {
           </Card>
         </div>
 
+        {/* Services Heading */}
+        <h2 className="text-lg font-semibold mb-4">Services</h2>
+
         {/* Services and Stats Grid */}
         <div className="grid grid-cols-5 gap-6 mb-8">
           {/* Stats Section - Now on the left */}
@@ -168,10 +171,6 @@ export default function Expert() {
           {/* Services Section - Now on the right */}
           <Card className="col-span-4">
             <CardContent className="p-6 space-y-6">
-              <div className="flex items-center gap-2">
-                <DollarSign className="w-5 h-5" />
-                <h2 className="text-lg font-semibold">Services</h2>
-              </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Basic Tier */}
                 <Card className="relative overflow-hidden">
