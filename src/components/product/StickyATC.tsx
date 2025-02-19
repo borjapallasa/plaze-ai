@@ -50,7 +50,7 @@ export function StickyATC({
             <SelectContent>
               {variants.map((variant) => (
                 <SelectItem key={variant.id} value={variant.id}>
-                  {variant.name}
+                  {variant.name} - ${variant.price}
                 </SelectItem>
               ))}
             </SelectContent>
