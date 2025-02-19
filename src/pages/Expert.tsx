@@ -411,47 +411,68 @@ export default function Expert() {
                           </div>
                         </div>
                       </div>
-                      <h3 className="font-semibold mt-3 mb-1">UX Design Community</h3>
-                      <p className="text-sm text-muted-foreground">A community of UX designers sharing knowledge and experiences</p>
+                      <h3 className="text-xl font-semibold mt-4 mb-1.5">UX Design Community</h3>
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="flex items-center gap-1.5">
+                          <Globe className="w-3.5 h-3.5 text-primary" />
+                          <span className="text-sm text-muted-foreground">Public Community</span>
+                        </div>
+                        <div className="w-1 h-1 bg-muted-foreground/30 rounded-full" />
+                        <Badge variant="secondary" className="text-xs px-2 py-0.5">Free Access</Badge>
+                      </div>
                     </div>
 
                     {/* Right side - Description and Stats */}
-                    <div className="flex-1 space-y-6">
-                      <div className="space-y-4">
+                    <div className="flex-1 flex flex-col justify-between">
+                      <div className="space-y-6">
                         <p className="text-sm leading-relaxed text-muted-foreground">
                           Join our vibrant community of UX designers where we share insights, 
                           collaborate on projects, and help each other grow. Get access to exclusive 
                           resources, participate in discussions, and connect with fellow designers 
                           from around the world.
                         </p>
-                        <div className="flex flex-wrap gap-4">
-                          <div className="flex items-center gap-2">
-                            <Globe className="w-4 h-4 text-primary" />
-                            <span className="text-sm font-medium">Public Community</span>
+
+                        <div className="grid grid-cols-2 gap-6">
+                          <div className="space-y-4">
+                            <div className="space-y-1">
+                              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Community Size</p>
+                              <div className="flex items-baseline gap-4">
+                                <div>
+                                  <p className="text-2xl font-bold">1,234</p>
+                                  <p className="text-xs text-muted-foreground">Members</p>
+                                </div>
+                                <div>
+                                  <p className="text-2xl font-bold">12</p>
+                                  <p className="text-xs text-muted-foreground">Classrooms</p>
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <Badge variant="secondary" className="text-xs">Free Access</Badge>
+                          <div className="space-y-4">
+                            <div className="space-y-1">
+                              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Activity</p>
+                              <div className="flex items-baseline gap-4">
+                                <div>
+                                  <p className="text-2xl font-bold">456</p>
+                                  <p className="text-xs text-muted-foreground">Posts</p>
+                                </div>
+                                <div>
+                                  <p className="text-2xl font-bold">89</p>
+                                  <p className="text-xs text-muted-foreground">Products</p>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-3 gap-4">
-                        <div>
-                          <p className="text-xs text-muted-foreground mb-0.5">Members</p>
-                          <p className="text-lg font-semibold">1,234</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground mb-0.5">Classrooms</p>
-                          <p className="text-lg font-semibold">12</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground mb-0.5">Posts</p>
-                          <p className="text-lg font-semibold">456</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground mb-0.5">Products</p>
-                          <p className="text-lg font-semibold">89</p>
-                        </div>
+                      <div className="flex items-center gap-3 mt-6">
+                        <Button className="w-full max-w-[200px]">
+                          Join Community
+                        </Button>
+                        <Button variant="outline">
+                          Learn More
+                        </Button>
                       </div>
                     </div>
                   </div>
