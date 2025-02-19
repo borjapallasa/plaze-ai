@@ -100,15 +100,116 @@ export default function Product() {
     }
   ];
 
-  const moreFromSeller = Array(5).fill({
-    title: "Another Great Course",
-    price: "$79.99",
-    image: "/placeholder.svg",
-    seller: "Design Master",
-    description: "More amazing content from our expert instructor.",
-    tags: ["design", "learning"],
-    category: "education"
-  });
+  const moreFromSeller = [
+    {
+      title: "Advanced UX Research Methods",
+      price: "$89.99",
+      image: "/placeholder.svg",
+      seller: "Design Master",
+      description: "Learn professional UX research techniques and methodologies.",
+      tags: ["research", "ux"],
+      category: "design"
+    },
+    {
+      title: "UI Animation Masterclass",
+      price: "$79.99",
+      image: "/placeholder.svg",
+      seller: "Design Master",
+      description: "Create engaging interface animations and micro-interactions.",
+      tags: ["animation", "ui"],
+      category: "design"
+    },
+    {
+      title: "Design Systems Workshop",
+      price: "$129.99",
+      image: "/placeholder.svg",
+      seller: "Design Master",
+      description: "Build and maintain scalable design systems for large applications.",
+      tags: ["systems", "workflow"],
+      category: "design"
+    },
+    {
+      title: "Figma Advanced Techniques",
+      price: "$69.99",
+      image: "/placeholder.svg",
+      seller: "Design Master",
+      description: "Master advanced Figma features and workflows for professional design.",
+      tags: ["figma", "tools"],
+      category: "design"
+    },
+    {
+      title: "User Testing Fundamentals",
+      price: "$94.99",
+      image: "/placeholder.svg",
+      seller: "Design Master",
+      description: "Learn effective user testing methods and result analysis.",
+      tags: ["testing", "research"],
+      category: "design"
+    },
+    {
+      title: "Design Psychology",
+      price: "$84.99",
+      image: "/placeholder.svg",
+      seller: "Design Master",
+      description: "Understanding human behavior and cognitive principles in UX design.",
+      tags: ["psychology", "ux"],
+      category: "design"
+    },
+    {
+      title: "Mobile UX Design",
+      price: "$99.99",
+      image: "/placeholder.svg",
+      seller: "Design Master",
+      description: "Create exceptional mobile user experiences and interfaces.",
+      tags: ["mobile", "ux"],
+      category: "design"
+    },
+    {
+      title: "Design Portfolio Workshop",
+      price: "$59.99",
+      image: "/placeholder.svg",
+      seller: "Design Master",
+      description: "Build a standout design portfolio that attracts clients.",
+      tags: ["portfolio", "career"],
+      category: "design"
+    },
+    {
+      title: "Enterprise UX Strategy",
+      price: "$149.99",
+      image: "/placeholder.svg",
+      seller: "Design Master",
+      description: "Strategic approaches to enterprise-level UX design challenges.",
+      tags: ["enterprise", "strategy"],
+      category: "design"
+    },
+    {
+      title: "Design Leadership",
+      price: "$129.99",
+      image: "/placeholder.svg",
+      seller: "Design Master",
+      description: "Lead design teams and manage design processes effectively.",
+      tags: ["leadership", "management"],
+      category: "design"
+    },
+    {
+      title: "Accessibility in Design",
+      price: "$89.99",
+      image: "/placeholder.svg",
+      seller: "Design Master",
+      description: "Create inclusive designs that work for everyone.",
+      tags: ["accessibility", "inclusive"],
+      category: "design"
+    },
+    {
+      title: "Design Ethics",
+      price: "$74.99",
+      image: "/placeholder.svg",
+      seller: "Design Master",
+      description: "Ethical considerations and practices in UX/UI design.",
+      tags: ["ethics", "principles"],
+      category: "design"
+    }
+  ];
 
   return (
     <div className="container mx-auto px-4 py-8">
