@@ -87,6 +87,10 @@ function ProductCard({ product }: { product: Product }) {
         {product.description}
       </p>
 
+      <div className="flex items-center gap-2">
+        <span className="text-sm font-medium">from {product.price}</span>
+      </div>
+
       <div className="flex items-center justify-between mt-auto pt-4">
         <div className="flex gap-2 flex-wrap">
           {product.tags.slice(0, 2).map((tag, index) => (
