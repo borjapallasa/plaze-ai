@@ -411,10 +411,10 @@ export default function Expert() {
               <Card>
                 <CardContent className="p-6 space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <Card className="relative overflow-hidden">
+                    <Card className="relative overflow-hidden h-[500px] flex flex-col">
                       <div className="absolute inset-x-0 top-0 h-2 bg-blue-100" />
-                      <CardContent className="p-6">
-                        <div className="space-y-4">
+                      <CardContent className="p-6 flex flex-col h-full">
+                        <div className="space-y-4 flex-1">
                           <div className="space-y-2">
                             <h3 className="text-xl font-semibold">Basic Consultation</h3>
                             <div className="flex items-center gap-1">
@@ -431,20 +431,20 @@ export default function Expert() {
                               </div>
                             ))}
                           </div>
-                          <div className="pt-4">
-                            <Button className="w-full">
-                              <Handshake className="w-4 h-4 mr-2" />
-                              Hire Expert
-                            </Button>
-                          </div>
+                        </div>
+                        <div className="mt-auto pt-4">
+                          <Button className="w-full">
+                            <Handshake className="w-4 h-4 mr-2" />
+                            Hire Expert
+                          </Button>
                         </div>
                       </CardContent>
                     </Card>
 
-                    <Card className="relative overflow-hidden">
+                    <Card className="relative overflow-hidden h-[500px] flex flex-col">
                       <div className="absolute inset-x-0 top-0 h-2 bg-purple-100" />
-                      <CardContent className="p-6">
-                        <div className="space-y-4">
+                      <CardContent className="p-6 flex flex-col h-full">
+                        <div className="space-y-4 flex-1">
                           <div className="space-y-2">
                             <h3 className="text-xl font-semibold">Professional Package</h3>
                             <div className="flex items-center gap-1">
@@ -467,20 +467,20 @@ export default function Expert() {
                               </div>
                             ))}
                           </div>
-                          <div className="pt-4">
-                            <Button className="w-full">
-                              <Handshake className="w-4 h-4 mr-2" />
-                              Hire Expert
-                            </Button>
-                          </div>
+                        </div>
+                        <div className="mt-auto pt-4">
+                          <Button className="w-full">
+                            <Handshake className="w-4 h-4 mr-2" />
+                            Hire Expert
+                          </Button>
                         </div>
                       </CardContent>
                     </Card>
 
-                    <Card className="relative overflow-hidden">
+                    <Card className="relative overflow-hidden h-[500px] flex flex-col">
                       <div className="absolute inset-x-0 top-0 h-2 bg-indigo-100" />
-                      <CardContent className="p-6">
-                        <div className="space-y-4">
+                      <CardContent className="p-6 flex flex-col h-full">
+                        <div className="space-y-4 flex-1">
                           <div className="space-y-2">
                             <h3 className="text-xl font-semibold">Enterprise Solution</h3>
                             <div className="flex items-center gap-1">
@@ -504,12 +504,12 @@ export default function Expert() {
                               </div>
                             ))}
                           </div>
-                          <div className="pt-4">
-                            <Button className="w-full">
-                              <Handshake className="w-4 h-4 mr-2" />
-                              Hire Expert
-                            </Button>
-                          </div>
+                        </div>
+                        <div className="mt-auto pt-4">
+                          <Button className="w-full">
+                            <Handshake className="w-4 h-4 mr-2" />
+                            Hire Expert
+                          </Button>
                         </div>
                       </CardContent>
                     </Card>
