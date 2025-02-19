@@ -49,12 +49,12 @@ export default function Expert() {
                     <div className="text-muted-foreground">•</div>
                     <div className="flex items-center gap-2">
                       <MapPin className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">San Francisco, CA</span>
+                      <span className="text-xl text-muted-foreground">San Francisco, CA</span>
                     </div>
                     <div className="text-muted-foreground">•</div>
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">Expert since 2020</span>
+                      <span className="text-xl text-muted-foreground">Expert since 2020</span>
                     </div>
                   </div>
                 </div>
@@ -67,13 +67,13 @@ export default function Expert() {
                   <div className="text-muted-foreground">•</div>
                   <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">San Francisco, CA</span>
+                    <span className="text-lg text-muted-foreground">San Francisco, CA</span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between w-full">
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">Expert since 2020</span>
+                    <span className="text-lg text-muted-foreground">Expert since 2020</span>
                   </div>
                   <div className="flex gap-1.5">
                     <Button variant="ghost" size="icon" className="h-6 w-6">
