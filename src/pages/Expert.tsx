@@ -521,7 +521,6 @@ export default function Expert() {
           </div>
 
           <div className="grid grid-cols-5 gap-6 mb-8">
-            {/* Community Section */}
             <Card className="col-span-1">
               <CardContent className="p-6 space-y-4">
                 <div className="flex items-center gap-2">
@@ -543,7 +542,6 @@ export default function Expert() {
               </CardContent>
             </Card>
 
-            {/* More From Seller Section */}
             <div className="col-span-4">
               <MoreFromSeller products={moreProducts} />
             </div>
