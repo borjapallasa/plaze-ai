@@ -1,4 +1,3 @@
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -39,7 +38,7 @@ export default function Product() {
       comparePrice: 199.99,
       label: "Best Value",
       highlight: true,
-      features: ["Core Course", "Premium Resources", "1-1 Mentoring"]
+      features: ["Core Course", "Premium Resources"]
     },
     {
       id: "pro",
@@ -47,7 +46,7 @@ export default function Product() {
       price: 199.99,
       comparePrice: 299.99,
       label: "Most Complete",
-      features: ["Core Course", "Premium Resources", "1-1 Mentoring", "Career Support"]
+      features: ["Core Course", "Premium Resources"]
     }
   ];
 
@@ -72,7 +71,6 @@ export default function Product() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Mobile Product Info & Variants */}
       <div className="lg:hidden">
         <h1 className="text-2xl font-semibold mb-4">{product.title}</h1>
         
@@ -87,53 +85,54 @@ export default function Product() {
           </div>
         </div>
 
-        {/* Variants Selection - Mobile */}
         <div className="mb-6">
           <RadioGroup 
             value={selectedVariant} 
             onValueChange={setSelectedVariant}
-            className="grid grid-cols-1 gap-4"
+            className="space-y-4"
           >
             {variants.map((variant) => (
               <div 
                 key={variant.id} 
-                className={`relative rounded-lg p-6 transition-all ${
+                className={`relative rounded-lg p-4 transition-all ${
                   variant.highlight 
                     ? 'border-2 border-primary shadow-lg' 
                     : 'border border-border'
                 }`}
               >
+                <Badge 
+                  variant={variant.highlight ? "default" : "secondary"}
+                  className="absolute -top-2 left-4 z-10"
+                >
+                  {variant.label}
+                </Badge>
                 <RadioGroupItem 
                   value={variant.id} 
                   id={variant.id} 
                   className="absolute right-4 top-4"
                 />
-                <div className="mb-2">
-                  <Badge variant={variant.highlight ? "default" : "secondary"}>
-                    {variant.label}
-                  </Badge>
+                <div className="flex justify-between items-baseline mb-2">
+                  <h3 className="text-base font-semibold">{variant.name}</h3>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-lg font-bold">${variant.price}</span>
+                    <span className="text-xs text-muted-foreground line-through">
+                      ${variant.comparePrice}
+                    </span>
+                  </div>
                 </div>
-                <h3 className="text-lg font-semibold mb-2">{variant.name}</h3>
-                <div className="flex items-baseline gap-2 mb-4">
-                  <span className="text-2xl font-bold">${variant.price}</span>
-                  <span className="text-sm text-muted-foreground line-through">
-                    ${variant.comparePrice}
-                  </span>
-                </div>
-                <ul className="space-y-2 mb-6">
+                <div className="flex gap-4 text-xs text-muted-foreground">
                   {variant.features.map((feature, index) => (
-                    <li key={index} className="flex items-center gap-2 text-sm">
-                      <Star className="w-4 h-4 text-primary" />
-                      {feature}
-                    </li>
+                    <div key={index} className="flex items-center gap-1">
+                      <Star className="w-3 h-3 text-primary flex-shrink-0" />
+                      <span>{feature}</span>
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
             ))}
           </RadioGroup>
 
-          {/* Action Buttons */}
-          <div className="space-y-4">
+          <div className="space-y-4 mt-4">
             <Button className="w-full">
               <ShoppingCart className="w-4 h-4 mr-2" />
               Add to Cart
@@ -145,7 +144,6 @@ export default function Product() {
           </div>
         </div>
 
-        {/* Mobile Gallery */}
         <div className="mb-6">
           <div className="bg-card rounded-lg overflow-hidden mb-4 aspect-square">
             <img 
@@ -168,11 +166,8 @@ export default function Product() {
         </div>
       </div>
 
-      {/* Main Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-        {/* Main Content */}
         <div className="lg:col-span-2">
-          {/* Desktop Gallery - Hidden on Mobile */}
           <div className="hidden lg:block">
             <div className="bg-card rounded-lg overflow-hidden mb-8 aspect-square">
               <img 
@@ -213,7 +208,6 @@ export default function Product() {
           </Card>
         </div>
 
-        {/* Sidebar - Hidden on Mobile */}
         <div className="hidden lg:block space-y-6">
           <div>
             <h1 className="text-2xl font-semibold mb-4">{product.title}</h1>
@@ -228,7 +222,6 @@ export default function Product() {
               </div>
             </div>
 
-            {/* Variants Selection - Desktop */}
             <div className="mb-6">
               <RadioGroup 
                 value={selectedVariant} 
@@ -238,43 +231,45 @@ export default function Product() {
                 {variants.map((variant) => (
                   <div 
                     key={variant.id} 
-                    className={`relative rounded-lg p-6 transition-all ${
+                    className={`relative rounded-lg p-4 transition-all ${
                       variant.highlight 
                         ? 'border-2 border-primary shadow-lg' 
                         : 'border border-border'
                     }`}
                   >
+                    <Badge 
+                      variant={variant.highlight ? "default" : "secondary"}
+                      className="absolute -top-2 left-4 z-10"
+                    >
+                      {variant.label}
+                    </Badge>
                     <RadioGroupItem 
                       value={variant.id} 
                       id={variant.id} 
                       className="absolute right-4 top-4"
                     />
-                    <div className="mb-2">
-                      <Badge variant={variant.highlight ? "default" : "secondary"}>
-                        {variant.label}
-                      </Badge>
+                    <div className="flex justify-between items-baseline mb-2">
+                      <h3 className="text-base font-semibold">{variant.name}</h3>
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-lg font-bold">${variant.price}</span>
+                        <span className="text-xs text-muted-foreground line-through">
+                          ${variant.comparePrice}
+                        </span>
+                      </div>
                     </div>
-                    <h3 className="text-lg font-semibold mb-2">{variant.name}</h3>
-                    <div className="flex items-baseline gap-2 mb-4">
-                      <span className="text-2xl font-bold">${variant.price}</span>
-                      <span className="text-sm text-muted-foreground line-through">
-                        ${variant.comparePrice}
-                      </span>
-                    </div>
-                    <ul className="space-y-2 mb-6">
+                    <div className="flex gap-4 text-xs text-muted-foreground">
                       {variant.features.map((feature, index) => (
-                        <li key={index} className="flex items-center gap-2 text-sm">
-                          <Star className="w-4 h-4 text-primary" />
-                          {feature}
-                        </li>
+                        <div key={index} className="flex items-center gap-1">
+                          <Star className="w-3 h-3 text-primary flex-shrink-0" />
+                          <span>{feature}</span>
+                        </div>
                       ))}
-                    </ul>
+                    </div>
                   </div>
                 ))}
               </RadioGroup>
 
-              {/* Action Buttons */}
-              <div className="space-y-4 mt-6">
+              <div className="space-y-4 mt-4">
                 <Button className="w-full">
                   <ShoppingCart className="w-4 h-4 mr-2" />
                   Add to Cart
