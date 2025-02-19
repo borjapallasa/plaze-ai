@@ -62,10 +62,13 @@ export default function Expert() {
 
               {/* Mobile: expert information */}
               <div className="flex flex-col sm:hidden items-start gap-2.5">
-                <p className="text-lg text-muted-foreground">John Doe</p>
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">San Francisco, CA</span>
+                <div className="flex items-center gap-2.5">
+                  <p className="text-lg text-muted-foreground">John Doe</p>
+                  <div className="text-muted-foreground">•</div>
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">San Francisco, CA</span>
+                  </div>
                 </div>
                 <div className="flex items-center justify-between w-full">
                   <div className="flex items-center gap-2">
