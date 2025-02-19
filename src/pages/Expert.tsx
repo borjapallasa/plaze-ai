@@ -332,29 +332,6 @@ export default function Expert() {
           </Card>
         </div>
 
-        <div className="lg:hidden mb-8">
-          <Card>
-            <CardContent className="p-6 space-y-4">
-              <div className="flex items-center gap-2">
-                <Users className="w-5 h-5" />
-                <h2 className="text-lg font-semibold">Community</h2>
-              </div>
-              <div className="space-y-4">
-                {[
-                  { title: "Active Members", count: "1,234" },
-                  { title: "Posts", count: "456" },
-                  { title: "Resources", count: "89" },
-                ].map((stat) => (
-                  <div key={stat.title} className="space-y-2">
-                    <p className="text-sm text-muted-foreground">{stat.title}</p>
-                    <p className="text-2xl font-bold">{stat.count}</p>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
         <div className="lg:hidden block">
           <MoreFromSeller products={moreProducts} />
         </div>
@@ -540,6 +517,35 @@ export default function Expert() {
                   </div>
                 </CardContent>
               </Card>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-5 gap-6 mb-8">
+            {/* Community Section */}
+            <Card className="col-span-1">
+              <CardContent className="p-6 space-y-4">
+                <div className="flex items-center gap-2">
+                  <Users className="w-5 h-5" />
+                  <h2 className="text-lg font-semibold">Community</h2>
+                </div>
+                <div className="space-y-4">
+                  {[
+                    { title: "Active Members", count: "1,234" },
+                    { title: "Posts", count: "456" },
+                    { title: "Resources", count: "89" },
+                  ].map((stat) => (
+                    <div key={stat.title} className="space-y-2">
+                      <p className="text-sm text-muted-foreground">{stat.title}</p>
+                      <p className="text-2xl font-bold">{stat.count}</p>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* More From Seller Section */}
+            <div className="col-span-4">
+              <MoreFromSeller products={moreProducts} />
             </div>
           </div>
         </div>
