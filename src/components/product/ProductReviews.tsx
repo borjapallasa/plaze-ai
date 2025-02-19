@@ -66,8 +66,8 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
                     <p className="text-sm text-muted-foreground">{review.description}</p>
                   </div>
                   <div className="flex justify-end">
-                    <div className="flex items-start text-sm text-green-600 whitespace-nowrap">
-                      <Check className="w-3.5 h-3.5 mr-1" />
+                    <div className="flex items-start text-xs text-green-600 whitespace-nowrap">
+                      <Check className="w-3 h-3 mr-0.5" />
                       <span>Recommends this item</span>
                     </div>
                   </div>
