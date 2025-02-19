@@ -45,7 +45,7 @@ export default function Expert() {
     {
       title: "UI Animation Masterclass",
       price: "$79.99",
-      image: "https://images.unsplash.com/photo-1518770660439-4636190af475",
+      image: "https://images.unsplash.com/photo-1518770660439-440f080d1e12",
       seller: "John Doe",
       description: "Create engaging interface animations and micro-interactions.",
       tags: ["animation", "ui"],
@@ -170,6 +170,275 @@ export default function Expert() {
       </div>
 
       <div className="container mx-auto px-4">
+        {/* Desktop Layout */}
+        <div className="hidden lg:block space-y-8">
+          <div className="grid grid-cols-5 gap-6">
+            <Card className="col-span-1">
+              <CardContent className="p-6 space-y-4">
+                <div className="flex items-center gap-2">
+                  <Info className="w-5 h-5" />
+                  <h2 className="text-lg font-semibold">Info</h2>
+                </div>
+                <p className="text-muted-foreground">
+                  Expert in UI/UX design with over 10 years of experience. Specialized in creating
+                  intuitive and beautiful user interfaces for web and mobile applications.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="col-span-4">
+              <CardContent className="p-6 space-y-6">
+                <p className="text-muted-foreground">
+                  Senior UX Designer with a passion for creating intuitive and engaging digital experiences. 
+                  Combining analytical thinking with creative design to solve complex user problems.
+                </p>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li className="flex items-center gap-2 leading-normal">
+                    <span className="flex-shrink-0">🎨</span>
+                    <span>User Interface Design - Creating beautiful and functional interfaces that delight users</span>
+                  </li>
+                  <li className="flex items-center gap-2 leading-normal">
+                    <span className="flex-shrink-0">🔍</span>
+                    <span>User Research - Conducting in-depth research to understand user needs and behaviors</span>
+                  </li>
+                  <li className="flex items-center gap-2 leading-normal">
+                    <span className="flex-shrink-0">📊</span>
+                    <span>Information Architecture - Organizing content in a clear and logical manner</span>
+                  </li>
+                  <li className="flex items-center gap-2 leading-normal">
+                    <span className="flex-shrink-0">🤝</span>
+                    <span>Stakeholder Management - Collaborating effectively with cross-functional teams</span>
+                  </li>
+                  <li className="flex items-center gap-2 leading-normal">
+                    <span className="flex-shrink-0">📱</span>
+                    <span>Responsive Design - Creating seamless experiences across all devices</span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid grid-cols-5 gap-6">
+            <Card className="col-span-1">
+              <CardContent className="p-6 space-y-4">
+                <div className="flex items-center gap-2">
+                  <Star className="w-5 h-5" />
+                  <h2 className="text-lg font-semibold">Stats</h2>
+                </div>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">Projects Completed</p>
+                    <p className="text-2xl font-bold">150+</p>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">Client Satisfaction</p>
+                    <p className="text-2xl font-bold">98%</p>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">Response Rate</p>
+                    <p className="text-2xl font-bold">100%</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="col-span-4">
+              <Card>
+                <CardContent className="p-6 space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <Card className="relative overflow-hidden h-[500px] flex flex-col">
+                      <div className="absolute inset-x-0 top-0 h-2 bg-blue-100" />
+                      <CardContent className="p-6 flex flex-col h-full">
+                        <div className="space-y-4 flex-1">
+                          <div className="space-y-2">
+                            <h3 className="text-xl font-semibold">Basic Consultation</h3>
+                            <div className="flex items-center gap-1">
+                              <DollarSign className="w-5 h-5 text-muted-foreground" />
+                              <span className="text-2xl font-bold">$99</span>
+                            </div>
+                            <p className="text-muted-foreground">Perfect for startups and small projects needing expert UX guidance.</p>
+                          </div>
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2">
+                              <Check className="w-4 h-4 text-blue-500" />
+                              <span className="text-sm">1-hour consultation</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Check className="w-4 h-4 text-blue-500" />
+                              <span className="text-sm">Basic UX review</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Check className="w-4 h-4 text-blue-500" />
+                              <span className="text-sm">Written recommendations</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Check className="w-4 h-4 text-blue-500" />
+                              <span className="text-sm">1 revision round</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="mt-auto space-y-2">
+                          <Button className="w-full">
+                            <Handshake className="w-4 h-4 mr-2" />
+                            Hire Expert
+                          </Button>
+                          <Button variant="outline" className="w-full">
+                            Contact Expert
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="relative overflow-hidden h-[500px] flex flex-col">
+                      <div className="absolute inset-x-0 top-0 h-2 bg-blue-100" />
+                      <CardContent className="p-6 flex flex-col h-full">
+                        <div className="space-y-4 flex-1">
+                          <div className="space-y-2">
+                            <h3 className="text-xl font-semibold">Professional Package</h3>
+                            <div className="flex items-center gap-1">
+                              <DollarSign className="w-5 h-5 text-muted-foreground" />
+                              <span className="text-2xl font-bold">$299</span>
+                            </div>
+                            <p className="text-muted-foreground">Comprehensive UX design solution for established businesses.</p>
+                          </div>
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2">
+                              <Check className="w-4 h-4 text-blue-500" />
+                              <span className="text-sm">3 consultation sessions</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Check className="w-4 h-4 text-blue-500" />
+                              <span className="text-sm">Detailed UX audit</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Check className="w-4 h-4 text-blue-500" />
+                              <span className="text-sm">Interactive prototypes</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Check className="w-4 h-4 text-blue-500" />
+                              <span className="text-sm">3 revision rounds</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Check className="w-4 h-4 text-blue-500" />
+                              <span className="text-sm">Priority support</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="mt-auto space-y-2">
+                          <Button className="w-full">
+                            <Handshake className="w-4 h-4 mr-2" />
+                            Hire Expert
+                          </Button>
+                          <Button variant="outline" className="w-full">
+                            Contact Expert
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="relative overflow-hidden h-[500px] flex flex-col">
+                      <div className="absolute inset-x-0 top-0 h-2 bg-blue-100" />
+                      <CardContent className="p-6 flex flex-col h-full">
+                        <div className="space-y-4 flex-1">
+                          <div className="space-y-2">
+                            <h3 className="text-xl font-semibold">Enterprise Solution</h3>
+                            <div className="flex items-center gap-1">
+                              <DollarSign className="w-5 h-5 text-muted-foreground" />
+                              <span className="text-2xl font-bold">$999</span>
+                            </div>
+                            <p className="text-muted-foreground">Full-service UX design and consultation for large organizations.</p>
+                          </div>
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2">
+                              <Check className="w-4 h-4 text-blue-500" />
+                              <span className="text-sm">Unlimited consultations</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Check className="w-4 h-4 text-blue-500" />
+                              <span className="text-sm">Complete UX overhaul</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Check className="w-4 h-4 text-blue-500" />
+                              <span className="text-sm">User research & testing</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Check className="w-4 h-4 text-blue-500" />
+                              <span className="text-sm">Custom design system</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Check className="w-4 h-4 text-blue-500" />
+                              <span className="text-sm">Dedicated support team</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Check className="w-4 h-4 text-blue-500" />
+                              <span className="text-sm">Monthly progress reports</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="mt-auto space-y-2">
+                          <Button className="w-full">
+                            <Handshake className="w-4 h-4 mr-2" />
+                            Hire Expert
+                          </Button>
+                          <Button variant="outline" className="w-full">
+                            Contact Expert
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-5 gap-6">
+            <div className="col-span-4 col-start-2">
+              <Card>
+                <CardContent className="p-6 space-y-6">
+                  <div className="flex items-center gap-2">
+                    <Users className="w-5 h-5" />
+                    <h2 className="text-lg font-semibold">UX Design Community</h2>
+                  </div>
+                  <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-3">
+                      <Globe className="w-5 h-5 text-muted-foreground" />
+                      <p className="text-base">Public Community</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Users className="w-5 h-5 text-muted-foreground" />
+                      <p className="text-base">1,234 members</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Badge variant="secondary" className="text-sm">Free Access</Badge>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <p className="text-sm text-muted-foreground">Active Members</p>
+                      <p className="text-2xl font-bold">1,234</p>
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-sm text-muted-foreground">Posts</p>
+                      <p className="text-2xl font-bold">456</p>
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-sm text-muted-foreground">Resources</p>
+                      <p className="text-2xl font-bold">89</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-5 gap-6">
+            <div className="col-span-4 col-start-2">
+              <MoreFromSeller products={moreProducts} />
+            </div>
+          </div>
+        </div>
+
         {/* Mobile Layout */}
         <div className="lg:hidden">
           <div className="mb-8">
