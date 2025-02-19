@@ -46,7 +46,7 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
         <div className="space-y-4">
           {reviews.map((review) => (
             <div key={review.id} className="border-b last:border-b-0 last:pb-0 pb-4">
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col">
                 {/* Desktop Layout */}
                 <div className="hidden md:flex justify-between">
                   <div className="space-y-1.5 max-w-[65%]">
@@ -63,7 +63,23 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
                       ))}
                     </div>
                     <h3 className="font-medium text-base">{review.content}</h3>
-                    <p className="text-sm text-muted-foreground">{review.description}</p>
+                    <p className="text-sm text-muted-foreground mb-3">{review.description}</p>
+                    
+                    {/* Desktop User Info - Moved up */}
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
+                        <img 
+                          src={review.avatar} 
+                          alt={review.author}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm">{review.author}</span>
+                        <span className="text-xs text-muted-foreground">•</span>
+                        <div className="text-xs text-muted-foreground">{review.date}</div>
+                      </div>
+                    </div>
                   </div>
                   <div className="min-w-[180px] flex flex-col">
                     <div className="flex items-center text-xs text-green-600 whitespace-nowrap justify-end">
@@ -103,45 +119,29 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
                     <h3 className="font-medium text-base">{review.content}</h3>
                     <p className="text-sm text-muted-foreground">{review.description}</p>
                   </div>
-                </div>
 
-                {/* Desktop User Info */}
-                <div className="hidden md:flex items-center gap-2 mt-2">
-                  <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
-                    <img 
-                      src={review.avatar} 
-                      alt={review.author}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium text-sm">{review.author}</span>
-                    <span className="text-xs text-muted-foreground">•</span>
-                    <div className="text-xs text-muted-foreground">{review.date}</div>
-                  </div>
-                </div>
-
-                {/* Mobile User Info and Ratings */}
-                <div className="md:hidden space-y-3 mt-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
-                      <img 
-                        src={review.avatar} 
-                        alt={review.author}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
+                  {/* Mobile User Info and Ratings */}
+                  <div className="space-y-3 mt-3">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-sm">{review.author}</span>
-                      <span className="text-xs text-muted-foreground">•</span>
-                      <div className="text-xs text-muted-foreground">{review.date}</div>
+                      <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
+                        <img 
+                          src={review.avatar} 
+                          alt={review.author}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm">{review.author}</span>
+                        <span className="text-xs text-muted-foreground">•</span>
+                        <div className="text-xs text-muted-foreground">{review.date}</div>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="space-y-0.5">
-                    <RatingCategory label="Item quality" rating={review.itemQuality} />
-                    <RatingCategory label="Shipping" rating={review.shipping} />
-                    <RatingCategory label="Customer service" rating={review.customerService} />
+                    <div className="space-y-0.5">
+                      <RatingCategory label="Item quality" rating={review.itemQuality} />
+                      <RatingCategory label="Shipping" rating={review.shipping} />
+                      <RatingCategory label="Customer service" rating={review.customerService} />
+                    </div>
                   </div>
                 </div>
               </div>
