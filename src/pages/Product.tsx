@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 
 export default function Product() {
-  const [selectedVariant, setSelectedVariant] = useState("basic");
+  const [selectedVariant, setSelectedVariant] = useState("premium");
 
   const product = {
     title: "Professional UI/UX Design Course",
@@ -21,6 +21,34 @@ export default function Product() {
     tags: ["design", "ui", "ux"],
     category: "design"
   };
+
+  const variants = [
+    { 
+      id: "basic",
+      name: "Basic Package",
+      price: 99.99,
+      comparePrice: 149.99,
+      label: "Most Popular",
+      features: ["Core Course", "Basic Resources"]
+    },
+    {
+      id: "premium",
+      name: "Premium Package",
+      price: 149.99,
+      comparePrice: 199.99,
+      label: "Best Value",
+      highlight: true,
+      features: ["Core Course", "Premium Resources", "1-1 Mentoring"]
+    },
+    {
+      id: "pro",
+      name: "Professional Package",
+      price: 199.99,
+      comparePrice: 299.99,
+      label: "Most Complete",
+      features: ["Core Course", "Premium Resources", "1-1 Mentoring", "Career Support"]
+    }
+  ];
 
   const reviews = [
     { id: 1, author: "John Doe", rating: 5, content: "Excellent course, very detailed and practical." },
@@ -38,21 +66,6 @@ export default function Product() {
     tags: ["design", "learning"],
     category: "education"
   });
-
-  const variants = [
-    { 
-      id: "basic",
-      name: "Basic Package",
-      price: 99.99,
-      comparePrice: 149.99
-    },
-    {
-      id: "premium",
-      name: "Premium Package",
-      price: 149.99,
-      comparePrice: 199.99
-    }
-  ];
 
   const currentVariant = variants.find(v => v.id === selectedVariant) || variants[0];
 
@@ -80,18 +93,9 @@ export default function Product() {
         </div>
       </div>
 
-      {/* Mobile Price, Title, and Actions Section */}
-      <Card className="p-6 mb-6 lg:hidden">
-        <div className="flex items-baseline gap-2 mb-4">
-          <span className="text-2xl font-bold">${currentVariant.price}</span>
-          {currentVariant.comparePrice && (
-            <span className="text-sm text-muted-foreground line-through">
-              ${currentVariant.comparePrice}
-            </span>
-          )}
-        </div>
-
-        <h1 className="text-xl font-semibold mb-4">{product.title}</h1>
+      {/* Mobile Product Info */}
+      <div className="lg:hidden mb-8">
+        <h1 className="text-2xl font-semibold mb-4">{product.title}</h1>
         
         <div className="flex items-center gap-2 mb-6">
           <div className="w-8 h-8 rounded-full bg-accent" />
@@ -103,26 +107,55 @@ export default function Product() {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Variants Selection */}
-        <div className="mb-6">
-          <h3 className="font-medium mb-3">Select Package</h3>
-          <RadioGroup 
-            value={selectedVariant} 
-            onValueChange={setSelectedVariant}
-            className="space-y-3"
-          >
-            {variants.map((variant) => (
-              <div key={variant.id} className="flex items-center space-x-2">
-                <RadioGroupItem value={variant.id} id={variant.id} />
-                <Label htmlFor={variant.id}>{variant.name}</Label>
+      {/* Variants Selection - Mobile & Desktop */}
+      <div className="mb-8">
+        <RadioGroup 
+          value={selectedVariant} 
+          onValueChange={setSelectedVariant}
+          className="grid grid-cols-1 md:grid-cols-3 gap-4"
+        >
+          {variants.map((variant) => (
+            <div 
+              key={variant.id} 
+              className={`relative rounded-lg p-6 transition-all ${
+                variant.highlight 
+                  ? 'border-2 border-primary shadow-lg' 
+                  : 'border border-border'
+              }`}
+            >
+              <RadioGroupItem 
+                value={variant.id} 
+                id={variant.id} 
+                className="absolute right-4 top-4"
+              />
+              <div className="mb-2">
+                <Badge variant={variant.highlight ? "default" : "secondary"}>
+                  {variant.label}
+                </Badge>
               </div>
-            ))}
-          </RadioGroup>
-        </div>
+              <h3 className="text-lg font-semibold mb-2">{variant.name}</h3>
+              <div className="flex items-baseline gap-2 mb-4">
+                <span className="text-2xl font-bold">${variant.price}</span>
+                <span className="text-sm text-muted-foreground line-through">
+                  ${variant.comparePrice}
+                </span>
+              </div>
+              <ul className="space-y-2 mb-6">
+                {variant.features.map((feature, index) => (
+                  <li key={index} className="flex items-center gap-2 text-sm">
+                    <Star className="w-4 h-4 text-primary" />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </RadioGroup>
 
         {/* Action Buttons */}
-        <div className="space-y-4">
+        <div className="mt-6 space-y-4">
           <Button className="w-full">
             <ShoppingCart className="w-4 h-4 mr-2" />
             Add to Cart
@@ -132,7 +165,7 @@ export default function Product() {
             Contact Seller
           </Button>
         </div>
-      </Card>
+      </div>
 
       {/* Main Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
@@ -180,19 +213,9 @@ export default function Product() {
         </div>
 
         {/* Sidebar - Hidden on Mobile */}
-        <div className="space-y-6">
-          <Card className="hidden lg:block p-6">
-            <div className="flex items-baseline gap-2 mb-4">
-              <span className="text-2xl font-bold">${currentVariant.price}</span>
-              {currentVariant.comparePrice && (
-                <span className="text-sm text-muted-foreground line-through">
-                  ${currentVariant.comparePrice}
-                </span>
-              )}
-            </div>
-
-            <h1 className="text-xl font-semibold mb-4">{product.title}</h1>
-            
+        <div className="hidden lg:block space-y-6">
+          <div className="p-6">
+            <h1 className="text-2xl font-semibold mb-4">{product.title}</h1>
             <div className="flex items-center gap-2 mb-6">
               <div className="w-8 h-8 rounded-full bg-accent" />
               <div>
@@ -203,34 +226,7 @@ export default function Product() {
                 </div>
               </div>
             </div>
-
-            <div className="mb-6">
-              <h3 className="font-medium mb-3">Select Package</h3>
-              <RadioGroup 
-                value={selectedVariant} 
-                onValueChange={setSelectedVariant}
-                className="space-y-3"
-              >
-                {variants.map((variant) => (
-                  <div key={variant.id} className="flex items-center space-x-2">
-                    <RadioGroupItem value={variant.id} id={variant.id} />
-                    <Label htmlFor={variant.id}>{variant.name}</Label>
-                  </div>
-                ))}
-              </RadioGroup>
-            </div>
-
-            <div className="space-y-4">
-              <Button className="w-full">
-                <ShoppingCart className="w-4 h-4 mr-2" />
-                Add to Cart
-              </Button>
-              <Button variant="outline" className="w-full">
-                <MessageSquare className="w-4 h-4 mr-2" />
-                Contact Seller
-              </Button>
-            </div>
-          </Card>
+          </div>
 
           <Card className="p-6">
             <h3 className="font-semibold mb-4">Additional Information</h3>
