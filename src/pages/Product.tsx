@@ -41,11 +41,11 @@ export default function Product() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content */}
         <div className="lg:col-span-2">
-          <div className="bg-card rounded-lg overflow-hidden mb-8">
+          <div className="bg-card rounded-lg overflow-hidden mb-8 aspect-square">
             <img 
               src={product.image} 
               alt={product.title}
-              className="w-full aspect-video object-cover"
+              className="w-full h-full object-cover"
             />
           </div>
           
