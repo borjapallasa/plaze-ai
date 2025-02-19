@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -58,36 +57,33 @@ export default function Expert() {
 
           {/* Description Section */}
           <Card className="col-span-4">
-            <CardContent className="p-6 space-y-4">
-              <h2 className="text-lg font-semibold">Areas of Expertise</h2>
-              <div className="space-y-6">
-                <p className="text-muted-foreground">
-                  Senior UX Designer with a passion for creating intuitive and engaging digital experiences. 
-                  Combining analytical thinking with creative design to solve complex user problems.
-                </p>
-                <ul className="space-y-2 text-muted-foreground">
-                  <li className="flex items-center gap-2 leading-normal">
-                    <span className="flex-shrink-0">🎨</span>
-                    <span>User Interface Design - Creating beautiful and functional interfaces that delight users</span>
-                  </li>
-                  <li className="flex items-center gap-2 leading-normal">
-                    <span className="flex-shrink-0">🔍</span>
-                    <span>User Research - Conducting in-depth research to understand user needs and behaviors</span>
-                  </li>
-                  <li className="flex items-center gap-2 leading-normal">
-                    <span className="flex-shrink-0">📊</span>
-                    <span>Information Architecture - Organizing content in a clear and logical manner</span>
-                  </li>
-                  <li className="flex items-center gap-2 leading-normal">
-                    <span className="flex-shrink-0">🤝</span>
-                    <span>Stakeholder Management - Collaborating effectively with cross-functional teams</span>
-                  </li>
-                  <li className="flex items-center gap-2 leading-normal">
-                    <span className="flex-shrink-0">📱</span>
-                    <span>Responsive Design - Creating seamless experiences across all devices</span>
-                  </li>
-                </ul>
-              </div>
+            <CardContent className="p-6 space-y-6">
+              <p className="text-muted-foreground">
+                Senior UX Designer with a passion for creating intuitive and engaging digital experiences. 
+                Combining analytical thinking with creative design to solve complex user problems.
+              </p>
+              <ul className="space-y-2 text-muted-foreground">
+                <li className="flex items-center gap-2 leading-normal">
+                  <span className="flex-shrink-0">🎨</span>
+                  <span>User Interface Design - Creating beautiful and functional interfaces that delight users</span>
+                </li>
+                <li className="flex items-center gap-2 leading-normal">
+                  <span className="flex-shrink-0">🔍</span>
+                  <span>User Research - Conducting in-depth research to understand user needs and behaviors</span>
+                </li>
+                <li className="flex items-center gap-2 leading-normal">
+                  <span className="flex-shrink-0">📊</span>
+                  <span>Information Architecture - Organizing content in a clear and logical manner</span>
+                </li>
+                <li className="flex items-center gap-2 leading-normal">
+                  <span className="flex-shrink-0">🤝</span>
+                  <span>Stakeholder Management - Collaborating effectively with cross-functional teams</span>
+                </li>
+                <li className="flex items-center gap-2 leading-normal">
+                  <span className="flex-shrink-0">📱</span>
+                  <span>Responsive Design - Creating seamless experiences across all devices</span>
+                </li>
+              </ul>
             </CardContent>
           </Card>
         </div>
