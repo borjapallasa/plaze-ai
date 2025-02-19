@@ -75,14 +75,7 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
 
                 {/* Mobile Layout */}
                 <div className="md:hidden">
-                  <div className="flex justify-end mb-2">
-                    <div className="flex items-center text-xs text-green-600">
-                      <Check className="w-3 h-3 mr-0.5" />
-                      <span>Recommends this item</span>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-3">
+                  <div className="flex justify-between items-start">
                     <div className="flex gap-1">
                       {Array(5).fill(0).map((_, i) => (
                         <Star 
@@ -95,11 +88,15 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
                         />
                       ))}
                     </div>
-
-                    <div className="space-y-1.5">
-                      <h3 className="font-medium text-base">{review.content}</h3>
-                      <p className="text-sm text-muted-foreground">{review.description}</p>
+                    <div className="flex items-center text-xs text-green-600">
+                      <Check className="w-3 h-3 mr-0.5" />
+                      <span>Recommends this item</span>
                     </div>
+                  </div>
+                  
+                  <div className="space-y-1.5 mt-2">
+                    <h3 className="font-medium text-base">{review.content}</h3>
+                    <p className="text-sm text-muted-foreground">{review.description}</p>
                   </div>
                 </div>
 
