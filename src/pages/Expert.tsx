@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -142,7 +141,31 @@ export default function Expert() {
 
         {/* Services and Stats Grid */}
         <div className="grid grid-cols-5 gap-6 mb-8">
-          {/* Services Section */}
+          {/* Stats Section - Now on the left */}
+          <Card className="col-span-1">
+            <CardContent className="p-6 space-y-4">
+              <div className="flex items-center gap-2">
+                <Star className="w-5 h-5" />
+                <h2 className="text-lg font-semibold">Stats</h2>
+              </div>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">Projects Completed</p>
+                  <p className="text-2xl font-bold">150+</p>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">Client Satisfaction</p>
+                  <p className="text-2xl font-bold">98%</p>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">Response Rate</p>
+                  <p className="text-2xl font-bold">100%</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Services Section - Now on the right */}
           <Card className="col-span-4">
             <CardContent className="p-6 space-y-6">
               <div className="flex items-center gap-2">
@@ -246,30 +269,6 @@ export default function Expert() {
                     </Button>
                   </CardContent>
                 </Card>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Stats Section */}
-          <Card className="col-span-1">
-            <CardContent className="p-6 space-y-4">
-              <div className="flex items-center gap-2">
-                <Star className="w-5 h-5" />
-                <h2 className="text-lg font-semibold">Stats</h2>
-              </div>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <p className="text-sm text-muted-foreground">Projects Completed</p>
-                  <p className="text-2xl font-bold">150+</p>
-                </div>
-                <div className="space-y-2">
-                  <p className="text-sm text-muted-foreground">Client Satisfaction</p>
-                  <p className="text-2xl font-bold">98%</p>
-                </div>
-                <div className="space-y-2">
-                  <p className="text-sm text-muted-foreground">Response Rate</p>
-                  <p className="text-2xl font-bold">100%</p>
-                </div>
               </div>
             </CardContent>
           </Card>
