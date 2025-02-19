@@ -1,12 +1,15 @@
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Eye, MessageSquare, Star } from "lucide-react";
+import { Eye, MessageSquare, Star, ShoppingCart } from "lucide-react";
 import { ProductCard } from "@/components/ProductCard";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
 
 export default function Product() {
-  // Placeholder data
+  const [selectedVariant, setSelectedVariant] = useState("basic");
+
   const product = {
     title: "Professional UI/UX Design Course",
     views: "9,995",
@@ -36,10 +39,26 @@ export default function Product() {
     category: "education"
   });
 
+  const variants = [
+    { 
+      id: "basic",
+      name: "Basic Package",
+      price: 99.99,
+      comparePrice: 149.99
+    },
+    {
+      id: "premium",
+      name: "Premium Package",
+      price: 149.99,
+      comparePrice: 199.99
+    }
+  ];
+
+  const currentVariant = variants.find(v => v.id === selectedVariant) || variants[0];
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-        {/* Main Content */}
         <div className="lg:col-span-2">
           <div className="bg-card rounded-lg overflow-hidden mb-8 aspect-square">
             <img 
@@ -79,18 +98,20 @@ export default function Product() {
           </Card>
         </div>
 
-        {/* Sidebar */}
         <div className="space-y-6">
           <Card className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h1 className="text-xl font-semibold">{product.title}</h1>
-              <Badge variant="secondary" className="text-xs">
-                <Eye className="w-3 h-3 mr-1" />
-                {product.views}
-              </Badge>
+            <div className="flex items-baseline gap-2 mb-4">
+              <span className="text-2xl font-bold">${currentVariant.price}</span>
+              {currentVariant.comparePrice && (
+                <span className="text-sm text-muted-foreground line-through">
+                  ${currentVariant.comparePrice}
+                </span>
+              )}
             </div>
+
+            <h1 className="text-xl font-semibold mb-4">{product.title}</h1>
             
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2 mb-6">
               <div className="w-8 h-8 rounded-full bg-accent" />
               <div>
                 <h3 className="font-medium">{product.seller}</h3>
@@ -101,9 +122,26 @@ export default function Product() {
               </div>
             </div>
 
+            <div className="mb-6">
+              <h3 className="font-medium mb-3">Select Package</h3>
+              <RadioGroup 
+                value={selectedVariant} 
+                onValueChange={setSelectedVariant}
+                className="space-y-3"
+              >
+                {variants.map((variant) => (
+                  <div key={variant.id} className="flex items-center space-x-2">
+                    <RadioGroupItem value={variant.id} id={variant.id} />
+                    <Label htmlFor={variant.id}>{variant.name}</Label>
+                  </div>
+                ))}
+              </RadioGroup>
+            </div>
+
             <div className="space-y-4">
               <Button className="w-full">
-                Watch
+                <ShoppingCart className="w-4 h-4 mr-2" />
+                Add to Cart
               </Button>
               <Button variant="outline" className="w-full">
                 <MessageSquare className="w-4 h-4 mr-2" />
@@ -113,28 +151,52 @@ export default function Product() {
           </Card>
 
           <Card className="p-6">
-            <h3 className="font-semibold mb-4">Apps & Pricing</h3>
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <span>Basic License</span>
-                <span className="font-medium">{product.price}</span>
+            <h3 className="font-semibold mb-4">Additional Information</h3>
+            
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-medium mb-2">Apps Involved</h4>
+                <ul className="list-disc list-inside text-sm text-muted-foreground">
+                  <li>Make</li>
+                  <li>Google Sheets</li>
+                  <li>Gmail</li>
+                </ul>
               </div>
-              <div className="flex justify-between items-center">
-                <span>Extended License</span>
-                <span className="font-medium">${parseFloat(product.price.replace('$', '')) * 2}</span>
+
+              <div>
+                <h4 className="font-medium mb-2">Apps Pricing</h4>
+                <ul className="list-disc list-inside text-sm text-muted-foreground">
+                  <li>Make: Free tier available</li>
+                  <li>Google Workspace: From $6/month</li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 className="font-medium mb-2">What's Included</h4>
+                <ul className="list-disc list-inside text-sm text-muted-foreground">
+                  <li>3x Make Templates</li>
+                  <li>1x Google Sheet Template</li>
+                  <li>Setup Documentation</li>
+                  <li>Email Support</li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 className="font-medium mb-2">Difficulty Level</h4>
+                <span className="text-sm text-muted-foreground">
+                  Intermediate - Basic knowledge of Make and Google Sheets required
+                </span>
               </div>
             </div>
           </Card>
         </div>
       </div>
 
-      {/* Full-width Demo Section */}
       <Card className="p-6 mb-8">
         <h2 className="text-xl font-semibold mb-4">Demo</h2>
         <div className="aspect-video bg-accent rounded-lg"></div>
       </Card>
 
-      {/* Full-width Reviews Section */}
       <Card className="p-6 mb-16">
         <h2 className="text-xl font-semibold mb-4">Reviews</h2>
         <div className="space-y-4">
@@ -154,7 +216,6 @@ export default function Product() {
         </div>
       </Card>
 
-      {/* More from seller */}
       <div className="mt-16">
         <h2 className="text-xl font-semibold mb-8">More from seller</h2>
         <div className="product-grid">
