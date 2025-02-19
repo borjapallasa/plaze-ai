@@ -7,11 +7,11 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
+  type CarouselApi
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { type CarouselApi } from "@/components/ui/carousel";
 
 interface Product {
   title: string;
@@ -46,29 +46,26 @@ export function MoreFromSeller({ products, className }: MoreFromSellerProps) {
     <div>
       <h2 className="text-xl font-semibold mb-8">More from seller</h2>
       
-      {/* Mobile Layout (1 visible) */}
-      <div className="lg:hidden">
-        <Carousel setApi={setApi} className="w-full">
-          <CarouselContent className="-ml-4">
-            {products.map((product, index) => (
-              <CarouselItem key={index} className="pl-4 basis-full">
-                <ProductCard product={product} />
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          {current > 0 && <CarouselPrevious />}
-          {current < products.length - 1 && <CarouselNext />}
-        </Carousel>
-      </div>
-
-      {/* Desktop Layout (3 visible) */}
-      <div className="hidden lg:block">
-        <div className="grid grid-cols-3 gap-6">
+      <Carousel 
+        setApi={setApi} 
+        className="w-full"
+        opts={{
+          align: "start",
+          dragFree: true,
+        }}
+      >
+        <CarouselContent className="-ml-4">
           {products.map((product, index) => (
-            <ProductCard key={index} product={product} />
+            <CarouselItem key={index} className="pl-4 basis-full lg:basis-1/3">
+              <ProductCard product={product} />
+            </CarouselItem>
           ))}
+        </CarouselContent>
+        <div className="flex items-center justify-end gap-2 mt-4">
+          <CarouselPrevious className="static translate-y-0" />
+          <CarouselNext className="static translate-y-0" />
         </div>
-      </div>
+      </Carousel>
     </div>
   );
 }
@@ -90,7 +87,7 @@ function ProductCard({ product }: { product: Product }) {
           </h3>
           <Badge 
             variant="secondary" 
-            className="font-medium capitalize bg-blue-50 text-blue-600 hover:bg-blue-50 text-xs"
+            className="font-medium capitalize bg-blue-50 text-blue-600 hover:bg-blue-50 text-xs mt-1.5"
           >
             {product.category}
           </Badge>
