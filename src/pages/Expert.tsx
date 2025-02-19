@@ -1,7 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, Users, Info, Calendar, MapPin, Share2, Save, Check, Handshake, DollarSign, Globe, Badge } from "lucide-react";
+import { Star, Users, Info, Calendar, MapPin, Share2, Save, Check, Handshake, DollarSign, Globe } from "lucide-react";
 import { MoreFromSeller } from "@/components/product/MoreFromSeller";
 import { 
   Carousel, 
