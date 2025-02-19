@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import { useState, useEffect, useRef } from "react";
 import { ProductGallery } from "@/components/product/ProductGallery";
@@ -19,16 +18,11 @@ export default function Product() {
     const handleScroll = () => {
       if (variantsRef.current) {
         const variantsRect = variantsRef.current.getBoundingClientRect();
-        const variantsBottom = variantsRect.bottom;
-        const windowHeight = window.innerHeight;
-        
-        // Show sticky ATC when variants section is not fully visible in viewport
-        setShowStickyATC(variantsBottom < windowHeight - 100);
+        setShowStickyATC(variantsRect.bottom < 0);
       }
     };
 
     window.addEventListener('scroll', handleScroll);
-    // Initial check
     handleScroll();
     
     return () => window.removeEventListener('scroll', handleScroll);
