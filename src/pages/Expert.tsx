@@ -260,10 +260,10 @@ export default function Expert() {
                 }
               ].map((service, index) => (
                 <CarouselItem key={index}>
-                  <Card className="relative overflow-hidden">
+                  <Card className="relative overflow-hidden h-[500px] flex flex-col">
                     <div className="absolute inset-x-0 top-0 h-2 bg-blue-100" />
-                    <CardContent className="p-6">
-                      <div className="space-y-4">
+                    <CardContent className="p-6 flex flex-col h-full">
+                      <div className="space-y-4 flex-1">
                         <div className="space-y-2">
                           <h3 className="text-xl font-semibold">{service.title}</h3>
                           <div className="flex items-center gap-1">
@@ -280,12 +280,12 @@ export default function Expert() {
                             </div>
                           ))}
                         </div>
-                        <div className="pt-4">
-                          <Button className="w-full">
-                            <Handshake className="w-4 h-4 mr-2" />
-                            Hire Expert
-                          </Button>
-                        </div>
+                      </div>
+                      <div className="mt-auto pt-4">
+                        <Button className="w-full">
+                          <Handshake className="w-4 h-4 mr-2" />
+                          Hire Expert
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>
@@ -294,7 +294,7 @@ export default function Expert() {
             </CarouselContent>
             <CarouselPrevious />
             <CarouselNext />
-            <div className="mt-[10px] text-center flex justify-center gap-1">
+            <div className="mt-0 text-center flex justify-center gap-1">
               {Array.from({ length: count }).map((_, index) => (
                 <span
                   key={index}
