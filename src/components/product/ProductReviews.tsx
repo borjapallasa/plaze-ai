@@ -63,7 +63,7 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
                       ))}
                     </div>
                     <h3 className="font-medium text-base">{review.content}</h3>
-                    <p className="text-sm text-muted-foreground mb-3">{review.description}</p>
+                    <p className="text-sm text-muted-foreground mb-7">{review.description}</p>
                     
                     {/* Desktop User Info - Moved up */}
                     <div className="flex items-center gap-2">
