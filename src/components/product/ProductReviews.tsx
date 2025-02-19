@@ -65,9 +65,9 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
                     <h3 className="font-medium text-base">{review.content}</h3>
                     <p className="text-sm text-muted-foreground">{review.description}</p>
                   </div>
-                  <div className="min-w-[180px] flex flex-col justify-between">
-                    <div className="space-y-4">
-                      <div className="flex items-center text-xs text-green-600 whitespace-nowrap justify-end">
+                  <div className="min-w-[180px] flex flex-col">
+                    <div>
+                      <div className="flex items-center text-xs text-green-600 whitespace-nowrap justify-end mb-6">
                         <Check className="w-3 h-3 mr-0.5" />
                         <span>Recommends this item</span>
                       </div>
