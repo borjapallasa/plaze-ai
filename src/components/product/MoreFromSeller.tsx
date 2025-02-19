@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface Product {
   title: string;
@@ -79,7 +80,13 @@ function ProductCard({ product }: { product: Product }) {
           <h3 className="font-semibold text-sm leading-tight truncate">
             {product.title}
           </h3>
-          <p className="text-sm text-muted-foreground">{product.seller}</p>
+          <Badge 
+            variant="secondary" 
+            className="mt-1 font-medium capitalize bg-blue-50 text-blue-600 hover:bg-blue-50 text-xs"
+          >
+            {product.category}
+          </Badge>
+          <p className="text-sm text-muted-foreground mt-1">{product.seller}</p>
         </div>
       </div>
 
@@ -88,10 +95,10 @@ function ProductCard({ product }: { product: Product }) {
       </p>
 
       <div className="flex items-center gap-2">
-        <span className="text-sm font-medium">from {product.price}</span>
+        <span className="text-sm font-medium">From {product.price}</span>
       </div>
 
-      <div className="flex items-center justify-between -mt-2">
+      <div className="flex items-center justify-between -mt-3">
         <div className="flex gap-2 flex-wrap">
           {product.tags.slice(0, 2).map((tag, index) => (
             <span
