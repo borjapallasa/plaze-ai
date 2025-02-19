@@ -291,29 +291,6 @@ export default function Expert() {
           </Card>
         </div>
 
-        <div className="lg:hidden mb-8">
-          <Card>
-            <CardContent className="p-6 space-y-4">
-              <div className="flex items-center gap-2">
-                <Users className="w-5 h-5" />
-                <h2 className="text-lg font-semibold">Community</h2>
-              </div>
-              <div className="space-y-4">
-                {[
-                  { title: "Active Members", count: "1,234" },
-                  { title: "Posts", count: "456" },
-                  { title: "Resources", count: "89" },
-                ].map((stat) => (
-                  <div key={stat.title} className="space-y-2">
-                    <p className="text-sm text-muted-foreground">{stat.title}</p>
-                    <p className="text-2xl font-bold">{stat.count}</p>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
         <div className="lg:hidden block">
           <MoreFromSeller products={moreProducts} />
         </div>
@@ -365,7 +342,7 @@ export default function Expert() {
             </Card>
           </div>
 
-          <div className="grid grid-cols-5 gap-6 mb-8">
+          <div className="grid grid-cols-5 gap-6">
             <Card className="col-span-1">
               <CardContent className="p-6 space-y-4">
                 <div className="flex items-center gap-2">
@@ -510,84 +487,33 @@ export default function Expert() {
             </div>
           </div>
 
-          <div className="grid grid-cols-5 gap-6 mb-8">
-            <Card className="col-span-1">
-              <CardContent className="p-6 space-y-4">
-                <div className="flex items-center gap-2">
-                  <Users className="w-5 h-5" />
-                  <h2 className="text-lg font-semibold">Community</h2>
-                </div>
-                <p className="text-muted-foreground">
-                  Join our vibrant UX design community to learn, share, and grow together with fellow designers.
-                </p>
-              </CardContent>
-            </Card>
-
-            <div className="col-span-4">
-              <Card>
-                <CardContent className="p-6 space-y-6">
-                  <div className="flex items-center gap-2">
-                    <Users className="w-5 h-5" />
-                    <h2 className="text-lg font-semibold">UX Design Community</h2>
-                  </div>
-                  <div className="flex items-center gap-6">
-                    <div className="flex items-center gap-3">
-                      <Globe className="w-5 h-5 text-muted-foreground" />
-                      <p className="text-base">Public Community</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Users className="w-5 h-5 text-muted-foreground" />
-                      <p className="text-base">1,234 members</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Badge variant="secondary" className="text-sm">Free Access</Badge>
-                    </div>
-                  </div>
-                  <div className="space-y-4">
-                    <p className="text-lg">Want to improve your UX design skills and connect with experts?</p>
-                    <p className="text-base text-muted-foreground">Get Free Access To:</p>
-                    <ul className="space-y-3">
-                      {[
-                        "Weekly UX Design Workshops",
-                        "Expert Design Reviews & Feedback",
-                        "UX Research Templates & Resources",
-                        "Live Q&A Sessions with Industry Leaders"
-                      ].map((item) => (
-                        <li key={item} className="flex items-center gap-2">
-                          <Check className="w-5 h-5 text-green-500" />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <Button className="w-full sm:w-auto mt-4">
-                      Join Community
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-5 gap-6">
-            <Card className="col-span-1">
-              <CardContent className="p-6 space-y-4">
-                <div className="flex items-center gap-2">
-                  <Info className="w-5 h-5" />
-                  <h2 className="text-lg font-semibold">More Courses</h2>
-                </div>
-                <p className="text-muted-foreground">
-                  Explore more UX design courses and resources from this expert.
-                </p>
-              </CardContent>
-            </Card>
-
-            <div className="col-span-4">
-              <MoreFromSeller products={moreProducts} />
-            </div>
-          </div>
+          <MoreFromSeller products={moreProducts} />
         </div>
 
+        {/* Mobile Layout */}
         <div className="lg:hidden">
+          <Card>
+            <CardContent className="p-6 space-y-4">
+              <div className="flex items-center gap-2">
+                <Star className="w-5 h-5" />
+                <h2 className="text-lg font-semibold">Stats</h2>
+              </div>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">Projects Completed</p>
+                  <p className="text-2xl font-bold">150+</p>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">Client Satisfaction</p>
+                  <p className="text-2xl font-bold">98%</p>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">Response Rate</p>
+                  <p className="text-2xl font-bold">100%</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
           <MoreFromSeller products={moreProducts} />
         </div>
       </div>
