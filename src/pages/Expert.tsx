@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,7 +12,7 @@ export default function Expert() {
       <div className="container mx-auto px-4">
         <Card className="mt-8">
           <CardContent className="p-6">
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3">
               <div className="flex gap-4 items-start">
                 <Avatar className="h-16 w-16 md:h-20 md:w-20">
                   <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" />
@@ -22,7 +23,7 @@ export default function Expert() {
                 </div>
               </div>
               
-              <div className="flex flex-wrap items-center gap-x-2.5 gap-y-2">
+              <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
                 <p className="text-lg md:text-xl text-muted-foreground">John Doe</p>
                 <div className="text-muted-foreground">•</div>
                 <div className="flex items-center gap-2">
@@ -34,12 +35,12 @@ export default function Expert() {
                   <Calendar className="w-4 h-4 text-muted-foreground" />
                   <span className="text-muted-foreground">Expert since 2020</span>
                 </div>
-                <div className="flex gap-2 ml-auto">
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <Share2 className="h-4 w-4" />
+                <div className="flex gap-1.5 ml-auto">
+                  <Button variant="ghost" size="icon" className="h-6 w-6">
+                    <Share2 className="h-3.5 w-3.5" />
                   </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <Save className="h-4 w-4" />
+                  <Button variant="ghost" size="icon" className="h-6 w-6">
+                    <Save className="h-3.5 w-3.5" />
                   </Button>
                 </div>
               </div>
