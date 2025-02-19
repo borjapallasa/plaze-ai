@@ -45,8 +45,8 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
         {reviews.map((review) => (
           <div key={review.id} className="border-b pb-8 last:border-b-0">
             <div className="flex flex-col gap-3">
-              <div className="flex items-start justify-between">
-                <div className="space-y-1">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
                   <div className="flex gap-1">
                     {Array(5).fill(0).map((_, i) => (
                       <Star 
@@ -60,14 +60,15 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
                     ))}
                   </div>
                   <h3 className="font-medium text-base">{review.content}</h3>
+                  <p className="text-sm text-muted-foreground">{review.description}</p>
                 </div>
-                <div className="flex items-center text-sm text-green-600">
-                  <Check className="w-3.5 h-3.5 mr-1" />
-                  <span>Recommends this item</span>
+                <div className="flex justify-end">
+                  <div className="flex items-center text-sm text-green-600">
+                    <Check className="w-3.5 h-3.5 mr-1" />
+                    <span>Recommends this item</span>
+                  </div>
                 </div>
               </div>
-
-              <p className="text-sm text-muted-foreground">{review.description}</p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center gap-2">
