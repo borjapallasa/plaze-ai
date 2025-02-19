@@ -24,8 +24,8 @@ interface ProductReviewsProps {
 
 const RatingCategory = ({ label, rating }: { label: string; rating: number }) => (
   <div className="flex items-center justify-between py-0.5">
-    <span className="text-sm text-muted-foreground">{label}</span>
-    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+    <span className="text-xs text-muted-foreground">{label}</span>
+    <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
   </div>
 );
 
@@ -74,28 +74,32 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
                 </div>
 
                 {/* Mobile Layout */}
-                <div className="md:hidden space-y-3">
-                  <div className="flex items-start text-xs text-green-600">
-                    <Check className="w-3 h-3 mr-0.5" />
-                    <span>Recommends this item</span>
+                <div className="md:hidden">
+                  <div className="flex justify-end mb-2">
+                    <div className="flex items-center text-xs text-green-600">
+                      <Check className="w-3 h-3 mr-0.5" />
+                      <span>Recommends this item</span>
+                    </div>
                   </div>
                   
-                  <div className="flex gap-1">
-                    {Array(5).fill(0).map((_, i) => (
-                      <Star 
-                        key={i} 
-                        className={`w-3.5 h-3.5 ${
-                          i < review.rating 
-                            ? 'fill-yellow-400 text-yellow-400' 
-                            : 'fill-gray-200 text-gray-200'
-                        }`}
-                      />
-                    ))}
-                  </div>
+                  <div className="space-y-3">
+                    <div className="flex gap-1">
+                      {Array(5).fill(0).map((_, i) => (
+                        <Star 
+                          key={i} 
+                          className={`w-3.5 h-3.5 ${
+                            i < review.rating 
+                              ? 'fill-yellow-400 text-yellow-400' 
+                              : 'fill-gray-200 text-gray-200'
+                          }`}
+                        />
+                      ))}
+                    </div>
 
-                  <div className="space-y-1.5">
-                    <h3 className="font-medium text-base">{review.content}</h3>
-                    <p className="text-sm text-muted-foreground">{review.description}</p>
+                    <div className="space-y-1.5">
+                      <h3 className="font-medium text-base">{review.content}</h3>
+                      <p className="text-sm text-muted-foreground">{review.description}</p>
+                    </div>
                   </div>
                 </div>
 
