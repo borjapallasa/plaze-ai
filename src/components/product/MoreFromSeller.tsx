@@ -36,9 +36,9 @@ export function MoreFromSeller({ products, className }: MoreFromSellerProps) {
         {/* Mobile Layout (1 visible) */}
         <div className="lg:hidden">
           <Carousel className="w-full">
-            <CarouselContent>
+            <CarouselContent className="-ml-4">
               {products.map((product, index) => (
-                <CarouselItem key={index} className="pl-0 basis-full">
+                <CarouselItem key={index} className="pl-4 basis-full">
                   <ProductCard product={product} />
                 </CarouselItem>
               ))}
@@ -71,9 +71,9 @@ export function MoreFromSeller({ products, className }: MoreFromSellerProps) {
         {/* Mobile Layout (Carousel) */}
         <div className="lg:hidden">
           <Carousel className="w-full">
-            <CarouselContent>
+            <CarouselContent className="-ml-4">
               {products.map((product, index) => (
-                <CarouselItem key={index} className="pl-0 basis-full">
+                <CarouselItem key={index} className="pl-4 basis-full">
                   <ProductCard product={product} />
                 </CarouselItem>
               ))}
@@ -96,9 +96,9 @@ export function MoreFromSeller({ products, className }: MoreFromSellerProps) {
 
 function ProductCard({ product }: { product: Product }) {
   return (
-    <Card className="group relative flex flex-col space-y-4 p-6 hover:bg-accent transition-colors">
-      <div className="flex items-start gap-4">
-        <div className="w-12 h-12 rounded-lg bg-accent flex items-center justify-center overflow-hidden flex-shrink-0">
+    <Card className="group relative flex flex-col space-y-4 p-4 lg:p-6 hover:bg-accent transition-colors max-w-full">
+      <div className="flex items-start gap-3 lg:gap-4">
+        <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg bg-accent flex items-center justify-center overflow-hidden flex-shrink-0">
           <img
             src={product.image}
             alt={product.title}
