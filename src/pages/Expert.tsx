@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -84,12 +83,10 @@ export default function Expert() {
 
   return (
     <div className="space-y-8">
-      {/* Header with Stats - Full Width */}
       <div className="container mx-auto px-4">
         <Card className="mt-8">
           <CardContent className="p-6">
             <div className="flex flex-col gap-4">
-              {/* Mobile: thumbnail and headline row */}
               <div className="flex sm:hidden gap-4 items-start w-full">
                 <Avatar className="h-16 w-16">
                   <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" />
@@ -102,7 +99,6 @@ export default function Expert() {
                 </div>
               </div>
 
-              {/* Desktop: thumbnail and headline */}
               <div className="hidden sm:flex gap-4 items-start">
                 <Avatar className="h-20 w-20">
                   <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" />
@@ -136,7 +132,6 @@ export default function Expert() {
                 </div>
               </div>
 
-              {/* Mobile: expert information */}
               <div className="flex flex-col sm:hidden items-start gap-2.5">
                 <div className="flex items-center gap-2.5">
                   <p className="text-lg text-muted-foreground">John Doe</p>
@@ -166,9 +161,7 @@ export default function Expert() {
         </Card>
       </div>
 
-      {/* Mobile-first layout for the rest of the sections */}
       <div className="container mx-auto px-4">
-        {/* Description Section - Now First */}
         <div className="lg:hidden mb-8">
           <Card>
             <CardContent className="p-6">
@@ -202,7 +195,6 @@ export default function Expert() {
           </Card>
         </div>
 
-        {/* Info Section - Now Second */}
         <div className="lg:hidden mb-8">
           <Card>
             <CardContent className="p-6 space-y-4">
@@ -218,7 +210,6 @@ export default function Expert() {
           </Card>
         </div>
 
-        {/* Services Section - Now Third */}
         <div className="lg:hidden mb-8">
           <h2 className="text-lg font-semibold mb-4">Services</h2>
           <Carousel className="w-full">
@@ -281,7 +272,6 @@ export default function Expert() {
           </Carousel>
         </div>
 
-        {/* Stats Section - Now Fourth */}
         <div className="lg:hidden mb-8">
           <Card>
             <CardContent className="p-6 space-y-4">
@@ -307,7 +297,6 @@ export default function Expert() {
           </Card>
         </div>
 
-        {/* Community Section - Now Fifth */}
         <div className="lg:hidden mb-8">
           <Card>
             <CardContent className="p-6 space-y-4">
@@ -331,15 +320,12 @@ export default function Expert() {
           </Card>
         </div>
 
-        {/* More From Seller Section - Now Last */}
         <div className="lg:hidden">
           <MoreFromSeller products={moreProducts} />
         </div>
 
-        {/* Desktop Layout - Hidden on Mobile */}
         <div className="hidden lg:block">
           <div className="grid grid-cols-5 gap-6 mb-8">
-            {/* Info Section */}
             <Card className="col-span-1">
               <CardContent className="p-6 space-y-4">
                 <div className="flex items-center gap-2">
@@ -353,7 +339,6 @@ export default function Expert() {
               </CardContent>
             </Card>
 
-            {/* Description Section */}
             <Card className="col-span-4">
               <CardContent className="p-6 space-y-6">
                 <p className="text-muted-foreground">
@@ -386,9 +371,7 @@ export default function Expert() {
             </Card>
           </div>
 
-          {/* Services and Stats Grid */}
           <div className="grid grid-cols-5 gap-6 mb-8">
-            {/* Stats Section - Now on the left */}
             <Card className="col-span-1">
               <CardContent className="p-6 space-y-4">
                 <div className="flex items-center gap-2">
@@ -414,21 +397,18 @@ export default function Expert() {
 
             <div className="col-span-4 space-y-4">
               <h2 className="text-lg font-semibold">Services</h2>
-              
               <Card>
                 <CardContent className="p-6 space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {/* Basic Tier */}
-                    <Card className="relative overflow-hidden flex flex-col">
+                    <Card className="relative overflow-hidden">
                       <div className="absolute inset-x-0 top-0 h-2 bg-blue-100" />
-                      <CardContent className="pt-6 flex-1 flex flex-col">
-                        <div className="space-y-6 flex-1">
+                      <CardContent className="p-6">
+                        <div className="space-y-4">
                           <div className="space-y-2">
                             <h3 className="text-xl font-semibold">Basic Consultation</h3>
                             <div className="flex items-center gap-1">
                               <DollarSign className="w-5 h-5 text-muted-foreground" />
-                              <span className="text-2xl font-bold">99</span>
-                              <span className="text-muted-foreground">/session</span>
+                              <span className="text-2xl font-bold">$99</span>
                             </div>
                             <p className="text-muted-foreground">Perfect for startups and small projects needing expert UX guidance.</p>
                           </div>
@@ -440,31 +420,25 @@ export default function Expert() {
                               </div>
                             ))}
                           </div>
-                        </div>
-                        <div className="space-y-2 pt-6">
-                          <Button className="w-full">
-                            <Handshake className="w-4 h-4 mr-2" />
-                            Hire Expert
-                          </Button>
-                          <Button variant="outline" className="w-full">
-                            <Mail className="w-4 h-4 mr-2" />
-                            Contact
-                          </Button>
+                          <div className="pt-4">
+                            <Button className="w-full">
+                              <Handshake className="w-4 h-4 mr-2" />
+                              Hire Expert
+                            </Button>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
 
-                    {/* Professional Tier */}
-                    <Card className="relative overflow-hidden flex flex-col">
+                    <Card className="relative overflow-hidden">
                       <div className="absolute inset-x-0 top-0 h-2 bg-purple-100" />
-                      <CardContent className="pt-6 flex-1 flex flex-col">
-                        <div className="space-y-6 flex-1">
+                      <CardContent className="p-6">
+                        <div className="space-y-4">
                           <div className="space-y-2">
                             <h3 className="text-xl font-semibold">Professional Package</h3>
                             <div className="flex items-center gap-1">
                               <DollarSign className="w-5 h-5 text-muted-foreground" />
-                              <span className="text-2xl font-bold">299</span>
-                              <span className="text-muted-foreground">/project</span>
+                              <span className="text-2xl font-bold">$299</span>
                             </div>
                             <p className="text-muted-foreground">Comprehensive UX design solution for established businesses.</p>
                           </div>
@@ -482,31 +456,25 @@ export default function Expert() {
                               </div>
                             ))}
                           </div>
-                        </div>
-                        <div className="space-y-2 pt-6">
-                          <Button className="w-full">
-                            <Handshake className="w-4 h-4 mr-2" />
-                            Hire Expert
-                          </Button>
-                          <Button variant="outline" className="w-full">
-                            <Mail className="w-4 h-4 mr-2" />
-                            Contact
-                          </Button>
+                          <div className="pt-4">
+                            <Button className="w-full">
+                              <Handshake className="w-4 h-4 mr-2" />
+                              Hire Expert
+                            </Button>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
 
-                    {/* Enterprise Tier */}
-                    <Card className="relative overflow-hidden flex flex-col">
+                    <Card className="relative overflow-hidden">
                       <div className="absolute inset-x-0 top-0 h-2 bg-indigo-100" />
-                      <CardContent className="pt-6 flex-1 flex flex-col">
-                        <div className="space-y-6 flex-1">
+                      <CardContent className="p-6">
+                        <div className="space-y-4">
                           <div className="space-y-2">
                             <h3 className="text-xl font-semibold">Enterprise Solution</h3>
                             <div className="flex items-center gap-1">
                               <DollarSign className="w-5 h-5 text-muted-foreground" />
-                              <span className="text-2xl font-bold">999</span>
-                              <span className="text-muted-foreground">/month</span>
+                              <span className="text-2xl font-bold">$999</span>
                             </div>
                             <p className="text-muted-foreground">Full-service UX design and consultation for large organizations.</p>
                           </div>
@@ -525,16 +493,12 @@ export default function Expert() {
                               </div>
                             ))}
                           </div>
-                        </div>
-                        <div className="space-y-2 pt-6">
-                          <Button className="w-full">
-                            <Handshake className="w-4 h-4 mr-2" />
-                            Hire Expert
-                          </Button>
-                          <Button variant="outline" className="w-full">
-                            <Mail className="w-4 h-4 mr-2" />
-                            Contact
-                          </Button>
+                          <div className="pt-4">
+                            <Button className="w-full">
+                              <Handshake className="w-4 h-4 mr-2" />
+                              Hire Expert
+                            </Button>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
