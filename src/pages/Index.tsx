@@ -284,9 +284,30 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
       }`}
     >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-6">
           <div className="flex-shrink-0 w-[200px]">
             <h1 className="text-2xl font-semibold">Logo</h1>
+          </div>
+
+          <div 
+            className={`absolute left-1/2 -translate-x-1/2 transition-all duration-200 ease-out ${
+              isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100'
+            }`}
+          >
+            <div className="text-[1.5rem] leading-relaxed font-bold whitespace-nowrap flex items-center justify-center">
+              <span>The Best AI & Automation</span>
+              <span className="text-muted-foreground ml-1">
+                <Typewriter
+                  options={{
+                    strings: typewriterStrings,
+                    autoStart: true,
+                    loop: true,
+                    delay: 50,
+                    deleteSpeed: 30,
+                  }}
+                />
+              </span>
+            </div>
           </div>
 
           <div className="flex items-center gap-2 w-[200px] justify-end">
@@ -313,28 +334,11 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
           </div>
         </div>
 
-        <div className="relative flex flex-col items-center justify-center gap-4">
-          <div 
-            className={`transition-all duration-200 ease-out ${
-              isScrolled ? 'opacity-0 absolute' : 'opacity-100 relative'
-            }`}
-          >
-            <div className="text-[1.5rem] leading-relaxed font-bold whitespace-nowrap flex items-center justify-center">
-              <span>The Best AI & Automation</span>
-              <span className="text-muted-foreground ml-1">
-                <Typewriter
-                  options={{
-                    strings: typewriterStrings,
-                    autoStart: true,
-                    loop: true,
-                    delay: 50,
-                    deleteSpeed: 30,
-                  }}
-                />
-              </span>
-            </div>
-          </div>
-
+        <div 
+          className={`absolute left-1/2 -translate-x-1/2 transition-all duration-200 ease-out ${
+            isScrolled ? 'top-2' : 'top-16'
+          }`}
+        >
           <div 
             className={`transition-all duration-200 ease-out ${
               isScrolled ? 'w-[360px]' : 'w-[540px]'
