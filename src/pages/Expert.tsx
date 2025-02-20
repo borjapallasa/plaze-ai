@@ -397,7 +397,7 @@ export default function Expert() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex gap-8">
-                    {/* Left side - Video and main info */}
+                    {/* Left side - Video and title hierarchy */}
                     <div className="w-80 flex-shrink-0">
                       <div className="aspect-video bg-muted rounded-lg overflow-hidden relative">
                         <img 
@@ -411,18 +411,20 @@ export default function Expert() {
                           </div>
                         </div>
                       </div>
-                      <h3 className="text-xl font-semibold mt-4 mb-1.5">UX Design Community</h3>
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="flex items-center gap-1.5">
-                          <Globe className="w-3.5 h-3.5 text-primary" />
-                          <span className="text-sm text-muted-foreground">Public Community</span>
+                      <div className="mt-4 space-y-3">
+                        <h3 className="text-2xl font-semibold leading-none tracking-tight">UX Design Community</h3>
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-1.5">
+                            <Globe className="w-3.5 h-3.5 text-muted-foreground" />
+                            <span className="text-sm text-muted-foreground">Public Community</span>
+                          </div>
+                          <div className="w-1 h-1 bg-muted-foreground/30 rounded-full" />
+                          <Badge variant="secondary" className="text-xs px-2 py-0.5">Free Access</Badge>
                         </div>
-                        <div className="w-1 h-1 bg-muted-foreground/30 rounded-full" />
-                        <Badge variant="secondary" className="text-xs px-2 py-0.5">Free Access</Badge>
                       </div>
                     </div>
 
-                    {/* Right side - Description and Stats */}
+                    {/* Right side - Content and CTAs */}
                     <div className="flex-1 flex flex-col justify-between">
                       <div className="space-y-6">
                         <p className="text-sm leading-relaxed text-muted-foreground">
@@ -433,9 +435,9 @@ export default function Expert() {
                         </p>
 
                         <div className="grid grid-cols-2 gap-6">
-                          <div className="space-y-4">
-                            <div className="space-y-1">
-                              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Community Size</p>
+                          <div className="space-y-1">
+                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Community Size</p>
+                            <div className="space-y-4">
                               <div className="flex items-baseline gap-4">
                                 <div>
                                   <p className="text-2xl font-bold">1,234</p>
@@ -448,9 +450,9 @@ export default function Expert() {
                               </div>
                             </div>
                           </div>
-                          <div className="space-y-4">
-                            <div className="space-y-1">
-                              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Activity</p>
+                          <div className="space-y-1">
+                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Activity</p>
+                            <div className="space-y-4">
                               <div className="flex items-baseline gap-4">
                                 <div>
                                   <p className="text-2xl font-bold">456</p>
