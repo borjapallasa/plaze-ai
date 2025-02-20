@@ -37,7 +37,7 @@ function Calendar({
         month: "space-y-4 w-full",
         caption: "flex justify-between pt-1 pb-4 items-center px-2 relative",
         caption_label: "text-base font-semibold",
-        nav: "space-x-1 flex items-center",
+        nav: "space-x-1 flex items-center gap-2",
         nav_button: cn(
           buttonVariants({ variant: "outline" }),
           "h-7 w-7 bg-transparent p-0 hover:opacity-75 flex items-center justify-center border border-input"
@@ -73,19 +73,40 @@ function Calendar({
       components={{
         IconLeft: () => <ChevronLeft className="h-4 w-4" />,
         IconRight: () => <ChevronRight className="h-4 w-4" />,
+        Caption: ({ displayMonth }) => (
+          <div className="flex w-full justify-between items-center">
+            <span className="font-semibold">
+              {format(displayMonth, 'MMMM yyyy')}
+            </span>
+            <div className="flex items-center gap-2">
+              <div className="flex gap-1">
+                <DayPicker.Button name="previous-month" className={cn(
+                  buttonVariants({ variant: "outline" }),
+                  "h-7 w-7 p-0 flex items-center justify-center"
+                )}>
+                  <ChevronLeft className="h-4 w-4" />
+                </DayPicker.Button>
+                <DayPicker.Button name="next-month" className={cn(
+                  buttonVariants({ variant: "outline" }),
+                  "h-7 w-7 p-0 flex items-center justify-center"
+                )}>
+                  <ChevronRight className="h-4 w-4" />
+                </DayPicker.Button>
+              </div>
+              <button
+                type="button"
+                onClick={() => onSelect?.(new Date())}
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "sm" }),
+                  "text-xs px-3"
+                )}
+              >
+                Today
+              </button>
+            </div>
+          </div>
+        )
       }}
-      footer={
-        <button
-          type="button"
-          onClick={() => onSelect?.(new Date())}
-          className={cn(
-            buttonVariants({ variant: "outline", size: "sm" }),
-            "mt-4 text-xs px-3 w-full"
-          )}
-        >
-          Today
-        </button>
-      }
       {...props}
     />
   );
