@@ -486,11 +486,11 @@ const Index = () => {
       />
 
       <div 
-        className={`sticky bg-background border-b transition-[top] duration-300 ease-in-out ${
+        className={`sticky bg-background border-b transition-all duration-200 ease-out ${
           isScrolled ? 'top-20 z-40' : 'top-[140px] z-30'
         }`}
       >
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-4 py-6">
           <Carousel
             setApi={setApi}
             opts={{
