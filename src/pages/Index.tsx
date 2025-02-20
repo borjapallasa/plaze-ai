@@ -164,7 +164,7 @@ const Index = () => {
           <div className="pb-5">
             <div className="flex flex-col items-center gap-4">
               <div className="text-2xl font-semibold text-center">
-                <span className="text-muted-foreground">The Best AI & Automation </span>
+                <span className="text-foreground">The Best AI & Automation </span>
                 <span className="inline-block text-muted-foreground">
                   <Typewriter
                     options={{
