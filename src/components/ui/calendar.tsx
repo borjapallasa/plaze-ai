@@ -35,9 +35,9 @@ function Calendar({
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0 w-full",
         month: "space-y-4 w-full",
-        caption: "flex justify-between pt-1 pb-4 items-center px-2",
+        caption: "flex justify-center pt-1 pb-4 items-center px-2 relative",
         caption_label: "text-base font-semibold",
-        nav: "space-x-1 flex items-center justify-end gap-1",
+        nav: "space-x-1 flex items-center absolute right-1",
         nav_button: cn(
           buttonVariants({ variant: "outline" }),
           "h-7 w-7 bg-transparent p-0 hover:opacity-75"
@@ -73,30 +73,6 @@ function Calendar({
       components={{
         IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" {...props} />,
         IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" {...props} />,
-        Caption: ({ displayMonth }) => {
-          return (
-            <div className="flex w-full justify-between items-center relative">
-              <div className="font-semibold">
-                {format(displayMonth, 'MMMM yyyy')}
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    const today = new Date();
-                    onSelect?.(today);
-                  }}
-                  className={cn(
-                    buttonVariants({ variant: "outline", size: "sm" }),
-                    "text-xs px-3"
-                  )}
-                >
-                  Today
-                </button>
-              </div>
-            </div>
-          );
-        }
       }}
       {...props}
     />
