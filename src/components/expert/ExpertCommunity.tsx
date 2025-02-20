@@ -13,9 +13,9 @@ export const ExpertCommunity = () => {
         <CardContent className="p-6">
           <div className="grid grid-cols-12 gap-6">
             {/* Left Column - Video and Description */}
-            <div className="col-span-7 flex flex-col h-full justify-between">
-              {/* Video thumbnail */}
-              <div className="aspect-video bg-muted rounded-lg overflow-hidden relative">
+            <div className="col-span-7 space-y-4">
+              {/* Video thumbnail - made smaller with max-width */}
+              <div className="aspect-video bg-muted rounded-lg overflow-hidden relative max-w-[380px]">
                 <img 
                   src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5"
                   alt="Community thumbnail"
@@ -29,19 +29,19 @@ export const ExpertCommunity = () => {
               </div>
 
               {/* Title and badges moved here */}
-              <div className="space-y-3">
+              <div className="space-y-3 max-w-[380px]">
                 <h3 className="text-xl font-semibold">UX Design Community</h3>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1.5">
-                    <Globe className="w-3.5 h-3.5 text-muted-foreground" />
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Globe className="w-4 h-4 text-muted-foreground" />
                     <span className="text-sm text-muted-foreground">Public Community</span>
                   </div>
-                  <Badge variant="secondary" className="text-xs px-2 py-0.5">Free Access</Badge>
+                  <Badge variant="secondary" className="text-sm px-3 py-1">Free Access</Badge>
                 </div>
               </div>
 
               {/* Description */}
-              <p className="text-sm leading-relaxed text-muted-foreground">
+              <p className="text-sm leading-relaxed text-muted-foreground max-w-[380px]">
                 Join our vibrant community of UX designers where we share insights, 
                 collaborate on projects, and help each other grow. Get access to exclusive 
                 resources, participate in discussions, and connect with fellow designers 
@@ -50,7 +50,7 @@ export const ExpertCommunity = () => {
             </div>
 
             {/* Right Column - Stats and CTAs */}
-            <div className="col-span-5 flex flex-col justify-between h-full">
+            <div className="col-span-5 space-y-6">
               {/* Stats Cards */}
               <div className="grid grid-cols-2 gap-3">
                 <Card className="p-3 space-y-1">
@@ -83,17 +83,16 @@ export const ExpertCommunity = () => {
                 </Card>
               </div>
 
-              <div>
-                <Separator className="mb-6" />
-                {/* CTAs */}
-                <div className="space-y-2">
-                  <Button size="lg" className="w-full text-base font-semibold">
-                    Join Community
-                  </Button>
-                  <Button variant="outline" size="lg" className="w-full text-base">
-                    Learn More
-                  </Button>
-                </div>
+              <Separator />
+
+              {/* CTAs */}
+              <div className="space-y-2">
+                <Button size="lg" className="w-full text-base font-semibold">
+                  Join Community
+                </Button>
+                <Button variant="outline" size="lg" className="w-full text-base">
+                  Learn More
+                </Button>
               </div>
             </div>
           </div>
