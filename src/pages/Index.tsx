@@ -284,7 +284,7 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
       }`}
     >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 pt-3">
           <div className="flex-shrink-0 w-[200px]">
             <h1 className="text-2xl font-semibold">Logo</h1>
           </div>
