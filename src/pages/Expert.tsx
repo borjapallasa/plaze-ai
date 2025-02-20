@@ -434,33 +434,33 @@ export default function Expert() {
                           from around the world.
                         </p>
 
-                        <div className="grid grid-cols-2 gap-6">
-                          <div className="space-y-1">
+                        <div className="grid grid-cols-2 gap-8">
+                          <div className="space-y-2">
                             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Community Size</p>
                             <div className="space-y-4">
-                              <div className="flex items-baseline gap-4">
+                              <div className="flex items-baseline gap-8">
                                 <div>
                                   <p className="text-2xl font-bold">1,234</p>
-                                  <p className="text-xs text-muted-foreground">Members</p>
+                                  <p className="text-xs text-muted-foreground mt-1">Members</p>
                                 </div>
                                 <div>
                                   <p className="text-2xl font-bold">12</p>
-                                  <p className="text-xs text-muted-foreground">Classrooms</p>
+                                  <p className="text-xs text-muted-foreground mt-1">Classrooms</p>
                                 </div>
                               </div>
                             </div>
                           </div>
-                          <div className="space-y-1">
+                          <div className="space-y-2">
                             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Activity</p>
                             <div className="space-y-4">
-                              <div className="flex items-baseline gap-4">
+                              <div className="flex items-baseline gap-8">
                                 <div>
                                   <p className="text-2xl font-bold">456</p>
-                                  <p className="text-xs text-muted-foreground">Posts</p>
+                                  <p className="text-xs text-muted-foreground mt-1">Posts</p>
                                 </div>
                                 <div>
                                   <p className="text-2xl font-bold">89</p>
-                                  <p className="text-xs text-muted-foreground">Products</p>
+                                  <p className="text-xs text-muted-foreground mt-1">Products</p>
                                 </div>
                               </div>
                             </div>
