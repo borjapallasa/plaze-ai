@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "./button"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 const Tabs = TabsPrimitive.Root
 
@@ -15,6 +16,7 @@ const TabsList = React.forwardRef<
   const tabsListRef = React.useRef<HTMLDivElement>(null);
   const [showLeftArrow, setShowLeftArrow] = React.useState(false);
   const [showRightArrow, setShowRightArrow] = React.useState(false);
+  const isMobile = useIsMobile();
 
   const checkScroll = React.useCallback(() => {
     const el = tabsListRef.current;
@@ -52,7 +54,7 @@ const TabsList = React.forwardRef<
   return (
     <div className="relative flex items-center">
       <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none"
-        style={{ opacity: showLeftArrow ? 1 : 0, transition: 'opacity 0.2s' }}
+        style={{ opacity: isMobile && showLeftArrow ? 1 : 0, transition: 'opacity 0.2s' }}
       />
       {showLeftArrow && (
         <Button
@@ -80,10 +82,6 @@ const TabsList = React.forwardRef<
           "overflow-x-auto scrollbar-none",
           className
         )}
-        style={{
-          maskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
-          WebkitMaskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)'
-        }}
         {...props}
       />
       {showRightArrow && (
@@ -97,7 +95,7 @@ const TabsList = React.forwardRef<
         </Button>
       )}
       <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none"
-        style={{ opacity: showRightArrow ? 1 : 0, transition: 'opacity 0.2s' }}
+        style={{ opacity: isMobile && showRightArrow ? 1 : 0, transition: 'opacity 0.2s' }}
       />
     </div>
   )
