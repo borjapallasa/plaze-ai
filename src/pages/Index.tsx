@@ -336,7 +336,7 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
 
         <div 
           className={`absolute left-1/2 -translate-x-1/2 transition-all duration-200 ease-out ${
-            isScrolled ? 'top-2' : 'top-16'
+            isScrolled ? 'top-2 pt-3' : 'top-16'
           }`}
         >
           <div 
