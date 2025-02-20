@@ -487,7 +487,9 @@ const Index = () => {
         setSearchCategory={setSearchCategory}
       />
 
-      <div className="sticky z-40 bg-background border-b top-20">
+      <div className={`sticky bg-background border-b ${
+        isScrolled ? 'top-20 z-40' : 'top-[140px] z-30'
+      }`}>
         <div className="container mx-auto px-4 py-4">
           <Carousel
             setApi={setApi}
@@ -526,7 +528,9 @@ const Index = () => {
 
       <main>
         <div className="container mx-auto px-4">
-          <div className="space-y-6 py-6 mt-24">
+          <div className={`space-y-6 py-6 ${
+            isScrolled ? 'mt-24' : 'mt-32'
+          }`}>
             {isMobile ? (
               <Carousel className="w-full">
                 <CarouselContent>
