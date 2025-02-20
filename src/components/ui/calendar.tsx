@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { DayPicker } from "react-day-picker";
+import { DayPicker, SelectedDate } from "react-day-picker";
 
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
@@ -12,8 +12,16 @@ function Calendar({
   className,
   classNames,
   showOutsideDays = true,
+  selected,
+  onSelect,
   ...props
 }: CalendarProps) {
+  const handleTodayClick = () => {
+    if (onSelect) {
+      onSelect(new Date(), { selected: new Date() });
+    }
+  };
+
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
@@ -62,10 +70,12 @@ function Calendar({
         IconLeft: ({ ..._props }) => <ChevronLeft className="h-4 w-4" />,
         IconRight: ({ ..._props }) => <ChevronRight className="h-4 w-4" />,
       }}
+      selected={selected}
+      onSelect={onSelect}
       footer={
         <div className="mt-4 space-x-2">
           <button
-            onClick={() => props.onSelect?.(new Date())}
+            onClick={handleTodayClick}
             className={cn(
               buttonVariants({ variant: "outline", size: "sm" }),
               "text-xs px-3"
