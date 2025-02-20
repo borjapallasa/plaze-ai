@@ -93,34 +93,6 @@ function Calendar({
                 >
                   Today
                 </button>
-                <div className="space-x-1 flex items-center">
-                  <button
-                    onClick={() => {
-                      const prevMonth = new Date(displayMonth);
-                      prevMonth.setMonth(prevMonth.getMonth() - 1);
-                      onSelect?.(prevMonth);
-                    }}
-                    className={cn(
-                      buttonVariants({ variant: "outline" }),
-                      "h-7 w-7 bg-transparent p-0 hover:opacity-75"
-                    )}
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() => {
-                      const nextMonth = new Date(displayMonth);
-                      nextMonth.setMonth(nextMonth.getMonth() + 1);
-                      onSelect?.(nextMonth);
-                    }}
-                    className={cn(
-                      buttonVariants({ variant: "outline" }),
-                      "h-7 w-7 bg-transparent p-0 hover:opacity-75"
-                    )}
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </button>
-                </div>
               </div>
             </div>
           );
