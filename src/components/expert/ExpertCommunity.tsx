@@ -14,8 +14,8 @@ export const ExpertCommunity = () => {
           <div className="grid grid-cols-12 gap-6">
             {/* Left Column - Video and Description */}
             <div className="col-span-7 space-y-4">
-              {/* Video thumbnail */}
-              <div className="aspect-video bg-muted rounded-lg overflow-hidden relative">
+              {/* Video thumbnail - made smaller with max-width */}
+              <div className="aspect-video bg-muted rounded-lg overflow-hidden relative max-w-[420px]">
                 <img 
                   src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5"
                   alt="Community thumbnail"
