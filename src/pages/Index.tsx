@@ -1,4 +1,3 @@
-
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
 import { Search, Target, ShoppingBag, Settings, Users, Truck, ChartBar, ChevronDown, ArrowRight, Sparkle, Star, Flame } from "lucide-react";
@@ -112,9 +111,9 @@ const banners = [
 
 const typewriterStrings = [
   "Experts To Hire",
-  "Communities To Learn",
-  "Templates To Use",
-  "Jobs To Earn"
+  "Jobs To Earn",
+  "Products To Scale",
+  "Communities To Learn"
 ];
 
 const badges = [
@@ -179,7 +178,7 @@ const Index = () => {
           <div className="pb-5">
             <div className="flex flex-col items-center gap-4">
               <div className="text-2xl font-semibold text-center">
-                Find{" "}
+                The Best AI & Automation{" "}
                 <span className="inline-block">
                   <Typewriter
                     options={{
