@@ -7,13 +7,13 @@ import { Separator } from "@/components/ui/separator";
 
 export const ExpertCommunity = () => {
   return (
-    <div className="col-span-4 col-start-2">
+    <div className="col-span-4 col-start-2 lg:col-span-4 lg:col-start-2">
       <h2 className="text-2xl font-bold mb-6">Community</h2>
       <Card>
         <CardContent className="p-6">
-          <div className="grid grid-cols-12 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Left Column - Video and Description */}
-            <div className="col-span-7 space-y-4">
+            <div className="lg:col-span-7 space-y-4">
               {/* Video thumbnail */}
               <div className="aspect-video bg-muted rounded-lg overflow-hidden relative">
                 <img 
@@ -50,7 +50,7 @@ export const ExpertCommunity = () => {
             </div>
 
             {/* Right Column - Stats and CTAs */}
-            <div className="col-span-5 space-y-6">
+            <div className="lg:col-span-5 space-y-6">
               {/* Stats Cards */}
               <div className="grid grid-cols-2 gap-3">
                 <Card className="p-3 space-y-1">
