@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -95,6 +94,27 @@ export default function Community() {
     {
       title: "How To Create Automated SEO Blogs With AI?",
       description: "In this classroom you will learn how to create SEO blogs automatically with AI, using Make.com and Airtable.",
+      content: {
+        introduction: "In this video, we are going to learn how to create an auto blogging no-code software using OpenAI, Airtable & Make and publish them automatically to Shopify and Wordpress.",
+        keyPoints: [
+          {
+            title: "No-Code Approach",
+            description: "This no-code approach allows users to manage and generate blogs through an accessible Airtable interface. By enabling the importation of existing web articles and the incorporation of new client details, our solution ensures content accurately mirrors the intended tone and voice of different websites."
+          },
+          {
+            title: "Synergy Between Tools",
+            description: "The synergy between Airtable, Make, and OpenAI streamlines the content creation process. This workflow automatically generates written content, enhancing the blogging experience for both creators and their audience. Furthermore, our system brings visual appeal to each blog post by including images from the Unsplash API."
+          },
+          {
+            title: "Automated Organization",
+            description: "The blogs are automatically organized to feature an index, FAQs, and conclusions and also to include related images properly alt-texted. This structured format enhances the reader's experience by making content easily navigable and informative."
+          }
+        ],
+        resources: {
+          docs: "https://docs.google.com/document/d/1YRkoPNAFhU-ryYDhzPLQi6zrP5kezlg6N5ukcCRP5Vk/edit?usp=sharing",
+          thumbnail: "/lovable-uploads/0f691532-4ffb-4ec9-82cb-3be9cc93d658.png"
+        }
+      },
       image: "/lovable-uploads/0f691532-4ffb-4ec9-82cb-3be9cc93d658.png"
     },
     {
@@ -266,16 +286,30 @@ export default function Community() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {classrooms.map((classroom, index) => (
               <Card key={index} className="group relative flex flex-col hover:bg-accent transition-colors cursor-pointer overflow-hidden">
-                <div className="aspect-[1.25] relative overflow-hidden bg-gradient-to-br from-blue-400 to-blue-600 rounded-t-lg">
-                  <div className="absolute inset-0 p-6 flex items-center justify-center">
-                    <h3 className="text-white text-2xl font-bold text-center leading-tight">Classroom</h3>
+                <div className="aspect-video relative overflow-hidden rounded-t-lg">
+                  <img 
+                    src={classroom.image} 
+                    alt={classroom.title}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <h3 className="text-lg font-semibold text-white line-clamp-2">
+                      {classroom.title}
+                    </h3>
                   </div>
                 </div>
-                <CardContent className="p-6 relative">
-                  <CardTitle className="text-lg font-semibold mb-2">{classroom.title}</CardTitle>
-                  <p className="text-muted-foreground text-sm mb-8">{classroom.description}</p>
-                  <div className="absolute right-6 bottom-6 opacity-0 transform translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200">
-                    <ArrowRight className="w-4 h-4 text-primary" />
+                <CardContent className="p-6 flex-1 flex flex-col">
+                  <p className="text-muted-foreground text-sm flex-1">
+                    {classroom.description}
+                  </p>
+                  <div className="flex items-center justify-between mt-4 pt-4 border-t">
+                    <span className="text-sm text-muted-foreground">
+                      3 lessons
+                    </span>
+                    <Button variant="ghost" size="sm" className="group-hover:translate-x-1 transition-transform">
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
