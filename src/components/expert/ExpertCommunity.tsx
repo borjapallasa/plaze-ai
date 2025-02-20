@@ -15,7 +15,7 @@ export const ExpertCommunity = () => {
             {/* Left Column - Video and Description */}
             <div className="col-span-7 space-y-4">
               {/* Video thumbnail - made smaller with max-width */}
-              <div className="aspect-video bg-muted rounded-lg overflow-hidden relative max-w-[420px]">
+              <div className="aspect-video bg-muted rounded-lg overflow-hidden relative max-w-[380px]">
                 <img 
                   src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5"
                   alt="Community thumbnail"
@@ -29,19 +29,19 @@ export const ExpertCommunity = () => {
               </div>
 
               {/* Title and badges moved here */}
-              <div className="space-y-3">
+              <div className="space-y-3 max-w-[380px]">
                 <h3 className="text-xl font-semibold">UX Design Community</h3>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1.5">
-                    <Globe className="w-3.5 h-3.5 text-muted-foreground" />
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Globe className="w-4 h-4 text-muted-foreground" />
                     <span className="text-sm text-muted-foreground">Public Community</span>
                   </div>
-                  <Badge variant="secondary" className="text-xs px-2 py-0.5">Free Access</Badge>
+                  <Badge variant="secondary" className="text-sm px-3 py-1">Free Access</Badge>
                 </div>
               </div>
 
               {/* Description */}
-              <p className="text-sm leading-relaxed text-muted-foreground">
+              <p className="text-sm leading-relaxed text-muted-foreground max-w-[380px]">
                 Join our vibrant community of UX designers where we share insights, 
                 collaborate on projects, and help each other grow. Get access to exclusive 
                 resources, participate in discussions, and connect with fellow designers 
