@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
@@ -536,7 +535,7 @@ const Index = () => {
       <main>
         <div className="container mx-auto px-4">
           <div 
-            className={`space-y-4 pt-8 pb-2 transition-[margin] duration-300 ease-in-out ${
+            className={`space-y-4 pt-8 pb-6 transition-[margin] duration-300 ease-in-out ${
               isScrolled ? 'mt-24' : 'mt-32'
             }`}
           >
@@ -577,4 +576,3 @@ const Index = () => {
 };
 
 export default Index;
-
