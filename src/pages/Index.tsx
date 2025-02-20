@@ -1,6 +1,7 @@
+
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
-import { Search, Target, ShoppingBag, Settings, Users, Truck, ChartBar, ChevronDown, ArrowRight, Sparkle, Star, Flame, DollarSign, Briefcase, Handshake, Building, Factory, CreditCard, ChevronRight, Palmtree, Home, Warehouse, Mountain, Boat, TreePine, House, Castle, CircleDollarSign } from "lucide-react";
+import { Search, Target, ShoppingBag, Settings, Users, Truck, ChartBar, ChevronDown, ArrowRight, Sparkle, Star, Flame, DollarSign, Briefcase, Handshake, Building, Factory, CreditCard, ChevronRight, Palmtree, Home, Warehouse, Mountain, TreePine, House, Castle, CircleDollarSign, Anchor } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Typewriter from 'typewriter-effect';
@@ -134,7 +135,7 @@ const departments = [
   { name: "Amazing views", icon: Mountain },
   { name: "Countryside", icon: TreePine },
   { name: "Mansions", icon: Castle },
-  { name: "Boats", icon: Boat },
+  { name: "Boats", icon: Anchor }, // Changed from Boat to Anchor
   { name: "Farms", icon: Building },
   { name: "OMG!", icon: Star },
   { name: "Domes", icon: House },
