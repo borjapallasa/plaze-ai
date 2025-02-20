@@ -178,6 +178,10 @@ export default function Community() {
         </div>
 
         <TabsContent value="threads" className="space-y-6">
+          <div className="flex gap-4">
+            <Button>Create New Thread</Button>
+            <Input placeholder="Search thread" className="flex-1" />
+          </div>
           <Card>
             <CardContent className="p-6 space-y-4">
               <div className="flex items-start gap-4">
