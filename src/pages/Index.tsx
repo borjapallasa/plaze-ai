@@ -282,7 +282,7 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
   return (
     <header 
       className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm border-b transition-all duration-200 ease-out ${
-        isScrolled ? 'py-2 bg-background/95' : 'py-4 bg-background'
+        isScrolled ? 'py-2 bg-background/95' : 'pb-[15px] pt-4 bg-background'
       }`}
     >
       <div className="container mx-auto px-4">
@@ -293,7 +293,7 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
                 defaultValue="Products" 
                 onValueChange={setSearchCategory}
               >
-                <SelectTrigger className="border-0 w-[120px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
+                <SelectTrigger className="border-0 w-[120px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9 text-xs">
                   <SelectValue className="pr-4" />
                 </SelectTrigger>
                 <SelectContent className="w-[150px]">
@@ -304,7 +304,7 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
                 </SelectContent>
               </Select>
               <Input
-                className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
+                className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9 text-xs"
                 placeholder={`Search ${searchCategory.toLowerCase()}...`}
                 type="search"
               />
@@ -372,7 +372,7 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
             }`}
           >
             <div 
-              className={`transition-all duration-200 ease-out mb-[15px] ${
+              className={`transition-all duration-200 ease-out ${
                 isScrolled ? 'w-[360px]' : 'w-[540px]'
               }`}
             >
