@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useMemo } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
 import { Search, ChevronDown, Globe, Menu, User, Target, ShoppingBag, Settings, Users, Truck, ChartBar, ArrowRight, Sparkle, Star, Flame, DollarSign, Briefcase, Handshake, Building, Factory, CreditCard, ChevronRight } from "lucide-react";
@@ -5,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Typewriter from 'typewriter-effect';
 import { Badge } from "@/components/ui/badge";
-import { useState, useEffect, useMemo } from "react";
 import {
   Select,
   SelectContent,
