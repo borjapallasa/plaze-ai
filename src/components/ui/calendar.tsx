@@ -65,7 +65,9 @@ function Calendar({
           "lg:h-[120px] lg:w-[14.28%] lg:p-0 lg:text-center lg:border-b lg:border-r lg:border-border lg:first:border-l",
           "focus-within:relative focus-within:z-20",
           "first:sm:rounded-none last:sm:rounded-none", // Remove border radius on desktop
-          "[&:first-child]:rounded-l [&:last-child]:rounded-r" // Add border radius on mobile
+          "[&:first-child]:rounded-l-lg [&:last-child]:rounded-r-lg", // Add rounded corners on mobile
+          "first:[&:first-child]:rounded-tl-lg last:[&:first-child]:rounded-tr-lg", // Top row corners
+          "first:[&:last-child]:rounded-bl-lg last:[&:last-child]:rounded-br-lg" // Bottom row corners
         ),
         day: cn(
           "h-full w-full p-2 font-normal aria-selected:opacity-100",
