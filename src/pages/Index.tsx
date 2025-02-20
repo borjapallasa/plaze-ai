@@ -36,6 +36,7 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
+  type CarouselApi,
 } from "@/components/ui/carousel";
 
 const typewriterStrings = [
@@ -420,6 +421,28 @@ const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchCategory, setSearchCategory] = useState("Products");
   const [canScrollPrev, setCanScrollPrev] = useState(false);
+  const [api, setApi] = useState<CarouselApi>();
+
+  useEffect(() => {
+    if (!api) {
+      return;
+    }
+
+    const onScroll = () => {
+      setCanScrollPrev(api.canScrollPrev());
+    };
+
+    api.on("scroll", onScroll);
+    api.on("reInit", onScroll);
+
+    // Initial check
+    onScroll();
+
+    return () => {
+      api.off("scroll", onScroll);
+      api.off("reInit", onScroll);
+    };
+  }, [api]);
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
@@ -467,14 +490,12 @@ const Index = () => {
       <main className="pt-40">
         <div className="container mx-auto px-4 mb-8 relative">
           <Carousel
+            setApi={setApi}
             opts={{
               align: "start",
               dragFree: true,
             }}
             className="w-full"
-            onScrollProgress={(progress) => {
-              setCanScrollPrev(progress > 0);
-            }}
           >
             <CarouselContent className="-ml-4">
               {departments.map((dept, index) => {
