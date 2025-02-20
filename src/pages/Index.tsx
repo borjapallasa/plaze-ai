@@ -163,9 +163,9 @@ const Index = () => {
           </div>
           <div className="pb-5">
             <div className="flex flex-col items-center gap-4">
-              <div className="text-2xl font-semibold text-center">
+              <div className="text-2xl font-semibold text-center flex items-center">
                 <span className="text-foreground">The Best AI & Automation </span>
-                <span className="inline-block text-muted-foreground">
+                <span className="inline-flex items-center text-muted-foreground">
                   <Typewriter
                     options={{
                       strings: typewriterStrings,
