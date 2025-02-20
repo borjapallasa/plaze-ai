@@ -48,34 +48,33 @@ function Calendar({
         ),
         nav_button_previous: "mr-1",
         nav_button_next: "ml-1",
-        table: "w-full border-collapse space-y-1",
-        head_row: "flex w-full",
-        head_cell: cn(
-          "text-muted-foreground rounded-md w-9 font-normal text-[0.8rem] h-9",
-          "lg:w-[14.28%] lg:h-[40px]"
+        table: "w-full border-collapse",
+        head_row: cn(
+          "flex w-full border-b border-border",
+          "lg:border-b lg:border-border"
         ),
-        row: "flex w-full mt-2",
+        head_cell: cn(
+          "text-muted-foreground font-normal text-[0.8rem] w-9 h-9 p-0",
+          "lg:w-[14.28%] lg:pb-3"
+        ),
+        row: "flex w-full",
         cell: cn(
-          "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 lg:h-[120px]",
-          "first:[&:not(:empty)]:rounded-l-md last:[&:not(:empty)]:rounded-r-md",
-          "lg:w-[14.28%] lg:border-b lg:border-r lg:border-border lg:first:border-l",
-          "[&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-outside)]:bg-accent/50",
-          "[&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-range-start)]:rounded-l-md"
+          "relative p-0 text-center h-9 w-9",
+          "lg:h-[120px] lg:w-[14.28%] lg:p-0 lg:text-center lg:border-b lg:border-r lg:border-border lg:first:border-l",
+          "focus-within:relative focus-within:z-20"
         ),
         day: cn(
-          "h-9 w-9 p-0 font-normal lg:h-[inherit] lg:w-[inherit] aria-selected:opacity-100",
+          "h-9 w-9 p-0 font-normal aria-selected:opacity-100",
           "lg:absolute lg:top-2 lg:left-2 lg:text-sm",
           "hover:bg-transparent"
         ),
-        day_range_start: "day-range-start",
-        day_range_end: "day-range-end",
         day_selected:
           "bg-[#FDE1D3] text-[#1A1F2C] hover:bg-[#FDE1D3] hover:text-[#1A1F2C] focus:bg-[#FDE1D3] focus:text-[#1A1F2C]",
         day_today: cn(
           "text-[#1A1F2C] font-semibold",
           "before:absolute before:w-7 before:h-7 before:bg-[#FDE1D3] before:rounded-full before:-z-10 before:-translate-x-1/2 before:-translate-y-1/2"
         ),
-        day_outside: "text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30",
+        day_outside: "text-muted-foreground opacity-50",
         day_disabled: "text-muted-foreground opacity-50",
         day_range_middle: "aria-selected:bg-accent aria-selected:text-accent-foreground",
         day_hidden: "invisible",
