@@ -90,10 +90,6 @@ export default function Community() {
     }
   ];
 
-  const selectedDateEvents = events.filter(
-    event => date && event.date.toDateString() === date.toDateString()
-  );
-
   return (
     <div className="container mx-auto px-4 py-8 max-w-[1200px] space-y-8">
       {/* Main Content Card */}
@@ -269,51 +265,43 @@ export default function Community() {
         </TabsContent>
 
         <TabsContent value="calendar" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div className="lg:col-span-8">
-              <Card>
-                <CardContent className="p-6">
-                  <CalendarComponent
-                    mode="single"
-                    selected={date}
-                    onSelect={setDate}
-                    className="rounded-md"
-                  />
-                </CardContent>
-              </Card>
-            </div>
-            <div className="lg:col-span-4">
-              <Card>
-                <CardContent className="p-6">
-                  <h3 className="text-lg font-semibold mb-4">
-                    {date ? date.toLocaleDateString('en-US', { 
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    }) : 'Select a date'}
-                  </h3>
-                  <div className="space-y-4">
-                    {selectedDateEvents.length > 0 ? (
-                      selectedDateEvents.map((event, index) => (
-                        <div key={index} className="border-l-2 border-primary pl-4 py-2">
-                          <h4 className="font-medium">{event.title}</h4>
-                          <p className="text-sm text-muted-foreground mt-1">
-                            {event.description}
-                          </p>
-                          <Badge variant="secondary" className="mt-2">
-                            {event.type}
-                          </Badge>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-muted-foreground">No events scheduled for this day</p>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
+          <Card>
+            <CardContent className="p-6">
+              <CalendarComponent
+                mode="single"
+                selected={date}
+                onSelect={setDate}
+                modifiers={{
+                  event: events.map(event => event.date),
+                }}
+                modifiersStyles={{
+                  event: {
+                    color: 'var(--primary)',
+                    fontWeight: 'bold',
+                    textDecoration: 'underline'
+                  }
+                }}
+                footer={
+                  date && events.find(event => 
+                    event.date.toDateString() === date.toDateString()
+                  ) && (
+                    <div className="mt-2 p-2 bg-muted rounded-md">
+                      {events
+                        .filter(event => event.date.toDateString() === date.toDateString())
+                        .map((event, index) => (
+                          <div key={index} className="text-sm">
+                            <span className="font-medium">{event.title}</span>
+                            <Badge variant="secondary" className="ml-2">
+                              {event.type}
+                            </Badge>
+                          </div>
+                        ))}
+                    </div>
+                  )
+                }
+              />
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>
