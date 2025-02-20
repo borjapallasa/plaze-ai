@@ -6,8 +6,12 @@ import { MessageSquare, Users, BookOpen, Calendar, Link, ThumbsUp, Search } from
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/ProductCard";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { useState } from "react";
 
 export default function Community() {
+  const [date, setDate] = useState<Date | undefined>(new Date());
+
   const templates = [
     {
       title: "Automated Email Workflow",
@@ -64,6 +68,31 @@ export default function Community() {
       category: "service"
     }
   ];
+
+  const events = [
+    {
+      title: "Community Meetup",
+      date: new Date(2024, 3, 15), // April 15, 2024
+      type: "meetup",
+      description: "Monthly community gathering to discuss automation trends"
+    },
+    {
+      title: "Workshop: No-Code Automation",
+      date: new Date(2024, 3, 20), // April 20, 2024
+      type: "workshop",
+      description: "Learn how to build powerful automation without coding"
+    },
+    {
+      title: "Q&A Session",
+      date: new Date(2024, 3, 25), // April 25, 2024
+      type: "qa",
+      description: "Open Q&A session with automation experts"
+    }
+  ];
+
+  const selectedDateEvents = events.filter(
+    event => date && event.date.toDateString() === date.toDateString()
+  );
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-[1200px] space-y-8">
@@ -236,6 +265,54 @@ export default function Community() {
                 category={template.category}
               />
             ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="calendar" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div className="lg:col-span-8">
+              <Card>
+                <CardContent className="p-6">
+                  <CalendarComponent
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    className="rounded-md"
+                  />
+                </CardContent>
+              </Card>
+            </div>
+            <div className="lg:col-span-4">
+              <Card>
+                <CardContent className="p-6">
+                  <h3 className="text-lg font-semibold mb-4">
+                    {date ? date.toLocaleDateString('en-US', { 
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    }) : 'Select a date'}
+                  </h3>
+                  <div className="space-y-4">
+                    {selectedDateEvents.length > 0 ? (
+                      selectedDateEvents.map((event, index) => (
+                        <div key={index} className="border-l-2 border-primary pl-4 py-2">
+                          <h4 className="font-medium">{event.title}</h4>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {event.description}
+                          </p>
+                          <Badge variant="secondary" className="mt-2">
+                            {event.type}
+                          </Badge>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-muted-foreground">No events scheduled for this day</p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </TabsContent>
       </Tabs>
