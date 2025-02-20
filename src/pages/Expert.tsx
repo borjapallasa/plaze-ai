@@ -397,9 +397,9 @@ export default function Expert() {
             <div className="col-span-4 col-start-2">
               <h2 className="text-2xl font-bold mb-6">Community</h2>
               <Card>
-                <CardContent className="p-4 space-y-6">
+                <CardContent className="p-4">
                   {/* Hero Image */}
-                  <div className="aspect-video bg-muted rounded-lg overflow-hidden relative">
+                  <div className="aspect-video bg-muted rounded-lg overflow-hidden relative mb-6">
                     <img 
                       src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5"
                       alt="Community thumbnail"
@@ -413,7 +413,7 @@ export default function Expert() {
                   </div>
 
                   {/* Title and Labels */}
-                  <div className="space-y-4">
+                  <div className="space-y-4 mb-6">
                     <h3 className="text-xl font-semibold">UX Design Community</h3>
                     <div className="flex flex-wrap items-center gap-3">
                       <div className="flex items-center gap-1.5">
@@ -426,7 +426,7 @@ export default function Expert() {
                   </div>
 
                   {/* Description */}
-                  <p className="text-sm leading-relaxed text-muted-foreground">
+                  <p className="text-sm leading-relaxed text-muted-foreground mb-6">
                     Join our vibrant community of UX designers where we share insights, 
                     collaborate on projects, and help each other grow. Get access to exclusive 
                     resources, participate in discussions, and connect with fellow designers 
@@ -434,7 +434,7 @@ export default function Expert() {
                   </p>
 
                   {/* Stats */}
-                  <div className="space-y-6">
+                  <div className="space-y-6 mb-6">
                     {/* Community Size */}
                     <div className="space-y-3">
                       <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Community Size</p>
