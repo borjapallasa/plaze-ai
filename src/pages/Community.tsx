@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,10 +11,10 @@ export default function Community() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-[1200px] space-y-8">
       {/* Main Content Card */}
-      <Card className="p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Left Column - Video and Description */}
-          <div className="lg:col-span-8 space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Left Column - Video and Description */}
+        <div className="lg:col-span-8">
+          <Card className="p-6 space-y-6">
             {/* Video Section */}
             <div className="aspect-video bg-muted rounded-lg overflow-hidden relative">
               <img 
@@ -52,49 +53,49 @@ export default function Community() {
                 </li>
               </ul>
             </div>
-          </div>
-
-          {/* Right Column - Community Info */}
-          <div className="lg:col-span-4 space-y-6">
-            <Card className="p-6">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-12 w-12">
-                    <AvatarImage src="https://github.com/shadcn.png" />
-                    <AvatarFallback>BP</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="text-sm text-muted-foreground">This community is host by</p>
-                    <p className="font-semibold">Borja P.</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-2 truncate">
-                  <Users className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                  <span className="text-sm truncate">Optimal Path Automations has 198 members!</span>
-                </div>
-
-                <div className="space-y-2">
-                  <a href="#" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                    <Link className="w-4 h-4" />
-                    <span className="font-medium">YouTube:</span> @BorjaPalleja
-                  </a>
-                  <a href="#" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                    <Link className="w-4 h-4" />
-                    <span className="font-medium">TikTok:</span> @borjapalleja
-                  </a>
-                  <a href="#" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                    <Link className="w-4 h-4" />
-                    <span className="font-medium">Calendly:</span> Book a call
-                  </a>
-                </div>
-
-                <Button className="w-full">Manage Community</Button>
-              </div>
-            </Card>
-          </div>
+          </Card>
         </div>
-      </Card>
+
+        {/* Right Column - Community Info */}
+        <div className="lg:col-span-4">
+          <Card className="p-6">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <Avatar className="h-12 w-12">
+                  <AvatarImage src="https://github.com/shadcn.png" />
+                  <AvatarFallback>BP</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="text-sm text-muted-foreground">This community is host by</p>
+                  <p className="font-semibold">Borja P.</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                <span className="text-sm truncate">Optimal Path Automations has 198 members!</span>
+              </div>
+
+              <div className="space-y-2">
+                <a href="#" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  <Link className="w-4 h-4" />
+                  <span className="font-medium">YouTube:</span> @BorjaPalleja
+                </a>
+                <a href="#" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  <Link className="w-4 h-4" />
+                  <span className="font-medium">TikTok:</span> @borjapalleja
+                </a>
+                <a href="#" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  <Link className="w-4 h-4" />
+                  <span className="font-medium">Calendly:</span> Book a call
+                </a>
+              </div>
+
+              <Button className="w-full">Manage Community</Button>
+            </div>
+          </Card>
+        </div>
+      </div>
 
       {/* Tabs Section */}
       <Tabs defaultValue="threads" className="space-y-6">
