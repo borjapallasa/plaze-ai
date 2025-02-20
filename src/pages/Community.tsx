@@ -281,24 +281,6 @@ export default function Community() {
                     textDecoration: 'underline'
                   }
                 }}
-                footer={
-                  date && events.find(event => 
-                    event.date.toDateString() === date.toDateString()
-                  ) && (
-                    <div className="mt-2 p-2 bg-muted rounded-md">
-                      {events
-                        .filter(event => event.date.toDateString() === date.toDateString())
-                        .map((event, index) => (
-                          <div key={index} className="text-sm">
-                            <span className="font-medium">{event.title}</span>
-                            <Badge variant="secondary" className="ml-2">
-                              {event.type}
-                            </Badge>
-                          </div>
-                        ))}
-                    </div>
-                  )
-                }
               />
             </CardContent>
           </Card>
