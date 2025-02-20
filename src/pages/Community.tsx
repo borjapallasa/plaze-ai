@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -89,6 +88,24 @@ export default function Community() {
       type: "qa",
       description: "Open Q&A session with automation experts"
     }
+  ];
+
+  const classrooms = [
+    {
+      title: "How To Create Automated SEO Blogs With AI?",
+      description: "In this classroom you will learn how to create SEO blogs automatically with AI, using Make.com and Airtable.",
+      image: "/lovable-uploads/0f691532-4ffb-4ec9-82cb-3be9cc93d658.png"
+    },
+    {
+      title: "Fully Automated Affiliate Marketing Dashboard",
+      description: "Learn how to create an Affiliate Marketing Dashboard in Airtable, seamlessly integrating HubSpot and Google Analytics with Make.com.",
+      image: "/lovable-uploads/0f691532-4ffb-4ec9-82cb-3be9cc93d658.png"
+    },
+    {
+      title: "How To Obtain The Emails Of The Followers Of An Instagram Account",
+      description: "In this classroom we explain how you can obtain the emails of the followers of certain instagram user, using Make.com, RapidAPI and Airtable.",
+      image: "/lovable-uploads/0f691532-4ffb-4ec9-82cb-3be9cc93d658.png"
+    },
   ];
 
   return (
@@ -186,11 +203,11 @@ export default function Community() {
           <TabsList>
             <TabsTrigger value="threads" className="flex items-center gap-2">
               <MessageSquare className="w-4 h-4" />
-              See Threads
+              Threads
             </TabsTrigger>
             <TabsTrigger value="classrooms" className="flex items-center gap-2">
               <BookOpen className="w-4 h-4" />
-              See Classrooms
+              Classrooms
             </TabsTrigger>
             <TabsTrigger value="templates" className="flex items-center gap-2">
               <Users className="w-4 h-4" />
@@ -242,6 +259,28 @@ export default function Community() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="classrooms" className="space-y-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input placeholder="Search classroom" className="pl-9" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {classrooms.map((classroom, index) => (
+              <Card key={index} className="overflow-hidden group hover:shadow-lg transition-shadow">
+                <div className="aspect-[1.25] relative overflow-hidden bg-gradient-to-br from-blue-400 to-blue-600">
+                  <div className="absolute inset-0 p-6 flex items-center justify-center">
+                    <h3 className="text-white text-2xl font-bold text-center leading-tight">{classroom.title}</h3>
+                  </div>
+                </div>
+                <CardContent className="p-6">
+                  <p className="text-muted-foreground text-sm mb-4">{classroom.description}</p>
+                  <Button className="w-full" variant="outline">Open Classroom</Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </TabsContent>
 
         <TabsContent value="templates" className="space-y-6">
