@@ -11,6 +11,7 @@ import Community from "./pages/Community";
 import SignUp from "./pages/sign-up";
 import SignIn from "./pages/sign-in";
 import Classroom from "./pages/Classroom";
+import Jobs from "./pages/Jobs";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const App = () => (
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/classroom" element={<Classroom />} />
+        <Route path="/jobs" element={<Jobs />} />
       </Routes>
       <Toaster />
       <Sonner />
