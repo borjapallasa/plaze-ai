@@ -5,14 +5,13 @@ import { Link } from "react-router-dom";
 
 export default function Classroom() {
   return (
-    <div className="container mx-auto px-4 py-8 max-w-[1200px] space-y-8">
-      {/* Header Section */}
-      <div className="space-y-6">
-        <h1 className="text-4xl font-bold">How To Create Automated SEO Blogs With AI?</h1>
-        
-        {/* Video Section */}
-        <div className="space-y-4">
-          <Card className="overflow-hidden">
+    <div className="container mx-auto px-4 py-8 max-w-[1200px]">
+      <Card className="overflow-hidden">
+        <CardContent className="p-6 space-y-6">
+          <h1 className="text-4xl font-bold">How To Create Automated SEO Blogs With AI?</h1>
+          
+          {/* Video Section */}
+          <div className="space-y-4">
             <div className="aspect-video bg-muted relative">
               <img 
                 src="/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"
@@ -25,24 +24,22 @@ export default function Classroom() {
                 </div>
               </div>
             </div>
-          </Card>
 
-          {/* Resources Link */}
-          <div className="flex items-center gap-2">
-            <span className="text-muted-foreground">All formulas & scripts →</span>
-            <a 
-              href="https://docs.google.com/document/d/1TYRkoPNAFhU-ryYDhzPLQi6zrP5kezlg6N5ukcCRP5Vk/edit?usp=sharing" 
-              target="_blank"
-              className="text-primary hover:underline"
-            >
-              View Documentation
-            </a>
+            {/* Resources Link */}
+            <div className="flex items-center gap-2">
+              <span className="text-muted-foreground">All formulas & scripts →</span>
+              <a 
+                href="https://docs.google.com/document/d/1TYRkoPNAFhU-ryYDhzPLQi6zrP5kezlg6N5ukcCRP5Vk/edit?usp=sharing" 
+                target="_blank"
+                className="text-primary hover:underline"
+              >
+                View Documentation
+              </a>
+            </div>
           </div>
-        </div>
 
-        {/* Introduction */}
-        <Card>
-          <CardContent className="p-6 space-y-6">
+          {/* Introduction */}
+          <div className="space-y-6">
             <p>
               In this video, we are going to learn how to create an auto blogging no-code software using{" "}
               <span className="font-semibold">OpenAI, Airtable & Make</span> and publish them automatically to{" "}
@@ -89,15 +86,15 @@ export default function Classroom() {
                 </p>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
 
-        {/* Action Buttons */}
-        <div className="flex gap-4">
-          <Button variant="outline">Edit Classroom Details</Button>
-          <Button>Add New Lesson</Button>
-        </div>
-      </div>
+          {/* Action Buttons */}
+          <div className="flex gap-4">
+            <Button variant="outline">Edit Classroom Details</Button>
+            <Button>Add New Lesson</Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
