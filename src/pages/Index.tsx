@@ -287,51 +287,31 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
     >
       <div className="container mx-auto px-4">
         <div className="sm:hidden">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-semibold">Logo</h1>
+          <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm bg-background">
+            <div className="flex-1 flex items-center gap-2">
+              <Select 
+                defaultValue="Products" 
+                onValueChange={setSearchCategory}
+              >
+                <SelectTrigger className="border-0 w-[100px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Products">Products</SelectItem>
+                  <SelectItem value="Experts">Experts</SelectItem>
+                  <SelectItem value="Communities">Communities</SelectItem>
+                  <SelectItem value="Jobs">Jobs</SelectItem>
+                </SelectContent>
+              </Select>
+              <Input
+                className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9 text-xs"
+                placeholder={`Search ${searchCategory.toLowerCase()}...`}
+                type="search"
+              />
             </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon" className="rounded-full">
-                  <Menu className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>Sign up</DropdownMenuItem>
-                <DropdownMenuItem>Log in</DropdownMenuItem>
-                <DropdownMenuItem>List your product</DropdownMenuItem>
-                <DropdownMenuItem>Help</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-          <div className="mt-4">
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm bg-background">
-              <div className="flex-1 flex items-center gap-2">
-                <Select 
-                  defaultValue="Products" 
-                  onValueChange={setSearchCategory}
-                >
-                  <SelectTrigger className="border-0 w-[100px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Products">Products</SelectItem>
-                    <SelectItem value="Experts">Experts</SelectItem>
-                    <SelectItem value="Communities">Communities</SelectItem>
-                    <SelectItem value="Jobs">Jobs</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Input
-                  className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
-                  placeholder={`Search ${searchCategory.toLowerCase()}...`}
-                  type="search"
-                />
-              </div>
-              <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
-                <Search className="h-4 w-4" />
-              </Button>
-            </div>
+            <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
+              <Search className="h-4 w-4" />
+            </Button>
           </div>
         </div>
 
