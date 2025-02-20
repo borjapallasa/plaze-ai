@@ -1,6 +1,6 @@
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
-import { Search, Target, ShoppingBag, Settings, Users, Truck, ChartBar, ChevronDown } from "lucide-react";
+import { Search, Target, ShoppingBag, Settings, Users, Truck, ChartBar, ChevronDown, ArrowRight, Sparkle, Star, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Typewriter from 'typewriter-effect';
@@ -117,7 +117,7 @@ const typewriterStrings = [
 ];
 
 const badges = [
-  { label: "Trending", icon: Sparkles, category: null },
+  { label: "Trending", icon: Sparkle, category: null },
   { label: "Templates", icon: Star, category: "template" },
   { label: "Prompt", icon: Flame, category: "prompt" },
   { label: "Communities", icon: Users, category: "community" },
