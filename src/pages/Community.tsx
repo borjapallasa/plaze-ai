@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -111,12 +110,9 @@ export default function Community() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-[1200px] space-y-8">
-      {/* Main Content Card */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Left Column - Video and Description */}
         <div className="lg:col-span-8">
           <Card className="p-6 space-y-6">
-            {/* Video Section */}
             <div className="aspect-video bg-muted rounded-lg overflow-hidden relative">
               <img 
                 src="/lovable-uploads/890bbce9-6ca6-4a0e-958a-d7ba6f61bf73.png"
@@ -130,7 +126,6 @@ export default function Community() {
               </div>
             </div>
 
-            {/* Description */}
             <div className="space-y-4">
               <p className="text-muted-foreground">
                 Imagine a spot where we all get together to chat about making our businesses run smoother with some automation magic and no-code shortcuts. Here's what you'll get by joining:
@@ -157,7 +152,6 @@ export default function Community() {
           </Card>
         </div>
 
-        {/* Right Column - Community Info */}
         <div className="lg:col-span-4">
           <Card className="p-6">
             <div className="space-y-4">
@@ -198,7 +192,6 @@ export default function Community() {
         </div>
       </div>
 
-      {/* Tabs Section */}
       <Tabs defaultValue="threads" className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-12">
           <div className="lg:col-span-8 w-full overflow-x-auto">
@@ -228,7 +221,7 @@ export default function Community() {
             <Button>Create New Thread</Button>
             <Input placeholder="Search thread" className="flex-1" />
           </div>
-          <Card>
+          <Card className="group hover:bg-accent transition-colors cursor-pointer">
             <CardContent className="p-6 space-y-4">
               <div className="flex items-start gap-4">
                 <Avatar className="h-12 w-12 flex-shrink-0">
