@@ -231,31 +231,23 @@ const Index = () => {
           <div className="flex justify-center">
             <div className={`transition-all duration-500 ${isScrolled ? 'w-[360px] -mt-10' : 'w-[540px] mt-3'}`}>
               <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm bg-background">
-                <div className="flex-1 flex items-center gap-6 divide-x">
-                  <div className="flex-1 flex items-center gap-2">
-                    <Select defaultValue="Products" onValueChange={setSearchCategory}>
-                      <SelectTrigger className="border-0 w-[120px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Products">Products</SelectItem>
-                        <SelectItem value="Experts">Experts</SelectItem>
-                        <SelectItem value="Communities">Communities</SelectItem>
-                        <SelectItem value="Jobs">Jobs</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Input
-                      className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent"
-                      placeholder={`Search ${searchCategory.toLowerCase()}...`}
-                      type="search"
-                    />
-                  </div>
-                  <div className="pl-6">
-                    <button className="text-sm font-medium">Any week</button>
-                  </div>
-                  <div className="pl-6">
-                    <button className="text-sm text-muted-foreground">Add guests</button>
-                  </div>
+                <div className="flex-1 flex items-center gap-2">
+                  <Select defaultValue="Products" onValueChange={setSearchCategory}>
+                    <SelectTrigger className="border-0 w-[120px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Products">Products</SelectItem>
+                      <SelectItem value="Experts">Experts</SelectItem>
+                      <SelectItem value="Communities">Communities</SelectItem>
+                      <SelectItem value="Jobs">Jobs</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent"
+                    placeholder={`Search ${searchCategory.toLowerCase()}...`}
+                    type="search"
+                  />
                 </div>
                 <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
                   <Search className="h-4 w-4" />
