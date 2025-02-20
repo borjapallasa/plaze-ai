@@ -2,6 +2,7 @@
 import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DayPicker } from "react-day-picker";
+import { format } from "date-fns";
 
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
@@ -62,12 +63,14 @@ function Calendar({
       components={{
         IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" />,
         IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
-        Caption: ({ ...props }) => (
+        Caption: ({ displayMonth, ...props }) => (
           <div className="flex w-full justify-between items-center">
-            <div className="font-semibold">{props.displayMonth}</div>
+            <div className="font-semibold">
+              {format(displayMonth, 'MMMM yyyy')}
+            </div>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => props.onGoToDate(new Date())}
+                onClick={() => props.goToDate?.(new Date())}
                 className={cn(
                   buttonVariants({ variant: "outline", size: "sm" }),
                   "text-xs px-3"
@@ -77,7 +80,7 @@ function Calendar({
               </button>
               <div className="space-x-1">
                 <button
-                  onClick={() => props.onPreviousClick()}
+                  onClick={() => props.goToPrevious?.()}
                   className={cn(
                     buttonVariants({ variant: "outline" }),
                     "h-7 w-7 bg-transparent p-0 hover:opacity-75"
@@ -86,7 +89,7 @@ function Calendar({
                   <ChevronLeft className="h-4 w-4" />
                 </button>
                 <button
-                  onClick={() => props.onNextClick()}
+                  onClick={() => props.goToNext?.()}
                   className={cn(
                     buttonVariants({ variant: "outline" }),
                     "h-7 w-7 bg-transparent p-0 hover:opacity-75"
