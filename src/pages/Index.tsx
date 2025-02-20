@@ -293,7 +293,7 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
                 defaultValue="Products" 
                 onValueChange={setSearchCategory}
               >
-                <SelectTrigger className="border-0 w-[120px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9 text-xs">
+                <SelectTrigger className="border-0 w-[120px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
                   <SelectValue className="pr-4" />
                 </SelectTrigger>
                 <SelectContent className="w-[150px]">
@@ -304,7 +304,7 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
                 </SelectContent>
               </Select>
               <Input
-                className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9 text-xs"
+                className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
                 placeholder={`Search ${searchCategory.toLowerCase()}...`}
                 type="search"
               />
@@ -316,14 +316,14 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
         </div>
 
         <div className="hidden sm:flex flex-col">
-          <div className="flex items-center justify-between pt-3">
+          <div className="flex items-center justify-between pt-3 relative">
             <div className="flex-shrink-0 w-[200px] flex items-center">
               <h1 className="text-2xl font-semibold">Logo</h1>
             </div>
 
             <div 
-              className={`flex justify-center transition-all duration-200 ease-out ${
-                isScrolled ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100 h-[32px]'
+              className={`absolute left-1/2 -translate-x-1/2 transition-all duration-200 ease-out ${
+                isScrolled ? 'opacity-0 h-0 overflow-hidden pointer-events-none' : 'opacity-100 h-[32px]'
               }`}
             >
               <div className="text-[1.5rem] leading-relaxed font-bold whitespace-nowrap flex items-center justify-center">
@@ -339,6 +339,45 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
                     }}
                   />
                 </span>
+              </div>
+            </div>
+
+            <div 
+              className={`absolute left-1/2 -translate-x-1/2 transition-all duration-200 ease-out ${
+                isScrolled ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
+              }`}
+            >
+              <div 
+                className={`transition-all duration-200 ease-out ${
+                  isScrolled ? 'w-[360px]' : 'w-[540px]'
+                }`}
+              >
+                <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm bg-background">
+                  <div className="flex-1 flex items-center gap-2">
+                    <Select 
+                      defaultValue="Products" 
+                      onValueChange={setSearchCategory}
+                    >
+                      <SelectTrigger className="border-0 w-[120px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
+                        <SelectValue className="pr-4" />
+                      </SelectTrigger>
+                      <SelectContent className="w-[150px]">
+                        <SelectItem value="Products">Products</SelectItem>
+                        <SelectItem value="Experts">Experts</SelectItem>
+                        <SelectItem value="Communities">Communities</SelectItem>
+                        <SelectItem value="Jobs">Jobs</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Input
+                      className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
+                      placeholder={`Search ${searchCategory.toLowerCase()}...`}
+                      type="search"
+                    />
+                  </div>
+                  <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
+                    <Search className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </div>
 
@@ -366,44 +405,7 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
             </div>
           </div>
 
-          <div 
-            className={`flex justify-center transition-all duration-200 ease-out ${
-              isScrolled ? 'py-2' : 'py-4'
-            }`}
-          >
-            <div 
-              className={`transition-all duration-200 ease-out ${
-                isScrolled ? 'w-[360px]' : 'w-[540px]'
-              }`}
-            >
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm bg-background">
-                <div className="flex-1 flex items-center gap-2">
-                  <Select 
-                    defaultValue="Products" 
-                    onValueChange={setSearchCategory}
-                  >
-                    <SelectTrigger className="border-0 w-[120px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
-                      <SelectValue className="pr-4" />
-                    </SelectTrigger>
-                    <SelectContent className="w-[150px]">
-                      <SelectItem value="Products">Products</SelectItem>
-                      <SelectItem value="Experts">Experts</SelectItem>
-                      <SelectItem value="Communities">Communities</SelectItem>
-                      <SelectItem value="Jobs">Jobs</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Input
-                    className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
-                    placeholder={`Search ${searchCategory.toLowerCase()}...`}
-                    type="search"
-                  />
-                </div>
-                <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
-                  <Search className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
+          <div className="h-16" />
         </div>
       </div>
     </header>
