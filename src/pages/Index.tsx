@@ -177,7 +177,19 @@ const Index = () => {
             </div>
           </div>
           <div className="pb-5">
-            <div className="flex justify-center">
+            <div className="flex flex-col items-center gap-4">
+              <div className="text-2xl font-semibold text-center">
+                Find{" "}
+                <span className="inline-block">
+                  <Typewriter
+                    options={{
+                      strings: typewriterStrings,
+                      autoStart: true,
+                      loop: true,
+                    }}
+                  />
+                </span>
+              </div>
               <div className="w-full max-w-2xl">
                 <div className="flex items-center gap-2 px-4 h-14 rounded-full border shadow-sm bg-background">
                   <Select value={searchCategory} onValueChange={setSearchCategory}>
@@ -200,7 +212,7 @@ const Index = () => {
                       type="search"
                     />
                   </div>
-                  <Button size="icon" variant="primary" className="rounded-full">
+                  <Button size="icon" variant="default" className="rounded-full">
                     <Search className="h-4 w-4" />
                   </Button>
                 </div>
