@@ -56,7 +56,7 @@ export function MoreFromSeller({ products, className }: MoreFromSellerProps) {
       >
         <CarouselContent className="-ml-4">
           {products.map((product, index) => (
-            <CarouselItem key={index} className="pl-4 basis-full lg:basis-1/3">
+            <CarouselItem key={index} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/4">
               <ProductCard product={product} />
             </CarouselItem>
           ))}
