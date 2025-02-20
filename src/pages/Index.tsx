@@ -424,6 +424,26 @@ const Index = () => {
   const [api, setApi] = useState<CarouselApi>();
 
   useEffect(() => {
+    let ticking = false;
+
+    const updateScrollState = () => {
+      setIsScrolled(window.scrollY > 10);
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateScrollState);
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
     if (!api) {
       return;
     }
@@ -443,28 +463,6 @@ const Index = () => {
       api.off("reInit", onScroll);
     };
   }, [api]);
-
-  useEffect(() => {
-    let lastScrollY = window.scrollY;
-    let ticking = false;
-
-    const updateScrollState = () => {
-      setIsScrolled(window.scrollY > 0);
-      lastScrollY = window.scrollY;
-      ticking = false;
-    };
-
-    const onScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(updateScrollState);
-        ticking = true;
-      }
-    };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   const filteredProducts = useMemo(() => 
     selectedCategory
@@ -487,9 +485,11 @@ const Index = () => {
         setSearchCategory={setSearchCategory}
       />
 
-      <div className={`sticky bg-background border-b ${
-        isScrolled ? 'top-20 z-40' : 'top-[140px] z-30'
-      }`}>
+      <div 
+        className={`sticky bg-background border-b transition-[top] duration-300 ease-in-out ${
+          isScrolled ? 'top-20 z-40' : 'top-[140px] z-30'
+        }`}
+      >
         <div className="container mx-auto px-4 py-4">
           <Carousel
             setApi={setApi}
@@ -528,9 +528,11 @@ const Index = () => {
 
       <main>
         <div className="container mx-auto px-4">
-          <div className={`space-y-6 py-6 ${
-            isScrolled ? 'mt-24' : 'mt-32'
-          }`}>
+          <div 
+            className={`space-y-6 py-6 transition-[margin] duration-300 ease-in-out ${
+              isScrolled ? 'mt-24' : 'mt-32'
+            }`}
+          >
             {isMobile ? (
               <Carousel className="w-full">
                 <CarouselContent>
