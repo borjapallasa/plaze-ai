@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
-import { 
+import {
   Search, 
   Globe, 
   Menu, 
@@ -464,6 +464,38 @@ const Index = () => {
       />
 
       <main className="pt-40 border-t">
+        <div className="container mx-auto px-4 mb-8">
+          <Carousel
+            opts={{
+              align: "start",
+              dragFree: true,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-4">
+              {departments.map((dept, index) => {
+                const Icon = dept.icon;
+                return (
+                  <CarouselItem key={index} className="pl-4 basis-[120px]">
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center">
+                        <Icon className="w-6 h-6 text-muted-foreground" />
+                      </div>
+                      <span className="text-xs text-muted-foreground whitespace-nowrap">
+                        {dept.name}
+                      </span>
+                    </div>
+                  </CarouselItem>
+                );
+              })}
+            </CarouselContent>
+            <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-background via-background to-transparent z-10" />
+            <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-background via-background to-transparent z-10" />
+            <CarouselPrevious className="-left-12" />
+            <CarouselNext className="-right-12" />
+          </Carousel>
+        </div>
+
         <div className="p-6 border-b border-gray-200">
           <div className="space-y-6">
             {isMobile ? (
