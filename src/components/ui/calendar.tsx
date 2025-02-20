@@ -35,20 +35,20 @@ function Calendar({
       showOutsideDays={showOutsideDays}
       month={month}
       onMonthChange={setMonth}
-      className={cn("p-3 w-full", className)}
+      className={cn("p-3 w-full rounded-lg overflow-hidden", className)}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0 w-full",
         month: "space-y-4 w-full",
-        caption: "flex justify-between pt-1 pb-4 items-center px-2 relative",
-        caption_label: "text-base font-semibold",
-        nav: "space-x-1 flex items-center gap-2",
+        caption: "flex flex-col sm:flex-row justify-between pt-1 pb-4 items-center px-2 relative gap-2",
+        caption_label: "text-xl font-semibold order-1 sm:order-none",
+        nav: "space-x-1 flex items-center gap-2 order-2 sm:order-none",
         nav_button: cn(
           buttonVariants({ variant: "outline" }),
           "h-7 w-7 bg-transparent p-0 hover:opacity-75 flex items-center justify-center border border-input"
         ),
         nav_button_previous: "mr-1",
         nav_button_next: "ml-1",
-        table: "w-full border-collapse",
+        table: "w-full border-collapse rounded-lg overflow-hidden",
         head_row: cn(
           "flex w-full [&>*]:flex-1",
           "border-b border-border"
@@ -63,7 +63,9 @@ function Calendar({
           "relative p-0 text-center min-h-[40px] border-b border-border",
           "[&:not(:first-child)]:border-l",
           "lg:h-[120px] lg:w-[14.28%] lg:p-0 lg:text-center lg:border-b lg:border-r lg:border-border lg:first:border-l",
-          "focus-within:relative focus-within:z-20"
+          "focus-within:relative focus-within:z-20",
+          "first:sm:rounded-none last:sm:rounded-none", // Remove border radius on desktop
+          "[&:first-child]:rounded-l [&:last-child]:rounded-r" // Add border radius on mobile
         ),
         day: cn(
           "h-full w-full p-2 font-normal aria-selected:opacity-100",
@@ -86,11 +88,11 @@ function Calendar({
         IconLeft: () => <ChevronLeft className="h-4 w-4" />,
         IconRight: () => <ChevronRight className="h-4 w-4" />,
         Caption: ({ displayMonth }) => (
-          <div className="flex w-full justify-between items-center">
-            <span className="text-xl font-semibold">
+          <div className="flex flex-col sm:flex-row w-full justify-between items-center gap-4 sm:gap-2">
+            <span className="text-xl font-semibold order-1 sm:order-none">
               {format(displayMonth, 'MMMM yyyy')}
             </span>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 order-2 sm:order-none">
               <div className="flex gap-1">
                 <button
                   onClick={() => {
