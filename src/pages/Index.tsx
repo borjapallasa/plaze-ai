@@ -28,10 +28,10 @@ import {
 } from "@/components/ui/carousel";
 
 const typewriterStrings = [
-  "The Best AI & Automation Communities",
-  "The Leading AI Resources",
-  "The Top AI Products & Services",
-  "The Best AI Learning Platform"
+  "Products To Scale",
+  "Experts To Hire",
+  "Jobs To Earn",
+  "Communities To Learn"
 ];
 
 const products = [
@@ -182,16 +182,19 @@ const Index = () => {
 
             {/* Center Section with Typewriter when not scrolled */}
             <div className={`transition-all duration-300 ${isScrolled ? 'hidden' : 'block'}`}>
-              <div className="text-lg font-medium text-center">
-                <Typewriter
-                  options={{
-                    strings: typewriterStrings,
-                    autoStart: true,
-                    loop: true,
-                    delay: 50,
-                    deleteSpeed: 30,
-                  }}
-                />
+              <div className="text-lg font-bold text-center flex items-center">
+                <span>The Best AI & Automation</span>
+                <span className="text-muted-foreground ml-1">
+                  <Typewriter
+                    options={{
+                      strings: typewriterStrings,
+                      autoStart: true,
+                      loop: true,
+                      delay: 50,
+                      deleteSpeed: 30,
+                    }}
+                  />
+                </span>
               </div>
             </div>
 
