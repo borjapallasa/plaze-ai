@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Product from "./pages/Product";
 import Expert from "./pages/Expert";
@@ -16,14 +16,12 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/product" element={<Product />} />
-          <Route path="/expert" element={<Expert />} />
-          <Route path="/community" element={<Community />} />
-        </Routes>
-      </BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/product" element={<Product />} />
+        <Route path="/expert" element={<Expert />} />
+        <Route path="/community" element={<Community />} />
+      </Routes>
     </TooltipProvider>
   </QueryClientProvider>
 );
