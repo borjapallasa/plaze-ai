@@ -531,7 +531,7 @@ const Index = () => {
       <main>
         <div className="container mx-auto px-4">
           <div 
-            className={`space-y-6 py-6 transition-[margin] duration-300 ease-in-out ${
+            className={`space-y-4 pt-8 pb-2 transition-[margin] duration-300 ease-in-out ${
               isScrolled ? 'mt-24' : 'mt-32'
             }`}
           >
@@ -543,8 +543,10 @@ const Index = () => {
                   <Badge
                     key={index}
                     variant={isSelected ? "default" : "secondary"}
-                    className={`px-4 py-2 text-sm font-medium cursor-pointer hover:bg-secondary/80 transition-colors ${
-                      isSelected ? 'bg-primary text-primary-foreground' : ''
+                    className={`px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200 ${
+                      isSelected 
+                        ? 'bg-primary text-primary-foreground shadow-md' 
+                        : 'hover:bg-secondary hover:shadow-sm'
                     }`}
                     onClick={() => handleBadgeClick(badge.category)}
                   >
