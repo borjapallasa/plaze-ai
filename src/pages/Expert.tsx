@@ -397,10 +397,10 @@ export default function Expert() {
             <div className="col-span-4 col-start-2">
               <h2 className="text-2xl font-bold mb-6">Community</h2>
               <Card>
-                <CardContent className="p-6">
-                  <div className="flex gap-8">
+                <CardContent className="p-4">
+                  <div className="flex flex-col gap-6">
                     {/* Left side - Video and title hierarchy */}
-                    <div className="w-80 flex-shrink-0">
+                    <div className="w-full">
                       <div className="aspect-video bg-muted rounded-lg overflow-hidden relative">
                         <img 
                           src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5"
@@ -415,7 +415,7 @@ export default function Expert() {
                       </div>
                       <div className="mt-4 space-y-3">
                         <h3 className="text-2xl font-semibold leading-none tracking-tight">UX Design Community</h3>
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-wrap items-center gap-3">
                           <div className="flex items-center gap-1.5">
                             <Globe className="w-3.5 h-3.5 text-muted-foreground" />
                             <span className="text-sm text-muted-foreground">Public Community</span>
@@ -427,7 +427,7 @@ export default function Expert() {
                     </div>
 
                     {/* Right side - Content and CTAs */}
-                    <div className="flex-1 flex flex-col justify-between">
+                    <div className="flex flex-col gap-6">
                       <div className="space-y-6">
                         <p className="text-sm leading-relaxed text-muted-foreground">
                           Join our vibrant community of UX designers where we share insights, 
@@ -436,45 +436,41 @@ export default function Expert() {
                           from around the world.
                         </p>
 
-                        <div className="grid grid-cols-2 gap-12">
+                        <div className="space-y-6">
                           <div className="space-y-3">
                             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Community Size</p>
-                            <div className="space-y-4">
-                              <div className="flex items-baseline gap-12">
-                                <div>
-                                  <p className="text-2xl font-bold">1,234</p>
-                                  <p className="text-xs text-muted-foreground mt-1.5">Members</p>
-                                </div>
-                                <div>
-                                  <p className="text-2xl font-bold">12</p>
-                                  <p className="text-xs text-muted-foreground mt-1.5">Classrooms</p>
-                                </div>
+                            <div className="grid grid-cols-2 gap-6">
+                              <div>
+                                <p className="text-2xl font-bold">1,234</p>
+                                <p className="text-xs text-muted-foreground mt-1.5">Members</p>
+                              </div>
+                              <div>
+                                <p className="text-2xl font-bold">12</p>
+                                <p className="text-xs text-muted-foreground mt-1.5">Classrooms</p>
                               </div>
                             </div>
                           </div>
                           <div className="space-y-3">
                             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Activity</p>
-                            <div className="space-y-4">
-                              <div className="flex items-baseline gap-12">
-                                <div>
-                                  <p className="text-2xl font-bold">456</p>
-                                  <p className="text-xs text-muted-foreground mt-1.5">Posts</p>
-                                </div>
-                                <div>
-                                  <p className="text-2xl font-bold">89</p>
-                                  <p className="text-xs text-muted-foreground mt-1.5">Products</p>
-                                </div>
+                            <div className="grid grid-cols-2 gap-6">
+                              <div>
+                                <p className="text-2xl font-bold">456</p>
+                                <p className="text-xs text-muted-foreground mt-1.5">Posts</p>
+                              </div>
+                              <div>
+                                <p className="text-2xl font-bold">89</p>
+                                <p className="text-xs text-muted-foreground mt-1.5">Products</p>
                               </div>
                             </div>
                           </div>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-3 mt-6">
-                        <Button className="w-full max-w-[200px]">
+                      <div className="flex flex-col gap-3">
+                        <Button className="w-full">
                           Join Community
                         </Button>
-                        <Button variant="outline">
+                        <Button variant="outline" className="w-full">
                           Learn More
                         </Button>
                       </div>
