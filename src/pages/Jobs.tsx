@@ -86,7 +86,7 @@ const JobCard = ({ job }: { job: Job }) => (
         <Badge 
           key={index}
           variant="secondary"
-          className="rounded-full bg-accent whitespace-nowrap py-1.5"
+          className="rounded-full whitespace-nowrap py-1.5 bg-[#9b87f5]/10 text-[#6E59A5] hover:bg-[#9b87f5]/20"
         >
           {skill}
         </Badge>
