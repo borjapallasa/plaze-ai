@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -123,7 +122,6 @@ export default function Community() {
         <div className="flex gap-4">
           <Button>Create New Thread</Button>
           <Input placeholder="Search thread" className="flex-1" />
-          <Button variant="outline">Search by topic</Button>
         </div>
 
         <TabsContent value="threads" className="space-y-6">
