@@ -128,21 +128,21 @@ export default function Community() {
           <Card>
             <CardContent className="p-6">
               <div className="flex flex-col sm:flex-row items-start gap-4">
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src="https://github.com/shadcn.png" />
-                  <AvatarFallback>BP</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 space-y-4 w-full">
-                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-0">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-semibold">Letter from Borja</h3>
-                        <Badge variant="secondary" className="text-xs">Messages: 1</Badge>
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        Created by Borja P
-                      </div>
+                <div className="flex gap-4 w-full">
+                  <Avatar className="h-10 w-10 flex-shrink-0">
+                    <AvatarImage src="https://github.com/shadcn.png" />
+                    <AvatarFallback>BP</AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col gap-1">
+                    <h3 className="font-semibold">Letter from Borja</h3>
+                    <div className="text-sm text-muted-foreground">
+                      Created by Borja P
                     </div>
+                    <Badge variant="secondary" className="text-xs w-fit">Messages: 1</Badge>
+                  </div>
+                </div>
+                <div className="flex-1 space-y-4 w-full">
+                  <div className="flex justify-end">
                     <Badge variant="outline" className="flex items-center gap-1 w-fit">
                       <ThumbsUp className="w-3 h-3" />
                       8
