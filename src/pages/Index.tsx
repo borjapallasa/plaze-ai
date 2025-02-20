@@ -1,3 +1,4 @@
+
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
 import { Search, Target, ShoppingBag, Settings, Users, Truck, ChartBar, ChevronDown, ArrowRight, Sparkle, Star, Flame } from "lucide-react";
@@ -152,62 +153,64 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
-      <main>
-        <div className="border-b">
-          <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between py-4 overflow-x-auto hide-scrollbar">
-              {departments.map((dept, index) => {
-                const Icon = dept.icon;
-                return (
-                  <div 
-                    key={index}
-                    className="flex flex-col items-center gap-2 min-w-[80px] cursor-pointer group"
-                  >
-                    <div className="p-3 rounded-full bg-accent group-hover:bg-accent/80 transition-colors">
-                      <Icon className="w-6 h-6 text-primary" />
-                    </div>
-                    <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
-                      {dept.name}
-                    </span>
-                  </div>
-                );
-              })}
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+        <div className="container mx-auto px-4">
+          <div className="h-20 flex items-center justify-between">
+            <div className="flex-1 flex items-center justify-between">
+              <div className="flex items-center gap-8">
+                <h1 className="text-2xl font-semibold">Logo</h1>
+                <div className="hidden lg:flex items-center gap-6">
+                  {departments.map((dept, index) => {
+                    const Icon = dept.icon;
+                    return (
+                      <button
+                        key={index}
+                        className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        <Icon className="w-4 h-4" />
+                        {dept.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-
-        <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="container mx-auto px-4 py-4">
-            <div className="flex items-center gap-4 max-w-3xl mx-auto">
-              <div className="flex-1 flex items-center gap-2 rounded-full border bg-background shadow-sm">
-                <Select value={searchCategory} onValueChange={setSearchCategory}>
-                  <SelectTrigger className="w-[140px] border-0 focus:ring-0 focus:ring-offset-0">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {searchCategories.map((category) => (
-                      <SelectItem key={category} value={category}>
-                        {category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <div className="h-6 w-[1px] bg-border" />
-                <div className="flex-1 flex items-center">
-                  <Input
-                    className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                    placeholder={`Search ${searchCategory.toLowerCase()}...`}
-                    type="search"
-                  />
+          <div className="pb-5">
+            <div className="flex justify-center">
+              <div className="w-full max-w-2xl">
+                <div className="flex items-center gap-2 px-4 h-14 rounded-full border shadow-sm bg-background">
+                  <Select value={searchCategory} onValueChange={setSearchCategory}>
+                    <SelectTrigger className="w-[140px] border-0 focus:ring-0 focus:ring-offset-0 px-0">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {searchCategories.map((category) => (
+                        <SelectItem key={category} value={category}>
+                          {category}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <div className="h-8 w-[1px] bg-border" />
+                  <div className="flex-1 flex items-center">
+                    <Input
+                      className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2"
+                      placeholder={`Search ${searchCategory.toLowerCase()}...`}
+                      type="search"
+                    />
+                  </div>
+                  <Button size="icon" variant="primary" className="rounded-full">
+                    <Search className="h-4 w-4" />
+                  </Button>
                 </div>
-                <Button size="icon" className="rounded-full mr-1">
-                  <Search className="h-4 w-4" />
-                </Button>
               </div>
             </div>
           </div>
         </div>
+      </header>
 
+      <main>
         <div className="p-6 border-b border-gray-200">
           <div className="space-y-6">
             {isMobile ? (
