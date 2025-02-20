@@ -176,13 +176,13 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className={`flex items-center justify-between transition-all duration-300 ${isScrolled ? '' : 'mb-4'}`}>
             {/* Logo */}
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 w-[200px]">
               <h1 className="text-2xl font-semibold">Logo</h1>
             </div>
 
             {/* Center Section with Typewriter when not scrolled */}
-            <div className={`transition-all duration-300 ${isScrolled ? 'hidden' : 'block'}`}>
-              <div className="text-lg font-bold text-center flex items-center">
+            <div className={`transition-all duration-300 flex-1 ${isScrolled ? 'hidden' : 'block'}`}>
+              <div className="text-lg font-bold text-center flex items-center justify-center">
                 <span>The Best AI & Automation</span>
                 <span className="text-muted-foreground ml-1">
                   <Typewriter
@@ -199,7 +199,7 @@ const Index = () => {
             </div>
 
             {/* Right Section */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 w-[200px] justify-end">
               <Button variant="ghost" size="sm" className="font-medium">
                 Add Product
               </Button>
