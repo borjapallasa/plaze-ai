@@ -23,7 +23,7 @@ function Calendar({
         month: "space-y-4 w-full",
         caption: "flex justify-between pt-1 pb-4 items-center px-2",
         caption_label: "text-base font-semibold",
-        nav: "space-x-1 flex items-center",
+        nav: "space-x-1 flex items-center gap-4",
         nav_button: cn(
           buttonVariants({ variant: "outline" }),
           "h-7 w-7 bg-transparent p-0 hover:opacity-75"
@@ -36,7 +36,7 @@ function Calendar({
           "text-muted-foreground w-[14.28%] font-normal text-[0.8rem] pb-3",
         row: "flex w-full",
         cell: cn(
-          "relative w-[14.28%] h-[100px] p-0 text-center border-b border-r border-border first:border-l focus-within:relative focus-within:z-20",
+          "relative w-[14.28%] h-[120px] p-0 text-center border-b border-r border-border first:border-l focus-within:relative focus-within:z-20",
           "[&:nth-child(7n)]:border-r-0"
         ),
         day: cn(
@@ -45,8 +45,11 @@ function Calendar({
         ),
         day_range_end: "day-range-end",
         day_selected:
-          "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
-        day_today: "font-semibold",
+          "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground rounded-full",
+        day_today: cn(
+          "bg-accent rounded-full font-semibold",
+          "before:absolute before:w-7 before:h-7 before:bg-accent before:rounded-full before:-z-10 before:-translate-x-1/2 before:-translate-y-1/2"
+        ),
         day_outside:
           "text-muted-foreground opacity-50",
         day_disabled: "text-muted-foreground opacity-50",
@@ -59,6 +62,19 @@ function Calendar({
         IconLeft: ({ ..._props }) => <ChevronLeft className="h-4 w-4" />,
         IconRight: ({ ..._props }) => <ChevronRight className="h-4 w-4" />,
       }}
+      footer={
+        <div className="mt-4 space-x-2">
+          <button
+            onClick={() => props.onSelect?.(new Date())}
+            className={cn(
+              buttonVariants({ variant: "outline", size: "sm" }),
+              "text-xs px-3"
+            )}
+          >
+            Today
+          </button>
+        </div>
+      }
       {...props}
     />
   );
