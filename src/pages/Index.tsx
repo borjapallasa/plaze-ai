@@ -318,7 +318,7 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
         <div className="hidden sm:flex relative pb-[20px]">
           <div className="w-[20%] flex items-start">
             <h1 className={`text-2xl font-semibold mt-[15px] ml-[15px] ${
-              isScrolled ? 'mb-[10px]' : ''
+              isScrolled ? 'mb-[30px]' : ''
             }`}>Logo</h1>
           </div>
 
@@ -346,7 +346,7 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
 
             <div 
               className={`flex justify-center transition-transform duration-300 ease-in-out ${
-                isScrolled ? 'transform -translate-y-[10px] mb-[10px]' : ''
+                isScrolled ? 'transform -translate-y-[10px] mb-[30px]' : ''
               }`}
             >
               <div 
@@ -386,7 +386,7 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
 
           <div className="w-[20%] flex items-start justify-end">
             <div className={`flex items-center gap-2 mt-[15px] mr-[15px] ${
-              isScrolled ? 'mb-[10px]' : ''
+              isScrolled ? 'mb-[30px]' : ''
             }`}>
               <Button variant="ghost" size="sm" className="font-medium">
                 Add Product
