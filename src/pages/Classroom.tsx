@@ -12,7 +12,7 @@ export default function Classroom() {
           
           {/* Video Section */}
           <div className="space-y-4">
-            <div className="aspect-video bg-muted relative">
+            <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
               <img 
                 src="/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"
                 alt="Course thumbnail"
