@@ -361,7 +361,7 @@ export default function Product() {
 
       <ProductReviews reviews={reviews} className="p-6 mb-16" />
 
-      <MoreFromSeller products={moreFromSeller} className="mt-16" />
+      <MoreFromSeller products={moreFromSeller} className="mt-30" />
 
       <StickyATC 
         variants={variants}
