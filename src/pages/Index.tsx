@@ -281,7 +281,7 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
 
   return (
     <header 
-      className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm transition-all duration-200 ease-out bg-white ${
+      className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm transition-all duration-200 ease-out bg-white border-b ${
         isScrolled ? 'h-[80px] bg-background/95 mt-[5px]' : 'bg-background'
       }`}
     >
