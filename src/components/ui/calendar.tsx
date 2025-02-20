@@ -73,25 +73,39 @@ function Calendar({
       components={{
         IconLeft: () => <ChevronLeft className="h-4 w-4" />,
         IconRight: () => <ChevronRight className="h-4 w-4" />,
-        Caption: ({ displayMonth }) => (
+        Caption: ({ displayMonth, goToMonth }) => (
           <div className="flex w-full justify-between items-center">
             <span className="font-semibold">
               {format(displayMonth, 'MMMM yyyy')}
             </span>
             <div className="flex items-center gap-2">
               <div className="flex gap-1">
-                <DayPicker.Button name="previous-month" className={cn(
-                  buttonVariants({ variant: "outline" }),
-                  "h-7 w-7 p-0 flex items-center justify-center"
-                )}>
+                <button
+                  onClick={() => {
+                    const prevMonth = new Date(displayMonth);
+                    prevMonth.setMonth(prevMonth.getMonth() - 1);
+                    goToMonth(prevMonth);
+                  }}
+                  className={cn(
+                    buttonVariants({ variant: "outline" }),
+                    "h-7 w-7 p-0 flex items-center justify-center"
+                  )}
+                >
                   <ChevronLeft className="h-4 w-4" />
-                </DayPicker.Button>
-                <DayPicker.Button name="next-month" className={cn(
-                  buttonVariants({ variant: "outline" }),
-                  "h-7 w-7 p-0 flex items-center justify-center"
-                )}>
+                </button>
+                <button
+                  onClick={() => {
+                    const nextMonth = new Date(displayMonth);
+                    nextMonth.setMonth(nextMonth.getMonth() + 1);
+                    goToMonth(nextMonth);
+                  }}
+                  className={cn(
+                    buttonVariants({ variant: "outline" }),
+                    "h-7 w-7 p-0 flex items-center justify-center"
+                  )}
+                >
                   <ChevronRight className="h-4 w-4" />
-                </DayPicker.Button>
+                </button>
               </div>
               <button
                 type="button"
