@@ -481,14 +481,13 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
-      <MemoizedHeader 
-        isScrolled={isScrolled}
-        searchCategory={searchCategory}
-        setSearchCategory={setSearchCategory}
-      />
-
-      <main>
-        <div className="sticky top-[80px] z-40 bg-background border-b">
+      <div className="sticky top-0 z-50">
+        <MemoizedHeader 
+          isScrolled={isScrolled}
+          searchCategory={searchCategory}
+          setSearchCategory={setSearchCategory}
+        />
+        <div className="bg-background border-b">
           <div className="container mx-auto px-4 py-4">
             <Carousel
               setApi={setApi}
@@ -524,7 +523,9 @@ const Index = () => {
             </Carousel>
           </div>
         </div>
+      </div>
 
+      <main>
         <div className="container mx-auto px-4">
           <div className="space-y-6 py-6">
             {isMobile ? (
