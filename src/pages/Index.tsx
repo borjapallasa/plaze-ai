@@ -372,7 +372,7 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
             }`}
           >
             <div 
-              className={`transition-all duration-200 ease-out ${
+              className={`transition-all duration-200 ease-out mt-4 ${
                 isScrolled ? 'w-[360px]' : 'w-[540px]'
               }`}
             >
