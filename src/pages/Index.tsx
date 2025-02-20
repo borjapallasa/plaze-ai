@@ -282,7 +282,7 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
   return (
     <header 
       className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm transition-all duration-200 ease-out bg-white border-b ${
-        isScrolled ? 'h-[60px] bg-background/95 mt-[5px] mb-[20px]' : 'bg-background'
+        isScrolled ? 'h-[60px] bg-background/95 mt-[5px]' : 'bg-background'
       }`}
     >
       <div className="container mx-auto px-4">
@@ -315,7 +315,7 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
           </div>
         </div>
 
-        <div className="hidden sm:flex relative pb-[35px]">
+        <div className="hidden sm:flex relative pb-[20px]">
           <div className="w-[20%] flex items-start">
             <h1 className="text-2xl font-semibold mt-[15px] ml-[15px]">Logo</h1>
           </div>
@@ -344,7 +344,7 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
 
             <div 
               className={`flex justify-center transition-transform duration-300 ease-in-out ${
-                isScrolled ? 'transform -translate-y-[10px]' : ''
+                isScrolled ? 'transform -translate-y-[10px] mb-[10px]' : ''
               }`}
             >
               <div 
