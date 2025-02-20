@@ -51,11 +51,14 @@ const TabsList = React.forwardRef<
 
   return (
     <div className="relative flex items-center">
+      <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none"
+        style={{ opacity: showLeftArrow ? 1 : 0, transition: 'opacity 0.2s' }}
+      />
       {showLeftArrow && (
         <Button
           variant="ghost"
           size="icon"
-          className="absolute left-0 z-10 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm"
+          className="absolute left-2 z-20 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm"
           onClick={() => scroll('left')}
         >
           <ChevronLeft className="h-4 w-4" />
@@ -73,22 +76,29 @@ const TabsList = React.forwardRef<
           }
         }}
         className={cn(
-          "inline-flex h-9 items-center justify-start rounded-lg bg-muted p-1 text-muted-foreground relative",
-          "overflow-x-auto overflow-y-hidden scrollbar-none",
+          "inline-flex h-9 items-center justify-start rounded-lg bg-muted p-1 text-muted-foreground relative w-full",
+          "overflow-x-auto scrollbar-none",
           className
         )}
+        style={{
+          maskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
+          WebkitMaskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)'
+        }}
         {...props}
       />
       {showRightArrow && (
         <Button
           variant="ghost"
           size="icon"
-          className="absolute right-0 z-10 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm"
+          className="absolute right-2 z-20 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm"
           onClick={() => scroll('right')}
         >
           <ChevronRight className="h-4 w-4" />
         </Button>
       )}
+      <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none"
+        style={{ opacity: showRightArrow ? 1 : 0, transition: 'opacity 0.2s' }}
+      />
     </div>
   )
 })
