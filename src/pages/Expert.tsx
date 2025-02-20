@@ -6,6 +6,7 @@ import { ExpertStats } from "@/components/expert/ExpertStats";
 import { ExpertServices } from "@/components/expert/ExpertServices";
 import { ExpertCommunity } from "@/components/expert/ExpertCommunity";
 import { MoreFromSeller } from "@/components/product/MoreFromSeller";
+import { ProductReviews } from "@/components/product/ProductReviews";
 
 export default function Expert() {
   const moreProducts = [
@@ -65,6 +66,57 @@ export default function Expert() {
     }
   ];
 
+  const reviews = [
+    { 
+      id: 1, 
+      author: "Sarah Johnson", 
+      rating: 5, 
+      content: "Outstanding UX expertise!",
+      description: "Worked with this expert on our app redesign. Their insights and attention to detail transformed our user experience completely.",
+      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
+      date: "2 days ago",
+      itemQuality: 5,
+      shipping: 5,
+      customerService: 5
+    },
+    { 
+      id: 2, 
+      author: "Michael Chen", 
+      rating: 5, 
+      content: "Exceptional design thinking",
+      description: "The expert provided invaluable feedback on our product's UX. Their systematic approach to problem-solving was impressive.",
+      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e",
+      date: "1 week ago",
+      itemQuality: 5,
+      shipping: 4,
+      customerService: 5
+    },
+    { 
+      id: 3, 
+      author: "Emily Rodriguez", 
+      rating: 4, 
+      content: "Great collaboration experience",
+      description: "Very professional and knowledgeable. They helped us identify key pain points in our user journey and provided actionable solutions.",
+      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
+      date: "2 weeks ago",
+      itemQuality: 4,
+      shipping: 5,
+      customerService: 4
+    },
+    { 
+      id: 4, 
+      author: "David Kim", 
+      rating: 5, 
+      content: "Top-notch UX consultant",
+      description: "Their expertise in user research and prototyping helped us create a much more intuitive interface. Highly recommended!",
+      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
+      date: "3 weeks ago",
+      itemQuality: 5,
+      shipping: 5,
+      customerService: 5
+    }
+  ];
+
   return (
     <div className="space-y-8">
       <div className="container mx-auto px-4">
@@ -93,6 +145,12 @@ export default function Expert() {
               <MoreFromSeller products={moreProducts} />
             </div>
           </div>
+
+          <div className="grid grid-cols-5 gap-6">
+            <div className="col-span-4 col-start-2">
+              <ProductReviews reviews={reviews} />
+            </div>
+          </div>
         </div>
 
         {/* Mobile Layout - Reordered */}
@@ -117,7 +175,11 @@ export default function Expert() {
             <ExpertCommunity />
           </div>
 
-          <MoreFromSeller products={moreProducts} />
+          <div className="mb-8">
+            <MoreFromSeller products={moreProducts} />
+          </div>
+
+          <ProductReviews reviews={reviews} />
         </div>
       </div>
     </div>
