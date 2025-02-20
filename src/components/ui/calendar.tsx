@@ -25,12 +25,16 @@ function Calendar({
   showOutsideDays = true,
   ...props
 }: CalendarProps) {
+  const [month, setMonth] = React.useState<Date>(new Date());
+
   return (
     <DayPicker
       mode="single"
       selected={selected}
       onSelect={onSelect}
       showOutsideDays={showOutsideDays}
+      month={month}
+      onMonthChange={setMonth}
       className={cn("p-3 w-full", className)}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0 w-full",
@@ -73,7 +77,7 @@ function Calendar({
       components={{
         IconLeft: () => <ChevronLeft className="h-4 w-4" />,
         IconRight: () => <ChevronRight className="h-4 w-4" />,
-        Caption: ({ displayMonth, goToMonth }) => (
+        Caption: ({ displayMonth }) => (
           <div className="flex w-full justify-between items-center">
             <span className="font-semibold">
               {format(displayMonth, 'MMMM yyyy')}
@@ -82,9 +86,9 @@ function Calendar({
               <div className="flex gap-1">
                 <button
                   onClick={() => {
-                    const prevMonth = new Date(displayMonth);
+                    const prevMonth = new Date(month);
                     prevMonth.setMonth(prevMonth.getMonth() - 1);
-                    goToMonth(prevMonth);
+                    setMonth(prevMonth);
                   }}
                   className={cn(
                     buttonVariants({ variant: "outline" }),
@@ -95,9 +99,9 @@ function Calendar({
                 </button>
                 <button
                   onClick={() => {
-                    const nextMonth = new Date(displayMonth);
+                    const nextMonth = new Date(month);
                     nextMonth.setMonth(nextMonth.getMonth() + 1);
-                    goToMonth(nextMonth);
+                    setMonth(nextMonth);
                   }}
                   className={cn(
                     buttonVariants({ variant: "outline" }),
