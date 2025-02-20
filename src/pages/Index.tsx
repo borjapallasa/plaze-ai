@@ -291,7 +291,7 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
 
           <div 
             className={`absolute left-1/2 -translate-x-1/2 transition-all duration-200 ease-out ${
-              isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100'
+              isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100 pb-4'
             }`}
           >
             <div className="text-[1.5rem] leading-relaxed font-bold whitespace-nowrap flex items-center justify-center">
