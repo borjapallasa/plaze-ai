@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect, useMemo } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
-import { Search, ChevronDown, Globe, Menu, User, Target, ShoppingBag, Settings, Users, Truck, ChartBar, ArrowRight, Sparkle, Star, Flame, DollarSign, Briefcase, Handshake, Building, Factory, CreditCard, ChevronRight } from "lucide-react";
+import { Search, Globe, Menu, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Typewriter from 'typewriter-effect';
@@ -268,8 +269,8 @@ const departments = [
 const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
   return (
     <header 
-      className={`sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b will-change-transform ${
-        isScrolled ? 'py-2' : 'py-4'
+      className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm border-b transition-[padding,background-color] duration-200 ease-out ${
+        isScrolled ? 'py-2 bg-background/95' : 'py-4 bg-background'
       }`}
     >
       <div className="container mx-auto px-4">
@@ -279,15 +280,13 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
           </div>
 
           <div 
-            className={`transition-opacity duration-300 flex-1 ${
-              isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100'
-            }`}
+            className="absolute left-1/2 -translate-x-1/2 top-1/2 transition-transform duration-200 ease-out"
             style={{
-              transform: isScrolled ? 'translateY(-1rem)' : 'translateY(0)',
-              transition: 'transform 300ms ease-in-out'
+              transform: `translate(-50%, ${isScrolled ? '-150%' : '-50%'})`,
+              opacity: isScrolled ? 0 : 1,
             }}
           >
-            <div className="text-[1.5rem] leading-relaxed font-bold text-center flex items-center justify-center">
+            <div className="text-[1.5rem] leading-relaxed font-bold whitespace-nowrap flex items-center justify-center">
               <span>The Best AI & Automation</span>
               <span className="text-muted-foreground ml-1">
                 <Typewriter
@@ -327,41 +326,38 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
           </div>
         </div>
 
-        <div className="flex justify-center">
-          <div 
-            className="transition-[width] duration-300"
-            style={{
-              width: isScrolled ? '360px' : '540px',
-              transform: isScrolled ? 'translateY(-2.5rem)' : 'translateY(0.75rem)',
-              transition: 'transform 300ms ease-in-out, width 300ms ease-in-out'
-            }}
-          >
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm bg-background">
-              <div className="flex-1 flex items-center gap-2">
-                <Select 
-                  defaultValue="Products" 
-                  onValueChange={setSearchCategory}
-                >
-                  <SelectTrigger className="border-0 w-[120px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Products">Products</SelectItem>
-                    <SelectItem value="Experts">Experts</SelectItem>
-                    <SelectItem value="Communities">Communities</SelectItem>
-                    <SelectItem value="Jobs">Jobs</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Input
-                  className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
-                  placeholder={`Search ${searchCategory.toLowerCase()}...`}
-                  type="search"
-                />
-              </div>
-              <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
-                <Search className="h-4 w-4" />
-              </Button>
+        <div 
+          className="absolute left-1/2 transition-all duration-200 ease-out"
+          style={{
+            width: isScrolled ? '360px' : '540px',
+            transform: `translate(-50%, ${isScrolled ? '-0.5rem' : '1.5rem'})`,
+          }}
+        >
+          <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm bg-background">
+            <div className="flex-1 flex items-center gap-2">
+              <Select 
+                defaultValue="Products" 
+                onValueChange={setSearchCategory}
+              >
+                <SelectTrigger className="border-0 w-[120px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Products">Products</SelectItem>
+                  <SelectItem value="Experts">Experts</SelectItem>
+                  <SelectItem value="Communities">Communities</SelectItem>
+                  <SelectItem value="Jobs">Jobs</SelectItem>
+                </SelectContent>
+              </Select>
+              <Input
+                className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
+                placeholder={`Search ${searchCategory.toLowerCase()}...`}
+                type="search"
+              />
             </div>
+            <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
+              <Search className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       </div>
@@ -378,20 +374,26 @@ const Index = () => {
   const [searchCategory, setSearchCategory] = useState("Products");
 
   useEffect(() => {
-    let ticking = false;
+    let timeoutId: number | null = null;
     
     const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          setIsScrolled(window.scrollY > 20);
-          ticking = false;
-        });
-        ticking = true;
+      if (timeoutId) {
+        window.cancelAnimationFrame(timeoutId);
       }
+      
+      timeoutId = window.requestAnimationFrame(() => {
+        setIsScrolled(window.scrollY > 20);
+      });
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (timeoutId) {
+        window.cancelAnimationFrame(timeoutId);
+      }
+    };
   }, []);
 
   const filteredProducts = useMemo(() => 
@@ -408,7 +410,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pt-32">
       <MemoizedHeader 
         isScrolled={isScrolled}
         searchCategory={searchCategory}
@@ -426,7 +428,6 @@ const Index = () => {
                       <div className="bg-accent rounded-lg p-3 relative group cursor-pointer hover:bg-accent/90 transition-colors">
                         <h3 className="text-lg font-semibold mb-1">{banner.title}</h3>
                         <p className="text-muted-foreground text-sm pr-6">{banner.description}</p>
-                        <ArrowRight className="absolute bottom-3 right-3 h-4 w-4 text-muted-foreground/50 group-hover:text-muted-foreground transition-colors" />
                       </div>
                     </CarouselItem>
                   ))}
@@ -440,7 +441,6 @@ const Index = () => {
                   <div key={index} className="bg-accent rounded-lg p-3 relative group cursor-pointer hover:bg-accent/90 transition-colors">
                     <h3 className="text-lg font-semibold mb-1">{banner.title}</h3>
                     <p className="text-muted-foreground text-sm pr-6">{banner.description}</p>
-                    <ArrowRight className="absolute bottom-3 right-3 h-4 w-4 text-muted-foreground/50 group-hover:text-muted-foreground transition-colors" />
                   </div>
                 ))}
               </div>
