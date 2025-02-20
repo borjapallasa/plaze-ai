@@ -40,8 +40,10 @@ function Calendar({
         nav: "space-x-1 flex items-center",
         nav_button: cn(
           buttonVariants({ variant: "outline" }),
-          "h-7 w-7 bg-transparent p-0 hover:opacity-75"
+          "h-7 w-7 bg-transparent p-0 hover:opacity-75 flex items-center justify-center border border-input"
         ),
+        nav_button_previous: "mr-1",
+        nav_button_next: "ml-1",
         table: "w-full border-collapse",
         head_row: "flex w-full border-b border-border",
         head_cell:
@@ -69,8 +71,8 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" {...props} />,
-        IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" {...props} />,
+        IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4 text-foreground" {...props} />,
+        IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4 text-foreground" {...props} />,
         Caption: ({ displayMonth, ...props }) => (
           <div className="flex w-full justify-between items-center">
             <span className="font-semibold">
