@@ -174,10 +174,25 @@ const Index = () => {
     <div className="min-h-screen">
       <header className={`sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b transition-all duration-300 ${isScrolled ? 'py-2' : 'py-4'}`}>
         <div className="container mx-auto px-4">
-          <div className={`flex items-center justify-between ${isScrolled ? '' : 'mb-6'}`}>
+          <div className={`flex items-center justify-between transition-all duration-300 ${isScrolled ? '' : 'mb-4'}`}>
             {/* Logo */}
             <div className="flex-shrink-0">
               <h1 className="text-2xl font-semibold">Logo</h1>
+            </div>
+
+            {/* Center Section with Typewriter when not scrolled */}
+            <div className={`transition-all duration-300 ${isScrolled ? 'hidden' : 'block'}`}>
+              <div className="text-lg font-medium text-center">
+                <Typewriter
+                  options={{
+                    strings: typewriterStrings,
+                    autoStart: true,
+                    loop: true,
+                    delay: 50,
+                    deleteSpeed: 30,
+                  }}
+                />
+              </div>
             </div>
 
             {/* Right Section */}
@@ -213,24 +228,9 @@ const Index = () => {
             </div>
           </div>
 
-          <div className={`flex flex-col items-center transition-all duration-300 ${isScrolled ? 'mt-0' : '-mt-2'}`}>
-            {/* Center Section with Typewriter */}
-            <div className={`transition-all duration-300 ${isScrolled ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100 h-8 mb-4'}`}>
-              <div className="text-lg font-medium text-center">
-                <Typewriter
-                  options={{
-                    strings: typewriterStrings,
-                    autoStart: true,
-                    loop: true,
-                    delay: 50,
-                    deleteSpeed: 30,
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* Search Bar */}
-            <div className={`transition-all duration-300 ${isScrolled ? 'w-[360px] -mt-10' : 'w-[540px]'}`}>
+          {/* Search Bar */}
+          <div className="flex justify-center">
+            <div className={`transition-all duration-300 ${isScrolled ? 'w-[360px] -mt-10' : 'w-[540px] mt-4'}`}>
               <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm bg-background">
                 <div className="flex-1 flex items-center gap-6 divide-x">
                   <div className="flex-1">
