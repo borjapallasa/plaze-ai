@@ -242,158 +242,160 @@ export default function Expert() {
               </CardContent>
             </Card>
 
-            <div className="col-span-4">
-              <Card>
-                <CardContent className="p-6 space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <Card className="relative overflow-hidden h-[500px] flex flex-col">
-                      <div className="absolute inset-x-0 top-0 h-2 bg-blue-100" />
-                      <CardContent className="p-6 flex flex-col h-full">
-                        <div className="space-y-4 flex-1">
-                          <div className="space-y-2">
-                            <h3 className="text-xl font-semibold">Basic Consultation</h3>
-                            <div className="flex items-center gap-1">
-                              <DollarSign className="w-5 h-5 text-muted-foreground" />
-                              <span className="text-2xl font-bold">$99</span>
-                            </div>
-                            <p className="text-muted-foreground">Perfect for startups and small projects needing expert UX guidance.</p>
+          <div className="col-span-4">
+            <h2 className="text-2xl font-bold mb-6">Services</h2>
+            <Card>
+              <CardContent className="p-6 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Card className="relative overflow-hidden h-[500px] flex flex-col">
+                    <div className="absolute inset-x-0 top-0 h-2 bg-blue-100" />
+                    <CardContent className="p-6 flex flex-col h-full">
+                      <div className="space-y-4 flex-1">
+                        <div className="space-y-2">
+                          <h3 className="text-xl font-semibold">Basic Consultation</h3>
+                          <div className="flex items-center gap-1">
+                            <DollarSign className="w-5 h-5 text-muted-foreground" />
+                            <span className="text-2xl font-bold">$99</span>
                           </div>
-                          <div className="space-y-3">
-                            <div className="flex items-center gap-2">
-                              <Check className="w-4 h-4 text-blue-500" />
-                              <span className="text-sm">1-hour consultation</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Check className="w-4 h-4 text-blue-500" />
-                              <span className="text-sm">Basic UX review</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Check className="w-4 h-4 text-blue-500" />
-                              <span className="text-sm">Written recommendations</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Check className="w-4 h-4 text-blue-500" />
-                              <span className="text-sm">1 revision round</span>
-                            </div>
+                          <p className="text-muted-foreground">Perfect for startups and small projects needing expert UX guidance.</p>
+                        </div>
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-blue-500" />
+                            <span className="text-sm">1-hour consultation</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-blue-500" />
+                            <span className="text-sm">Basic UX review</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-blue-500" />
+                            <span className="text-sm">Written recommendations</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-blue-500" />
+                            <span className="text-sm">1 revision round</span>
                           </div>
                         </div>
-                        <div className="mt-auto space-y-2">
-                          <Button className="w-full">
-                            <Handshake className="w-4 h-4 mr-2" />
-                            Hire Expert
-                          </Button>
-                          <Button variant="outline" className="w-full">
-                            Contact Expert
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
+                      </div>
+                      <div className="mt-auto space-y-2">
+                        <Button className="w-full">
+                          <Handshake className="w-4 h-4 mr-2" />
+                          Hire Expert
+                        </Button>
+                        <Button variant="outline" className="w-full">
+                          Contact Expert
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
 
-                    <Card className="relative overflow-hidden h-[500px] flex flex-col">
-                      <div className="absolute inset-x-0 top-0 h-2 bg-blue-100" />
-                      <CardContent className="p-6 flex flex-col h-full">
-                        <div className="space-y-4 flex-1">
-                          <div className="space-y-2">
-                            <h3 className="text-xl font-semibold">Professional Package</h3>
-                            <div className="flex items-center gap-1">
-                              <DollarSign className="w-5 h-5 text-muted-foreground" />
-                              <span className="text-2xl font-bold">$299</span>
-                            </div>
-                            <p className="text-muted-foreground">Comprehensive UX design solution for established businesses.</p>
+                  <Card className="relative overflow-hidden h-[500px] flex flex-col">
+                    <div className="absolute inset-x-0 top-0 h-2 bg-blue-100" />
+                    <CardContent className="p-6 flex flex-col h-full">
+                      <div className="space-y-4 flex-1">
+                        <div className="space-y-2">
+                          <h3 className="text-xl font-semibold">Professional Package</h3>
+                          <div className="flex items-center gap-1">
+                            <DollarSign className="w-5 h-5 text-muted-foreground" />
+                            <span className="text-2xl font-bold">$299</span>
                           </div>
-                          <div className="space-y-3">
-                            <div className="flex items-center gap-2">
-                              <Check className="w-4 h-4 text-blue-500" />
-                              <span className="text-sm">3 consultation sessions</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Check className="w-4 h-4 text-blue-500" />
-                              <span className="text-sm">Detailed UX audit</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Check className="w-4 h-4 text-blue-500" />
-                              <span className="text-sm">Interactive prototypes</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Check className="w-4 h-4 text-blue-500" />
-                              <span className="text-sm">3 revision rounds</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Check className="w-4 h-4 text-blue-500" />
-                              <span className="text-sm">Priority support</span>
-                            </div>
+                          <p className="text-muted-foreground">Comprehensive UX design solution for established businesses.</p>
+                        </div>
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-blue-500" />
+                            <span className="text-sm">3 consultation sessions</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-blue-500" />
+                            <span className="text-sm">Detailed UX audit</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-blue-500" />
+                            <span className="text-sm">Interactive prototypes</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-blue-500" />
+                            <span className="text-sm">3 revision rounds</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-blue-500" />
+                            <span className="text-sm">Priority support</span>
                           </div>
                         </div>
-                        <div className="mt-auto space-y-2">
-                          <Button className="w-full">
-                            <Handshake className="w-4 h-4 mr-2" />
-                            Hire Expert
-                          </Button>
-                          <Button variant="outline" className="w-full">
-                            Contact Expert
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
+                      </div>
+                      <div className="mt-auto space-y-2">
+                        <Button className="w-full">
+                          <Handshake className="w-4 h-4 mr-2" />
+                          Hire Expert
+                        </Button>
+                        <Button variant="outline" className="w-full">
+                          Contact Expert
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
 
-                    <Card className="relative overflow-hidden h-[500px] flex flex-col">
-                      <div className="absolute inset-x-0 top-0 h-2 bg-blue-100" />
-                      <CardContent className="p-6 flex flex-col h-full">
-                        <div className="space-y-4 flex-1">
-                          <div className="space-y-2">
-                            <h3 className="text-xl font-semibold">Enterprise Solution</h3>
-                            <div className="flex items-center gap-1">
-                              <DollarSign className="w-5 h-5 text-muted-foreground" />
-                              <span className="text-2xl font-bold">$999</span>
-                            </div>
-                            <p className="text-muted-foreground">Full-service UX design and consultation for large organizations.</p>
+                  <Card className="relative overflow-hidden h-[500px] flex flex-col">
+                    <div className="absolute inset-x-0 top-0 h-2 bg-blue-100" />
+                    <CardContent className="p-6 flex flex-col h-full">
+                      <div className="space-y-4 flex-1">
+                        <div className="space-y-2">
+                          <h3 className="text-xl font-semibold">Enterprise Solution</h3>
+                          <div className="flex items-center gap-1">
+                            <DollarSign className="w-5 h-5 text-muted-foreground" />
+                            <span className="text-2xl font-bold">$999</span>
                           </div>
-                          <div className="space-y-3">
-                            <div className="flex items-center gap-2">
-                              <Check className="w-4 h-4 text-blue-500" />
-                              <span className="text-sm">Unlimited consultations</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Check className="w-4 h-4 text-blue-500" />
-                              <span className="text-sm">Complete UX overhaul</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Check className="w-4 h-4 text-blue-500" />
-                              <span className="text-sm">User research & testing</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Check className="w-4 h-4 text-blue-500" />
-                              <span className="text-sm">Custom design system</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Check className="w-4 h-4 text-blue-500" />
-                              <span className="text-sm">Dedicated support team</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Check className="w-4 h-4 text-blue-500" />
-                              <span className="text-sm">Monthly progress reports</span>
-                            </div>
+                          <p className="text-muted-foreground">Full-service UX design and consultation for large organizations.</p>
+                        </div>
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-blue-500" />
+                            <span className="text-sm">Unlimited consultations</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-blue-500" />
+                            <span className="text-sm">Complete UX overhaul</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-blue-500" />
+                            <span className="text-sm">User research & testing</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-blue-500" />
+                            <span className="text-sm">Custom design system</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-blue-500" />
+                            <span className="text-sm">Dedicated support team</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-blue-500" />
+                            <span className="text-sm">Monthly progress reports</span>
                           </div>
                         </div>
-                        <div className="mt-auto space-y-2">
-                          <Button className="w-full">
-                            <Handshake className="w-4 h-4 mr-2" />
-                            Hire Expert
-                          </Button>
-                          <Button variant="outline" className="w-full">
-                            Contact Expert
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+                      </div>
+                      <div className="mt-auto space-y-2">
+                        <Button className="w-full">
+                          <Handshake className="w-4 h-4 mr-2" />
+                          Hire Expert
+                        </Button>
+                        <Button variant="outline" className="w-full">
+                          Contact Expert
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </CardContent>
+            </Card>
           </div>
+        </div>
 
           <div className="grid grid-cols-5 gap-6">
             <div className="col-span-4 col-start-2">
+              <h2 className="text-2xl font-bold mb-6">Community</h2>
               <Card>
                 <CardContent className="p-6">
                   <div className="flex gap-8">
