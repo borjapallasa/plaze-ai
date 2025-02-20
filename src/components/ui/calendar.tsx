@@ -1,13 +1,20 @@
 
 import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { DayPicker, DayPickerSingleProps } from "react-day-picker";
+import { DayPicker } from "react-day-picker";
 import { format } from "date-fns";
 
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 
-export type CalendarProps = React.ComponentProps<typeof DayPicker<Date>>;
+export type CalendarProps = {
+  className?: string;
+  classNames?: Record<string, string>;
+  showOutsideDays?: boolean;
+  selected?: Date | undefined;
+  onSelect?: (date: Date | undefined) => void;
+  mode?: "single" | "multiple" | "range";
+} & Omit<React.ComponentProps<typeof DayPicker>, "mode" | "selected" | "onSelect">;
 
 function Calendar({
   className,
@@ -60,56 +67,64 @@ function Calendar({
       components={{
         IconLeft: () => <ChevronLeft className="h-4 w-4" />,
         IconRight: () => <ChevronRight className="h-4 w-4" />,
-        Caption: ({ displayMonth, goToMonth }) => (
-          <div className="flex w-full justify-between items-center">
-            <div className="font-semibold">
-              {format(displayMonth, 'MMMM yyyy')}
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  const today = new Date();
-                  goToMonth(today);
-                }}
-                className={cn(
-                  buttonVariants({ variant: "outline", size: "sm" }),
-                  "text-xs px-3"
-                )}
-              >
-                Today
-              </button>
-              <div className="space-x-1 flex items-center">
+        Caption: ({ displayMonth, goToMonth }) => {
+          const handleGoToMonth = (month: Date) => {
+            if (goToMonth) {
+              goToMonth(month);
+            }
+          };
+          
+          return (
+            <div className="flex w-full justify-between items-center">
+              <div className="font-semibold">
+                {format(displayMonth, 'MMMM yyyy')}
+              </div>
+              <div className="flex items-center gap-2">
                 <button
+                  type="button"
                   onClick={() => {
-                    const prevMonth = new Date(displayMonth);
-                    prevMonth.setMonth(prevMonth.getMonth() - 1);
-                    goToMonth(prevMonth);
+                    const today = new Date();
+                    handleGoToMonth(today);
                   }}
                   className={cn(
-                    buttonVariants({ variant: "outline" }),
-                    "h-7 w-7 bg-transparent p-0 hover:opacity-75"
+                    buttonVariants({ variant: "outline", size: "sm" }),
+                    "text-xs px-3"
                   )}
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  Today
                 </button>
-                <button
-                  onClick={() => {
-                    const nextMonth = new Date(displayMonth);
-                    nextMonth.setMonth(nextMonth.getMonth() + 1);
-                    goToMonth(nextMonth);
-                  }}
-                  className={cn(
-                    buttonVariants({ variant: "outline" }),
-                    "h-7 w-7 bg-transparent p-0 hover:opacity-75"
-                  )}
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </button>
+                <div className="space-x-1 flex items-center">
+                  <button
+                    onClick={() => {
+                      const prevMonth = new Date(displayMonth);
+                      prevMonth.setMonth(prevMonth.getMonth() - 1);
+                      handleGoToMonth(prevMonth);
+                    }}
+                    className={cn(
+                      buttonVariants({ variant: "outline" }),
+                      "h-7 w-7 bg-transparent p-0 hover:opacity-75"
+                    )}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      const nextMonth = new Date(displayMonth);
+                      nextMonth.setMonth(nextMonth.getMonth() + 1);
+                      handleGoToMonth(nextMonth);
+                    }}
+                    className={cn(
+                      buttonVariants({ variant: "outline" }),
+                      "h-7 w-7 bg-transparent p-0 hover:opacity-75"
+                    )}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        )
+          );
+        }
       }}
       {...props}
     />

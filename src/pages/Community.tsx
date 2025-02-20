@@ -272,14 +272,10 @@ export default function Community() {
                 selected={date}
                 onSelect={setDate}
                 modifiers={{
-                  event: events.map(event => event.date),
+                  event: events.map(event => event.date)
                 }}
-                modifiersStyles={{
-                  event: {
-                    color: 'var(--primary)',
-                    fontWeight: 'bold',
-                    textDecoration: 'underline'
-                  }
+                modifiersClassNames={{
+                  event: "text-primary font-bold underline"
                 }}
               />
             </CardContent>
