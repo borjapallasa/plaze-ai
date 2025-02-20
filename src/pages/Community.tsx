@@ -200,8 +200,8 @@ export default function Community() {
 
       {/* Tabs Section */}
       <Tabs defaultValue="threads" className="space-y-6">
-        <div className="flex items-center justify-between">
-          <TabsList>
+        <div className="lg:col-span-8 w-full overflow-x-auto">
+          <TabsList className="w-full">
             <TabsTrigger value="threads" className="flex items-center gap-2">
               <MessageSquare className="w-4 h-4" />
               Threads
