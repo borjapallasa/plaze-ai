@@ -1,8 +1,9 @@
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageSquare, Users, BookOpen, Calendar, Link, ThumbsUp, Search } from "lucide-react";
+import { MessageSquare, Users, BookOpen, Calendar, Link, ThumbsUp, Search, ArrowRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/ProductCard";
@@ -268,15 +269,17 @@ export default function Community() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {classrooms.map((classroom, index) => (
-              <Card key={index} className="overflow-hidden group hover:shadow-lg transition-shadow">
+              <Card key={index} className="overflow-hidden group hover:shadow-lg transition-shadow cursor-pointer">
                 <div className="aspect-[1.25] relative overflow-hidden bg-gradient-to-br from-blue-400 to-blue-600">
                   <div className="absolute inset-0 p-6 flex items-center justify-center">
                     <h3 className="text-white text-2xl font-bold text-center leading-tight">{classroom.title}</h3>
                   </div>
                 </div>
-                <CardContent className="p-6">
+                <CardContent className="p-6 relative">
                   <p className="text-muted-foreground text-sm mb-4">{classroom.description}</p>
-                  <Button className="w-full" variant="outline">Open Classroom</Button>
+                  <div className="absolute right-6 bottom-6 opacity-0 transform translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200">
+                    <ArrowRight className="w-6 h-6 text-primary" />
+                  </div>
                 </CardContent>
               </Card>
             ))}
