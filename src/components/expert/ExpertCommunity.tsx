@@ -13,7 +13,7 @@ export const ExpertCommunity = () => {
         <CardContent className="p-6">
           <div className="grid grid-cols-12 gap-6">
             {/* Left Column - Video and Description */}
-            <div className="col-span-7 space-y-4">
+            <div className="col-span-7 flex flex-col h-full justify-between">
               {/* Video thumbnail */}
               <div className="aspect-video bg-muted rounded-lg overflow-hidden relative">
                 <img 
@@ -50,7 +50,7 @@ export const ExpertCommunity = () => {
             </div>
 
             {/* Right Column - Stats and CTAs */}
-            <div className="col-span-5 space-y-6">
+            <div className="col-span-5 flex flex-col justify-between h-full">
               {/* Stats Cards */}
               <div className="grid grid-cols-2 gap-3">
                 <Card className="p-3 space-y-1">
@@ -83,16 +83,17 @@ export const ExpertCommunity = () => {
                 </Card>
               </div>
 
-              <Separator />
-
-              {/* CTAs */}
-              <div className="space-y-2">
-                <Button size="lg" className="w-full text-base font-semibold">
-                  Join Community
-                </Button>
-                <Button variant="outline" size="lg" className="w-full text-base">
-                  Learn More
-                </Button>
+              <div>
+                <Separator className="mb-6" />
+                {/* CTAs */}
+                <div className="space-y-2">
+                  <Button size="lg" className="w-full text-base font-semibold">
+                    Join Community
+                  </Button>
+                  <Button variant="outline" size="lg" className="w-full text-base">
+                    Learn More
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
