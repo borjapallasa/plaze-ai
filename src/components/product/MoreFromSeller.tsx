@@ -44,7 +44,7 @@ export function MoreFromSeller({ products, className }: MoreFromSellerProps) {
 
   return (
     <div>
-      <h2 className="text-xl font-semibold mb-8">More from seller</h2>
+      <h2 className="text-2xl font-bold mb-6">More from seller</h2>
       
       <Carousel 
         setApi={setApi} 
