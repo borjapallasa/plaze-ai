@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageSquare, Users, BookOpen, Calendar, Link } from "lucide-react";
+import { MessageSquare, Users, BookOpen, Calendar, Link, ThumbsUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -70,23 +70,23 @@ export default function Community() {
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-muted-foreground" />
-                  <span>Optimal Path Automations has 198 members!</span>
+                <div className="flex items-center gap-2 truncate">
+                  <Users className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                  <span className="truncate">Optimal Path Automations has 198 members!</span>
                 </div>
 
                 <div className="space-y-2">
                   <a href="#" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
                     <Link className="w-4 h-4" />
-                    https://youtube.com/@BorjaPalleja
+                    <span className="font-medium">YouTube:</span> @BorjaPalleja
                   </a>
                   <a href="#" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
                     <Link className="w-4 h-4" />
-                    https://tiktok.com/@borjapalleja
+                    <span className="font-medium">TikTok:</span> @borjapalleja
                   </a>
                   <a href="#" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
                     <Link className="w-4 h-4" />
-                    https://calendly.com/optimalpath/30-min
+                    <span className="font-medium">Calendly:</span> Book a call
                   </a>
                 </div>
 
@@ -136,14 +136,14 @@ export default function Community() {
                 </Avatar>
                 <div className="flex-1 space-y-4">
                   <div className="flex items-start justify-between">
-                    <div>
+                    <div className="flex items-center gap-3">
                       <h3 className="font-semibold">Letter from Borja</h3>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <span>Created by Borja P</span>
-                        <Badge variant="secondary" className="text-xs">Total Messages in Thread: 1</Badge>
-                      </div>
+                      <Badge variant="secondary" className="text-xs">Messages: 1</Badge>
                     </div>
-                    <Badge variant="outline">8</Badge>
+                    <Badge variant="outline" className="flex items-center gap-1">
+                      <ThumbsUp className="w-3 h-3" />
+                      8
+                    </Badge>
                   </div>
                   
                   <p>👋 Welcome to Optimal Path Automations! 👋</p>
