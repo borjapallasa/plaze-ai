@@ -1,5 +1,5 @@
 
-import { Search, ThumbsDown, Heart } from "lucide-react";
+import { Search, ThumbsDown, Heart, MapPin } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -57,13 +57,14 @@ const jobs: Job[] = [
 ];
 
 const JobCard = ({ job }: { job: Job }) => (
-  <div className="py-8 border-b last:border-b-0">
+  <div className="py-6 border-b last:border-b-0 bg-background">
+    <div className="mb-1">
+      <p className="text-sm text-muted-foreground">Posted {job.postedTime}</p>
+    </div>
+
     <div className="flex justify-between items-start mb-2">
-      <div>
-        <p className="text-sm text-muted-foreground">Posted {job.postedTime}</p>
-        <h3 className="text-xl font-semibold mt-1">{job.title}</h3>
-      </div>
-      <div className="flex gap-2">
+      <h3 className="text-xl font-semibold">{job.title}</h3>
+      <div className="flex gap-2 ml-4">
         <button className="p-2 hover:bg-accent rounded-full transition-colors">
           <ThumbsDown className="w-5 h-5 text-muted-foreground" />
         </button>
@@ -73,36 +74,40 @@ const JobCard = ({ job }: { job: Job }) => (
       </div>
     </div>
     
-    <div className="text-sm text-muted-foreground mb-4">
+    <div className="text-sm text-muted-foreground mb-3">
       Hourly: {job.rate} - {job.experienceLevel} - Est. Time: {job.duration}, {job.hours}
     </div>
     
-    <p className="text-sm mb-4">{job.description}</p>
+    <p className="text-sm mb-3 line-clamp-3">{job.description}</p>
+    <button className="text-sm text-primary mb-4">more</button>
     
-    <div className="flex flex-wrap gap-2 mb-6">
+    <div className="flex overflow-x-auto hide-scrollbar gap-2 mb-6 -mx-4 px-4">
       {job.skills.map((skill, index) => (
         <Badge 
           key={index}
           variant="secondary"
-          className="rounded-full bg-accent/50 hover:bg-accent"
+          className="rounded-full bg-accent whitespace-nowrap py-1.5"
         >
           {skill}
         </Badge>
       ))}
     </div>
     
-    <div className="flex items-center gap-6 text-sm text-muted-foreground">
-      {job.paymentVerified && (
-        <div className="flex items-center gap-1">
-          <span>✓</span>
-          <span>Payment verified</span>
-        </div>
-      )}
-      <div className="flex items-center gap-1">
-        {"★".repeat(job.rating)}
-        <span>{job.spent} spent</span>
+    <div className="space-y-2 text-sm text-muted-foreground">
+      <div className="flex items-center gap-2">
+        {job.paymentVerified && (
+          <>
+            <span>✓</span>
+            <span>Payment verified</span>
+            <span className="text-amber-500">{"★".repeat(job.rating)}</span>
+            <span>{job.spent} spent</span>
+          </>
+        )}
       </div>
-      <div>{job.location}</div>
+      <div className="flex items-center gap-2">
+        <MapPin className="w-4 h-4" />
+        <span>{job.location}</span>
+      </div>
       <div>Proposals: {job.proposals}</div>
     </div>
   </div>
@@ -110,26 +115,26 @@ const JobCard = ({ job }: { job: Job }) => (
 
 const Jobs = () => {
   return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl">
-      <div className="relative mb-8">
+    <div className="container mx-auto px-4 py-6 max-w-5xl">
+      <div className="relative mb-6">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
         <Input 
           placeholder="Search for jobs" 
-          className="pl-10 h-12 text-lg"
+          className="pl-10 h-12"
         />
       </div>
 
-      <h1 className="text-2xl font-semibold mb-6">Jobs you might like</h1>
+      <h1 className="text-2xl font-bold mb-4">Jobs you might like</h1>
 
-      <Tabs defaultValue="best" className="mb-8">
-        <TabsList>
-          <TabsTrigger value="best">Best Matches</TabsTrigger>
-          <TabsTrigger value="recent">Most Recent</TabsTrigger>
-          <TabsTrigger value="saved">Saved Jobs</TabsTrigger>
+      <Tabs defaultValue="best" className="mb-6">
+        <TabsList className="w-full justify-start">
+          <TabsTrigger value="best" className="flex-1">Best Matches</TabsTrigger>
+          <TabsTrigger value="recent" className="flex-1">Most Recent</TabsTrigger>
+          <TabsTrigger value="saved" className="flex-1">Saved Jobs</TabsTrigger>
         </TabsList>
       </Tabs>
 
-      <p className="text-muted-foreground mb-8">
+      <p className="text-muted-foreground mb-6 text-sm">
         Browse jobs that match your experience to a client's hiring preferences. Ordered by most relevant.
       </p>
 
