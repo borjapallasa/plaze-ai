@@ -160,7 +160,7 @@ const Index = () => {
             </div>
 
             <div className="flex justify-center items-center">
-              <div className="text-2xl font-semibold text-center flex items-center">
+              <div className="text-xl font-semibold text-center flex items-center whitespace-nowrap">
                 <span className="text-foreground">The Best AI & Automation </span>
                 <span className="inline-flex items-center text-muted-foreground">
                   <Typewriter
