@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Typewriter from 'typewriter-effect';
 import { Badge } from "@/components/ui/badge";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Select,
   SelectContent,
@@ -265,6 +265,112 @@ const departments = [
   { name: "Settings", icon: Settings }
 ];
 
+const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
+  return (
+    <header 
+      className={`sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b will-change-transform ${
+        isScrolled ? 'py-2' : 'py-4'
+      }`}
+    >
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between">
+          <div className="flex-shrink-0 w-[200px]">
+            <h1 className="text-2xl font-semibold">Logo</h1>
+          </div>
+
+          <div 
+            className={`transition-opacity duration-300 flex-1 ${
+              isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100'
+            }`}
+            style={{
+              transform: isScrolled ? 'translateY(-1rem)' : 'translateY(0)',
+              transition: 'transform 300ms ease-in-out'
+            }}
+          >
+            <div className="text-[1.5rem] leading-relaxed font-bold text-center flex items-center justify-center">
+              <span>The Best AI & Automation</span>
+              <span className="text-muted-foreground ml-1">
+                <Typewriter
+                  options={{
+                    strings: typewriterStrings,
+                    autoStart: true,
+                    loop: true,
+                    delay: 50,
+                    deleteSpeed: 30,
+                  }}
+                />
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 w-[200px] justify-end">
+            <Button variant="ghost" size="sm" className="font-medium">
+              Add Product
+            </Button>
+            <Button variant="ghost" size="icon" className="rounded-full">
+              <Globe className="h-4 w-4" />
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="rounded-full p-1 h-10">
+                  <Menu className="h-4 w-4 mr-2" />
+                  <User className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>Sign up</DropdownMenuItem>
+                <DropdownMenuItem>Log in</DropdownMenuItem>
+                <DropdownMenuItem>List your product</DropdownMenuItem>
+                <DropdownMenuItem>Help</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+
+        <div className="flex justify-center">
+          <div 
+            className="transition-[width] duration-300"
+            style={{
+              width: isScrolled ? '360px' : '540px',
+              transform: isScrolled ? 'translateY(-2.5rem)' : 'translateY(0.75rem)',
+              transition: 'transform 300ms ease-in-out, width 300ms ease-in-out'
+            }}
+          >
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm bg-background">
+              <div className="flex-1 flex items-center gap-2">
+                <Select 
+                  defaultValue="Products" 
+                  onValueChange={setSearchCategory}
+                >
+                  <SelectTrigger className="border-0 w-[120px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Products">Products</SelectItem>
+                    <SelectItem value="Experts">Experts</SelectItem>
+                    <SelectItem value="Communities">Communities</SelectItem>
+                    <SelectItem value="Jobs">Jobs</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Input
+                  className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
+                  placeholder={`Search ${searchCategory.toLowerCase()}...`}
+                  type="search"
+                />
+              </div>
+              <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
+                <Search className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+const MemoizedHeader = React.memo(Header);
+
 const Index = () => {
   const isMobile = useIsMobile();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -272,17 +378,28 @@ const Index = () => {
   const [searchCategory, setSearchCategory] = useState("Products");
 
   useEffect(() => {
+    let ticking = false;
+    
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 20);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const filteredProducts = selectedCategory
-    ? products.filter(product => product.category === selectedCategory)
-    : products;
+  const filteredProducts = useMemo(() => 
+    selectedCategory
+      ? products.filter(product => product.category === selectedCategory)
+      : products,
+    [selectedCategory]
+  );
 
   const handleBadgeClick = (category: string | null) => {
     setSelectedCategory(prevCategory => 
@@ -292,91 +409,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
-      <header className={`sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b transition-all duration-500 ${isScrolled ? 'py-2' : 'py-4'}`}>
-        <div className="container mx-auto px-4">
-          <div className={`flex items-center justify-between transition-all duration-500 ${isScrolled ? '' : 'mb-3'}`}>
-            <div className="flex-shrink-0 w-[200px]">
-              <h1 className="text-2xl font-semibold">Logo</h1>
-            </div>
-
-            <div className={`transition-all duration-500 flex-1 ${isScrolled ? 'opacity-0 -translate-y-4' : 'opacity-100 translate-y-0'}`}>
-              <div className="text-[1.5rem] leading-relaxed font-bold text-center flex items-center justify-center">
-                <span>The Best AI & Automation</span>
-                <span className="text-muted-foreground ml-1">
-                  <Typewriter
-                    options={{
-                      strings: typewriterStrings,
-                      autoStart: true,
-                      loop: true,
-                      delay: 50,
-                      deleteSpeed: 30,
-                    }}
-                  />
-                </span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 w-[200px] justify-end">
-              <Button variant="ghost" size="sm" className="font-medium">
-                Add Product
-              </Button>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <Globe className="h-4 w-4" />
-              </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="rounded-full p-1 h-10">
-                    <Menu className="h-4 w-4 mr-2" />
-                    <User className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem>
-                    Sign up
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    Log in
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    List your product
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    Help
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
-
-          <div className="flex justify-center">
-            <div className={`transition-all duration-500 ${isScrolled ? 'w-[360px] -mt-10' : 'w-[540px] mt-3'}`}>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm bg-background">
-                <div className="flex-1 flex items-center gap-2">
-                  <Select defaultValue="Products" onValueChange={setSearchCategory}>
-                    <SelectTrigger className="border-0 w-[120px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Products">Products</SelectItem>
-                      <SelectItem value="Experts">Experts</SelectItem>
-                      <SelectItem value="Communities">Communities</SelectItem>
-                      <SelectItem value="Jobs">Jobs</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Input
-                    className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
-                    placeholder={`Search ${searchCategory.toLowerCase()}...`}
-                    type="search"
-                  />
-                </div>
-                <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
-                  <Search className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+      <MemoizedHeader 
+        isScrolled={isScrolled}
+        searchCategory={searchCategory}
+        setSearchCategory={setSearchCategory}
+      />
 
       <main>
         <div className="p-6 border-b border-gray-200">
