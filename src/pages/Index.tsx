@@ -343,7 +343,7 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
             </div>
 
             <div 
-              className={`flex justify-center transition-all duration-300 ease-in-out mt-[10px] ${
+              className={`flex justify-center transition-all duration-300 ease-in-out mt-[20px] ${
                 isScrolled ? 'absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2' : 'relative'
               }`}
             >
