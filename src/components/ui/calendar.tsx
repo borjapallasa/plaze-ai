@@ -113,7 +113,11 @@ function Calendar({
               </div>
               <button
                 type="button"
-                onClick={() => onSelect?.(new Date())}
+                onClick={() => {
+                  const today = new Date();
+                  setMonth(today);
+                  onSelect?.(today);
+                }}
                 className={cn(
                   buttonVariants({ variant: "outline", size: "sm" }),
                   "text-xs px-3"
