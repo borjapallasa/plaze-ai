@@ -1,11 +1,11 @@
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
-import { Search, Target, ShoppingBag, Settings, Users, Truck, ChartBar, ChevronDown, ArrowRight, Sparkle, Star, Flame, DollarSign, Briefcase, Handshake, Building, Factory, CreditCard, ChevronRight } from "lucide-react";
+import { Search, ChevronDown, Globe, Menu, User, Target, ShoppingBag, Settings, Users, Truck, ChartBar, ArrowRight, Sparkle, Star, Flame, DollarSign, Briefcase, Handshake, Building, Factory, CreditCard, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Typewriter from 'typewriter-effect';
 import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Select,
   SelectContent,
@@ -14,12 +14,25 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+
+const typewriterStrings = [
+  "The Best AI & Automation Communities",
+  "The Leading AI Resources",
+  "The Top AI Products & Services",
+  "The Best AI Learning Platform"
+];
 
 const products = [
   {
@@ -109,13 +122,6 @@ const banners = [
   }
 ];
 
-const typewriterStrings = [
-  "Experts To Hire",
-  "Jobs To Earn",
-  "Products To Scale",
-  "Communities To Learn"
-];
-
 const badges = [
   { label: "Trending", icon: Sparkle, category: null },
   { label: "Templates", icon: Star, category: "template" },
@@ -139,12 +145,20 @@ const departments = [
   { name: "Settings", icon: Settings }
 ];
 
-const searchCategories = ["Jobs", "Experts", "Products", "Communities"];
-
 const Index = () => {
   const isMobile = useIsMobile();
+  const [isScrolled, setIsScrolled] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchCategory, setSearchCategory] = useState("Products");
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const filteredProducts = selectedCategory
     ? products.filter(product => product.category === selectedCategory)
@@ -158,85 +172,83 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+      <header className={`sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b transition-all duration-300 ${isScrolled ? 'py-2' : 'py-4'}`}>
         <div className="container mx-auto px-4">
-          <div className="h-20 grid grid-cols-3 items-center">
-            <div className="flex items-center">
+          <div className="flex items-center justify-between gap-4">
+            {/* Logo */}
+            <div className="flex-shrink-0">
               <h1 className="text-2xl font-semibold">Logo</h1>
             </div>
 
-            <div className="flex justify-center items-center">
-              <div className="text-xl font-semibold text-center flex items-center whitespace-nowrap">
-                <span className="text-foreground">The Best AI & Automation&nbsp;</span>
-                <span className="inline-flex items-center text-muted-foreground">
-                  <Typewriter
-                    options={{
-                      strings: typewriterStrings,
-                      autoStart: true,
-                      loop: true,
-                      delay: 50,
-                      deleteSpeed: 30,
-                    }}
-                  />
-                </span>
+            {/* Center Section with Typewriter and Search */}
+            <div className={`flex-1 max-w-2xl transition-all duration-300 ${isScrolled ? 'opacity-0 hidden' : 'opacity-100'}`}>
+              <div className="text-lg font-medium text-center flex items-center justify-center whitespace-nowrap mb-4">
+                <Typewriter
+                  options={{
+                    strings: typewriterStrings,
+                    autoStart: true,
+                    loop: true,
+                    delay: 50,
+                    deleteSpeed: 30,
+                  }}
+                />
               </div>
             </div>
 
-            <div className="flex justify-end">
-            </div>
-          </div>
-
-          <div className="py-4">
-            <div className="w-full max-w-2xl mx-auto">
-              <div className="flex items-center gap-2 px-4 h-14 rounded-full border shadow-sm bg-background">
-                <Select value={searchCategory} onValueChange={setSearchCategory}>
-                  <SelectTrigger className="w-[140px] border-0 focus:ring-0 focus:ring-offset-0 px-0">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {searchCategories.map((category) => (
-                      <SelectItem key={category} value={category}>
-                        {category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <div className="h-8 w-[1px] bg-border" />
-                <div className="flex-1 flex items-center">
-                  <Input
-                    className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2"
-                    placeholder={`Search ${searchCategory.toLowerCase()}...`}
-                    type="search"
-                  />
+            {/* Search Bar */}
+            <div className={`flex-1 max-w-2xl transition-all duration-300 ${isScrolled ? 'translate-y-0' : ''}`}>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm bg-background">
+                <div className="flex-1 flex items-center gap-6 divide-x">
+                  <div className="flex-1">
+                    <Input
+                      className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent"
+                      placeholder="Search anywhere"
+                      type="search"
+                    />
+                  </div>
+                  <div className="pl-6">
+                    <button className="text-sm font-medium">Any week</button>
+                  </div>
+                  <div className="pl-6">
+                    <button className="text-sm text-muted-foreground">Add guests</button>
+                  </div>
                 </div>
-                <Button size="icon" variant="default" className="rounded-full">
+                <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
                   <Search className="h-4 w-4" />
                 </Button>
               </div>
             </div>
-          </div>
 
-          <div className="py-4 border-t overflow-x-auto hide-scrollbar relative">
-            <div className="flex gap-6 min-w-max px-4 pr-14">
-              {departments.map((dept, index) => {
-                const Icon = dept.icon;
-                return (
-                  <button
-                    key={index}
-                    className="flex flex-col items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors group w-16"
-                  >
-                    <div className="p-2.5 rounded-full bg-accent group-hover:bg-accent/80 transition-colors">
-                      <Icon className="w-4 h-4" />
-                    </div>
-                    <span className="text-[11px] truncate w-full text-center">{dept.name}</span>
-                  </button>
-                );
-              })}
-            </div>
-            <div className="absolute right-0 top-0 h-full flex items-center bg-gradient-to-l from-background from-30% via-background/90 to-transparent pr-2 pl-6">
-              <button className="w-7 h-7 flex items-center justify-center bg-white border rounded-full shadow-sm">
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
+            {/* Right Section */}
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="sm" className="font-medium">
+                Add Product
+              </Button>
+              <Button variant="ghost" size="icon" className="rounded-full">
+                <Globe className="h-4 w-4" />
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="rounded-full p-1 h-10">
+                    <Menu className="h-4 w-4 mr-2" />
+                    <User className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem>
+                    Sign up
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    Log in
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    List your product
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    Help
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>
