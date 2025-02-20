@@ -8,6 +8,7 @@ import { MoreFromSeller } from "@/components/product/MoreFromSeller";
 import { StickyATC } from "@/components/product/StickyATC";
 import { useToast } from "@/components/ui/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ProductCard } from "@/components/ProductCard";
 
 const placeholderImages = [
   "https://images.unsplash.com/photo-1649972904349-6e44c42644a7",
@@ -254,6 +255,117 @@ export default function Product() {
     }
   ];
 
+  const relatedProducts = [
+    {
+      title: "Responsive Web Design Course",
+      price: "$79.99",
+      image: getRandomImage(),
+      seller: "WebMaster Pro",
+      description: "Master the art of responsive web design and development.",
+      tags: ["web", "responsive", "design"],
+      category: "development"
+    },
+    {
+      title: "Digital Marketing Fundamentals",
+      price: "$89.99",
+      image: getRandomImage(),
+      seller: "Marketing Guru",
+      description: "Learn essential digital marketing strategies and tools.",
+      tags: ["marketing", "digital"],
+      category: "marketing"
+    },
+    {
+      title: "Product Management Essentials",
+      price: "$99.99",
+      image: getRandomImage(),
+      seller: "PM Expert",
+      description: "Comprehensive guide to modern product management.",
+      tags: ["product", "management"],
+      category: "business"
+    },
+    {
+      title: "JavaScript Advanced Concepts",
+      price: "$94.99",
+      image: getRandomImage(),
+      seller: "JS Master",
+      description: "Deep dive into advanced JavaScript programming.",
+      tags: ["javascript", "programming"],
+      category: "development"
+    },
+    {
+      title: "Graphic Design Masterclass",
+      price: "$84.99",
+      image: getRandomImage(),
+      seller: "Design Pro",
+      description: "Complete guide to professional graphic design.",
+      tags: ["graphic", "design"],
+      category: "design"
+    },
+    {
+      title: "Content Creation Workshop",
+      price: "$69.99",
+      image: getRandomImage(),
+      seller: "Content Creator",
+      description: "Learn to create engaging digital content.",
+      tags: ["content", "creation"],
+      category: "marketing"
+    },
+    {
+      title: "Data Analysis with Python",
+      price: "$109.99",
+      image: getRandomImage(),
+      seller: "Data Expert",
+      description: "Master data analysis using Python.",
+      tags: ["python", "data"],
+      category: "development"
+    },
+    {
+      title: "SEO Optimization Course",
+      price: "$79.99",
+      image: getRandomImage(),
+      seller: "SEO Master",
+      description: "Learn modern SEO techniques and strategies.",
+      tags: ["seo", "marketing"],
+      category: "marketing"
+    },
+    {
+      title: "Business Strategy Planning",
+      price: "$129.99",
+      image: getRandomImage(),
+      seller: "Strategy Pro",
+      description: "Develop effective business strategies.",
+      tags: ["business", "strategy"],
+      category: "business"
+    },
+    {
+      title: "Mobile App Development",
+      price: "$119.99",
+      image: getRandomImage(),
+      seller: "App Developer",
+      description: "Complete mobile app development course.",
+      tags: ["mobile", "development"],
+      category: "development"
+    },
+    {
+      title: "Email Marketing Strategy",
+      price: "$74.99",
+      image: getRandomImage(),
+      seller: "Email Pro",
+      description: "Master email marketing campaigns.",
+      tags: ["email", "marketing"],
+      category: "marketing"
+    },
+    {
+      title: "Photography Basics",
+      price: "$64.99",
+      image: getRandomImage(),
+      seller: "Photo Master",
+      description: "Learn fundamental photography techniques.",
+      tags: ["photography", "creative"],
+      category: "creative"
+    }
+  ];
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="lg:hidden">
@@ -362,6 +474,24 @@ export default function Product() {
       <ProductReviews reviews={reviews} className="p-6 mb-16" />
 
       <MoreFromSeller products={moreFromSeller} className="mt-30" />
+
+      <div className="mt-16">
+        <h2 className="text-2xl font-bold mb-6">Related Products</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {relatedProducts.map((product, index) => (
+            <ProductCard
+              key={index}
+              title={product.title}
+              price={product.price}
+              image={product.image}
+              seller={product.seller}
+              description={product.description}
+              tags={product.tags}
+              category={product.category}
+            />
+          ))}
+        </div>
+      </div>
 
       <StickyATC 
         variants={variants}
