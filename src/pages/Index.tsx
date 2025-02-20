@@ -315,7 +315,7 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
           </div>
         </div>
 
-        <div className="hidden sm:flex relative">
+        <div className="hidden sm:flex relative pb-[20px]">
           <div className="w-[20%] flex items-start">
             <h1 className="text-2xl font-semibold mt-[15px] ml-[15px]">Logo</h1>
           </div>
