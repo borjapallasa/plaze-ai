@@ -1,8 +1,18 @@
-
 import React, { useState, useEffect, useMemo } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
-import { Search, Globe, Menu, User } from "lucide-react";
+import { 
+  Search, 
+  Globe, 
+  Menu, 
+  User,
+  Star,
+  Target,
+  Building,
+  DollarSign,
+  ChartBar,
+  ShoppingBag
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Typewriter from 'typewriter-effect';
@@ -244,26 +254,26 @@ const banners = [
 ];
 
 const badges = [
-  { label: "Trending", icon: Sparkle, category: null },
+  { label: "Trending", icon: Star, category: null },
   { label: "Templates", icon: Star, category: "template" },
-  { label: "Prompt", icon: Flame, category: "prompt" },
-  { label: "Communities", icon: Users, category: "community" },
+  { label: "Prompt", icon: Star, category: "prompt" },
+  { label: "Communities", icon: User, category: "community" },
   { label: "Experts", icon: Target, category: "expert" }
 ];
 
 const departments = [
   { name: "Business", icon: Building },
-  { name: "Jobs", icon: Briefcase },
-  { name: "Partners", icon: Handshake },
+  { name: "Jobs", icon: User },
+  { name: "Partners", icon: User },
   { name: "Finance", icon: DollarSign },
   { name: "Analytics", icon: ChartBar },
-  { name: "Teams", icon: Users },
-  { name: "Logistics", icon: Truck },
-  { name: "Manufacturing", icon: Factory },
-  { name: "Payments", icon: CreditCard },
+  { name: "Teams", icon: User },
+  { name: "Logistics", icon: Star },
+  { name: "Manufacturing", icon: Building },
+  { name: "Payments", icon: DollarSign },
   { name: "Commerce", icon: ShoppingBag },
   { name: "Marketing", icon: Target },
-  { name: "Settings", icon: Settings }
+  { name: "Settings", icon: Menu }
 ];
 
 const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
