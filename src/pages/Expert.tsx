@@ -148,38 +148,40 @@ export default function Expert() {
 
           <div className="grid grid-cols-5 gap-6">
             <div className="col-span-4 col-start-2">
-              <ProductReviews reviews={reviews} />
+              <ProductReviews reviews={reviews} className="border-gray-100" />
             </div>
           </div>
         </div>
 
         {/* Mobile Layout - Reordered */}
-        <div className="lg:hidden">
-          <div className="mb-8">
+        <div className="lg:hidden space-y-8">
+          <div>
             <ExpertSkills />
           </div>
 
-          <div className="mb-8">
+          <div>
             <ExpertInfo />
           </div>
 
-          <div className="mb-8">
+          <div>
             <ExpertServices />
           </div>
 
-          <div className="mb-8">
+          <div>
             <ExpertStats />
           </div>
 
-          <div className="mb-8">
+          <div>
             <ExpertCommunity />
           </div>
 
-          <div className="mb-8">
+          <div>
             <MoreFromSeller products={moreProducts} />
           </div>
 
-          <ProductReviews reviews={reviews} />
+          <div>
+            <ProductReviews reviews={reviews} className="border-gray-100" />
+          </div>
         </div>
       </div>
     </div>
