@@ -279,7 +279,7 @@ const departments = [
 const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
   return (
     <header 
-      className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm border-b transition-[padding,background-color] duration-200 ease-out ${
+      className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm border-b transition-all duration-200 ease-out ${
         isScrolled ? 'py-2 bg-background/95' : 'py-4 bg-background'
       }`}
     >
@@ -287,29 +287,6 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
         <div className="flex items-center justify-between">
           <div className="flex-shrink-0 w-[200px]">
             <h1 className="text-2xl font-semibold">Logo</h1>
-          </div>
-
-          <div 
-            className="absolute left-1/2 -translate-x-1/2 top-1/2 transition-transform duration-200 ease-out"
-            style={{
-              transform: `translate(-50%, ${isScrolled ? '-150%' : '-50%'})`,
-              opacity: isScrolled ? 0 : 1,
-            }}
-          >
-            <div className="text-[1.5rem] leading-relaxed font-bold whitespace-nowrap flex items-center justify-center">
-              <span>The Best AI & Automation</span>
-              <span className="text-muted-foreground ml-1">
-                <Typewriter
-                  options={{
-                    strings: typewriterStrings,
-                    autoStart: true,
-                    loop: true,
-                    delay: 50,
-                    deleteSpeed: 30,
-                  }}
-                />
-              </span>
-            </div>
           </div>
 
           <div className="flex items-center gap-2 w-[200px] justify-end">
@@ -336,38 +313,59 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
           </div>
         </div>
 
-        <div 
-          className="absolute left-1/2 transition-all duration-200 ease-out"
-          style={{
-            width: isScrolled ? '360px' : '540px',
-            transform: `translate(-50%, ${isScrolled ? '-0.5rem' : '1.5rem'})`,
-          }}
-        >
-          <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm bg-background">
-            <div className="flex-1 flex items-center gap-2">
-              <Select 
-                defaultValue="Products" 
-                onValueChange={setSearchCategory}
-              >
-                <SelectTrigger className="border-0 w-[120px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Products">Products</SelectItem>
-                  <SelectItem value="Experts">Experts</SelectItem>
-                  <SelectItem value="Communities">Communities</SelectItem>
-                  <SelectItem value="Jobs">Jobs</SelectItem>
-                </SelectContent>
-              </Select>
-              <Input
-                className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
-                placeholder={`Search ${searchCategory.toLowerCase()}...`}
-                type="search"
-              />
+        <div className="relative flex flex-col items-center justify-center gap-4">
+          <div 
+            className={`transition-all duration-200 ease-out ${
+              isScrolled ? 'opacity-0 absolute' : 'opacity-100 relative'
+            }`}
+          >
+            <div className="text-[1.5rem] leading-relaxed font-bold whitespace-nowrap flex items-center justify-center">
+              <span>The Best AI & Automation</span>
+              <span className="text-muted-foreground ml-1">
+                <Typewriter
+                  options={{
+                    strings: typewriterStrings,
+                    autoStart: true,
+                    loop: true,
+                    delay: 50,
+                    deleteSpeed: 30,
+                  }}
+                />
+              </span>
             </div>
-            <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
-              <Search className="h-4 w-4" />
-            </Button>
+          </div>
+
+          <div 
+            className={`transition-all duration-200 ease-out ${
+              isScrolled ? 'w-[360px]' : 'w-[540px]'
+            }`}
+          >
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm bg-background">
+              <div className="flex-1 flex items-center gap-2">
+                <Select 
+                  defaultValue="Products" 
+                  onValueChange={setSearchCategory}
+                >
+                  <SelectTrigger className="border-0 w-[120px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Products">Products</SelectItem>
+                    <SelectItem value="Experts">Experts</SelectItem>
+                    <SelectItem value="Communities">Communities</SelectItem>
+                    <SelectItem value="Jobs">Jobs</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Input
+                  className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
+                  placeholder={`Search ${searchCategory.toLowerCase()}...`}
+                  type="search"
+                />
+              </div>
+              <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
+                <Search className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -384,26 +382,25 @@ const Index = () => {
   const [searchCategory, setSearchCategory] = useState("Products");
 
   useEffect(() => {
-    let timeoutId: number | null = null;
-    
-    const handleScroll = () => {
-      if (timeoutId) {
-        window.cancelAnimationFrame(timeoutId);
-      }
-      
-      timeoutId = window.requestAnimationFrame(() => {
-        setIsScrolled(window.scrollY > 20);
-      });
+    let lastScrollY = window.scrollY;
+    let ticking = false;
+
+    const updateScrollState = () => {
+      setIsScrolled(window.scrollY > 0);
+      lastScrollY = window.scrollY;
+      ticking = false;
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (timeoutId) {
-        window.cancelAnimationFrame(timeoutId);
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateScrollState);
+        ticking = true;
       }
     };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   const filteredProducts = useMemo(() => 
@@ -420,7 +417,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen pt-32">
+    <div className="min-h-screen pt-40">
       <MemoizedHeader 
         isScrolled={isScrolled}
         searchCategory={searchCategory}
