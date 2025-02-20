@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Typewriter from 'typewriter-effect';
 import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Select,
   SelectContent,
@@ -145,6 +145,17 @@ const Index = () => {
   const isMobile = useIsMobile();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchCategory, setSearchCategory] = useState("Products");
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      setIsScrolled(scrollPosition > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const filteredProducts = selectedCategory
     ? products.filter(product => product.category === selectedCategory)
@@ -158,14 +169,14 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+      <header className={`sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b transition-all duration-300 ${isScrolled ? 'py-2' : ''}`}>
         <div className="container mx-auto px-4">
-          <div className="h-20 grid grid-cols-3 items-center">
+          <div className={`grid grid-cols-3 items-center transition-all duration-300 ${isScrolled ? 'h-16' : 'h-20'}`}>
             <div className="flex items-center">
               <h1 className="text-2xl font-semibold">Logo</h1>
             </div>
 
-            <div className="flex justify-center items-center">
+            <div className={`flex justify-center items-center transition-opacity duration-300 ${isScrolled ? 'opacity-0 hidden' : 'opacity-100'}`}>
               <div className="text-xl font-semibold text-center flex items-center whitespace-nowrap">
                 <span className="text-foreground">The Best AI & Automation&nbsp;</span>
                 <span className="inline-flex items-center text-muted-foreground">
@@ -186,9 +197,9 @@ const Index = () => {
             </div>
           </div>
 
-          <div className="py-4">
-            <div className="w-full max-w-2xl mx-auto">
-              <div className="flex items-center gap-2 px-4 h-14 rounded-full border shadow-sm bg-background">
+          <div className={`transition-all duration-300 ${isScrolled ? 'py-2' : 'py-4'}`}>
+            <div className={`w-full mx-auto transition-all duration-300 ${isScrolled ? 'max-w-xl' : 'max-w-2xl'}`}>
+              <div className={`flex items-center gap-2 px-4 rounded-full border shadow-sm bg-background transition-all duration-300 ${isScrolled ? 'h-12' : 'h-14'}`}>
                 <Select value={searchCategory} onValueChange={setSearchCategory}>
                   <SelectTrigger className="w-[140px] border-0 focus:ring-0 focus:ring-offset-0 px-0">
                     <SelectValue />
@@ -216,7 +227,7 @@ const Index = () => {
             </div>
           </div>
 
-          <div className="py-4 border-t overflow-x-auto hide-scrollbar relative">
+          <div className={`border-t overflow-x-auto hide-scrollbar relative transition-all duration-300 ${isScrolled ? 'py-3' : 'py-4'}`}>
             <div className="flex gap-6 min-w-max px-4 pr-14">
               {departments.map((dept, index) => {
                 const Icon = dept.icon;
