@@ -1,5 +1,3 @@
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
 import { Search, ArrowRight, Sparkles, Star, Flame, Target, Users } from "lucide-react";
@@ -134,98 +132,95 @@ const Index = () => {
   };
 
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <AppSidebar />
-        <main className="flex-1">
-          <div className="p-6 border-b border-gray-200">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-2 flex-1">
-                <h2 className="text-xl font-semibold whitespace-nowrap">The Best AI & Automation</h2>
-                <div className="text-xl font-semibold text-muted-foreground">
-                  <Typewriter
-                    options={{
-                      strings: typewriterStrings,
-                      autoStart: true,
-                      loop: true,
-                      delay: 50,
-                      deleteSpeed: 30,
-                    }}
-                  />
-                </div>
-              </div>
-              <div className="relative w-64">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  className="pl-10"
-                  placeholder="Search"
-                  type="search"
+    <div className="min-h-screen">
+      <main>
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-2 flex-1">
+              <h2 className="text-xl font-semibold whitespace-nowrap">The Best AI & Automation</h2>
+              <div className="text-xl font-semibold text-muted-foreground">
+                <Typewriter
+                  options={{
+                    strings: typewriterStrings,
+                    autoStart: true,
+                    loop: true,
+                    delay: 50,
+                    deleteSpeed: 30,
+                  }}
                 />
               </div>
             </div>
+            <div className="relative w-64">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                className="pl-10"
+                placeholder="Search"
+                type="search"
+              />
+            </div>
           </div>
-          <div className="p-6 border-b border-gray-200">
-            <div className="space-y-6">
-              {isMobile ? (
-                <Carousel className="w-full">
-                  <CarouselContent>
-                    {banners.map((banner, index) => (
-                      <CarouselItem key={index}>
-                        <div className="bg-accent rounded-lg p-3 relative group cursor-pointer hover:bg-accent/90 transition-colors">
-                          <h3 className="text-lg font-semibold mb-1">{banner.title}</h3>
-                          <p className="text-muted-foreground text-sm pr-6">{banner.description}</p>
-                          <ArrowRight className="absolute bottom-3 right-3 h-4 w-4 text-muted-foreground/50 group-hover:text-muted-foreground transition-colors" />
-                        </div>
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                  <CarouselPrevious />
-                  <CarouselNext />
-                </Carousel>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        </div>
+        <div className="p-6 border-b border-gray-200">
+          <div className="space-y-6">
+            {isMobile ? (
+              <Carousel className="w-full">
+                <CarouselContent>
                   {banners.map((banner, index) => (
-                    <div key={index} className="bg-accent rounded-lg p-3 relative group cursor-pointer hover:bg-accent/90 transition-colors">
-                      <h3 className="text-lg font-semibold mb-1">{banner.title}</h3>
-                      <p className="text-muted-foreground text-sm pr-6">{banner.description}</p>
-                      <ArrowRight className="absolute bottom-3 right-3 h-4 w-4 text-muted-foreground/50 group-hover:text-muted-foreground transition-colors" />
-                    </div>
+                    <CarouselItem key={index}>
+                      <div className="bg-accent rounded-lg p-3 relative group cursor-pointer hover:bg-accent/90 transition-colors">
+                        <h3 className="text-lg font-semibold mb-1">{banner.title}</h3>
+                        <p className="text-muted-foreground text-sm pr-6">{banner.description}</p>
+                        <ArrowRight className="absolute bottom-3 right-3 h-4 w-4 text-muted-foreground/50 group-hover:text-muted-foreground transition-colors" />
+                      </div>
+                    </CarouselItem>
                   ))}
-                </div>
-              )}
-              <div className="flex flex-wrap gap-3">
-                {badges.map((badge, index) => {
-                  const Icon = badge.icon;
-                  const isSelected = selectedCategory === badge.category;
-                  return (
-                    <Badge
-                      key={index}
-                      variant={isSelected ? "default" : "secondary"}
-                      className={`px-4 py-2 text-sm font-medium cursor-pointer hover:bg-secondary/80 transition-colors ${
-                        isSelected ? 'bg-primary text-primary-foreground' : ''
-                      }`}
-                      onClick={() => handleBadgeClick(badge.category)}
-                    >
-                      <Icon className="w-4 h-4 mr-2" />
-                      {badge.label}
-                    </Badge>
-                  );
-                })}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {banners.map((banner, index) => (
+                  <div key={index} className="bg-accent rounded-lg p-3 relative group cursor-pointer hover:bg-accent/90 transition-colors">
+                    <h3 className="text-lg font-semibold mb-1">{banner.title}</h3>
+                    <p className="text-muted-foreground text-sm pr-6">{banner.description}</p>
+                    <ArrowRight className="absolute bottom-3 right-3 h-4 w-4 text-muted-foreground/50 group-hover:text-muted-foreground transition-colors" />
+                  </div>
+                ))}
               </div>
+            )}
+            <div className="flex flex-wrap gap-3">
+              {badges.map((badge, index) => {
+                const Icon = badge.icon;
+                const isSelected = selectedCategory === badge.category;
+                return (
+                  <Badge
+                    key={index}
+                    variant={isSelected ? "default" : "secondary"}
+                    className={`px-4 py-2 text-sm font-medium cursor-pointer hover:bg-secondary/80 transition-colors ${
+                      isSelected ? 'bg-primary text-primary-foreground' : ''
+                    }`}
+                    onClick={() => handleBadgeClick(badge.category)}
+                  >
+                    <Icon className="w-4 h-4 mr-2" />
+                    {badge.label}
+                  </Badge>
+                );
+              })}
             </div>
           </div>
+        </div>
 
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredProducts.map((product, index) => (
-                <ProductCard key={index} {...product} />
-              ))}
-            </div>
+        <div className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredProducts.map((product, index) => (
+              <ProductCard key={index} {...product} />
+            ))}
           </div>
+        </div>
 
-        </main>
-      </div>
-    </SidebarProvider>
+      </main>
+    </div>
   );
 };
 
