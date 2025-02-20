@@ -1,3 +1,4 @@
+
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
 import { Search, Target, ShoppingBag, Settings, Users, Truck, ChartBar, ChevronDown, ArrowRight, Sparkle, Star, Flame } from "lucide-react";
@@ -158,28 +159,14 @@ const Index = () => {
             <div className="flex-1 flex items-center justify-between">
               <div className="flex items-center gap-8">
                 <h1 className="text-2xl font-semibold">Logo</h1>
-                <div className="hidden lg:flex items-center gap-6">
-                  {departments.map((dept, index) => {
-                    const Icon = dept.icon;
-                    return (
-                      <button
-                        key={index}
-                        className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                      >
-                        <Icon className="w-4 h-4" />
-                        {dept.name}
-                      </button>
-                    );
-                  })}
-                </div>
               </div>
             </div>
           </div>
           <div className="pb-5">
             <div className="flex flex-col items-center gap-4">
               <div className="text-2xl font-semibold text-center">
-                The Best AI & Automation{" "}
-                <span className="inline-block">
+                <span className="text-gray-900">The Best AI & Automation </span>
+                <span className="inline-block text-[#8B5CF6]">
                   <Typewriter
                     options={{
                       strings: typewriterStrings,
@@ -216,6 +203,24 @@ const Index = () => {
                   </Button>
                 </div>
               </div>
+            </div>
+          </div>
+          <div className="py-4 border-t">
+            <div className="grid grid-cols-3 md:grid-cols-6 gap-6 justify-items-center">
+              {departments.map((dept, index) => {
+                const Icon = dept.icon;
+                return (
+                  <button
+                    key={index}
+                    className="flex flex-col items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors group"
+                  >
+                    <div className="p-3 rounded-full bg-accent group-hover:bg-accent/80 transition-colors">
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <span>{dept.name}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
