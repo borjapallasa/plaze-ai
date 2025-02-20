@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MessageSquare, Users, BookOpen, Calendar, Link, ThumbsUp, Search, ArrowRight } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/ProductCard";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
@@ -272,11 +272,12 @@ export default function Community() {
               <Card key={index} className="overflow-hidden group hover:shadow-lg transition-shadow cursor-pointer">
                 <div className="aspect-[1.25] relative overflow-hidden bg-gradient-to-br from-blue-400 to-blue-600">
                   <div className="absolute inset-0 p-6 flex items-center justify-center">
-                    <h3 className="text-white text-2xl font-bold text-center leading-tight">{classroom.title}</h3>
+                    <h3 className="text-white text-2xl font-bold text-center leading-tight">Classroom</h3>
                   </div>
                 </div>
                 <CardContent className="p-6 relative">
-                  <p className="text-muted-foreground text-sm">{classroom.description}</p>
+                  <CardTitle className="text-lg font-semibold mb-2">{classroom.title}</CardTitle>
+                  <p className="text-muted-foreground text-sm mb-8">{classroom.description}</p>
                   <div className="absolute right-6 bottom-6 opacity-0 transform translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200">
                     <ArrowRight className="w-4 h-4 text-primary" />
                   </div>
