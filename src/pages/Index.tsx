@@ -217,25 +217,25 @@ const Index = () => {
           </div>
 
           <div className="py-4 border-t overflow-x-auto hide-scrollbar relative">
-            <div className="flex gap-8 min-w-max px-6 pr-16">
+            <div className="flex gap-6 min-w-max px-4 pr-14">
               {departments.map((dept, index) => {
                 const Icon = dept.icon;
                 return (
                   <button
                     key={index}
-                    className="flex flex-col items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors group"
+                    className="flex flex-col items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors group w-16"
                   >
-                    <div className="p-3 rounded-full bg-accent group-hover:bg-accent/80 transition-colors">
-                      <Icon className="w-5 h-5" />
+                    <div className="p-2.5 rounded-full bg-accent group-hover:bg-accent/80 transition-colors">
+                      <Icon className="w-4 h-4" />
                     </div>
-                    <span className="text-xs">{dept.name}</span>
+                    <span className="text-[11px] truncate w-full text-center">{dept.name}</span>
                   </button>
                 );
               })}
             </div>
-            <div className="absolute right-0 top-0 h-full flex items-center bg-gradient-to-l from-background via-background to-transparent pr-2 pl-8">
-              <button className="w-8 h-8 flex items-center justify-center bg-white border rounded-full shadow-md">
-                <ChevronRight className="w-4 h-4" />
+            <div className="absolute right-0 top-0 h-full flex items-center bg-gradient-to-l from-background from-30% via-background/90 to-transparent pr-2 pl-6">
+              <button className="w-7 h-7 flex items-center justify-center bg-white border rounded-full shadow-sm">
+                <ChevronRight className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
