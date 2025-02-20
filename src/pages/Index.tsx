@@ -281,12 +281,12 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
 
   return (
     <header 
-      className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm transition-all duration-200 ease-out ${
+      className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm transition-all duration-200 ease-out bg-white ${
         isScrolled ? 'pt-0 bg-background/95' : 'pt-4 bg-background'
       }`}
     >
       <div className="container mx-auto px-4">
-        <div className="sm:hidden">
+        <div className="sm:hidden px-4 py-3">
           <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm bg-background">
             <div className="flex-1 flex items-center gap-2">
               <Select 
