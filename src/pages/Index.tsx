@@ -1,7 +1,6 @@
-
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
-import { Search, Target, ShoppingBag, Settings, Users, Truck, ChartBar, ChevronDown, ArrowRight, Sparkle, Star, Flame, DollarSign, Briefcase, Handshake, Building, Factory, CreditCard, ChevronRight, Palmtree, Home, Warehouse, Mountain, TreePine, House, Castle, CircleDollarSign, Anchor } from "lucide-react";
+import { Search, Target, ShoppingBag, Settings, Users, Truck, ChartBar, ChevronDown, ArrowRight, Sparkle, Star, Flame, DollarSign, Briefcase, Handshake, Building, Factory, CreditCard, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Typewriter from 'typewriter-effect';
@@ -126,21 +125,18 @@ const badges = [
 ];
 
 const departments = [
-  { name: "Amazing pools", icon: Palmtree },
-  { name: "Icons", icon: CircleDollarSign },
-  { name: "Tiny homes", icon: Home },
-  { name: "Cabins", icon: House },
-  { name: "Lake", icon: Warehouse },
-  { name: "Containers", icon: Factory },
-  { name: "Amazing views", icon: Mountain },
-  { name: "Countryside", icon: TreePine },
-  { name: "Mansions", icon: Castle },
-  { name: "Boats", icon: Anchor }, // Changed from Boat to Anchor
-  { name: "Farms", icon: Building },
-  { name: "OMG!", icon: Star },
-  { name: "Domes", icon: House },
-  { name: "Treehouses", icon: TreePine },
-  { name: "Beachfront", icon: Palmtree },
+  { name: "Business", icon: Building },
+  { name: "Jobs", icon: Briefcase },
+  { name: "Partners", icon: Handshake },
+  { name: "Finance", icon: DollarSign },
+  { name: "Analytics", icon: ChartBar },
+  { name: "Teams", icon: Users },
+  { name: "Logistics", icon: Truck },
+  { name: "Manufacturing", icon: Factory },
+  { name: "Payments", icon: CreditCard },
+  { name: "Commerce", icon: ShoppingBag },
+  { name: "Marketing", icon: Target },
+  { name: "Settings", icon: Settings }
 ];
 
 const searchCategories = ["Jobs", "Experts", "Products", "Communities"];
@@ -221,7 +217,7 @@ const Index = () => {
           </div>
 
           <div className="py-4 border-t overflow-x-auto hide-scrollbar relative">
-            <div className="flex gap-8 min-w-max px-6">
+            <div className="flex gap-8 min-w-max px-6 pr-16">
               {departments.map((dept, index) => {
                 const Icon = dept.icon;
                 return (
@@ -237,9 +233,11 @@ const Index = () => {
                 );
               })}
             </div>
-            <button className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-white border rounded-full shadow-md">
-              <ChevronRight className="w-4 h-4" />
-            </button>
+            <div className="absolute right-0 top-0 h-full flex items-center bg-gradient-to-l from-background via-background to-transparent pr-2 pl-8">
+              <button className="w-8 h-8 flex items-center justify-center bg-white border rounded-full shadow-md">
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
       </header>
