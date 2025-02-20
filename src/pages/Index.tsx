@@ -38,6 +38,7 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
+import { TrendingUp, Sparkle, Trophy, ThumbsUp, Tags } from "lucide-react";
 
 const typewriterStrings = [
   "Products To Scale",
@@ -255,11 +256,12 @@ const banners = [
 ];
 
 const badges = [
-  { label: "Trending", icon: Star, category: null },
-  { label: "Templates", icon: Star, category: "template" },
-  { label: "Prompt", icon: Star, category: "prompt" },
-  { label: "Communities", icon: User, category: "community" },
-  { label: "Experts", icon: Target, category: "expert" }
+  { label: "Trending", icon: TrendingUp, category: null },
+  { label: "Newest", icon: Sparkle, category: "template" },
+  { label: "Top Seller", icon: Trophy, category: "prompt" },
+  { label: "Best Reviews", icon: ThumbsUp, category: "community" },
+  { label: "Our Pick", icon: Star, category: "expert" },
+  { label: "Affiliate Offers", icon: Tags, category: null }
 ];
 
 const departments = [
@@ -533,31 +535,6 @@ const Index = () => {
               isScrolled ? 'mt-24' : 'mt-32'
             }`}
           >
-            {isMobile ? (
-              <Carousel className="w-full">
-                <CarouselContent>
-                  {banners.map((banner, index) => (
-                    <CarouselItem key={index}>
-                      <div className="bg-accent rounded-lg p-3 relative group cursor-pointer hover:bg-accent/90 transition-colors">
-                        <h3 className="text-lg font-semibold mb-1">{banner.title}</h3>
-                        <p className="text-muted-foreground text-sm pr-6">{banner.description}</p>
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
-              </Carousel>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {banners.map((banner, index) => (
-                  <div key={index} className="bg-accent rounded-lg p-3 relative group cursor-pointer hover:bg-accent/90 transition-colors">
-                    <h3 className="text-lg font-semibold mb-1">{banner.title}</h3>
-                    <p className="text-muted-foreground text-sm pr-6">{banner.description}</p>
-                  </div>
-                ))}
-              </div>
-            )}
             <div className="flex flex-wrap gap-3">
               {badges.map((badge, index) => {
                 const Icon = badge.icon;
