@@ -161,7 +161,7 @@ const Index = () => {
 
             <div className="flex justify-center items-center">
               <div className="text-xl font-semibold text-center flex items-center whitespace-nowrap">
-                <span className="text-foreground">The Best AI & Automation </span>
+                <span className="text-foreground">The Best AI & Automation&nbsp;</span>
                 <span className="inline-flex items-center text-muted-foreground">
                   <Typewriter
                     options={{
@@ -180,7 +180,7 @@ const Index = () => {
             </div>
           </div>
 
-          <div className="py-6">
+          <div className="py-4">
             <div className="w-full max-w-2xl mx-auto">
               <div className="flex items-center gap-2 px-4 h-14 rounded-full border shadow-sm bg-background">
                 <Select value={searchCategory} onValueChange={setSearchCategory}>
