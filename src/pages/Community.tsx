@@ -275,10 +275,10 @@ export default function Community() {
                     <h3 className="text-white text-2xl font-bold text-center leading-tight">{classroom.title}</h3>
                   </div>
                 </div>
-                <CardContent className="p-6 relative">
-                  <p className="text-muted-foreground text-sm mb-4">{classroom.description}</p>
+                <CardContent className="p-6">
+                  <p className="text-muted-foreground text-sm">{classroom.description}</p>
                   <div className="absolute right-6 bottom-6 opacity-0 transform translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200">
-                    <ArrowRight className="w-6 h-6 text-primary" />
+                    <ArrowRight className="w-4 h-4 text-primary" />
                   </div>
                 </CardContent>
               </Card>
