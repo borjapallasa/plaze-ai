@@ -21,7 +21,7 @@ function Calendar({
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0 w-full",
         month: "space-y-4 w-full",
-        caption: "flex justify-between pt-1 pb-4 items-center px-2",
+        caption: "flex justify-between pt-1 pb-4 items-center",
         caption_label: "text-base font-semibold",
         nav: "space-x-1 flex items-center",
         nav_button: cn(
@@ -30,18 +30,19 @@ function Calendar({
         ),
         nav_button_previous: "",
         nav_button_next: "",
-        table: "w-full border-collapse",
-        head_row: "flex w-full border-b border-border",
+        table: "w-full border-collapse space-y-1",
+        head_row: "flex w-full mt-2",
         head_cell:
-          "text-muted-foreground w-full font-normal text-[0.8rem] pb-3",
-        row: "flex w-full",
+          "text-muted-foreground rounded-md w-[14.28%] font-normal text-[0.8rem] pb-3",
+        row: "flex w-full mt-2",
         cell: cn(
-          "relative p-0 text-center border-b border-r border-border first:border-l focus-within:relative focus-within:z-20 h-[120px]",
-          "last:[&:not(:nth-child(7))]:border-r [&:nth-child(7)]:border-r-0"
+          "relative w-[14.28%] h-[100px] p-0 text-center border border-border focus-within:relative focus-within:z-20",
+          "[&:nth-child(7n)]:border-r [&:nth-child(7n+1)]:border-l"
         ),
         day: cn(
-          "h-8 w-8 p-0 font-normal hover:bg-accent hover:text-accent-foreground relative",
-          "aria-selected:opacity-100"
+          buttonVariants({ variant: "ghost" }),
+          "h-9 w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-accent hover:text-accent-foreground",
+          "absolute top-1 left-1"
         ),
         day_range_end: "day-range-end",
         day_selected:
