@@ -71,7 +71,7 @@ export default function Community() {
                 
                 <div className="flex items-center gap-2 truncate">
                   <Users className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                  <span className="truncate">Optimal Path Automations has 198 members!</span>
+                  <span className="text-sm truncate">Optimal Path Automations has 198 members!</span>
                 </div>
 
                 <div className="space-y-2">
@@ -136,10 +136,12 @@ export default function Community() {
                 <div className="flex-1 space-y-4">
                   <div className="flex items-start justify-between">
                     <div>
-                      <h3 className="font-semibold">Letter from Borja</h3>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <span>Created by Borja P</span>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-semibold">Letter from Borja</h3>
                         <Badge variant="secondary" className="text-xs">Messages: 1</Badge>
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Created by Borja P
                       </div>
                     </div>
                     <Badge variant="outline" className="flex items-center gap-1">
