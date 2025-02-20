@@ -315,14 +315,14 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
           </div>
         </div>
 
-        <div className="hidden sm:block">
-          <div className="flex items-center justify-between mb-6 pt-3">
+        <div className="hidden sm:flex flex-col">
+          <div className="flex items-center justify-between pt-3">
             <div className="flex-shrink-0 w-[200px] flex items-center">
               <h1 className="text-2xl font-semibold">Logo</h1>
             </div>
 
             <div 
-              className={`absolute left-1/2 -translate-x-1/2 transition-all duration-200 ease-out ${
+              className={`transition-all duration-200 ease-out ${
                 isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100 pb-4'
               }`}
             >
@@ -366,14 +366,10 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
             </div>
           </div>
 
-          <div 
-            className={`absolute left-1/2 -translate-x-1/2 transition-all duration-200 ease-out ${
-              isScrolled ? 'top-1/2 -translate-y-1/2' : 'top-16'
-            }`}
-          >
+          <div className="flex justify-center py-4">
             <div 
               className={`transition-all duration-200 ease-out ${
-                isScrolled ? 'w-[360px]' : 'w-[540px] mt-4'
+                isScrolled ? 'w-[360px]' : 'w-[540px]'
               }`}
             >
               <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm bg-background">
