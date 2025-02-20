@@ -293,10 +293,10 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
                 defaultValue="Products" 
                 onValueChange={setSearchCategory}
               >
-                <SelectTrigger className="border-0 w-[100px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9 text-xs">
-                  <SelectValue />
+                <SelectTrigger className="border-0 w-[120px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9 text-xs">
+                  <SelectValue className="pr-4" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="w-[150px]">
                   <SelectItem value="Products">Products</SelectItem>
                   <SelectItem value="Experts">Experts</SelectItem>
                   <SelectItem value="Communities">Communities</SelectItem>
@@ -383,9 +383,9 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
                     onValueChange={setSearchCategory}
                   >
                     <SelectTrigger className="border-0 w-[120px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
-                      <SelectValue />
+                      <SelectValue className="pr-4" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="w-[150px]">
                       <SelectItem value="Products">Products</SelectItem>
                       <SelectItem value="Experts">Experts</SelectItem>
                       <SelectItem value="Communities">Communities</SelectItem>
