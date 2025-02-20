@@ -1,3 +1,4 @@
+
 import { ExpertHeader } from "@/components/expert/ExpertHeader";
 import { ExpertInfo } from "@/components/expert/ExpertInfo";
 import { ExpertSkills } from "@/components/expert/ExpertSkills";
@@ -137,9 +138,11 @@ export default function Expert() {
 
           <ExpertCommunity />
 
-          <MoreFromSeller products={moreProducts} />
-          
-          <ProductReviews reviews={reviews} className="border-gray-100" />
+          <div className="space-y-8">
+            <MoreFromSeller products={moreProducts} />
+            
+            <ProductReviews reviews={reviews} className="p-6 border-gray-100" />
+          </div>
         </div>
 
         {/* Mobile Layout - Reordered */}
@@ -169,7 +172,7 @@ export default function Expert() {
           </div>
 
           <div>
-            <ProductReviews reviews={reviews} className="border-gray-100" />
+            <ProductReviews reviews={reviews} className="p-6 border-gray-100" />
           </div>
         </div>
       </div>
