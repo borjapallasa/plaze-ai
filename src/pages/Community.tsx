@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -136,9 +135,12 @@ export default function Community() {
                 </Avatar>
                 <div className="flex-1 space-y-4">
                   <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
+                    <div>
                       <h3 className="font-semibold">Letter from Borja</h3>
-                      <Badge variant="secondary" className="text-xs">Messages: 1</Badge>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <span>Created by Borja P</span>
+                        <Badge variant="secondary" className="text-xs">Messages: 1</Badge>
+                      </div>
                     </div>
                     <Badge variant="outline" className="flex items-center gap-1">
                       <ThumbsUp className="w-3 h-3" />
