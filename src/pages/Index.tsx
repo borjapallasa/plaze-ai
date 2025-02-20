@@ -174,49 +174,10 @@ const Index = () => {
     <div className="min-h-screen">
       <header className={`sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b transition-all duration-300 ${isScrolled ? 'py-2' : 'py-4'}`}>
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center justify-between">
             {/* Logo */}
             <div className="flex-shrink-0">
               <h1 className="text-2xl font-semibold">Logo</h1>
-            </div>
-
-            {/* Center Section with Typewriter and Search */}
-            <div className={`flex-1 max-w-2xl transition-all duration-300 ${isScrolled ? 'opacity-0 hidden' : 'opacity-100'}`}>
-              <div className="text-lg font-medium text-center flex items-center justify-center whitespace-nowrap mb-4">
-                <Typewriter
-                  options={{
-                    strings: typewriterStrings,
-                    autoStart: true,
-                    loop: true,
-                    delay: 50,
-                    deleteSpeed: 30,
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* Search Bar */}
-            <div className={`flex-1 max-w-2xl transition-all duration-300 ${isScrolled ? 'translate-y-0' : ''}`}>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm bg-background">
-                <div className="flex-1 flex items-center gap-6 divide-x">
-                  <div className="flex-1">
-                    <Input
-                      className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent"
-                      placeholder="Search anywhere"
-                      type="search"
-                    />
-                  </div>
-                  <div className="pl-6">
-                    <button className="text-sm font-medium">Any week</button>
-                  </div>
-                  <div className="pl-6">
-                    <button className="text-sm text-muted-foreground">Add guests</button>
-                  </div>
-                </div>
-                <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
-                  <Search className="h-4 w-4" />
-                </Button>
-              </div>
             </div>
 
             {/* Right Section */}
@@ -249,6 +210,47 @@ const Index = () => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+            </div>
+          </div>
+
+          {/* Center Section with Typewriter */}
+          <div className={`flex justify-center transition-all duration-300 ${isScrolled ? 'opacity-0 hidden' : 'opacity-100 mb-4'}`}>
+            <div className="text-lg font-medium text-center">
+              <Typewriter
+                options={{
+                  strings: typewriterStrings,
+                  autoStart: true,
+                  loop: true,
+                  delay: 50,
+                  deleteSpeed: 30,
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Search Bar */}
+          <div className="flex justify-center">
+            <div className={`w-full max-w-2xl transition-all duration-300 ${isScrolled ? '-mt-2' : ''}`}>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm bg-background">
+                <div className="flex-1 flex items-center gap-6 divide-x">
+                  <div className="flex-1">
+                    <Input
+                      className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent"
+                      placeholder="Search anywhere"
+                      type="search"
+                    />
+                  </div>
+                  <div className="pl-6">
+                    <button className="text-sm font-medium">Any week</button>
+                  </div>
+                  <div className="pl-6">
+                    <button className="text-sm text-muted-foreground">Add guests</button>
+                  </div>
+                </div>
+                <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
+                  <Search className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
