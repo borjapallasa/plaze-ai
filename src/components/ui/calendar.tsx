@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { DayPicker, SelectedDate } from "react-day-picker";
+import { DayPicker } from "react-day-picker";
 
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
@@ -12,16 +12,9 @@ function Calendar({
   className,
   classNames,
   showOutsideDays = true,
-  selected,
-  onSelect,
+  mode = "single",
   ...props
 }: CalendarProps) {
-  const handleTodayClick = () => {
-    if (onSelect) {
-      onSelect(new Date(), { selected: new Date() });
-    }
-  };
-
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
@@ -31,7 +24,7 @@ function Calendar({
         month: "space-y-4 w-full",
         caption: "flex justify-between pt-1 pb-4 items-center px-2",
         caption_label: "text-base font-semibold",
-        nav: "space-x-1 flex items-center gap-4",
+        nav: "space-x-1 flex items-center justify-end gap-1",
         nav_button: cn(
           buttonVariants({ variant: "outline" }),
           "h-7 w-7 bg-transparent p-0 hover:opacity-75"
@@ -67,24 +60,46 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        IconLeft: ({ ..._props }) => <ChevronLeft className="h-4 w-4" />,
-        IconRight: ({ ..._props }) => <ChevronRight className="h-4 w-4" />,
+        IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" />,
+        IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
+        Caption: ({ ...props }) => (
+          <div className="flex w-full justify-between items-center">
+            <div className="font-semibold">{props.displayMonth}</div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => props.onGoToDate(new Date())}
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "sm" }),
+                  "text-xs px-3"
+                )}
+              >
+                Today
+              </button>
+              <div className="space-x-1">
+                <button
+                  onClick={() => props.onPreviousClick()}
+                  className={cn(
+                    buttonVariants({ variant: "outline" }),
+                    "h-7 w-7 bg-transparent p-0 hover:opacity-75"
+                  )}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => props.onNextClick()}
+                  className={cn(
+                    buttonVariants({ variant: "outline" }),
+                    "h-7 w-7 bg-transparent p-0 hover:opacity-75"
+                  )}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        ),
       }}
-      selected={selected}
-      onSelect={onSelect}
-      footer={
-        <div className="mt-4 space-x-2">
-          <button
-            onClick={handleTodayClick}
-            className={cn(
-              buttonVariants({ variant: "outline", size: "sm" }),
-              "text-xs px-3"
-            )}
-          >
-            Today
-          </button>
-        </div>
-      }
+      mode={mode}
       {...props}
     />
   );
