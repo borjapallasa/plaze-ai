@@ -214,7 +214,7 @@ const Index = () => {
           </div>
 
           {/* Center Section with Typewriter */}
-          <div className={`flex justify-center transition-all duration-300 ${isScrolled ? 'opacity-0 hidden' : 'opacity-100 mb-4'}`}>
+          <div className={`flex justify-center transition-all duration-300 ${isScrolled ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100 h-8 mb-4'}`}>
             <div className="text-lg font-medium text-center">
               <Typewriter
                 options={{
@@ -230,7 +230,7 @@ const Index = () => {
 
           {/* Search Bar */}
           <div className="flex justify-center">
-            <div className={`w-full max-w-2xl transition-all duration-300 ${isScrolled ? '-mt-2' : ''}`}>
+            <div className={`transition-all duration-300 ${isScrolled ? 'w-[600px]' : 'w-[900px]'}`}>
               <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm bg-background">
                 <div className="flex-1 flex items-center gap-6 divide-x">
                   <div className="flex-1">
