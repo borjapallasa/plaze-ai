@@ -172,17 +172,17 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
-      <header className={`sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b transition-all duration-300 ${isScrolled ? 'py-2' : 'py-4'}`}>
+      <header className={`sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b transition-all duration-500 ${isScrolled ? 'py-2' : 'py-4'}`}>
         <div className="container mx-auto px-4">
-          <div className={`flex items-center justify-between transition-all duration-300 ${isScrolled ? '' : 'mb-4'}`}>
+          <div className={`flex items-center justify-between transition-all duration-500 ${isScrolled ? '' : 'mb-3'}`}>
             {/* Logo */}
             <div className="flex-shrink-0 w-[200px]">
               <h1 className="text-2xl font-semibold">Logo</h1>
             </div>
 
             {/* Center Section with Typewriter when not scrolled */}
-            <div className={`transition-all duration-300 flex-1 ${isScrolled ? 'hidden' : 'block'}`}>
-              <div className="text-lg font-bold text-center flex items-center justify-center">
+            <div className={`transition-all duration-500 flex-1 ${isScrolled ? 'opacity-0 -translate-y-4' : 'opacity-100 translate-y-0'}`}>
+              <div className="text-[1.15rem] leading-relaxed font-bold text-center flex items-center justify-center">
                 <span>The Best AI & Automation</span>
                 <span className="text-muted-foreground ml-1">
                   <Typewriter
@@ -233,7 +233,7 @@ const Index = () => {
 
           {/* Search Bar */}
           <div className="flex justify-center">
-            <div className={`transition-all duration-300 ${isScrolled ? 'w-[360px] -mt-10' : 'w-[540px] mt-4'}`}>
+            <div className={`transition-all duration-500 ${isScrolled ? 'w-[360px] -mt-10' : 'w-[540px] mt-3'}`}>
               <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm bg-background">
                 <div className="flex-1 flex items-center gap-6 divide-x">
                   <div className="flex-1">
