@@ -73,17 +73,17 @@ function Calendar({
       components={{
         IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4 text-foreground" {...props} />,
         IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4 text-foreground" {...props} />,
-        Caption: ({ displayMonth, onMonthChange }) => {
+        Caption: ({ displayMonth }) => {
           const handlePreviousClick = () => {
             const previousMonth = new Date(displayMonth);
             previousMonth.setMonth(previousMonth.getMonth() - 1);
-            onMonthChange?.(previousMonth);
+            props.onMonthChange?.(previousMonth);
           };
           
           const handleNextClick = () => {
             const nextMonth = new Date(displayMonth);
             nextMonth.setMonth(nextMonth.getMonth() + 1);
-            onMonthChange?.(nextMonth);
+            props.onMonthChange?.(nextMonth);
           };
 
           return (
