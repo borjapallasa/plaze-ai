@@ -269,8 +269,8 @@ export default function Community() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {classrooms.map((classroom, index) => (
-              <Card key={index} className="group relative flex flex-col hover:bg-accent transition-colors cursor-pointer">
-                <div className="aspect-[1.25] relative overflow-hidden bg-gradient-to-br from-blue-400 to-blue-600">
+              <Card key={index} className="group relative flex flex-col hover:bg-accent transition-colors cursor-pointer overflow-hidden">
+                <div className="aspect-[1.25] relative overflow-hidden bg-gradient-to-br from-blue-400 to-blue-600 rounded-t-lg">
                   <div className="absolute inset-0 p-6 flex items-center justify-center">
                     <h3 className="text-white text-2xl font-bold text-center leading-tight">Classroom</h3>
                   </div>
