@@ -104,6 +104,126 @@ const products = [
     tags: ["community", "development", "networking"],
     fromPrice: "$0",
     category: "community"
+  },
+  {
+    title: "AI Content Generator",
+    price: "Free",
+    image: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7",
+    seller: "Content AI",
+    description: "Generate high-quality content using advanced AI algorithms.",
+    tags: ["content", "writing", "marketing"],
+    fromPrice: "$29.99",
+    category: "template"
+  },
+  {
+    title: "Machine Learning Workshop",
+    price: "Free",
+    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
+    seller: "ML Experts",
+    description: "Learn machine learning fundamentals through practical workshops.",
+    tags: ["education", "ML", "AI"],
+    fromPrice: "$199",
+    category: "expert"
+  },
+  {
+    title: "AI Trading Bot",
+    price: "Free",
+    image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e",
+    seller: "Trading AI",
+    description: "Automated trading solutions powered by artificial intelligence.",
+    tags: ["finance", "trading", "automation"],
+    fromPrice: "$79.99",
+    category: "template"
+  },
+  {
+    title: "NLP Toolkit",
+    price: "Free",
+    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3",
+    seller: "NLP Solutions",
+    description: "Comprehensive toolkit for natural language processing tasks.",
+    tags: ["NLP", "AI", "development"],
+    fromPrice: "$59.99",
+    category: "template"
+  },
+  {
+    title: "AI Mentorship Program",
+    price: "Free",
+    image: "https://images.unsplash.com/photo-1531482615713-2afd69097998",
+    seller: "AI Mentors",
+    description: "Get personalized guidance from experienced AI professionals.",
+    tags: ["mentorship", "career", "learning"],
+    fromPrice: "$299",
+    category: "expert"
+  },
+  {
+    title: "Computer Vision Suite",
+    price: "Free",
+    image: "https://images.unsplash.com/photo-1563770660941-20978e870e26",
+    seller: "Vision AI",
+    description: "Complete suite of computer vision tools and models.",
+    tags: ["vision", "AI", "development"],
+    fromPrice: "$89.99",
+    category: "template"
+  },
+  {
+    title: "AI Startup Community",
+    price: "Free",
+    image: "https://images.unsplash.com/photo-1559136555-9303baea8ebd",
+    seller: "Startup Network",
+    description: "Connect with other AI startup founders and entrepreneurs.",
+    tags: ["startup", "networking", "business"],
+    fromPrice: "$0",
+    category: "community"
+  },
+  {
+    title: "Data Science Bootcamp",
+    price: "Free",
+    image: "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3",
+    seller: "DS Academy",
+    description: "Intensive training program in data science and AI.",
+    tags: ["education", "data", "career"],
+    fromPrice: "$499",
+    category: "expert"
+  },
+  {
+    title: "AI Ethics Framework",
+    price: "Free",
+    image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4",
+    seller: "Ethics AI",
+    description: "Comprehensive framework for ethical AI development.",
+    tags: ["ethics", "AI", "compliance"],
+    fromPrice: "$149",
+    category: "template"
+  },
+  {
+    title: "Robotics Community",
+    price: "Free",
+    image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e",
+    seller: "Robotics Hub",
+    description: "Connect with robotics enthusiasts and professionals.",
+    tags: ["robotics", "community", "automation"],
+    fromPrice: "$0",
+    category: "community"
+  },
+  {
+    title: "AI Research Network",
+    price: "Free",
+    image: "https://images.unsplash.com/photo-1532619187608-e5375cab36aa",
+    seller: "Research Hub",
+    description: "Platform for AI researchers to collaborate and share findings.",
+    tags: ["research", "academic", "collaboration"],
+    fromPrice: "$0",
+    category: "community"
+  },
+  {
+    title: "Healthcare AI Solutions",
+    price: "Free",
+    image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d",
+    seller: "Health AI",
+    description: "AI-powered solutions for healthcare professionals.",
+    tags: ["healthcare", "AI", "medical"],
+    fromPrice: "$199",
+    category: "template"
   }
 ];
 
@@ -180,7 +300,7 @@ const Index = () => {
             </div>
 
             <div className={`transition-all duration-500 flex-1 ${isScrolled ? 'opacity-0 -translate-y-4' : 'opacity-100 translate-y-0'}`}>
-              <div className="text-[1.15rem] leading-relaxed font-bold text-center flex items-center justify-center">
+              <div className="text-[1.5rem] leading-relaxed font-bold text-center flex items-center justify-center">
                 <span>The Best AI & Automation</span>
                 <span className="text-muted-foreground ml-1">
                   <Typewriter
@@ -233,7 +353,7 @@ const Index = () => {
               <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm bg-background">
                 <div className="flex-1 flex items-center gap-2">
                   <Select defaultValue="Products" onValueChange={setSearchCategory}>
-                    <SelectTrigger className="border-0 w-[120px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0">
+                    <SelectTrigger className="border-0 w-[120px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -244,7 +364,7 @@ const Index = () => {
                     </SelectContent>
                   </Select>
                   <Input
-                    className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent"
+                    className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
                     placeholder={`Search ${searchCategory.toLowerCase()}...`}
                     type="search"
                   />
