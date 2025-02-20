@@ -488,9 +488,7 @@ const Index = () => {
       />
 
       <main>
-        <div className={`fixed top-[80px] left-0 right-0 z-40 bg-background transition-all duration-200 ease-out ${
-          isScrolled ? 'border-t mt-[5px]' : ''
-        }`}>
+        <div className="sticky top-[80px] z-40 bg-background border-b">
           <div className="container mx-auto px-4 py-4">
             <Carousel
               setApi={setApi}
@@ -527,55 +525,51 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="pt-[160px]">
-          <div className="border-t border-gray-200">
-            <div className="p-6">
-              <div className="space-y-6">
-                {isMobile ? (
-                  <Carousel className="w-full">
-                    <CarouselContent>
-                      {banners.map((banner, index) => (
-                        <CarouselItem key={index}>
-                          <div className="bg-accent rounded-lg p-3 relative group cursor-pointer hover:bg-accent/90 transition-colors">
-                            <h3 className="text-lg font-semibold mb-1">{banner.title}</h3>
-                            <p className="text-muted-foreground text-sm pr-6">{banner.description}</p>
-                          </div>
-                        </CarouselItem>
-                      ))}
-                    </CarouselContent>
-                    <CarouselPrevious />
-                    <CarouselNext />
-                  </Carousel>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {banners.map((banner, index) => (
-                      <div key={index} className="bg-accent rounded-lg p-3 relative group cursor-pointer hover:bg-accent/90 transition-colors">
+        <div className="container mx-auto px-4">
+          <div className="space-y-6 py-6">
+            {isMobile ? (
+              <Carousel className="w-full">
+                <CarouselContent>
+                  {banners.map((banner, index) => (
+                    <CarouselItem key={index}>
+                      <div className="bg-accent rounded-lg p-3 relative group cursor-pointer hover:bg-accent/90 transition-colors">
                         <h3 className="text-lg font-semibold mb-1">{banner.title}</h3>
                         <p className="text-muted-foreground text-sm pr-6">{banner.description}</p>
                       </div>
-                    ))}
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {banners.map((banner, index) => (
+                  <div key={index} className="bg-accent rounded-lg p-3 relative group cursor-pointer hover:bg-accent/90 transition-colors">
+                    <h3 className="text-lg font-semibold mb-1">{banner.title}</h3>
+                    <p className="text-muted-foreground text-sm pr-6">{banner.description}</p>
                   </div>
-                )}
-                <div className="flex flex-wrap gap-3">
-                  {badges.map((badge, index) => {
-                    const Icon = badge.icon;
-                    const isSelected = selectedCategory === badge.category;
-                    return (
-                      <Badge
-                        key={index}
-                        variant={isSelected ? "default" : "secondary"}
-                        className={`px-4 py-2 text-sm font-medium cursor-pointer hover:bg-secondary/80 transition-colors ${
-                          isSelected ? 'bg-primary text-primary-foreground' : ''
-                        }`}
-                        onClick={() => handleBadgeClick(badge.category)}
-                      >
-                        <Icon className="w-4 h-4 mr-2" />
-                        {badge.label}
-                      </Badge>
-                    );
-                  })}
-                </div>
+                ))}
               </div>
+            )}
+            <div className="flex flex-wrap gap-3">
+              {badges.map((badge, index) => {
+                const Icon = badge.icon;
+                const isSelected = selectedCategory === badge.category;
+                return (
+                  <Badge
+                    key={index}
+                    variant={isSelected ? "default" : "secondary"}
+                    className={`px-4 py-2 text-sm font-medium cursor-pointer hover:bg-secondary/80 transition-colors ${
+                      isSelected ? 'bg-primary text-primary-foreground' : ''
+                    }`}
+                    onClick={() => handleBadgeClick(badge.category)}
+                  >
+                    <Icon className="w-4 h-4 mr-2" />
+                    {badge.label}
+                  </Badge>
+                );
+              })}
             </div>
           </div>
         </div>
