@@ -176,7 +176,7 @@ const Index = () => {
               <h1 className="text-2xl font-semibold">Logo</h1>
             </div>
 
-            <div className={`flex justify-center items-center transition-opacity duration-300 ${isScrolled ? 'opacity-0 hidden' : 'opacity-100'}`}>
+            <div className={`flex justify-center items-center col-span-2 transition-opacity duration-300 ${isScrolled ? 'opacity-0 hidden' : 'opacity-100'}`}>
               <div className="text-xl font-semibold text-center flex items-center whitespace-nowrap">
                 <span className="text-foreground">The Best AI & Automation&nbsp;</span>
                 <span className="inline-flex items-center text-muted-foreground">
@@ -193,13 +193,40 @@ const Index = () => {
               </div>
             </div>
 
-            <div className="flex justify-end">
+            <div className={`absolute left-0 right-0 transition-all duration-300 ${isScrolled ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+              <div className="container mx-auto px-4">
+                <div className="flex items-center gap-2 px-4 h-10 rounded-full border shadow-sm bg-background">
+                  <Select value={searchCategory} onValueChange={setSearchCategory}>
+                    <SelectTrigger className="w-[140px] border-0 focus:ring-0 focus:ring-offset-0 px-0">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {searchCategories.map((category) => (
+                        <SelectItem key={category} value={category}>
+                          {category}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <div className="h-8 w-[1px] bg-border" />
+                  <div className="flex-1 flex items-center">
+                    <Input
+                      className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2"
+                      placeholder={`Search ${searchCategory.toLowerCase()}...`}
+                      type="search"
+                    />
+                  </div>
+                  <Button size="icon" variant="default" className="rounded-full">
+                    <Search className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className={`transition-all duration-300 ${isScrolled ? 'py-2' : 'py-4'}`}>
-            <div className={`w-full mx-auto transition-all duration-300 ${isScrolled ? 'max-w-xl' : 'max-w-2xl'}`}>
-              <div className={`flex items-center gap-2 px-4 rounded-full border shadow-sm bg-background transition-all duration-300 ${isScrolled ? 'h-12' : 'h-14'}`}>
+          <div className={`transition-all duration-300 ${isScrolled ? 'hidden' : 'py-4'}`}>
+            <div className="w-full max-w-2xl mx-auto">
+              <div className="flex items-center gap-2 px-4 h-14 rounded-full border shadow-sm bg-background">
                 <Select value={searchCategory} onValueChange={setSearchCategory}>
                   <SelectTrigger className="w-[140px] border-0 focus:ring-0 focus:ring-offset-0 px-0">
                     <SelectValue />
