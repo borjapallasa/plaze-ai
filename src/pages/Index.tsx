@@ -285,7 +285,7 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between mb-6 pt-3">
-          <div className="flex-shrink-0 w-[200px]">
+          <div className="flex-shrink-0 w-[200px] flex items-center">
             <h1 className="text-2xl font-semibold">Logo</h1>
           </div>
 
@@ -294,7 +294,7 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
               isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100 pb-4'
             }`}
           >
-            <div className="text-[1.5rem] leading-relaxed font-bold whitespace-nowrap flex items-center justify-center">
+            <div className="text-[1.5rem] leading-relaxed font-bold whitespace-nowrap flex items-center justify-center h-[32px]">
               <span>The Best AI & Automation</span>
               <span className="text-muted-foreground ml-1">
                 <Typewriter
