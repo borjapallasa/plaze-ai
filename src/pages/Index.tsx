@@ -175,12 +175,10 @@ const Index = () => {
       <header className={`sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b transition-all duration-500 ${isScrolled ? 'py-2' : 'py-4'}`}>
         <div className="container mx-auto px-4">
           <div className={`flex items-center justify-between transition-all duration-500 ${isScrolled ? '' : 'mb-3'}`}>
-            {/* Logo */}
             <div className="flex-shrink-0 w-[200px]">
               <h1 className="text-2xl font-semibold">Logo</h1>
             </div>
 
-            {/* Center Section with Typewriter when not scrolled */}
             <div className={`transition-all duration-500 flex-1 ${isScrolled ? 'opacity-0 -translate-y-4' : 'opacity-100 translate-y-0'}`}>
               <div className="text-[1.15rem] leading-relaxed font-bold text-center flex items-center justify-center">
                 <span>The Best AI & Automation</span>
@@ -198,7 +196,6 @@ const Index = () => {
               </div>
             </div>
 
-            {/* Right Section */}
             <div className="flex items-center gap-2 w-[200px] justify-end">
               <Button variant="ghost" size="sm" className="font-medium">
                 Add Product
@@ -231,15 +228,25 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Search Bar */}
           <div className="flex justify-center">
             <div className={`transition-all duration-500 ${isScrolled ? 'w-[360px] -mt-10' : 'w-[540px] mt-3'}`}>
               <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm bg-background">
                 <div className="flex-1 flex items-center gap-6 divide-x">
-                  <div className="flex-1">
+                  <div className="flex-1 flex items-center gap-2">
+                    <Select defaultValue="Products" onValueChange={setSearchCategory}>
+                      <SelectTrigger className="border-0 w-[120px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Products">Products</SelectItem>
+                        <SelectItem value="Experts">Experts</SelectItem>
+                        <SelectItem value="Communities">Communities</SelectItem>
+                        <SelectItem value="Jobs">Jobs</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <Input
                       className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent"
-                      placeholder="Search anywhere"
+                      placeholder={`Search ${searchCategory.toLowerCase()}...`}
                       type="search"
                     />
                   </div>
