@@ -282,7 +282,7 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
   return (
     <header 
       className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm border-b transition-all duration-200 ease-out ${
-        isScrolled ? 'py-2 bg-background/95' : 'pb-[15px] pt-4 bg-background'
+        isScrolled ? 'pt-2 pb-[15px] bg-background/95' : 'pt-4 pb-[15px] bg-background'
       }`}
     >
       <div className="container mx-auto px-4">
@@ -368,7 +368,7 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
 
           <div 
             className={`absolute left-1/2 -translate-x-1/2 transition-all duration-200 ease-out ${
-              isScrolled ? 'top-2 pt-3' : 'top-16'
+              isScrolled ? 'top-2' : 'top-16'
             }`}
           >
             <div 
