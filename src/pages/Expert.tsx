@@ -397,83 +397,88 @@ export default function Expert() {
             <div className="col-span-4 col-start-2">
               <h2 className="text-2xl font-bold mb-6">Community</h2>
               <Card>
-                <CardContent className="p-4">
-                  {/* Hero Image */}
-                  <div className="aspect-video bg-muted rounded-lg overflow-hidden relative mb-6">
-                    <img 
-                      src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5"
-                      alt="Community thumbnail"
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                      <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center">
-                        <div className="w-4 h-4 border-8 border-transparent border-l-primary ml-1" style={{ transform: 'rotate(-45deg)' }} />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Title and Labels */}
-                  <div className="space-y-4 mb-6">
-                    <h3 className="text-xl font-semibold">UX Design Community</h3>
-                    <div className="flex flex-wrap items-center gap-3">
-                      <div className="flex items-center gap-1.5">
-                        <Globe className="w-3.5 h-3.5 text-muted-foreground" />
-                        <span className="text-sm text-muted-foreground">Public Community</span>
-                      </div>
-                      <div className="w-1 h-1 bg-muted-foreground/30 rounded-full" />
-                      <Badge variant="secondary" className="text-xs px-2 py-0.5">Free Access</Badge>
-                    </div>
-                  </div>
-
-                  {/* Description */}
-                  <p className="text-sm leading-relaxed text-muted-foreground mb-6">
-                    Join our vibrant community of UX designers where we share insights, 
-                    collaborate on projects, and help each other grow. Get access to exclusive 
-                    resources, participate in discussions, and connect with fellow designers 
-                    from around the world.
-                  </p>
-
-                  {/* Stats */}
-                  <div className="space-y-6 mb-6">
-                    {/* Community Size */}
-                    <div className="space-y-3">
-                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Community Size</p>
-                      <div className="grid grid-cols-2 gap-6">
-                        <div>
-                          <p className="text-2xl font-bold">1,234</p>
-                          <p className="text-xs text-muted-foreground mt-1.5">Members</p>
+                <CardContent className="p-6">
+                  <div className="flex gap-8">
+                    {/* Left side - Video and title hierarchy */}
+                    <div className="w-80 flex-shrink-0">
+                      <div className="aspect-video bg-muted rounded-lg overflow-hidden relative">
+                        <img 
+                          src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5"
+                          alt="Community thumbnail"
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                          <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center">
+                            <div className="w-4 h-4 border-8 border-transparent border-l-primary ml-1" style={{ transform: 'rotate(-45deg)' }} />
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-2xl font-bold">12</p>
-                          <p className="text-xs text-muted-foreground mt-1.5">Classrooms</p>
+                      </div>
+                      <div className="mt-4 space-y-3">
+                        <h3 className="text-2xl font-semibold leading-none tracking-tight">UX Design Community</h3>
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-1.5">
+                            <Globe className="w-3.5 h-3.5 text-muted-foreground" />
+                            <span className="text-sm text-muted-foreground">Public Community</span>
+                          </div>
+                          <div className="w-1 h-1 bg-muted-foreground/30 rounded-full" />
+                          <Badge variant="secondary" className="text-xs px-2 py-0.5">Free Access</Badge>
                         </div>
                       </div>
                     </div>
 
-                    {/* Activity */}
-                    <div className="space-y-3">
-                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Activity</p>
-                      <div className="grid grid-cols-2 gap-6">
-                        <div>
-                          <p className="text-2xl font-bold">456</p>
-                          <p className="text-xs text-muted-foreground mt-1.5">Posts</p>
-                        </div>
-                        <div>
-                          <p className="text-2xl font-bold">89</p>
-                          <p className="text-xs text-muted-foreground mt-1.5">Products</p>
+                    {/* Right side - Content and CTAs */}
+                    <div className="flex-1 flex flex-col justify-between">
+                      <div className="space-y-6">
+                        <p className="text-sm leading-relaxed text-muted-foreground">
+                          Join our vibrant community of UX designers where we share insights, 
+                          collaborate on projects, and help each other grow. Get access to exclusive 
+                          resources, participate in discussions, and connect with fellow designers 
+                          from around the world.
+                        </p>
+
+                        <div className="grid grid-cols-2 gap-12">
+                          <div className="space-y-3">
+                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Community Size</p>
+                            <div className="space-y-4">
+                              <div className="flex items-baseline gap-12">
+                                <div>
+                                  <p className="text-2xl font-bold">1,234</p>
+                                  <p className="text-xs text-muted-foreground mt-1.5">Members</p>
+                                </div>
+                                <div>
+                                  <p className="text-2xl font-bold">12</p>
+                                  <p className="text-xs text-muted-foreground mt-1.5">Classrooms</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="space-y-3">
+                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Activity</p>
+                            <div className="space-y-4">
+                              <div className="flex items-baseline gap-12">
+                                <div>
+                                  <p className="text-2xl font-bold">456</p>
+                                  <p className="text-xs text-muted-foreground mt-1.5">Posts</p>
+                                </div>
+                                <div>
+                                  <p className="text-2xl font-bold">89</p>
+                                  <p className="text-xs text-muted-foreground mt-1.5">Products</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
 
-                  {/* CTAs */}
-                  <div className="flex flex-col gap-3">
-                    <Button className="w-full">
-                      Join Community
-                    </Button>
-                    <Button variant="outline" className="w-full">
-                      Learn More
-                    </Button>
+                      <div className="flex items-center gap-3 mt-6">
+                        <Button className="w-full max-w-[200px]">
+                          Join Community
+                        </Button>
+                        <Button variant="outline">
+                          Learn More
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
