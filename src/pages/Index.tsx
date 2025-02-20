@@ -1,6 +1,6 @@
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
-import { Search, Target, ShoppingBag, Settings, Users, Truck, ChartBar, ChevronDown, ArrowRight, Sparkle, Star, Flame } from "lucide-react";
+import { Search, Target, ShoppingBag, Settings, Users, Truck, ChartBar, ChevronDown, ArrowRight, Sparkle, Star, Flame, DollarSign, Briefcase, Handshake, Building, Factory, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Typewriter from 'typewriter-effect';
@@ -131,6 +131,12 @@ const departments = [
   { name: "Human Resources", icon: Users },
   { name: "Logistics", icon: Truck },
   { name: "Data", icon: ChartBar },
+  { name: "Finance", icon: DollarSign },
+  { name: "Legal", icon: Briefcase },
+  { name: "Partnerships", icon: Handshake },
+  { name: "Real Estate", icon: Building },
+  { name: "Manufacturing", icon: Factory },
+  { name: "Payments", icon: CreditCard },
 ];
 
 const searchCategories = ["Jobs", "Experts", "Products", "Communities"];
