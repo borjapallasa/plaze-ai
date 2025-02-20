@@ -419,6 +419,7 @@ const Index = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchCategory, setSearchCategory] = useState("Products");
+  const [canScrollPrev, setCanScrollPrev] = useState(false);
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
@@ -463,14 +464,17 @@ const Index = () => {
         setSearchCategory={setSearchCategory}
       />
 
-      <main className="pt-40 border-t">
-        <div className="container mx-auto px-4 mb-8">
+      <main className="pt-40">
+        <div className="container mx-auto px-4 mb-8 relative">
           <Carousel
             opts={{
               align: "start",
               dragFree: true,
             }}
             className="w-full"
+            onScrollProgress={(progress) => {
+              setCanScrollPrev(progress > 0);
+            }}
           >
             <CarouselContent className="-ml-4">
               {departments.map((dept, index) => {
@@ -489,58 +493,62 @@ const Index = () => {
                 );
               })}
             </CarouselContent>
-            <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-background via-background to-transparent z-10" />
+            {canScrollPrev && (
+              <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-background via-background to-transparent z-10" />
+            )}
             <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-background via-background to-transparent z-10" />
-            <CarouselPrevious className="-left-12" />
+            {canScrollPrev && <CarouselPrevious className="-left-12" />}
             <CarouselNext className="-right-12" />
           </Carousel>
         </div>
 
-        <div className="p-6 border-b border-gray-200">
-          <div className="space-y-6">
-            {isMobile ? (
-              <Carousel className="w-full">
-                <CarouselContent>
+        <div className="border-t border-gray-200">
+          <div className="p-6">
+            <div className="space-y-6">
+              {isMobile ? (
+                <Carousel className="w-full">
+                  <CarouselContent>
+                    {banners.map((banner, index) => (
+                      <CarouselItem key={index}>
+                        <div className="bg-accent rounded-lg p-3 relative group cursor-pointer hover:bg-accent/90 transition-colors">
+                          <h3 className="text-lg font-semibold mb-1">{banner.title}</h3>
+                          <p className="text-muted-foreground text-sm pr-6">{banner.description}</p>
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious />
+                  <CarouselNext />
+                </Carousel>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {banners.map((banner, index) => (
-                    <CarouselItem key={index}>
-                      <div className="bg-accent rounded-lg p-3 relative group cursor-pointer hover:bg-accent/90 transition-colors">
-                        <h3 className="text-lg font-semibold mb-1">{banner.title}</h3>
-                        <p className="text-muted-foreground text-sm pr-6">{banner.description}</p>
-                      </div>
-                    </CarouselItem>
+                    <div key={index} className="bg-accent rounded-lg p-3 relative group cursor-pointer hover:bg-accent/90 transition-colors">
+                      <h3 className="text-lg font-semibold mb-1">{banner.title}</h3>
+                      <p className="text-muted-foreground text-sm pr-6">{banner.description}</p>
+                    </div>
                   ))}
-                </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
-              </Carousel>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {banners.map((banner, index) => (
-                  <div key={index} className="bg-accent rounded-lg p-3 relative group cursor-pointer hover:bg-accent/90 transition-colors">
-                    <h3 className="text-lg font-semibold mb-1">{banner.title}</h3>
-                    <p className="text-muted-foreground text-sm pr-6">{banner.description}</p>
-                  </div>
-                ))}
+                </div>
+              )}
+              <div className="flex flex-wrap gap-3">
+                {badges.map((badge, index) => {
+                  const Icon = badge.icon;
+                  const isSelected = selectedCategory === badge.category;
+                  return (
+                    <Badge
+                      key={index}
+                      variant={isSelected ? "default" : "secondary"}
+                      className={`px-4 py-2 text-sm font-medium cursor-pointer hover:bg-secondary/80 transition-colors ${
+                        isSelected ? 'bg-primary text-primary-foreground' : ''
+                      }`}
+                      onClick={() => handleBadgeClick(badge.category)}
+                    >
+                      <Icon className="w-4 h-4 mr-2" />
+                      {badge.label}
+                    </Badge>
+                  );
+                })}
               </div>
-            )}
-            <div className="flex flex-wrap gap-3">
-              {badges.map((badge, index) => {
-                const Icon = badge.icon;
-                const isSelected = selectedCategory === badge.category;
-                return (
-                  <Badge
-                    key={index}
-                    variant={isSelected ? "default" : "secondary"}
-                    className={`px-4 py-2 text-sm font-medium cursor-pointer hover:bg-secondary/80 transition-colors ${
-                      isSelected ? 'bg-primary text-primary-foreground' : ''
-                    }`}
-                    onClick={() => handleBadgeClick(badge.category)}
-                  >
-                    <Icon className="w-4 h-4 mr-2" />
-                    {badge.label}
-                  </Badge>
-                );
-              })}
             </div>
           </div>
         </div>
