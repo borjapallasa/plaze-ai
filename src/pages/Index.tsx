@@ -322,11 +322,11 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
             </div>
 
             <div 
-              className={`transition-all duration-200 ease-out ${
-                isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100 pb-4'
+              className={`flex justify-center transition-all duration-200 ease-out ${
+                isScrolled ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100 h-[32px]'
               }`}
             >
-              <div className="text-[1.5rem] leading-relaxed font-bold whitespace-nowrap flex items-center justify-center h-[32px]">
+              <div className="text-[1.5rem] leading-relaxed font-bold whitespace-nowrap flex items-center justify-center">
                 <span>The Best AI & Automation</span>
                 <span className="text-muted-foreground ml-1">
                   <Typewriter
@@ -366,7 +366,11 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
             </div>
           </div>
 
-          <div className="flex justify-center py-4">
+          <div 
+            className={`flex justify-center transition-all duration-200 ease-out ${
+              isScrolled ? 'py-2' : 'py-4'
+            }`}
+          >
             <div 
               className={`transition-all duration-200 ease-out ${
                 isScrolled ? 'w-[360px]' : 'w-[540px]'
