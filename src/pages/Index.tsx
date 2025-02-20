@@ -316,7 +316,7 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
         </div>
 
         <div className="hidden sm:flex flex-col">
-          <div className="flex items-center justify-between pt-3 relative">
+          <div className="flex items-center justify-between pt-3 relative min-h-[40px]">
             <div className="flex-shrink-0 w-[200px] flex items-center">
               <h1 className="text-2xl font-semibold">Logo</h1>
             </div>
@@ -367,8 +367,8 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
           </div>
 
           <div 
-            className={`flex justify-center transition-all duration-300 ease-in-out ${
-              isScrolled ? 'absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2' : 'relative py-4'
+            className={`flex justify-center transition-all duration-300 ease-in-out absolute left-0 right-0 ${
+              isScrolled ? 'top-[20px]' : 'top-[64px]'
             }`}
           >
             <div 
