@@ -50,22 +50,24 @@ function Calendar({
         nav_button_next: "ml-1",
         table: "w-full border-collapse",
         head_row: cn(
-          "flex w-full border-b border-border",
-          "lg:border-b lg:border-border"
+          "flex w-full [&>*]:flex-1",
+          "border-b border-border"
         ),
         head_cell: cn(
-          "text-muted-foreground font-normal text-[0.8rem] w-9 h-9 p-0",
+          "text-muted-foreground font-normal text-[0.8rem] py-4",
+          "text-center",
           "lg:w-[14.28%] lg:pb-3"
         ),
-        row: "flex w-full",
+        row: "flex w-full [&>*]:flex-1",
         cell: cn(
-          "relative p-0 text-center h-9 w-9",
+          "relative p-0 text-center min-h-[40px] border-b border-border",
+          "[&:not(:first-child)]:border-l",
           "lg:h-[120px] lg:w-[14.28%] lg:p-0 lg:text-center lg:border-b lg:border-r lg:border-border lg:first:border-l",
           "focus-within:relative focus-within:z-20"
         ),
         day: cn(
-          "h-9 w-9 p-0 font-normal aria-selected:opacity-100",
-          "lg:absolute lg:top-2 lg:left-2 lg:text-sm",
+          "h-full w-full p-2 font-normal aria-selected:opacity-100",
+          "lg:absolute lg:top-2 lg:left-2 lg:text-sm lg:p-0 lg:h-9 lg:w-9",
           "hover:bg-transparent"
         ),
         day_selected:
