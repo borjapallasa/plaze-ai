@@ -129,7 +129,7 @@ export default function Community() {
             <CardContent className="p-6">
               <div className="flex flex-col sm:flex-row items-start gap-4">
                 <div className="flex gap-4 w-full">
-                  <Avatar className="h-10 w-10 flex-shrink-0">
+                  <Avatar className="h-12 w-12 flex-shrink-0">
                     <AvatarImage src="https://github.com/shadcn.png" />
                     <AvatarFallback>BP</AvatarFallback>
                   </Avatar>
@@ -142,20 +142,19 @@ export default function Community() {
                   </div>
                 </div>
                 <div className="flex-1 space-y-4 w-full">
-                  <div className="flex justify-end">
-                    <Badge variant="outline" className="flex items-center gap-1 w-fit">
-                      <ThumbsUp className="w-3 h-3" />
-                      8
-                    </Badge>
-                  </div>
-                  
                   <p>👋 Welcome to Optimal Path Automations! 👋</p>
                   <p className="text-muted-foreground">
                     Hey everyone! I'm Borja, and I'm thrilled to welcome you to our community. Creating this space is a dream come true for me because I am passionate about helping others discover the power of no-code automation...
                   </p>
                   
-                  <div className="text-sm text-muted-foreground">
-                    Last Message: 10/24/2024, 8:31 PM
+                  <div className="flex justify-between items-end">
+                    <div className="text-sm text-muted-foreground">
+                      Last Message: 10/24/2024, 8:31 PM
+                    </div>
+                    <Badge variant="outline" className="flex items-center gap-1 w-fit">
+                      <ThumbsUp className="w-3 h-3" />
+                      8
+                    </Badge>
                   </div>
                 </div>
               </div>
