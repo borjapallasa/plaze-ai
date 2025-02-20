@@ -216,8 +216,8 @@ const Index = () => {
             </div>
           </div>
 
-          <div className="py-4 border-t">
-            <div className="grid grid-cols-3 md:grid-cols-6 gap-6 justify-items-center">
+          <div className="py-4 border-t overflow-x-auto hide-scrollbar">
+            <div className="flex gap-6 min-w-max px-6">
               {departments.map((dept, index) => {
                 const Icon = dept.icon;
                 return (
