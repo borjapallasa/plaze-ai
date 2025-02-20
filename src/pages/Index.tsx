@@ -481,53 +481,52 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
-      <div className="sticky top-0 z-50">
-        <MemoizedHeader 
-          isScrolled={isScrolled}
-          searchCategory={searchCategory}
-          setSearchCategory={setSearchCategory}
-        />
-        <div className="bg-background border-b">
-          <div className="container mx-auto px-4 py-4">
-            <Carousel
-              setApi={setApi}
-              opts={{
-                align: "start",
-                dragFree: true,
-              }}
-              className="w-full"
-            >
-              <CarouselContent className="-ml-4">
-                {departments.map((dept, index) => {
-                  const Icon = dept.icon;
-                  return (
-                    <CarouselItem key={index} className="pl-4 basis-[120px]">
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center">
-                          <Icon className="w-6 h-6 text-muted-foreground" />
-                        </div>
-                        <span className="text-xs text-muted-foreground whitespace-nowrap">
-                          {dept.name}
-                        </span>
+      <MemoizedHeader 
+        isScrolled={isScrolled}
+        searchCategory={searchCategory}
+        setSearchCategory={setSearchCategory}
+      />
+
+      <div className="sticky top-[100px] z-40 bg-background border-b mt-5">
+        <div className="container mx-auto px-4 py-4">
+          <Carousel
+            setApi={setApi}
+            opts={{
+              align: "start",
+              dragFree: true,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-4">
+              {departments.map((dept, index) => {
+                const Icon = dept.icon;
+                return (
+                  <CarouselItem key={index} className="pl-4 basis-[120px]">
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center">
+                        <Icon className="w-6 h-6 text-muted-foreground" />
                       </div>
-                    </CarouselItem>
-                  );
-                })}
-              </CarouselContent>
-              {canScrollPrev && (
-                <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-background via-background to-transparent z-10" />
-              )}
-              <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-background via-background to-transparent z-10" />
-              {canScrollPrev && <CarouselPrevious className="-left-12" />}
-              <CarouselNext className="-right-12" />
-            </Carousel>
-          </div>
+                      <span className="text-xs text-muted-foreground whitespace-nowrap">
+                        {dept.name}
+                      </span>
+                    </div>
+                  </CarouselItem>
+                );
+              })}
+            </CarouselContent>
+            {canScrollPrev && (
+              <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-background via-background to-transparent z-10" />
+            )}
+            <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-background via-background to-transparent z-10" />
+            {canScrollPrev && <CarouselPrevious className="-left-12" />}
+            <CarouselNext className="-right-12" />
+          </Carousel>
         </div>
       </div>
 
       <main>
         <div className="container mx-auto px-4">
-          <div className="space-y-6 py-6">
+          <div className="space-y-6 py-6 mt-[100px]">
             {isMobile ? (
               <Carousel className="w-full">
                 <CarouselContent>
