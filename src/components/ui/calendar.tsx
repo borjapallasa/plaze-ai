@@ -48,7 +48,7 @@ function Calendar({
         ),
         nav_button_previous: "mr-1",
         nav_button_next: "ml-1",
-        table: "w-full border-collapse rounded-lg overflow-hidden",
+        table: "w-full border-collapse",
         head_row: cn(
           "flex w-full [&>*]:flex-1",
           "border-b border-border"
@@ -63,11 +63,7 @@ function Calendar({
           "relative p-0 text-center min-h-[40px] border-b border-border",
           "[&:not(:first-child)]:border-l",
           "lg:h-[120px] lg:w-[14.28%] lg:p-0 lg:text-center lg:border-b lg:border-r lg:border-border lg:first:border-l",
-          "focus-within:relative focus-within:z-20",
-          "first:sm:rounded-none last:sm:rounded-none", // Remove border radius on desktop
-          "[&:first-child]:rounded-l-lg [&:last-child]:rounded-r-lg", // Add rounded corners on mobile
-          "first:[&:first-child]:rounded-tl-lg last:[&:first-child]:rounded-tr-lg", // Top row corners
-          "first:[&:last-child]:rounded-bl-lg last:[&:last-child]:rounded-br-lg" // Bottom row corners
+          "focus-within:relative focus-within:z-20"
         ),
         day: cn(
           "h-full w-full p-2 font-normal aria-selected:opacity-100",
