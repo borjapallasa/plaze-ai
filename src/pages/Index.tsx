@@ -1,6 +1,6 @@
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
-import { Search, Target, ShoppingBag, Settings, Users, Truck, ChartBar, ChevronDown, ArrowRight, Sparkle, Star, Flame, DollarSign, Briefcase, Handshake, Building, Factory, CreditCard } from "lucide-react";
+import { Search, Target, ShoppingBag, Settings, Users, Truck, ChartBar, ChevronDown, ArrowRight, Sparkle, Star, Flame, DollarSign, Briefcase, Handshake, Building, Factory, CreditCard, ChevronRight, Palmtree, Home, Warehouse, Mountain, Boat, TreePine, House, Castle, CircleDollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Typewriter from 'typewriter-effect';
@@ -125,18 +125,21 @@ const badges = [
 ];
 
 const departments = [
-  { name: "Marketing", icon: Target },
-  { name: "Sales", icon: ShoppingBag },
-  { name: "Operations", icon: Settings },
-  { name: "Human Resources", icon: Users },
-  { name: "Logistics", icon: Truck },
-  { name: "Data", icon: ChartBar },
-  { name: "Finance", icon: DollarSign },
-  { name: "Legal", icon: Briefcase },
-  { name: "Partnerships", icon: Handshake },
-  { name: "Real Estate", icon: Building },
-  { name: "Manufacturing", icon: Factory },
-  { name: "Payments", icon: CreditCard },
+  { name: "Amazing pools", icon: Palmtree },
+  { name: "Icons", icon: CircleDollarSign },
+  { name: "Tiny homes", icon: Home },
+  { name: "Cabins", icon: House },
+  { name: "Lake", icon: Warehouse },
+  { name: "Containers", icon: Factory },
+  { name: "Amazing views", icon: Mountain },
+  { name: "Countryside", icon: TreePine },
+  { name: "Mansions", icon: Castle },
+  { name: "Boats", icon: Boat },
+  { name: "Farms", icon: Building },
+  { name: "OMG!", icon: Star },
+  { name: "Domes", icon: House },
+  { name: "Treehouses", icon: TreePine },
+  { name: "Beachfront", icon: Palmtree },
 ];
 
 const searchCategories = ["Jobs", "Experts", "Products", "Communities"];
@@ -216,8 +219,8 @@ const Index = () => {
             </div>
           </div>
 
-          <div className="py-4 border-t overflow-x-auto hide-scrollbar">
-            <div className="flex gap-6 min-w-max px-6">
+          <div className="py-4 border-t overflow-x-auto hide-scrollbar relative">
+            <div className="flex gap-8 min-w-max px-6">
               {departments.map((dept, index) => {
                 const Icon = dept.icon;
                 return (
@@ -228,11 +231,14 @@ const Index = () => {
                     <div className="p-3 rounded-full bg-accent group-hover:bg-accent/80 transition-colors">
                       <Icon className="w-5 h-5" />
                     </div>
-                    <span>{dept.name}</span>
+                    <span className="text-xs">{dept.name}</span>
                   </button>
                 );
               })}
             </div>
+            <button className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-white border rounded-full shadow-md">
+              <ChevronRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </header>
