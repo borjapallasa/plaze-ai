@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
@@ -11,7 +12,12 @@ import {
   Building,
   DollarSign,
   ChartBar,
-  ShoppingBag
+  ShoppingBag,
+  TrendingUp,
+  Sparkle,
+  Trophy,
+  ThumbsUp,
+  Tags
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -38,7 +44,6 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
-import { TrendingUp, Sparkle, Trophy, ThumbsUp, Tags } from "lucide-react";
 
 const typewriterStrings = [
   "Products To Scale",
@@ -559,8 +564,8 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredProducts.map((product, index) => (
               <ProductCard key={index} {...product} />
             ))}
@@ -572,3 +577,4 @@ const Index = () => {
 };
 
 export default Index;
+
