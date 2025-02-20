@@ -95,7 +95,7 @@ export default function Expert() {
           </div>
         </div>
 
-        {/* Mobile Layout */}
+        {/* Mobile Layout - Reordered */}
         <div className="lg:hidden">
           <div className="mb-8">
             <ExpertSkills />
@@ -106,11 +106,11 @@ export default function Expert() {
           </div>
 
           <div className="mb-8">
-            <ExpertStats />
+            <ExpertServices />
           </div>
 
           <div className="mb-8">
-            <ExpertServices />
+            <ExpertStats />
           </div>
 
           <div className="mb-8">
