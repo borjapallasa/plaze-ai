@@ -1,4 +1,3 @@
-
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
 import { Search, Target, ShoppingBag, Settings, Users, Truck, ChartBar, ChevronDown, ArrowRight, Sparkle, Star, Flame } from "lucide-react";
@@ -165,13 +164,15 @@ const Index = () => {
           <div className="pb-5">
             <div className="flex flex-col items-center gap-4">
               <div className="text-2xl font-semibold text-center">
-                <span className="text-gray-900">The Best AI & Automation </span>
-                <span className="inline-block text-[#8B5CF6]">
+                <span className="text-muted-foreground">The Best AI & Automation </span>
+                <span className="inline-block text-muted-foreground">
                   <Typewriter
                     options={{
                       strings: typewriterStrings,
                       autoStart: true,
                       loop: true,
+                      delay: 50,
+                      deleteSpeed: 30,
                     }}
                   />
                 </span>
