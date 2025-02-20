@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { DayPicker } from "react-day-picker";
+import { DayPicker, DayPickerDefaultProps } from "react-day-picker";
 import { format } from "date-fns";
 
 import { cn } from "@/lib/utils";
@@ -13,7 +13,8 @@ function Calendar({
   className,
   classNames,
   showOutsideDays = true,
-  mode = "single",
+  selected,
+  onSelect,
   ...props
 }: CalendarProps) {
   return (
@@ -45,15 +46,13 @@ function Calendar({
           "absolute top-2 left-2 text-sm",
           "hover:bg-transparent"
         ),
-        day_range_end: "day-range-end",
         day_selected:
-          "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground rounded-full",
+          "bg-[#FDE1D3] text-[#1A1F2C] hover:bg-[#FDE1D3] hover:text-[#1A1F2C] focus:bg-[#FDE1D3] focus:text-[#1A1F2C]",
         day_today: cn(
-          "bg-accent rounded-full font-semibold",
-          "before:absolute before:w-7 before:h-7 before:bg-accent before:rounded-full before:-z-10 before:-translate-x-1/2 before:-translate-y-1/2"
+          "text-[#1A1F2C] font-semibold",
+          "before:absolute before:w-7 before:h-7 before:bg-[#FDE1D3] before:rounded-full before:-z-10 before:-translate-x-1/2 before:-translate-y-1/2"
         ),
-        day_outside:
-          "text-muted-foreground opacity-50",
+        day_outside: "text-muted-foreground opacity-50",
         day_disabled: "text-muted-foreground opacity-50",
         day_range_middle:
           "aria-selected:bg-accent aria-selected:text-accent-foreground",
@@ -61,16 +60,20 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" />,
-        IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
-        Caption: ({ displayMonth, ...props }) => (
+        IconLeft: () => <ChevronLeft className="h-4 w-4" />,
+        IconRight: () => <ChevronRight className="h-4 w-4" />,
+        Caption: ({ displayMonth }) => (
           <div className="flex w-full justify-between items-center">
             <div className="font-semibold">
               {format(displayMonth, 'MMMM yyyy')}
             </div>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => props.goToDate?.(new Date())}
+                type="button"
+                onClick={() => {
+                  const today = new Date();
+                  onSelect?.(today);
+                }}
                 className={cn(
                   buttonVariants({ variant: "outline", size: "sm" }),
                   "text-xs px-3"
@@ -78,31 +81,15 @@ function Calendar({
               >
                 Today
               </button>
-              <div className="space-x-1">
-                <button
-                  onClick={() => props.goToPrevious?.()}
-                  className={cn(
-                    buttonVariants({ variant: "outline" }),
-                    "h-7 w-7 bg-transparent p-0 hover:opacity-75"
-                  )}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={() => props.goToNext?.()}
-                  className={cn(
-                    buttonVariants({ variant: "outline" }),
-                    "h-7 w-7 bg-transparent p-0 hover:opacity-75"
-                  )}
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </button>
+              <div className="space-x-1 flex">
+                {props.children}
               </div>
             </div>
           </div>
-        ),
+        )
       }}
-      mode={mode}
+      selected={selected}
+      onSelect={onSelect}
       {...props}
     />
   );
