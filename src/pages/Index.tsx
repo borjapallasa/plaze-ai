@@ -1,11 +1,18 @@
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
-import { Search, ArrowRight, Sparkles, Star, Flame, Target, Users } from "lucide-react";
+import { Search, Target, ShoppingBag, Settings, Users, Truck, ChartBar, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Typewriter from 'typewriter-effect';
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Carousel,
   CarouselContent,
@@ -117,9 +124,21 @@ const badges = [
   { label: "Experts", icon: Target, category: "expert" }
 ];
 
+const departments = [
+  { name: "Marketing", icon: Target },
+  { name: "Sales", icon: ShoppingBag },
+  { name: "Operations", icon: Settings },
+  { name: "Human Resources", icon: Users },
+  { name: "Logistics", icon: Truck },
+  { name: "Data", icon: ChartBar },
+];
+
+const searchCategories = ["Jobs", "Experts", "Products", "Communities"];
+
 const Index = () => {
   const isMobile = useIsMobile();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [searchCategory, setSearchCategory] = useState("Products");
 
   const filteredProducts = selectedCategory
     ? products.filter(product => product.category === selectedCategory)
@@ -134,32 +153,61 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <main>
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2 flex-1">
-              <h2 className="text-xl font-semibold whitespace-nowrap">The Best AI & Automation</h2>
-              <div className="text-xl font-semibold text-muted-foreground">
-                <Typewriter
-                  options={{
-                    strings: typewriterStrings,
-                    autoStart: true,
-                    loop: true,
-                    delay: 50,
-                    deleteSpeed: 30,
-                  }}
-                />
-              </div>
-            </div>
-            <div className="relative w-64">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input
-                className="pl-10"
-                placeholder="Search"
-                type="search"
-              />
+        <div className="border-b">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between py-4 overflow-x-auto hide-scrollbar">
+              {departments.map((dept, index) => {
+                const Icon = dept.icon;
+                return (
+                  <div 
+                    key={index}
+                    className="flex flex-col items-center gap-2 min-w-[80px] cursor-pointer group"
+                  >
+                    <div className="p-3 rounded-full bg-accent group-hover:bg-accent/80 transition-colors">
+                      <Icon className="w-6 h-6 text-primary" />
+                    </div>
+                    <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+                      {dept.name}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
+
+        <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center gap-4 max-w-3xl mx-auto">
+              <div className="flex-1 flex items-center gap-2 rounded-full border bg-background shadow-sm">
+                <Select value={searchCategory} onValueChange={setSearchCategory}>
+                  <SelectTrigger className="w-[140px] border-0 focus:ring-0 focus:ring-offset-0">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {searchCategories.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <div className="h-6 w-[1px] bg-border" />
+                <div className="flex-1 flex items-center">
+                  <Input
+                    className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    placeholder={`Search ${searchCategory.toLowerCase()}...`}
+                    type="search"
+                  />
+                </div>
+                <Button size="icon" className="rounded-full mr-1">
+                  <Search className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="p-6 border-b border-gray-200">
           <div className="space-y-6">
             {isMobile ? (
@@ -218,7 +266,6 @@ const Index = () => {
             ))}
           </div>
         </div>
-
       </main>
     </div>
   );
