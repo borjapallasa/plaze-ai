@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -5,8 +6,66 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MessageSquare, Users, BookOpen, Calendar, Link, ThumbsUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ProductCard } from "@/components/ProductCard";
 
 export default function Community() {
+  const templates = [
+    {
+      title: "Automated Email Workflow",
+      price: "$49.99",
+      image: "/placeholder.svg",
+      seller: "Automation Pro",
+      description: "Streamline your email marketing with this automated workflow template.",
+      tags: ["email", "automation"],
+      category: "marketing"
+    },
+    {
+      title: "CRM Integration Template",
+      price: "$79.99",
+      image: "/placeholder.svg",
+      seller: "CRM Expert",
+      description: "Connect your favorite CRM with other tools seamlessly.",
+      tags: ["crm", "integration"],
+      category: "business"
+    },
+    {
+      title: "Social Media Manager",
+      price: "$39.99",
+      image: "/placeholder.svg",
+      seller: "Social Pro",
+      description: "Manage all your social media accounts from one place.",
+      tags: ["social", "management"],
+      category: "marketing"
+    },
+    {
+      title: "Project Tracker",
+      price: "$59.99",
+      image: "/placeholder.svg",
+      seller: "PM Tools",
+      description: "Keep track of your projects with this comprehensive template.",
+      tags: ["project", "management"],
+      category: "business"
+    },
+    {
+      title: "Lead Generation System",
+      price: "$89.99",
+      image: "/placeholder.svg",
+      seller: "Lead Gen Pro",
+      description: "Generate and nurture leads automatically.",
+      tags: ["leads", "automation"],
+      category: "sales"
+    },
+    {
+      title: "Customer Support Flow",
+      price: "$69.99",
+      image: "/placeholder.svg",
+      seller: "Support Expert",
+      description: "Streamline your customer support process.",
+      tags: ["support", "workflow"],
+      category: "service"
+    }
+  ];
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-[1200px] space-y-8">
       {/* Main Content Card */}
@@ -159,6 +218,23 @@ export default function Community() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="templates" className="space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {templates.map((template, index) => (
+              <ProductCard
+                key={index}
+                title={template.title}
+                price={template.price}
+                image={template.image}
+                seller={template.seller}
+                description={template.description}
+                tags={template.tags}
+                category={template.category}
+              />
+            ))}
+          </div>
         </TabsContent>
       </Tabs>
     </div>
