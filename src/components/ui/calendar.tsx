@@ -42,8 +42,8 @@ function Calendar({
           buttonVariants({ variant: "outline" }),
           "h-7 w-7 bg-transparent p-0 hover:opacity-75"
         ),
-        nav_button_previous: "",
-        nav_button_next: "",
+        nav_button_previous: "absolute left-1",
+        nav_button_next: "absolute right-1",
         table: "w-full border-collapse",
         head_row: "flex w-full border-b border-border",
         head_cell:
@@ -71,11 +71,11 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        IconLeft: () => <ChevronLeft className="h-4 w-4" />,
-        IconRight: () => <ChevronRight className="h-4 w-4" />,
+        IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" {...props} />,
+        IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" {...props} />,
         Caption: ({ displayMonth }) => {
           return (
-            <div className="flex w-full justify-between items-center">
+            <div className="flex w-full justify-between items-center relative">
               <div className="font-semibold">
                 {format(displayMonth, 'MMMM yyyy')}
               </div>
