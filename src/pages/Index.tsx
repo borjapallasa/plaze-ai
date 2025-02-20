@@ -154,55 +154,49 @@ const Index = () => {
     <div className="min-h-screen">
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
         <div className="container mx-auto px-4">
-          <div className="h-20 flex items-center justify-between">
-            <div className="flex-1 flex items-center justify-between">
-              <div className="flex items-center gap-8">
-                <h1 className="text-2xl font-semibold">Logo</h1>
-              </div>
-            </div>
+          <div className="h-20 flex items-center">
+            <h1 className="text-2xl font-semibold">Logo</h1>
           </div>
-          <div className="pb-5">
-            <div className="flex flex-col items-center gap-4">
-              <div className="text-2xl font-semibold text-center flex items-center">
-                <span className="text-foreground">The Best AI & Automation </span>
-                <span className="inline-flex items-center text-muted-foreground">
-                  <Typewriter
-                    options={{
-                      strings: typewriterStrings,
-                      autoStart: true,
-                      loop: true,
-                      delay: 50,
-                      deleteSpeed: 30,
-                    }}
+          <div className="flex flex-col items-center justify-center min-h-[120px]">
+            <div className="text-2xl font-semibold text-center">
+              <span className="text-foreground">The Best AI & Automation </span>
+              <span className="inline-block text-muted-foreground">
+                <Typewriter
+                  options={{
+                    strings: typewriterStrings,
+                    autoStart: true,
+                    loop: true,
+                    delay: 50,
+                    deleteSpeed: 30,
+                  }}
+                />
+              </span>
+            </div>
+            <div className="w-full max-w-2xl">
+              <div className="flex items-center gap-2 px-4 h-14 rounded-full border shadow-sm bg-background">
+                <Select value={searchCategory} onValueChange={setSearchCategory}>
+                  <SelectTrigger className="w-[140px] border-0 focus:ring-0 focus:ring-offset-0 px-0">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {searchCategories.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <div className="h-8 w-[1px] bg-border" />
+                <div className="flex-1 flex items-center">
+                  <Input
+                    className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2"
+                    placeholder={`Search ${searchCategory.toLowerCase()}...`}
+                    type="search"
                   />
-                </span>
-              </div>
-              <div className="w-full max-w-2xl">
-                <div className="flex items-center gap-2 px-4 h-14 rounded-full border shadow-sm bg-background">
-                  <Select value={searchCategory} onValueChange={setSearchCategory}>
-                    <SelectTrigger className="w-[140px] border-0 focus:ring-0 focus:ring-offset-0 px-0">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {searchCategories.map((category) => (
-                        <SelectItem key={category} value={category}>
-                          {category}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <div className="h-8 w-[1px] bg-border" />
-                  <div className="flex-1 flex items-center">
-                    <Input
-                      className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2"
-                      placeholder={`Search ${searchCategory.toLowerCase()}...`}
-                      type="search"
-                    />
-                  </div>
-                  <Button size="icon" variant="default" className="rounded-full">
-                    <Search className="h-4 w-4" />
-                  </Button>
                 </div>
+                <Button size="icon" variant="default" className="rounded-full">
+                  <Search className="h-4 w-4" />
+                </Button>
               </div>
             </div>
           </div>
