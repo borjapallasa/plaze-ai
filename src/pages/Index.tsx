@@ -154,25 +154,34 @@ const Index = () => {
     <div className="min-h-screen">
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
         <div className="container mx-auto px-4">
-          <div className="h-20 flex items-center">
-            <h1 className="text-2xl font-semibold">Logo</h1>
-          </div>
-          <div className="flex flex-col items-center justify-center min-h-[120px]">
-            <div className="text-2xl font-semibold text-center">
-              <span className="text-foreground">The Best AI & Automation </span>
-              <span className="inline-block text-muted-foreground">
-                <Typewriter
-                  options={{
-                    strings: typewriterStrings,
-                    autoStart: true,
-                    loop: true,
-                    delay: 50,
-                    deleteSpeed: 30,
-                  }}
-                />
-              </span>
+          <div className="h-20 grid grid-cols-3 items-center">
+            <div className="flex items-center">
+              <h1 className="text-2xl font-semibold">Logo</h1>
             </div>
-            <div className="w-full max-w-2xl">
+
+            <div className="flex justify-center items-center">
+              <div className="text-2xl font-semibold text-center flex items-center">
+                <span className="text-foreground">The Best AI & Automation </span>
+                <span className="inline-flex items-center text-muted-foreground">
+                  <Typewriter
+                    options={{
+                      strings: typewriterStrings,
+                      autoStart: true,
+                      loop: true,
+                      delay: 50,
+                      deleteSpeed: 30,
+                    }}
+                  />
+                </span>
+              </div>
+            </div>
+
+            <div className="flex justify-end">
+            </div>
+          </div>
+
+          <div className="py-6">
+            <div className="w-full max-w-2xl mx-auto">
               <div className="flex items-center gap-2 px-4 h-14 rounded-full border shadow-sm bg-background">
                 <Select value={searchCategory} onValueChange={setSearchCategory}>
                   <SelectTrigger className="w-[140px] border-0 focus:ring-0 focus:ring-offset-0 px-0">
@@ -200,6 +209,7 @@ const Index = () => {
               </div>
             </div>
           </div>
+
           <div className="py-4 border-t">
             <div className="grid grid-cols-3 md:grid-cols-6 gap-6 justify-items-center">
               {departments.map((dept, index) => {
