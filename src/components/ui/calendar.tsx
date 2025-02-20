@@ -1,22 +1,25 @@
 
 import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { DayPicker } from "react-day-picker";
+import { DayPicker, type DayPickerSingleProps } from "react-day-picker";
 import { format } from "date-fns";
 
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 
-export type CalendarProps = {
+type CalendarProps = {
+  mode?: "single";
+  selected?: Date;
+  onSelect?: (date: Date | undefined) => void;
   className?: string;
   classNames?: Record<string, string>;
   showOutsideDays?: boolean;
-  selected?: Date | undefined;
-  onSelect?: (date: Date | undefined) => void;
-  mode?: "single" | "multiple" | "range";
-} & Omit<React.ComponentProps<typeof DayPicker>, "mode" | "selected" | "onSelect">;
+} & Omit<DayPickerSingleProps, "mode" | "selected" | "onSelect" | "className" | "classNames" | "showOutsideDays">;
 
 function Calendar({
+  mode = "single",
+  selected,
+  onSelect,
   className,
   classNames,
   showOutsideDays = true,
@@ -24,6 +27,9 @@ function Calendar({
 }: CalendarProps) {
   return (
     <DayPicker
+      mode="single"
+      selected={selected}
+      onSelect={onSelect}
       showOutsideDays={showOutsideDays}
       className={cn("p-3 w-full", className)}
       classNames={{
@@ -67,13 +73,7 @@ function Calendar({
       components={{
         IconLeft: () => <ChevronLeft className="h-4 w-4" />,
         IconRight: () => <ChevronRight className="h-4 w-4" />,
-        Caption: ({ displayMonth, goToMonth }) => {
-          const handleGoToMonth = (month: Date) => {
-            if (goToMonth) {
-              goToMonth(month);
-            }
-          };
-          
+        Caption: ({ displayMonth }) => {
           return (
             <div className="flex w-full justify-between items-center">
               <div className="font-semibold">
@@ -84,7 +84,7 @@ function Calendar({
                   type="button"
                   onClick={() => {
                     const today = new Date();
-                    handleGoToMonth(today);
+                    onSelect?.(today);
                   }}
                   className={cn(
                     buttonVariants({ variant: "outline", size: "sm" }),
@@ -98,7 +98,7 @@ function Calendar({
                     onClick={() => {
                       const prevMonth = new Date(displayMonth);
                       prevMonth.setMonth(prevMonth.getMonth() - 1);
-                      handleGoToMonth(prevMonth);
+                      onSelect?.(prevMonth);
                     }}
                     className={cn(
                       buttonVariants({ variant: "outline" }),
@@ -111,7 +111,7 @@ function Calendar({
                     onClick={() => {
                       const nextMonth = new Date(displayMonth);
                       nextMonth.setMonth(nextMonth.getMonth() + 1);
-                      handleGoToMonth(nextMonth);
+                      onSelect?.(nextMonth);
                     }}
                     className={cn(
                       buttonVariants({ variant: "outline" }),
