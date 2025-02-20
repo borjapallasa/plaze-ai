@@ -11,31 +11,33 @@ export default function Classroom() {
         <h1 className="text-4xl font-bold">How To Create Automated SEO Blogs With AI?</h1>
         
         {/* Video Section */}
-        <Card className="overflow-hidden">
-          <div className="aspect-video bg-muted relative">
-            <img 
-              src="/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"
-              alt="Course thumbnail"
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-              <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center cursor-pointer hover:bg-white transition-colors">
-                <div className="w-6 h-6 border-8 border-transparent border-l-primary ml-1" style={{ transform: 'rotate(-45deg)' }} />
+        <div className="space-y-4">
+          <Card className="overflow-hidden">
+            <div className="aspect-video bg-muted relative">
+              <img 
+                src="/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"
+                alt="Course thumbnail"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center cursor-pointer hover:bg-white transition-colors">
+                  <div className="w-6 h-6 border-8 border-transparent border-l-primary ml-1" style={{ transform: 'rotate(-45deg)' }} />
+                </div>
               </div>
             </div>
-          </div>
-        </Card>
+          </Card>
 
-        {/* Resources Link */}
-        <div className="flex items-center gap-2">
-          <span className="text-muted-foreground">All formulas & scripts →</span>
-          <a 
-            href="https://docs.google.com/document/d/1TYRkoPNAFhU-ryYDhzPLQi6zrP5kezlg6N5ukcCRP5Vk/edit?usp=sharing" 
-            target="_blank"
-            className="text-primary hover:underline"
-          >
-            View Documentation
-          </a>
+          {/* Resources Link */}
+          <div className="flex items-center gap-2">
+            <span className="text-muted-foreground">All formulas & scripts →</span>
+            <a 
+              href="https://docs.google.com/document/d/1TYRkoPNAFhU-ryYDhzPLQi6zrP5kezlg6N5ukcCRP5Vk/edit?usp=sharing" 
+              target="_blank"
+              className="text-primary hover:underline"
+            >
+              View Documentation
+            </a>
+          </div>
         </div>
 
         {/* Introduction */}
