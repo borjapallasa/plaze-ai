@@ -1,9 +1,8 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageSquare, Users, BookOpen, Calendar, Link, ThumbsUp } from "lucide-react";
+import { MessageSquare, Users, BookOpen, Calendar, Link, ThumbsUp, Search } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/ProductCard";
@@ -178,11 +177,6 @@ export default function Community() {
           </TabsList>
         </div>
 
-        <div className="flex gap-4">
-          <Button>Create New Thread</Button>
-          <Input placeholder="Search thread" className="flex-1" />
-        </div>
-
         <TabsContent value="threads" className="space-y-6">
           <Card>
             <CardContent className="p-6 space-y-4">
@@ -221,6 +215,10 @@ export default function Community() {
         </TabsContent>
 
         <TabsContent value="templates" className="space-y-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input placeholder="Search templates" className="pl-9" />
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {templates.map((template, index) => (
               <ProductCard
