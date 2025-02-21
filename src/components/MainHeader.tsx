@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, Menu, User, ChevronDown } from "lucide-react";
@@ -22,10 +23,12 @@ export const MainHeader = () => {
   const location = useLocation();
   const isCommunityPage = location.pathname.includes('/community') || location.pathname.includes('/classroom');
   const [mobileSearchCategory, setMobileSearchCategory] = useState(isCommunityPage ? "This Community" : "Products");
+  const [desktopSearchCategory, setDesktopSearchCategory] = useState(isCommunityPage ? "ThisCommunity" : "Products");
 
   const getPlaceholder = (category: string) => {
     switch(category) {
       case "This Community":
+      case "ThisCommunity":
         return "Search in this community...";
       case "Products":
         return "Search products...";
@@ -115,7 +118,10 @@ export const MainHeader = () => {
           <div className="flex-1 max-w-xl">
             <div className="flex items-center gap-1 px-3 py-1.5 rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background">
               <div className="flex-1 flex items-center gap-1">
-                <Select defaultValue={isCommunityPage ? "ThisCommunity" : "Products"}>
+                <Select 
+                  defaultValue={isCommunityPage ? "ThisCommunity" : "Products"}
+                  onValueChange={setDesktopSearchCategory}
+                >
                   <SelectTrigger className="border-0 w-[200px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-7 text-sm [&>span]:whitespace-nowrap [&>span]:overflow-visible">
                     <SelectValue />
                   </SelectTrigger>
@@ -131,7 +137,7 @@ export const MainHeader = () => {
                 </Select>
                 <Input
                   className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-7 text-sm"
-                  placeholder={isCommunityPage ? "Search in this community..." : "Search products..."}
+                  placeholder={getPlaceholder(desktopSearchCategory)}
                   type="search"
                 />
               </div>
