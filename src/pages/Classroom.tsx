@@ -29,41 +29,43 @@ export default function Classroom() {
     <div className="container mx-auto px-4 py-8 max-w-[1400px]">
       <div className="flex gap-6">
         {/* Sidebar */}
-        <div className="w-64 flex-shrink-0">
-          <div className="space-y-6">
-            {/* Progress Section */}
-            <div>
-              <h2 className="text-lg font-semibold mb-2">Weekly Call Recordings</h2>
-              <div className="h-2 bg-muted rounded-full">
-                <div className="h-full w-0 bg-primary rounded-full"></div>
+        <Card className="w-64 flex-shrink-0 h-fit">
+          <CardContent className="p-4">
+            <div className="space-y-6">
+              {/* Progress Section */}
+              <div>
+                <h2 className="text-lg font-semibold mb-2">Weekly Call Recordings</h2>
+                <div className="h-2 bg-muted rounded-full">
+                  <div className="h-full w-0 bg-primary rounded-full"></div>
+                </div>
+                <p className="text-sm text-muted-foreground mt-1">0% complete</p>
               </div>
-              <p className="text-sm text-muted-foreground mt-1">0% complete</p>
-            </div>
 
-            {/* Lessons List */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-medium">New set</h3>
-                <ChevronDown className="w-4 h-4 text-muted-foreground" />
-              </div>
-              <div className="space-y-1">
-                {lessons.map((lesson) => (
-                  <button
-                    key={lesson.title}
-                    className={cn(
-                      "w-full text-left px-3 py-2 rounded-lg text-sm transition-colors",
-                      lesson.isActive 
-                        ? "bg-amber-50 text-amber-900" 
-                        : "hover:bg-muted"
-                    )}
-                  >
-                    {lesson.title}
-                  </button>
-                ))}
+              {/* Lessons List */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-medium">New set</h3>
+                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                </div>
+                <div className="space-y-1">
+                  {lessons.map((lesson) => (
+                    <button
+                      key={lesson.title}
+                      className={cn(
+                        "w-full text-left px-3 py-2 rounded-lg text-sm transition-colors",
+                        lesson.isActive 
+                          ? "bg-primary text-primary-foreground" 
+                          : "hover:bg-muted"
+                      )}
+                    >
+                      {lesson.title}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Main Content */}
         <Card className="flex-1">
