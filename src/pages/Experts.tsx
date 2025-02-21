@@ -111,7 +111,7 @@ const Experts = () => {
                       </Avatar>
                       <Badge 
                         variant="secondary" 
-                        className="absolute -bottom-2 -right-2 bg-blue-100 text-blue-700"
+                        className="absolute -bottom-2 -right-2 bg-[#D3E4FD] text-[#0EA5E9]"
                       >
                         <Crown className="h-3 w-3" />
                       </Badge>
@@ -121,24 +121,24 @@ const Experts = () => {
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="text-lg font-medium">{expert.name}</h3>
                         {expert.boosted && (
-                          <Badge variant="secondary" className="flex items-center gap-1 bg-purple-100 text-purple-700">
+                          <Badge variant="secondary" className="flex items-center gap-1 bg-[#E5DEFF] text-[#8B5CF6]">
                             <Zap className="h-3 w-3" />
                             Boosted
                           </Badge>
                         )}
                       </div>
-                      <p className="text-base text-gray-900 mb-1">{expert.title}</p>
-                      <p className="text-sm text-gray-500">{expert.location}</p>
+                      <p className="text-base text-[#1A1F2C] mb-1">{expert.title}</p>
+                      <p className="text-sm text-[#8E9196]">{expert.location}</p>
                     </div>
 
                     <div className="hidden md:flex items-start gap-2">
-                      <Button variant="outline" size="icon" className="rounded-full border-gray-300">
+                      <Button variant="outline" size="icon" className="rounded-full border-[#C8C8C9]">
                         <Heart className="h-4 w-4" />
                       </Button>
-                      <Button variant="outline" className="whitespace-nowrap border-gray-300">
+                      <Button variant="outline" className="whitespace-nowrap border-[#C8C8C9]">
                         Message
                       </Button>
-                      <Button className="whitespace-nowrap bg-green-600 hover:bg-green-700">
+                      <Button className="whitespace-nowrap bg-[#9b87f5] hover:bg-[#7E69AB]">
                         Invite to job
                       </Button>
                     </div>
@@ -146,14 +146,14 @@ const Experts = () => {
 
                   {/* Stats Section */}
                   <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-                    <span className="text-base text-gray-900">${expert.rate}/hr</span>
+                    <span className="text-base text-[#1A1F2C]">${expert.rate}/hr</span>
                     <div className="flex items-center gap-1">
-                      <Crown className="h-4 w-4 text-blue-500" />
-                      <span className="text-base text-gray-900">{expert.successRate}% Job Success</span>
+                      <Crown className="h-4 w-4 text-[#0EA5E9]" />
+                      <span className="text-base text-[#1A1F2C]">{expert.successRate}% Job Success</span>
                     </div>
-                    <span className="text-base text-gray-900">{expert.earned} earned</span>
+                    <span className="text-base text-[#1A1F2C]">{expert.earned} earned</span>
                     {expert.available && (
-                      <Badge variant="secondary" className="flex items-center gap-1 bg-purple-100 text-purple-700">
+                      <Badge variant="secondary" className="flex items-center gap-1 bg-[#E5DEFF] text-[#8B5CF6]">
                         <Zap className="h-3 w-3" />
                         Available now
                       </Badge>
@@ -166,7 +166,7 @@ const Experts = () => {
                       <Badge 
                         key={index}
                         variant="secondary" 
-                        className="rounded-full bg-gray-100 text-gray-700 hover:bg-gray-100"
+                        className="rounded-full bg-[#F1F0FB] text-[#403E43] hover:bg-[#F1F0FB]"
                       >
                         {skill}
                       </Badge>
@@ -174,14 +174,14 @@ const Experts = () => {
                   </div>
 
                   {/* Description Section */}
-                  <p className="text-base text-gray-600">{expert.description}</p>
+                  <p className="text-base text-[#8E9196]">{expert.description}</p>
 
                   {/* Mobile Buttons */}
                   <div className="md:hidden flex flex-col space-y-2">
-                    <Button variant="outline" className="w-full border-gray-300">
+                    <Button variant="outline" className="w-full border-[#C8C8C9]">
                       Message
                     </Button>
-                    <Button className="w-full bg-green-600 hover:bg-green-700">
+                    <Button className="w-full bg-[#9b87f5] hover:bg-[#7E69AB]">
                       Invite to job
                     </Button>
                   </div>
