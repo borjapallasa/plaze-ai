@@ -3,7 +3,6 @@ import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
 import {
   Search, 
-  Globe, 
   Menu, 
   User,
   Star,
@@ -391,12 +390,6 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
 
           <div className="w-[20%] flex items-start justify-end">
             <div className="flex items-center gap-2 mt-[15px] mr-[15px]">
-              <Button variant="ghost" size="sm" className="font-medium">
-                Add Product
-              </Button>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <Globe className="h-4 w-4" />
-              </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="rounded-full p-1 h-10">
