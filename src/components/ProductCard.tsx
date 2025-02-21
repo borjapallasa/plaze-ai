@@ -56,7 +56,7 @@ export const ProductCard = ({ title, price, image, seller, description, tags, fr
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-1.5">
               <DollarSign className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm font-medium">{price}</span>
+              <span className="text-sm font-medium">From {price}</span>
             </div>
             {split && (
               <div className="flex items-center gap-1.5">
