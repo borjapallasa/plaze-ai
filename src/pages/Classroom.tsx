@@ -65,8 +65,8 @@ export default function Classroom() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-[1400px]">
       <div className="flex gap-6">
-        {/* Sidebar */}
-        <Card className="w-64 flex-shrink-0 h-fit">
+        {/* Sidebar - Updated width from w-64 to w-80 */}
+        <Card className="w-80 flex-shrink-0 h-fit">
           <CardContent className="p-4">
             <div className="space-y-6">
               {/* Course Title Section */}
