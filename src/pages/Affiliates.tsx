@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { AffiliateDashboard } from "@/components/affiliates/AffiliateDashboard";
 import { AffiliateTable } from "@/components/affiliates/AffiliateTable";
@@ -7,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Star, ThumbsUp, TrendingUp, Sparkle, Trophy, Tags } from "lucide-react";
 import { useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const badges = [
   { label: "Trending", icon: TrendingUp, category: null },
@@ -111,7 +111,7 @@ const affiliateOffers = [
   {
     title: "Smart Project Manager",
     price: "$119.99",
-    image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
+    image: "https://images.unsplash.com/photo-1488591534298-04dcbce3278c",
     seller: "Project Tech",
     description: "AI-powered project management tool with automated task allocation and progress tracking.",
     tags: ["project", "management", "automation"],
@@ -171,8 +171,33 @@ export default function Affiliates() {
           <p className="text-muted-foreground mb-8">
             Click on your affiliate to see all transactions.
           </p>
-          <AffiliateTable />
+          
+          <Tabs defaultValue="affiliates" className="space-y-6">
+            <TabsList className="w-full justify-start">
+              <TabsTrigger value="affiliates">Affiliates</TabsTrigger>
+              <TabsTrigger value="transactions">Transactions</TabsTrigger>
+              <TabsTrigger value="partnerships">Partnerships</TabsTrigger>
+              <TabsTrigger value="payouts">Payouts</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="affiliates">
+              <AffiliateTable />
+            </TabsContent>
+
+            <TabsContent value="transactions" className="min-h-[300px] flex items-center justify-center text-muted-foreground">
+              Transactions tab content
+            </TabsContent>
+
+            <TabsContent value="partnerships" className="min-h-[300px] flex items-center justify-center text-muted-foreground">
+              Partnerships tab content
+            </TabsContent>
+
+            <TabsContent value="payouts" className="min-h-[300px] flex items-center justify-center text-muted-foreground">
+              Payouts tab content
+            </TabsContent>
+          </Tabs>
         </div>
+
         <div className="mt-16">
           <div className="flex flex-col space-y-8 mb-8">
             <h2 className="text-4xl font-bold text-foreground">Affiliate offers</h2>
