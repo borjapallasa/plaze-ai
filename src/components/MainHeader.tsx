@@ -24,7 +24,7 @@ export const MainHeader = () => {
     <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-background border-b">
       <div className="container mx-auto px-4 h-full">
         {/* Mobile Header */}
-        <div className="flex md:hidden items-center justify-between h-full gap-4">
+        <div className="flex md:hidden items-center justify-between h-full gap-3">
           <div className="flex-1">
             <div className="flex items-center gap-1 px-3 py-1.5 rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background">
               <Input
@@ -41,7 +41,7 @@ export const MainHeader = () => {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="outline" 
-                className="rounded-full px-2.5 py-1.5 h-8 border-2 hover:border-primary/20 transition-colors ml-2"
+                className="rounded-full px-2.5 py-1.5 h-8 border-2 hover:border-primary/20 transition-colors"
               >
                 <Menu className="h-3.5 w-3.5" />
               </Button>
