@@ -47,7 +47,7 @@ export function ThreadDialog({ isOpen, onClose }: ThreadDialogProps) {
       <DialogContent className="max-w-3xl h-[80vh] flex flex-col p-0">
         <div className="p-4 space-y-4 flex-1 overflow-y-auto">
           <div className="w-full">
-            <div className="flex justify-between items-start mb-4">
+            <div className="flex justify-between items-start mb-4 pr-8">
               <div className="flex items-start gap-3">
                 <Avatar className="h-10 w-10">
                   <AvatarImage src="https://github.com/shadcn.png" />
