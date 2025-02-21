@@ -117,7 +117,7 @@ export default function Classroom() {
         <div className="space-y-6">
           <Card className="w-full">
             <CardContent className="p-6 space-y-6">
-              <h1 className="text-4xl font-bold">How To Create Automated SEO Blogs With AI?</h1>
+              <h1 className="text-2xl font-bold">How To Create Automated SEO Blogs With AI?</h1>
               
               <div className="space-y-4">
                 <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
@@ -133,12 +133,12 @@ export default function Classroom() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <span className="text-muted-foreground">All formulas & scripts →</span>
+                <div className="space-y-2">
+                  <p className="text-muted-foreground">All formulas & scripts →</p>
                   <a 
                     href="https://docs.google.com/document/d/1TYRkoPNAFhU-ryYDhzPLQi6zrP5kezlg6N5ukcCRP5Vk/edit?usp=sharing" 
                     target="_blank"
-                    className="text-primary hover:underline"
+                    className="text-primary hover:underline block"
                   >
                     View Documentation
                   </a>
@@ -192,12 +192,11 @@ export default function Classroom() {
                     </p>
                   </div>
                 </div>
-
               </div>
 
-              <div className="flex gap-4">
-                <Button variant="outline">Edit Classroom Details</Button>
-                <Button>Add New Lesson</Button>
+              <div className="space-y-3 w-full">
+                <Button variant="outline" className="w-full">Edit Classroom Details</Button>
+                <Button className="w-full">Add New Lesson</Button>
               </div>
             </CardContent>
           </Card>
