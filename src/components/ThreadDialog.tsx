@@ -4,7 +4,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { MessageSquare, Heart, ThumbsUp } from "lucide-react";
+import { MessageSquare, Heart, Send } from "lucide-react";
 import { useRef, useEffect } from "react";
 
 interface ThreadDialogProps {
@@ -135,16 +135,21 @@ export function ThreadDialog({ isOpen, onClose }: ThreadDialogProps) {
               <AvatarImage src="https://github.com/shadcn.png" />
               <AvatarFallback>ME</AvatarFallback>
             </Avatar>
-            <div className="flex-1 space-y-2">
-              <textarea
-                placeholder="Write a comment..."
-                className="w-full min-h-[36px] max-h-[150px] rounded-md border border-input bg-background px-3 py-2 text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring overflow-hidden"
-                rows={1}
-                onInput={handleTextareaInput}
-              />
-              <div className="flex justify-end">
-                <Button size="sm">Comment</Button>
+            <div className="flex-1 flex items-end gap-2">
+              <div className="flex-1">
+                <textarea
+                  placeholder="Write a comment..."
+                  className="w-full min-h-[36px] max-h-[150px] rounded-md border border-input bg-background px-3 py-2 text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring overflow-hidden"
+                  rows={1}
+                  onInput={handleTextareaInput}
+                />
               </div>
+              <Button 
+                size="icon" 
+                className="h-9 w-9 rounded-full"
+              >
+                <Send className="h-4 w-4" />
+              </Button>
             </div>
           </div>
         </div>
