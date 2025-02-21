@@ -390,7 +390,7 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
           </div>
 
           <div className="w-[20%] flex items-start justify-end">
-            <div className="flex items-center gap-2 mt-[15px] mr-[15px]">
+            <div className="flex items-center gap-3 mt-[15px] mr-[15px]">
               <Button 
                 variant="ghost" 
                 size="sm" 
@@ -400,7 +400,10 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="rounded-full p-1 h-10">
+                  <Button 
+                    variant="outline" 
+                    className="rounded-full px-3 py-2 h-10 border-2 hover:border-primary/20 transition-colors"
+                  >
                     <Menu className="h-4 w-4 mr-2" />
                     <User className="h-4 w-4" />
                   </Button>
