@@ -113,7 +113,7 @@ export default function SignInCommunity() {
                 Sign In
               </Button>
 
-              <div className="text-center space-y-2">
+              <div className="text-center space-y-4">
                 <div className="text-sm">
                   <span className="text-muted-foreground">Don't have an account? </span>
                   <Link to="/sign-up/community" className="text-primary hover:underline">
