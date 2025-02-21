@@ -129,24 +129,24 @@ export function ThreadDialog({ isOpen, onClose }: ThreadDialogProps) {
           </div>
         </div>
 
-        <div className="border-t p-3">
-          <div className="flex gap-3">
-            <Avatar className="h-8 w-8">
+        <div className="border-t p-4">
+          <div className="flex items-center gap-3 max-w-4xl mx-auto">
+            <Avatar className="h-8 w-8 shrink-0">
               <AvatarImage src="https://github.com/shadcn.png" />
               <AvatarFallback>ME</AvatarFallback>
             </Avatar>
-            <div className="flex-1 flex items-end gap-2">
+            <div className="flex-1 flex items-center gap-2">
               <div className="flex-1">
                 <textarea
                   placeholder="Write a comment..."
-                  className="w-full min-h-[36px] max-h-[150px] rounded-md border border-input bg-background px-3 py-2 text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring overflow-hidden"
+                  className="w-full min-h-[40px] max-h-[150px] rounded-full border border-input bg-background px-4 py-2 text-sm resize-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring overflow-hidden"
                   rows={1}
                   onInput={handleTextareaInput}
                 />
               </div>
               <Button 
                 size="icon" 
-                className="h-9 w-9 rounded-full"
+                className="h-10 w-10 rounded-full shrink-0"
               >
                 <Send className="h-4 w-4" />
               </Button>
