@@ -43,11 +43,11 @@ const transactions: Transaction[] = [
 
 export default function Transactions() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState<string>("");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
 
   const filteredTransactions = transactions.filter(transaction =>
     transaction.templateName.toLowerCase().includes(searchQuery.toLowerCase()) &&
-    (categoryFilter === "" || transaction.deliverables.includes(categoryFilter))
+    (categoryFilter === "all" || transaction.deliverables.includes(categoryFilter))
   );
 
   return (
@@ -73,7 +73,7 @@ export default function Transactions() {
                 <SelectValue placeholder="Filter by category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Categories</SelectItem>
+                <SelectItem value="all">All Categories</SelectItem>
                 <SelectItem value="Product">Product</SelectItem>
                 <SelectItem value="Service">Service</SelectItem>
                 <SelectItem value="Community Subscription">Community Subscription</SelectItem>
