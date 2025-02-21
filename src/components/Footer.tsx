@@ -1,18 +1,18 @@
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { Facebook, Twitter, Instagram, ShoppingBag, Briefcase, Users, Star } from "lucide-react";
+import { Facebook, Twitter, Instagram } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 const FooterSection = ({ title, links }: { title: string; links: { label: string; href: string }[] }) => (
-  <div className="space-y-4">
-    <h3 className="font-semibold text-lg">{title}</h3>
-    <ul className="space-y-2">
+  <div className="space-y-3">
+    <h3 className="font-semibold text-base">{title}</h3>
+    <ul className="space-y-1.5">
       {links.map((link, index) => (
         <li key={index}>
           <Link 
             to={link.href}
-            className="text-muted-foreground hover:text-foreground transition-colors"
+            className="text-muted-foreground hover:text-foreground transition-colors text-sm"
           >
             {link.label}
           </Link>
@@ -52,25 +52,21 @@ export function Footer() {
   ];
 
   return (
-    <footer className="mt-auto bg-background">
+    <footer className="mt-auto bg-background pt-10">
       <div className="border-t">
         <div className="container mx-auto px-4 py-8">
           <Tabs defaultValue="products" className="w-full">
-            <TabsList className="w-full justify-start h-14 bg-background">
-              <TabsTrigger value="products" className="flex items-center gap-2">
-                <ShoppingBag className="h-4 w-4" />
+            <TabsList className="w-full justify-start h-12 bg-background border-none p-0">
+              <TabsTrigger value="products" className="text-base px-6 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none data-[state=active]:shadow-none">
                 Products
               </TabsTrigger>
-              <TabsTrigger value="jobs" className="flex items-center gap-2">
-                <Briefcase className="h-4 w-4" />
+              <TabsTrigger value="jobs" className="text-base px-6 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none data-[state=active]:shadow-none">
                 Jobs
               </TabsTrigger>
-              <TabsTrigger value="experts" className="flex items-center gap-2">
-                <Star className="h-4 w-4" />
+              <TabsTrigger value="experts" className="text-base px-6 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none data-[state=active]:shadow-none">
                 Experts
               </TabsTrigger>
-              <TabsTrigger value="communities" className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
+              <TabsTrigger value="communities" className="text-base px-6 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none data-[state=active]:shadow-none">
                 Communities
               </TabsTrigger>
             </TabsList>
