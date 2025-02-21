@@ -117,7 +117,7 @@ export default function Classroom() {
         <div className="space-y-6">
           <Card className="w-full">
             <CardContent className="p-6 space-y-6">
-              <h1 className="text-2xl font-bold">How To Create Automated SEO Blogs With AI?</h1>
+              <h1 className="text-xl font-bold leading-tight">How To Create Automated SEO Blogs With AI?</h1>
               
               <div className="space-y-4">
                 <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
