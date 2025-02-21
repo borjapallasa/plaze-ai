@@ -51,7 +51,7 @@ export default function Transactions() {
   );
 
   return (
-    <>
+    <div className="overflow-y-scroll h-screen">
       <div className="fixed top-0 left-0 right-0 z-50 bg-background">
         <MainHeader />
       </div>
@@ -149,6 +149,6 @@ export default function Transactions() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
