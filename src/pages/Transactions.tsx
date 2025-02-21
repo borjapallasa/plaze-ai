@@ -5,6 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Search, Star } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface Transaction {
   id: string;
@@ -19,7 +26,7 @@ const transactions: Transaction[] = [
   {
     id: "1",
     templateName: "Find Customer Email List Of Competitors From Social Media Instagram Account",
-    deliverables: ["Template + Installation"],
+    deliverables: ["Product"],
     transactionDate: "1/8/2025, 2:41 PM",
     amount: 149.95,
     rating: 0
@@ -27,7 +34,7 @@ const transactions: Transaction[] = [
   {
     id: "2",
     templateName: "Automated YouTube Faceless Channel Video Creation",
-    deliverables: ["Template + Installation"],
+    deliverables: ["Product"],
     transactionDate: "1/8/2025, 2:41 PM",
     amount: 399.95,
     rating: 0
@@ -36,9 +43,11 @@ const transactions: Transaction[] = [
 
 export default function Transactions() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState<string>("");
 
   const filteredTransactions = transactions.filter(transaction =>
-    transaction.templateName.toLowerCase().includes(searchQuery.toLowerCase())
+    transaction.templateName.toLowerCase().includes(searchQuery.toLowerCase()) &&
+    (categoryFilter === "" || transaction.deliverables.includes(categoryFilter))
   );
 
   return (
@@ -48,9 +57,9 @@ export default function Transactions() {
         <div className="container mx-auto px-4 py-8 max-w-[1000px]">
           <h1 className="text-2xl font-semibold mb-6">All Your Purchases</h1>
           
-          {/* Search Section */}
-          <div className="mb-6">
-            <div className="relative">
+          {/* Search and Filter Section */}
+          <div className="mb-6 flex gap-4">
+            <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input 
                 placeholder="Type here to search" 
@@ -59,6 +68,17 @@ export default function Transactions() {
                 className="pl-9 h-10"
               />
             </div>
+            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Filter by category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">All Categories</SelectItem>
+                <SelectItem value="Product">Product</SelectItem>
+                <SelectItem value="Service">Service</SelectItem>
+                <SelectItem value="Community Subscription">Community Subscription</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Transactions List */}
