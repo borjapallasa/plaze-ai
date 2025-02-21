@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Mail, Lock, User, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, User, Eye, EyeOff } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -22,52 +22,44 @@ export default function SignUpCommunity() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-muted/40">
-      <div className="w-full max-w-6xl grid md:grid-cols-2 gap-8 items-center">
-        <div className="space-y-6">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">
+    <div className="min-h-screen flex items-center justify-center px-6 py-12 bg-muted/40">
+      <div className="w-full max-w-6xl grid md:grid-cols-2 gap-12 items-start">
+        <div className="space-y-8">
+          <div className="space-y-4">
+            <h1 className="text-4xl font-bold tracking-tight">
               You've been invited to{" "}
               <span className="text-[#356DED]">join this community!</span>
             </h1>
-            <h2 className="text-2xl font-semibold mb-4">Optimal Path Automations</h2>
+            <h2 className="text-2xl font-semibold">Optimal Path Automations</h2>
             <p className="text-muted-foreground">This community is host by Borja P.</p>
           </div>
 
-          <div className="space-y-4">
-            <p>
+          <div className="space-y-6">
+            <p className="text-lg">
               Imagine a spot where we all get together to chat about making our businesses run
               smoother with some automation magic and no-code shortcuts.{" "}
               <span className="font-medium">Here's what you'll get by joining:</span>
             </p>
 
-            <ul className="space-y-3">
-              <li className="flex gap-2">
+            <ul className="space-y-4">
+              <li className="flex gap-3">
                 <span className="font-semibold">Win Back Your Weekdays</span> - Spend time on what truly grows your business.
               </li>
-              <li className="flex gap-2">
+              <li className="flex gap-3">
                 <span className="font-semibold">Elevate Your Team's Game</span> - Simple tools, incredible results.
               </li>
-              <li className="flex gap-2">
+              <li className="flex gap-3">
                 <span className="font-semibold">Economize Effortlessly</span> - Invest in growth, not unnecessary expenses.
               </li>
-              <li className="flex gap-2">
+              <li className="flex gap-3">
                 <span className="font-semibold">Future-Proof Your Business</span> - Adapt and thrive in the digital age.
               </li>
             </ul>
           </div>
         </div>
 
-        <Card className="w-full p-8 space-y-6">
-          <div className="flex justify-center mb-4">
-            <img
-              src="/public/lovable-uploads/ee8e4525-4a77-4294-b3a5-b8cf02b5351d.png"
-              alt="NoCodeClick Logo"
-              className="h-8"
-            />
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <Card className="w-full p-8 space-y-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <div className="relative">
                 <User className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
@@ -155,14 +147,14 @@ export default function SignUpCommunity() {
             >
               Sign Up
             </Button>
-          </form>
 
-          <div className="text-center text-sm">
-            <span className="text-muted-foreground">Already have an account? </span>
-            <Link to="/sign-in" className="text-[#356DED] hover:underline">
-              Sign In
-            </Link>
-          </div>
+            <div className="text-center text-sm">
+              <span className="text-muted-foreground">Already have an account? </span>
+              <Link to="/sign-in" className="text-[#356DED] hover:underline">
+                Sign In
+              </Link>
+            </div>
+          </form>
         </Card>
       </div>
     </div>
