@@ -106,12 +106,6 @@ export default function SignInCommunity() {
                 </button>
               </div>
 
-              <div className="flex justify-end">
-                <Button variant="link" className="h-auto p-0 text-sm">
-                  Reset password
-                </Button>
-              </div>
-
               <Button
                 type="submit"
                 className="w-full"
@@ -119,11 +113,18 @@ export default function SignInCommunity() {
                 Sign In
               </Button>
 
-              <div className="text-center text-sm">
-                <span className="text-muted-foreground">Don't have an account? </span>
-                <Link to="/sign-up/community" className="text-primary hover:underline">
-                  Sign Up
-                </Link>
+              <div className="text-center space-y-2">
+                <div className="text-sm">
+                  <span className="text-muted-foreground">Don't have an account? </span>
+                  <Link to="/sign-up/community" className="text-primary hover:underline">
+                    Sign Up
+                  </Link>
+                </div>
+                <div>
+                  <Button variant="link" className="h-auto p-0 text-sm">
+                    Reset password
+                  </Button>
+                </div>
               </div>
             </form>
           </div>
