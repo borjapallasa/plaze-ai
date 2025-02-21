@@ -16,6 +16,7 @@ import Classroom from "./pages/Classroom";
 import Jobs from "./pages/Jobs";
 import ManageSubscriptions from "./pages/ManageSubscriptions";
 import Blog from "./pages/Blog";
+import Affiliates from "./pages/Affiliates";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
         <Route path="/jobs" element={<Jobs />} />
         <Route path="/manage-subscriptions" element={<ManageSubscriptions />} />
         <Route path="/blog" element={<Blog />} />
+        <Route path="/affiliates" element={<Affiliates />} />
       </Routes>
       <Toaster />
       <Sonner />
