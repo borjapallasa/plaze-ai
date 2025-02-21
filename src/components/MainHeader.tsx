@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, Menu, User, ChevronDown } from "lucide-react";
@@ -36,9 +35,8 @@ export const MainHeader = () => {
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    className="h-7 px-2 flex items-center gap-1 hover:bg-transparent"
+                    className="h-7 w-7 p-0 hover:bg-transparent"
                   >
-                    <span className="text-sm font-normal">{mobileSearchCategory}</span>
                     <ChevronDown className="h-3.5 w-3.5" />
                   </Button>
                 </DropdownMenuTrigger>
