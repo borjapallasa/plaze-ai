@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
@@ -101,19 +100,36 @@ const Experts = () => {
           <div className="space-y-4">
             {experts.map((expert) => (
               <Card key={expert.id} className="p-4 md:p-6">
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="flex w-full gap-4">
-                    <div className="shrink-0">
-                      <Avatar className="h-16 w-16">
+                <div className="flex flex-col md:flex-row">
+                  <div className="flex w-full">
+                    <div className="relative flex flex-col">
+                      <Avatar className="h-16 w-16 shrink-0">
                         <AvatarImage src={expert.avatar} />
                         <AvatarFallback>{expert.name.split(' ')[0][0]}</AvatarFallback>
                       </Avatar>
+                      <div className="mt-3 space-y-3">
+                        {expert.available && (
+                          <Badge variant="secondary">
+                            Available now
+                          </Badge>
+                        )}
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-4">
+                            <span className="text-sm">${expert.rate}/hr</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Star className="h-4 w-4" />
+                            <span className="text-sm">{expert.successRate}% Job Success</span>
+                          </div>
+                          <span className="block text-sm">{expert.earned} earned</span>
+                        </div>
+                      </div>
                     </div>
                     
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0 ml-4">
                       {/* Mobile layout */}
                       <div className="md:hidden">
-                        <div className="flex justify-between items-start mb-2">
+                        <div className="flex justify-between items-start mb-4">
                           <div>
                             <h3 className="text-lg font-medium">{expert.name}</h3>
                             <p className="text-base">{expert.title}</p>
@@ -124,45 +140,28 @@ const Experts = () => {
                           </Button>
                         </div>
 
-                        <div className="mt-4">
-                          {expert.available && (
-                            <Badge variant="secondary" className="mb-3">
-                              Available now
+                        <p className="text-sm text-muted-foreground mb-4">{expert.description}</p>
+
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {expert.skills.map((skill, index) => (
+                            <Badge 
+                              key={index}
+                              variant="secondary" 
+                              className="rounded-full"
+                            >
+                              {skill}
                             </Badge>
-                          )}
+                          ))}
+                        </div>
 
-                          <div className="flex items-center gap-4 mb-3">
-                            <span className="text-sm">${expert.rate}/hr</span>
-                            <div className="flex items-center gap-1">
-                              <Star className="h-4 w-4" />
-                              <span className="text-sm">{expert.successRate}% Job Success</span>
-                            </div>
-                            <span className="text-sm">{expert.earned} earned</span>
-                          </div>
-
-                          <p className="text-sm text-muted-foreground mb-4">{expert.description}</p>
-
-                          <div className="flex flex-wrap gap-2 mb-4">
-                            {expert.skills.map((skill, index) => (
-                              <Badge 
-                                key={index}
-                                variant="secondary" 
-                                className="rounded-full"
-                              >
-                                {skill}
-                              </Badge>
-                            ))}
-                          </div>
-
-                          <div className="flex flex-col space-y-2">
-                            <Button variant="outline" size="sm" className="w-full">
-                              <MessageCircle className="h-4 w-4 mr-2" />
-                              Message
-                            </Button>
-                            <Button size="sm" className="w-full">
-                              Invite to job
-                            </Button>
-                          </div>
+                        <div className="flex flex-col space-y-2">
+                          <Button variant="outline" size="sm" className="w-full">
+                            <MessageCircle className="h-4 w-4 mr-2" />
+                            Message
+                          </Button>
+                          <Button size="sm" className="w-full">
+                            Invite to job
+                          </Button>
                         </div>
                       </div>
 
@@ -180,12 +179,6 @@ const Experts = () => {
                             </div>
                             <p className="text-base mb-1">{expert.title}</p>
                             <p className="text-sm text-muted-foreground mb-2">{expert.location}</p>
-                            
-                            {expert.available && (
-                              <Badge variant="secondary" className="mb-2">
-                                Available now
-                              </Badge>
-                            )}
                           </div>
 
                           <div className="flex gap-2">
@@ -200,15 +193,6 @@ const Experts = () => {
                               Invite to job
                             </Button>
                           </div>
-                        </div>
-
-                        <div className="flex items-center gap-4 mb-3">
-                          <span className="text-sm">${expert.rate}/hr</span>
-                          <div className="flex items-center gap-1">
-                            <Star className="h-4 w-4" />
-                            <span className="text-sm">{expert.successRate}% Job Success</span>
-                          </div>
-                          <span className="text-sm">{expert.earned} earned</span>
                         </div>
 
                         <p className="text-sm text-muted-foreground mb-4">{expert.description}</p>
