@@ -7,6 +7,7 @@ import { Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Product from "./pages/Product";
 import Expert from "./pages/Expert";
+import Experts from "./pages/Experts";
 import Community from "./pages/Community";
 import SignUp from "./pages/sign-up";
 import SignUpCommunity from "./pages/sign-up-community";
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/product" element={<Product />} />
           <Route path="/expert" element={<Expert />} />
+          <Route path="/experts" element={<Experts />} />
           <Route path="/community" element={<Community />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/sign-up/community" element={<SignUpCommunity />} />
