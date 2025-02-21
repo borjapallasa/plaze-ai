@@ -10,7 +10,7 @@ const affiliateOffers = [
     price: "$99.99",
     image: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81",
     seller: "Marketing AI",
-    description: "Complete suite of AI-powered marketing tools with 30% commission.",
+    description: "Split: 70/30 - You earn 30% commission on each sale. Complete suite of AI-powered marketing tools.",
     tags: ["marketing", "ai", "automation"],
     category: "software"
   },
@@ -19,7 +19,7 @@ const affiliateOffers = [
     price: "$79.99",
     image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7",
     seller: "SEO Tools Inc",
-    description: "Professional SEO optimization toolkit with 25% affiliate commission.",
+    description: "Split: 75/25 - You earn 25% commission per sale. Professional SEO optimization toolkit.",
     tags: ["seo", "marketing", "tools"],
     category: "software"
   },
@@ -28,7 +28,7 @@ const affiliateOffers = [
     price: "$129.99",
     image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
     seller: "AI Solutions",
-    description: "AI-powered content creation platform with 35% commission structure.",
+    description: "Split: 65/35 - You earn 35% commission on each sale. AI-powered content creation platform.",
     tags: ["content", "ai", "writing"],
     category: "software"
   }
