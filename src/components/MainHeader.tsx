@@ -22,8 +22,22 @@ import {
 export const MainHeader = () => {
   const location = useLocation();
   const isCommunityPage = location.pathname.includes('/community') || location.pathname.includes('/classroom');
-  const [mobileSearchCategory, setMobileSearchCategory] = useState(isCommunityPage ? "This Community" : "Products");
-  const [desktopSearchCategory, setDesktopSearchCategory] = useState(isCommunityPage ? "ThisCommunity" : "Products");
+  const isExpertPage = location.pathname.includes('/expert');
+
+  const getInitialSearchCategory = () => {
+    if (isCommunityPage) return "This Community";
+    if (isExpertPage) return "Experts";
+    return "Products";
+  };
+
+  const getInitialDesktopSearchCategory = () => {
+    if (isCommunityPage) return "ThisCommunity";
+    if (isExpertPage) return "Experts";
+    return "Products";
+  };
+
+  const [mobileSearchCategory, setMobileSearchCategory] = useState(getInitialSearchCategory());
+  const [desktopSearchCategory, setDesktopSearchCategory] = useState(getInitialDesktopSearchCategory());
 
   const getPlaceholder = (category: string) => {
     switch(category) {
@@ -119,7 +133,7 @@ export const MainHeader = () => {
             <div className="flex items-center gap-1 px-3 py-1.5 rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background">
               <div className="flex-1 flex items-center gap-1">
                 <Select 
-                  defaultValue={isCommunityPage ? "ThisCommunity" : "Products"}
+                  defaultValue={getInitialDesktopSearchCategory()}
                   onValueChange={setDesktopSearchCategory}
                 >
                   <SelectTrigger className="border-0 w-[200px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-7 text-sm [&>span]:whitespace-nowrap [&>span]:overflow-visible">
