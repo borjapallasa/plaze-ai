@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -58,6 +59,7 @@ const experts: Expert[] = [
 const Experts = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-background">
@@ -100,7 +102,11 @@ const Experts = () => {
           {/* Experts List */}
           <div className="space-y-4">
             {experts.map((expert) => (
-              <Card key={expert.id} className="p-6">
+              <Card 
+                key={expert.id} 
+                className="p-6 cursor-pointer transition-colors hover:bg-accent"
+                onClick={() => navigate(`/expert`)}
+              >
                 <div className="flex flex-col space-y-6">
                   {/* Header Section */}
                   <div className="flex items-start gap-4">
@@ -132,13 +138,25 @@ const Experts = () => {
                     </div>
 
                     <div className="hidden md:flex items-start gap-2">
-                      <Button variant="outline" size="icon" className="rounded-full border-[#C8C8C9]">
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="rounded-full border-[#C8C8C9]"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <Heart className="h-4 w-4" />
                       </Button>
-                      <Button variant="outline" className="whitespace-nowrap border-[#C8C8C9]">
+                      <Button 
+                        variant="outline" 
+                        className="whitespace-nowrap border-[#C8C8C9]"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         Message
                       </Button>
-                      <Button className="whitespace-nowrap bg-[#222222] hover:bg-[#000000]">
+                      <Button 
+                        className="whitespace-nowrap bg-[#222222] hover:bg-[#000000]"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         Invite to job
                       </Button>
                     </div>
@@ -178,10 +196,17 @@ const Experts = () => {
 
                   {/* Mobile Buttons */}
                   <div className="md:hidden flex flex-col space-y-2">
-                    <Button variant="outline" className="w-full border-[#C8C8C9]">
+                    <Button 
+                      variant="outline" 
+                      className="w-full border-[#C8C8C9]"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       Message
                     </Button>
-                    <Button className="w-full bg-[#222222] hover:bg-[#000000]">
+                    <Button 
+                      className="w-full bg-[#222222] hover:bg-[#000000]"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       Invite to job
                     </Button>
                   </div>
