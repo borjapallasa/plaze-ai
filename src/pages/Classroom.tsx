@@ -37,7 +37,7 @@ export default function Classroom() {
             <div className="space-y-6">
               {/* Course Title Section */}
               <div>
-                <h2 className="text-lg font-semibold mb-2 text-left">How To Create Automated SEO Blogs With AI</h2>
+                <h2 className="text-lg font-semibold mb-2 text-left leading-snug">How To Create Automated SEO Blogs With AI</h2>
                 <div className="h-2 bg-muted rounded-full">
                   <div className="h-full w-0 bg-primary rounded-full"></div>
                 </div>
