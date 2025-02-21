@@ -1,7 +1,7 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Search, Menu, User } from "lucide-react";
+import { Search, Menu, User, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -22,6 +22,7 @@ import {
 export const MainHeader = () => {
   const location = useLocation();
   const isCommunityPage = location.pathname.includes('/community') || location.pathname.includes('/classroom');
+  const [mobileSearchCategory, setMobileSearchCategory] = useState(isCommunityPage ? "This Community" : "Products");
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-background border-b">
@@ -30,29 +31,45 @@ export const MainHeader = () => {
         <div className="flex md:hidden items-center justify-between h-full gap-3">
           <div className="flex-1">
             <div className="flex items-center gap-1 px-3 py-1.5 rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background">
-              {isCommunityPage ? (
-                <>
-                  <Input
-                    className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-7 text-sm flex-1"
-                    placeholder="Search in this community..."
-                    type="search"
-                  />
-                  <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90 h-7 w-7">
-                    <Search className="h-3.5 w-3.5" />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-7 px-2 flex items-center gap-1 hover:bg-transparent"
+                  >
+                    <span className="text-sm font-normal">{mobileSearchCategory}</span>
+                    <ChevronDown className="h-3.5 w-3.5" />
                   </Button>
-                </>
-              ) : (
-                <>
-                  <Input
-                    className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-7 text-sm flex-1"
-                    placeholder="Search products..."
-                    type="search"
-                  />
-                  <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90 h-7 w-7">
-                    <Search className="h-3.5 w-3.5" />
-                  </Button>
-                </>
-              )}
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-[200px]">
+                  {isCommunityPage && (
+                    <DropdownMenuItem onClick={() => setMobileSearchCategory("This Community")}>
+                      This Community
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuItem onClick={() => setMobileSearchCategory("Products")}>
+                    Products
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setMobileSearchCategory("Experts")}>
+                    Experts
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setMobileSearchCategory("Communities")}>
+                    Communities
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setMobileSearchCategory("Jobs")}>
+                    Jobs
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Input
+                className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-7 text-sm flex-1"
+                placeholder={`Search ${mobileSearchCategory.toLowerCase()}...`}
+                type="search"
+              />
+              <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90 h-7 w-7">
+                <Search className="h-3.5 w-3.5" />
+              </Button>
             </div>
           </div>
           <DropdownMenu>
