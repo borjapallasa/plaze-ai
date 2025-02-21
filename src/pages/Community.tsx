@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,9 +8,11 @@ import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/ProductCard";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { useState } from "react";
+import { ThreadDialog } from "@/components/ThreadDialog";
 
 export default function Community() {
   const [date, setDate] = useState<Date | undefined>(new Date());
+  const [isThreadOpen, setIsThreadOpen] = useState(false);
 
   const templates = [
     {
@@ -222,7 +223,10 @@ export default function Community() {
             <Button className="w-full sm:w-auto">Create New Thread</Button>
             <Input placeholder="Search thread" className="flex-1" />
           </div>
-          <Card className="group hover:bg-accent transition-colors cursor-pointer">
+          <Card 
+            className="group hover:bg-accent transition-colors cursor-pointer"
+            onClick={() => setIsThreadOpen(true)}
+          >
             <CardContent className="p-6 space-y-4">
               <div className="flex items-start gap-4">
                 <Avatar className="h-12 w-12 flex-shrink-0">
@@ -322,6 +326,11 @@ export default function Community() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <ThreadDialog 
+        isOpen={isThreadOpen}
+        onClose={() => setIsThreadOpen(false)}
+      />
     </div>
   );
 }
