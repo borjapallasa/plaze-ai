@@ -52,8 +52,8 @@ export default function Transactions() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="pt-16">
-        <MainHeader />
+      <MainHeader />
+      <div className="pt-24"> {/* Increased padding-top to account for fixed header */}
         <div className="container mx-auto px-4 py-8 max-w-[1000px]">
           <h1 className="text-2xl font-semibold mb-6">All Your Purchases</h1>
           
