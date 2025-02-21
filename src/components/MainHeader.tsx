@@ -21,9 +21,41 @@ import {
 
 export const MainHeader = () => {
   const location = useLocation();
-  const isCommunityPage = location.pathname.includes('/community') || location.pathname.includes('/classroom');
-  const [mobileSearchCategory, setMobileSearchCategory] = useState(isCommunityPage ? "This Community" : "Products");
-  const [desktopSearchCategory, setDesktopSearchCategory] = useState(isCommunityPage ? "ThisCommunity" : "Products");
+  
+  const getInitialSearchCategory = () => {
+    if (location.pathname.includes('/community') || location.pathname.includes('/classroom')) {
+      return "This Community";
+    }
+    if (location.pathname.includes('/expert')) {
+      return "Experts";
+    }
+    if (location.pathname.includes('/jobs')) {
+      return "Jobs";
+    }
+    if (location.pathname.includes('/blog')) {
+      return "Products";
+    }
+    return "Products"; // default fallback
+  };
+
+  const getInitialDesktopSearchCategory = () => {
+    if (location.pathname.includes('/community') || location.pathname.includes('/classroom')) {
+      return "ThisCommunity";
+    }
+    if (location.pathname.includes('/expert')) {
+      return "Experts";
+    }
+    if (location.pathname.includes('/jobs')) {
+      return "Jobs";
+    }
+    if (location.pathname.includes('/blog')) {
+      return "Products";
+    }
+    return "Products"; // default fallback
+  };
+
+  const [mobileSearchCategory, setMobileSearchCategory] = useState(getInitialSearchCategory());
+  const [desktopSearchCategory, setDesktopSearchCategory] = useState(getInitialDesktopSearchCategory());
 
   const getPlaceholder = (category: string) => {
     switch(category) {
@@ -61,7 +93,7 @@ export const MainHeader = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-[200px]">
-                  {isCommunityPage && (
+                  {(location.pathname.includes('/community') || location.pathname.includes('/classroom')) && (
                     <DropdownMenuItem onClick={() => setMobileSearchCategory("This Community")}>
                       This Community
                     </DropdownMenuItem>
@@ -119,14 +151,14 @@ export const MainHeader = () => {
             <div className="flex items-center gap-1 px-3 py-1.5 rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background">
               <div className="flex-1 flex items-center gap-1">
                 <Select 
-                  defaultValue={isCommunityPage ? "ThisCommunity" : "Products"}
+                  defaultValue={getInitialDesktopSearchCategory()}
                   onValueChange={setDesktopSearchCategory}
                 >
                   <SelectTrigger className="border-0 w-[200px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-7 text-sm [&>span]:whitespace-nowrap [&>span]:overflow-visible">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="w-[240px]">
-                    {isCommunityPage && (
+                    {(location.pathname.includes('/community') || location.pathname.includes('/classroom')) && (
                       <SelectItem value="ThisCommunity" className="whitespace-nowrap">This Community</SelectItem>
                     )}
                     <SelectItem value="Products">Products</SelectItem>
