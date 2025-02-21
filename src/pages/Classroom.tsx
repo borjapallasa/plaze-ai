@@ -38,10 +38,10 @@ export default function Classroom() {
               {/* Course Title Section */}
               <div>
                 <h2 className="text-lg font-semibold mb-2 text-left leading-snug">How To Create Automated SEO Blogs With AI</h2>
-                <div className="h-2 bg-muted rounded-full">
+                <div className="h-2 bg-muted rounded-full mb-2">
                   <div className="h-full w-0 bg-primary rounded-full"></div>
                 </div>
-                <p className="text-sm text-muted-foreground mt-1">0% complete</p>
+                <p className="text-sm text-muted-foreground">0% complete</p>
               </div>
 
               {/* Lessons List */}
