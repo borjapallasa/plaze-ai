@@ -7,6 +7,7 @@ import { ExpertServices } from "@/components/expert/ExpertServices";
 import { ExpertCommunity } from "@/components/expert/ExpertCommunity";
 import { MoreFromSeller } from "@/components/product/MoreFromSeller";
 import { ProductReviews } from "@/components/product/ProductReviews";
+import { MainHeader } from "@/components/MainHeader";
 
 export default function Expert() {
   const moreProducts = [
@@ -118,61 +119,64 @@ export default function Expert() {
   ];
 
   return (
-    <div className="space-y-8">
-      <div className="container mx-auto px-4">
-        <ExpertHeader />
-      </div>
-
-      <div className="container mx-auto px-4">
-        {/* Desktop Layout */}
-        <div className="hidden lg:block space-y-8">
-          <div className="grid grid-cols-5 gap-6">
-            <ExpertInfo />
-            <ExpertSkills />
-          </div>
-
-          <div className="grid grid-cols-5 gap-6">
-            <ExpertStats />
-            <ExpertServices />
-          </div>
-
-          <ExpertCommunity />
-
-          <div className="space-y-8">
-            <MoreFromSeller products={moreProducts} />
-            
-            <ProductReviews reviews={reviews} className="p-6 border-gray-100" />
-          </div>
+    <div className="min-h-screen bg-background">
+      <div className="pt-16">
+        <MainHeader />
+        <div className="container mx-auto px-4">
+          <ExpertHeader />
         </div>
 
-        {/* Mobile Layout - Reordered */}
-        <div className="lg:hidden space-y-8">
-          <div>
-            <ExpertSkills />
-          </div>
+        <div className="container mx-auto px-4">
+          {/* Desktop Layout */}
+          <div className="hidden lg:block space-y-8">
+            <div className="grid grid-cols-5 gap-6">
+              <ExpertInfo />
+              <ExpertSkills />
+            </div>
 
-          <div>
-            <ExpertInfo />
-          </div>
+            <div className="grid grid-cols-5 gap-6">
+              <ExpertStats />
+              <ExpertServices />
+            </div>
 
-          <div>
-            <ExpertServices />
-          </div>
-
-          <div>
-            <ExpertStats />
-          </div>
-
-          <div>
             <ExpertCommunity />
+
+            <div className="space-y-8">
+              <MoreFromSeller products={moreProducts} />
+              
+              <ProductReviews reviews={reviews} className="p-6 border-gray-100" />
+            </div>
           </div>
 
-          <div>
-            <MoreFromSeller products={moreProducts} />
-          </div>
+          {/* Mobile Layout - Reordered */}
+          <div className="lg:hidden space-y-8">
+            <div>
+              <ExpertSkills />
+            </div>
 
-          <div>
-            <ProductReviews reviews={reviews} className="p-6 border-gray-100" />
+            <div>
+              <ExpertInfo />
+            </div>
+
+            <div>
+              <ExpertServices />
+            </div>
+
+            <div>
+              <ExpertStats />
+            </div>
+
+            <div>
+              <ExpertCommunity />
+            </div>
+
+            <div>
+              <MoreFromSeller products={moreProducts} />
+            </div>
+
+            <div>
+              <ProductReviews reviews={reviews} className="p-6 border-gray-100" />
+            </div>
           </div>
         </div>
       </div>
