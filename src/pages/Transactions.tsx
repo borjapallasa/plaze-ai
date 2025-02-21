@@ -69,15 +69,15 @@ export default function Transactions() {
                 className="p-6 hover:bg-accent transition-colors cursor-pointer"
               >
                 <div className="grid grid-cols-[2fr,1fr,1fr,auto] items-center gap-8">
-                  {/* Template Name */}
+                  {/* Name */}
                   <div>
-                    <div className="text-sm text-[#888888] mb-1">Template Name</div>
+                    <div className="text-sm text-[#888888] mb-1">Name</div>
                     <div className="text-[#333333] font-medium leading-tight">{transaction.templateName}</div>
                   </div>
 
-                  {/* Deliverables */}
+                  {/* Category */}
                   <div>
-                    <div className="text-sm text-[#888888] mb-1">Deliverables</div>
+                    <div className="text-sm text-[#888888] mb-1">Category</div>
                     <div className="flex flex-wrap gap-2">
                       {transaction.deliverables.map((deliverable, index) => (
                         <Badge 
@@ -91,13 +91,13 @@ export default function Transactions() {
                     </div>
                   </div>
 
-                  {/* Transaction Date */}
+                  {/* Date */}
                   <div>
-                    <div className="text-sm text-[#888888] mb-1">Transaction Date</div>
+                    <div className="text-sm text-[#888888] mb-1">Date</div>
                     <div className="text-[#333333] font-medium">{transaction.transactionDate}</div>
                   </div>
 
-                  {/* Amount and Rating */}
+                  {/* Amount and Review */}
                   <div className="flex flex-col gap-2">
                     <div>
                       <div className="text-sm text-[#888888] mb-1">Amount</div>
