@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Mail, Lock, User, Eye, EyeOff } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 export default function SignUpCommunity() {
   const [email, setEmail] = useState("");
@@ -30,8 +31,16 @@ export default function SignUpCommunity() {
               You've been invited to{" "}
               <span className="text-primary">join this community!</span>
             </h1>
-            <h2 className="text-xl font-semibold">Optimal Path Automations</h2>
-            <p className="text-sm text-muted-foreground">This community is host by Borja P.</p>
+            <div className="flex items-start gap-4">
+              <Avatar className="h-16 w-16 rounded-lg border">
+                <AvatarImage src="https://images.unsplash.com/photo-1517022812141-23620dba5c23" alt="Community thumbnail" />
+                <AvatarFallback>OPA</AvatarFallback>
+              </Avatar>
+              <div>
+                <h2 className="text-xl font-semibold">Optimal Path Automations</h2>
+                <p className="text-sm text-muted-foreground">This community is host by Borja P.</p>
+              </div>
+            </div>
           </div>
 
           <div className="space-y-6">
