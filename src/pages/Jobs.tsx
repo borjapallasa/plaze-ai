@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
+import { MainHeader } from "@/components/MainHeader";
 
 interface Job {
   id: number;
@@ -116,33 +117,38 @@ const JobCard = ({ job }: { job: Job }) => (
 
 const Jobs = () => {
   return (
-    <div className="container mx-auto px-4 py-6 max-w-5xl">
-      <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
-        <Input 
-          placeholder="Search for jobs" 
-          className="pl-10 h-12"
-        />
-      </div>
+    <div className="min-h-screen bg-background">
+      <div className="pt-16">
+        <MainHeader />
+        <div className="container mx-auto px-4 py-6 max-w-5xl">
+          <div className="relative mb-6">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
+            <Input 
+              placeholder="Search for jobs" 
+              className="pl-10 h-12"
+            />
+          </div>
 
-      <h1 className="text-2xl font-bold mb-4">Jobs you might like</h1>
+          <h1 className="text-2xl font-bold mb-4">Jobs you might like</h1>
 
-      <Tabs defaultValue="best" className="mb-6">
-        <TabsList className="w-full justify-start">
-          <TabsTrigger value="best" className="flex-1">Best Matches</TabsTrigger>
-          <TabsTrigger value="recent" className="flex-1">Most Recent</TabsTrigger>
-          <TabsTrigger value="saved" className="flex-1">Saved Jobs</TabsTrigger>
-        </TabsList>
-      </Tabs>
+          <Tabs defaultValue="best" className="mb-6">
+            <TabsList className="w-full justify-start">
+              <TabsTrigger value="best" className="flex-1">Best Matches</TabsTrigger>
+              <TabsTrigger value="recent" className="flex-1">Most Recent</TabsTrigger>
+              <TabsTrigger value="saved" className="flex-1">Saved Jobs</TabsTrigger>
+            </TabsList>
+          </Tabs>
 
-      <p className="text-muted-foreground mb-6 text-sm">
-        Browse jobs that match your experience to a client's hiring preferences. Ordered by most relevant.
-      </p>
+          <p className="text-muted-foreground mb-6 text-sm">
+            Browse jobs that match your experience to a client's hiring preferences. Ordered by most relevant.
+          </p>
 
-      <div className="space-y-4">
-        {jobs.map(job => (
-          <JobCard key={job.id} job={job} />
-        ))}
+          <div className="space-y-4">
+            {jobs.map(job => (
+              <JobCard key={job.id} job={job} />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
