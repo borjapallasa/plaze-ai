@@ -1,7 +1,21 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { AffiliateDashboard } from "@/components/affiliates/AffiliateDashboard";
 import { AffiliateTable } from "@/components/affiliates/AffiliateTable";
 import { ProductCard } from "@/components/ProductCard";
+import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Star, ThumbsUp, TrendingUp, Sparkle, Trophy, Tags } from "lucide-react";
+import { useState } from "react";
+
+const badges = [
+  { label: "Trending", icon: TrendingUp, category: null },
+  { label: "Newest", icon: Sparkle, category: "template" },
+  { label: "Top Seller", icon: Trophy, category: "prompt" },
+  { label: "Best Reviews", icon: ThumbsUp, category: "community" },
+  { label: "Our Pick", icon: Star, category: "expert" },
+  { label: "Affiliate Offers", icon: Tags, category: null }
+];
 
 const affiliateOffers = [
   {
@@ -37,6 +51,15 @@ const affiliateOffers = [
 ];
 
 export default function Affiliates() {
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [filterType, setFilterType] = useState("Products");
+
+  const handleBadgeClick = (category: string | null) => {
+    setSelectedCategory(prevCategory => 
+      prevCategory === category ? null : category
+    );
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <MainHeader />
@@ -51,7 +74,49 @@ export default function Affiliates() {
           <AffiliateTable />
         </div>
         <div className="mt-16">
-          <h2 className="text-4xl font-bold mb-8 text-foreground">Affiliate offers</h2>
+          <div className="flex flex-col space-y-8 mb-8">
+            <h2 className="text-4xl font-bold text-foreground">Affiliate offers</h2>
+            
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex flex-wrap gap-3">
+                {badges.map((badge, index) => {
+                  const Icon = badge.icon;
+                  const isSelected = selectedCategory === badge.category;
+                  return (
+                    <Badge
+                      key={index}
+                      variant={isSelected ? "default" : "secondary"}
+                      className={`px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200 ${
+                        isSelected 
+                          ? 'bg-primary text-primary-foreground shadow-md' 
+                          : 'hover:bg-secondary hover:shadow-sm'
+                      }`}
+                      onClick={() => handleBadgeClick(badge.category)}
+                    >
+                      <Icon className="w-4 h-4 mr-2" />
+                      {badge.label}
+                    </Badge>
+                  );
+                })}
+              </div>
+              
+              <Select 
+                defaultValue="Products" 
+                onValueChange={setFilterType}
+                value={filterType}
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Products">Products</SelectItem>
+                  <SelectItem value="Experts">Experts</SelectItem>
+                  <SelectItem value="Communities">Communities</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {affiliateOffers.map((offer, index) => (
               <ProductCard
