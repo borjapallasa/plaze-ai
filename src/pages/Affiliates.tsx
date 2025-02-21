@@ -187,15 +187,15 @@ export default function Affiliates() {
                 <AffiliateTable />
               </TabsContent>
 
-              <TabsContent value="transactions" className="min-h-[300px] flex items-center justify-center text-muted-foreground">
+              <TabsContent value="transactions" className="h-24 flex items-center justify-center text-muted-foreground">
                 Transactions tab content
               </TabsContent>
 
-              <TabsContent value="partnerships" className="min-h-[300px] flex items-center justify-center text-muted-foreground">
+              <TabsContent value="partnerships" className="h-24 flex items-center justify-center text-muted-foreground">
                 Partnerships tab content
               </TabsContent>
 
-              <TabsContent value="payouts" className="min-h-[300px] flex items-center justify-center text-muted-foreground">
+              <TabsContent value="payouts" className="h-24 flex items-center justify-center text-muted-foreground">
                 Payouts tab content
               </TabsContent>
             </Tabs>
