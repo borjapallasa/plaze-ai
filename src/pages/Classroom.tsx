@@ -35,9 +35,9 @@ export default function Classroom() {
         <Card className="w-64 flex-shrink-0 h-fit">
           <CardContent className="p-4">
             <div className="space-y-6">
-              {/* Progress Section */}
+              {/* Course Title Section */}
               <div>
-                <h2 className="text-lg font-semibold mb-2">Weekly Call Recordings</h2>
+                <h2 className="text-lg font-semibold mb-2 text-left">How To Create Automated SEO Blogs With AI</h2>
                 <div className="h-2 bg-muted rounded-full">
                   <div className="h-full w-0 bg-primary rounded-full"></div>
                 </div>
@@ -50,7 +50,7 @@ export default function Classroom() {
                   onClick={() => setIsExpanded(!isExpanded)}
                   className="w-full flex items-center justify-between mb-2 hover:bg-muted/50 p-2 rounded-lg transition-colors"
                 >
-                  <h3 className="font-medium">How To Create Automated SEO Blogs With AI</h3>
+                  <h3 className="font-medium">New set</h3>
                   <ChevronDown 
                     className={cn(
                       "w-4 h-4 text-muted-foreground transition-transform duration-200",
