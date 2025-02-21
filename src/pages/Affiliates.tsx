@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { AffiliateDashboard } from "@/components/affiliates/AffiliateDashboard";
 import { AffiliateTable } from "@/components/affiliates/AffiliateTable";
@@ -10,27 +9,30 @@ const affiliateOffers = [
     price: "$99.99",
     image: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81",
     seller: "Marketing AI",
-    description: "Split: 70/30 - You earn 30% commission on each sale. Complete suite of AI-powered marketing tools.",
+    description: "Complete suite of AI-powered marketing tools for automated campaigns, social media management, and analytics.",
     tags: ["marketing", "ai", "automation"],
-    category: "software"
+    category: "software",
+    split: "70/30"
   },
   {
     title: "SEO Optimizer Pro",
     price: "$79.99",
     image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7",
     seller: "SEO Tools Inc",
-    description: "Split: 75/25 - You earn 25% commission per sale. Professional SEO optimization toolkit.",
+    description: "Professional SEO optimization toolkit with keyword research, rank tracking, and content optimization features.",
     tags: ["seo", "marketing", "tools"],
-    category: "software"
+    category: "software",
+    split: "75/25"
   },
   {
     title: "Content Creator AI",
     price: "$129.99",
     image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
     seller: "AI Solutions",
-    description: "Split: 65/35 - You earn 35% commission on each sale. AI-powered content creation platform.",
+    description: "AI-powered content creation platform with smart templates, multilingual support, and brand voice customization.",
     tags: ["content", "ai", "writing"],
-    category: "software"
+    category: "software",
+    split: "65/35"
   }
 ];
 
@@ -61,6 +63,7 @@ export default function Affiliates() {
                 description={offer.description}
                 tags={offer.tags}
                 category={offer.category}
+                split={offer.split}
               />
             ))}
           </div>

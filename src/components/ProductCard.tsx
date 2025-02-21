@@ -13,9 +13,10 @@ interface ProductCardProps {
   tags: string[];
   fromPrice?: string;
   category: string;
+  split?: string;
 }
 
-export const ProductCard = ({ title, price, image, seller, description, tags, fromPrice, category }: ProductCardProps) => {
+export const ProductCard = ({ title, price, image, seller, description, tags, fromPrice, category, split }: ProductCardProps) => {
   return (
     <Card className="group relative flex flex-col space-y-4 p-4 lg:p-6 hover:bg-accent transition-colors">
       <div className="flex items-start gap-3 lg:gap-4">
@@ -37,10 +38,15 @@ export const ProductCard = ({ title, price, image, seller, description, tags, fr
         </div>
       </div>
 
-      <p className="text-sm text-muted-foreground line-clamp-2">{description}</p>
+      <p className="text-sm text-foreground line-clamp-2">{description}</p>
 
-      <div className="flex items-center gap-2">
-        <span className="text-sm font-medium">Minimum earnings: {price}</span>
+      <div className="space-y-1">
+        <div className="text-sm font-medium">Minimum earnings: {price}</div>
+        {split && (
+          <div className="text-xs text-muted-foreground">
+            Commission split: {split}
+          </div>
+        )}
       </div>
 
       <div className="flex items-center justify-between -mt-3">
