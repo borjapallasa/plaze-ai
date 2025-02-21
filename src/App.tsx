@@ -17,6 +17,7 @@ import Jobs from "./pages/Jobs";
 import ManageSubscriptions from "./pages/ManageSubscriptions";
 import Blog from "./pages/Blog";
 import Affiliates from "./pages/Affiliates";
+import PersonalArea from "./pages/PersonalArea";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
         <Route path="/manage-subscriptions" element={<ManageSubscriptions />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/affiliates" element={<Affiliates />} />
+        <Route path="/personal-area" element={<PersonalArea />} />
       </Routes>
       <Toaster />
       <Sonner />
