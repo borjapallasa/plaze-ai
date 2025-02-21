@@ -6,7 +6,7 @@ import { Share2, Save, MapPin, Calendar } from "lucide-react";
 
 export const ExpertHeader = () => {
   return (
-    <Card className="mt-8">
+    <Card className="mt-8 mb-6">
       <CardContent className="p-6">
         <div className="flex flex-col gap-4">
           <div className="flex sm:hidden gap-4 items-start w-full">
