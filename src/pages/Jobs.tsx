@@ -3,6 +3,7 @@ import { Search, ThumbsDown, Heart, MapPin } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card } from "@/components/ui/card";
 
 interface Job {
   id: number;
@@ -57,7 +58,7 @@ const jobs: Job[] = [
 ];
 
 const JobCard = ({ job }: { job: Job }) => (
-  <div className="py-6 border-b last:border-b-0 bg-background">
+  <Card className="p-6 mb-4">
     <div className="mb-1">
       <p className="text-sm text-muted-foreground">Posted {job.postedTime}</p>
     </div>
@@ -110,7 +111,7 @@ const JobCard = ({ job }: { job: Job }) => (
       </div>
       <div>Proposals: {job.proposals}</div>
     </div>
-  </div>
+  </Card>
 );
 
 const Jobs = () => {
@@ -138,13 +139,13 @@ const Jobs = () => {
         Browse jobs that match your experience to a client's hiring preferences. Ordered by most relevant.
       </p>
 
-      <div className="divide-y">
+      <div className="space-y-4">
         {jobs.map(job => (
           <JobCard key={job.id} job={job} />
         ))}
       </div>
     </div>
   );
-};
+}
 
 export default Jobs;
