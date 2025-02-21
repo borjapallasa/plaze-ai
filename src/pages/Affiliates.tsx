@@ -167,96 +167,99 @@ export default function Affiliates() {
       <main className="container mx-auto px-4 py-8 pt-24">
         <h1 className="text-4xl font-bold mb-8 text-foreground">Your affiliate dashboard</h1>
         <AffiliateDashboard />
-        <div className="mt-12">
-          <h2 className="text-4xl font-bold mb-4 text-foreground">Your affiliates</h2>
-          <p className="text-muted-foreground mb-8">
-            Click on your affiliate to see all transactions.
-          </p>
-          
-          <Tabs defaultValue="affiliates" className="space-y-6">
-            <TabsList className="w-full justify-start">
-              <TabsTrigger value="affiliates">Affiliates</TabsTrigger>
-              <TabsTrigger value="transactions">Transactions</TabsTrigger>
-              <TabsTrigger value="partnerships">Partnerships</TabsTrigger>
-              <TabsTrigger value="payouts">Payouts</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="affiliates">
-              <AffiliateTable />
-            </TabsContent>
-
-            <TabsContent value="transactions" className="min-h-[300px] flex items-center justify-center text-muted-foreground">
-              Transactions tab content
-            </TabsContent>
-
-            <TabsContent value="partnerships" className="min-h-[300px] flex items-center justify-center text-muted-foreground">
-              Partnerships tab content
-            </TabsContent>
-
-            <TabsContent value="payouts" className="min-h-[300px] flex items-center justify-center text-muted-foreground">
-              Payouts tab content
-            </TabsContent>
-          </Tabs>
-        </div>
-
-        <div className="mt-8">
-          <div className="flex flex-col space-y-8 mb-8">
-            <h2 className="text-4xl font-bold text-foreground">Affiliate offers</h2>
+        
+        <div className="mt-12 space-y-12">
+          <div>
+            <h2 className="text-4xl font-bold mb-4 text-foreground">Your affiliates</h2>
+            <p className="text-muted-foreground mb-8">
+              Click on your affiliate to see all transactions.
+            </p>
             
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div className="flex flex-wrap gap-3">
-                {badges.map((badge, index) => {
-                  const Icon = badge.icon;
-                  const isSelected = selectedCategory === badge.category;
-                  return (
-                    <Badge
-                      key={index}
-                      variant={isSelected ? "default" : "secondary"}
-                      className={`px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200 ${
-                        isSelected 
-                          ? 'bg-primary text-primary-foreground shadow-md' 
-                          : 'hover:bg-secondary hover:shadow-sm'
-                      }`}
-                      onClick={() => handleBadgeClick(badge.category)}
-                    >
-                      <Icon className="w-4 h-4 mr-2" />
-                      {badge.label}
-                    </Badge>
-                  );
-                })}
-              </div>
-              
-              <Select 
-                defaultValue="Products" 
-                onValueChange={setFilterType}
-                value={filterType}
-              >
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Products">Products</SelectItem>
-                  <SelectItem value="Experts">Experts</SelectItem>
-                  <SelectItem value="Communities">Communities</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            <Tabs defaultValue="affiliates" className="space-y-4">
+              <TabsList className="w-full justify-start">
+                <TabsTrigger value="affiliates">Affiliates</TabsTrigger>
+                <TabsTrigger value="transactions">Transactions</TabsTrigger>
+                <TabsTrigger value="partnerships">Partnerships</TabsTrigger>
+                <TabsTrigger value="payouts">Payouts</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="affiliates">
+                <AffiliateTable />
+              </TabsContent>
+
+              <TabsContent value="transactions" className="min-h-[300px] flex items-center justify-center text-muted-foreground">
+                Transactions tab content
+              </TabsContent>
+
+              <TabsContent value="partnerships" className="min-h-[300px] flex items-center justify-center text-muted-foreground">
+                Partnerships tab content
+              </TabsContent>
+
+              <TabsContent value="payouts" className="min-h-[300px] flex items-center justify-center text-muted-foreground">
+                Payouts tab content
+              </TabsContent>
+            </Tabs>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {affiliateOffers.map((offer, index) => (
-              <ProductCard
-                key={index}
-                title={offer.title}
-                price={offer.price}
-                image={offer.image}
-                seller={offer.seller}
-                description={offer.description}
-                tags={offer.tags}
-                category={offer.category}
-                split={offer.split}
-              />
-            ))}
+          <div>
+            <div className="flex flex-col space-y-8 mb-8">
+              <h2 className="text-4xl font-bold text-foreground">Affiliate offers</h2>
+              
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="flex flex-wrap gap-3">
+                  {badges.map((badge, index) => {
+                    const Icon = badge.icon;
+                    const isSelected = selectedCategory === badge.category;
+                    return (
+                      <Badge
+                        key={index}
+                        variant={isSelected ? "default" : "secondary"}
+                        className={`px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200 ${
+                          isSelected 
+                            ? 'bg-primary text-primary-foreground shadow-md' 
+                            : 'hover:bg-secondary hover:shadow-sm'
+                        }`}
+                        onClick={() => handleBadgeClick(badge.category)}
+                      >
+                        <Icon className="w-4 h-4 mr-2" />
+                        {badge.label}
+                      </Badge>
+                    );
+                  })}
+                </div>
+                
+                <Select 
+                  defaultValue="Products" 
+                  onValueChange={setFilterType}
+                  value={filterType}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Products">Products</SelectItem>
+                    <SelectItem value="Experts">Experts</SelectItem>
+                    <SelectItem value="Communities">Communities</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {affiliateOffers.map((offer, index) => (
+                <ProductCard
+                  key={index}
+                  title={offer.title}
+                  price={offer.price}
+                  image={offer.image}
+                  seller={offer.seller}
+                  description={offer.description}
+                  tags={offer.tags}
+                  category={offer.category}
+                  split={offer.split}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </main>
