@@ -28,7 +28,7 @@ export const ProductCard = ({ title, price, image, seller, description, tags, fr
           />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-sm leading-tight truncate">{title}</h3>
+          <h3 className="font-semibold text-base leading-tight truncate">{title}</h3>
           <Badge 
             variant="secondary" 
             className="font-medium capitalize bg-blue-50 text-blue-600 hover:bg-blue-50 text-xs mt-1.5"
@@ -38,13 +38,13 @@ export const ProductCard = ({ title, price, image, seller, description, tags, fr
         </div>
       </div>
 
-      <p className="text-sm text-foreground line-clamp-2 mt-4 mb-6">{description}</p>
+      <p className="text-base text-foreground line-clamp-2 mt-4 mb-6">{description}</p>
 
-      <div className="flex gap-2 flex-wrap mt-auto mb-2">
+      <div className="flex gap-2 flex-wrap mt-auto mb-4">
         {tags.slice(0, 2).map((tag, index) => (
           <span
             key={index}
-            className="text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full text-xs"
+            className="text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full text-sm"
           >
             #{tag}
           </span>
@@ -55,13 +55,13 @@ export const ProductCard = ({ title, price, image, seller, description, tags, fr
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-1.5">
-              <DollarSign className="h-3.5 w-3.5 text-muted-foreground" />
-              <span className="text-xs font-medium">{price}</span>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm font-medium">{price}</span>
             </div>
             {split && (
               <div className="flex items-center gap-1.5">
-                <Percent className="h-3.5 w-3.5 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">{split}</span>
+                <Percent className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">{split}</span>
               </div>
             )}
           </div>
