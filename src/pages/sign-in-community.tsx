@@ -106,6 +106,12 @@ export default function SignInCommunity() {
                 </button>
               </div>
 
+              <div className="flex justify-end">
+                <Button variant="link" className="h-auto p-0 text-sm">
+                  Reset password
+                </Button>
+              </div>
+
               <Button
                 type="submit"
                 className="w-full"
