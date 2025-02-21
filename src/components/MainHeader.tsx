@@ -143,11 +143,11 @@ export const MainHeader = () => {
 
         {/* Desktop Header */}
         <div className="hidden md:flex items-center justify-between h-full gap-4">
-          <Link to="/" className="text-lg font-semibold">
+          <Link to="/" className="text-lg font-semibold w-[140px]">
             Logo
           </Link>
 
-          <div className="flex-1 max-w-xl">
+          <div className="flex-1 max-w-2xl mx-auto">
             <div className="flex items-center gap-1 px-3 py-1.5 rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background">
               <div className="flex-1 flex items-center gap-1">
                 <Select 
@@ -179,7 +179,7 @@ export const MainHeader = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 w-[140px] justify-end">
             <Button 
               variant="ghost" 
               size="sm" 
@@ -211,3 +211,4 @@ export const MainHeader = () => {
     </header>
   );
 };
+
