@@ -111,7 +111,7 @@ const Experts = () => {
                       </Avatar>
                       <Badge 
                         variant="secondary" 
-                        className="absolute -bottom-2 -right-2 bg-[#D3E4FD] text-[#0EA5E9]"
+                        className="absolute -bottom-2 -right-2 bg-[#F1F1F1] text-[#222222]"
                       >
                         <Crown className="h-3 w-3" />
                       </Badge>
@@ -121,14 +121,14 @@ const Experts = () => {
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="text-lg font-medium">{expert.name}</h3>
                         {expert.boosted && (
-                          <Badge variant="secondary" className="flex items-center gap-1 bg-[#E5DEFF] text-[#8B5CF6]">
+                          <Badge variant="secondary" className="flex items-center gap-1 bg-[#333333] text-white">
                             <Zap className="h-3 w-3" />
                             Boosted
                           </Badge>
                         )}
                       </div>
-                      <p className="text-base text-[#1A1F2C] mb-1">{expert.title}</p>
-                      <p className="text-sm text-[#8E9196]">{expert.location}</p>
+                      <p className="text-base text-[#333333] mb-1">{expert.title}</p>
+                      <p className="text-sm text-[#888888]">{expert.location}</p>
                     </div>
 
                     <div className="hidden md:flex items-start gap-2">
@@ -138,7 +138,7 @@ const Experts = () => {
                       <Button variant="outline" className="whitespace-nowrap border-[#C8C8C9]">
                         Message
                       </Button>
-                      <Button className="whitespace-nowrap bg-[#9b87f5] hover:bg-[#7E69AB]">
+                      <Button className="whitespace-nowrap bg-[#222222] hover:bg-[#000000]">
                         Invite to job
                       </Button>
                     </div>
@@ -146,14 +146,14 @@ const Experts = () => {
 
                   {/* Stats Section */}
                   <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-                    <span className="text-base text-[#1A1F2C]">${expert.rate}/hr</span>
+                    <span className="text-base text-[#333333]">${expert.rate}/hr</span>
                     <div className="flex items-center gap-1">
-                      <Crown className="h-4 w-4 text-[#0EA5E9]" />
-                      <span className="text-base text-[#1A1F2C]">{expert.successRate}% Job Success</span>
+                      <Crown className="h-4 w-4 text-[#555555]" />
+                      <span className="text-base text-[#333333]">{expert.successRate}% Job Success</span>
                     </div>
-                    <span className="text-base text-[#1A1F2C]">{expert.earned} earned</span>
+                    <span className="text-base text-[#333333]">{expert.earned} earned</span>
                     {expert.available && (
-                      <Badge variant="secondary" className="flex items-center gap-1 bg-[#E5DEFF] text-[#8B5CF6]">
+                      <Badge variant="secondary" className="flex items-center gap-1 bg-[#333333] text-white">
                         <Zap className="h-3 w-3" />
                         Available now
                       </Badge>
@@ -166,7 +166,7 @@ const Experts = () => {
                       <Badge 
                         key={index}
                         variant="secondary" 
-                        className="rounded-full bg-[#F1F0FB] text-[#403E43] hover:bg-[#F1F0FB]"
+                        className="rounded-full bg-[#F1F1F1] text-[#333333] hover:bg-[#F1F1F1]"
                       >
                         {skill}
                       </Badge>
@@ -174,14 +174,14 @@ const Experts = () => {
                   </div>
 
                   {/* Description Section */}
-                  <p className="text-base text-[#8E9196]">{expert.description}</p>
+                  <p className="text-base text-[#888888]">{expert.description}</p>
 
                   {/* Mobile Buttons */}
                   <div className="md:hidden flex flex-col space-y-2">
                     <Button variant="outline" className="w-full border-[#C8C8C9]">
                       Message
                     </Button>
-                    <Button className="w-full bg-[#9b87f5] hover:bg-[#7E69AB]">
+                    <Button className="w-full bg-[#222222] hover:bg-[#000000]">
                       Invite to job
                     </Button>
                   </div>
