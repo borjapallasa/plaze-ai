@@ -63,36 +63,36 @@ const Experts = () => {
     <div className="min-h-screen bg-background">
       <div className="pt-16">
         <MainHeader />
-        <div className="container max-w-6xl mx-auto px-4 py-8">
+        <div className="container max-w-6xl mx-auto px-4 py-6">
           {/* Search Section */}
-          <div className="mb-8 space-y-6">
+          <div className="mb-6 flex flex-col gap-3">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input 
                 placeholder="Search for experts" 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 h-12"
+                className="pl-9 h-10 text-sm"
               />
             </div>
             
             {/* Filters */}
-            <div className="flex gap-2 overflow-x-auto pb-2 hide-scrollbar">
-              <Button variant="outline" className="whitespace-nowrap">
+            <div className="flex gap-2 overflow-x-auto pb-1 hide-scrollbar">
+              <Button variant="outline" size="sm" className="h-8 text-sm">
                 Talent badge
-                <ChevronDown className="ml-1 h-4 w-4" />
+                <ChevronDown className="ml-1 h-3 w-3" />
               </Button>
-              <Button variant="outline" className="whitespace-nowrap">
+              <Button variant="outline" size="sm" className="h-8 text-sm">
                 Hourly rate
-                <ChevronDown className="ml-1 h-4 w-4" />
+                <ChevronDown className="ml-1 h-3 w-3" />
               </Button>
-              <Button variant="outline" className="whitespace-nowrap">
+              <Button variant="outline" size="sm" className="h-8 text-sm">
                 Location
-                <ChevronDown className="ml-1 h-4 w-4" />
+                <ChevronDown className="ml-1 h-3 w-3" />
               </Button>
-              <Button variant="outline" className="whitespace-nowrap">
+              <Button variant="outline" size="sm" className="h-8 text-sm">
                 Skills
-                <ChevronDown className="ml-1 h-4 w-4" />
+                <ChevronDown className="ml-1 h-3 w-3" />
               </Button>
             </div>
           </div>
