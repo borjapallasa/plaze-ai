@@ -51,24 +51,26 @@ export function AffiliateTable() {
           className="pl-10"
         />
       </div>
-      <div className="rounded-lg border">
-        <div className="grid grid-cols-5 gap-4 p-4 bg-muted/50">
-          <div className="font-medium">Affiliate</div>
-          <div className="font-medium">Joined @</div>
-          <div className="font-medium text-center">Active Templates</div>
-          <div className="font-medium text-center">Multiplier</div>
-          <div className="font-medium text-right">Affiliate Fees</div>
-        </div>
-        <div className="divide-y">
-          {affiliates.map((affiliate, index) => (
-            <div key={index} className="grid grid-cols-5 gap-4 p-4 hover:bg-muted/50 cursor-pointer">
-              <div>{affiliate.name}</div>
-              <div>{affiliate.joinedAt}</div>
-              <div className="text-center">{affiliate.activeTemplates}</div>
-              <div className="text-center">{affiliate.multiplier || "-"}</div>
-              <div className="text-right">{affiliate.fees}</div>
-            </div>
-          ))}
+      <div className="overflow-x-auto">
+        <div className="min-w-[800px] rounded-lg border">
+          <div className="grid grid-cols-5 gap-4 p-4 bg-muted/50">
+            <div className="font-medium">Affiliate</div>
+            <div className="font-medium">Joined @</div>
+            <div className="font-medium text-center">Active Templates</div>
+            <div className="font-medium text-center">Multiplier</div>
+            <div className="font-medium text-right">Affiliate Fees</div>
+          </div>
+          <div className="divide-y">
+            {affiliates.map((affiliate, index) => (
+              <div key={index} className="grid grid-cols-5 gap-4 p-4 hover:bg-muted/50 cursor-pointer">
+                <div>{affiliate.name}</div>
+                <div>{affiliate.joinedAt}</div>
+                <div className="text-center">{affiliate.activeTemplates}</div>
+                <div className="text-center">{affiliate.multiplier || "-"}</div>
+                <div className="text-right">{affiliate.fees}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

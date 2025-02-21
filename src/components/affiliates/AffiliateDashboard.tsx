@@ -7,13 +7,13 @@ export function AffiliateDashboard() {
   return (
     <Card className="w-full">
       <CardContent className="p-6">
-        <div className="flex justify-between items-start mb-8">
-          <div>
+        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-6">
+          <div className="space-y-4 w-full">
             <p className="text-lg mb-2">info@optimalpath.ai</p>
             <div className="space-y-4">
               <div>
                 <p className="text-sm text-muted-foreground">Your Affiliate Link</p>
-                <p className="font-medium">https://nocodeclick.com/sign-up?ref=BorjaLBLY</p>
+                <p className="font-medium break-all">https://nocodeclick.com/sign-up?ref=BorjaLBLY</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Number Of Affiliates</p>
@@ -37,9 +37,9 @@ export function AffiliateDashboard() {
               </div>
             </div>
           </div>
-          <div className="flex gap-2">
-            <Button>Request Payout</Button>
-            <Button variant="ghost" size="icon">
+          <div className="flex flex-col gap-2 w-full md:w-auto mt-4 md:mt-0">
+            <Button className="w-full md:w-auto">Request Payout</Button>
+            <Button variant="ghost" size="icon" className="hidden md:inline-flex">
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </div>
