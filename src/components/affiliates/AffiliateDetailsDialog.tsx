@@ -57,56 +57,56 @@ const transactions: Transaction[] = [
 export function AffiliateDetailsDialog({ isOpen, onClose, affiliate }: AffiliateDetailsDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
-        <div className="space-y-8 flex-1 overflow-y-auto">
-          <div>
-            <h2 className="text-3xl font-bold">{affiliate.name}</h2>
-            <p className="text-muted-foreground">{affiliate.status}</p>
+      <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col p-8">
+        <div className="space-y-12 flex-1 overflow-y-auto">
+          <div className="space-y-2">
+            <h2 className="text-4xl font-bold">{affiliate.name}</h2>
+            <p className="text-muted-foreground text-lg">{affiliate.status}</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-1">Active Templates</h3>
-              <p className="text-2xl font-semibold">{affiliate.activeTemplates}</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium text-muted-foreground">Active Templates</h3>
+              <p className="text-3xl font-semibold">{affiliate.activeTemplates}</p>
             </div>
-            <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-1">Total Sales</h3>
-              <p className="text-2xl font-semibold">{affiliate.totalSales}</p>
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium text-muted-foreground">Total Sales</h3>
+              <p className="text-3xl font-semibold">{affiliate.totalSales}</p>
             </div>
-            <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-1">Affiliate Fees</h3>
-              <p className="text-2xl font-semibold">{affiliate.affiliateFees}</p>
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium text-muted-foreground">Affiliate Fees</h3>
+              <p className="text-3xl font-semibold">{affiliate.affiliateFees}</p>
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-6">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
               <Input
                 placeholder="Type here to search"
-                className="pl-10"
+                className="pl-12 py-6 text-lg"
               />
             </div>
 
             <div className="overflow-auto border rounded-lg">
               <div className="min-w-[800px]">
                 <div className="sticky top-0 bg-muted/50 z-10">
-                  <div className="grid grid-cols-5 gap-4 p-3">
-                    <div className="font-medium">Template</div>
-                    <div className="font-medium text-right">Transaction Amount</div>
-                    <div className="font-medium text-right">Multiplier</div>
-                    <div className="font-medium text-right">Affiliate Fee</div>
-                    <div className="font-medium text-right">Transaction Date</div>
+                  <div className="grid grid-cols-5 gap-6 p-4">
+                    <div className="font-medium text-base">Template</div>
+                    <div className="font-medium text-right text-base">Transaction Amount</div>
+                    <div className="font-medium text-right text-base">Multiplier</div>
+                    <div className="font-medium text-right text-base">Affiliate Fee</div>
+                    <div className="font-medium text-right text-base">Transaction Date</div>
                   </div>
                 </div>
                 <div className="divide-y">
                   {transactions.map((transaction, index) => (
-                    <div key={index} className="grid grid-cols-5 gap-4 p-3 hover:bg-muted/50">
-                      <div className="truncate">{transaction.template}</div>
-                      <div className="text-right">{transaction.amount}</div>
-                      <div className="text-right">{transaction.multiplier}</div>
-                      <div className="text-right">{transaction.affiliateFee}</div>
-                      <div className="text-right">{transaction.date}</div>
+                    <div key={index} className="grid grid-cols-5 gap-6 p-4 hover:bg-muted/50">
+                      <div className="truncate text-base">{transaction.template}</div>
+                      <div className="text-right text-base">{transaction.amount}</div>
+                      <div className="text-right text-base">{transaction.multiplier}</div>
+                      <div className="text-right text-base">{transaction.affiliateFee}</div>
+                      <div className="text-right text-base">{transaction.date}</div>
                     </div>
                   ))}
                 </div>
