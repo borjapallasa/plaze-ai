@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
@@ -50,16 +51,16 @@ export default function Transactions() {
   );
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="fixed top-0 left-0 right-0 z-50 bg-background">
+    <div className="min-h-screen bg-background relative">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-background w-full">
         <MainHeader />
       </div>
-      <div className="pt-24">
-        <div className="container mx-auto px-4 py-8 max-w-[1000px]">
+      <div className="pt-24 relative w-full">
+        <div className="container mx-auto px-4 py-8 max-w-[1000px] relative">
           <h1 className="text-2xl font-semibold mb-6">All Your Purchases</h1>
           
           {/* Search and Filter Section */}
-          <div className="mb-6 flex gap-4">
+          <div className="mb-6 flex gap-4 relative">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input 
@@ -69,17 +70,23 @@ export default function Transactions() {
                 className="pl-9 h-10"
               />
             </div>
-            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Filter by category" />
-              </SelectTrigger>
-              <SelectContent position="popper" sideOffset={4}>
-                <SelectItem value="all">All Categories</SelectItem>
-                <SelectItem value="Product">Product</SelectItem>
-                <SelectItem value="Service">Service</SelectItem>
-                <SelectItem value="Community Subscription">Community Subscription</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="relative">
+              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Filter by category" />
+                </SelectTrigger>
+                <SelectContent 
+                  position="popper" 
+                  sideOffset={4}
+                  className="z-[60]"
+                >
+                  <SelectItem value="all">All Categories</SelectItem>
+                  <SelectItem value="Product">Product</SelectItem>
+                  <SelectItem value="Service">Service</SelectItem>
+                  <SelectItem value="Community Subscription">Community Subscription</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           {/* Transactions List */}
