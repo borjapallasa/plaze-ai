@@ -3,11 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ShoppingCart } from "lucide-react";
 import { useState } from "react";
+import { ProductVariants } from "@/components/product/ProductVariants";
 
 export default function Classroom() {
   const [isExpanded, setIsExpanded] = useState(true);
+  const [selectedVariant, setSelectedVariant] = useState("basic");
   
   const lessons = [
     {
@@ -27,6 +29,38 @@ export default function Classroom() {
       isActive: false,
     },
   ];
+
+  const variants = [
+    { 
+      id: "basic",
+      name: "Basic Package",
+      price: 99.99,
+      comparePrice: 149.99,
+      label: "Most Popular",
+      features: ["Core Course", "Basic Resources"]
+    },
+    {
+      id: "premium",
+      name: "Premium Package",
+      price: 149.99,
+      comparePrice: 199.99,
+      label: "Best Value",
+      highlight: true,
+      features: ["Core Course", "Premium Resources"]
+    },
+    {
+      id: "pro",
+      name: "Professional Package",
+      price: 199.99,
+      comparePrice: 299.99,
+      label: "Most Complete",
+      features: ["Core Course", "Premium Resources"]
+    }
+  ];
+
+  const handleAddToCart = () => {
+    // Add to cart logic here
+  };
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-[1400px]">
@@ -76,6 +110,18 @@ export default function Classroom() {
                     </button>
                   ))}
                 </div>
+              </div>
+
+              {/* Products in this class */}
+              <div className="pt-4 border-t">
+                <h3 className="font-semibold mb-4">Products in this class</h3>
+                <ProductVariants
+                  variants={variants}
+                  selectedVariant={selectedVariant}
+                  onVariantChange={setSelectedVariant}
+                  onAddToCart={handleAddToCart}
+                  className="space-y-2"
+                />
               </div>
             </div>
           </CardContent>
