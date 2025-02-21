@@ -68,7 +68,7 @@ export default function Transactions() {
                 key={transaction.id} 
                 className="p-6 hover:bg-accent transition-colors cursor-pointer"
               >
-                <div className="grid grid-cols-1 lg:grid-cols-[2fr,1fr,1fr,1fr] gap-4">
+                <div className="grid grid-cols-[2fr,1fr,1fr,auto] items-center gap-8">
                   {/* Template Name */}
                   <div>
                     <div className="text-sm text-[#888888] mb-1">Template Name</div>
