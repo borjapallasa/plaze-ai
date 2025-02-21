@@ -48,7 +48,7 @@ export default function Blog() {
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="space-y-2 p-6">
+            <div className="space-y-2 p-6 pb-16">
               <h2 className="text-xl font-semibold">{post.title}</h2>
               <p className="text-muted-foreground">{post.description}</p>
             </div>
