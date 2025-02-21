@@ -39,16 +39,16 @@ export default function Blog() {
         {blogPosts.map((post, index) => (
           <Card 
             key={index} 
-            className="group relative flex flex-col overflow-hidden border-none shadow-none bg-transparent"
+            className="group relative flex flex-col overflow-hidden bg-transparent border border-border/50"
           >
-            <div className="aspect-[4/3] overflow-hidden rounded-xl bg-muted mb-6">
+            <div className="aspect-[4/3] overflow-hidden rounded-t-xl bg-muted">
               <img
                 src={post.image}
                 alt={post.title}
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 p-6">
               <h2 className="text-xl font-semibold">{post.title}</h2>
               <p className="text-muted-foreground">{post.description}</p>
               <Link 
