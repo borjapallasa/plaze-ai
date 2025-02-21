@@ -390,6 +390,9 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
 
           <div className="w-[20%] flex items-start justify-end">
             <div className="flex items-center gap-2 mt-[15px] mr-[15px]">
+              <Button variant="ghost" size="sm" className="font-medium">
+                Sell on Plaze
+              </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="rounded-full p-1 h-10">
