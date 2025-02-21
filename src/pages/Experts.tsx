@@ -100,50 +100,34 @@ const Experts = () => {
           <div className="space-y-4">
             {experts.map((expert) => (
               <Card key={expert.id} className="p-4 md:p-6">
-                <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex flex-row gap-4">
                   <Avatar className="h-16 w-16">
                     <AvatarImage src={expert.avatar} />
                     <AvatarFallback>{expert.name.split(' ')[0][0]}</AvatarFallback>
                   </Avatar>
                   
                   <div className="flex-1 min-w-0">
-                    <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                      <div>
-                        <div className="flex flex-wrap items-center gap-2 mb-1">
-                          <h3 className="text-lg font-medium">{expert.name}</h3>
-                          {expert.boosted && (
-                            <Badge variant="secondary">
-                              Boosted
-                            </Badge>
-                          )}
-                          {expert.available && (
-                            <Badge variant="secondary">
-                              Available now
-                            </Badge>
-                          )}
-                        </div>
-                        <p className="text-base mb-1">{expert.title}</p>
-                        <p className="text-sm text-muted-foreground mb-2">{expert.location}</p>
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="text-lg font-medium">{expert.name}</h3>
+                        {expert.boosted && (
+                          <Badge variant="secondary">
+                            Boosted
+                          </Badge>
+                        )}
                       </div>
+                      <p className="text-base mb-1">{expert.title}</p>
+                      <p className="text-sm text-muted-foreground mb-2">{expert.location}</p>
                       
-                      <div className="flex flex-wrap gap-2">
-                        <Button variant="outline" size="sm" className="h-9 w-full md:w-auto">
-                          <Heart className="h-4 w-4" />
-                          {isMobile && <span className="ml-2">Save</span>}
-                        </Button>
-                        <Button variant="outline" size="sm" className="h-9 w-full md:w-auto">
-                          <MessageCircle className="h-4 w-4" />
-                          <span className="ml-2">Message</span>
-                        </Button>
-                        <Button size="sm" className="h-9 w-full md:w-auto">
-                          Invite to job
-                        </Button>
-                      </div>
+                      {expert.available && (
+                        <Badge variant="secondary" className="mb-2">
+                          Available now
+                        </Badge>
+                      )}
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-4 mb-3">
+                    <div className="flex items-center gap-4 mb-3">
                       <div className="flex items-center gap-1">
-                        <Star className="h-4 w-4" />
                         <span className="text-sm">${expert.rate}/hr</span>
                       </div>
                       <div className="flex items-center gap-1">
@@ -155,7 +139,7 @@ const Experts = () => {
 
                     <p className="text-sm text-muted-foreground mb-4">{expert.description}</p>
 
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 mb-4">
                       {expert.skills.map((skill, index) => (
                         <Badge 
                           key={index}
@@ -165,6 +149,16 @@ const Experts = () => {
                           {skill}
                         </Badge>
                       ))}
+                    </div>
+
+                    <div className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:gap-2">
+                      <Button variant="outline" size="sm" className="md:w-auto">
+                        <MessageCircle className="h-4 w-4 mr-2" />
+                        Message
+                      </Button>
+                      <Button size="sm" className="md:w-auto">
+                        Invite to job
+                      </Button>
                     </div>
                   </div>
                 </div>
