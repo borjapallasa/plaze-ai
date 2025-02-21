@@ -1,3 +1,4 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { AffiliateDashboard } from "@/components/affiliates/AffiliateDashboard";
 import { AffiliateTable } from "@/components/affiliates/AffiliateTable";
@@ -198,7 +199,7 @@ export default function Affiliates() {
           </Tabs>
         </div>
 
-        <div className="mt-16">
+        <div className="mt-8">
           <div className="flex flex-col space-y-8 mb-8">
             <h2 className="text-4xl font-bold text-foreground">Affiliate offers</h2>
             
