@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
@@ -6,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Heart, MessageCircle, Search, Star, ChevronDown, Zap } from "lucide-react";
+import { Heart, MessageCircle, Search, Star, ChevronDown, Zap, Crown } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Expert {
@@ -103,49 +104,56 @@ const Experts = () => {
                 <div className="flex flex-col space-y-6">
                   {/* Header Section */}
                   <div className="flex items-start gap-4">
-                    <Avatar className="h-16 w-16">
-                      <AvatarImage src={expert.avatar} />
-                      <AvatarFallback>{expert.name.split(' ')[0][0]}</AvatarFallback>
-                    </Avatar>
+                    <div className="relative">
+                      <Avatar className="h-16 w-16">
+                        <AvatarImage src={expert.avatar} />
+                        <AvatarFallback>{expert.name.split(' ')[0][0]}</AvatarFallback>
+                      </Avatar>
+                      <Badge 
+                        variant="secondary" 
+                        className="absolute -bottom-2 -right-2 bg-blue-100 text-blue-700"
+                      >
+                        <Crown className="h-3 w-3" />
+                      </Badge>
+                    </div>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="text-lg font-medium">{expert.name}</h3>
                         {expert.boosted && (
-                          <Badge variant="secondary" className="flex items-center gap-1">
+                          <Badge variant="secondary" className="flex items-center gap-1 bg-purple-100 text-purple-700">
                             <Zap className="h-3 w-3" />
                             Boosted
                           </Badge>
                         )}
                       </div>
-                      <p className="text-base mb-1">{expert.title}</p>
-                      <p className="text-sm text-muted-foreground">{expert.location}</p>
+                      <p className="text-base text-gray-900 mb-1">{expert.title}</p>
+                      <p className="text-sm text-gray-500">{expert.location}</p>
                     </div>
 
-                    <div className="flex items-start gap-2">
-                      <Button variant="outline" size="icon" className="rounded-full">
+                    <div className="hidden md:flex items-start gap-2">
+                      <Button variant="outline" size="icon" className="rounded-full border-gray-300">
                         <Heart className="h-4 w-4" />
                       </Button>
-                      <Button variant="outline" className="whitespace-nowrap">
-                        <MessageCircle className="h-4 w-4" />
-                        <span className="ml-2">Message</span>
+                      <Button variant="outline" className="whitespace-nowrap border-gray-300">
+                        Message
                       </Button>
-                      <Button className="whitespace-nowrap">
+                      <Button className="whitespace-nowrap bg-green-600 hover:bg-green-700">
                         Invite to job
                       </Button>
                     </div>
                   </div>
 
                   {/* Stats Section */}
-                  <div className="flex items-center gap-6">
-                    <span className="text-base">${expert.rate}/hr</span>
+                  <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+                    <span className="text-base text-gray-900">${expert.rate}/hr</span>
                     <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 text-blue-500" />
-                      <span className="text-base">{expert.successRate}% Job Success</span>
+                      <Crown className="h-4 w-4 text-blue-500" />
+                      <span className="text-base text-gray-900">{expert.successRate}% Job Success</span>
                     </div>
-                    <span className="text-base">{expert.earned} earned</span>
+                    <span className="text-base text-gray-900">{expert.earned} earned</span>
                     {expert.available && (
-                      <Badge variant="secondary" className="flex items-center gap-1">
+                      <Badge variant="secondary" className="flex items-center gap-1 bg-purple-100 text-purple-700">
                         <Zap className="h-3 w-3" />
                         Available now
                       </Badge>
@@ -158,7 +166,7 @@ const Experts = () => {
                       <Badge 
                         key={index}
                         variant="secondary" 
-                        className="rounded-full bg-gray-100 text-gray-900 hover:bg-gray-100"
+                        className="rounded-full bg-gray-100 text-gray-700 hover:bg-gray-100"
                       >
                         {skill}
                       </Badge>
@@ -167,6 +175,16 @@ const Experts = () => {
 
                   {/* Description Section */}
                   <p className="text-base text-gray-600">{expert.description}</p>
+
+                  {/* Mobile Buttons */}
+                  <div className="md:hidden flex flex-col space-y-2">
+                    <Button variant="outline" className="w-full border-gray-300">
+                      Message
+                    </Button>
+                    <Button className="w-full bg-green-600 hover:bg-green-700">
+                      Invite to job
+                    </Button>
+                  </div>
                 </div>
               </Card>
             ))}
