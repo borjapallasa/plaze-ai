@@ -77,19 +77,19 @@ const Experts = () => {
             
             {/* Filters */}
             <div className="flex gap-2 overflow-x-auto pb-2 hide-scrollbar">
-              <Button variant="outline" className="whitespace-nowrap bg-[#E5DEFF] border-[#9b87f5] text-[#6E59A5] hover:bg-[#E5DEFF]/80">
+              <Button variant="outline" className="whitespace-nowrap">
                 Talent badge
                 <ChevronDown className="ml-1 h-4 w-4" />
               </Button>
-              <Button variant="outline" className="whitespace-nowrap bg-[#FDE1D3] border-[#F97316] text-[#F97316] hover:bg-[#FDE1D3]/80">
+              <Button variant="outline" className="whitespace-nowrap">
                 Hourly rate
                 <ChevronDown className="ml-1 h-4 w-4" />
               </Button>
-              <Button variant="outline" className="whitespace-nowrap bg-[#D3E4FD] border-[#0EA5E9] text-[#0EA5E9] hover:bg-[#D3E4FD]/80">
+              <Button variant="outline" className="whitespace-nowrap">
                 Location
                 <ChevronDown className="ml-1 h-4 w-4" />
               </Button>
-              <Button variant="outline" className="whitespace-nowrap bg-[#F2FCE2] border-[#00A651] text-[#00A651] hover:bg-[#F2FCE2]/80">
+              <Button variant="outline" className="whitespace-nowrap">
                 Skills
                 <ChevronDown className="ml-1 h-4 w-4" />
               </Button>
@@ -112,12 +112,12 @@ const Experts = () => {
                         <div className="flex items-center gap-2 mb-1">
                           <h3 className="text-lg font-medium">{expert.name}</h3>
                           {expert.boosted && (
-                            <Badge variant="secondary" className="bg-[#D3E4FD] text-[#0EA5E9] hover:bg-[#D3E4FD]">
+                            <Badge variant="secondary">
                               Boosted
                             </Badge>
                           )}
                           {expert.available && (
-                            <Badge variant="secondary" className="bg-[#F2FCE2] text-[#00A651] hover:bg-[#F2FCE2]">
+                            <Badge variant="secondary">
                               Available now
                             </Badge>
                           )}
@@ -127,14 +127,14 @@ const Experts = () => {
                       </div>
                       
                       <div className="flex gap-2">
-                        <Button variant="outline" size="sm" className="h-9 border-[#9b87f5] text-[#6E59A5] hover:bg-[#E5DEFF]">
+                        <Button variant="outline" size="sm" className="h-9">
                           <Heart className="h-4 w-4" />
                         </Button>
-                        <Button variant="outline" size="sm" className="h-9 border-[#9b87f5] text-[#6E59A5] hover:bg-[#E5DEFF]">
+                        <Button variant="outline" size="sm" className="h-9">
                           <MessageCircle className="h-4 w-4" />
                           <span className="ml-2">Message</span>
                         </Button>
-                        <Button size="sm" className="h-9 bg-[#9b87f5] hover:bg-[#7E69AB]">
+                        <Button size="sm" className="h-9">
                           Invite to job
                         </Button>
                       </div>
@@ -142,11 +142,11 @@ const Experts = () => {
 
                     <div className="flex items-center gap-4 mb-3">
                       <div className="flex items-center gap-1">
-                        <Star className="h-4 w-4 text-[#F97316] fill-[#F97316]" />
+                        <Star className="h-4 w-4" />
                         <span className="text-sm">${expert.rate}/hr</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Star className="h-4 w-4 text-[#9b87f5] fill-[#9b87f5]" />
+                        <Star className="h-4 w-4" />
                         <span className="text-sm">{expert.successRate}% Job Success</span>
                       </div>
                       <span className="text-sm">{expert.earned} earned</span>
@@ -159,7 +159,7 @@ const Experts = () => {
                         <Badge 
                           key={index}
                           variant="secondary" 
-                          className="rounded-full bg-[#E5DEFF] text-[#6E59A5] hover:bg-[#E5DEFF]"
+                          className="rounded-full"
                         >
                           {skill}
                         </Badge>
