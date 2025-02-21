@@ -390,7 +390,11 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
 
           <div className="w-[20%] flex items-start justify-end">
             <div className="flex items-center gap-2 mt-[15px] mr-[15px]">
-              <Button variant="ghost" size="sm" className="font-medium">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="font-medium text-primary hover:text-primary/90 hover:bg-primary/10"
+              >
                 Sell on Plaze
               </Button>
               <DropdownMenu>
@@ -400,11 +404,12 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
                     <User className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem>Sign up</DropdownMenuItem>
-                  <DropdownMenuItem>Log in</DropdownMenuItem>
-                  <DropdownMenuItem>List your product</DropdownMenuItem>
-                  <DropdownMenuItem>Help</DropdownMenuItem>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuItem>Sign In</DropdownMenuItem>
+                  <DropdownMenuItem>Sign Up</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>Sell on Plaze</DropdownMenuItem>
+                  <DropdownMenuItem>Help Center</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
