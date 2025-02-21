@@ -119,11 +119,16 @@ export default function SignInCommunity() {
                 Sign In
               </Button>
 
-              <div className="text-center text-sm">
-                <span className="text-muted-foreground">Don't have an account? </span>
-                <Link to="/sign-up/community" className="text-primary hover:underline">
-                  Sign Up
-                </Link>
+              <div className="text-center space-y-2">
+                <div className="text-sm">
+                  <span className="text-muted-foreground">Don't have an account? </span>
+                  <Link to="/sign-up/community" className="text-primary hover:underline">
+                    Sign Up
+                  </Link>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Password must be at least 8 characters and include uppercase, lowercase, number, and special character
+                </p>
               </div>
             </form>
           </div>
