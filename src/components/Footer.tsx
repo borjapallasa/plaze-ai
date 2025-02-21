@@ -52,7 +52,7 @@ export function Footer() {
   ];
 
   return (
-    <footer className="mt-auto bg-background pt-10">
+    <footer className="mt-auto bg-background pt-20">
       <div className="border-t">
         <div className="container mx-auto px-4 py-8">
           <Tabs defaultValue="products" className="w-full">
@@ -68,6 +68,15 @@ export function Footer() {
               </TabsTrigger>
               <TabsTrigger value="communities" className="text-base px-6 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none data-[state=active]:shadow-none">
                 Communities
+              </TabsTrigger>
+              <TabsTrigger value="education" className="text-base px-6 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none data-[state=active]:shadow-none">
+                Education
+              </TabsTrigger>
+              <TabsTrigger value="enterprise" className="text-base px-6 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none data-[state=active]:shadow-none">
+                Enterprise
+              </TabsTrigger>
+              <TabsTrigger value="support" className="text-base px-6 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none data-[state=active]:shadow-none">
+                Support
               </TabsTrigger>
             </TabsList>
           </Tabs>
