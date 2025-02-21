@@ -2,99 +2,160 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
+import { cn } from "@/lib/utils";
+import { ChevronDown } from "lucide-react";
 
 export default function Classroom() {
+  const lessons = [
+    {
+      title: "Week 5",
+      isActive: false,
+    },
+    {
+      title: "Week 4",
+      isActive: true,
+    },
+    {
+      title: "Week 3",
+      isActive: false,
+    },
+    {
+      title: "Week 1",
+      isActive: false,
+    },
+  ];
+
   return (
-    <div className="container mx-auto px-4 py-8 max-w-[1200px]">
-      <Card className="overflow-hidden">
-        <CardContent className="p-6 space-y-6">
-          <h1 className="text-4xl font-bold">How To Create Automated SEO Blogs With AI?</h1>
-          
-          {/* Video Section */}
-          <div className="space-y-4">
-            <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
-              <img 
-                src="/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"
-                alt="Course thumbnail"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center cursor-pointer hover:bg-white transition-colors">
-                  <div className="w-6 h-6 border-8 border-transparent border-l-primary ml-1" style={{ transform: 'rotate(-45deg)' }} />
+    <div className="container mx-auto px-4 py-8 max-w-[1400px]">
+      <div className="flex gap-6">
+        {/* Sidebar */}
+        <div className="w-64 flex-shrink-0">
+          <div className="space-y-6">
+            {/* Progress Section */}
+            <div>
+              <h2 className="text-lg font-semibold mb-2">Weekly Call Recordings</h2>
+              <div className="h-2 bg-muted rounded-full">
+                <div className="h-full w-0 bg-primary rounded-full"></div>
+              </div>
+              <p className="text-sm text-muted-foreground mt-1">0% complete</p>
+            </div>
+
+            {/* Lessons List */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-medium">New set</h3>
+                <ChevronDown className="w-4 h-4 text-muted-foreground" />
+              </div>
+              <div className="space-y-1">
+                {lessons.map((lesson) => (
+                  <button
+                    key={lesson.title}
+                    className={cn(
+                      "w-full text-left px-3 py-2 rounded-lg text-sm transition-colors",
+                      lesson.isActive 
+                        ? "bg-amber-50 text-amber-900" 
+                        : "hover:bg-muted"
+                    )}
+                  >
+                    {lesson.title}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <Card className="flex-1">
+          <CardContent className="p-6 space-y-6">
+            <h1 className="text-4xl font-bold">How To Create Automated SEO Blogs With AI?</h1>
+            
+            {/* Video Section */}
+            <div className="space-y-4">
+              <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
+                <img 
+                  src="/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"
+                  alt="Course thumbnail"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center cursor-pointer hover:bg-white transition-colors">
+                    <div className="w-6 h-6 border-8 border-transparent border-l-primary ml-1" style={{ transform: 'rotate(-45deg)' }} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Resources Link */}
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground">All formulas & scripts →</span>
+                <a 
+                  href="https://docs.google.com/document/d/1TYRkoPNAFhU-ryYDhzPLQi6zrP5kezlg6N5ukcCRP5Vk/edit?usp=sharing" 
+                  target="_blank"
+                  className="text-primary hover:underline"
+                >
+                  View Documentation
+                </a>
+              </div>
+            </div>
+
+            {/* Introduction */}
+            <div className="space-y-6">
+              <p>
+                In this video, we are going to learn how to create an auto blogging no-code software using{" "}
+                <span className="font-semibold">OpenAI, Airtable & Make</span> and publish them automatically to{" "}
+                <span className="font-semibold">Shopify</span> and{" "}
+                <span className="font-semibold">Wordpress</span>.
+              </p>
+
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <h3 className="font-semibold">No-Code Approach</h3>
+                  <p className="text-muted-foreground">
+                    This no-code approach allows users to manage and generate blogs through an accessible Airtable interface. 
+                    By enabling the importation of existing web articles and the incorporation of new client details, 
+                    our solution ensures content accurately mirrors the intended tone and voice of different websites.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="font-semibold">Synergy Between Tools</h3>
+                  <p className="text-muted-foreground">
+                    The synergy between Airtable, Make, and OpenAI streamlines the content creation process. 
+                    This workflow automatically generates written content, enhancing the blogging experience 
+                    for both creators and their audience. Furthermore, our system brings visual appeal to each 
+                    blog post by including images from the Unsplash API.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="font-semibold">Automated Organization</h3>
+                  <p className="text-muted-foreground">
+                    The blogs are automatically organized to feature an index, FAQs, and conclusions and also 
+                    to include related images properly alt-texted. This structured format enhances the reader's 
+                    experience by making content easily navigable and informative.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="font-semibold">Target Audience</h3>
+                  <p className="text-muted-foreground">
+                    Designed for content creators, digital marketers, and business owners, our solution focuses 
+                    on ease of use. It aims to reduce the complexity of maintaining an updated and relevant blog, 
+                    freeing up users to concentrate on other critical aspects of their work. By automating content 
+                    creation, our system saves time and allows for the efficient management of a consistent online presence.
+                  </p>
                 </div>
               </div>
             </div>
 
-            {/* Resources Link */}
-            <div className="flex items-center gap-2">
-              <span className="text-muted-foreground">All formulas & scripts →</span>
-              <a 
-                href="https://docs.google.com/document/d/1TYRkoPNAFhU-ryYDhzPLQi6zrP5kezlg6N5ukcCRP5Vk/edit?usp=sharing" 
-                target="_blank"
-                className="text-primary hover:underline"
-              >
-                View Documentation
-              </a>
+            {/* Action Buttons */}
+            <div className="flex gap-4">
+              <Button variant="outline">Edit Classroom Details</Button>
+              <Button>Add New Lesson</Button>
             </div>
-          </div>
-
-          {/* Introduction */}
-          <div className="space-y-6">
-            <p>
-              In this video, we are going to learn how to create an auto blogging no-code software using{" "}
-              <span className="font-semibold">OpenAI, Airtable & Make</span> and publish them automatically to{" "}
-              <span className="font-semibold">Shopify</span> and{" "}
-              <span className="font-semibold">Wordpress</span>.
-            </p>
-
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <h3 className="font-semibold">No-Code Approach</h3>
-                <p className="text-muted-foreground">
-                  This no-code approach allows users to manage and generate blogs through an accessible Airtable interface. 
-                  By enabling the importation of existing web articles and the incorporation of new client details, 
-                  our solution ensures content accurately mirrors the intended tone and voice of different websites.
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <h3 className="font-semibold">Synergy Between Tools</h3>
-                <p className="text-muted-foreground">
-                  The synergy between Airtable, Make, and OpenAI streamlines the content creation process. 
-                  This workflow automatically generates written content, enhancing the blogging experience 
-                  for both creators and their audience. Furthermore, our system brings visual appeal to each 
-                  blog post by including images from the Unsplash API.
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <h3 className="font-semibold">Automated Organization</h3>
-                <p className="text-muted-foreground">
-                  The blogs are automatically organized to feature an index, FAQs, and conclusions and also 
-                  to include related images properly alt-texted. This structured format enhances the reader's 
-                  experience by making content easily navigable and informative.
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <h3 className="font-semibold">Target Audience</h3>
-                <p className="text-muted-foreground">
-                  Designed for content creators, digital marketers, and business owners, our solution focuses 
-                  on ease of use. It aims to reduce the complexity of maintaining an updated and relevant blog, 
-                  freeing up users to concentrate on other critical aspects of their work. By automating content 
-                  creation, our system saves time and allows for the efficient management of a consistent online presence.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex gap-4">
-            <Button variant="outline">Edit Classroom Details</Button>
-            <Button>Add New Lesson</Button>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
