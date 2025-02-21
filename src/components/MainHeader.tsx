@@ -84,12 +84,12 @@ export const MainHeader = () => {
             <div className="flex items-center gap-1 px-3 py-1.5 rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background">
               <div className="flex-1 flex items-center gap-1">
                 <Select defaultValue={isCommunityPage ? "ThisCommunity" : "Products"}>
-                  <SelectTrigger className="border-0 w-[180px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-7 text-sm">
+                  <SelectTrigger className="border-0 w-[200px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-7 text-sm [&>span]:whitespace-nowrap [&>span]:overflow-visible">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="w-[220px]">
+                  <SelectContent className="w-[240px]">
                     {isCommunityPage && (
-                      <SelectItem value="ThisCommunity">This Community</SelectItem>
+                      <SelectItem value="ThisCommunity" className="whitespace-nowrap">This Community</SelectItem>
                     )}
                     <SelectItem value="Products">Products</SelectItem>
                     <SelectItem value="Experts">Experts</SelectItem>
