@@ -1,3 +1,4 @@
+import { MainHeader } from "@/components/MainHeader";
 import { Card } from "@/components/ui/card";
 import { useState, useEffect, useRef } from "react";
 import { ProductGallery } from "@/components/product/ProductGallery";
@@ -367,55 +368,16 @@ export default function Product() {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="lg:hidden">
-        <ProductGallery image={product.image} className="mb-6" />
-        <ProductHeader 
-          title={product.title}
-          seller={product.seller}
-          rating={product.rating}
-          className="mb-6"
-        />
-        <div ref={variantsRef}>
-          <ProductVariants
-            variants={variants}
-            selectedVariant={selectedVariant}
-            onVariantChange={setSelectedVariant}
-            onAddToCart={handleAddToCart}
-            className="mb-6"
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-        <div className="lg:col-span-2">
-          <div className="hidden lg:block">
-            <ProductGallery image={product.image} className="mb-8" />
-          </div>
-
-          <Card className="p-6 mb-8">
-            <p className="text-muted-foreground leading-relaxed">
-              {product.description}
-              <br /><br />
-              This comprehensive course covers everything you need to know about UI/UX design. From fundamental principles 
-              to advanced techniques, you'll learn how to create beautiful and functional user interfaces. Topics include:
-              <br /><br />
-              • User Research and Analysis<br />
-              • Wireframing and Prototyping<br />
-              • Visual Design Principles<br />
-              • User Testing and Iteration<br />
-              • Industry Standard Tools<br />
-              <br />
-              Perfect for beginners and intermediate designers looking to enhance their skills and create professional-grade designs.
-            </p>
-          </Card>
-        </div>
-
-        <div className="hidden lg:block space-y-6">
+    <div className="min-h-screen">
+      <MainHeader />
+      <main className="container mx-auto px-4 pt-24">
+        <div className="lg:hidden">
+          <ProductGallery image={product.image} className="mb-6" />
           <ProductHeader 
             title={product.title}
             seller={product.seller}
             rating={product.rating}
+            className="mb-6"
           />
           <div ref={variantsRef}>
             <ProductVariants
@@ -423,83 +385,125 @@ export default function Product() {
               selectedVariant={selectedVariant}
               onVariantChange={setSelectedVariant}
               onAddToCart={handleAddToCart}
+              className="mb-6"
             />
           </div>
-          <Card className="p-6">
-            <h3 className="font-semibold mb-4">Additional Information</h3>
-            <div className="space-y-4">
-              <div>
-                <h4 className="font-medium mb-2">Apps Involved</h4>
-                <ul className="list-disc list-inside text-sm text-muted-foreground">
-                  <li>Make</li>
-                  <li>Google Sheets</li>
-                  <li>Gmail</li>
-                </ul>
-              </div>
+        </div>
 
-              <div>
-                <h4 className="font-medium mb-2">Apps Pricing</h4>
-                <ul className="list-disc list-inside text-sm text-muted-foreground">
-                  <li>Make: Free tier available</li>
-                  <li>Google Workspace: From $6/month</li>
-                </ul>
-              </div>
-
-              <div>
-                <h4 className="font-medium mb-2">What's Included</h4>
-                <ul className="list-disc list-inside text-sm text-muted-foreground">
-                  <li>3x Make Templates</li>
-                  <li>1x Google Sheet Template</li>
-                  <li>Setup Documentation</li>
-                  <li>Email Support</li>
-                </ul>
-              </div>
-
-              <div>
-                <h4 className="font-medium mb-2">Difficulty Level</h4>
-                <span className="text-sm text-muted-foreground">
-                  Intermediate - Basic knowledge of Make and Google Sheets required
-                </span>
-              </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+          <div className="lg:col-span-2">
+            <div className="hidden lg:block">
+              <ProductGallery image={product.image} className="mb-8" />
             </div>
-          </Card>
-        </div>
-      </div>
 
-      <h2 className="text-xl font-semibold mb-4">Demo</h2>
-      <Card className="p-6 mb-8">
-        <div className="aspect-video bg-accent rounded-lg"></div>
-      </Card>
+            <Card className="p-6 mb-8">
+              <p className="text-muted-foreground leading-relaxed">
+                {product.description}
+                <br /><br />
+                This comprehensive course covers everything you need to know about UI/UX design. From fundamental principles 
+                to advanced techniques, you'll learn how to create beautiful and functional user interfaces. Topics include:
+                <br /><br />
+                • User Research and Analysis<br />
+                • Wireframing and Prototyping<br />
+                • Visual Design Principles<br />
+                • User Testing and Iteration<br />
+                • Industry Standard Tools<br />
+                <br />
+                Perfect for beginners and intermediate designers looking to enhance their skills and create professional-grade designs.
+              </p>
+            </Card>
+          </div>
 
-      <ProductReviews reviews={reviews} className="p-6 mb-16" />
-
-      <MoreFromSeller products={moreFromSeller} className="mt-30" />
-
-      <div className="mt-16">
-        <h2 className="text-2xl font-bold mb-6">Related Products</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {relatedProducts.map((product, index) => (
-            <ProductCard
-              key={index}
+          <div className="hidden lg:block space-y-6">
+            <ProductHeader 
               title={product.title}
-              price={product.price}
-              image={product.image}
               seller={product.seller}
-              description={product.description}
-              tags={product.tags}
-              category={product.category}
+              rating={product.rating}
             />
-          ))}
-        </div>
-      </div>
+            <div ref={variantsRef}>
+              <ProductVariants
+                variants={variants}
+                selectedVariant={selectedVariant}
+                onVariantChange={setSelectedVariant}
+                onAddToCart={handleAddToCart}
+              />
+            </div>
+            <Card className="p-6">
+              <h3 className="font-semibold mb-4">Additional Information</h3>
+              <div className="space-y-4">
+                <div>
+                  <h4 className="font-medium mb-2">Apps Involved</h4>
+                  <ul className="list-disc list-inside text-sm text-muted-foreground">
+                    <li>Make</li>
+                    <li>Google Sheets</li>
+                    <li>Gmail</li>
+                  </ul>
+                </div>
 
-      <StickyATC 
-        variants={variants}
-        selectedVariant={selectedVariant}
-        onVariantChange={setSelectedVariant}
-        visible={showStickyATC}
-        onAddToCart={handleAddToCart}
-      />
+                <div>
+                  <h4 className="font-medium mb-2">Apps Pricing</h4>
+                  <ul className="list-disc list-inside text-sm text-muted-foreground">
+                    <li>Make: Free tier available</li>
+                    <li>Google Workspace: From $6/month</li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h4 className="font-medium mb-2">What's Included</h4>
+                  <ul className="list-disc list-inside text-sm text-muted-foreground">
+                    <li>3x Make Templates</li>
+                    <li>1x Google Sheet Template</li>
+                    <li>Setup Documentation</li>
+                    <li>Email Support</li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h4 className="font-medium mb-2">Difficulty Level</h4>
+                  <span className="text-sm text-muted-foreground">
+                    Intermediate - Basic knowledge of Make and Google Sheets required
+                  </span>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </div>
+
+        <h2 className="text-xl font-semibold mb-4">Demo</h2>
+        <Card className="p-6 mb-8">
+          <div className="aspect-video bg-accent rounded-lg"></div>
+        </Card>
+
+        <ProductReviews reviews={reviews} className="p-6 mb-16" />
+
+        <MoreFromSeller products={moreFromSeller} className="mt-30" />
+
+        <div className="mt-16">
+          <h2 className="text-2xl font-bold mb-6">Related Products</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {relatedProducts.map((product, index) => (
+              <ProductCard
+                key={index}
+                title={product.title}
+                price={product.price}
+                image={product.image}
+                seller={product.seller}
+                description={product.description}
+                tags={product.tags}
+                category={product.category}
+              />
+            ))}
+          </div>
+        </div>
+
+        <StickyATC 
+          variants={variants}
+          selectedVariant={selectedVariant}
+          onVariantChange={setSelectedVariant}
+          visible={showStickyATC}
+          onAddToCart={handleAddToCart}
+        />
+      </main>
     </div>
   );
 }
