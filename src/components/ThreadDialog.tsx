@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { MessageSquare, Heart, ThumbsUp } from "lucide-react";
+import { useRef, useEffect } from "react";
 
 interface ThreadDialogProps {
   isOpen: boolean;
@@ -33,6 +34,13 @@ export function ThreadDialog({ isOpen, onClose }: ThreadDialogProps) {
       timestamp: "26 Jun 2024, 08:14"
     }
   ];
+
+  // Auto-resize textarea function
+  const handleTextareaInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const textarea = e.target;
+    textarea.style.height = 'auto';
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -130,7 +138,9 @@ export function ThreadDialog({ isOpen, onClose }: ThreadDialogProps) {
             <div className="flex-1 space-y-2">
               <textarea
                 placeholder="Write a comment..."
-                className="w-full min-h-[60px] rounded-md border border-input bg-background px-3 py-2 text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="w-full min-h-[36px] max-h-[150px] rounded-md border border-input bg-background px-3 py-2 text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring overflow-hidden"
+                rows={1}
+                onInput={handleTextareaInput}
               />
               <div className="flex justify-end">
                 <Button size="sm">Comment</Button>
