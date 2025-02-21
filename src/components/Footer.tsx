@@ -1,5 +1,5 @@
 
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Facebook, Twitter, Instagram } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
@@ -69,16 +69,55 @@ export function Footer() {
               <TabsTrigger value="communities" className="text-base px-6 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none data-[state=active]:shadow-none">
                 Communities
               </TabsTrigger>
-              <TabsTrigger value="education" className="text-base px-6 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none data-[state=active]:shadow-none">
-                Education
-              </TabsTrigger>
-              <TabsTrigger value="enterprise" className="text-base px-6 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none data-[state=active]:shadow-none">
-                Enterprise
-              </TabsTrigger>
-              <TabsTrigger value="support" className="text-base px-6 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none data-[state=active]:shadow-none">
-                Support
-              </TabsTrigger>
             </TabsList>
+
+            <TabsContent value="products" className="mt-6 grid grid-cols-3 gap-x-12 gap-y-4">
+              <Link to="/products/templates" className="text-sm text-muted-foreground hover:text-foreground">Website Templates</Link>
+              <Link to="/products/ecommerce" className="text-sm text-muted-foreground hover:text-foreground">E-commerce Solutions</Link>
+              <Link to="/products/mobile" className="text-sm text-muted-foreground hover:text-foreground">Mobile Apps</Link>
+              <Link to="/products/landing" className="text-sm text-muted-foreground hover:text-foreground">Landing Pages</Link>
+              <Link to="/products/cms" className="text-sm text-muted-foreground hover:text-foreground">Content Management</Link>
+              <Link to="/products/analytics" className="text-sm text-muted-foreground hover:text-foreground">Analytics Tools</Link>
+              <Link to="/products/marketing" className="text-sm text-muted-foreground hover:text-foreground">Marketing Solutions</Link>
+              <Link to="/products/automation" className="text-sm text-muted-foreground hover:text-foreground">Automation Tools</Link>
+              <Link to="/products/integrations" className="text-sm text-muted-foreground hover:text-foreground">Integrations</Link>
+            </TabsContent>
+
+            <TabsContent value="jobs" className="mt-6 grid grid-cols-3 gap-x-12 gap-y-4">
+              <Link to="/jobs/development" className="text-sm text-muted-foreground hover:text-foreground">Web Development</Link>
+              <Link to="/jobs/design" className="text-sm text-muted-foreground hover:text-foreground">UI/UX Design</Link>
+              <Link to="/jobs/marketing" className="text-sm text-muted-foreground hover:text-foreground">Digital Marketing</Link>
+              <Link to="/jobs/content" className="text-sm text-muted-foreground hover:text-foreground">Content Creation</Link>
+              <Link to="/jobs/seo" className="text-sm text-muted-foreground hover:text-foreground">SEO Management</Link>
+              <Link to="/jobs/social" className="text-sm text-muted-foreground hover:text-foreground">Social Media</Link>
+              <Link to="/jobs/analytics" className="text-sm text-muted-foreground hover:text-foreground">Data Analytics</Link>
+              <Link to="/jobs/project" className="text-sm text-muted-foreground hover:text-foreground">Project Management</Link>
+              <Link to="/jobs/consulting" className="text-sm text-muted-foreground hover:text-foreground">Consulting</Link>
+            </TabsContent>
+
+            <TabsContent value="experts" className="mt-6 grid grid-cols-3 gap-x-12 gap-y-4">
+              <Link to="/experts/developers" className="text-sm text-muted-foreground hover:text-foreground">Developer Experts</Link>
+              <Link to="/experts/designers" className="text-sm text-muted-foreground hover:text-foreground">Design Experts</Link>
+              <Link to="/experts/marketers" className="text-sm text-muted-foreground hover:text-foreground">Marketing Experts</Link>
+              <Link to="/experts/content" className="text-sm text-muted-foreground hover:text-foreground">Content Strategists</Link>
+              <Link to="/experts/seo" className="text-sm text-muted-foreground hover:text-foreground">SEO Specialists</Link>
+              <Link to="/experts/analytics" className="text-sm text-muted-foreground hover:text-foreground">Analytics Experts</Link>
+              <Link to="/experts/security" className="text-sm text-muted-foreground hover:text-foreground">Security Specialists</Link>
+              <Link to="/experts/automation" className="text-sm text-muted-foreground hover:text-foreground">Automation Experts</Link>
+              <Link to="/experts/consulting" className="text-sm text-muted-foreground hover:text-foreground">Business Consultants</Link>
+            </TabsContent>
+
+            <TabsContent value="communities" className="mt-6 grid grid-cols-3 gap-x-12 gap-y-4">
+              <Link to="/communities/developers" className="text-sm text-muted-foreground hover:text-foreground">Developer Community</Link>
+              <Link to="/communities/designers" className="text-sm text-muted-foreground hover:text-foreground">Design Community</Link>
+              <Link to="/communities/marketing" className="text-sm text-muted-foreground hover:text-foreground">Marketing Network</Link>
+              <Link to="/communities/creators" className="text-sm text-muted-foreground hover:text-foreground">Content Creators</Link>
+              <Link to="/communities/entrepreneurs" className="text-sm text-muted-foreground hover:text-foreground">Entrepreneurs</Link>
+              <Link to="/communities/freelancers" className="text-sm text-muted-foreground hover:text-foreground">Freelancers</Link>
+              <Link to="/communities/startups" className="text-sm text-muted-foreground hover:text-foreground">Startups</Link>
+              <Link to="/communities/agencies" className="text-sm text-muted-foreground hover:text-foreground">Agencies</Link>
+              <Link to="/communities/educators" className="text-sm text-muted-foreground hover:text-foreground">Educators</Link>
+            </TabsContent>
           </Tabs>
         </div>
       </div>
