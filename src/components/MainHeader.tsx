@@ -23,7 +23,41 @@ export const MainHeader = () => {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 h-14 bg-background border-b">
       <div className="container mx-auto px-4 h-full">
-        <div className="flex items-center justify-between h-full gap-4">
+        {/* Mobile Header */}
+        <div className="flex md:hidden items-center justify-between h-full gap-4">
+          <div className="flex-1">
+            <div className="flex items-center gap-1 px-3 py-1.5 rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background">
+              <Input
+                className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-7 text-sm flex-1"
+                placeholder="Search products..."
+                type="search"
+              />
+              <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90 h-7 w-7">
+                <Search className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="outline" 
+                className="rounded-full px-2.5 py-1.5 h-8 border-2 hover:border-primary/20 transition-colors ml-2"
+              >
+                <Menu className="h-3.5 w-3.5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem>Sign In</DropdownMenuItem>
+              <DropdownMenuItem>Sign Up</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Sell on Plaze</DropdownMenuItem>
+              <DropdownMenuItem>Help Center</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        {/* Desktop Header */}
+        <div className="hidden md:flex items-center justify-between h-full gap-4">
           <Link to="/" className="text-lg font-semibold">
             Logo
           </Link>
