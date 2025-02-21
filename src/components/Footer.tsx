@@ -1,4 +1,3 @@
-
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Facebook, Twitter, Instagram } from "lucide-react";
@@ -53,7 +52,7 @@ export function Footer() {
   return (
     <footer className="mt-auto bg-background pt-20">
       <div className="border-t">
-        <div className="container mx-auto px-4 py-6">
+        <div className="container max-w-6xl mx-auto px-4 py-6">
           <Tabs defaultValue="products" className="w-full">
             <TabsList className="w-full justify-start h-12 bg-background border-none p-0">
               <TabsTrigger value="products" className="text-[14px] px-6 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none data-[state=active]:shadow-none">
@@ -122,7 +121,7 @@ export function Footer() {
       </div>
 
       <div className="border-t">
-        <div className="container mx-auto px-4 py-12">
+        <div className="container max-w-6xl mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <FooterSection title="Quick Links" links={quickLinks} />
             <FooterSection title="Resources" links={resources} />
