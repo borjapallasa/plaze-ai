@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
@@ -8,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Heart, MessageCircle, Search, Star, ChevronDown } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Expert {
   id: number;
@@ -52,11 +52,11 @@ const experts: Expert[] = [
     description: "Senior UI/UX designer and full stack developer with 8+ years of experience creating beautiful, intuitive interfaces and robust web applications.",
     available: true
   },
-  // Add more experts as needed
 ];
 
 const Experts = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const isMobile = useIsMobile();
 
   return (
     <div className="min-h-screen bg-background">
@@ -99,17 +99,17 @@ const Experts = () => {
           {/* Experts List */}
           <div className="space-y-4">
             {experts.map((expert) => (
-              <Card key={expert.id} className="p-6">
-                <div className="flex gap-4">
+              <Card key={expert.id} className="p-4 md:p-6">
+                <div className="flex flex-col md:flex-row gap-4">
                   <Avatar className="h-16 w-16">
                     <AvatarImage src={expert.avatar} />
                     <AvatarFallback>{expert.name.split(' ')[0][0]}</AvatarFallback>
                   </Avatar>
                   
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-4">
+                    <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                       <div>
-                        <div className="flex items-center gap-2 mb-1">
+                        <div className="flex flex-wrap items-center gap-2 mb-1">
                           <h3 className="text-lg font-medium">{expert.name}</h3>
                           {expert.boosted && (
                             <Badge variant="secondary">
@@ -126,21 +126,22 @@ const Experts = () => {
                         <p className="text-sm text-muted-foreground mb-2">{expert.location}</p>
                       </div>
                       
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm" className="h-9">
+                      <div className="flex flex-wrap gap-2">
+                        <Button variant="outline" size="sm" className="h-9 w-full md:w-auto">
                           <Heart className="h-4 w-4" />
+                          {isMobile && <span className="ml-2">Save</span>}
                         </Button>
-                        <Button variant="outline" size="sm" className="h-9">
+                        <Button variant="outline" size="sm" className="h-9 w-full md:w-auto">
                           <MessageCircle className="h-4 w-4" />
                           <span className="ml-2">Message</span>
                         </Button>
-                        <Button size="sm" className="h-9">
+                        <Button size="sm" className="h-9 w-full md:w-auto">
                           Invite to job
                         </Button>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-4 mb-3">
+                    <div className="flex flex-wrap items-center gap-4 mb-3">
                       <div className="flex items-center gap-1">
                         <Star className="h-4 w-4" />
                         <span className="text-sm">${expert.rate}/hr</span>
