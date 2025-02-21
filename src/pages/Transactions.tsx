@@ -52,9 +52,11 @@ export default function Transactions() {
 
   return (
     <>
-      <MainHeader />
+      <div className="fixed top-0 left-0 right-0 z-50 bg-background">
+        <MainHeader />
+      </div>
       <div className="min-h-screen bg-background">
-        <div className="pt-24"> {/* Increased padding-top to account for fixed header */}
+        <div className="pt-24">
           <div className="container mx-auto px-4 py-8 max-w-[1000px]">
             <h1 className="text-2xl font-semibold mb-6">All Your Purchases</h1>
             
@@ -73,7 +75,7 @@ export default function Transactions() {
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Filter by category" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent position="popper" sideOffset={4}>
                   <SelectItem value="all">All Categories</SelectItem>
                   <SelectItem value="Product">Product</SelectItem>
                   <SelectItem value="Service">Service</SelectItem>
