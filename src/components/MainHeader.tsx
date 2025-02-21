@@ -23,6 +23,23 @@ export const MainHeader = () => {
   const isCommunityPage = location.pathname.includes('/community') || location.pathname.includes('/classroom');
   const [mobileSearchCategory, setMobileSearchCategory] = useState(isCommunityPage ? "This Community" : "Products");
 
+  const getPlaceholder = (category: string) => {
+    switch(category) {
+      case "This Community":
+        return "Search in this community...";
+      case "Products":
+        return "Search products...";
+      case "Experts":
+        return "Search experts...";
+      case "Communities":
+        return "Search communities...";
+      case "Jobs":
+        return "Search jobs...";
+      default:
+        return "Search...";
+    }
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-background border-b">
       <div className="container mx-auto px-4 h-full">
@@ -62,7 +79,7 @@ export const MainHeader = () => {
               </DropdownMenu>
               <Input
                 className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-7 text-sm flex-1"
-                placeholder={`Search ${mobileSearchCategory.toLowerCase()}...`}
+                placeholder={getPlaceholder(mobileSearchCategory)}
                 type="search"
               />
               <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90 h-7 w-7">
