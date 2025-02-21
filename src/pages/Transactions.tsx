@@ -64,23 +64,26 @@ export default function Transactions() {
           {/* Transactions List */}
           <div className="space-y-4">
             {filteredTransactions.map((transaction) => (
-              <Card key={transaction.id} className="p-6">
+              <Card 
+                key={transaction.id} 
+                className="p-6 hover:bg-accent transition-colors cursor-pointer"
+              >
                 <div className="grid grid-cols-1 lg:grid-cols-[2fr,1fr,1fr,1fr] gap-4">
                   {/* Template Name */}
                   <div>
-                    <div className="text-sm text-muted-foreground mb-1">Template Name</div>
-                    <div className="font-medium">{transaction.templateName}</div>
+                    <div className="text-sm text-[#888888] mb-1">Template Name</div>
+                    <div className="text-[#333333] font-medium leading-tight">{transaction.templateName}</div>
                   </div>
 
                   {/* Deliverables */}
                   <div>
-                    <div className="text-sm text-muted-foreground mb-1">Deliverables</div>
+                    <div className="text-sm text-[#888888] mb-1">Deliverables</div>
                     <div className="flex flex-wrap gap-2">
                       {transaction.deliverables.map((deliverable, index) => (
                         <Badge 
                           key={index}
                           variant="secondary" 
-                          className="bg-[#FFF4F1] text-[#333333] font-normal"
+                          className="bg-[#333333] text-white hover:bg-[#222222] font-normal"
                         >
                           {deliverable}
                         </Badge>
@@ -90,26 +93,26 @@ export default function Transactions() {
 
                   {/* Transaction Date */}
                   <div>
-                    <div className="text-sm text-muted-foreground mb-1">Transaction Date</div>
-                    <div className="font-medium">{transaction.transactionDate}</div>
+                    <div className="text-sm text-[#888888] mb-1">Transaction Date</div>
+                    <div className="text-[#333333] font-medium">{transaction.transactionDate}</div>
                   </div>
 
                   {/* Amount and Rating */}
                   <div className="flex flex-col gap-2">
                     <div>
-                      <div className="text-sm text-muted-foreground mb-1">Amount</div>
-                      <div className="font-medium">${transaction.amount}</div>
+                      <div className="text-sm text-[#888888] mb-1">Amount</div>
+                      <div className="text-[#333333] font-medium">${transaction.amount}</div>
                     </div>
                     <div>
-                      <div className="text-sm text-muted-foreground mb-1">Review</div>
+                      <div className="text-sm text-[#888888] mb-1">Review</div>
                       <div className="flex gap-0.5">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <Star
                             key={star}
                             className={`h-5 w-5 ${
                               star <= transaction.rating 
-                                ? "fill-yellow-400 text-yellow-400" 
-                                : "fill-gray-200 text-gray-200"
+                                ? "fill-[#222222] text-[#222222]" 
+                                : "fill-[#F1F1F1] text-[#F1F1F1]"
                             }`}
                           />
                         ))}
