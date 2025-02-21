@@ -7,7 +7,6 @@ import { ExpertServices } from "@/components/expert/ExpertServices";
 import { ExpertCommunity } from "@/components/expert/ExpertCommunity";
 import { MoreFromSeller } from "@/components/product/MoreFromSeller";
 import { ProductReviews } from "@/components/product/ProductReviews";
-import { MainHeader } from "@/components/MainHeader";
 
 export default function Expert() {
   const moreProducts = [
@@ -119,8 +118,7 @@ export default function Expert() {
   ];
 
   return (
-    <div className="space-y-8 pt-16">
-      <MainHeader />
+    <div className="space-y-8">
       <div className="container mx-auto px-4">
         <ExpertHeader />
       </div>
