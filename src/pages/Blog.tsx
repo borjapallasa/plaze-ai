@@ -39,7 +39,7 @@ export default function Blog() {
         {blogPosts.map((post, index) => (
           <Card 
             key={index} 
-            className="group relative flex flex-col overflow-hidden bg-transparent border border-border/50"
+            className="group relative flex flex-col overflow-hidden bg-transparent border border-border/50 hover:bg-accent transition-colors"
           >
             <div className="aspect-[4/3] overflow-hidden rounded-t-xl bg-muted">
               <img
@@ -51,14 +51,16 @@ export default function Blog() {
             <div className="space-y-2 p-6">
               <h2 className="text-xl font-semibold">{post.title}</h2>
               <p className="text-muted-foreground">{post.description}</p>
-              <Link 
-                to={post.link}
-                className="inline-flex items-center gap-2 mt-4 text-primary hover:underline"
-              >
-                Learn more
-                <ArrowRight className="w-4 h-4" />
-              </Link>
             </div>
+            <Link to={post.link}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute bottom-4 right-4 h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
           </Card>
         ))}
       </div>
