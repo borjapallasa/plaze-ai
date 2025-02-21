@@ -57,8 +57,8 @@ const transactions: Transaction[] = [
 export function AffiliateDetailsDialog({ isOpen, onClose, affiliate }: AffiliateDetailsDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl">
-        <div className="space-y-8">
+      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
+        <div className="space-y-8 flex-1 overflow-y-auto">
           <div>
             <h2 className="text-3xl font-bold">{affiliate.name}</h2>
             <p className="text-muted-foreground">{affiliate.status}</p>
@@ -88,29 +88,29 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate }: Affiliate
               />
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-muted/50">
-                  <tr>
-                    <th className="text-left p-3">Template</th>
-                    <th className="text-right p-3">Transaction Amount</th>
-                    <th className="text-right p-3">Multiplier</th>
-                    <th className="text-right p-3">Affiliate Fee</th>
-                    <th className="text-right p-3">Transaction Date</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
+            <div className="overflow-auto border rounded-lg">
+              <div className="min-w-[800px]">
+                <div className="sticky top-0 bg-muted/50 z-10">
+                  <div className="grid grid-cols-5 gap-4 p-3">
+                    <div className="font-medium">Template</div>
+                    <div className="font-medium text-right">Transaction Amount</div>
+                    <div className="font-medium text-right">Multiplier</div>
+                    <div className="font-medium text-right">Affiliate Fee</div>
+                    <div className="font-medium text-right">Transaction Date</div>
+                  </div>
+                </div>
+                <div className="divide-y">
                   {transactions.map((transaction, index) => (
-                    <tr key={index} className="hover:bg-muted/50">
-                      <td className="p-3">{transaction.template}</td>
-                      <td className="text-right p-3">{transaction.amount}</td>
-                      <td className="text-right p-3">{transaction.multiplier}</td>
-                      <td className="text-right p-3">{transaction.affiliateFee}</td>
-                      <td className="text-right p-3">{transaction.date}</td>
-                    </tr>
+                    <div key={index} className="grid grid-cols-5 gap-4 p-3 hover:bg-muted/50">
+                      <div className="truncate">{transaction.template}</div>
+                      <div className="text-right">{transaction.amount}</div>
+                      <div className="text-right">{transaction.multiplier}</div>
+                      <div className="text-right">{transaction.affiliateFee}</div>
+                      <div className="text-right">{transaction.date}</div>
+                    </div>
                   ))}
-                </tbody>
-              </table>
+                </div>
+              </div>
             </div>
           </div>
         </div>
