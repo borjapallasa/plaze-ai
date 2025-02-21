@@ -84,7 +84,7 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate }: Affiliate
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
               <Input
                 placeholder="Type here to search"
-                className="pl-12 py-6 text-lg"
+                className="pl-12 py-6 text-lg rounded-full border-2"
               />
             </div>
 
