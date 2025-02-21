@@ -26,22 +26,22 @@ export default function SignUpCommunity() {
       <div className="w-full max-w-6xl grid md:grid-cols-2 gap-12 items-start">
         <div className="space-y-8">
           <div className="space-y-4">
-            <h1 className="text-4xl font-bold tracking-tight">
+            <h1 className="text-3xl font-bold tracking-tight">
               You've been invited to{" "}
-              <span className="text-[#356DED]">join this community!</span>
+              <span className="text-primary">join this community!</span>
             </h1>
-            <h2 className="text-2xl font-semibold">Optimal Path Automations</h2>
-            <p className="text-muted-foreground">This community is host by Borja P.</p>
+            <h2 className="text-xl font-semibold">Optimal Path Automations</h2>
+            <p className="text-sm text-muted-foreground">This community is host by Borja P.</p>
           </div>
 
           <div className="space-y-6">
-            <p className="text-lg">
+            <p className="text-sm">
               Imagine a spot where we all get together to chat about making our businesses run
               smoother with some automation magic and no-code shortcuts.{" "}
               <span className="font-medium">Here's what you'll get by joining:</span>
             </p>
 
-            <ul className="space-y-4">
+            <ul className="space-y-4 text-sm">
               <li className="flex gap-3">
                 <span className="font-semibold">Win Back Your Weekdays</span> - Spend time on what truly grows your business.
               </li>
@@ -138,11 +138,11 @@ export default function SignUpCommunity() {
                   className="text-sm text-muted-foreground"
                 >
                   I agree to the{" "}
-                  <Link to="#" className="text-[#356DED] hover:underline">
+                  <Link to="#" className="text-primary hover:underline">
                     Terms
                   </Link>{" "}
                   and{" "}
-                  <Link to="#" className="text-[#356DED] hover:underline">
+                  <Link to="#" className="text-primary hover:underline">
                     Privacy Policy
                   </Link>
                 </label>
@@ -150,14 +150,14 @@ export default function SignUpCommunity() {
 
               <Button
                 type="submit"
-                className="w-full bg-black text-white hover:bg-black/90"
+                className="w-full"
               >
                 Sign Up
               </Button>
 
               <div className="text-center text-sm">
                 <span className="text-muted-foreground">Already have an account? </span>
-                <Link to="/sign-in" className="text-[#356DED] hover:underline">
+                <Link to="/sign-in" className="text-primary hover:underline">
                   Sign In
                 </Link>
               </div>
