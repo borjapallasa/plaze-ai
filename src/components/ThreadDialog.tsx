@@ -48,19 +48,19 @@ export function ThreadDialog({ isOpen, onClose }: ThreadDialogProps) {
         <div className="p-4 space-y-4 flex-1 overflow-y-auto">
           <div className="w-full">
             <div className="flex justify-between items-start mb-4 pr-8">
-              <div className="flex items-start gap-3">
-                <Avatar className="h-10 w-10">
+              <div className="flex items-start gap-4">
+                <Avatar className="h-12 w-12">
                   <AvatarImage src="https://github.com/shadcn.png" />
                   <AvatarFallback>BP</AvatarFallback>
                 </Avatar>
-                <div>
-                  <h2 className="text-lg font-semibold">Letter from Borja</h2>
-                  <div className="text-sm text-muted-foreground">
+                <div className="space-y-0.5">
+                  <h2 className="text-lg font-semibold leading-tight">Letter from Borja</h2>
+                  <div className="text-sm text-muted-foreground leading-none">
                     Created by Borja P.
                   </div>
                 </div>
               </div>
-              <Badge variant="secondary" className="text-xs">Total Messages: 1</Badge>
+              <Badge variant="secondary" className="text-xs">Messages: 1</Badge>
             </div>
               
             <div className="space-y-3 mt-4">
