@@ -4,8 +4,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
+import { useState } from "react";
 
 export default function Classroom() {
+  const [isExpanded, setIsExpanded] = useState(true);
+  
   const lessons = [
     {
       title: "Week 5",
@@ -43,11 +46,22 @@ export default function Classroom() {
 
               {/* Lessons List */}
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-medium">New set</h3>
-                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                </div>
-                <div className="space-y-1">
+                <button 
+                  onClick={() => setIsExpanded(!isExpanded)}
+                  className="w-full flex items-center justify-between mb-2 hover:bg-muted/50 p-2 rounded-lg transition-colors"
+                >
+                  <h3 className="font-medium">How To Create Automated SEO Blogs With AI</h3>
+                  <ChevronDown 
+                    className={cn(
+                      "w-4 h-4 text-muted-foreground transition-transform duration-200",
+                      isExpanded ? "transform rotate-0" : "transform rotate-180"
+                    )} 
+                  />
+                </button>
+                <div className={cn(
+                  "space-y-1 overflow-hidden transition-all duration-200",
+                  isExpanded ? "max-h-[500px]" : "max-h-0"
+                )}>
                   {lessons.map((lesson) => (
                     <button
                       key={lesson.title}
