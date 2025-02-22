@@ -97,7 +97,7 @@ export function VariantPicker({
         })}
       </div>
       {onAddToCart && (
-        <div className="space-y-2">
+        <div className="space-y-2 pt-4">
           <Button
             className="w-full"
             size="lg"
