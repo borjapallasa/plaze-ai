@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
@@ -241,20 +240,20 @@ const badges = [
   { label: "Affiliate Offers", icon: Tags, category: null }
 ];
 
-// Memoize the TypeWriter component to prevent unnecessary re-renders
 const MemoizedTypeWriter = React.memo(() => (
-  <Typewriter
-    options={{
-      strings: typewriterStrings,
-      autoStart: true,
-      loop: true,
-      delay: 50,
-      deleteSpeed: 30,
-    }}
-  />
+  <div className="text-muted-foreground ml-1">
+    <Typewriter
+      options={{
+        strings: typewriterStrings,
+        autoStart: true,
+        loop: true,
+        delay: 50,
+        deleteSpeed: 30,
+      }}
+    />
+  </div>
 ));
 
-// Memoize the badge component to prevent re-renders when selected category changes
 const CategoryBadge = React.memo(({ 
   badge, 
   isSelected, 
@@ -281,28 +280,40 @@ const CategoryBadge = React.memo(({
   );
 });
 
+const PageTitle = React.memo(() => (
+  <div className="text-[1.5rem] leading-relaxed font-bold whitespace-nowrap flex items-center justify-center">
+    <span>The Best AI & Automation</span>
+    <MemoizedTypeWriter />
+  </div>
+));
+
 const Header = ({ searchCategory, setSearchCategory }) => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
+    const threshold = 10;
+    let lastScrollY = window.scrollY;
     let ticking = false;
 
     const updateScrollState = () => {
-      setIsScrolled(window.scrollY > 10);
+      const shouldBeScrolled = lastScrollY > threshold;
+      if (shouldBeScrolled !== isScrolled) {
+        setIsScrolled(shouldBeScrolled);
+      }
       ticking = false;
     };
 
     const onScroll = () => {
+      lastScrollY = window.scrollY;
       if (!ticking) {
-        window.requestAnimationFrame(updateScrollState);
+        requestAnimationFrame(updateScrollState);
         ticking = true;
       }
     };
 
     window.addEventListener('scroll', onScroll, { passive: true });
-    
     return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  }, [isScrolled]);
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm transition-all duration-200 ease-out bg-background border-b ${
@@ -318,12 +329,7 @@ const Header = ({ searchCategory, setSearchCategory }) => {
             <div className={`transition-all duration-300 ease-out mt-[15px] ${
               isScrolled ? 'opacity-0 h-0 mb-0 overflow-hidden' : 'opacity-100 h-[32px] mb-[20px]'
             }`}>
-              <div className="text-[1.5rem] leading-relaxed font-bold whitespace-nowrap flex items-center justify-center">
-                <span>The Best AI & Automation</span>
-                <span className="text-muted-foreground ml-1">
-                  <MemoizedTypeWriter />
-                </span>
-              </div>
+              <PageTitle />
             </div>
 
             <div className={`flex justify-center transition-transform duration-300 ease-in-out ${
@@ -401,7 +407,6 @@ const Header = ({ searchCategory, setSearchCategory }) => {
           </div>
         </div>
 
-        {/* Mobile Header */}
         <div className="sm:hidden">
           <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-md hover:shadow-lg transition-shadow bg-background">
             <div className="flex-1 flex items-center gap-2">
@@ -437,6 +442,14 @@ const Header = ({ searchCategory, setSearchCategory }) => {
 
 const MemoizedHeader = React.memo(Header);
 
+const ProductGrid = React.memo(({ products }: { products: typeof products }) => (
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {products.map((product, index) => (
+      <ProductCard key={index} {...product} />
+    ))}
+  </div>
+));
+
 const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchCategory, setSearchCategory] = useState("Products");
@@ -464,11 +477,8 @@ const Index = () => {
       <main>
         <div className="container mx-auto px-4">
           <div className="pt-24 pb-6">
-            <div className="text-[1.5rem] leading-relaxed font-bold whitespace-nowrap flex items-center justify-center mb-6">
-              <span>The Best AI & Automation</span>
-              <span className="text-muted-foreground ml-1">
-                <MemoizedTypeWriter />
-              </span>
+            <div className="mb-6">
+              <PageTitle />
             </div>
 
             <div className="space-y-4">
@@ -485,11 +495,7 @@ const Index = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProducts.map((product, index) => (
-              <ProductCard key={index} {...product} />
-            ))}
-          </div>
+          <ProductGrid products={filteredProducts} />
         </div>
       </main>
     </div>
