@@ -121,7 +121,7 @@ export default function Communities() {
                   {community.description}
                 </p>
 
-                <div className="flex items-center justify-between text-sm mb-8">
+                <div className="flex items-center justify-between text-sm mb-12">
                   <div className="text-muted-foreground">
                     {community.members} Members
                   </div>
