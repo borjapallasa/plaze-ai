@@ -1,4 +1,3 @@
-
 import React, { useMemo, useCallback } from "react";
 import { TrendingUp, Sparkle, Trophy, ThumbsUp, Star, Tags, LucideProps, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -31,7 +30,9 @@ const STYLES = {
   },
   mobile: {
     menuButton: "md:hidden inline-flex items-center rounded-full border px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary hover:shadow-sm",
-    menuItem: "flex items-center gap-2"
+    menuTrigger: "cursor-pointer",
+    menuContent: "z-50 min-w-[200px] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md animate-in data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+    menuItem: "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
   }
 } as const;
 
@@ -78,7 +79,6 @@ CategoryBadge.displayName = "CategoryBadge";
 export const CategoryHeader = React.memo(({ selectedCategory, onCategoryChange }: CategoryHeaderProps) => {
   const isMobile = useIsMobile();
 
-  // Single callback for all badge clicks
   const handleBadgeClick = useCallback((category: string | null) => {
     onCategoryChange(selectedCategory === category ? null : category);
   }, [selectedCategory, onCategoryChange]);
@@ -89,18 +89,26 @@ export const CategoryHeader = React.memo(({ selectedCategory, onCategoryChange }
         <div className={STYLES.container.badgeContainer}>
           {isMobile ? (
             <DropdownMenu>
-              <DropdownMenuTrigger className={STYLES.mobile.menuButton}>
-                <Menu className={STYLES.badge.icon} aria-hidden="true" />
-                Categories
+              <DropdownMenuTrigger asChild>
+                <button className={STYLES.mobile.menuButton}>
+                  <Menu className={STYLES.badge.icon} />
+                  <span>Categories</span>
+                </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
+              <DropdownMenuContent 
+                align="start"
+                className={STYLES.mobile.menuContent}
+              >
                 {BADGES.map((badge) => {
                   const Icon = badge.icon;
                   return (
                     <DropdownMenuItem 
                       key={`${badge.label}-${badge.category}`}
-                      className={STYLES.mobile.menuItem}
                       onClick={() => handleBadgeClick(badge.category)}
+                      className={cn(
+                        STYLES.mobile.menuItem,
+                        selectedCategory === badge.category && "bg-accent text-accent-foreground"
+                      )}
                     >
                       <Icon className={STYLES.badge.icon} />
                       {badge.label}
