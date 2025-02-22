@@ -1,6 +1,6 @@
 
 import { Card } from "@/components/ui/card";
-import { Star } from "lucide-react";
+import { Star, Clock, Wallet, DollarSign } from "lucide-react";
 import { Check } from "lucide-react";
 import React from "react";
 
@@ -72,10 +72,19 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
                     <p className="text-gray-600 leading-relaxed">{review.description}</p>
                     
                     {review.projectDetails && (
-                      <div className="space-y-1 text-sm text-gray-500">
-                        <p>{review.projectDetails.duration}</p>
-                        <p>{review.projectDetails.rate}</p>
-                        <p>Billed: {review.projectDetails.billed}</p>
+                      <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                        <div className="flex items-center gap-1.5">
+                          <Clock className="h-4 w-4 text-gray-400" />
+                          <span>{review.projectDetails.duration}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <Wallet className="h-4 w-4 text-gray-400" />
+                          <span>{review.projectDetails.rate}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <DollarSign className="h-4 w-4 text-gray-400" />
+                          <span>Billed: {review.projectDetails.billed}</span>
+                        </div>
                       </div>
                     )}
 
