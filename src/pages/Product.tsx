@@ -10,6 +10,7 @@ import { StickyATC } from "@/components/product/StickyATC";
 import { useToast } from "@/components/ui/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ProductCard } from "@/components/ProductCard";
+import { VariantPicker } from "@/components/product/VariantPicker";
 
 const placeholderImages = [
   "https://images.unsplash.com/photo-1649972904349-6e44c42644a7",
@@ -380,7 +381,7 @@ export default function Product() {
             className="mb-6"
           />
           <div ref={variantsRef}>
-            <ProductVariants
+            <VariantPicker
               variants={variants}
               selectedVariant={selectedVariant}
               onVariantChange={setSelectedVariant}
@@ -421,7 +422,7 @@ export default function Product() {
               rating={product.rating}
             />
             <div ref={variantsRef}>
-              <ProductVariants
+              <VariantPicker
                 variants={variants}
                 selectedVariant={selectedVariant}
                 onVariantChange={setSelectedVariant}

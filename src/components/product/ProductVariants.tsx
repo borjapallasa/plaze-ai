@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { ProductPricing } from "@/components/product/ProductPricing";
 import { VariantCard } from "./VariantCard";
-import { Variant, ProductVariantsProps } from "./types/variants";
+import { Variant, ProductVariantsEditorProps } from "./types/variants";
 
 export interface ProductVariantsEditorProps {
   variants?: Variant[];
@@ -147,3 +147,5 @@ export function ProductVariantsEditor({
     </div>
   );
 }
+
+export const ProductVariants = ProductVariantsEditor;

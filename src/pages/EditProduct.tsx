@@ -8,7 +8,7 @@ import { MainHeader } from "@/components/MainHeader";
 import { ProductEditor } from "@/components/product/ProductEditor";
 import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
 import { ProductStatus } from "@/components/product/ProductStatus";
-import { ProductVariants } from "@/components/product/ProductVariants";
+import { ProductVariantsEditor } from "@/components/product/ProductVariants";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -92,7 +92,7 @@ const EditProduct = () => {
                 </Card>
 
                 <Card className="p-3 sm:p-6">
-                  <ProductVariants />
+                  <ProductVariantsEditor />
                 </Card>
               </div>
             </div>
