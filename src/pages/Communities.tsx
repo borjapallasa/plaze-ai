@@ -282,10 +282,10 @@ export default function Communities() {
                   <DropdownMenuTrigger asChild>
                     <Button 
                       variant="outline" 
-                      className="rounded-full px-2.5 py-1.5 h-8 border-2 hover:border-primary/20 transition-colors"
+                      className="rounded-full px-2 py-1 h-7 border-2 hover:border-primary/20 transition-colors"
                     >
-                      <Menu className="h-3.5 w-3.5 mr-1.5" />
-                      <User className="h-3.5 w-3.5" />
+                      <Menu className="h-3 w-3 mr-1" />
+                      <User className="h-3 w-3" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-56">
