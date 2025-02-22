@@ -74,64 +74,57 @@ const CategoryBadge = React.memo(({
 CategoryBadge.displayName = "CategoryBadge";
 
 export const CategoryHeader = React.memo(({ selectedCategory, onCategoryChange }: CategoryHeaderProps) => {
-  const isMobile = useIsMobile();
-
   const handleBadgeClick = useCallback((category: string | null) => {
     onCategoryChange(selectedCategory === category ? null : category);
   }, [selectedCategory, onCategoryChange]);
 
-  const renderMobileMenu = () => (
-    <div className="block md:hidden">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button type="button" className="p-2 rounded-md hover:bg-secondary">
-            <Menu className="h-6 w-6" />
-          </button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent 
-          align="start"
-          className={STYLES.mobile.menuContent}
-        >
-          {BADGES.map((badge) => {
-            const Icon = badge.icon;
-            return (
-              <DropdownMenuItem 
-                key={`${badge.label}-${badge.category}`}
-                onClick={() => handleBadgeClick(badge.category)}
-                className={cn(
-                  STYLES.mobile.menuItem,
-                  selectedCategory === badge.category && "bg-accent text-accent-foreground"
-                )}
-              >
-                <Icon className={STYLES.badge.icon} />
-                {badge.label}
-              </DropdownMenuItem>
-            );
-          })}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
-  );
-
-  const renderDesktopBadges = () => (
-    <div className="hidden md:flex flex-wrap gap-3">
-      {BADGES.map((badge) => (
-        <CategoryBadge
-          key={`${badge.label}-${badge.category}`}
-          badge={badge}
-          isSelected={selectedCategory === badge.category}
-          onClick={() => handleBadgeClick(badge.category)}
-        />
-      ))}
-    </div>
-  );
-
   return (
     <div className={STYLES.container.wrapper}>
       <div className={STYLES.container.inner}>
-        <div className="flex items-center">
-          {renderMobileMenu()}
-          {renderDesktopBadges()}
+        <div className="flex items-center justify-between">
+          <div className="md:hidden">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button 
+                  type="button" 
+                  className="p-2 rounded-md hover:bg-accent/50 border border-input"
+                >
+                  <Menu className="h-6 w-6" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent 
+                align="start"
+                className={STYLES.mobile.menuContent}
+              >
+                {BADGES.map((badge) => {
+                  const Icon = badge.icon;
+                  return (
+                    <DropdownMenuItem 
+                      key={`${badge.label}-${badge.category}`}
+                      onClick={() => handleBadgeClick(badge.category)}
+                      className={cn(
+                        STYLES.mobile.menuItem,
+                        selectedCategory === badge.category && "bg-accent text-accent-foreground"
+                      )}
+                    >
+                      <Icon className={STYLES.badge.icon} />
+                      {badge.label}
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          <div className="hidden md:flex flex-wrap gap-3">
+            {BADGES.map((badge) => (
+              <CategoryBadge
+                key={`${badge.label}-${badge.category}`}
+                badge={badge}
+                isSelected={selectedCategory === badge.category}
+                onClick={() => handleBadgeClick(badge.category)}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>
