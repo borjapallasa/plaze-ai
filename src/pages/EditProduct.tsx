@@ -19,9 +19,9 @@ const EditProduct = () => {
       <div className="mt-16">
         <div className="w-full max-w-[1400px] mx-auto px-2 xs:px-3 sm:px-6 lg:px-8 py-3 sm:py-6">
           <div className="space-y-6 sm:space-y-8 mb-8 lg:mb-0">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+            <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
               <Link to="/seller/product">
-                <Button variant="ghost" size="icon" className="rounded-full flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10">
+                <Button variant="ghost" size="icon" className="rounded-full flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 mt-1">
                   <ArrowLeft className="h-4 w-4" />
                 </Button>
               </Link>
