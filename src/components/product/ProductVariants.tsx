@@ -142,33 +142,6 @@ export function ProductVariants({
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor={`price-${variant.id}`}>Price</Label>
-                <Input
-                  id={`price-${variant.id}`}
-                  type="number"
-                  placeholder="0.00"
-                  value={variant.price}
-                  onChange={(e) =>
-                    updateVariant(variant.id, "price", e.target.value)
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor={`compare-price-${variant.id}`}>Compare Price</Label>
-                <Input
-                  id={`compare-price-${variant.id}`}
-                  type="number"
-                  placeholder="0.00"
-                  value={variant.comparePrice}
-                  onChange={(e) =>
-                    updateVariant(variant.id, "comparePrice", e.target.value)
-                  }
-                />
-              </div>
-            </div>
-
             <div className="flex items-center space-x-2">
               <Checkbox
                 id={`highlight-${variant.id}`}
