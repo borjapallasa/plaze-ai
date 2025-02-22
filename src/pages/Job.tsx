@@ -230,7 +230,7 @@ export default function JobDetails() {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="space-y-4">
             <Button className="w-full">Apply now</Button>
             <Button variant="outline" className="w-full">Save job</Button>
 
