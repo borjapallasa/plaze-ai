@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -169,8 +168,8 @@ export default function JobDetails() {
 
               <Separator className="mb-6" />
 
-              <div className="flex items-center gap-8 mb-6 overflow-x-auto">
-                <div className="flex items-start gap-3 flex-shrink-0">
+              <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border">
+                <div className="flex items-start gap-3 py-4 md:py-0 md:px-6 md:first:pl-0 md:last:pr-0">
                   <Clock className="h-6 w-6 text-muted-foreground mt-0.5 flex-shrink-0" />
                   <div className="min-w-0">
                     <p className="font-medium text-base">{job.workDetails.hours}</p>
@@ -178,9 +177,7 @@ export default function JobDetails() {
                   </div>
                 </div>
                 
-                <Separator orientation="vertical" className="h-12" />
-                
-                <div className="flex items-start gap-3 flex-shrink-0">
+                <div className="flex items-start gap-3 py-4 md:py-0 md:px-6">
                   <Calendar className="h-6 w-6 text-muted-foreground mt-0.5 flex-shrink-0" />
                   <div className="min-w-0">
                     <p className="font-medium text-base">{job.workDetails.duration}</p>
@@ -188,9 +185,7 @@ export default function JobDetails() {
                   </div>
                 </div>
                 
-                <Separator orientation="vertical" className="h-12" />
-                
-                <div className="flex items-start gap-3 flex-shrink-0">
+                <div className="flex items-start gap-3 py-4 md:py-0 md:px-6">
                   <Briefcase className="h-6 w-6 text-muted-foreground mt-0.5 flex-shrink-0" />
                   <div className="min-w-0">
                     <p className="font-medium text-base leading-snug">{job.workDetails.experience}</p>
@@ -199,7 +194,7 @@ export default function JobDetails() {
                 </div>
               </div>
 
-              <div>
+              <div className="mt-6">
                 <h2 className="text-lg font-semibold mb-4">Skills and Expertise</h2>
                 <div className="flex flex-wrap gap-1.5 mb-6">
                   {job.skills.map((skill, index) => (
