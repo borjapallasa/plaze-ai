@@ -11,10 +11,10 @@ import {
   Sparkle,
   Trophy,
   ThumbsUp,
-  Tags
+  Tags,
+  ChevronDown
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useIsMobile } from "@/hooks/use-mobile";
 import Typewriter from 'typewriter-effect';
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
@@ -243,54 +243,90 @@ const badges = [
 ];
 
 const Header = ({ searchCategory, setSearchCategory }) => {
-  const isMobile = useIsMobile();
-
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background border-b h-16">
-      <div className="container mx-auto px-4">
-        <div className="sm:hidden px-4 py-3">
-          <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-md bg-background">
-            <div className="flex-1 flex items-center gap-2">
-              <Select 
-                defaultValue="Products" 
-                onValueChange={setSearchCategory}
-              >
-                <SelectTrigger className="border-0 w-[120px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
-                  <SelectValue className="pr-4" />
-                </SelectTrigger>
-                <SelectContent className="w-[150px]">
-                  <SelectItem value="Products">Products</SelectItem>
-                  <SelectItem value="Experts">Experts</SelectItem>
-                  <SelectItem value="Communities">Communities</SelectItem>
-                  <SelectItem value="Jobs">Jobs</SelectItem>
-                </SelectContent>
-              </Select>
+    <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-background border-b">
+      <div className="container mx-auto px-4 h-full">
+        {/* Mobile Header */}
+        <div className="flex md:hidden items-center justify-between h-full gap-3">
+          <div className="flex-1">
+            <div className="flex items-center gap-1 px-3 py-1.5 rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-7 w-7 p-0 hover:bg-transparent"
+                  >
+                    <ChevronDown className="h-3.5 w-3.5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-[200px]">
+                  <DropdownMenuItem onClick={() => setSearchCategory("Products")}>
+                    Products
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setSearchCategory("Experts")}>
+                    Experts
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setSearchCategory("Communities")}>
+                    Communities
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setSearchCategory("Jobs")}>
+                    Jobs
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
               <Input
-                className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
+                className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-7 text-sm flex-1"
                 placeholder={`Search ${searchCategory.toLowerCase()}...`}
                 type="search"
               />
+              <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90 h-7 w-7">
+                <Search className="h-3.5 w-3.5" />
+              </Button>
             </div>
-            <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
-              <Search className="h-4 w-4" />
-            </Button>
           </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="outline" 
+                className="rounded-full px-2.5 py-1.5 h-8 border-2 hover:border-primary/20 transition-colors"
+              >
+                <Menu className="h-3.5 w-3.5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <Link to="/">
+                <DropdownMenuItem>
+                  Home
+                </DropdownMenuItem>
+              </Link>
+              <DropdownMenuItem>Sign In</DropdownMenuItem>
+              <DropdownMenuItem>Sign Up</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <Link to="/affiliates">
+                <DropdownMenuItem>Affiliates</DropdownMenuItem>
+              </Link>
+              <DropdownMenuItem>Sell on Plaze</DropdownMenuItem>
+              <DropdownMenuItem>Help Center</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
-        <div className="hidden sm:flex items-center justify-between h-16">
+        {/* Desktop Header */}
+        <div className="hidden md:flex items-center justify-between h-full gap-4">
           <Link to="/" className="text-lg font-semibold w-[140px]">
             Logo
           </Link>
 
           <div className="flex-1 max-w-2xl mx-auto">
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-md hover:shadow-lg transition-shadow bg-background">
-              <div className="flex-1 flex items-center gap-2">
+            <div className="flex items-center gap-1 px-3 py-1.5 rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background">
+              <div className="flex-1 flex items-center gap-1">
                 <Select 
-                  defaultValue="Products" 
+                  defaultValue="Products"
                   onValueChange={setSearchCategory}
                 >
-                  <SelectTrigger className="border-0 w-[200px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
-                    <SelectValue className="pr-4" />
+                  <SelectTrigger className="border-0 w-[200px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-7 text-sm [&>span]:whitespace-nowrap [&>span]:overflow-visible">
+                    <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="w-[240px]">
                     <SelectItem value="Products">Products</SelectItem>
@@ -300,13 +336,13 @@ const Header = ({ searchCategory, setSearchCategory }) => {
                   </SelectContent>
                 </Select>
                 <Input
-                  className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
+                  className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-7 text-sm"
                   placeholder={`Search ${searchCategory.toLowerCase()}...`}
                   type="search"
                 />
               </div>
-              <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
-                <Search className="h-4 w-4" />
+              <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90 h-7 w-7">
+                <Search className="h-3.5 w-3.5" />
               </Button>
             </div>
           </div>
