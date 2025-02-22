@@ -1,3 +1,4 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -168,8 +169,8 @@ export default function JobDetails() {
 
               <Separator className="mb-6" />
 
-              <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border">
-                <div className="flex items-start gap-3 py-4 md:py-0 md:px-6 md:first:pl-0 md:last:pr-0">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:divide-x divide-border">
+                <div className="flex items-start gap-3">
                   <Clock className="h-6 w-6 text-muted-foreground mt-0.5 flex-shrink-0" />
                   <div className="min-w-0">
                     <p className="font-medium text-base">{job.workDetails.hours}</p>
@@ -177,7 +178,7 @@ export default function JobDetails() {
                   </div>
                 </div>
                 
-                <div className="flex items-start gap-3 py-4 md:py-0 md:px-6">
+                <div className="flex items-start gap-3 md:px-6">
                   <Calendar className="h-6 w-6 text-muted-foreground mt-0.5 flex-shrink-0" />
                   <div className="min-w-0">
                     <p className="font-medium text-base">{job.workDetails.duration}</p>
@@ -185,7 +186,7 @@ export default function JobDetails() {
                   </div>
                 </div>
                 
-                <div className="flex items-start gap-3 py-4 md:py-0 md:px-6">
+                <div className="flex items-start gap-3 md:px-6">
                   <Briefcase className="h-6 w-6 text-muted-foreground mt-0.5 flex-shrink-0" />
                   <div className="min-w-0">
                     <p className="font-medium text-base leading-snug">{job.workDetails.experience}</p>
@@ -194,29 +195,31 @@ export default function JobDetails() {
                 </div>
               </div>
 
-              <div className="mt-6">
-                <h2 className="text-lg font-semibold mb-4">Skills and Expertise</h2>
-                <div className="flex flex-wrap gap-1.5 mb-6">
-                  {job.skills.map((skill, index) => (
-                    <Badge 
-                      key={index} 
-                      variant="secondary" 
-                      className="rounded-full text-xs px-2 py-0.5 bg-[#F4F4F5] hover:bg-[#F4F4F5]"
-                    >
-                      {skill}
-                    </Badge>
-                  ))}
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h2 className="text-lg font-semibold mb-4">Skills and Expertise</h2>
+                  <div className="flex flex-wrap gap-1.5">
+                    {job.skills.map((skill, index) => (
+                      <Badge 
+                        key={index} 
+                        variant="secondary" 
+                        className="rounded-full text-xs px-2 py-0.5 bg-[#F4F4F5] hover:bg-[#F4F4F5]"
+                      >
+                        {skill}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
-              </div>
 
-              <div className="border-t pt-6">
-                <h2 className="text-lg font-semibold mb-4">Activity on this job</h2>
-                <div className="space-y-2 text-sm">
-                  <p>Proposals: {job.activity.proposals.range}</p>
-                  <p>Last viewed by client: {job.activity.lastViewed}</p>
-                  <p>Interviewing: {job.activity.interviewing}</p>
-                  <p>Invites sent: {job.activity.invitesSent}</p>
-                  <p>Unanswered invites: {job.activity.unansweredInvites}</p>
+                <div>
+                  <h2 className="text-lg font-semibold mb-4">Activity on this job</h2>
+                  <div className="space-y-2 text-sm">
+                    <p>Proposals: {job.activity.proposals.range}</p>
+                    <p>Last viewed by client: {job.activity.lastViewed}</p>
+                    <p>Interviewing: {job.activity.interviewing}</p>
+                    <p>Invites sent: {job.activity.invitesSent}</p>
+                    <p>Unanswered invites: {job.activity.unansweredInvites}</p>
+                  </div>
                 </div>
               </div>
             </Card>
