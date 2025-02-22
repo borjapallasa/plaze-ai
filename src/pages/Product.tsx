@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -394,7 +393,7 @@ export default function Product() {
           </div>
           <Button 
             variant="outline" 
-            className="w-full flex items-center justify-center gap-2 mb-12"
+            className="w-full flex items-center justify-center gap-2 mb-8"
             onClick={() => {
               console.log("Contact seller clicked");
             }}
@@ -447,7 +446,7 @@ export default function Product() {
 
             <Button 
               variant="outline" 
-              className="w-full flex items-center justify-center gap-2 mb-8"
+              className="w-full flex items-center justify-center gap-2 mb-6"
               onClick={() => {
                 console.log("Contact seller clicked");
               }}
@@ -456,7 +455,7 @@ export default function Product() {
               Contact Seller
             </Button>
 
-            <Card className="p-6 mt-6">
+            <Card className="p-6">
               <h3 className="font-semibold mb-4">Additional Information</h3>
               <div className="space-y-4">
                 <div>
@@ -502,7 +501,6 @@ export default function Product() {
           <div className="aspect-video bg-accent rounded-lg"></div>
         </Card>
 
-        {/* Mobile Additional Information */}
         <div className="lg:hidden mb-8">
           <Card className="p-6 mb-4">
             <h3 className="font-semibold mb-4">Additional Information</h3>
