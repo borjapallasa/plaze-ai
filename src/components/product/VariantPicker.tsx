@@ -76,14 +76,14 @@ export function VariantPicker({
                     </ul>
                   )}
                   {variant.tags && variant.tags.length > 0 && (
-                    <div className="inline-flex flex-wrap gap-1.5 mt-3">
+                    <div className="flex flex-wrap items-center gap-1.5 mt-3">
                       {variant.tags.map((tag) => (
-                        <div
+                        <span
                           key={tag}
-                          className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full text-xs"
+                          className="inline-block bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full text-xs whitespace-nowrap"
                         >
                           {tag}
-                        </div>
+                        </span>
                       ))}
                     </div>
                   )}
