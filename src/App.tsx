@@ -1,95 +1,69 @@
 
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Routes, Route } from "react-router-dom";
 import Index from "./pages/index";
 import Product from "./pages/Product";
-import EditProduct from "./pages/EditProduct";
 import Expert from "./pages/Expert";
 import Experts from "./pages/Experts";
-import Job from "./pages/Job";
-import Jobs from "./pages/Jobs";
-import Blog from "./pages/Blog";
-import SignIn from "./pages/sign-in";
+import Community from "./pages/Community";
 import SignUp from "./pages/sign-up";
-import SignInCommunity from "./pages/sign-in-community";
 import SignUpCommunity from "./pages/sign-up-community";
+import SignIn from "./pages/sign-in";
+import SignInCommunity from "./pages/sign-in-community";
+import RecoverPassword from "./pages/RecoverPassword";
+import Classroom from "./pages/Classroom";
+import Jobs from "./pages/Jobs";
+import Job from "./pages/Job";
+import ManageSubscriptions from "./pages/ManageSubscriptions";
+import Blog from "./pages/Blog";
 import Affiliates from "./pages/Affiliates";
-import Communities from "./pages/Communities";
+import PersonalArea from "./pages/PersonalArea";
+import Transactions from "./pages/Transactions";
+import AccountSettings from "./pages/AccountSettings";
+import Chats from "./pages/Chats";
+import ThankYou from "./pages/ThankYou";
+import EditProduct from "./pages/EditProduct";
+import { Footer } from "./components/Footer";
 
 const queryClient = new QueryClient();
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Index />,
-  },
-  {
-    path: "/product/:productId",
-    element: <Product />,
-  },
-  {
-    path: "/edit-product/:productId",
-    element: <EditProduct />,
-  },
-  {
-    path: "/expert/:expertId",
-    element: <Expert />,
-  },
-  {
-    path: "/experts",
-    element: <Experts />,
-  },
-  {
-    path: "/job/:jobId",
-    element: <Job />,
-  },
-  {
-    path: "/jobs",
-    element: <Jobs />,
-  },
-  {
-    path: "/blog",
-    element: <Blog />,
-  },
-  {
-    path: "/sign-in",
-    element: <SignIn />,
-  },
-  {
-    path: "/sign-up",
-    element: <SignUp />,
-  },
-  {
-    path: "/sign-in-community",
-    element: <SignInCommunity />,
-  },
-  {
-    path: "/sign-up-community",
-    element: <SignUpCommunity />,
-  },
-  {
-    path: "/affiliates",
-    element: <Affiliates />,
-  },
-  {
-    path: "/communities",
-    element: <Communities />,
-  }
-]);
-
-function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <RouterProvider router={router} />
-        <Toaster />
-        <Sonner />
-      </TooltipProvider>
-    </QueryClientProvider>
-  );
-}
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <div className="flex flex-col min-h-screen">
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/product" element={<Product />} />
+          <Route path="/expert" element={<Expert />} />
+          <Route path="/experts" element={<Experts />} />
+          <Route path="/community" element={<Community />} />
+          <Route path="/sign-up" element={<SignUp />} />
+          <Route path="/sign-up/community" element={<SignUpCommunity />} />
+          <Route path="/sign-in" element={<SignIn />} />
+          <Route path="/sign-in/community" element={<SignInCommunity />} />
+          <Route path="/recover-password" element={<RecoverPassword />} />
+          <Route path="/community/classroom" element={<Classroom />} />
+          <Route path="/jobs" element={<Jobs />} />
+          <Route path="/job/:id" element={<Job />} />
+          <Route path="/manage-subscriptions" element={<ManageSubscriptions />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/affiliates" element={<Affiliates />} />
+          <Route path="/personal-area" element={<PersonalArea />} />
+          <Route path="/transactions" element={<Transactions />} />
+          <Route path="/account-settings" element={<AccountSettings />} />
+          <Route path="/chats" element={<Chats />} />
+          <Route path="/thank-you" element={<ThankYou />} />
+          <Route path="/seller/product" element={<EditProduct />} />
+        </Routes>
+        <Footer />
+      </div>
+      <Toaster />
+      <Sonner />
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 
 export default App;
