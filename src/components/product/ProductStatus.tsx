@@ -13,6 +13,7 @@ import {
 export function ProductStatus() {
   return (
     <Card className="p-3 sm:p-6">
+      <h2 className="text-lg font-medium mb-3 sm:mb-4">Status</h2>
       <div className="flex items-center gap-4">
         <div className="flex-1">
           <Select defaultValue="active">
