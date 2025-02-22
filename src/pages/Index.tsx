@@ -224,14 +224,14 @@ export default function Index() {
         isScrolled ? 'bg-background' : ''
       }`}>
         <div className="container mx-auto px-4">
-          <div className="hidden sm:flex relative py-4">
+          <div className="hidden sm:flex relative py-2">
             <div className="w-[20%] flex items-start">
-              <h1 className="text-2xl font-semibold mt-[15px] ml-[15px]">Logo</h1>
+              <h1 className="text-2xl font-semibold mt-[12px] ml-[15px]">Logo</h1>
             </div>
 
             <div className="w-[60%] flex flex-col items-center">
-              <div className={`transition-all duration-300 ease-out mt-[15px] ${
-                isScrolled ? 'opacity-0 h-0 mb-0 overflow-hidden' : 'opacity-100 h-[32px] mb-[20px]'
+              <div className={`transition-all duration-300 ease-out mt-[12px] ${
+                isScrolled ? 'opacity-0 h-0 mb-0 overflow-hidden' : 'opacity-100 h-[32px] mb-[16px]'
               }`}>
                 <div className="text-[1.5rem] leading-relaxed font-bold whitespace-nowrap flex items-center justify-center">
                   <span>The Best AI & Automations</span>
@@ -286,7 +286,7 @@ export default function Index() {
             </div>
 
             <div className="w-[20%] flex items-start justify-end">
-              <div className="flex items-center gap-3 mt-[15px] mr-[15px]">
+              <div className="flex items-center gap-3 mt-[12px] mr-[15px]">
                 <Button 
                   variant="ghost" 
                   size="sm" 
@@ -324,7 +324,7 @@ export default function Index() {
             </div>
           </div>
 
-          <div className="sm:hidden py-3">
+          <div className="sm:hidden py-2">
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border shadow-md hover:shadow-lg transition-shadow bg-background">
               <div className="flex-1 flex items-center gap-2">
                 <Select 
