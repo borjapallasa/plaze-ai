@@ -48,7 +48,7 @@ export default function AccountSettings() {
         <MainHeader />
       </div>
 
-      <div className="container mx-auto px-4 pt-24 pb-8 max-w-2xl">
+      <div className="container mx-auto px-4 pt-[54px] pb-8 max-w-2xl">
         <div className="space-y-8">
           {/* Update Profile Section */}
           <Card className="border-none shadow-lg">
