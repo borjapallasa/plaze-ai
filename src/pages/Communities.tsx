@@ -28,7 +28,7 @@ const communities = [
     description: "#1 Fragrance Community 🏆 Our mission is to help YOU leverage the power of scent to become the man you know yourself to be.",
     members: "5.3k",
     pricing: "Free",
-    image: "/lovable-uploads/a5a87b0c-bddb-41ec-bba1-5ee75d5a86cc.png",
+    image: "https://images.unsplash.com/photo-1517022812141-23620dba5c23",
     category: "hobbies"
   },
   {
@@ -37,7 +37,7 @@ const communities = [
     description: "Modern calligraphy made easy! ✍️",
     members: "1.1k",
     pricing: "$9/month",
-    image: "/lovable-uploads/a5a87b0c-bddb-41ec-bba1-5ee75d5a86cc.png",
+    image: "https://images.unsplash.com/photo-1582562124811-c09040d0a901",
     category: "hobbies"
   },
   {
@@ -46,7 +46,7 @@ const communities = [
     description: "THE #1 community for menopausal (peri & post) women to come together, lose weight, get healthier and regain their confidence.",
     members: "1.3k",
     pricing: "$49/month",
-    image: "/lovable-uploads/a5a87b0c-bddb-41ec-bba1-5ee75d5a86cc.png",
+    image: "https://images.unsplash.com/photo-1498936178812-4b2e558d2937",
     category: "health"
   },
   {
@@ -55,7 +55,7 @@ const communities = [
     description: "🌎 💰 Join The #1 Community In The World For Entrepreneurs And Get Mentored Every Week By The Millionaires And Billionaires Who've Done It.",
     members: "3.6k",
     pricing: "$39/month",
-    image: "/lovable-uploads/a5a87b0c-bddb-41ec-bba1-5ee75d5a86cc.png",
+    image: "https://images.unsplash.com/photo-1501286353178-1ec881214838",
     category: "money"
   },
   {
@@ -64,7 +64,7 @@ const communities = [
     description: "Join a community of obsessed pickleball players, learn the strategies pros rely on & get personalized help so you play confidently.",
     members: "690",
     pricing: "$39/month",
-    image: "/lovable-uploads/a5a87b0c-bddb-41ec-bba1-5ee75d5a86cc.png",
+    image: "https://images.unsplash.com/photo-1469041797191-50ace28483c3",
     category: "sports"
   },
   {
@@ -73,7 +73,7 @@ const communities = [
     description: "Join the #1 masculine self-improvement community... Level up in all areas of your life and finally leave Jeffery behind.",
     members: "176.4k",
     pricing: "Free",
-    image: "/lovable-uploads/a5a87b0c-bddb-41ec-bba1-5ee75d5a86cc.png",
+    image: "https://images.unsplash.com/photo-1517022812141-23620dba5c23",
     category: "self-improvement"
   }
 ];
