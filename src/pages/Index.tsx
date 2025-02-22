@@ -386,7 +386,7 @@ export default function Index() {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="flex flex-col flex-1 min-w-0">
+                <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-lg leading-tight mb-1">Product {index + 1}</h3>
                   <Badge 
                     variant="secondary" 
