@@ -46,6 +46,36 @@ const EditProduct = () => {
             </Card>
 
             <Card className="p-6">
+              <h2 className="text-lg font-medium mb-4">Product Details</h2>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="apps">Apps</Label>
+                  <Input id="apps" placeholder="Enter required apps" />
+                </div>
+                <div>
+                  <Label htmlFor="appsPricing">Apps Pricing</Label>
+                  <Input id="appsPricing" placeholder="Enter apps pricing details" />
+                </div>
+                <div>
+                  <Label htmlFor="included">Included</Label>
+                  <Input id="included" placeholder="Enter what's included" />
+                </div>
+                <div>
+                  <Label htmlFor="difficultyLevel">Difficulty Level</Label>
+                  <Input id="difficultyLevel" placeholder="Select difficulty level" />
+                </div>
+                <div>
+                  <Label htmlFor="demo">Demo</Label>
+                  <Input id="demo" placeholder="Enter demo link" type="url" />
+                </div>
+                <div>
+                  <Label htmlFor="filesLink">Files Link</Label>
+                  <Input id="filesLink" placeholder="Enter files link" type="url" />
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-6">
               <h2 className="text-lg font-medium mb-4">Media</h2>
               <ProductMediaUpload />
             </Card>
