@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Search, Menu, User, ChevronDown } from "lucide-react";
+import { Search, Menu, User, ChevronDown, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -132,6 +132,16 @@ export const MainHeader = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
+              <Link to="/">
+                <DropdownMenuItem>
+                  <Home className="mr-2 h-4 w-4" />
+                  Home
+                </DropdownMenuItem>
+              </Link>
+              <Link to="/affiliates">
+                <DropdownMenuItem>Affiliates</DropdownMenuItem>
+              </Link>
+              <DropdownMenuSeparator />
               <DropdownMenuItem>Sign In</DropdownMenuItem>
               <DropdownMenuItem>Sign Up</DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -198,6 +208,16 @@ export const MainHeader = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
+                <Link to="/">
+                  <DropdownMenuItem>
+                    <Home className="mr-2 h-4 w-4" />
+                    Home
+                  </DropdownMenuItem>
+                </Link>
+                <Link to="/affiliates">
+                  <DropdownMenuItem>Affiliates</DropdownMenuItem>
+                </Link>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem>Sign In</DropdownMenuItem>
                 <DropdownMenuItem>Sign Up</DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -211,4 +231,3 @@ export const MainHeader = () => {
     </header>
   );
 };
-
