@@ -205,11 +205,11 @@ export default function Communities() {
 
   return (
     <>
-      <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm transition-all duration-200 ease-out bg-background border-b ${
-        isScrolled ? 'h-[80px] bg-[#FFFFFF] mt-[5px]' : ''
+      <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm transition-all duration-200 ease-out bg-background/95 border-b ${
+        isScrolled ? 'h-16 bg-background' : ''
       }`}>
         <div className="container mx-auto px-4">
-          <div className="hidden sm:flex relative pb-[20px]">
+          <div className="hidden sm:flex relative py-4">
             <div className="w-[20%] flex items-start">
               <h1 className="text-2xl font-semibold mt-[15px] ml-[15px]">Logo</h1>
             </div>
@@ -309,28 +309,26 @@ export default function Communities() {
           </div>
 
           {/* Mobile Header */}
-          <div className="sm:hidden">
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-md hover:shadow-lg transition-shadow bg-background">
-              <div className="flex-1 flex items-center gap-2">
-                <Select 
-                  defaultValue="Communities"
-                >
-                  <SelectTrigger className="border-0 w-[140px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
-                    <SelectValue className="pr-4" />
-                  </SelectTrigger>
-                  <SelectContent className="w-[180px]">
-                    <SelectItem value="Products">Products</SelectItem>
-                    <SelectItem value="Experts">Experts</SelectItem>
-                    <SelectItem value="Communities">Communities</SelectItem>
-                    <SelectItem value="Jobs">Jobs</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Input
-                  className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
-                  placeholder="Search communities..."
-                  type="search"
-                />
-              </div>
+          <div className="sm:hidden py-3">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border shadow-md hover:shadow-lg transition-shadow bg-background">
+              <Select 
+                defaultValue="Communities"
+              >
+                <SelectTrigger className="border-0 w-[140px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
+                  <SelectValue className="pr-4" />
+                </SelectTrigger>
+                <SelectContent className="w-[180px]">
+                  <SelectItem value="Products">Products</SelectItem>
+                  <SelectItem value="Experts">Experts</SelectItem>
+                  <SelectItem value="Communities">Communities</SelectItem>
+                  <SelectItem value="Jobs">Jobs</SelectItem>
+                </SelectContent>
+              </Select>
+              <Input
+                className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
+                placeholder="Search communities..."
+                type="search"
+              />
               <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
                 <Search className="h-4 w-4" />
               </Button>

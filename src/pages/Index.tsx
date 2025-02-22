@@ -220,11 +220,11 @@ export default function Index() {
 
   return (
     <>
-      <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm transition-all duration-200 ease-out bg-background border-b ${
-        isScrolled ? 'h-[80px] bg-[#FFFFFF] mt-[5px]' : ''
+      <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm transition-all duration-200 ease-out bg-background/95 border-b ${
+        isScrolled ? 'h-16 bg-background' : ''
       }`}>
         <div className="container mx-auto px-4">
-          <div className="hidden sm:flex relative pb-[20px]">
+          <div className="hidden sm:flex relative py-4">
             <div className="w-[20%] flex items-start">
               <h1 className="text-2xl font-semibold mt-[15px] ml-[15px]">Logo</h1>
             </div>
@@ -324,8 +324,8 @@ export default function Index() {
             </div>
           </div>
 
-          <div className="sm:hidden">
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-md hover:shadow-lg transition-shadow bg-background">
+          <div className="sm:hidden py-3">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border shadow-md hover:shadow-lg transition-shadow bg-background">
               <div className="flex-1 flex items-center gap-2">
                 <Select 
                   defaultValue="Products"
