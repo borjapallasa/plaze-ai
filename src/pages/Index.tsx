@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
@@ -30,6 +31,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+interface Product {
+  title: string;
+  price: string;
+  image: string;
+  seller: string;
+  description: string;
+  tags: string[];
+  fromPrice: string;
+  category: string;
+}
 
 const typewriterStrings = [
   "Products To Scale",
@@ -442,7 +454,7 @@ const Header = ({ searchCategory, setSearchCategory }) => {
 
 const MemoizedHeader = React.memo(Header);
 
-const ProductGrid = React.memo(({ products }: { products: typeof products }) => (
+const ProductGrid = React.memo(({ products }: { products: Product[] }) => (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     {products.map((product, index) => (
       <ProductCard key={index} {...product} />
