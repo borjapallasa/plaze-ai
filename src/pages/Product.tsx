@@ -383,7 +383,7 @@ export default function Product() {
             rating={product.rating}
             className="mb-6"
           />
-          <div ref={variantsRef}>
+          <div ref={variantsRef} className="py-4">
             <VariantPicker
               variants={variants}
               selectedVariant={selectedVariant}
@@ -394,7 +394,7 @@ export default function Product() {
           </div>
           <Button 
             variant="outline" 
-            className="w-full flex items-center justify-center gap-2 mb-6"
+            className="w-full flex items-center justify-center gap-2 mb-8"
             onClick={() => {
               console.log("Contact seller clicked");
             }}
@@ -435,7 +435,7 @@ export default function Product() {
               rating={product.rating}
               className="mb-6"
             />
-            <div ref={variantsRef}>
+            <div ref={variantsRef} className="py-4">
               <VariantPicker
                 variants={variants}
                 selectedVariant={selectedVariant}
@@ -447,7 +447,7 @@ export default function Product() {
 
             <Button 
               variant="outline" 
-              className="w-full flex items-center justify-center gap-2"
+              className="w-full flex items-center justify-center gap-2 mb-4"
               onClick={() => {
                 console.log("Contact seller clicked");
               }}
