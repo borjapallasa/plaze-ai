@@ -1,10 +1,9 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, Flag, Heart, ExternalLink, Clock, Calendar, Briefcase, MapPin, Star } from "lucide-react";
+import { ArrowLeft, Flag, Heart, Clock, Calendar, Briefcase, MapPin, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ProductReviews } from "@/components/product/ProductReviews";
 
@@ -134,10 +133,7 @@ export default function JobDetails() {
             <ArrowLeft className="h-4 w-4" />
             Back to Jobs
           </Link>
-          <Button variant="outline" className="gap-2">
-            <ExternalLink className="h-4 w-4" />
-            Open job in a new window
-          </Button>
+          <Button className="lg:hidden">Apply now</Button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr,300px] gap-6">
@@ -231,8 +227,7 @@ export default function JobDetails() {
 
           {/* Sidebar */}
           <div className="space-y-4">
-            <Button className="w-full">Apply now</Button>
-            <Button variant="outline" className="w-full">Save job</Button>
+            <Button className="w-full hidden lg:block">Apply now</Button>
 
             <Card className="p-6">
               <h2 className="text-lg font-semibold mb-4">About the client</h2>
