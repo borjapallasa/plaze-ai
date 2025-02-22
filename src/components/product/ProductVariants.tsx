@@ -15,8 +15,18 @@ interface Variant {
   tags: string[];
 }
 
-export function ProductVariants() {
-  const [variants, setVariants] = React.useState<Variant[]>([
+interface ProductVariantsProps {
+  variants?: Variant[];
+  onVariantsChange?: (variants: Variant[]) => void;
+  className?: string;
+}
+
+export function ProductVariants({ 
+  variants: externalVariants,
+  onVariantsChange,
+  className = ""
+}: ProductVariantsProps) {
+  const [internalVariants, setInternalVariants] = React.useState<Variant[]>([
     {
       id: "1",
       price: "",
@@ -25,6 +35,16 @@ export function ProductVariants() {
       tags: [],
     },
   ]);
+
+  // Use either external variants (if provided) or internal state
+  const variants = externalVariants || internalVariants;
+  const setVariants = (newVariants: Variant[]) => {
+    if (onVariantsChange) {
+      onVariantsChange(newVariants);
+    } else {
+      setInternalVariants(newVariants);
+    }
+  };
 
   const addVariant = () => {
     setVariants([
@@ -72,7 +92,7 @@ export function ProductVariants() {
   };
 
   return (
-    <div className="space-y-4">
+    <div className={`space-y-4 ${className}`}>
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-medium">Variants</h2>
         <Button onClick={addVariant} variant="outline" size="sm">
