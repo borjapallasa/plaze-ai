@@ -1,7 +1,7 @@
 
 import React, { useMemo, useCallback } from "react";
 import { TrendingUp, Sparkle, Trophy, ThumbsUp, Star, Tags } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Badge, BadgeProps } from "@/components/ui/badge";
 
 interface CategoryHeaderProps {
   selectedCategory: string | null;
@@ -26,18 +26,17 @@ const CategoryBadge = React.memo(({
   const Icon = badge.icon;
   
   return (
-    <Badge
-      variant={isSelected ? "default" : "secondary"}
-      className={`px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200 ${
-        isSelected 
-          ? 'bg-primary text-primary-foreground shadow-md' 
-          : 'hover:bg-secondary hover:shadow-sm'
-      }`}
+    <div
       onClick={onClick}
+      className={`inline-flex items-center rounded-full border px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200 ${
+        isSelected 
+          ? 'border-transparent bg-primary text-primary-foreground shadow-md' 
+          : 'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary hover:shadow-sm'
+      }`}
     >
       <Icon className="w-4 h-4 mr-2" />
       {badge.label}
-    </Badge>
+    </div>
   );
 });
 
