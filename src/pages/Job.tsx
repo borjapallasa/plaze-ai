@@ -98,80 +98,86 @@ export default function JobDetails() {
         <div className="grid grid-cols-1 lg:grid-cols-[1fr,300px] gap-6">
           {/* Main Content */}
           <div className="space-y-6">
-            <div className="flex justify-between items-start">
-              <div>
-                <h1 className="text-2xl font-semibold mb-2">{job.title}</h1>
-                <div className="flex items-center gap-4 text-muted-foreground">
-                  <span>{job.postedTime}</span>
-                  <div className="flex items-center gap-1">
-                    <MapPin className="h-4 w-4" />
-                    {job.location}
+            <Card className="p-6">
+              <div className="flex justify-between items-start mb-6">
+                <div>
+                  <h1 className="text-2xl font-semibold mb-2">{job.title}</h1>
+                  <div className="flex items-center gap-4 text-muted-foreground">
+                    <span>{job.postedTime}</span>
+                    <div className="flex items-center gap-1">
+                      <MapPin className="h-4 w-4" />
+                      {job.location}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="icon">
+                    <Flag className="h-4 w-4" />
+                  </Button>
+                  <Button variant="outline" size="icon">
+                    <Heart className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+
+              <p className="text-muted-foreground whitespace-pre-line mb-6">{job.description}</p>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Card className="p-4">
+                  <div className="flex items-start gap-2">
+                    <Clock className="h-5 w-5 text-muted-foreground mt-0.5" />
+                    <div>
+                      <p className="font-medium">{job.workDetails.hours}</p>
+                      <p className="text-sm text-muted-foreground">Hourly</p>
+                    </div>
+                  </div>
+                </Card>
+                <Card className="p-4">
+                  <div className="flex items-start gap-2">
+                    <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
+                    <div>
+                      <p className="font-medium">{job.workDetails.duration}</p>
+                      <p className="text-sm text-muted-foreground">Project Length</p>
+                    </div>
+                  </div>
+                </Card>
+                <Card className="p-4">
+                  <div className="flex items-start gap-2">
+                    <Briefcase className="h-5 w-5 text-muted-foreground mt-0.5" />
+                    <div>
+                      <p className="font-medium">{job.workDetails.experience}</p>
+                      <p className="text-sm text-muted-foreground">{job.workDetails.experienceDetails}</p>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+            </Card>
+
+            <Card className="p-6">
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-lg font-semibold mb-4">Skills and Expertise</h2>
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {job.skills.map((skill, index) => (
+                      <Badge key={index} variant="secondary" className="rounded-full">
+                        {skill}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="border-t pt-6">
+                  <h2 className="text-lg font-semibold mb-4">Activity on this job</h2>
+                  <div className="space-y-2 text-sm">
+                    <p>Proposals: {job.activity.proposals.range}</p>
+                    <p>Last viewed by client: {job.activity.lastViewed}</p>
+                    <p>Interviewing: {job.activity.interviewing}</p>
+                    <p>Invites sent: {job.activity.invitesSent}</p>
+                    <p>Unanswered invites: {job.activity.unansweredInvites}</p>
                   </div>
                 </div>
               </div>
-              <div className="flex gap-2">
-                <Button variant="outline" size="icon">
-                  <Flag className="h-4 w-4" />
-                </Button>
-                <Button variant="outline" size="icon">
-                  <Heart className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-
-            <p className="text-muted-foreground whitespace-pre-line">{job.description}</p>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card className="p-4">
-                <div className="flex items-start gap-2">
-                  <Clock className="h-5 w-5 text-muted-foreground mt-0.5" />
-                  <div>
-                    <p className="font-medium">{job.workDetails.hours}</p>
-                    <p className="text-sm text-muted-foreground">Hourly</p>
-                  </div>
-                </div>
-              </Card>
-              <Card className="p-4">
-                <div className="flex items-start gap-2">
-                  <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
-                  <div>
-                    <p className="font-medium">{job.workDetails.duration}</p>
-                    <p className="text-sm text-muted-foreground">Project Length</p>
-                  </div>
-                </div>
-              </Card>
-              <Card className="p-4">
-                <div className="flex items-start gap-2">
-                  <Briefcase className="h-5 w-5 text-muted-foreground mt-0.5" />
-                  <div>
-                    <p className="font-medium">{job.workDetails.experience}</p>
-                    <p className="text-sm text-muted-foreground">{job.workDetails.experienceDetails}</p>
-                  </div>
-                </div>
-              </Card>
-            </div>
-
-            <div>
-              <h2 className="text-lg font-semibold mb-4">Skills and Expertise</h2>
-              <div className="flex flex-wrap gap-2">
-                {job.skills.map((skill, index) => (
-                  <Badge key={index} variant="secondary" className="rounded-full">
-                    {skill}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <h2 className="text-lg font-semibold mb-4">Activity on this job</h2>
-              <div className="space-y-2 text-sm">
-                <p>Proposals: {job.activity.proposals.range}</p>
-                <p>Last viewed by client: {job.activity.lastViewed}</p>
-                <p>Interviewing: {job.activity.interviewing}</p>
-                <p>Invites sent: {job.activity.invitesSent}</p>
-                <p>Unanswered invites: {job.activity.unansweredInvites}</p>
-              </div>
-            </div>
+            </Card>
 
             <ProductReviews reviews={reviews} className="p-6 border rounded-lg" />
           </div>
