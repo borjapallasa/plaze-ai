@@ -23,10 +23,10 @@ import Typewriter from 'typewriter-effect';
 import { Link } from "react-router-dom";
 
 const typewriterStrings = [
-  "To Learn",
-  "To Connect",
-  "To Grow",
-  "To Share"
+  "Products to Scale",
+  "Communities to Learn",
+  "Experts to Hire",
+  "Jobs to Earn"
 ];
 
 const categories = [
@@ -218,7 +218,7 @@ export default function Index() {
                 isScrolled ? 'opacity-0 h-0 mb-0 overflow-hidden' : 'opacity-100 h-[32px] mb-[20px]'
               }`}>
                 <div className="text-[1.5rem] leading-relaxed font-bold whitespace-nowrap flex items-center justify-center">
-                  <span>Join Communities</span>
+                  <span>The Best AI & Automations</span>
                   <span className="text-muted-foreground ml-1">
                     <Typewriter
                       options={{
@@ -242,7 +242,7 @@ export default function Index() {
                   <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-md hover:shadow-lg transition-shadow bg-background">
                     <div className="flex-1 flex items-center gap-2">
                       <Select 
-                        defaultValue="Communities"
+                        defaultValue="Products"
                       >
                         <SelectTrigger className="border-0 w-[140px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
                           <SelectValue className="pr-4" />
@@ -256,7 +256,7 @@ export default function Index() {
                       </Select>
                       <Input
                         className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
-                        placeholder="Search communities..."
+                        placeholder="Search products..."
                         type="search"
                       />
                     </div>
@@ -307,12 +307,11 @@ export default function Index() {
             </div>
           </div>
 
-          {/* Mobile Header */}
           <div className="sm:hidden">
             <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-md hover:shadow-lg transition-shadow bg-background">
               <div className="flex-1 flex items-center gap-2">
                 <Select 
-                  defaultValue="Communities"
+                  defaultValue="Products"
                 >
                   <SelectTrigger className="border-0 w-[140px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
                     <SelectValue className="pr-4" />
@@ -326,7 +325,7 @@ export default function Index() {
                 </Select>
                 <Input
                   className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
-                  placeholder="Search communities..."
+                  placeholder="Search products..."
                   type="search"
                 />
               </div>
