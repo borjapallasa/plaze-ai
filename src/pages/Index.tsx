@@ -1,7 +1,11 @@
-import React, { useState, useEffect, useMemo } from "react";
+
+import React, { useState, useMemo } from "react";
 import { ProductCard } from "@/components/ProductCard";
-import { MainHeader } from "@/components/MainHeader";
+import { Input } from "@/components/ui/input";
 import {
+  Search, 
+  Menu, 
+  User,
   Star,
   TrendingUp,
   Sparkle,
@@ -9,7 +13,25 @@ import {
   ThumbsUp,
   Tags
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
+import Typewriter from 'typewriter-effect';
 import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const typewriterStrings = [
   "Products To Scale",
@@ -220,6 +242,118 @@ const badges = [
   { label: "Affiliate Offers", icon: Tags, category: null }
 ];
 
+const Header = ({ searchCategory, setSearchCategory }) => {
+  const isMobile = useIsMobile();
+
+  return (
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background border-b h-16">
+      <div className="container mx-auto px-4">
+        <div className="sm:hidden px-4 py-3">
+          <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-md bg-background">
+            <div className="flex-1 flex items-center gap-2">
+              <Select 
+                defaultValue="Products" 
+                onValueChange={setSearchCategory}
+              >
+                <SelectTrigger className="border-0 w-[120px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
+                  <SelectValue className="pr-4" />
+                </SelectTrigger>
+                <SelectContent className="w-[150px]">
+                  <SelectItem value="Products">Products</SelectItem>
+                  <SelectItem value="Experts">Experts</SelectItem>
+                  <SelectItem value="Communities">Communities</SelectItem>
+                  <SelectItem value="Jobs">Jobs</SelectItem>
+                </SelectContent>
+              </Select>
+              <Input
+                className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
+                placeholder={`Search ${searchCategory.toLowerCase()}...`}
+                type="search"
+              />
+            </div>
+            <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
+              <Search className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+
+        <div className="hidden sm:flex items-center justify-between h-16">
+          <Link to="/" className="text-lg font-semibold w-[140px]">
+            Logo
+          </Link>
+
+          <div className="flex-1 max-w-2xl mx-auto">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-md hover:shadow-lg transition-shadow bg-background">
+              <div className="flex-1 flex items-center gap-2">
+                <Select 
+                  defaultValue="Products" 
+                  onValueChange={setSearchCategory}
+                >
+                  <SelectTrigger className="border-0 w-[200px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
+                    <SelectValue className="pr-4" />
+                  </SelectTrigger>
+                  <SelectContent className="w-[240px]">
+                    <SelectItem value="Products">Products</SelectItem>
+                    <SelectItem value="Experts">Experts</SelectItem>
+                    <SelectItem value="Communities">Communities</SelectItem>
+                    <SelectItem value="Jobs">Jobs</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Input
+                  className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
+                  placeholder={`Search ${searchCategory.toLowerCase()}...`}
+                  type="search"
+                />
+              </div>
+              <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
+                <Search className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 w-[140px] justify-end">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="font-medium text-primary hover:text-primary/90 hover:bg-primary/10 h-8"
+            >
+              Sell on Plaze
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  className="rounded-full px-2.5 py-1.5 h-8 border-2 hover:border-primary/20 transition-colors"
+                >
+                  <Menu className="h-3.5 w-3.5 mr-1.5" />
+                  <User className="h-3.5 w-3.5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <Link to="/">
+                  <DropdownMenuItem>
+                    Home
+                  </DropdownMenuItem>
+                </Link>
+                <DropdownMenuItem>Sign In</DropdownMenuItem>
+                <DropdownMenuItem>Sign Up</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <Link to="/affiliates">
+                  <DropdownMenuItem>Affiliates</DropdownMenuItem>
+                </Link>
+                <DropdownMenuItem>Sell on Plaze</DropdownMenuItem>
+                <DropdownMenuItem>Help Center</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+const MemoizedHeader = React.memo(Header);
+
 const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchCategory, setSearchCategory] = useState("Products");
@@ -239,31 +373,51 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
-      <MainHeader initialSearchCategory={searchCategory} />
+      <MemoizedHeader 
+        searchCategory={searchCategory}
+        setSearchCategory={setSearchCategory}
+      />
 
       <main>
         <div className="container mx-auto px-4">
-          <div className="space-y-4 pt-24 pb-6">
-            <div className="flex flex-wrap gap-3">
-              {badges.map((badge, index) => {
-                const Icon = badge.icon;
-                const isSelected = selectedCategory === badge.category;
-                return (
-                  <Badge
-                    key={index}
-                    variant={isSelected ? "default" : "secondary"}
-                    className={`px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200 ${
-                      isSelected 
-                        ? 'bg-primary text-primary-foreground shadow-md' 
-                        : 'hover:bg-secondary hover:shadow-sm'
-                    }`}
-                    onClick={() => handleBadgeClick(badge.category)}
-                  >
-                    <Icon className="w-4 h-4 mr-2" />
-                    {badge.label}
-                  </Badge>
-                );
-              })}
+          <div className="pt-24 pb-6">
+            <div className="text-[1.5rem] leading-relaxed font-bold whitespace-nowrap flex items-center justify-center mb-6">
+              <span>The Best AI & Automation</span>
+              <span className="text-muted-foreground ml-1">
+                <Typewriter
+                  options={{
+                    strings: typewriterStrings,
+                    autoStart: true,
+                    loop: true,
+                    delay: 50,
+                    deleteSpeed: 30,
+                  }}
+                />
+              </span>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex flex-wrap gap-3">
+                {badges.map((badge, index) => {
+                  const Icon = badge.icon;
+                  const isSelected = selectedCategory === badge.category;
+                  return (
+                    <Badge
+                      key={index}
+                      variant={isSelected ? "default" : "secondary"}
+                      className={`px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200 ${
+                        isSelected 
+                          ? 'bg-primary text-primary-foreground shadow-md' 
+                          : 'hover:bg-secondary hover:shadow-sm'
+                      }`}
+                      onClick={() => handleBadgeClick(badge.category)}
+                    >
+                      <Icon className="w-4 h-4 mr-2" />
+                      {badge.label}
+                    </Badge>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
