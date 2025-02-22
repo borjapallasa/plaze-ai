@@ -1,3 +1,4 @@
+
 import React from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
@@ -138,7 +139,7 @@ const Communities = () => {
                   </p>
 
                   {/* Footer */}
-                  <div className="mt-auto flex items-center justify-between">
+                  <div className="mt-auto flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Users className="h-4 w-4" />
                       <span>{community.members} Members</span>
@@ -147,7 +148,7 @@ const Communities = () => {
                   </div>
 
                   {/* Arrow */}
-                  <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute bottom-4 right-6 opacity-0 group-hover:opacity-100 transition-opacity">
                     <ArrowUpRight className="h-5 w-5 text-primary" />
                   </div>
                 </div>
