@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Mail, ArrowRight, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
+import { MainHeader } from "@/components/MainHeader";
 
 export default function RecoverPassword() {
   const [email, setEmail] = useState("");
@@ -22,6 +23,10 @@ export default function RecoverPassword() {
 
   return (
     <div className="min-h-screen bg-background">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm">
+        <MainHeader />
+      </div>
+
       <div className="min-h-screen flex items-center justify-center p-4">
         <Card className="w-full max-w-md p-8 space-y-8">
           <div className="space-y-2 text-center">
@@ -64,4 +69,4 @@ export default function RecoverPassword() {
       </div>
     </div>
   );
-};
+}
