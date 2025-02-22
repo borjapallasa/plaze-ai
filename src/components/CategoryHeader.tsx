@@ -1,7 +1,8 @@
 
 import React, { useMemo, useCallback } from "react";
-import { TrendingUp, Sparkle, Trophy, ThumbsUp, Star, Tags, LucideProps } from "lucide-react";
+import { TrendingUp, Sparkle, Trophy, ThumbsUp, Star, Tags, LucideProps, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface CategoryHeaderProps {
   selectedCategory: string | null;
@@ -26,6 +27,9 @@ const STYLES = {
     wrapper: "container mx-auto px-4",
     inner: "space-y-4 pt-8 pb-6",
     badgeContainer: "flex flex-wrap gap-3"
+  },
+  mobile: {
+    menuButton: "md:hidden inline-flex items-center rounded-full border px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary hover:shadow-sm"
   }
 } as const;
 
@@ -70,6 +74,8 @@ const CategoryBadge = React.memo(({
 CategoryBadge.displayName = "CategoryBadge";
 
 export const CategoryHeader = React.memo(({ selectedCategory, onCategoryChange }: CategoryHeaderProps) => {
+  const isMobile = useIsMobile();
+
   // Single callback for all badge clicks
   const handleBadgeClick = useCallback((category: string | null) => {
     onCategoryChange(selectedCategory === category ? null : category);
@@ -79,14 +85,21 @@ export const CategoryHeader = React.memo(({ selectedCategory, onCategoryChange }
     <div className={STYLES.container.wrapper}>
       <div className={STYLES.container.inner}>
         <div className={STYLES.container.badgeContainer}>
-          {BADGES.map((badge) => (
-            <CategoryBadge
-              key={`${badge.label}-${badge.category}`}
-              badge={badge}
-              isSelected={selectedCategory === badge.category}
-              onClick={() => handleBadgeClick(badge.category)}
-            />
-          ))}
+          {isMobile ? (
+            <div className={STYLES.mobile.menuButton}>
+              <Menu className={STYLES.badge.icon} aria-hidden="true" />
+              Categories
+            </div>
+          ) : (
+            BADGES.map((badge) => (
+              <CategoryBadge
+                key={`${badge.label}-${badge.category}`}
+                badge={badge}
+                isSelected={selectedCategory === badge.category}
+                onClick={() => handleBadgeClick(badge.category)}
+              />
+            ))
+          )}
         </div>
       </div>
     </div>
