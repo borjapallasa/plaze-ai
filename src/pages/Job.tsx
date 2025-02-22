@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, Flag, Heart, ExternalLink, Clock, Calendar, Briefcase, MapPin, Star } from "lucide-react";
 import { Link } from "react-router-dom";
+import { ProductReviews } from "@/components/product/ProductReviews";
 
 export default function JobDetails() {
   const job = {
@@ -48,6 +49,33 @@ export default function JobDetails() {
       unansweredInvites: 0
     }
   };
+
+  const reviews = [
+    { 
+      id: 1, 
+      author: "Sarah Johnson", 
+      rating: 5, 
+      content: "Great client to work with!",
+      description: "Very clear communication and reasonable expectations. The project was well-defined and payment was prompt.",
+      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
+      date: "2 days ago",
+      itemQuality: 5,
+      shipping: 5,
+      customerService: 5
+    },
+    { 
+      id: 2, 
+      author: "Michael Chen", 
+      rating: 4, 
+      content: "Professional and organized",
+      description: "The client provided detailed requirements and was responsive throughout the project. Would work with them again.",
+      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e",
+      date: "1 week ago",
+      itemQuality: 4,
+      shipping: 5,
+      customerService: 4
+    }
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -144,6 +172,8 @@ export default function JobDetails() {
                 <p>Unanswered invites: {job.activity.unansweredInvites}</p>
               </div>
             </div>
+
+            <ProductReviews reviews={reviews} className="p-6 border rounded-lg" />
           </div>
 
           {/* Sidebar */}
@@ -202,7 +232,7 @@ export default function JobDetails() {
             <Card className="p-6">
               <h2 className="text-lg font-semibold mb-4">Job link</h2>
               <div className="p-2 bg-muted rounded text-sm mb-4">
-                https://www.upwork.com/jobs/
+                https://www.plaze.ai/jobs/
               </div>
               <Button variant="outline" className="w-full">
                 Copy link
