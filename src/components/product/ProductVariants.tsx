@@ -12,7 +12,7 @@ interface Variant {
   name?: string;
   price: string | number;
   comparePrice: string | number;
-  highlight: boolean;
+  highlight?: boolean;
   tags?: string[];
   label?: string;
   features?: string[];
@@ -155,7 +155,7 @@ export function ProductVariants({
             <div className="flex items-center space-x-2">
               <Checkbox
                 id={`highlight-${variant.id}`}
-                checked={variant.highlight}
+                checked={variant.highlight || false}
                 onCheckedChange={(checked) =>
                   updateVariant(variant.id, "highlight", checked)
                 }
