@@ -104,8 +104,8 @@ export default function Communities() {
                   {community.badge}
                 </Badge>
               </div>
-              <CardContent className="p-6 space-y-4">
-                <div className="flex items-center gap-3">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3 mb-4">
                   <Avatar className="h-12 w-12">
                     <AvatarImage src={community.image} />
                     <AvatarFallback>
@@ -117,11 +117,11 @@ export default function Communities() {
                   </div>
                 </div>
 
-                <p className="text-muted-foreground text-sm line-clamp-2 text-left">
+                <p className="text-muted-foreground text-sm line-clamp-2 text-left mb-4">
                   {community.description}
                 </p>
 
-                <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center justify-between text-sm mb-8">
                   <div className="text-muted-foreground">
                     {community.members} Members
                   </div>
@@ -130,7 +130,7 @@ export default function Communities() {
                   </div>
                 </div>
 
-                <ArrowRight className="absolute bottom-4 right-4 w-5 h-5 text-primary opacity-0 transform translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0" />
+                <ArrowRight className="absolute bottom-6 right-6 w-5 h-5 text-primary opacity-0 transform translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0" />
               </CardContent>
             </Card>
           ))}
