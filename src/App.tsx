@@ -18,76 +18,65 @@ import SignInCommunity from "./pages/sign-in-community";
 import SignUpCommunity from "./pages/sign-up-community";
 import Affiliates from "./pages/Affiliates";
 import Communities from "./pages/Communities";
-import { Footer } from "./components/Footer";
 
 const queryClient = new QueryClient();
-
-// Create a root layout component that includes the footer
-const RootLayout = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <div className="flex flex-col min-h-screen">
-      {children}
-      <Footer />
-    </div>
-  );
-};
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <RootLayout><Index /></RootLayout>,
+    element: <Index />,
   },
   {
     path: "/product/:productId",
-    element: <RootLayout><Product /></RootLayout>,
+    element: <Product />,
   },
   {
     path: "/edit-product/:productId",
-    element: <RootLayout><EditProduct /></RootLayout>,
+    element: <EditProduct />,
   },
   {
     path: "/expert/:expertId",
-    element: <RootLayout><Expert /></RootLayout>,
+    element: <Expert />,
   },
   {
     path: "/experts",
-    element: <RootLayout><Experts /></RootLayout>,
+    element: <Experts />,
   },
   {
     path: "/job/:jobId",
-    element: <RootLayout><Job /></RootLayout>,
+    element: <Job />,
   },
   {
     path: "/jobs",
-    element: <RootLayout><Jobs /></RootLayout>,
+    element: <Jobs />,
   },
   {
     path: "/blog",
-    element: <RootLayout><Blog /></RootLayout>,
+    element: <Blog />,
   },
   {
     path: "/sign-in",
-    element: <RootLayout><SignIn /></RootLayout>,
+    element: <SignIn />,
   },
   {
     path: "/sign-up",
-    element: <RootLayout><SignUp /></RootLayout>,
+    element: <SignUp />,
   },
   {
     path: "/sign-in-community",
-    element: <RootLayout><SignInCommunity /></RootLayout>,
+    element: <SignInCommunity />,
   },
   {
     path: "/sign-up-community",
-    element: <RootLayout><SignUpCommunity /></RootLayout>,
+    element: <SignUpCommunity />,
   },
   {
     path: "/affiliates",
-    element: <RootLayout><Affiliates /></RootLayout>,
+    element: <Affiliates />,
   },
   {
     path: "/communities",
-    element: <RootLayout><Communities /></RootLayout>,
+    element: <Communities />,
   }
 ]);
 
