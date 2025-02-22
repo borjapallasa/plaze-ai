@@ -1,7 +1,6 @@
 
 import React, { useMemo, useCallback } from "react";
-import { TrendingUp, Sparkle, Trophy, ThumbsUp, Star, Tags } from "lucide-react";
-import { Badge, BadgeProps } from "@/components/ui/badge";
+import { TrendingUp, Sparkle, Trophy, ThumbsUp, Star, Tags, LucideIcon } from "lucide-react";
 
 interface CategoryHeaderProps {
   selectedCategory: string | null;
@@ -10,7 +9,7 @@ interface CategoryHeaderProps {
 
 interface BadgeItem {
   label: string;
-  icon: React.ComponentType;
+  icon: LucideIcon;
   category: string | null;
 }
 
@@ -34,7 +33,7 @@ const CategoryBadge = React.memo(({
           : 'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary hover:shadow-sm'
       }`}
     >
-      <Icon className="w-4 h-4 mr-2" />
+      <Icon className="w-4 h-4 mr-2" aria-hidden="true" />
       {badge.label}
     </div>
   );
