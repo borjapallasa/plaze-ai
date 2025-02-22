@@ -3,10 +3,8 @@ import { useState } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
-import { Search, User, Settings, Video, MessageSquare, Image, SmilePlus, Send } from "lucide-react";
+import { Check, Search, User, Settings, Video, MessageSquare, Image, SmilePlus, Send } from "lucide-react";
 
 interface Chat {
   id: string;
@@ -57,6 +55,7 @@ interface Message {
   timestamp: string;
   avatar?: string;
   outgoing?: boolean;
+  read?: boolean;
 }
 
 const mockMessages: Message[] = [
@@ -65,21 +64,24 @@ const mockMessages: Message[] = [
     sender: "Borja Pallasa Alvarez",
     content: "Hey man, was super busy yesterday, can you show the themes?",
     timestamp: "Jan 16, 2025 | 3:49 PM",
-    outgoing: false
+    outgoing: false,
+    read: true
   },
   {
     id: "2",
     sender: "Elisha Adeniyi",
     content: "go through the messages I sent",
     timestamp: "4:04 PM",
-    outgoing: true
+    outgoing: true,
+    read: true
   },
   {
     id: "3",
     sender: "Elisha Adeniyi",
     content: "I tagged you on the other chat",
     timestamp: "5:13 PM",
-    outgoing: true
+    outgoing: true,
+    read: false
   }
 ];
 
@@ -103,7 +105,7 @@ export default function Chats() {
           <div className="p-4 border-b">
             <div className="flex items-center justify-between mb-4">
               <h1 className="text-2xl font-bold">Messages</h1>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="hover:bg-accent">
                 <Settings className="h-5 w-5" />
               </Button>
             </div>
@@ -122,26 +124,28 @@ export default function Chats() {
             {filteredChats.map((chat) => (
               <div
                 key={chat.id}
-                className={`p-4 cursor-pointer transition-colors hover:bg-accent/50 ${
-                  selectedChat?.id === chat.id ? "bg-accent" : ""
+                className={`p-4 cursor-pointer transition-all hover:bg-accent/50 border-l-2 ${
+                  selectedChat?.id === chat.id 
+                    ? "bg-accent border-l-primary" 
+                    : "border-l-transparent"
                 }`}
                 onClick={() => setSelectedChat(chat)}
               >
                 <div className="flex gap-3">
                   <div className="relative flex-shrink-0">
-                    <Avatar className="h-12 w-12 border-2 border-background">
+                    <Avatar className="h-12 w-12 border-2 border-background ring-2 ring-background">
                       <AvatarFallback>
                         <User className="h-6 w-6" />
                       </AvatarFallback>
                       {chat.avatar && <AvatarImage src={chat.avatar} />}
                     </Avatar>
                     {chat.online && (
-                      <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 border-2 border-background" />
+                      <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 ring-2 ring-background" />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-start gap-2">
-                      <p className="font-semibold truncate leading-none mb-1">
+                      <p className="font-semibold truncate leading-none mb-1.5">
                         {chat.subject}
                       </p>
                       <span className="text-xs text-muted-foreground whitespace-nowrap flex-shrink-0">
@@ -168,9 +172,9 @@ export default function Chats() {
           {selectedChat ? (
             <>
               {/* Chat Header */}
-              <div className="px-6 py-4 border-b flex items-center justify-between bg-card/50">
+              <div className="px-6 py-4 border-b flex items-center justify-between bg-card/50 backdrop-blur-sm">
                 <div className="flex items-center gap-3">
-                  <Avatar className="h-10 w-10">
+                  <Avatar className="h-10 w-10 ring-2 ring-background">
                     <AvatarFallback>
                       <User className="h-5 w-5" />
                     </AvatarFallback>
@@ -178,19 +182,20 @@ export default function Chats() {
                   </Avatar>
                   <div>
                     <h2 className="font-semibold leading-none mb-1">{selectedChat.subject}</h2>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+                      <span className={`h-2 w-2 rounded-full ${selectedChat.online ? 'bg-green-500' : 'bg-muted-foreground'}`} />
                       {selectedChat.online ? "Active now" : "Offline"}
                     </p>
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="ghost" size="icon">
+                  <Button variant="ghost" size="icon" className="hover:bg-accent">
                     <Video className="h-5 w-5" />
                   </Button>
-                  <Button variant="ghost" size="icon">
+                  <Button variant="ghost" size="icon" className="hover:bg-accent">
                     <MessageSquare className="h-5 w-5" />
                   </Button>
-                  <Button variant="ghost" size="icon">
+                  <Button variant="ghost" size="icon" className="hover:bg-accent">
                     <Settings className="h-5 w-5" />
                   </Button>
                 </div>
@@ -203,12 +208,13 @@ export default function Chats() {
                     key={message.id} 
                     className={`flex gap-3 ${message.outgoing ? 'flex-row-reverse' : ''}`}
                   >
-                    <Avatar className="h-8 w-8 flex-shrink-0">
+                    <Avatar className="h-8 w-8 flex-shrink-0 ring-2 ring-background">
                       <AvatarFallback>
                         <User className="h-4 w-4" />
                       </AvatarFallback>
+                      {message.avatar && <AvatarImage src={message.avatar} />}
                     </Avatar>
-                    <div className={`flex flex-col ${message.outgoing ? 'items-end' : 'items-start'}`}>
+                    <div className={`flex flex-col ${message.outgoing ? 'items-end' : 'items-start'} max-w-[80%]`}>
                       <div className="flex items-center gap-2 mb-1">
                         <span className={`text-sm font-medium ${message.outgoing ? 'order-2' : ''}`}>
                           {message.sender}
@@ -218,26 +224,34 @@ export default function Chats() {
                         </span>
                       </div>
                       <div 
-                        className={`rounded-2xl px-4 py-2.5 max-w-[80%] ${
+                        className={`rounded-2xl px-4 py-2.5 ${
                           message.outgoing 
-                            ? 'bg-primary text-primary-foreground' 
-                            : 'bg-accent'
+                            ? 'bg-primary text-primary-foreground rounded-br-none' 
+                            : 'bg-accent rounded-bl-none'
                         }`}
                       >
-                        <p className="text-sm">{message.content}</p>
+                        <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
                       </div>
+                      {message.outgoing && (
+                        <div className="flex items-center gap-1 mt-1">
+                          <span className="text-xs text-muted-foreground">
+                            {message.read ? 'Read' : 'Sent'}
+                          </span>
+                          <Check className={`h-3 w-3 ${message.read ? 'text-primary' : 'text-muted-foreground'}`} />
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
               </div>
 
               {/* Message Input */}
-              <div className="p-4 border-t bg-card/50">
+              <div className="p-4 border-t bg-card/50 backdrop-blur-sm">
                 <div className="flex gap-2 items-center">
-                  <Button variant="ghost" size="icon" className="flex-shrink-0">
+                  <Button variant="ghost" size="icon" className="flex-shrink-0 hover:bg-accent">
                     <Image className="h-5 w-5" />
                   </Button>
-                  <Button variant="ghost" size="icon" className="flex-shrink-0">
+                  <Button variant="ghost" size="icon" className="flex-shrink-0 hover:bg-accent">
                     <SmilePlus className="h-5 w-5" />
                   </Button>
                   <Input 
