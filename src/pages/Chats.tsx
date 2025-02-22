@@ -97,8 +97,8 @@ export default function Chats() {
     <div className="min-h-screen bg-background">
       <MainHeader />
       
-      <div className="container mx-auto max-w-[1400px] px-4 lg:px-8">
-        <div className="flex h-[calc(100vh-64px)] mt-16 rounded-lg border bg-card shadow-sm overflow-hidden">
+      <div className="container mx-auto max-w-[1400px] px-4 lg:px-8 py-6">
+        <div className="flex h-[calc(100vh-96px)] rounded-lg border bg-card shadow-sm overflow-hidden">
           {/* Sidebar */}
           <div className="w-80 border-r flex flex-col">
             <div className="p-4 border-b">
