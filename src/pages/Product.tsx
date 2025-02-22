@@ -389,7 +389,7 @@ export default function Product() {
               selectedVariant={selectedVariant}
               onVariantChange={setSelectedVariant}
               onAddToCart={handleAddToCart}
-              className="mb-6"
+              className="mb-2" {/* Changed from mb-6 to mb-2 */}
             />
           </div>
           <Button 
