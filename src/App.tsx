@@ -9,6 +9,7 @@ import Product from "./pages/Product";
 import Expert from "./pages/Expert";
 import Experts from "./pages/Experts";
 import Community from "./pages/Community";
+import Communities from "./pages/Communities";
 import SignUp from "./pages/sign-up";
 import SignUpCommunity from "./pages/sign-up-community";
 import SignIn from "./pages/sign-in";
@@ -40,6 +41,7 @@ const App = () => (
           <Route path="/expert" element={<Expert />} />
           <Route path="/experts" element={<Experts />} />
           <Route path="/community" element={<Community />} />
+          <Route path="/communities" element={<Communities />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/sign-up/community" element={<SignUpCommunity />} />
           <Route path="/sign-in" element={<SignIn />} />
