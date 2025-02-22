@@ -22,62 +22,72 @@ import { Footer } from "./components/Footer";
 
 const queryClient = new QueryClient();
 
+// Create a root layout component that includes the footer
+const RootLayout = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <div className="flex flex-col min-h-screen">
+      {children}
+      <Footer />
+    </div>
+  );
+};
+
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Index />,
+    element: <RootLayout><Index /></RootLayout>,
   },
   {
     path: "/product/:productId",
-    element: <Product />,
+    element: <RootLayout><Product /></RootLayout>,
   },
   {
     path: "/edit-product/:productId",
-    element: <EditProduct />,
+    element: <RootLayout><EditProduct /></RootLayout>,
   },
   {
     path: "/expert/:expertId",
-    element: <Expert />,
+    element: <RootLayout><Expert /></RootLayout>,
   },
   {
     path: "/experts",
-    element: <Experts />,
+    element: <RootLayout><Experts /></RootLayout>,
   },
   {
     path: "/job/:jobId",
-    element: <Job />,
+    element: <RootLayout><Job /></RootLayout>,
   },
   {
     path: "/jobs",
-    element: <Jobs />,
+    element: <RootLayout><Jobs /></RootLayout>,
   },
   {
     path: "/blog",
-    element: <Blog />,
+    element: <RootLayout><Blog /></RootLayout>,
   },
   {
     path: "/sign-in",
-    element: <SignIn />,
+    element: <RootLayout><SignIn /></RootLayout>,
   },
   {
     path: "/sign-up",
-    element: <SignUp />,
+    element: <RootLayout><SignUp /></RootLayout>,
   },
   {
     path: "/sign-in-community",
-    element: <SignInCommunity />,
+    element: <RootLayout><SignInCommunity /></RootLayout>,
   },
   {
     path: "/sign-up-community",
-    element: <SignUpCommunity />,
+    element: <RootLayout><SignUpCommunity /></RootLayout>,
   },
   {
     path: "/affiliates",
-    element: <Affiliates />,
+    element: <RootLayout><Affiliates /></RootLayout>,
   },
   {
     path: "/communities",
-    element: <Communities />,
+    element: <RootLayout><Communities /></RootLayout>,
   }
 ]);
 
@@ -85,10 +95,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <div className="flex flex-col min-h-screen">
-          <RouterProvider router={router} />
-          <Footer />
-        </div>
+        <RouterProvider router={router} />
         <Toaster />
         <Sonner />
       </TooltipProvider>
