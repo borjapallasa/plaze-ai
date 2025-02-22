@@ -1,4 +1,3 @@
-
 import React from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
@@ -7,7 +6,6 @@ import {
   PenLine, Coins, Flame, Heart, Music, 
   Brain, MonitorSmartphone, Activity, Target, Users 
 } from "lucide-react";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
@@ -129,21 +127,9 @@ const Communities = () => {
                 </div>
 
                 <div className="p-6 flex-1 flex flex-col">
-                  {/* Community Header */}
-                  <div className="flex items-start gap-4 mb-4">
-                    <Avatar className="h-12 w-12">
-                      <AvatarImage src={community.image} />
-                      <AvatarFallback>{community.name[0]}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <h3 className="font-semibold text-lg leading-none mb-1">
-                        {community.name}
-                      </h3>
-                      <Badge variant="secondary" className="font-medium">
-                        {categories.find(c => c.id === community.category)?.label}
-                      </Badge>
-                    </div>
-                  </div>
+                  <h3 className="font-semibold text-lg leading-none mb-4">
+                    {community.name}
+                  </h3>
 
                   {/* Description */}
                   <p className="text-muted-foreground text-sm mb-6">
