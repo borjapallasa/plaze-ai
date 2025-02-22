@@ -140,49 +140,6 @@ export default function JobDetails() {
           </Button>
         </div>
 
-        <Card className="p-6 mb-6">
-          <div className="flex items-center gap-6 justify-between flex-wrap">
-            <div className="flex items-center gap-6">
-              <div className="flex items-start gap-2">
-                <Clock className="h-5 w-5 text-muted-foreground mt-0.5" />
-                <div>
-                  <p className="font-medium">{job.workDetails.hours}</p>
-                  <p className="text-sm text-muted-foreground">Hourly</p>
-                </div>
-              </div>
-              
-              <Separator orientation="vertical" className="h-12" />
-              
-              <div className="flex items-start gap-2">
-                <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
-                <div>
-                  <p className="font-medium">{job.workDetails.duration}</p>
-                  <p className="text-sm text-muted-foreground">Project Length</p>
-                </div>
-              </div>
-              
-              <Separator orientation="vertical" className="h-12" />
-              
-              <div className="flex items-start gap-2">
-                <Briefcase className="h-5 w-5 text-muted-foreground mt-0.5" />
-                <div>
-                  <p className="font-medium">{job.workDetails.experience}</p>
-                  <p className="text-sm text-muted-foreground">{job.workDetails.experienceDetails}</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex gap-2">
-              <Button variant="outline" size="icon">
-                <Flag className="h-4 w-4" />
-              </Button>
-              <Button variant="outline" size="icon">
-                <Heart className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </Card>
-
         <div className="grid grid-cols-1 lg:grid-cols-[1fr,300px] gap-6">
           {/* Main Content */}
           <div className="space-y-6">
@@ -199,6 +156,49 @@ export default function JobDetails() {
               </div>
 
               <p className="text-muted-foreground whitespace-pre-line mb-6">{job.description}</p>
+
+              <div className="border rounded-lg p-4 mb-6">
+                <div className="flex items-center gap-6 justify-between flex-wrap">
+                  <div className="flex items-center gap-6">
+                    <div className="flex items-start gap-2">
+                      <Clock className="h-5 w-5 text-muted-foreground mt-0.5" />
+                      <div>
+                        <p className="font-medium">{job.workDetails.hours}</p>
+                        <p className="text-sm text-muted-foreground">Hourly</p>
+                      </div>
+                    </div>
+                    
+                    <Separator orientation="vertical" className="h-8" />
+                    
+                    <div className="flex items-start gap-2">
+                      <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
+                      <div>
+                        <p className="font-medium">{job.workDetails.duration}</p>
+                        <p className="text-sm text-muted-foreground">Project Length</p>
+                      </div>
+                    </div>
+                    
+                    <Separator orientation="vertical" className="h-8" />
+                    
+                    <div className="flex items-start gap-2">
+                      <Briefcase className="h-5 w-5 text-muted-foreground mt-0.5" />
+                      <div>
+                        <p className="font-medium">{job.workDetails.experience}</p>
+                        <p className="text-sm text-muted-foreground">{job.workDetails.experienceDetails}</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="icon">
+                      <Flag className="h-4 w-4" />
+                    </Button>
+                    <Button variant="outline" size="icon">
+                      <Heart className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
 
               <div>
                 <h2 className="text-lg font-semibold mb-4">Skills and Expertise</h2>
