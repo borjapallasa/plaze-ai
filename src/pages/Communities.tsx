@@ -81,7 +81,7 @@ const communities = [
   }
 ];
 
-export default function Communities() {
+const Communities = () => {
   const [selectedCategory, setSelectedCategory] = React.useState("all");
 
   const filteredCommunities = communities.filter(community => 
@@ -166,4 +166,6 @@ export default function Communities() {
       </div>
     </div>
   );
-}
+};
+
+export default Communities;
