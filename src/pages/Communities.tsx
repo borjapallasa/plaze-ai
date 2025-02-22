@@ -6,8 +6,32 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Search, Music, Users, Banknote, Zap, Monitor, Heart, Dumbbell, BookOpen, Heart as HeartIcon, ArrowRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import Typewriter from 'typewriter-effect';
 
 export default function Communities() {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    let ticking = false;
+
+    const updateScrollState = () => {
+      setIsScrolled(window.scrollY > 10);
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateScrollState);
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   const categories = [
     { id: 'all', label: 'All', icon: Users },
     { id: 'hobbies', label: 'Hobbies', icon: BookOpen },
@@ -50,10 +74,75 @@ export default function Communities() {
     }
   ];
 
+  const typewriterStrings = [
+    "To Learn",
+    "To Connect",
+    "To Grow",
+    "To Share"
+  ];
+
   return (
     <>
-      <MainHeader initialSearchCategory="Communities" />
-      <main className="container mx-auto px-4 py-8 max-w-[1200px] space-y-8 mt-16">
+      <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm transition-all duration-200 ease-out bg-background border-b ${
+        isScrolled ? 'h-[80px] bg-[#FFFFFF] mt-[5px]' : ''
+      }`}>
+        <div className="container mx-auto px-4">
+          <div className="hidden sm:flex relative pb-[20px]">
+            <div className="w-[20%] flex items-start">
+              <h1 className="text-2xl font-semibold mt-[15px] ml-[15px]">Logo</h1>
+            </div>
+
+            <div className="w-[60%] flex flex-col items-center">
+              <div className={`transition-all duration-300 ease-out mt-[15px] ${
+                isScrolled ? 'opacity-0 h-0 mb-0 overflow-hidden' : 'opacity-100 h-[32px] mb-[20px]'
+              }`}>
+                <div className="text-[1.5rem] leading-relaxed font-bold whitespace-nowrap flex items-center justify-center">
+                  <span>Join Communities</span>
+                  <span className="text-muted-foreground ml-1">
+                    <Typewriter
+                      options={{
+                        strings: typewriterStrings,
+                        autoStart: true,
+                        loop: true,
+                        delay: 50,
+                        deleteSpeed: 30,
+                      }}
+                    />
+                  </span>
+                </div>
+              </div>
+
+              <div className={`flex justify-center transition-transform duration-300 ease-in-out ${
+                isScrolled ? 'transform -translate-y-[10px]' : ''
+              }`}>
+                <div className={`transition-all duration-200 ease-out ${
+                  isScrolled ? 'w-[360px]' : 'w-[540px]'
+                }`}>
+                  <MainHeader initialSearchCategory="Communities" />
+                </div>
+              </div>
+            </div>
+
+            <div className="w-[20%] flex items-start justify-end">
+              <div className="flex items-center gap-3 mt-[15px] mr-[15px]">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="font-medium text-primary hover:text-primary/90 hover:bg-primary/10"
+                >
+                  Sell on Plaze
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile Header */}
+          <div className="sm:hidden">
+            <MainHeader initialSearchCategory="Communities" />
+          </div>
+        </div>
+      </header>
+      <main className="container mx-auto px-4 py-8 max-w-[1200px] space-y-8 mt-32">
         <div className="text-center space-y-4">
           <h1 className="text-4xl md:text-5xl font-bold">
             Discover communities
