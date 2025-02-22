@@ -18,9 +18,9 @@ interface BadgeItem {
 const STYLES = {
   badge: {
     base: "inline-flex items-center rounded-full border px-4 py-2 text-sm font-medium cursor-pointer will-change-transform",
-    selected: "border-transparent bg-primary text-primary-foreground shadow-md transition-transform duration-150 ease-out",
-    unselected: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-transform duration-150 ease-out",
-    icon: "w-4 h-4 mr-2 transition-none"
+    selected: "border-transparent bg-primary text-primary-foreground shadow-md",
+    unselected: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/90",
+    icon: "w-4 h-4 mr-2"
   },
   container: {
     wrapper: "container mx-auto px-4",
@@ -44,14 +44,14 @@ const BADGES: ReadonlyArray<BadgeItem> = [
   { label: "Affiliate Offers", icon: Tags, category: null }
 ] as const;
 
-// Pure component for rendering icon
+// Pure component for rendering icon with minimal props
 const Icon = React.memo(({ icon: IconComponent, className }: { icon: React.ComponentType<LucideProps>; className: string }) => (
   <IconComponent className={className} aria-hidden="true" />
 ));
 
 Icon.displayName = "Icon";
 
-// Memoized badge component with minimal props
+// Memoized badge component with minimal props and optimized transitions
 const CategoryBadge = React.memo(({ 
   label,
   icon,
@@ -75,7 +75,13 @@ const CategoryBadge = React.memo(({
     <div 
       onClick={onClick} 
       className={badgeClassName}
-      style={{ transform: isSelected ? 'scale(1.02)' : 'scale(1)' }}
+      style={{
+        transform: isSelected ? 'scale(1.02)' : 'scale(1)',
+        transition: 'transform 150ms cubic-bezier(0.4, 0, 0.2, 1)',
+        backfaceVisibility: 'hidden',
+        perspective: '1000px',
+        WebkitFontSmoothing: 'antialiased'
+      }}
     >
       <Icon icon={icon} className={STYLES.badge.icon} />
       {label}
@@ -122,8 +128,12 @@ MenuTrigger.displayName = "MenuTrigger";
 
 export const CategoryHeader = React.memo(({ selectedCategory, onCategoryChange }: CategoryHeaderProps) => {
   const handleBadgeClick = useCallback((category: string | null) => {
+    // Use RAF to ensure smooth animation frame
     requestAnimationFrame(() => {
-      onCategoryChange(selectedCategory === category ? null : category);
+      // Schedule the state update for the next frame
+      requestAnimationFrame(() => {
+        onCategoryChange(selectedCategory === category ? null : category);
+      });
     });
   }, [selectedCategory, onCategoryChange]);
 
