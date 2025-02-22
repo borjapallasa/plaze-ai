@@ -7,7 +7,7 @@ import { ExpertServices } from "@/components/expert/ExpertServices";
 import { ExpertCommunity } from "@/components/expert/ExpertCommunity";
 import { MoreFromSeller } from "@/components/product/MoreFromSeller";
 import { ProductReviews } from "@/components/product/ProductReviews";
-import { DefaultHeader } from "../components/DefaultHeader";
+import { MainHeader } from "@/components/MainHeader";
 
 export default function Expert() {
   const moreProducts = [
@@ -121,7 +121,7 @@ export default function Expert() {
   return (
     <div className="min-h-screen bg-background">
       <div className="pt-16">
-        <DefaultHeader />
+        <MainHeader />
         <div className="container mx-auto px-4">
           <ExpertHeader />
         </div>
