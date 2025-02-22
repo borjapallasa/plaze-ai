@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { 
   PenLine, Coins, Flame, Heart, Music, 
   Brain, MonitorSmartphone, Activity, Target, Users,
-  ArrowUpRight 
+  ArrowRight
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -115,7 +115,10 @@ const Communities = () => {
           {/* Communities Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
             {filteredCommunities.map((community) => (
-              <Card key={community.id} className="group relative overflow-hidden flex flex-col">
+              <Card 
+                key={community.id} 
+                className="group relative overflow-hidden flex flex-col transition-all duration-200 hover:shadow-lg hover:-translate-y-1"
+              >
                 {/* Community Image */}
                 <div className="relative aspect-[2/1] overflow-hidden">
                   <img
@@ -149,7 +152,7 @@ const Communities = () => {
 
                   {/* Arrow */}
                   <div className="absolute bottom-4 right-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <ArrowUpRight className="h-5 w-5 text-primary" />
+                    <ArrowRight className="h-5 w-5 text-primary" />
                   </div>
                 </div>
               </Card>
