@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -195,9 +194,7 @@ export default function JobDetails() {
                 </div>
               </div>
 
-              <Separator className="my-6" />
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <h2 className="text-lg font-semibold mb-4">Skills and Expertise</h2>
                   <div className="flex flex-wrap gap-1.5">
