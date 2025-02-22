@@ -245,10 +245,10 @@ export default function Communities() {
                       <Select 
                         defaultValue="Communities"
                       >
-                        <SelectTrigger className="border-0 w-[120px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
+                        <SelectTrigger className="border-0 w-[140px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
                           <SelectValue className="pr-4" />
                         </SelectTrigger>
-                        <SelectContent className="w-[150px]">
+                        <SelectContent className="w-[180px]">
                           <SelectItem value="Products">Products</SelectItem>
                           <SelectItem value="Experts">Experts</SelectItem>
                           <SelectItem value="Communities">Communities</SelectItem>
@@ -315,10 +315,10 @@ export default function Communities() {
                 <Select 
                   defaultValue="Communities"
                 >
-                  <SelectTrigger className="border-0 w-[120px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
+                  <SelectTrigger className="border-0 w-[140px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
                     <SelectValue className="pr-4" />
                   </SelectTrigger>
-                  <SelectContent className="w-[150px]">
+                  <SelectContent className="w-[180px]">
                     <SelectItem value="Products">Products</SelectItem>
                     <SelectItem value="Experts">Experts</SelectItem>
                     <SelectItem value="Communities">Communities</SelectItem>
