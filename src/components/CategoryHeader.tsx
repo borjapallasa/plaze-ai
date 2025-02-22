@@ -1,3 +1,4 @@
+
 import React, { useMemo, useCallback } from "react";
 import { TrendingUp, Sparkle, Trophy, ThumbsUp, Star, Tags, LucideProps, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -25,7 +26,7 @@ const BADGES: ReadonlyArray<BadgeItem> = [
 
 const STYLES = {
   badge: {
-    base: "inline-flex items-center rounded-full border px-4 py-2 text-sm font-medium cursor-pointer will-change-transform select-none",
+    base: "inline-flex items-center rounded-full border px-4 py-2 text-sm font-medium cursor-pointer select-none touch-none",
     selected: "border-transparent bg-primary text-primary-foreground shadow-md",
     unselected: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/90",
     icon: "w-4 h-4 mr-2"
@@ -69,12 +70,13 @@ const CategoryBadge = React.memo(({
       isSelected ? STYLES.badge.selected : STYLES.badge.unselected
     )}
     style={{
-      transform: `translateZ(0) scale(${isSelected ? 1.02 : 1})`,
-      transition: 'transform 120ms cubic-bezier(0.4, 0, 0.2, 1)',
+      transform: `translate3d(0,0,0) scale(${isSelected ? 1.02 : 1})`,
+      transition: 'transform 100ms cubic-bezier(0.4, 0, 0.2, 1)',
       willChange: 'transform',
       backfaceVisibility: 'hidden',
       WebkitFontSmoothing: 'antialiased',
-      WebkitTapHighlightColor: 'transparent'
+      WebkitTapHighlightColor: 'transparent',
+      WebkitTransformStyle: 'preserve-3d'
     }}
   >
     <Icon icon={icon} className={STYLES.badge.icon} />
@@ -122,7 +124,8 @@ export const CategoryHeader = React.memo(({ selectedCategory, onCategoryChange }
     if (selectedCategory === category) {
       onCategoryChange(null);
     } else {
-      requestAnimationFrame(() => {
+      // Use only transform for animation, avoid triggering layout
+      queueMicrotask(() => {
         onCategoryChange(category);
       });
     }
