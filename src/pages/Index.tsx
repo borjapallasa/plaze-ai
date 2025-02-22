@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
 import {
@@ -11,8 +11,7 @@ import {
   Sparkle,
   Trophy,
   ThumbsUp,
-  Tags,
-  ChevronDown
+  Tags
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Typewriter from 'typewriter-effect';
@@ -242,6 +241,46 @@ const badges = [
   { label: "Affiliate Offers", icon: Tags, category: null }
 ];
 
+// Memoize the TypeWriter component to prevent unnecessary re-renders
+const MemoizedTypeWriter = React.memo(() => (
+  <Typewriter
+    options={{
+      strings: typewriterStrings,
+      autoStart: true,
+      loop: true,
+      delay: 50,
+      deleteSpeed: 30,
+    }}
+  />
+));
+
+// Memoize the badge component to prevent re-renders when selected category changes
+const CategoryBadge = React.memo(({ 
+  badge, 
+  isSelected, 
+  onClick 
+}: { 
+  badge: typeof badges[0], 
+  isSelected: boolean, 
+  onClick: () => void 
+}) => {
+  const Icon = badge.icon;
+  return (
+    <Badge
+      variant={isSelected ? "default" : "secondary"}
+      className={`px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200 ${
+        isSelected 
+          ? 'bg-primary text-primary-foreground shadow-md' 
+          : 'hover:bg-secondary hover:shadow-sm'
+      }`}
+      onClick={onClick}
+    >
+      <Icon className="w-4 h-4 mr-2" />
+      {badge.label}
+    </Badge>
+  );
+});
+
 const Header = ({ searchCategory, setSearchCategory }) => {
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -282,15 +321,7 @@ const Header = ({ searchCategory, setSearchCategory }) => {
               <div className="text-[1.5rem] leading-relaxed font-bold whitespace-nowrap flex items-center justify-center">
                 <span>The Best AI & Automation</span>
                 <span className="text-muted-foreground ml-1">
-                  <Typewriter
-                    options={{
-                      strings: typewriterStrings,
-                      autoStart: true,
-                      loop: true,
-                      delay: 50,
-                      deleteSpeed: 30,
-                    }}
-                  />
+                  <MemoizedTypeWriter />
                 </span>
               </div>
             </div>
@@ -417,11 +448,11 @@ const Index = () => {
     [selectedCategory]
   );
 
-  const handleBadgeClick = (category: string | null) => {
+  const handleBadgeClick = useCallback((category: string | null) => {
     setSelectedCategory(prevCategory => 
       prevCategory === category ? null : category
     );
-  };
+  }, []);
 
   return (
     <div className="min-h-screen">
@@ -436,39 +467,20 @@ const Index = () => {
             <div className="text-[1.5rem] leading-relaxed font-bold whitespace-nowrap flex items-center justify-center mb-6">
               <span>The Best AI & Automation</span>
               <span className="text-muted-foreground ml-1">
-                <Typewriter
-                  options={{
-                    strings: typewriterStrings,
-                    autoStart: true,
-                    loop: true,
-                    delay: 50,
-                    deleteSpeed: 30,
-                  }}
-                />
+                <MemoizedTypeWriter />
               </span>
             </div>
 
             <div className="space-y-4">
               <div className="flex flex-wrap gap-3">
-                {badges.map((badge, index) => {
-                  const Icon = badge.icon;
-                  const isSelected = selectedCategory === badge.category;
-                  return (
-                    <Badge
-                      key={index}
-                      variant={isSelected ? "default" : "secondary"}
-                      className={`px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200 ${
-                        isSelected 
-                          ? 'bg-primary text-primary-foreground shadow-md' 
-                          : 'hover:bg-secondary hover:shadow-sm'
-                      }`}
-                      onClick={() => handleBadgeClick(badge.category)}
-                    >
-                      <Icon className="w-4 h-4 mr-2" />
-                      {badge.label}
-                    </Badge>
-                  );
-                })}
+                {badges.map((badge, index) => (
+                  <CategoryBadge
+                    key={index}
+                    badge={badge}
+                    isSelected={selectedCategory === badge.category}
+                    onClick={() => handleBadgeClick(badge.category)}
+                  />
+                ))}
               </div>
             </div>
           </div>
