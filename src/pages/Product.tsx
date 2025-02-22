@@ -1,3 +1,4 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -427,7 +428,7 @@ export default function Product() {
             </Card>
           </div>
 
-          <div className="hidden lg:block space-y-2">
+          <div className="hidden lg:block">
             <ProductHeader 
               title={product.title}
               seller={product.seller}
