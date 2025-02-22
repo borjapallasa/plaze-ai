@@ -52,7 +52,7 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
         <div className="divide-y divide-gray-100">
           {reviews.map((review) => (
             <div key={review.id}>
-              <div className="px-8 py-7">
+              <div className="px-4 sm:px-8 py-7">
                 <div className="flex flex-col md:flex-row md:gap-16">
                   <div className="flex-1 space-y-4">
                     <div className="flex gap-1">
