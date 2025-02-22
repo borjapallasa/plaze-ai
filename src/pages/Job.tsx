@@ -169,7 +169,7 @@ export default function JobDetails() {
 
               <Separator className="mb-6" />
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:divide-x divide-border">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="flex items-start gap-3">
                   <Clock className="h-6 w-6 text-muted-foreground mt-0.5 flex-shrink-0" />
                   <div className="min-w-0">
@@ -178,7 +178,7 @@ export default function JobDetails() {
                   </div>
                 </div>
                 
-                <div className="flex items-start gap-3 md:px-6">
+                <div className="flex items-start gap-3">
                   <Calendar className="h-6 w-6 text-muted-foreground mt-0.5 flex-shrink-0" />
                   <div className="min-w-0">
                     <p className="font-medium text-base">{job.workDetails.duration}</p>
@@ -186,7 +186,7 @@ export default function JobDetails() {
                   </div>
                 </div>
                 
-                <div className="flex items-start gap-3 md:px-6">
+                <div className="flex items-start gap-3">
                   <Briefcase className="h-6 w-6 text-muted-foreground mt-0.5 flex-shrink-0" />
                   <div className="min-w-0">
                     <p className="font-medium text-base leading-snug">{job.workDetails.experience}</p>
