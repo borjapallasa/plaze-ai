@@ -355,15 +355,6 @@ export default function Index() {
         </div>
       </header>
       <main className="container mx-auto px-4 py-8 max-w-[1200px] space-y-8 mt-32">
-        <div className="text-center space-y-4">
-          <h1 className="text-4xl md:text-5xl font-bold">
-            Discover communities
-          </h1>
-          <p className="text-xl text-muted-foreground">
-            or <a href="/create-community" className="text-primary hover:underline">create your own</a>
-          </p>
-        </div>
-
         <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
           {categories.map((category) => {
             const Icon = category.icon;
@@ -384,50 +375,55 @@ export default function Index() {
           })}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {communities.map((community) => (
-            <Card key={community.id} className="group hover:shadow-lg transition-shadow relative">
-              <div className="aspect-video relative overflow-hidden">
-                <img 
-                  src={community.image} 
-                  alt={community.name}
-                  className="w-full h-full object-cover"
-                />
-                <Badge 
-                  className="absolute top-3 left-3 bg-background/80 backdrop-blur-sm" 
-                  variant="outline"
-                >
-                  {community.badge}
-                </Badge>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[...Array(12)].map((_, index) => (
+            <Card key={index} className="group relative flex flex-col p-4 lg:p-6 hover:bg-accent transition-colors">
+              <div className="flex items-start gap-3 lg:gap-4">
+                <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg bg-accent flex items-center justify-center overflow-hidden flex-shrink-0">
+                  <img
+                    src="/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png"
+                    alt={`Product ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-base leading-tight truncate">Product {index + 1}</h3>
+                  <Badge 
+                    variant="secondary" 
+                    className="font-medium capitalize bg-blue-50 text-blue-600 hover:bg-blue-50 text-xs mt-1.5"
+                  >
+                    automation
+                  </Badge>
+                </div>
               </div>
-              <CardContent className="p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <Avatar className="h-12 w-12">
-                    <AvatarImage src={community.image} />
-                    <AvatarFallback>
-                      {community.name.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <h3 className="font-semibold truncate">{community.name}</h3>
+
+              <p className="text-base text-muted-foreground line-clamp-2 mt-4 mb-6">
+                Automate your workflow with this powerful integration tool. Save time and increase productivity.
+              </p>
+
+              <div className="flex gap-2 flex-wrap mt-auto mb-4">
+                <span className="text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full text-sm">
+                  #automation
+                </span>
+                <span className="text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full text-sm">
+                  #productivity
+                </span>
+              </div>
+
+              <div className="border-t border-border mt-auto pt-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-sm font-medium">From $49.99</span>
                   </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
                 </div>
-
-                <p className="text-muted-foreground text-sm line-clamp-2 text-left mb-4">
-                  {community.description}
-                </p>
-
-                <div className="flex items-center justify-between text-sm mb-12">
-                  <div className="text-muted-foreground">
-                    {community.members} Members
-                  </div>
-                  <div className="font-medium">
-                    {community.price}
-                  </div>
-                </div>
-
-                <ArrowRight className="absolute bottom-6 right-6 w-5 h-5 text-primary opacity-0 transform translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0" />
-              </CardContent>
+              </div>
             </Card>
           ))}
         </div>
