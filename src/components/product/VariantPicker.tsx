@@ -53,8 +53,10 @@ export function VariantPicker({
                   {badge}
                 </div>
               )}
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
+              
+              {/* Upper section with header and price */}
+              <div className="mb-4">
+                <div className="flex items-start justify-between gap-4">
                   <div className="flex items-center gap-3">
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                       selectedVariant === variant.id ? "border-black" : "border-gray-300"
@@ -65,36 +67,29 @@ export function VariantPicker({
                     </div>
                     <h3 className="text-lg font-semibold">{variant.name}</h3>
                   </div>
-                  {variant.features && variant.features.length > 0 && (
-                    <ul className="mt-3 space-y-2 text-gray-600">
-                      {variant.features.map((feature, index) => (
-                        <li key={index} className="flex items-center gap-2">
-                          <Star className="h-4 w-4 flex-shrink-0" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                  {variant.tags && variant.tags.length > 0 && (
-                    <div className="flex flex-wrap items-center gap-1.5 mt-3">
-                      {variant.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="inline-block bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full text-xs whitespace-nowrap"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+                  <div className="text-right">
+                    <div className="text-2xl font-bold">${variant.price}</div>
+                    {variant.comparePrice && (
+                      <div className="text-sm text-gray-500 line-through">
+                        ${variant.comparePrice}
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div className="text-right flex flex-col items-end">
-                  <div className="text-2xl font-bold">${variant.price}</div>
-                  {variant.comparePrice && (
-                    <div className="text-sm text-gray-500 line-through">
-                      ${variant.comparePrice}
-                    </div>
-                  )}
+              </div>
+
+              {/* Bottom section with features */}
+              <div className="border-t pt-4">
+                <div className="flex flex-row gap-3 flex-wrap">
+                  {variant.features && variant.features.map((feature, index) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center gap-1.5 bg-gray-100 text-gray-700 px-2.5 py-1 rounded-full text-xs"
+                    >
+                      <Star className="h-3 w-3" />
+                      {feature}
+                    </span>
+                  ))}
                 </div>
               </div>
             </Card>
