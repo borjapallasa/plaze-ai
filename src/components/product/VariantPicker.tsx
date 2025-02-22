@@ -2,8 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Award, Star, Trophy, Tag } from "lucide-react";
+import { Star } from "lucide-react";
 import { Variant } from "./types/variants";
 
 interface VariantPickerProps {
@@ -14,10 +13,10 @@ interface VariantPickerProps {
   className?: string;
 }
 
-const getBadgeContent = (index: number, variant: Variant) => {
-  if (index === 0) return { icon: Trophy, text: "Top Seller", color: "bg-orange-500" };
-  if (variant.highlight) return { icon: Award, text: "Best Value", color: "bg-green-500" };
-  if (index === 2) return { icon: Star, text: "Best Price", color: "bg-blue-500" };
+const getBadgeLabel = (index: number, variant: Variant) => {
+  if (index === 0) return "Most Popular";
+  if (variant.highlight) return "Best Value";
+  if (index === 2) return "Most Complete";
   return null;
 };
 
@@ -33,59 +32,55 @@ export function VariantPicker({
       <h2 className="text-lg font-semibold">Choose your package</h2>
       <div className="grid gap-4">
         {variants.map((variant, index) => {
-          const badge = getBadgeContent(index, variant);
+          const badge = getBadgeLabel(index, variant);
           
           return (
             <Card
               key={variant.id}
-              className={`p-4 cursor-pointer transition-all relative ${
+              className={`p-6 cursor-pointer transition-all relative overflow-visible ${
                 selectedVariant === variant.id
-                  ? "ring-2 ring-primary"
-                  : "hover:border-primary"
-              }`}
+                  ? "ring-2 ring-black"
+                  : "hover:ring-1 hover:ring-black/50"
+              } ${variant.highlight ? "ring-2 ring-black" : ""}`}
               onClick={() => onVariantChange?.(variant.id)}
             >
               {badge && (
-                <div className={`absolute -top-2 -left-2 ${badge.color} text-white px-2 py-1 rounded-lg text-xs font-medium flex items-center gap-1 shadow-md`}>
-                  <badge.icon className="h-3 w-3" />
-                  {badge.text}
+                <div className={`absolute -top-3 left-6 ${
+                  variant.highlight 
+                    ? "bg-black text-white" 
+                    : "bg-white text-black border border-gray-200"
+                } px-4 py-1 rounded-full text-sm font-medium`}>
+                  {badge}
                 </div>
               )}
-              <div className="flex justify-between items-start gap-4">
-                <div className="space-y-1.5">
-                  <h3 className="font-medium">{variant.name}</h3>
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                      selectedVariant === variant.id ? "border-black" : "border-gray-300"
+                    }`}>
+                      {selectedVariant === variant.id && (
+                        <div className="w-3 h-3 rounded-full bg-black" />
+                      )}
+                    </div>
+                    <h3 className="text-lg font-semibold">{variant.name}</h3>
+                  </div>
                   {variant.features && variant.features.length > 0 && (
-                    <ul className="text-sm text-muted-foreground space-y-1">
+                    <ul className="mt-3 space-y-2 text-gray-600">
                       {variant.features.map((feature, index) => (
-                        <li key={index}>{feature}</li>
+                        <li key={index} className="flex items-center gap-2">
+                          <Star className="h-4 w-4 flex-shrink-0" />
+                          {feature}
+                        </li>
                       ))}
                     </ul>
                   )}
-                  {variant.tags && variant.tags.length > 0 && (
-                    <div className="flex gap-2 mt-2">
-                      {variant.tags.map((tag) => (
-                        <Badge
-                          key={tag}
-                          variant="secondary"
-                          className="flex items-center gap-1"
-                        >
-                          <Tag className="h-3 w-3" />
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
                 </div>
-                <div className="text-right">
-                  <div className="font-medium">€{variant.price}</div>
+                <div className="text-right flex flex-col items-end">
+                  <div className="text-2xl font-bold">${variant.price}</div>
                   {variant.comparePrice && (
-                    <div className="text-sm text-muted-foreground line-through">
-                      €{variant.comparePrice}
-                    </div>
-                  )}
-                  {variant.highlight && (
-                    <div className="text-xs text-primary font-medium mt-1">
-                      Best value
+                    <div className="text-sm text-gray-500 line-through">
+                      ${variant.comparePrice}
                     </div>
                   )}
                 </div>
