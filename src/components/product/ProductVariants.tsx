@@ -1,94 +1,178 @@
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { MessageSquare, ShoppingCart, Star } from "lucide-react";
 import React from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Plus, X } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 interface Variant {
   id: string;
-  name: string;
-  price: number;
-  comparePrice: number;
-  label: string;
-  highlight?: boolean;
-  features: string[];
+  price: string;
+  comparePrice: string;
+  highlight: boolean;
+  tags: string[];
 }
 
-interface ProductVariantsProps {
-  variants: Variant[];
-  selectedVariant: string;
-  onVariantChange: (value: string) => void;
-  className?: string;
-  onAddToCart?: () => void;
-}
+export function ProductVariants() {
+  const [variants, setVariants] = React.useState<Variant[]>([
+    {
+      id: "1",
+      price: "",
+      comparePrice: "",
+      highlight: false,
+      tags: [],
+    },
+  ]);
 
-export function ProductVariants({ 
-  variants, 
-  selectedVariant, 
-  onVariantChange,
-  className,
-  onAddToCart 
-}: ProductVariantsProps) {
-  const currentVariant = variants.find(v => v.id === selectedVariant);
-  
+  const addVariant = () => {
+    setVariants([
+      ...variants,
+      {
+        id: Math.random().toString(),
+        price: "",
+        comparePrice: "",
+        highlight: false,
+        tags: [],
+      },
+    ]);
+  };
+
+  const removeVariant = (id: string) => {
+    setVariants(variants.filter((v) => v.id !== id));
+  };
+
+  const updateVariant = (id: string, field: keyof Variant, value: any) => {
+    setVariants(
+      variants.map((v) =>
+        v.id === id ? { ...v, [field]: value } : v
+      )
+    );
+  };
+
+  const addTag = (variantId: string, tag: string) => {
+    setVariants(
+      variants.map((v) =>
+        v.id === variantId
+          ? { ...v, tags: [...v.tags, tag].slice(0, 2) }
+          : v
+      )
+    );
+  };
+
+  const removeTag = (variantId: string, tagToRemove: string) => {
+    setVariants(
+      variants.map((v) =>
+        v.id === variantId
+          ? { ...v, tags: v.tags.filter((tag) => tag !== tagToRemove) }
+          : v
+      )
+    );
+  };
+
   return (
-    <div className={className}>
-      <RadioGroup 
-        value={selectedVariant} 
-        onValueChange={onVariantChange}
-        className="space-y-3"
-      >
-        {variants.map((variant) => (
-          <div 
-            key={variant.id} 
-            className={`relative rounded-lg p-3 transition-all cursor-pointer ${
-              variant.id === selectedVariant
-                ? 'border-2 border-primary shadow-lg' 
-                : 'border border-border'
-            }`}
-            onClick={() => onVariantChange(variant.id)}
-          >
-            <Badge 
-              variant={variant.id === selectedVariant ? "default" : "secondary"}
-              className="absolute -top-2 left-4 z-10"
-            >
-              {variant.label}
-            </Badge>
-            <div className="flex justify-between items-center mb-2">
-              <div className="flex items-center gap-2">
-                <RadioGroupItem value={variant.id} id={variant.id} />
-                <h3 className="text-base font-semibold">{variant.name}</h3>
-              </div>
-              <div className="flex items-baseline gap-1">
-                <span className="text-lg font-bold">${variant.price}</span>
-                <span className="text-xs text-muted-foreground line-through">
-                  ${variant.comparePrice}
-                </span>
-              </div>
-            </div>
-            <div className="flex gap-4 text-xs text-muted-foreground">
-              {variant.features.slice(0, 2).map((feature, index) => (
-                <div key={index} className="flex items-center gap-1">
-                  <Star className="w-3 h-3 text-primary flex-shrink-0" />
-                  <span>{feature}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </RadioGroup>
-
-      <div className="space-y-2 mt-3">
-        <Button className="w-full" onClick={onAddToCart}>
-          <ShoppingCart className="w-4 h-4 mr-2" />
-          Add to Cart
-        </Button>
-        <Button variant="outline" className="w-full">
-          <MessageSquare className="w-4 h-4 mr-2" />
-          Contact Seller
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-medium">Variants</h2>
+        <Button onClick={addVariant} variant="outline" size="sm">
+          <Plus className="h-4 w-4 mr-2" />
+          Add variant
         </Button>
       </div>
+
+      {variants.map((variant) => (
+        <Card key={variant.id} className="p-4">
+          <div className="space-y-4">
+            <div className="flex justify-end">
+              {variants.length > 1 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeVariant(variant.id)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor={`price-${variant.id}`}>Price</Label>
+                <Input
+                  id={`price-${variant.id}`}
+                  type="number"
+                  placeholder="0.00"
+                  value={variant.price}
+                  onChange={(e) =>
+                    updateVariant(variant.id, "price", e.target.value)
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor={`compare-price-${variant.id}`}>Compare Price</Label>
+                <Input
+                  id={`compare-price-${variant.id}`}
+                  type="number"
+                  placeholder="0.00"
+                  value={variant.comparePrice}
+                  onChange={(e) =>
+                    updateVariant(variant.id, "comparePrice", e.target.value)
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id={`highlight-${variant.id}`}
+                checked={variant.highlight}
+                onCheckedChange={(checked) =>
+                  updateVariant(variant.id, "highlight", checked)
+                }
+              />
+              <Label htmlFor={`highlight-${variant.id}`}>Highlight this variant</Label>
+            </div>
+
+            <div>
+              <Label>Tags (max 2)</Label>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {variant.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-sm flex items-center gap-1"
+                  >
+                    {tag}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-4 w-4 p-0 hover:bg-transparent"
+                      onClick={() => removeTag(variant.id, tag)}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </span>
+                ))}
+                {variant.tags.length < 2 && (
+                  <Input
+                    className="w-32"
+                    placeholder="Add tag"
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        const input = e.currentTarget;
+                        if (input.value) {
+                          addTag(variant.id, input.value);
+                          input.value = '';
+                        }
+                      }
+                    }}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+        </Card>
+      ))}
     </div>
   );
 }

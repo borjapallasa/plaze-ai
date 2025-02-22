@@ -9,6 +9,7 @@ import { ProductEditor } from "@/components/product/ProductEditor";
 import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
 import { ProductPricing } from "@/components/product/ProductPricing";
 import { ProductStatus } from "@/components/product/ProductStatus";
+import { ProductVariants } from "@/components/product/ProductVariants";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -78,6 +79,10 @@ const EditProduct = () => {
             <Card className="p-6">
               <h2 className="text-lg font-medium mb-4">Media</h2>
               <ProductMediaUpload />
+            </Card>
+
+            <Card className="p-6">
+              <ProductVariants />
             </Card>
 
             <Card className="p-6">
