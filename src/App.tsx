@@ -1,4 +1,9 @@
+
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Index from "./pages/index";
 import Product from "./pages/Product";
 import EditProduct from "./pages/EditProduct";
@@ -13,6 +18,9 @@ import SignInCommunity from "./pages/sign-in-community";
 import SignUpCommunity from "./pages/sign-up-community";
 import Affiliates from "./pages/Affiliates";
 import Communities from "./pages/Communities";
+import { Footer } from "./components/Footer";
+
+const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
   {
@@ -75,7 +83,16 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <RouterProvider router={router} />
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <div className="flex flex-col min-h-screen">
+          <RouterProvider router={router} />
+          <Footer />
+        </div>
+        <Toaster />
+        <Sonner />
+      </TooltipProvider>
+    </QueryClientProvider>
   );
 }
 
