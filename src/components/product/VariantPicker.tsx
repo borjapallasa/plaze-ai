@@ -33,15 +33,16 @@ export function VariantPicker({
       <div className="grid gap-4">
         {variants.map((variant, index) => {
           const badge = getBadgeLabel(index, variant);
+          const isSelected = selectedVariant === variant.id;
           
           return (
             <Card
               key={variant.id}
-              className={`p-4 cursor-pointer transition-all relative overflow-visible ${
-                selectedVariant === variant.id
-                  ? "ring-2 ring-black"
+              className={`p-4 cursor-pointer transition-all relative overflow-visible shadow-sm hover:shadow-md ${
+                isSelected
+                  ? "ring-2 ring-black shadow-md"
                   : "hover:ring-1 hover:ring-black/50"
-              } ${variant.highlight ? "ring-2 ring-black" : ""}`}
+              } ${variant.highlight && !isSelected ? "ring-1 ring-black/10" : ""}`}
               onClick={() => onVariantChange?.(variant.id)}
             >
               {badge && (
@@ -49,7 +50,7 @@ export function VariantPicker({
                   variant.highlight 
                     ? "bg-black text-white" 
                     : "bg-white text-black border border-gray-200"
-                } px-3 py-0.5 rounded-full text-xs font-medium`}>
+                } px-3 py-0.5 rounded-full text-xs font-medium shadow-sm`}>
                   {badge}
                 </div>
               )}
@@ -59,9 +60,9 @@ export function VariantPicker({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                      selectedVariant === variant.id ? "border-black" : "border-gray-300"
+                      isSelected ? "border-black" : "border-gray-300"
                     }`}>
-                      {selectedVariant === variant.id && (
+                      {isSelected && (
                         <div className="w-2 h-2 rounded-full bg-black" />
                       )}
                     </div>
