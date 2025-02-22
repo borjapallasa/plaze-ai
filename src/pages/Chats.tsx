@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
@@ -99,7 +100,7 @@ export default function Chats() {
       <MainHeader />
       
       <div className="container mx-auto max-w-[1400px] px-2 md:px-4 lg:px-8 py-6 pt-28">
-        <div className="flex h-[calc(100vh-96px)] rounded-lg border bg-card shadow-sm overflow-hidden">
+        <div className="flex h-[calc(100vh-140px)] rounded-lg border bg-card shadow-sm overflow-hidden">
           {/* Sidebar */}
           <div className={`${
             isMobile && selectedChat ? 'hidden' : 'flex'
