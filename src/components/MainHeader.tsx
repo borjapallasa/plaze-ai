@@ -18,10 +18,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export const MainHeader = () => {
+export const MainHeader = ({ initialSearchCategory = "Products" }: { initialSearchCategory?: string }) => {
   const location = useLocation();
   
   const getInitialSearchCategory = () => {
+    if (initialSearchCategory) {
+      return initialSearchCategory;
+    }
     if (location.pathname.includes('/community') || location.pathname.includes('/classroom')) {
       return "This Community";
     }
@@ -38,6 +41,9 @@ export const MainHeader = () => {
   };
 
   const getInitialDesktopSearchCategory = () => {
+    if (initialSearchCategory) {
+      return initialSearchCategory;
+    }
     if (location.pathname.includes('/community') || location.pathname.includes('/classroom')) {
       return "ThisCommunity";
     }

@@ -52,7 +52,7 @@ export default function Communities() {
 
   return (
     <>
-      <MainHeader />
+      <MainHeader initialSearchCategory="Communities" />
       <main className="container mx-auto px-4 py-8 max-w-[1200px] space-y-8 mt-16">
         <div className="text-center space-y-4">
           <h1 className="text-4xl md:text-5xl font-bold">
@@ -61,11 +61,6 @@ export default function Communities() {
           <p className="text-xl text-muted-foreground">
             or <a href="/create-community" className="text-primary hover:underline">create your own</a>
           </p>
-        </div>
-
-        <div className="relative max-w-2xl mx-auto">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input placeholder="Search for anything" className="pl-9" />
         </div>
 
         <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
