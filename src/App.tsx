@@ -13,6 +13,7 @@ import SignUp from "./pages/sign-up";
 import SignUpCommunity from "./pages/sign-up-community";
 import SignIn from "./pages/sign-in";
 import SignInCommunity from "./pages/sign-in-community";
+import RecoverPassword from "./pages/RecoverPassword";
 import Classroom from "./pages/Classroom";
 import Jobs from "./pages/Jobs";
 import Job from "./pages/Job";
@@ -40,6 +41,7 @@ const App = () => (
           <Route path="/sign-up/community" element={<SignUpCommunity />} />
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-in/community" element={<SignInCommunity />} />
+          <Route path="/recover-password" element={<RecoverPassword />} />
           <Route path="/community/classroom" element={<Classroom />} />
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/job/:id" element={<Job />} />
