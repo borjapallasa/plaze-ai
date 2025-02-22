@@ -72,16 +72,16 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
                     <p className="text-gray-600 leading-relaxed">{review.description}</p>
                     
                     {review.projectDetails && (
-                      <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
-                        <div className="flex items-center gap-1.5">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-6 text-sm text-gray-500">
+                        <div className="flex items-center gap-1.5 min-w-fit">
                           <Clock className="h-4 w-4 text-gray-400" />
                           <span>{review.projectDetails.duration}</span>
                         </div>
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1.5 min-w-fit">
                           <Wallet className="h-4 w-4 text-gray-400" />
                           <span>{review.projectDetails.rate}</span>
                         </div>
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1.5 min-w-fit">
                           <DollarSign className="h-4 w-4 text-gray-400" />
                           <span>Billed: {review.projectDetails.billed}</span>
                         </div>
