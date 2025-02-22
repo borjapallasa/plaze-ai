@@ -1,4 +1,3 @@
-
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,6 +13,7 @@ import {
 import { Search, Music, Users, Banknote, Zap, Monitor, Heart, Dumbbell, BookOpen, Heart as HeartIcon, ArrowRight, Menu, ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import Typewriter from 'typewriter-effect';
 import {
   Select,
   SelectContent,
@@ -21,6 +21,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
+const typewriterStrings = [
+  "Products to Scale",
+  "Communities to Learn",
+  "Experts to Hire",
+  "Jobs to Earn"
+];
 
 const categories = [
   { id: 'all', label: 'All', icon: Users },
@@ -224,6 +231,25 @@ export default function Communities() {
             </div>
 
             <div className="w-[60%] flex flex-col items-center">
+              <div className={`transition-all duration-300 ease-out mt-[12px] ${
+                isScrolled ? 'opacity-0 h-0 mb-0 overflow-hidden' : 'opacity-100 h-[32px] mb-[16px]'
+              }`}>
+                <div className="text-[1.5rem] leading-relaxed font-bold whitespace-nowrap flex items-center justify-center">
+                  <span>The Best AI & Automations</span>
+                  <span className="text-muted-foreground ml-1">
+                    <Typewriter
+                      options={{
+                        strings: typewriterStrings,
+                        autoStart: true,
+                        loop: true,
+                        delay: 50,
+                        deleteSpeed: 30,
+                      }}
+                    />
+                  </span>
+                </div>
+              </div>
+
               <div className={`transition-all duration-200 ease-out ${
                 isScrolled ? 'w-[360px]' : 'w-[540px]'
               }`}>
@@ -364,6 +390,7 @@ export default function Communities() {
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-border" />
       </header>
+
       <main className="container mx-auto px-4 py-8 max-w-[1200px] space-y-8 mt-32">
         <div className="text-center space-y-4">
           <h1 className="text-4xl md:text-5xl font-bold">
