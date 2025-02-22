@@ -10,7 +10,7 @@ interface CategoryHeaderProps {
 
 interface BadgeItem {
   label: string;
-  icon: LucideIcon;
+  icon: typeof TrendingUp;
   category: string | null;
 }
 
