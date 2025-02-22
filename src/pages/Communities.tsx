@@ -1,4 +1,3 @@
-import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -167,86 +166,83 @@ const communities = [
 
 export default function Communities() {
   return (
-    <>
-      <MainHeader initialSearchCategory="Communities" />
-      <main className="container mx-auto px-4 py-8 max-w-[1200px] space-y-8 mt-32">
-        <div className="text-center space-y-4">
-          <h1 className="text-4xl md:text-5xl font-bold">
-            Discover communities
-          </h1>
-          <p className="text-xl text-muted-foreground">
-            or <a href="/create-community" className="text-primary hover:underline">create your own</a>
-          </p>
-        </div>
+    <main className="container mx-auto px-4 py-8 max-w-[1200px] space-y-8">
+      <div className="text-center space-y-4">
+        <h1 className="text-4xl md:text-5xl font-bold">
+          Discover communities
+        </h1>
+        <p className="text-xl text-muted-foreground">
+          or <a href="/create-community" className="text-primary hover:underline">create your own</a>
+        </p>
+      </div>
 
-        <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
-          {categories.map((category) => {
-            const Icon = category.icon;
-            return (
-              <Badge
-                key={category.id}
-                variant={category.id === 'all' ? "default" : "secondary"}
-                className={`px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200 ${
-                  category.id === 'all' 
-                    ? 'bg-primary text-primary-foreground shadow-md' 
-                    : 'hover:bg-secondary hover:shadow-sm'
-                }`}
+      <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
+        {categories.map((category) => {
+          const Icon = category.icon;
+          return (
+            <Badge
+              key={category.id}
+              variant={category.id === 'all' ? "default" : "secondary"}
+              className={`px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200 ${
+                category.id === 'all' 
+                  ? 'bg-primary text-primary-foreground shadow-md' 
+                  : 'hover:bg-secondary hover:shadow-sm'
+              }`}
+            >
+              <Icon className="w-4 h-4 mr-2" />
+              {category.label}
+            </Badge>
+          );
+        })}
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {communities.map((community) => (
+          <Card key={community.id} className="group hover:shadow-lg transition-shadow relative">
+            <div className="aspect-video relative overflow-hidden">
+              <img 
+                src={community.image} 
+                alt={community.name}
+                className="w-full h-full object-cover"
+              />
+              <Badge 
+                className="absolute top-3 left-3 bg-background/80 backdrop-blur-sm" 
+                variant="outline"
               >
-                <Icon className="w-4 h-4 mr-2" />
-                {category.label}
+                {community.badge}
               </Badge>
-            );
-          })}
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {communities.map((community) => (
-            <Card key={community.id} className="group hover:shadow-lg transition-shadow relative">
-              <div className="aspect-video relative overflow-hidden">
-                <img 
-                  src={community.image} 
-                  alt={community.name}
-                  className="w-full h-full object-cover"
-                />
-                <Badge 
-                  className="absolute top-3 left-3 bg-background/80 backdrop-blur-sm" 
-                  variant="outline"
-                >
-                  {community.badge}
-                </Badge>
+            </div>
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <Avatar className="h-12 w-12">
+                  <AvatarImage src={community.image} />
+                  <AvatarFallback>
+                    {community.name.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <h3 className="font-semibold truncate">{community.name}</h3>
+                </div>
               </div>
-              <CardContent className="p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <Avatar className="h-12 w-12">
-                    <AvatarImage src={community.image} />
-                    <AvatarFallback>
-                      {community.name.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <h3 className="font-semibold truncate">{community.name}</h3>
-                  </div>
+
+              <p className="text-muted-foreground text-sm line-clamp-2 text-left mb-4">
+                {community.description}
+              </p>
+
+              <div className="flex items-center justify-between text-sm mb-12">
+                <div className="text-muted-foreground">
+                  {community.members} Members
                 </div>
-
-                <p className="text-muted-foreground text-sm line-clamp-2 text-left mb-4">
-                  {community.description}
-                </p>
-
-                <div className="flex items-center justify-between text-sm mb-12">
-                  <div className="text-muted-foreground">
-                    {community.members} Members
-                  </div>
-                  <div className="font-medium">
-                    {community.price}
-                  </div>
+                <div className="font-medium">
+                  {community.price}
                 </div>
+              </div>
 
-                <ArrowRight className="absolute bottom-6 right-6 w-5 h-5 text-primary opacity-0 transform translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0" />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </main>
-    </>
+              <ArrowRight className="absolute bottom-6 right-6 w-5 h-5 text-primary opacity-0 transform translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0" />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </main>
   );
 }
