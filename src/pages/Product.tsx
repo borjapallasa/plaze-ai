@@ -428,11 +428,12 @@ export default function Product() {
             </Card>
           </div>
 
-          <div className="hidden lg:block space-y-6">
+          <div className="hidden lg:block space-y-2">
             <ProductHeader 
               title={product.title}
               seller={product.seller}
               rating={product.rating}
+              className="mb-6"
             />
             <div ref={variantsRef}>
               <VariantPicker
@@ -440,6 +441,7 @@ export default function Product() {
                 selectedVariant={selectedVariant}
                 onVariantChange={setSelectedVariant}
                 onAddToCart={handleAddToCart}
+                className="mb-2"
               />
             </div>
 
@@ -454,7 +456,7 @@ export default function Product() {
               Contact Seller
             </Button>
 
-            <Card className="p-6">
+            <Card className="p-6 mt-6">
               <h3 className="font-semibold mb-4">Additional Information</h3>
               <div className="space-y-4">
                 <div>
