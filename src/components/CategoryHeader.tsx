@@ -1,3 +1,4 @@
+
 import React, { useMemo, useCallback } from "react";
 import { TrendingUp, Sparkle, Trophy, ThumbsUp, Star, Tags, LucideProps, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -90,8 +91,8 @@ export const CategoryHeader = React.memo(({ selectedCategory, onCategoryChange }
           {isMobile ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className={STYLES.mobile.menuButton}>
-                  <Menu className={STYLES.badge.icon} />
+                <button type="button" className={STYLES.mobile.menuButton}>
+                  <Menu className="h-4 w-4 mr-2" />
                   <span>Categories</span>
                 </button>
               </DropdownMenuTrigger>
