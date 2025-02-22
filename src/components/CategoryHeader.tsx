@@ -3,6 +3,7 @@ import React, { useMemo, useCallback } from "react";
 import { TrendingUp, Sparkle, Trophy, ThumbsUp, Star, Tags, LucideProps, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 interface CategoryHeaderProps {
   selectedCategory: string | null;
@@ -29,7 +30,8 @@ const STYLES = {
     badgeContainer: "flex flex-wrap gap-3"
   },
   mobile: {
-    menuButton: "md:hidden inline-flex items-center rounded-full border px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary hover:shadow-sm"
+    menuButton: "md:hidden inline-flex items-center rounded-full border px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary hover:shadow-sm",
+    menuItem: "flex items-center gap-2"
   }
 } as const;
 
@@ -86,10 +88,27 @@ export const CategoryHeader = React.memo(({ selectedCategory, onCategoryChange }
       <div className={STYLES.container.inner}>
         <div className={STYLES.container.badgeContainer}>
           {isMobile ? (
-            <div className={STYLES.mobile.menuButton}>
-              <Menu className={STYLES.badge.icon} aria-hidden="true" />
-              Categories
-            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger className={STYLES.mobile.menuButton}>
+                <Menu className={STYLES.badge.icon} aria-hidden="true" />
+                Categories
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                {BADGES.map((badge) => {
+                  const Icon = badge.icon;
+                  return (
+                    <DropdownMenuItem 
+                      key={`${badge.label}-${badge.category}`}
+                      className={STYLES.mobile.menuItem}
+                      onClick={() => handleBadgeClick(badge.category)}
+                    >
+                      <Icon className={STYLES.badge.icon} />
+                      {badge.label}
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
             BADGES.map((badge) => (
               <CategoryBadge
