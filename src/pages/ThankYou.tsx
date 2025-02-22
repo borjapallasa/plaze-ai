@@ -8,7 +8,7 @@ const ThankYou = () => {
   return (
     <>
       <MainHeader />
-      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] px-4 py-4">
+      <div className="container flex flex-col items-center justify-center px-4 py-16">
         <div className="text-center max-w-3xl mx-auto space-y-6">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
             <span className="text-primary">Thanks</span> for your{" "}
