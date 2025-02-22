@@ -1,50 +1,15 @@
-
 import React, { useState, useEffect, useMemo } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
-import {
-  Search, 
-  Menu, 
-  User,
-  Star,
-  Target,
-  Building,
-  DollarSign,
-  ChartBar,
-  ShoppingBag,
-  TrendingUp,
-  Sparkle,
-  Trophy,
-  ThumbsUp,
-  Tags
-} from "lucide-react";
+import { Search, Menu, User, Star, Target, Building, DollarSign, ChartBar, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Typewriter from 'typewriter-effect';
-import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-  type CarouselApi,
-} from "@/components/ui/carousel";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
+import { CategoryHeader } from "@/components/CategoryHeader";
 
 const typewriterStrings = [
   "Products To Scale",
@@ -261,15 +226,6 @@ const banners = [
   }
 ];
 
-const badges = [
-  { label: "Trending", icon: TrendingUp, category: null },
-  { label: "Newest", icon: Sparkle, category: "template" },
-  { label: "Top Seller", icon: Trophy, category: "prompt" },
-  { label: "Best Reviews", icon: ThumbsUp, category: "community" },
-  { label: "Our Pick", icon: Star, category: "expert" },
-  { label: "Affiliate Offers", icon: Tags, category: null }
-];
-
 const departments = [
   { name: "Business", icon: Building },
   { name: "Jobs", icon: User },
@@ -441,8 +397,8 @@ const Index = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchCategory, setSearchCategory] = useState("Products");
-  const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [api, setApi] = useState<CarouselApi>();
+  const [canScrollPrev, setCanScrollPrev] = useState(false);
 
   useEffect(() => {
     let ticking = false;
@@ -475,8 +431,6 @@ const Index = () => {
 
     api.on("scroll", onScroll);
     api.on("reInit", onScroll);
-
-    // Initial check
     onScroll();
 
     return () => {
@@ -491,12 +445,6 @@ const Index = () => {
       : products,
     [selectedCategory]
   );
-
-  const handleBadgeClick = (category: string | null) => {
-    setSelectedCategory(prevCategory => 
-      prevCategory === category ? null : category
-    );
-  };
 
   return (
     <div className="min-h-screen">
@@ -548,35 +496,10 @@ const Index = () => {
       </div>
 
       <main>
-        <div className="container mx-auto px-4">
-          <div 
-            className={`space-y-4 pt-8 pb-6 transition-[margin] duration-300 ease-in-out ${
-              isScrolled ? 'mt-24' : 'mt-32'
-            }`}
-          >
-            <div className="flex flex-wrap gap-3">
-              {badges.map((badge, index) => {
-                const Icon = badge.icon;
-                const isSelected = selectedCategory === badge.category;
-                return (
-                  <Badge
-                    key={index}
-                    variant={isSelected ? "default" : "secondary"}
-                    className={`px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200 ${
-                      isSelected 
-                        ? 'bg-primary text-primary-foreground shadow-md' 
-                        : 'hover:bg-secondary hover:shadow-sm'
-                    }`}
-                    onClick={() => handleBadgeClick(badge.category)}
-                  >
-                    <Icon className="w-4 h-4 mr-2" />
-                    {badge.label}
-                  </Badge>
-                );
-              })}
-            </div>
-          </div>
-        </div>
+        <CategoryHeader 
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+        />
 
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
