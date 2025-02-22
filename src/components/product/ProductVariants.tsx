@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, X } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { ProductPricing } from "@/components/product/ProductPricing";
 
 interface Variant {
   id: string;
@@ -38,6 +39,7 @@ export function ProductVariants({
   const [internalVariants, setInternalVariants] = React.useState<Variant[]>([
     {
       id: "1",
+      name: "",
       price: "",
       comparePrice: "",
       highlight: false,
@@ -60,6 +62,7 @@ export function ProductVariants({
       ...variants,
       {
         id: Math.random().toString(),
+        name: "",
         price: "",
         comparePrice: "",
         highlight: false,
@@ -102,6 +105,8 @@ export function ProductVariants({
 
   return (
     <div className={`space-y-4 ${className}`}>
+      {variants.length === 1 && <ProductPricing />}
+      
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-medium">Variants</h2>
         <Button onClick={addVariant} variant="outline" size="sm">
@@ -123,6 +128,18 @@ export function ProductVariants({
                   <X className="h-4 w-4" />
                 </Button>
               )}
+            </div>
+
+            <div>
+              <Label htmlFor={`name-${variant.id}`}>Variant Name</Label>
+              <Input
+                id={`name-${variant.id}`}
+                placeholder="Enter variant name"
+                value={variant.name}
+                onChange={(e) =>
+                  updateVariant(variant.id, "name", e.target.value)
+                }
+              />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
