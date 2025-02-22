@@ -34,7 +34,7 @@ const EditProduct = () => {
 
           <div className="grid lg:grid-cols-3 gap-3 sm:gap-6">
             <div className="lg:col-span-2 space-y-3 sm:space-y-6">
-              <div className="lg:hidden">
+              <div className="block lg:hidden">
                 <ProductStatus />
               </div>
 
