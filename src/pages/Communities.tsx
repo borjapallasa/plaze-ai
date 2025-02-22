@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,9 +11,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Music, Users, Banknote, Zap, Monitor, Heart, Dumbbell, BookOpen, Heart as HeartIcon, ArrowRight } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Search, Music, Users, Banknote, Zap, Monitor, Heart, Dumbbell, BookOpen, Heart as HeartIcon, ArrowRight, Menu, User } from "lucide-react";
 import { useState, useEffect } from "react";
 import Typewriter from 'typewriter-effect';
+import { Link } from "react-router-dom";
 
 export default function Communities() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -78,6 +85,114 @@ export default function Communities() {
       members: "2.1k",
       price: "$49/month",
       badge: "#3"
+    },
+    {
+      id: 4,
+      name: "AI Enthusiasts",
+      description: "Explore the latest in artificial intelligence with fellow enthusiasts. Weekly discussions and project showcases.",
+      image: "/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png",
+      members: "4.2k",
+      price: "Free",
+      badge: "#4"
+    },
+    {
+      id: 5,
+      name: "Web3 Developers",
+      description: "Join the future of web development. Learn blockchain, smart contracts, and decentralized applications.",
+      image: "/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png",
+      members: "3.8k",
+      price: "$19/month",
+      badge: "#5"
+    },
+    {
+      id: 6,
+      name: "Content Creators Lab",
+      description: "A community for content creators to share tips, get feedback, and collaborate on projects.",
+      image: "/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png",
+      members: "6.1k",
+      price: "$29/month",
+      badge: "#6"
+    },
+    {
+      id: 7,
+      name: "Data Science Hub",
+      description: "Learn data science from experts. Weekly workshops on machine learning, statistics, and data visualization.",
+      image: "/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png",
+      members: "4.5k",
+      price: "$39/month",
+      badge: "#7"
+    },
+    {
+      id: 8,
+      name: "Product Managers Circle",
+      description: "Connect with product managers worldwide. Share experiences and best practices in product development.",
+      image: "/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png",
+      members: "3.9k",
+      price: "$29/month",
+      badge: "#8"
+    },
+    {
+      id: 9,
+      name: "Mobile App Developers",
+      description: "Community for mobile app developers. Share knowledge about iOS, Android, and cross-platform development.",
+      image: "/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png",
+      members: "5.7k",
+      price: "Free",
+      badge: "#9"
+    },
+    {
+      id: 10,
+      name: "DevOps Professionals",
+      description: "Learn about DevOps practices, tools, and automation. Regular discussions about CI/CD and cloud services.",
+      image: "/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png",
+      members: "4.2k",
+      price: "$49/month",
+      badge: "#10"
+    },
+    {
+      id: 11,
+      name: "UI/UX Research Group",
+      description: "Dedicated to user research and experience design. Share research methods and usability testing insights.",
+      image: "/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png",
+      members: "3.3k",
+      price: "$19/month",
+      badge: "#11"
+    },
+    {
+      id: 12,
+      name: "Game Developers United",
+      description: "For game developers of all levels. Discuss game design, development techniques, and industry trends.",
+      image: "/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png",
+      members: "6.5k",
+      price: "$39/month",
+      badge: "#12"
+    },
+    {
+      id: 13,
+      name: "Cloud Architecture Masters",
+      description: "Expert discussions on cloud architecture, scalability, and best practices across major cloud platforms.",
+      image: "/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png",
+      members: "4.8k",
+      price: "$59/month",
+      badge: "#13"
+    },
+    {
+      id: 14,
+      name: "Frontend Developers Hub",
+      description: "Stay updated with the latest in frontend development. Regular code reviews and framework discussions.",
+      image: "/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png",
+      members: "7.2k",
+      price: "$29/month",
+      badge: "#14"
+    },
+    {
+      id: 15,
+      name: "Cybersecurity Experts",
+      description: "Join security professionals in discussions about the latest threats, defense strategies, and best practices.",
+      image: "/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png",
+      members: "3.6k",
+      price: "$69/month",
+      badge: "#15"
     }
   ];
 
@@ -163,6 +278,32 @@ export default function Communities() {
                 >
                   Sell on Plaze
                 </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      className="rounded-full px-2.5 py-1.5 h-8 border-2 hover:border-primary/20 transition-colors"
+                    >
+                      <Menu className="h-3.5 w-3.5 mr-1.5" />
+                      <User className="h-3.5 w-3.5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <Link to="/">
+                      <DropdownMenuItem>
+                        Home
+                      </DropdownMenuItem>
+                    </Link>
+                    <DropdownMenuItem>Sign In</DropdownMenuItem>
+                    <DropdownMenuItem>Sign Up</DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <Link to="/affiliates">
+                      <DropdownMenuItem>Affiliates</DropdownMenuItem>
+                    </Link>
+                    <DropdownMenuItem>Sell on Plaze</DropdownMenuItem>
+                    <DropdownMenuItem>Help Center</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
           </div>
