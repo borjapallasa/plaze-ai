@@ -378,15 +378,15 @@ export default function Index() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {[...Array(12)].map((_, index) => (
             <Card key={index} className="group relative flex flex-col p-4 lg:p-6 hover:bg-accent transition-colors">
-              <div className="flex gap-4">
-                <div className="w-[80px] h-[80px] rounded-lg bg-accent flex items-center justify-center overflow-hidden flex-shrink-0">
+              <div className="flex items-start gap-4">
+                <div className="w-20 h-20 rounded-lg bg-accent flex items-center justify-center overflow-hidden flex-shrink-0">
                   <img
                     src="/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png"
                     alt={`Product ${index + 1}`}
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="flex-1 min-w-0">
+                <div>
                   <h3 className="font-semibold text-lg leading-tight mb-1">Product {index + 1}</h3>
                   <Badge 
                     variant="secondary" 
