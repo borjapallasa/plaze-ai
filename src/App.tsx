@@ -25,6 +25,7 @@ import Transactions from "./pages/Transactions";
 import AccountSettings from "./pages/AccountSettings";
 import Chats from "./pages/Chats";
 import ThankYou from "./pages/ThankYou";
+import EditProduct from "./pages/EditProduct";
 import { Footer } from "./components/Footer";
 
 const queryClient = new QueryClient();
@@ -55,6 +56,7 @@ const App = () => (
           <Route path="/account-settings" element={<AccountSettings />} />
           <Route path="/chats" element={<Chats />} />
           <Route path="/thank-you" element={<ThankYou />} />
+          <Route path="/seller/product" element={<EditProduct />} />
         </Routes>
         <Footer />
       </div>
