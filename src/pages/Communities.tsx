@@ -99,8 +99,9 @@ const Communities = () => {
                   key={id}
                   variant="outline"
                   className={cn(
-                    "rounded-full px-6 h-11 shadow-sm",
-                    dark ? "bg-[#1A1F2C] text-white hover:bg-[#1A1F2C]/90" : "bg-white hover:bg-white/90",
+                    "rounded-full px-6 py-3 h-auto font-medium transition-colors duration-200",
+                    dark ? "bg-[#1A1A1A] text-white hover:bg-[#1A1A1A]/90 border-transparent" : 
+                          "bg-[#F2F2F2] text-[#1A1A1A] hover:bg-[#E8E8E8] border-transparent",
                     selectedCategory === id && "ring-2 ring-primary"
                   )}
                   onClick={() => setSelectedCategory(id)}
