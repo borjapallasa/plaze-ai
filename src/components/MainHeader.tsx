@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, Menu, User, ChevronDown } from "lucide-react";
@@ -206,8 +207,7 @@ export const MainHeader = ({ initialSearchCategory = "Products" }: { initialSear
                   variant="outline" 
                   className="rounded-full px-2.5 py-1.5 h-8 border-2 hover:border-primary/20 transition-colors"
                 >
-                  <Menu className="h-3.5 w-3.5 mr-1.5" />
-                  <User className="h-3.5 w-3.5" />
+                  <Menu className="h-3.5 w-3.5" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
