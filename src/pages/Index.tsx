@@ -1,22 +1,8 @@
-
-import React, { useState, useMemo, useEffect, useCallback } from "react";
-import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
-import {
-  Search, 
-  Menu, 
-  User,
-  Star,
-  TrendingUp,
-  Sparkle,
-  Trophy,
-  ThumbsUp,
-  Tags
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Typewriter from 'typewriter-effect';
+import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Link } from "react-router-dom";
 import {
   Select,
   SelectContent,
@@ -31,487 +17,404 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-interface Product {
-  title: string;
-  price: string;
-  image: string;
-  seller: string;
-  description: string;
-  tags: string[];
-  fromPrice: string;
-  category: string;
-}
+import { Search, Music, Users, Banknote, Zap, Monitor, Heart, Dumbbell, BookOpen, Heart as HeartIcon, ArrowRight, Menu, User } from "lucide-react";
+import { useState, useEffect } from "react";
+import Typewriter from 'typewriter-effect';
+import { Link } from "react-router-dom";
 
 const typewriterStrings = [
-  "Products To Scale",
-  "Experts To Hire",
-  "Jobs To Earn",
-  "Communities To Learn"
+  "To Learn",
+  "To Connect",
+  "To Grow",
+  "To Share"
 ];
 
-const products = [
+const categories = [
+  { id: 'all', label: 'All', icon: Users },
+  { id: 'hobbies', label: 'Hobbies', icon: BookOpen },
+  { id: 'music', label: 'Music', icon: Music },
+  { id: 'money', label: 'Money', icon: Banknote },
+  { id: 'spirituality', label: 'Spirituality', icon: Zap },
+  { id: 'tech', label: 'Tech', icon: Monitor },
+  { id: 'health', label: 'Health', icon: Heart },
+  { id: 'sports', label: 'Sports', icon: Dumbbell },
+  { id: 'relationships', label: 'Relationships', icon: HeartIcon },
+];
+
+const communities = [
   {
-    title: "AI Video Editor",
+    id: 1,
+    name: "UX Design Masters",
+    description: "Learn and share UX design knowledge with fellow designers. Weekly workshops and design critiques.",
+    image: "/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png",
+    members: "5.3k",
     price: "Free",
-    image: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9",
-    seller: "Video AI",
-    description: "Edit your videos automatically with AI powered tools and effects.",
-    tags: ["marketing", "social media", "e-commerce"],
-    fromPrice: "$49.95",
-    category: "template"
+    badge: "#1"
   },
   {
-    title: "ChatGPT Prompts",
-    price: "Free",
-    image: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
-    seller: "Prompt Engineering",
-    description: "Access a curated collection of effective prompts for ChatGPT.",
-    tags: ["marketing", "social media", "e-commerce"],
-    fromPrice: "$49.95",
-    category: "prompt"
+    id: 2,
+    name: "Digital Marketing Hub",
+    description: "Master the art of digital marketing with industry experts. Get access to exclusive resources and case studies.",
+    image: "/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png",
+    members: "3.2k",
+    price: "$9/month",
+    badge: "#2"
   },
   {
-    title: "AI Templates",
-    price: "Free",
-    image: "https://images.unsplash.com/photo-1498936178812-4b2e558d2937",
-    seller: "Template Hub",
-    description: "Ready-to-use AI templates for various business needs.",
-    tags: ["marketing", "social media", "e-commerce"],
-    fromPrice: "$49.95",
-    category: "template"
+    id: 3,
+    name: "Startup Founders Circle",
+    description: "Connect with fellow founders, share experiences, and get advice on growing your startup.",
+    image: "/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png",
+    members: "2.1k",
+    price: "$49/month",
+    badge: "#3"
   },
   {
-    title: "Expert Network",
+    id: 4,
+    name: "AI Enthusiasts",
+    description: "Explore the latest in artificial intelligence with fellow enthusiasts. Weekly discussions and project showcases.",
+    image: "/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png",
+    members: "4.2k",
     price: "Free",
-    image: "https://images.unsplash.com/photo-1501286353178-1ec881214838",
-    seller: "AI Experts",
-    description: "Connect with AI experts for guidance and consultation.",
-    tags: ["marketing", "social media", "e-commerce"],
-    fromPrice: "$49.95",
-    category: "expert"
+    badge: "#4"
   },
   {
-    title: "AI Community Hub",
-    price: "Free",
-    image: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81",
-    seller: "Community Leaders",
-    description: "Join a vibrant community of AI enthusiasts and professionals.",
-    tags: ["community", "networking", "learning"],
-    fromPrice: "$0",
-    category: "community"
+    id: 5,
+    name: "Web3 Developers",
+    description: "Join the future of web development. Learn blockchain, smart contracts, and decentralized applications.",
+    image: "/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png",
+    members: "3.8k",
+    price: "$19/month",
+    badge: "#5"
   },
   {
-    title: "Prompt Engineering Course",
-    price: "Free",
-    image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
-    seller: "AI Academy",
-    description: "Master the art of prompt engineering with hands-on exercises.",
-    tags: ["education", "prompts", "course"],
-    fromPrice: "$149",
-    category: "prompt"
+    id: 6,
+    name: "Content Creators Lab",
+    description: "A community for content creators to share tips, get feedback, and collaborate on projects.",
+    image: "/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png",
+    members: "6.1k",
+    price: "$29/month",
+    badge: "#6"
   },
   {
-    title: "AI Developers Community",
-    price: "Free",
-    image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
-    seller: "Dev Network",
-    description: "Connect with other AI developers and share knowledge.",
-    tags: ["community", "development", "networking"],
-    fromPrice: "$0",
-    category: "community"
+    id: 7,
+    name: "Data Science Hub",
+    description: "Learn data science from experts. Weekly workshops on machine learning, statistics, and data visualization.",
+    image: "/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png",
+    members: "4.5k",
+    price: "$39/month",
+    badge: "#7"
   },
   {
-    title: "AI Content Generator",
-    price: "Free",
-    image: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7",
-    seller: "Content AI",
-    description: "Generate high-quality content using advanced AI algorithms.",
-    tags: ["content", "writing", "marketing"],
-    fromPrice: "$29.99",
-    category: "template"
+    id: 8,
+    name: "Product Managers Circle",
+    description: "Connect with product managers worldwide. Share experiences and best practices in product development.",
+    image: "/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png",
+    members: "3.9k",
+    price: "$29/month",
+    badge: "#8"
   },
   {
-    title: "Machine Learning Workshop",
+    id: 9,
+    name: "Mobile App Developers",
+    description: "Community for mobile app developers. Share knowledge about iOS, Android, and cross-platform development.",
+    image: "/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png",
+    members: "5.7k",
     price: "Free",
-    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
-    seller: "ML Experts",
-    description: "Learn machine learning fundamentals through practical workshops.",
-    tags: ["education", "ML", "AI"],
-    fromPrice: "$199",
-    category: "expert"
+    badge: "#9"
   },
   {
-    title: "AI Trading Bot",
-    price: "Free",
-    image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e",
-    seller: "Trading AI",
-    description: "Automated trading solutions powered by artificial intelligence.",
-    tags: ["finance", "trading", "automation"],
-    fromPrice: "$79.99",
-    category: "template"
+    id: 10,
+    name: "DevOps Professionals",
+    description: "Learn about DevOps practices, tools, and automation. Regular discussions about CI/CD and cloud services.",
+    image: "/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png",
+    members: "4.2k",
+    price: "$49/month",
+    badge: "#10"
   },
   {
-    title: "NLP Toolkit",
-    price: "Free",
-    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3",
-    seller: "NLP Solutions",
-    description: "Comprehensive toolkit for natural language processing tasks.",
-    tags: ["NLP", "AI", "development"],
-    fromPrice: "$59.99",
-    category: "template"
+    id: 11,
+    name: "UI/UX Research Group",
+    description: "Dedicated to user research and experience design. Share research methods and usability testing insights.",
+    image: "/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png",
+    members: "3.3k",
+    price: "$19/month",
+    badge: "#11"
   },
   {
-    title: "AI Mentorship Program",
-    price: "Free",
-    image: "https://images.unsplash.com/photo-1531482615713-2afd69097998",
-    seller: "AI Mentors",
-    description: "Get personalized guidance from experienced AI professionals.",
-    tags: ["mentorship", "career", "learning"],
-    fromPrice: "$299",
-    category: "expert"
+    id: 12,
+    name: "Game Developers United",
+    description: "For game developers of all levels. Discuss game design, development techniques, and industry trends.",
+    image: "/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png",
+    members: "6.5k",
+    price: "$39/month",
+    badge: "#12"
   },
   {
-    title: "Computer Vision Suite",
-    price: "Free",
-    image: "https://images.unsplash.com/photo-1563770660941-20978e870e26",
-    seller: "Vision AI",
-    description: "Complete suite of computer vision tools and models.",
-    tags: ["vision", "AI", "development"],
-    fromPrice: "$89.99",
-    category: "template"
+    id: 13,
+    name: "Cloud Architecture Masters",
+    description: "Expert discussions on cloud architecture, scalability, and best practices across major cloud platforms.",
+    image: "/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png",
+    members: "4.8k",
+    price: "$59/month",
+    badge: "#13"
   },
   {
-    title: "AI Startup Community",
-    price: "Free",
-    image: "https://images.unsplash.com/photo-1559136555-9303baea8ebd",
-    seller: "Startup Network",
-    description: "Connect with other AI startup founders and entrepreneurs.",
-    tags: ["startup", "networking", "business"],
-    fromPrice: "$0",
-    category: "community"
+    id: 14,
+    name: "Frontend Developers Hub",
+    description: "Stay updated with the latest in frontend development. Regular code reviews and framework discussions.",
+    image: "/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png",
+    members: "7.2k",
+    price: "$29/month",
+    badge: "#14"
   },
   {
-    title: "Data Science Bootcamp",
-    price: "Free",
-    image: "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3",
-    seller: "DS Academy",
-    description: "Intensive training program in data science and AI.",
-    tags: ["education", "data", "career"],
-    fromPrice: "$499",
-    category: "expert"
-  },
-  {
-    title: "AI Ethics Framework",
-    price: "Free",
-    image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4",
-    seller: "Ethics AI",
-    description: "Comprehensive framework for ethical AI development.",
-    tags: ["ethics", "AI", "compliance"],
-    fromPrice: "$149",
-    category: "template"
-  },
-  {
-    title: "Robotics Community",
-    price: "Free",
-    image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e",
-    seller: "Robotics Hub",
-    description: "Connect with robotics enthusiasts and professionals.",
-    tags: ["robotics", "community", "automation"],
-    fromPrice: "$0",
-    category: "community"
-  },
-  {
-    title: "AI Research Network",
-    price: "Free",
-    image: "https://images.unsplash.com/photo-1532619187608-e5375cab36aa",
-    seller: "Research Hub",
-    description: "Platform for AI researchers to collaborate and share findings.",
-    tags: ["research", "academic", "collaboration"],
-    fromPrice: "$0",
-    category: "community"
-  },
-  {
-    title: "Healthcare AI Solutions",
-    price: "Free",
-    image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d",
-    seller: "Health AI",
-    description: "AI-powered solutions for healthcare professionals.",
-    tags: ["healthcare", "AI", "medical"],
-    fromPrice: "$199",
-    category: "template"
+    id: 15,
+    name: "Cybersecurity Experts",
+    description: "Join security professionals in discussions about the latest threats, defense strategies, and best practices.",
+    image: "/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png",
+    members: "3.6k",
+    price: "$69/month",
+    badge: "#15"
   }
 ];
 
-const badges = [
-  { label: "Trending", icon: TrendingUp, category: null },
-  { label: "Newest", icon: Sparkle, category: "template" },
-  { label: "Top Seller", icon: Trophy, category: "prompt" },
-  { label: "Best Reviews", icon: ThumbsUp, category: "community" },
-  { label: "Our Pick", icon: Star, category: "expert" },
-  { label: "Affiliate Offers", icon: Tags, category: null }
-];
-
-const MemoizedTypeWriter = React.memo(() => (
-  <div className="text-muted-foreground ml-1">
-    <Typewriter
-      options={{
-        strings: typewriterStrings,
-        autoStart: true,
-        loop: true,
-        delay: 50,
-        deleteSpeed: 30,
-      }}
-    />
-  </div>
-));
-
-const CategoryBadge = React.memo(({ 
-  badge, 
-  isSelected, 
-  onClick 
-}: { 
-  badge: typeof badges[0], 
-  isSelected: boolean, 
-  onClick: () => void 
-}) => {
-  const Icon = badge.icon;
-  return (
-    <Badge
-      variant={isSelected ? "default" : "secondary"}
-      className={`px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200 ${
-        isSelected 
-          ? 'bg-primary text-primary-foreground shadow-md' 
-          : 'hover:bg-secondary hover:shadow-sm'
-      }`}
-      onClick={onClick}
-    >
-      <Icon className="w-4 h-4 mr-2" />
-      {badge.label}
-    </Badge>
-  );
-});
-
-const PageTitle = React.memo(() => (
-  <div className="text-[1.5rem] leading-relaxed font-bold whitespace-nowrap flex items-center justify-center">
-    <span>The Best AI & Automation</span>
-    <MemoizedTypeWriter />
-  </div>
-));
-
-const Header = ({ searchCategory, setSearchCategory }) => {
+export default function Index() {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
-    const threshold = 10;
-    let lastScrollY = window.scrollY;
     let ticking = false;
 
     const updateScrollState = () => {
-      const shouldBeScrolled = lastScrollY > threshold;
-      if (shouldBeScrolled !== isScrolled) {
-        setIsScrolled(shouldBeScrolled);
-      }
+      setIsScrolled(window.scrollY > 10);
       ticking = false;
     };
 
     const onScroll = () => {
-      lastScrollY = window.scrollY;
       if (!ticking) {
-        requestAnimationFrame(updateScrollState);
+        window.requestAnimationFrame(updateScrollState);
         ticking = true;
       }
     };
 
     window.addEventListener('scroll', onScroll, { passive: true });
+    
     return () => window.removeEventListener('scroll', onScroll);
-  }, [isScrolled]);
-
-  return (
-    <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm transition-all duration-200 ease-out bg-background border-b ${
-      isScrolled ? 'h-[80px] bg-[#FFFFFF] mt-[5px]' : ''
-    }`}>
-      <div className="container mx-auto px-4">
-        <div className="hidden sm:flex relative pb-[20px]">
-          <div className="w-[20%] flex items-start">
-            <h1 className="text-2xl font-semibold mt-[15px] ml-[15px]">Logo</h1>
-          </div>
-
-          <div className="w-[60%] flex flex-col items-center">
-            <div className={`transition-all duration-300 ease-out mt-[15px] ${
-              isScrolled ? 'opacity-0 h-0 mb-0 overflow-hidden' : 'opacity-100 h-[32px] mb-[20px]'
-            }`}>
-              <PageTitle />
-            </div>
-
-            <div className={`flex justify-center transition-transform duration-300 ease-in-out ${
-              isScrolled ? 'transform -translate-y-[10px]' : ''
-            }`}>
-              <div className={`transition-all duration-200 ease-out ${
-                isScrolled ? 'w-[360px]' : 'w-[540px]'
-              }`}>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-md hover:shadow-lg transition-shadow bg-background">
-                  <div className="flex-1 flex items-center gap-2">
-                    <Select 
-                      defaultValue="Products"
-                      onValueChange={setSearchCategory}
-                    >
-                      <SelectTrigger className="border-0 w-[140px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
-                        <SelectValue className="pr-4" />
-                      </SelectTrigger>
-                      <SelectContent className="w-[180px]">
-                        <SelectItem value="Products">Products</SelectItem>
-                        <SelectItem value="Experts">Experts</SelectItem>
-                        <SelectItem value="Communities">Communities</SelectItem>
-                        <SelectItem value="Jobs">Jobs</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Input
-                      className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
-                      placeholder={`Search ${searchCategory.toLowerCase()}...`}
-                      type="search"
-                    />
-                  </div>
-                  <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
-                    <Search className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="w-[20%] flex items-start justify-end">
-            <div className="flex items-center gap-3 mt-[15px] mr-[15px]">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="font-medium text-primary hover:text-primary/90 hover:bg-primary/10"
-              >
-                Sell on Plaze
-              </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    className="rounded-full px-2.5 py-1.5 h-8 border-2 hover:border-primary/20 transition-colors"
-                  >
-                    <Menu className="h-3.5 w-3.5 mr-1.5" />
-                    <User className="h-3.5 w-3.5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <Link to="/">
-                    <DropdownMenuItem>
-                      Home
-                    </DropdownMenuItem>
-                  </Link>
-                  <DropdownMenuItem>Sign In</DropdownMenuItem>
-                  <DropdownMenuItem>Sign Up</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <Link to="/affiliates">
-                    <DropdownMenuItem>Affiliates</DropdownMenuItem>
-                  </Link>
-                  <DropdownMenuItem>Sell on Plaze</DropdownMenuItem>
-                  <DropdownMenuItem>Help Center</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
-        </div>
-
-        <div className="sm:hidden">
-          <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-md hover:shadow-lg transition-shadow bg-background">
-            <div className="flex-1 flex items-center gap-2">
-              <Select 
-                defaultValue="Products"
-                onValueChange={setSearchCategory}
-              >
-                <SelectTrigger className="border-0 w-[140px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
-                  <SelectValue className="pr-4" />
-                </SelectTrigger>
-                <SelectContent className="w-[180px]">
-                  <SelectItem value="Products">Products</SelectItem>
-                  <SelectItem value="Experts">Experts</SelectItem>
-                  <SelectItem value="Communities">Communities</SelectItem>
-                  <SelectItem value="Jobs">Jobs</SelectItem>
-                </SelectContent>
-              </Select>
-              <Input
-                className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
-                placeholder={`Search ${searchCategory.toLowerCase()}...`}
-                type="search"
-              />
-            </div>
-            <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
-              <Search className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </div>
-    </header>
-  );
-};
-
-const MemoizedHeader = React.memo(Header);
-
-const ProductGrid = React.memo(({ products }: { products: Product[] }) => (
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    {products.map((product, index) => (
-      <ProductCard key={index} {...product} />
-    ))}
-  </div>
-));
-
-const Index = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [searchCategory, setSearchCategory] = useState("Products");
-
-  const filteredProducts = useMemo(() => 
-    selectedCategory
-      ? products.filter(product => product.category === selectedCategory)
-      : products,
-    [selectedCategory]
-  );
-
-  const handleBadgeClick = useCallback((category: string | null) => {
-    setSelectedCategory(prevCategory => 
-      prevCategory === category ? null : category
-    );
   }, []);
 
   return (
-    <div className="min-h-screen">
-      <MemoizedHeader 
-        searchCategory={searchCategory}
-        setSearchCategory={setSearchCategory}
-      />
-
-      <main>
+    <>
+      <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm transition-all duration-200 ease-out bg-background border-b ${
+        isScrolled ? 'h-[80px] bg-[#FFFFFF] mt-[5px]' : ''
+      }`}>
         <div className="container mx-auto px-4">
-          <div className="pt-24 pb-6">
-            <div className="mb-6">
-              <PageTitle />
+          <div className="hidden sm:flex relative pb-[20px]">
+            <div className="w-[20%] flex items-start">
+              <h1 className="text-2xl font-semibold mt-[15px] ml-[15px]">Logo</h1>
             </div>
 
-            <div className="space-y-4">
-              <div className="flex flex-wrap gap-3">
-                {badges.map((badge, index) => (
-                  <CategoryBadge
-                    key={index}
-                    badge={badge}
-                    isSelected={selectedCategory === badge.category}
-                    onClick={() => handleBadgeClick(badge.category)}
-                  />
-                ))}
+            <div className="w-[60%] flex flex-col items-center">
+              <div className={`transition-all duration-300 ease-out mt-[15px] ${
+                isScrolled ? 'opacity-0 h-0 mb-0 overflow-hidden' : 'opacity-100 h-[32px] mb-[20px]'
+              }`}>
+                <div className="text-[1.5rem] leading-relaxed font-bold whitespace-nowrap flex items-center justify-center">
+                  <span>Join Communities</span>
+                  <span className="text-muted-foreground ml-1">
+                    <Typewriter
+                      options={{
+                        strings: typewriterStrings,
+                        autoStart: true,
+                        loop: true,
+                        delay: 50,
+                        deleteSpeed: 30,
+                      }}
+                    />
+                  </span>
+                </div>
+              </div>
+
+              <div className={`flex justify-center transition-transform duration-300 ease-in-out ${
+                isScrolled ? 'transform -translate-y-[10px]' : ''
+              }`}>
+                <div className={`transition-all duration-200 ease-out ${
+                  isScrolled ? 'w-[360px]' : 'w-[540px]'
+                }`}>
+                  <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-md hover:shadow-lg transition-shadow bg-background">
+                    <div className="flex-1 flex items-center gap-2">
+                      <Select 
+                        defaultValue="Communities"
+                      >
+                        <SelectTrigger className="border-0 w-[140px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
+                          <SelectValue className="pr-4" />
+                        </SelectTrigger>
+                        <SelectContent className="w-[180px]">
+                          <SelectItem value="Products">Products</SelectItem>
+                          <SelectItem value="Experts">Experts</SelectItem>
+                          <SelectItem value="Communities">Communities</SelectItem>
+                          <SelectItem value="Jobs">Jobs</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Input
+                        className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
+                        placeholder="Search communities..."
+                        type="search"
+                      />
+                    </div>
+                    <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
+                      <Search className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="w-[20%] flex items-start justify-end">
+              <div className="flex items-center gap-3 mt-[15px] mr-[15px]">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="font-medium text-primary hover:text-primary/90 hover:bg-primary/10"
+                >
+                  Sell on Plaze
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      className="rounded-full px-2.5 py-1.5 h-8 border-2 hover:border-primary/20 transition-colors"
+                    >
+                      <Menu className="h-3.5 w-3.5 mr-1.5" />
+                      <User className="h-3.5 w-3.5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <Link to="/">
+                      <DropdownMenuItem>
+                        Home
+                      </DropdownMenuItem>
+                    </Link>
+                    <DropdownMenuItem>Sign In</DropdownMenuItem>
+                    <DropdownMenuItem>Sign Up</DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <Link to="/affiliates">
+                      <DropdownMenuItem>Affiliates</DropdownMenuItem>
+                    </Link>
+                    <DropdownMenuItem>Sell on Plaze</DropdownMenuItem>
+                    <DropdownMenuItem>Help Center</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
           </div>
 
-          <ProductGrid products={filteredProducts} />
+          {/* Mobile Header */}
+          <div className="sm:hidden">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-md hover:shadow-lg transition-shadow bg-background">
+              <div className="flex-1 flex items-center gap-2">
+                <Select 
+                  defaultValue="Communities"
+                >
+                  <SelectTrigger className="border-0 w-[140px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
+                    <SelectValue className="pr-4" />
+                  </SelectTrigger>
+                  <SelectContent className="w-[180px]">
+                    <SelectItem value="Products">Products</SelectItem>
+                    <SelectItem value="Experts">Experts</SelectItem>
+                    <SelectItem value="Communities">Communities</SelectItem>
+                    <SelectItem value="Jobs">Jobs</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Input
+                  className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
+                  placeholder="Search communities..."
+                  type="search"
+                />
+              </div>
+              <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
+                <Search className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </header>
+      <main className="container mx-auto px-4 py-8 max-w-[1200px] space-y-8 mt-32">
+        <div className="text-center space-y-4">
+          <h1 className="text-4xl md:text-5xl font-bold">
+            Discover communities
+          </h1>
+          <p className="text-xl text-muted-foreground">
+            or <a href="/create-community" className="text-primary hover:underline">create your own</a>
+          </p>
+        </div>
+
+        <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
+          {categories.map((category) => {
+            const Icon = category.icon;
+            return (
+              <Badge
+                key={category.id}
+                variant={category.id === 'all' ? "default" : "secondary"}
+                className={`px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200 ${
+                  category.id === 'all' 
+                    ? 'bg-primary text-primary-foreground shadow-md' 
+                    : 'hover:bg-secondary hover:shadow-sm'
+                }`}
+              >
+                <Icon className="w-4 h-4 mr-2" />
+                {category.label}
+              </Badge>
+            );
+          })}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {communities.map((community) => (
+            <Card key={community.id} className="group hover:shadow-lg transition-shadow relative">
+              <div className="aspect-video relative overflow-hidden">
+                <img 
+                  src={community.image} 
+                  alt={community.name}
+                  className="w-full h-full object-cover"
+                />
+                <Badge 
+                  className="absolute top-3 left-3 bg-background/80 backdrop-blur-sm" 
+                  variant="outline"
+                >
+                  {community.badge}
+                </Badge>
+              </div>
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <Avatar className="h-12 w-12">
+                    <AvatarImage src={community.image} />
+                    <AvatarFallback>
+                      {community.name.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <h3 className="font-semibold truncate">{community.name}</h3>
+                  </div>
+                </div>
+
+                <p className="text-muted-foreground text-sm line-clamp-2 text-left mb-4">
+                  {community.description}
+                </p>
+
+                <div className="flex items-center justify-between text-sm mb-12">
+                  <div className="text-muted-foreground">
+                    {community.members} Members
+                  </div>
+                  <div className="font-medium">
+                    {community.price}
+                  </div>
+                </div>
+
+                <ArrowRight className="absolute bottom-6 right-6 w-5 h-5 text-primary opacity-0 transform translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0" />
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </main>
-    </div>
+    </>
   );
-};
-
-export default Index;
+}
