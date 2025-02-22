@@ -1,6 +1,6 @@
 
 import React, { useMemo, useCallback } from "react";
-import { TrendingUp, Sparkle, Trophy, ThumbsUp, Star, Tags, LucideIcon } from "lucide-react";
+import { TrendingUp, Sparkle, Trophy, ThumbsUp, Star, Tags, LucideProps } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface CategoryHeaderProps {
@@ -10,7 +10,7 @@ interface CategoryHeaderProps {
 
 interface BadgeItem {
   label: string;
-  icon: typeof TrendingUp;
+  icon: React.ComponentType<LucideProps>;
   category: string | null;
 }
 
