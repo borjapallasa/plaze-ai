@@ -21,6 +21,7 @@ import Blog from "./pages/Blog";
 import Affiliates from "./pages/Affiliates";
 import PersonalArea from "./pages/PersonalArea";
 import Transactions from "./pages/Transactions";
+import AccountSettings from "./pages/AccountSettings";
 import { Footer } from "./components/Footer";
 
 const queryClient = new QueryClient();
@@ -47,6 +48,7 @@ const App = () => (
           <Route path="/affiliates" element={<Affiliates />} />
           <Route path="/personal-area" element={<PersonalArea />} />
           <Route path="/transactions" element={<Transactions />} />
+          <Route path="/account-settings" element={<AccountSettings />} />
         </Routes>
         <Footer />
       </div>
