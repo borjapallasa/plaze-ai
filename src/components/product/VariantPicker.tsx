@@ -97,14 +97,16 @@ export function VariantPicker({
         })}
       </div>
       {onAddToCart && (
-        <Button
-          className="w-full"
-          size="lg"
-          onClick={onAddToCart}
-          disabled={!selectedVariant}
-        >
-          Add to Cart
-        </Button>
+        <div className="space-y-2">
+          <Button
+            className="w-full"
+            size="lg"
+            onClick={onAddToCart}
+            disabled={!selectedVariant}
+          >
+            Add to Cart
+          </Button>
+        </div>
       )}
     </div>
   );
