@@ -437,7 +437,6 @@ export default function Product() {
               variant="outline" 
               className="w-full flex items-center justify-center gap-2"
               onClick={() => {
-                // Add contact seller functionality here
                 console.log("Contact seller clicked");
               }}
             >
@@ -490,6 +489,58 @@ export default function Product() {
         <Card className="p-6 mb-8">
           <div className="aspect-video bg-accent rounded-lg"></div>
         </Card>
+
+        {/* Mobile Additional Information and Contact Seller */}
+        <div className="lg:hidden mb-8">
+          <Card className="p-6 mb-4">
+            <h3 className="font-semibold mb-4">Additional Information</h3>
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-medium mb-2">Apps Involved</h4>
+                <ul className="list-disc list-inside text-sm text-muted-foreground">
+                  <li>Make</li>
+                  <li>Google Sheets</li>
+                  <li>Gmail</li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 className="font-medium mb-2">Apps Pricing</h4>
+                <ul className="list-disc list-inside text-sm text-muted-foreground">
+                  <li>Make: Free tier available</li>
+                  <li>Google Workspace: From $6/month</li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 className="font-medium mb-2">What's Included</h4>
+                <ul className="list-disc list-inside text-sm text-muted-foreground">
+                  <li>3x Make Templates</li>
+                  <li>1x Google Sheet Template</li>
+                  <li>Setup Documentation</li>
+                  <li>Email Support</li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 className="font-medium mb-2">Difficulty Level</h4>
+                <span className="text-sm text-muted-foreground">
+                  Intermediate - Basic knowledge of Make and Google Sheets required
+                </span>
+              </div>
+            </div>
+          </Card>
+          <Button 
+            variant="outline" 
+            className="w-full flex items-center justify-center gap-2"
+            onClick={() => {
+              console.log("Contact seller clicked");
+            }}
+          >
+            <MessageCircle className="h-4 w-4" />
+            Contact Seller
+          </Button>
+        </div>
 
         <ProductReviews reviews={reviews} className="p-6 mb-16" />
 
