@@ -4,27 +4,79 @@ import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Search, MessageSquare } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
+import { Search, User, Settings, Video, MessageSquare, Image, SmilePlus, Send } from "lucide-react";
 
 interface Chat {
   id: string;
   subject: string;
-  participants: string;
-  lastMessageDate: string;
-  startDate: string;
-  totalMessages: number;
+  avatar?: string;
+  lastMessage: string;
+  timestamp: string;
+  unread?: number;
+  online?: boolean;
 }
 
 const mockChats: Chat[] = [
   {
     id: "1",
-    subject: "Automated Onboarding (Contract, Payments & Channels) Process to Discord",
-    participants: "Automated Onboarding (Contract, Payments & Channels) Process to Discord - Phil, Borja",
-    lastMessageDate: "Saturday, 22/02/2025 08:45",
-    startDate: "4/1/2025 14:03",
-    totalMessages: 4
+    subject: "Ihor Poltavtsev",
+    lastMessage: "E-commerce Email Marketing I...",
+    timestamp: "6/3/23",
+    online: false,
   },
-  // Add more mock chats as needed
+  {
+    id: "2",
+    subject: "Elisha Adeniyi",
+    lastMessage: "Quick Fix: CSS Conflict Style in ...",
+    timestamp: "1/24/25",
+    online: true,
+  },
+  {
+    id: "3",
+    subject: "Arslan Ahmad",
+    lastMessage: "LinkedIn API Trouble Shooting ...",
+    timestamp: "1/24/25",
+    online: true,
+  },
+  {
+    id: "4",
+    subject: "Manoj Kargar",
+    lastMessage: "FlutterFlow Developer for Saa...",
+    timestamp: "1/22/25",
+    unread: 2,
+    online: true,
+  }
+];
+
+interface Message {
+  id: string;
+  sender: string;
+  content: string;
+  timestamp: string;
+  avatar?: string;
+}
+
+const mockMessages: Message[] = [
+  {
+    id: "1",
+    sender: "Borja Pallasa Alvarez",
+    content: "Hey man, was super busy yesterday, can you show the themes?",
+    timestamp: "Jan 16, 2025 | 3:49 PM"
+  },
+  {
+    id: "2",
+    sender: "Elisha Adeniyi",
+    content: "go through the messages I sent",
+    timestamp: "4:04 PM"
+  },
+  {
+    id: "3",
+    sender: "Elisha Adeniyi",
+    content: "I tagged you on the other chat",
+    timestamp: "5:13 PM"
+  }
 ];
 
 export default function Chats() {
@@ -41,81 +93,148 @@ export default function Chats() {
         <MainHeader />
       </div>
 
-      <main className="container mx-auto px-4 pt-[126px] pb-8 max-w-6xl">
-        <div className="space-y-6">
-          <div>
-            <h1 className="text-4xl font-bold mb-4">Your inbox</h1>
-            <p className="text-muted-foreground text-lg">
-              Here you can find all your active conversations. If you want to delete one. Just select the conversation, 
-              click on Archive and then select "Close" in the Pop-Up. This action is irreversible.
-            </p>
+      <div className="flex h-[calc(100vh-64px)] pt-16">
+        {/* Sidebar */}
+        <div className="w-80 border-r flex flex-col bg-card">
+          <div className="p-4 border-b">
+            <div className="flex items-center justify-between mb-4">
+              <h1 className="text-2xl font-bold">Messages</h1>
+              <Button variant="ghost" size="icon">
+                <Settings className="h-5 w-5" />
+              </Button>
+            </div>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                className="pl-9 bg-secondary"
+                placeholder="Search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
           </div>
 
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              className="pl-9"
-              placeholder="Start typing to search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-4">
+          <div className="flex-1 overflow-y-auto">
             {filteredChats.map((chat) => (
-              <Card
+              <div
                 key={chat.id}
-                className={`p-6 cursor-pointer transition-all duration-200 hover:shadow-md ${
-                  selectedChat?.id === chat.id ? "border-primary" : ""
+                className={`p-4 cursor-pointer hover:bg-accent/50 ${
+                  selectedChat?.id === chat.id ? "bg-accent" : ""
                 }`}
                 onClick={() => setSelectedChat(chat)}
               >
-                <div className="grid md:grid-cols-[1fr,2fr] gap-6">
-                  <div className="space-y-2">
-                    <h3 className="font-semibold">{chat.subject}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Last Message @ {chat.lastMessageDate}
-                    </p>
-                    <div className="inline-block bg-secondary px-3 py-1 rounded-full text-sm">
-                      Total Messages: {chat.totalMessages}
-                    </div>
+                <div className="flex gap-3">
+                  <div className="relative">
+                    <Avatar>
+                      <AvatarFallback>
+                        <User className="h-4 w-4" />
+                      </AvatarFallback>
+                      {chat.avatar && <AvatarImage src={chat.avatar} />}
+                    </Avatar>
+                    {chat.online && (
+                      <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 border-2 border-background" />
+                    )}
                   </div>
-                  
-                  {selectedChat?.id === chat.id && (
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <p className="text-sm text-muted-foreground">Subject:</p>
-                        <p>{chat.subject}</p>
-                      </div>
-                      <div className="space-y-2">
-                        <p className="text-sm text-muted-foreground">Conversation:</p>
-                        <p>{chat.participants}</p>
-                      </div>
-                      <div className="space-y-2">
-                        <p className="text-sm text-muted-foreground">Last Message Date:</p>
-                        <p>{chat.lastMessageDate}</p>
-                      </div>
-                      <div className="space-y-2">
-                        <p className="text-sm text-muted-foreground">Conversation Started Date:</p>
-                        <p>{chat.startDate}</p>
-                      </div>
-                      <div className="flex gap-3 mt-4">
-                        <Button className="gap-2">
-                          <MessageSquare className="h-4 w-4" />
-                          Open Chat
-                        </Button>
-                        <Button variant="outline">
-                          Archive
-                        </Button>
-                      </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-start">
+                      <p className="font-semibold truncate">{chat.subject}</p>
+                      <span className="text-xs text-muted-foreground whitespace-nowrap ml-2">
+                        {chat.timestamp}
+                      </span>
                     </div>
+                    <p className="text-sm text-muted-foreground truncate">
+                      {chat.lastMessage}
+                    </p>
+                  </div>
+                  {chat.unread && (
+                    <span className="bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {chat.unread}
+                    </span>
                   )}
                 </div>
-              </Card>
+              </div>
             ))}
           </div>
         </div>
-      </main>
+
+        {/* Chat Area */}
+        <div className="flex-1 flex flex-col bg-background">
+          {selectedChat ? (
+            <>
+              {/* Chat Header */}
+              <div className="p-4 border-b flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Avatar>
+                    <AvatarFallback>
+                      <User className="h-4 w-4" />
+                    </AvatarFallback>
+                    {selectedChat.avatar && <AvatarImage src={selectedChat.avatar} />}
+                  </Avatar>
+                  <div>
+                    <h2 className="font-semibold">{selectedChat.subject}</h2>
+                    <p className="text-sm text-muted-foreground">
+                      {selectedChat.online ? "Online" : "Offline"}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="ghost" size="icon">
+                    <Video className="h-5 w-5" />
+                  </Button>
+                  <Button variant="ghost" size="icon">
+                    <MessageSquare className="h-5 w-5" />
+                  </Button>
+                  <Button variant="ghost" size="icon">
+                    <Settings className="h-5 w-5" />
+                  </Button>
+                </div>
+              </div>
+
+              {/* Messages */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                {mockMessages.map((message) => (
+                  <div key={message.id} className="flex gap-3">
+                    <Avatar>
+                      <AvatarFallback>
+                        <User className="h-4 w-4" />
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="font-semibold">{message.sender}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {message.timestamp}
+                        </span>
+                      </div>
+                      <p className="text-sm">{message.content}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Message Input */}
+              <div className="p-4 border-t">
+                <div className="flex gap-2">
+                  <Button variant="ghost" size="icon">
+                    <Image className="h-5 w-5" />
+                  </Button>
+                  <Button variant="ghost" size="icon">
+                    <SmilePlus className="h-5 w-5" />
+                  </Button>
+                  <Input className="flex-1" placeholder="Send a message..." />
+                  <Button size="icon">
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex-1 flex items-center justify-center text-muted-foreground">
+              Select a conversation to start chatting
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
