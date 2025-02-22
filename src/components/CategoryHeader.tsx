@@ -1,4 +1,3 @@
-
 import React, { useMemo, useCallback } from "react";
 import { TrendingUp, Sparkle, Trophy, ThumbsUp, Star, Tags, LucideProps, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -15,13 +14,13 @@ interface BadgeItem {
   category: string | null;
 }
 
-// Memoize static styles object outside component
+// Optimized styles with faster transitions
 const STYLES = {
   badge: {
-    base: "inline-flex items-center rounded-full border px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200",
-    selected: "border-transparent bg-primary text-primary-foreground shadow-md",
-    unselected: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary hover:shadow-sm",
-    icon: "w-4 h-4 mr-2"
+    base: "inline-flex items-center rounded-full border px-4 py-2 text-sm font-medium cursor-pointer will-change-transform",
+    selected: "border-transparent bg-primary text-primary-foreground shadow-md transition-transform duration-150 ease-out",
+    unselected: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-transform duration-150 ease-out",
+    icon: "w-4 h-4 mr-2 transition-none"
   },
   container: {
     wrapper: "container mx-auto px-4",
@@ -29,9 +28,9 @@ const STYLES = {
     badgeContainer: "flex flex-wrap gap-3"
   },
   mobile: {
-    button: "p-2 rounded-md hover:bg-accent/50 border border-input",
-    menuContent: "z-50 min-w-[200px] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md",
-    menuItem: "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+    button: "p-2 rounded-md hover:bg-accent/50 border border-input transition-colors duration-150 ease-out",
+    menuContent: "z-[100] min-w-[200px] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md",
+    menuItem: "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors duration-150 ease-out focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
   }
 } as const;
 
@@ -73,7 +72,11 @@ const CategoryBadge = React.memo(({
   );
   
   return (
-    <div onClick={onClick} className={badgeClassName}>
+    <div 
+      onClick={onClick} 
+      className={badgeClassName}
+      style={{ transform: isSelected ? 'scale(1.02)' : 'scale(1)' }}
+    >
       <Icon icon={icon} className={STYLES.badge.icon} />
       {label}
     </div>
@@ -119,7 +122,9 @@ MenuTrigger.displayName = "MenuTrigger";
 
 export const CategoryHeader = React.memo(({ selectedCategory, onCategoryChange }: CategoryHeaderProps) => {
   const handleBadgeClick = useCallback((category: string | null) => {
-    onCategoryChange(selectedCategory === category ? null : category);
+    requestAnimationFrame(() => {
+      onCategoryChange(selectedCategory === category ? null : category);
+    });
   }, [selectedCategory, onCategoryChange]);
 
   const badges = useMemo(() => (
@@ -158,6 +163,7 @@ export const CategoryHeader = React.memo(({ selectedCategory, onCategoryChange }
               <DropdownMenuContent 
                 align="start"
                 className={STYLES.mobile.menuContent}
+                sideOffset={4}
               >
                 {mobileMenuItems}
               </DropdownMenuContent>
