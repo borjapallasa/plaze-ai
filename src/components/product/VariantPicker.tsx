@@ -54,9 +54,9 @@ export function VariantPicker({
                 </div>
               )}
               
-              {/* Upper section with header and price */}
-              <div className="mb-4">
-                <div className="flex items-start justify-between gap-4">
+              <div className="space-y-3">
+                {/* Header section with name and price */}
+                <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                       selectedVariant === variant.id ? "border-black" : "border-gray-300"
@@ -67,7 +67,7 @@ export function VariantPicker({
                     </div>
                     <h3 className="text-lg font-semibold">{variant.name}</h3>
                   </div>
-                  <div className="text-right">
+                  <div className="flex items-center gap-2">
                     <div className="text-2xl font-bold">${variant.price}</div>
                     {variant.comparePrice && (
                       <div className="text-sm text-gray-500 line-through">
@@ -76,10 +76,8 @@ export function VariantPicker({
                     )}
                   </div>
                 </div>
-              </div>
 
-              {/* Bottom section with features */}
-              <div className="border-t pt-4">
+                {/* Features section */}
                 <div className="flex flex-row gap-3 flex-wrap">
                   {variant.features && variant.features.map((feature, index) => (
                     <span
