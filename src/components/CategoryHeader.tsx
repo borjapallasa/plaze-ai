@@ -1,7 +1,7 @@
+
 import React, { useMemo, useCallback } from "react";
 import { TrendingUp, Sparkle, Trophy, ThumbsUp, Star, Tags, LucideProps, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 interface CategoryHeaderProps {
@@ -15,6 +15,7 @@ interface BadgeItem {
   category: string | null;
 }
 
+// Memoize static styles object
 const STYLES = {
   badge: {
     base: "inline-flex items-center rounded-full border px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200",
@@ -35,6 +36,7 @@ const STYLES = {
   }
 } as const;
 
+// Memoize badges array
 const BADGES: ReadonlyArray<BadgeItem> = [
   { label: "Trending", icon: TrendingUp, category: null },
   { label: "Newest", icon: Sparkle, category: "template" },
@@ -44,6 +46,7 @@ const BADGES: ReadonlyArray<BadgeItem> = [
   { label: "Affiliate Offers", icon: Tags, category: null }
 ] as const;
 
+// Memoize individual badge component
 const CategoryBadge = React.memo(({ 
   badge, 
   isSelected, 
@@ -73,10 +76,62 @@ const CategoryBadge = React.memo(({
 
 CategoryBadge.displayName = "CategoryBadge";
 
+// Memoize mobile menu item
+const MobileMenuItem = React.memo(({ 
+  badge, 
+  isSelected, 
+  onClick 
+}: { 
+  badge: BadgeItem; 
+  isSelected: boolean; 
+  onClick: () => void;
+}) => {
+  const Icon = badge.icon;
+  return (
+    <DropdownMenuItem 
+      onClick={onClick}
+      className={cn(
+        STYLES.mobile.menuItem,
+        isSelected && "bg-accent text-accent-foreground"
+      )}
+    >
+      <Icon className={STYLES.badge.icon} />
+      {badge.label}
+    </DropdownMenuItem>
+  );
+});
+
+MobileMenuItem.displayName = "MobileMenuItem";
+
+// Memoize the entire CategoryHeader component
 export const CategoryHeader = React.memo(({ selectedCategory, onCategoryChange }: CategoryHeaderProps) => {
   const handleBadgeClick = useCallback((category: string | null) => {
     onCategoryChange(selectedCategory === category ? null : category);
   }, [selectedCategory, onCategoryChange]);
+
+  // Memoize badge list
+  const badges = useMemo(() => (
+    BADGES.map((badge) => (
+      <CategoryBadge
+        key={`${badge.label}-${badge.category}`}
+        badge={badge}
+        isSelected={selectedCategory === badge.category}
+        onClick={() => handleBadgeClick(badge.category)}
+      />
+    ))
+  ), [selectedCategory, handleBadgeClick]);
+
+  // Memoize mobile menu items
+  const mobileMenuItems = useMemo(() => (
+    BADGES.map((badge) => (
+      <MobileMenuItem
+        key={`${badge.label}-${badge.category}`}
+        badge={badge}
+        isSelected={selectedCategory === badge.category}
+        onClick={() => handleBadgeClick(badge.category)}
+      />
+    ))
+  ), [selectedCategory, handleBadgeClick]);
 
   return (
     <div className={STYLES.container.wrapper}>
@@ -96,34 +151,12 @@ export const CategoryHeader = React.memo(({ selectedCategory, onCategoryChange }
                 align="start"
                 className={STYLES.mobile.menuContent}
               >
-                {BADGES.map((badge) => {
-                  const Icon = badge.icon;
-                  return (
-                    <DropdownMenuItem 
-                      key={`${badge.label}-${badge.category}`}
-                      onClick={() => handleBadgeClick(badge.category)}
-                      className={cn(
-                        STYLES.mobile.menuItem,
-                        selectedCategory === badge.category && "bg-accent text-accent-foreground"
-                      )}
-                    >
-                      <Icon className={STYLES.badge.icon} />
-                      {badge.label}
-                    </DropdownMenuItem>
-                  );
-                })}
+                {mobileMenuItems}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
           <div className="hidden md:flex flex-wrap gap-3">
-            {BADGES.map((badge) => (
-              <CategoryBadge
-                key={`${badge.label}-${badge.category}`}
-                badge={badge}
-                isSelected={selectedCategory === badge.category}
-                onClick={() => handleBadgeClick(badge.category)}
-              />
-            ))}
+            {badges}
           </div>
         </div>
       </div>
