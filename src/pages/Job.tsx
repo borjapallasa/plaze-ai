@@ -222,8 +222,8 @@ export default function JobDetails() {
               </div>
             </Card>
 
-            {/* Client Info and Job Link - Visible on mobile, hidden on desktop */}
-            <div className="lg:hidden space-y-4">
+            {/* Client Info - Visible on mobile, hidden on desktop */}
+            <div className="lg:hidden">
               <Card className="p-6">
                 <h2 className="text-lg font-semibold mb-4">About the client</h2>
                 <div className="space-y-4">
@@ -271,7 +271,12 @@ export default function JobDetails() {
                   </div>
                 </div>
               </Card>
+            </div>
 
+            <ProductReviews reviews={reviews} className="p-6 border rounded-lg" />
+
+            {/* Job Link - Visible on mobile, hidden on desktop */}
+            <div className="lg:hidden">
               <Card className="p-6">
                 <h2 className="text-lg font-semibold mb-4">Job link</h2>
                 <div className="p-2 bg-muted rounded text-sm mb-4">
@@ -282,8 +287,6 @@ export default function JobDetails() {
                 </Button>
               </Card>
             </div>
-
-            <ProductReviews reviews={reviews} className="p-6 border rounded-lg" />
           </div>
 
           {/* Sidebar - Hidden on mobile */}
