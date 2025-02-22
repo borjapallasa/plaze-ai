@@ -4,9 +4,9 @@ import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { ChevronDown, ShoppingCart } from "lucide-react";
 import { useState } from "react";
-import { ProductVariants } from "@/components/product/ProductVariants";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MainHeader } from "@/components/MainHeader";
+import { VariantPicker } from "@/components/product/VariantPicker";
 
 export default function Classroom() {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -102,7 +102,7 @@ export default function Classroom() {
   const ProductsSection = () => (
     <div className="pt-4 border-t">
       <h3 className="font-semibold mb-4">Products in this class</h3>
-      <ProductVariants
+      <VariantPicker
         variants={variants}
         selectedVariant={selectedVariant}
         onVariantChange={setSelectedVariant}
