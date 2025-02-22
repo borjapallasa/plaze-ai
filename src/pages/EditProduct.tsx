@@ -27,16 +27,17 @@ const EditProduct = () => {
               </Link>
               <div className="w-full">
                 <h1 className="text-lg sm:text-xl md:text-2xl font-semibold break-words pr-2">Veilleuse LED Personnalisée Pour Enfants Lampe Arc-En-Ciel Avec Prénom</h1>
-                <p className="text-sm text-muted-foreground mt-2 mb-6">Product details and configuration</p>
+                <p className="text-sm text-muted-foreground mt-2">Product details and configuration</p>
               </div>
-            </div>
-            <div className="lg:hidden">
-              <ProductStatus />
             </div>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-3 sm:gap-6">
             <div className="lg:col-span-2 space-y-3 sm:space-y-6">
+              <div className="lg:hidden">
+                <ProductStatus />
+              </div>
+              
               <Card className="p-3 sm:p-6">
                 <div className="space-y-3 sm:space-y-4">
                   <div>
