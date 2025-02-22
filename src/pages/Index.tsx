@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
-import { MainHeader } from "@/components/MainHeader";
 import {
   Search, 
   Menu, 
@@ -24,6 +23,20 @@ import Typewriter from 'typewriter-effect';
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   Carousel,
   CarouselContent,
   CarouselItem,
@@ -31,6 +44,13 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
+
+const typewriterStrings = [
+  "Products To Scale",
+  "Experts To Hire",
+  "Jobs To Earn",
+  "Communities To Learn"
+];
 
 const products = [
   {
@@ -264,6 +284,157 @@ const departments = [
   { name: "Settings", icon: Menu }
 ];
 
+const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
+  const isMobile = useIsMobile();
+
+  return (
+    <header 
+      className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm transition-all duration-200 ease-out bg-white border-b ${
+        isScrolled ? 'h-[80px] bg-[#FFFFFF] mt-[5px]' : 'bg-background'
+      }`}
+    >
+      <div className="container mx-auto px-4">
+        <div className="sm:hidden px-4 py-3">
+          <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-md bg-background">
+            <div className="flex-1 flex items-center gap-2">
+              <Select 
+                defaultValue="Products" 
+                onValueChange={setSearchCategory}
+              >
+                <SelectTrigger className="border-0 w-[120px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
+                  <SelectValue className="pr-4" />
+                </SelectTrigger>
+                <SelectContent className="w-[150px]">
+                  <SelectItem value="Products">Products</SelectItem>
+                  <SelectItem value="Experts">Experts</SelectItem>
+                  <SelectItem value="Communities">Communities</SelectItem>
+                  <SelectItem value="Jobs">Jobs</SelectItem>
+                </SelectContent>
+              </Select>
+              <Input
+                className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
+                placeholder={`Search ${searchCategory.toLowerCase()}...`}
+                type="search"
+              />
+            </div>
+            <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
+              <Search className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+
+        <div className="hidden sm:flex relative pb-[20px]">
+          <div className="w-[20%] flex items-start">
+            <h1 className="text-2xl font-semibold mt-[15px] ml-[15px]">Logo</h1>
+          </div>
+
+          <div className="w-[60%] flex flex-col items-center">
+            <div 
+              className={`transition-all duration-300 ease-out mt-[15px] ${
+                isScrolled ? 'opacity-0 h-0 mb-0 overflow-hidden' : 'opacity-100 h-[32px] mb-[20px]'
+              }`}
+            >
+              <div className="text-[1.5rem] leading-relaxed font-bold whitespace-nowrap flex items-center justify-center">
+                <span>The Best AI & Automation</span>
+                <span className="text-muted-foreground ml-1">
+                  <Typewriter
+                    options={{
+                      strings: typewriterStrings,
+                      autoStart: true,
+                      loop: true,
+                      delay: 50,
+                      deleteSpeed: 30,
+                    }}
+                  />
+                </span>
+              </div>
+            </div>
+
+            <div 
+              className={`flex justify-center transition-transform duration-300 ease-in-out ${
+                isScrolled ? 'transform -translate-y-[10px]' : ''
+              }`}
+            >
+              <div 
+                className={`transition-all duration-200 ease-out ${
+                  isScrolled ? 'w-[360px]' : 'w-[540px]'
+                }`}
+              >
+                <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-md hover:shadow-lg transition-shadow bg-background">
+                  <div className="flex-1 flex items-center gap-2">
+                    <Select 
+                      defaultValue="Products" 
+                      onValueChange={setSearchCategory}
+                    >
+                      <SelectTrigger className="border-0 w-[200px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
+                        <SelectValue className="pr-4" />
+                      </SelectTrigger>
+                      <SelectContent className="w-[240px]">
+                        <SelectItem value="Products">Products</SelectItem>
+                        <SelectItem value="Experts">Experts</SelectItem>
+                        <SelectItem value="Communities">Communities</SelectItem>
+                        <SelectItem value="Jobs">Jobs</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Input
+                      className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
+                      placeholder={`Search ${searchCategory.toLowerCase()}...`}
+                      type="search"
+                    />
+                  </div>
+                  <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
+                    <Search className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="w-[20%] flex items-start justify-end">
+            <div className="flex items-center gap-3 mt-[15px] mr-[15px]">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="font-medium text-primary hover:text-primary/90 hover:bg-primary/10"
+              >
+                Sell on Plaze
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    className="rounded-full px-3 py-2 h-10 border-2 hover:border-primary/20 transition-colors"
+                  >
+                    <Menu className="h-4 w-4 mr-2" />
+                    <User className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <Link to="/">
+                    <DropdownMenuItem>
+                      Home
+                    </DropdownMenuItem>
+                  </Link>
+                  <DropdownMenuItem>Sign In</DropdownMenuItem>
+                  <DropdownMenuItem>Sign Up</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <Link to="/affiliates">
+                    <DropdownMenuItem>Affiliates</DropdownMenuItem>
+                  </Link>
+                  <DropdownMenuItem>Sell on Plaze</DropdownMenuItem>
+                  <DropdownMenuItem>Help Center</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+const MemoizedHeader = React.memo(Header);
+
 const Index = () => {
   const isMobile = useIsMobile();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -304,6 +475,7 @@ const Index = () => {
     api.on("scroll", onScroll);
     api.on("reInit", onScroll);
 
+    // Initial check
     onScroll();
 
     return () => {
@@ -327,90 +499,85 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
-      <MainHeader initialSearchCategory={searchCategory} />
+      <MemoizedHeader 
+        isScrolled={isScrolled}
+        searchCategory={searchCategory}
+        setSearchCategory={setSearchCategory}
+      />
+
+      <div 
+        className={`sticky bg-background border-b transition-all duration-200 ease-out ${
+          isScrolled ? 'top-20 z-40' : 'top-[140px] z-30'
+        }`}
+      >
+        <div className="container mx-auto px-4 py-6">
+          <Carousel
+            setApi={setApi}
+            opts={{
+              align: "start",
+              dragFree: true,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-4">
+              {departments.map((dept, index) => {
+                const Icon = dept.icon;
+                return (
+                  <CarouselItem key={index} className="pl-4 basis-[120px]">
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center">
+                        <Icon className="w-6 h-6 text-muted-foreground" />
+                      </div>
+                      <span className="text-xs text-muted-foreground whitespace-nowrap">
+                        {dept.name}
+                      </span>
+                    </div>
+                  </CarouselItem>
+                );
+              })}
+            </CarouselContent>
+            {canScrollPrev && (
+              <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-background via-background to-transparent z-10" />
+            )}
+            <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-background via-background to-transparent z-10" />
+            {canScrollPrev && <CarouselPrevious className="-left-12" />}
+            <CarouselNext className="-right-12" />
+          </Carousel>
+        </div>
+      </div>
 
       <main>
         <div className="container mx-auto px-4">
-          <div className="pt-24 pb-6">
-            <div className="text-[1.5rem] leading-relaxed font-bold whitespace-nowrap flex items-center justify-center mb-6">
-              <span>The Best AI & Automation</span>
-              <span className="text-muted-foreground ml-1">
-                <Typewriter
-                  options={{
-                    strings: ["Products To Scale", "Experts To Hire", "Jobs To Earn", "Communities To Learn"],
-                    autoStart: true,
-                    loop: true,
-                    delay: 50,
-                    deleteSpeed: 30,
-                  }}
-                />
-              </span>
-            </div>
-
-            <div 
-              className="sticky top-16 bg-background border-b z-40 -mx-4 px-4"
-            >
-              <div className="py-6">
-                <Carousel
-                  setApi={setApi}
-                  opts={{
-                    align: "start",
-                    dragFree: true,
-                  }}
-                  className="w-full"
-                >
-                  <CarouselContent className="-ml-4">
-                    {departments.map((dept, index) => {
-                      const Icon = dept.icon;
-                      return (
-                        <CarouselItem key={index} className="pl-4 basis-[120px]">
-                          <div className="flex flex-col items-center gap-2">
-                            <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center">
-                              <Icon className="w-6 h-6 text-muted-foreground" />
-                            </div>
-                            <span className="text-xs text-muted-foreground whitespace-nowrap">
-                              {dept.name}
-                            </span>
-                          </div>
-                        </CarouselItem>
-                      );
-                    })}
-                  </CarouselContent>
-                  {canScrollPrev && (
-                    <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-background via-background to-transparent z-10" />
-                  )}
-                  <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-background via-background to-transparent z-10" />
-                  {canScrollPrev && <CarouselPrevious className="-left-12" />}
-                  <CarouselNext className="-right-12" />
-                </Carousel>
-              </div>
-            </div>
-
-            <div className="space-y-4 pt-8">
-              <div className="flex flex-wrap gap-3">
-                {badges.map((badge, index) => {
-                  const Icon = badge.icon;
-                  const isSelected = selectedCategory === badge.category;
-                  return (
-                    <Badge
-                      key={index}
-                      variant={isSelected ? "default" : "secondary"}
-                      className={`px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200 ${
-                        isSelected 
-                          ? 'bg-primary text-primary-foreground shadow-md' 
-                          : 'hover:bg-secondary hover:shadow-sm'
-                      }`}
-                      onClick={() => handleBadgeClick(badge.category)}
-                    >
-                      <Icon className="w-4 h-4 mr-2" />
-                      {badge.label}
-                    </Badge>
-                  );
-                })}
-              </div>
+          <div 
+            className={`space-y-4 pt-8 pb-6 transition-[margin] duration-300 ease-in-out ${
+              isScrolled ? 'mt-24' : 'mt-32'
+            }`}
+          >
+            <div className="flex flex-wrap gap-3">
+              {badges.map((badge, index) => {
+                const Icon = badge.icon;
+                const isSelected = selectedCategory === badge.category;
+                return (
+                  <Badge
+                    key={index}
+                    variant={isSelected ? "default" : "secondary"}
+                    className={`px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200 ${
+                      isSelected 
+                        ? 'bg-primary text-primary-foreground shadow-md' 
+                        : 'hover:bg-secondary hover:shadow-sm'
+                    }`}
+                    onClick={() => handleBadgeClick(badge.category)}
+                  >
+                    <Icon className="w-4 h-4 mr-2" />
+                    {badge.label}
+                  </Badge>
+                );
+              })}
             </div>
           </div>
+        </div>
 
+        <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredProducts.map((product, index) => (
               <ProductCard key={index} {...product} />
