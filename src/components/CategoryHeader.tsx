@@ -14,10 +14,18 @@ interface BadgeItem {
   category: string | null;
 }
 
-// Optimized styles with faster transitions
+const BADGES: ReadonlyArray<BadgeItem> = [
+  { label: "Trending", icon: TrendingUp, category: null },
+  { label: "Newest", icon: Sparkle, category: "template" },
+  { label: "Top Seller", icon: Trophy, category: "prompt" },
+  { label: "Best Reviews", icon: ThumbsUp, category: "community" },
+  { label: "Our Pick", icon: Star, category: "expert" },
+  { label: "Affiliate Offers", icon: Tags, category: null }
+] as const;
+
 const STYLES = {
   badge: {
-    base: "inline-flex items-center rounded-full border px-4 py-2 text-sm font-medium cursor-pointer will-change-transform",
+    base: "inline-flex items-center rounded-full border px-4 py-2 text-sm font-medium cursor-pointer will-change-transform select-none",
     selected: "border-transparent bg-primary text-primary-foreground shadow-md",
     unselected: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/90",
     icon: "w-4 h-4 mr-2"
@@ -34,24 +42,12 @@ const STYLES = {
   }
 } as const;
 
-// Memoize badges array outside component to prevent recreation
-const BADGES: ReadonlyArray<BadgeItem> = [
-  { label: "Trending", icon: TrendingUp, category: null },
-  { label: "Newest", icon: Sparkle, category: "template" },
-  { label: "Top Seller", icon: Trophy, category: "prompt" },
-  { label: "Best Reviews", icon: ThumbsUp, category: "community" },
-  { label: "Our Pick", icon: Star, category: "expert" },
-  { label: "Affiliate Offers", icon: Tags, category: null }
-] as const;
-
-// Pure component for rendering icon with minimal props
 const Icon = React.memo(({ icon: IconComponent, className }: { icon: React.ComponentType<LucideProps>; className: string }) => (
   <IconComponent className={className} aria-hidden="true" />
 ));
 
 Icon.displayName = "Icon";
 
-// Memoized badge component with minimal props and optimized transitions
 const CategoryBadge = React.memo(({ 
   label,
   icon,
@@ -62,36 +58,32 @@ const CategoryBadge = React.memo(({
   icon: React.ComponentType<LucideProps>;
   isSelected: boolean; 
   onClick: () => void;
-}) => {
-  const badgeClassName = useMemo(() => 
-    cn(
+}) => (
+  <div 
+    role="button"
+    tabIndex={0}
+    onClick={onClick}
+    onKeyDown={(e) => e.key === 'Enter' && onClick()}
+    className={cn(
       STYLES.badge.base,
       isSelected ? STYLES.badge.selected : STYLES.badge.unselected
-    ),
-    [isSelected]
-  );
-  
-  return (
-    <div 
-      onClick={onClick} 
-      className={badgeClassName}
-      style={{
-        transform: isSelected ? 'scale(1.02)' : 'scale(1)',
-        transition: 'transform 150ms cubic-bezier(0.4, 0, 0.2, 1)',
-        backfaceVisibility: 'hidden',
-        perspective: '1000px',
-        WebkitFontSmoothing: 'antialiased'
-      }}
-    >
-      <Icon icon={icon} className={STYLES.badge.icon} />
-      {label}
-    </div>
-  );
-});
+    )}
+    style={{
+      transform: `translateZ(0) scale(${isSelected ? 1.02 : 1})`,
+      transition: 'transform 120ms cubic-bezier(0.4, 0, 0.2, 1)',
+      willChange: 'transform',
+      backfaceVisibility: 'hidden',
+      WebkitFontSmoothing: 'antialiased',
+      WebkitTapHighlightColor: 'transparent'
+    }}
+  >
+    <Icon icon={icon} className={STYLES.badge.icon} />
+    {label}
+  </div>
+));
 
 CategoryBadge.displayName = "CategoryBadge";
 
-// Memoized mobile menu item with minimal props
 const MobileMenuItem = React.memo(({ 
   label,
   icon,
@@ -117,7 +109,6 @@ const MobileMenuItem = React.memo(({
 
 MobileMenuItem.displayName = "MobileMenuItem";
 
-// Memoized trigger button
 const MenuTrigger = React.memo(() => (
   <button type="button" className={STYLES.mobile.button}>
     <Menu className="h-6 w-6" />
@@ -128,19 +119,19 @@ MenuTrigger.displayName = "MenuTrigger";
 
 export const CategoryHeader = React.memo(({ selectedCategory, onCategoryChange }: CategoryHeaderProps) => {
   const handleBadgeClick = useCallback((category: string | null) => {
-    // Use RAF to ensure smooth animation frame
-    requestAnimationFrame(() => {
-      // Schedule the state update for the next frame
+    if (selectedCategory === category) {
+      onCategoryChange(null);
+    } else {
       requestAnimationFrame(() => {
-        onCategoryChange(selectedCategory === category ? null : category);
+        onCategoryChange(category);
       });
-    });
+    }
   }, [selectedCategory, onCategoryChange]);
 
   const badges = useMemo(() => (
     BADGES.map(({ label, icon, category }) => (
       <CategoryBadge
-        key={`${label}-${category}`}
+        key={category ?? label}
         label={label}
         icon={icon}
         isSelected={selectedCategory === category}
@@ -152,7 +143,7 @@ export const CategoryHeader = React.memo(({ selectedCategory, onCategoryChange }
   const mobileMenuItems = useMemo(() => (
     BADGES.map(({ label, icon, category }) => (
       <MobileMenuItem
-        key={`${label}-${category}`}
+        key={category ?? label}
         label={label}
         icon={icon}
         isSelected={selectedCategory === category}
