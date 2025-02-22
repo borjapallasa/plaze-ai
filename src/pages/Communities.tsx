@@ -142,7 +142,7 @@ const Communities = () => {
                   </p>
 
                   {/* Footer */}
-                  <div className="mt-auto flex items-center justify-between mb-2">
+                  <div className="mt-auto flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Users className="h-4 w-4" />
                       <span>{community.members} Members</span>
