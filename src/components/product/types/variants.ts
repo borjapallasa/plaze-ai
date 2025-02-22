@@ -10,9 +10,14 @@ export interface Variant {
   features?: string[];
 }
 
-export interface ProductVariantsProps {
+export interface ProductVariantsEditorProps {
   variants?: Variant[];
   onVariantsChange?: (variants: Variant[]) => void;
+  className?: string;
+}
+
+export interface VariantPickerProps {
+  variants: Variant[];
   selectedVariant?: string;
   onVariantChange?: (variantId: string) => void;
   onAddToCart?: () => void;

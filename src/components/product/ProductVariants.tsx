@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -6,14 +5,17 @@ import { ProductPricing } from "@/components/product/ProductPricing";
 import { VariantCard } from "./VariantCard";
 import { Variant, ProductVariantsProps } from "./types/variants";
 
-export function ProductVariants({ 
+export interface ProductVariantsEditorProps {
+  variants?: Variant[];
+  onVariantsChange?: (variants: Variant[]) => void;
+  className?: string;
+}
+
+export function ProductVariantsEditor({ 
   variants: externalVariants,
   onVariantsChange,
-  selectedVariant,
-  onVariantChange,
-  onAddToCart,
   className = ""
-}: ProductVariantsProps) {
+}: ProductVariantsEditorProps) {
   const [internalVariants, setInternalVariants] = React.useState<Variant[]>([
     {
       id: "1",
