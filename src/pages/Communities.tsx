@@ -118,7 +118,7 @@ const Communities = () => {
             {filteredCommunities.map((community) => (
               <Card 
                 key={community.id} 
-                className="group relative overflow-hidden flex flex-col transition-all duration-200 hover:bg-gray-50"
+                className="group relative overflow-hidden flex flex-col transition-all duration-200 hover:bg-gray-100 hover:border-gray-300"
               >
                 {/* Community Image */}
                 <div className="relative aspect-[2/1] overflow-hidden">
