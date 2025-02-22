@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,7 +46,6 @@ export function ProductVariants({
     },
   ]);
 
-  // Use either external variants (if provided) or internal state
   const variants = externalVariants || internalVariants;
   const setVariants = (newVariants: Variant[]) => {
     if (onVariantsChange) {
@@ -59,28 +57,25 @@ export function ProductVariants({
 
   const addVariant = () => {
     if (variants.length === 1) {
-      // Get the price and comparePrice from ProductPricing component
       const priceInput = document.getElementById('price') as HTMLInputElement;
       const comparePriceInput = document.getElementById('compare-price') as HTMLInputElement;
       
       const price = priceInput?.value || '';
       const comparePrice = comparePriceInput?.value || '';
       
-      // Update the first variant with these values
       const updatedFirstVariant = {
         ...variants[0],
         price,
         comparePrice,
       };
       
-      // Add a new variant with the same prices
       setVariants([
         updatedFirstVariant,
         {
           id: Math.random().toString(),
           name: "",
-          price,
-          comparePrice,
+          price: "0",
+          comparePrice: "0",
           highlight: false,
           tags: [],
         },
@@ -91,8 +86,8 @@ export function ProductVariants({
         {
           id: Math.random().toString(),
           name: "",
-          price: "",
-          comparePrice: "",
+          price: "0",
+          comparePrice: "0",
           highlight: false,
           tags: [],
         },
@@ -105,11 +100,19 @@ export function ProductVariants({
   };
 
   const updateVariant = (id: string, field: keyof Variant, value: any) => {
-    setVariants(
-      variants.map((v) =>
-        v.id === id ? { ...v, [field]: value } : v
-      )
-    );
+    if (field === 'highlight' && value === true) {
+      setVariants(
+        variants.map((v) =>
+          v.id === id ? { ...v, highlight: true } : { ...v, highlight: false }
+        )
+      );
+    } else {
+      setVariants(
+        variants.map((v) =>
+          v.id === id ? { ...v, [field]: value } : v
+        )
+      );
+    }
   };
 
   const addTag = (variantId: string, tag: string) => {
