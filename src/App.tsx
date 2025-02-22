@@ -23,6 +23,7 @@ import Affiliates from "./pages/Affiliates";
 import PersonalArea from "./pages/PersonalArea";
 import Transactions from "./pages/Transactions";
 import AccountSettings from "./pages/AccountSettings";
+import Chats from "./pages/Chats";
 import { Footer } from "./components/Footer";
 
 const queryClient = new QueryClient();
@@ -51,6 +52,7 @@ const App = () => (
           <Route path="/personal-area" element={<PersonalArea />} />
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/account-settings" element={<AccountSettings />} />
+          <Route path="/chats" element={<Chats />} />
         </Routes>
         <Footer />
       </div>
