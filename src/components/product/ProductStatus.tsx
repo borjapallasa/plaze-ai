@@ -10,7 +10,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Link2, Globe, Mail } from "lucide-react";
 
 export function ProductStatus() {
   return (
@@ -38,39 +37,6 @@ export function ProductStatus() {
               <SelectItem value="archived">Archived</SelectItem>
             </SelectContent>
           </Select>
-        </div>
-
-        <div>
-          <h3 className="text-sm font-medium mb-2">Sales channels</h3>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2">
-                <Globe className="h-4 w-4 text-muted-foreground" />
-                <span>Online Store</span>
-              </div>
-              <Badge variant="secondary" className="bg-blue-100 text-blue-700 hover:bg-blue-100">
-                Active
-              </Badge>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2">
-                <Link2 className="h-4 w-4 text-muted-foreground" />
-                <span>Google & YouTube</span>
-              </div>
-              <Badge variant="secondary" className="bg-blue-100 text-blue-700 hover:bg-blue-100">
-                Active
-              </Badge>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-muted-foreground" />
-                <span>Email Marketing & SMS</span>
-              </div>
-              <Badge variant="secondary" className="bg-blue-100 text-blue-700 hover:bg-blue-100">
-                Active
-              </Badge>
-            </div>
-          </div>
         </div>
       </div>
     </Card>

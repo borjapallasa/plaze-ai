@@ -5,8 +5,8 @@ import { Plus } from "lucide-react";
 
 export function ProductMediaUpload() {
   return (
-    <div className="grid grid-cols-3 gap-4">
-      <div className="aspect-square rounded-lg border-2 border-dashed flex items-center justify-center">
+    <div className="grid grid-cols-4 gap-4">
+      <div className="col-span-2 aspect-[3/2] rounded-lg border-2 border-dashed flex items-center justify-center">
         <Button variant="ghost" className="h-full w-full rounded-lg">
           <Plus className="h-4 w-4" />
         </Button>
