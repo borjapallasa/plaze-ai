@@ -394,7 +394,7 @@ export default function Product() {
           </div>
           <Button 
             variant="outline" 
-            className="w-full flex items-center justify-center gap-2 mb-6"
+            className="w-full flex items-center justify-center gap-2 mb-12"
             onClick={() => {
               console.log("Contact seller clicked");
             }}
@@ -447,7 +447,7 @@ export default function Product() {
 
             <Button 
               variant="outline" 
-              className="w-full flex items-center justify-center gap-2"
+              className="w-full flex items-center justify-center gap-2 mb-8"
               onClick={() => {
                 console.log("Contact seller clicked");
               }}
