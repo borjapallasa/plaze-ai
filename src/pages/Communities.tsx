@@ -118,7 +118,31 @@ export default function Communities() {
                 <div className={`transition-all duration-200 ease-out ${
                   isScrolled ? 'w-[360px]' : 'w-[540px]'
                 }`}>
-                  <MainHeader initialSearchCategory="Communities" />
+                  <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-md hover:shadow-lg transition-shadow bg-background">
+                    <div className="flex-1 flex items-center gap-2">
+                      <Select 
+                        defaultValue="Communities"
+                      >
+                        <SelectTrigger className="border-0 w-[120px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
+                          <SelectValue className="pr-4" />
+                        </SelectTrigger>
+                        <SelectContent className="w-[150px]">
+                          <SelectItem value="Products">Products</SelectItem>
+                          <SelectItem value="Experts">Experts</SelectItem>
+                          <SelectItem value="Communities">Communities</SelectItem>
+                          <SelectItem value="Jobs">Jobs</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Input
+                        className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
+                        placeholder="Search communities..."
+                        type="search"
+                      />
+                    </div>
+                    <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
+                      <Search className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -138,7 +162,31 @@ export default function Communities() {
 
           {/* Mobile Header */}
           <div className="sm:hidden">
-            <MainHeader initialSearchCategory="Communities" />
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-md hover:shadow-lg transition-shadow bg-background">
+              <div className="flex-1 flex items-center gap-2">
+                <Select 
+                  defaultValue="Communities"
+                >
+                  <SelectTrigger className="border-0 w-[120px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
+                    <SelectValue className="pr-4" />
+                  </SelectTrigger>
+                  <SelectContent className="w-[150px]">
+                    <SelectItem value="Products">Products</SelectItem>
+                    <SelectItem value="Experts">Experts</SelectItem>
+                    <SelectItem value="Communities">Communities</SelectItem>
+                    <SelectItem value="Jobs">Jobs</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Input
+                  className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
+                  placeholder="Search communities..."
+                  type="search"
+                />
+              </div>
+              <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
+                <Search className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </header>
