@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Search, Menu, User, ChevronDown } from "lucide-react";
+import { Search, Menu, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -94,6 +94,7 @@ export const MainHeader = ({ initialSearchCategory = "Products" }: { initialSear
                     variant="ghost" 
                     size="sm" 
                     className="h-7 w-7 p-0 hover:bg-transparent"
+                    aria-label="Select search category"
                   >
                     <ChevronDown className="h-3.5 w-3.5" />
                   </Button>
