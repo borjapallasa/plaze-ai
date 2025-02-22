@@ -5,6 +5,7 @@ import { Plus } from "lucide-react";
 import { ProductPricing } from "@/components/product/ProductPricing";
 import { VariantCard } from "./VariantCard";
 import { Variant, ProductVariantsEditorProps } from "./types/variants";
+import { VariantPicker } from "./VariantPicker";
 
 export function ProductVariantsEditor({ 
   variants: externalVariants,
