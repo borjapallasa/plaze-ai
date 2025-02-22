@@ -1,10 +1,10 @@
-
 import { useState } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Check, Search, User, Settings, Video, MessageSquare, Image, SmilePlus, Send } from "lucide-react";
+import { Check, Search, User, Settings, Video, MessageSquare, Image, SmilePlus, Send, ArrowLeft } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Chat {
   id: string;
@@ -88,6 +88,7 @@ const mockMessages: Message[] = [
 export default function Chats() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
+  const isMobile = useIsMobile();
 
   const filteredChats = mockChats.filter(chat =>
     chat.subject.toLowerCase().includes(searchQuery.toLowerCase())
@@ -97,13 +98,15 @@ export default function Chats() {
     <div className="min-h-screen bg-background">
       <MainHeader />
       
-      <div className="container mx-auto max-w-[1400px] px-4 lg:px-8 py-6 pt-28">
+      <div className="container mx-auto max-w-[1400px] px-2 md:px-4 lg:px-8 py-6 pt-28">
         <div className="flex h-[calc(100vh-96px)] rounded-lg border bg-card shadow-sm overflow-hidden">
           {/* Sidebar */}
-          <div className="w-80 border-r flex flex-col">
+          <div className={`${
+            isMobile && selectedChat ? 'hidden' : 'flex'
+          } w-full md:w-80 border-r flex-col`}>
             <div className="p-4 border-b">
               <div className="flex items-center justify-between mb-4">
-                <h1 className="text-2xl font-bold">Messages</h1>
+                <h1 className="text-xl md:text-2xl font-bold">Messages</h1>
                 <Button variant="ghost" size="icon" className="hover:bg-accent">
                   <Settings className="h-5 w-5" />
                 </Button>
@@ -167,12 +170,24 @@ export default function Chats() {
           </div>
 
           {/* Chat Area */}
-          <div className="flex-1 flex flex-col bg-background">
+          <div className={`${
+            isMobile && !selectedChat ? 'hidden' : 'flex'
+          } flex-1 flex-col bg-background`}>
             {selectedChat ? (
               <>
                 {/* Chat Header */}
-                <div className="px-6 py-4 border-b flex items-center justify-between bg-card/50 backdrop-blur-sm">
+                <div className="px-4 md:px-6 py-4 border-b flex items-center justify-between bg-card/50 backdrop-blur-sm">
                   <div className="flex items-center gap-3">
+                    {isMobile && (
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="mr-1 md:hidden" 
+                        onClick={() => setSelectedChat(null)}
+                      >
+                        <ArrowLeft className="h-5 w-5" />
+                      </Button>
+                    )}
                     <Avatar className="h-10 w-10 ring-2 ring-background">
                       <AvatarFallback>
                         <User className="h-5 w-5" />
@@ -188,10 +203,10 @@ export default function Chats() {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="ghost" size="icon" className="hover:bg-accent">
+                    <Button variant="ghost" size="icon" className="hover:bg-accent hidden md:inline-flex">
                       <Video className="h-5 w-5" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="hover:bg-accent">
+                    <Button variant="ghost" size="icon" className="hover:bg-accent hidden md:inline-flex">
                       <MessageSquare className="h-5 w-5" />
                     </Button>
                     <Button variant="ghost" size="icon" className="hover:bg-accent">
@@ -201,7 +216,7 @@ export default function Chats() {
                 </div>
 
                 {/* Messages */}
-                <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
                   {mockMessages.map((message) => (
                     <div 
                       key={message.id} 
@@ -213,7 +228,7 @@ export default function Chats() {
                         </AvatarFallback>
                         {message.avatar && <AvatarImage src={message.avatar} />}
                       </Avatar>
-                      <div className={`flex flex-col ${message.outgoing ? 'items-end' : 'items-start'} max-w-[80%]`}>
+                      <div className={`flex flex-col ${message.outgoing ? 'items-end' : 'items-start'} max-w-[85%] md:max-w-[80%]`}>
                         <div className="flex items-center gap-2 mb-1">
                           <span className={`text-sm font-medium ${message.outgoing ? 'order-2' : ''}`}>
                             {message.sender}
@@ -245,12 +260,12 @@ export default function Chats() {
                 </div>
 
                 {/* Message Input */}
-                <div className="p-4 border-t bg-card/50 backdrop-blur-sm">
+                <div className="p-3 md:p-4 border-t bg-card/50 backdrop-blur-sm">
                   <div className="flex gap-2 items-center">
-                    <Button variant="ghost" size="icon" className="flex-shrink-0 hover:bg-accent">
+                    <Button variant="ghost" size="icon" className="flex-shrink-0 hover:bg-accent hidden md:inline-flex">
                       <Image className="h-5 w-5" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="flex-shrink-0 hover:bg-accent">
+                    <Button variant="ghost" size="icon" className="flex-shrink-0 hover:bg-accent hidden md:inline-flex">
                       <SmilePlus className="h-5 w-5" />
                     </Button>
                     <Input 
