@@ -43,40 +43,56 @@ export default function AccountSettings() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="fixed top-0 left-0 right-0 z-50 bg-background">
+    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white dark:from-gray-900 dark:to-gray-800">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm">
         <MainHeader />
       </div>
 
       <div className="container mx-auto px-4 pt-24 pb-8 max-w-2xl">
         <div className="space-y-8">
           {/* Update Profile Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Update Your Profile</CardTitle>
+          <Card className="border-none shadow-lg">
+            <CardHeader className="space-y-1">
+              <CardTitle className="text-2xl">Update Your Profile</CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleProfileUpdate} className="space-y-6">
                 <div className="space-y-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="firstName">Name *</Label>
-                    <Input id="firstName" placeholder="Enter your first name" required />
+                    <Label htmlFor="firstName" className="text-base font-medium">Name *</Label>
+                    <Input 
+                      id="firstName" 
+                      placeholder="Enter your first name" 
+                      required 
+                      className="h-11 bg-white dark:bg-gray-800"
+                    />
                   </div>
 
                   <div className="grid gap-2">
-                    <Label htmlFor="lastName">Last Name *</Label>
-                    <Input id="lastName" placeholder="Enter your last name" required />
+                    <Label htmlFor="lastName" className="text-base font-medium">Last Name *</Label>
+                    <Input 
+                      id="lastName" 
+                      placeholder="Enter your last name" 
+                      required 
+                      className="h-11 bg-white dark:bg-gray-800"
+                    />
                   </div>
 
                   <div className="grid gap-2">
-                    <Label htmlFor="email">Email *</Label>
-                    <Input id="email" type="email" placeholder="Enter your email" required />
+                    <Label htmlFor="email" className="text-base font-medium">Email *</Label>
+                    <Input 
+                      id="email" 
+                      type="email" 
+                      placeholder="Enter your email" 
+                      required 
+                      className="h-11 bg-white dark:bg-gray-800"
+                    />
                   </div>
 
                   <div className="grid gap-2">
-                    <Label htmlFor="photo">Your Account Photo *</Label>
+                    <Label htmlFor="photo" className="text-base font-medium">Your Account Photo *</Label>
                     <div className="flex flex-col gap-4">
-                      <div className="flex items-center justify-center border-2 border-dashed rounded-lg p-6 cursor-pointer hover:border-primary/50 transition-colors">
+                      <div className="flex items-center justify-center border-2 border-dashed rounded-xl p-8 cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all duration-200">
                         <Input
                           id="photo"
                           type="file"
@@ -84,22 +100,23 @@ export default function AccountSettings() {
                           accept="image/*"
                           onChange={handleFileChange}
                         />
-                        <Label htmlFor="photo" className="cursor-pointer text-center space-y-2">
-                          <Upload className="mx-auto h-8 w-8 text-muted-foreground" />
+                        <Label htmlFor="photo" className="cursor-pointer text-center space-y-3">
+                          <Upload className="mx-auto h-10 w-10 text-primary/60" />
                           <div className="text-sm text-muted-foreground">
-                            Drag files here to upload or{" "}
-                            <span className="text-primary font-medium">Browse</span>
+                            Drop your image here or{" "}
+                            <span className="text-primary font-medium">browse</span>
                           </div>
                         </Label>
                       </div>
                       {selectedFile && (
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground bg-primary/5 px-4 py-2 rounded-lg">
                           <span className="truncate flex-1">Selected file</span>
                           <Button
                             type="button"
                             variant="ghost"
                             size="sm"
                             onClick={() => setSelectedFile(null)}
+                            className="hover:text-destructive"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -109,7 +126,7 @@ export default function AccountSettings() {
                   </div>
                 </div>
 
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full h-11 bg-primary hover:bg-primary/90">
                   Update Profile
                 </Button>
               </form>
@@ -117,20 +134,21 @@ export default function AccountSettings() {
           </Card>
 
           {/* Change Password Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Change Password</CardTitle>
+          <Card className="border-none shadow-lg">
+            <CardHeader className="space-y-1">
+              <CardTitle className="text-2xl">Change Password</CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handlePasswordChange} className="space-y-6">
                 <div className="space-y-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="oldPassword">Old password</Label>
+                    <Label htmlFor="oldPassword" className="text-base font-medium">Old password</Label>
                     <div className="relative">
                       <Input
                         id="oldPassword"
                         type={showOldPassword ? "text" : "password"}
                         placeholder="Enter your old password"
+                        className="h-11 bg-white dark:bg-gray-800 pr-12"
                       />
                       <Button
                         type="button"
@@ -149,12 +167,13 @@ export default function AccountSettings() {
                   </div>
 
                   <div className="grid gap-2">
-                    <Label htmlFor="newPassword">New password</Label>
+                    <Label htmlFor="newPassword" className="text-base font-medium">New password</Label>
                     <div className="relative">
                       <Input
                         id="newPassword"
                         type={showNewPassword ? "text" : "password"}
                         placeholder="Enter your new password"
+                        className="h-11 bg-white dark:bg-gray-800 pr-12"
                       />
                       <Button
                         type="button"
@@ -173,7 +192,7 @@ export default function AccountSettings() {
                   </div>
                 </div>
 
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full h-11 bg-primary hover:bg-primary/90">
                   Change Password
                 </Button>
               </form>
