@@ -220,8 +220,8 @@ export default function Index() {
 
   return (
     <>
-      <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm transition-all duration-200 ease-out bg-background/95 border-b ${
-        isScrolled ? 'h-16 bg-background' : ''
+      <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm transition-all duration-200 ease-out bg-background/95 ${
+        isScrolled ? 'bg-background' : ''
       }`}>
         <div className="container mx-auto px-4">
           <div className="hidden sm:flex relative py-4">
@@ -353,6 +353,7 @@ export default function Index() {
             </div>
           </div>
         </div>
+        <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-border" />
       </header>
       <main className="container mx-auto px-4 py-8 max-w-[1200px] space-y-8 mt-32">
         <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
