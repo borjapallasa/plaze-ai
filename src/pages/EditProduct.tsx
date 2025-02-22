@@ -63,20 +63,20 @@ const EditProduct = () => {
               <h2 className="text-lg font-medium mb-4">Product Organization</h2>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="type">Type</Label>
-                  <Input id="type" placeholder="Enter product type" />
+                  <Label htmlFor="team">Team</Label>
+                  <Input id="team" placeholder="Select team" />
                 </div>
                 <div>
-                  <Label htmlFor="vendor">Vendor</Label>
-                  <Input 
-                    id="vendor" 
-                    placeholder="Enter vendor name"
-                    defaultValue="Promisera"
-                  />
+                  <Label htmlFor="industries">Industries</Label>
+                  <Input id="industries" placeholder="Select industries" />
                 </div>
                 <div>
-                  <Label htmlFor="collections">Collections</Label>
-                  <Input id="collections" placeholder="Add collections" />
+                  <Label htmlFor="platform">Platform</Label>
+                  <Input id="platform" placeholder="Select platform" />
+                </div>
+                <div>
+                  <Label htmlFor="useCase">Use Case</Label>
+                  <Input id="useCase" placeholder="Select use case" />
                 </div>
               </div>
             </Card>
