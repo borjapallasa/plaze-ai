@@ -5,17 +5,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Search, Music, Users, Banknote, Zap, Monitor, Heart, Dumbbell, BookOpen, Heart as HeartIcon, ArrowRight, Menu, ChevronDown } from "lucide-react";
@@ -260,50 +252,32 @@ export default function Communities() {
                 }`}>
                   <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-md hover:shadow-lg transition-shadow bg-background">
                     <div className="flex items-center gap-2">
-                      <div className="sm:hidden">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              className="h-7 w-7 p-0 hover:bg-transparent"
-                              aria-label="Select search category"
-                            >
-                              <ChevronDown className="h-3.5 w-3.5" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="start" className="w-[200px]">
-                            <DropdownMenuItem onClick={() => setSearchCategory("Products")}>
-                              Products
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setSearchCategory("Experts")}>
-                              Experts
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setSearchCategory("Communities")}>
-                              Communities
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setSearchCategory("Jobs")}>
-                              Jobs
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                      <div className="hidden sm:block">
-                        <Select 
-                          defaultValue="Communities"
-                          onValueChange={setSearchCategory}
-                        >
-                          <SelectTrigger className="border-0 w-[140px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="w-[180px]">
-                            <SelectItem value="Products">Products</SelectItem>
-                            <SelectItem value="Experts">Experts</SelectItem>
-                            <SelectItem value="Communities">Communities</SelectItem>
-                            <SelectItem value="Jobs">Jobs</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-7 w-7 p-0 hover:bg-transparent"
+                            aria-label="Select search category"
+                          >
+                            <ChevronDown className="h-3.5 w-3.5" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start" className="w-[200px]">
+                          <DropdownMenuItem onClick={() => setSearchCategory("Products")}>
+                            Products
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setSearchCategory("Experts")}>
+                            Experts
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setSearchCategory("Communities")}>
+                            Communities
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setSearchCategory("Jobs")}>
+                            Jobs
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                       <Input
                         className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
                         placeholder={getPlaceholder(searchCategory)}
@@ -360,20 +334,37 @@ export default function Communities() {
             <div className="flex items-center justify-between gap-3">
               <div className="flex-1">
                 <div className="flex items-center gap-1 px-3 py-1.5 rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background">
-                  <Select defaultValue="Communities">
-                    <SelectTrigger className="border-0 w-[140px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-7">
-                      <SelectValue className="pr-4" />
-                    </SelectTrigger>
-                    <SelectContent className="w-[180px]">
-                      <SelectItem value="Products">Products</SelectItem>
-                      <SelectItem value="Experts">Experts</SelectItem>
-                      <SelectItem value="Communities">Communities</SelectItem>
-                      <SelectItem value="Jobs">Jobs</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="flex items-center">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-7 w-7 p-0 hover:bg-transparent"
+                          aria-label="Select search category"
+                        >
+                          <ChevronDown className="h-3.5 w-3.5" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start" className="w-[200px]">
+                        <DropdownMenuItem onClick={() => setSearchCategory("Products")}>
+                          Products
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setSearchCategory("Experts")}>
+                          Experts
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setSearchCategory("Communities")}>
+                          Communities
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setSearchCategory("Jobs")}>
+                          Jobs
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                   <Input
                     className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-7 text-sm flex-1"
-                    placeholder="Search communities..."
+                    placeholder={getPlaceholder(searchCategory)}
                     type="search"
                   />
                   <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90 h-7 w-7">
