@@ -181,6 +181,22 @@ const communities = [
 
 export default function Index() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [searchCategory, setSearchCategory] = useState("Products");
+
+  const getPlaceholder = (category: string) => {
+    switch(category) {
+      case "Products":
+        return "Search products...";
+      case "Experts":
+        return "Search experts...";
+      case "Communities":
+        return "Search communities...";
+      case "Jobs":
+        return "Search jobs...";
+      default:
+        return "Search...";
+    }
+  };
 
   useEffect(() => {
     let ticking = false;
@@ -243,6 +259,7 @@ export default function Index() {
                     <div className="flex-1 flex items-center gap-2">
                       <Select 
                         defaultValue="Products"
+                        onValueChange={setSearchCategory}
                       >
                         <SelectTrigger className="border-0 w-[140px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
                           <SelectValue className="pr-4" />
@@ -256,7 +273,7 @@ export default function Index() {
                       </Select>
                       <Input
                         className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
-                        placeholder="Search products..."
+                        placeholder={getPlaceholder(searchCategory)}
                         type="search"
                       />
                     </div>
@@ -312,6 +329,7 @@ export default function Index() {
               <div className="flex-1 flex items-center gap-2">
                 <Select 
                   defaultValue="Products"
+                  onValueChange={setSearchCategory}
                 >
                   <SelectTrigger className="border-0 w-[140px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
                     <SelectValue className="pr-4" />
@@ -325,7 +343,7 @@ export default function Index() {
                 </Select>
                 <Input
                   className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
-                  placeholder="Search products..."
+                  placeholder={getPlaceholder(searchCategory)}
                   type="search"
                 />
               </div>
