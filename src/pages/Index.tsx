@@ -379,7 +379,7 @@ export default function Index() {
           {[...Array(12)].map((_, index) => (
             <Card key={index} className="group relative flex flex-col p-4 lg:p-6 hover:bg-accent transition-colors">
               <div className="flex items-start gap-4">
-                <div className="w-20 h-20 rounded-lg bg-accent flex items-center justify-center overflow-hidden flex-shrink-0">
+                <div className="w-16 h-16 rounded-lg bg-accent flex items-center justify-center overflow-hidden flex-shrink-0">
                   <img
                     src="/lovable-uploads/50385371-4590-48ee-b814-7f6ce488745f.png"
                     alt={`Product ${index + 1}`}
