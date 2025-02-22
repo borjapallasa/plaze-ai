@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
@@ -21,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Typewriter from 'typewriter-effect';
 import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
 import {
   Select,
   SelectContent,
@@ -409,9 +411,17 @@ const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
+                  <Link to="/">
+                    <DropdownMenuItem>
+                      Home
+                    </DropdownMenuItem>
+                  </Link>
                   <DropdownMenuItem>Sign In</DropdownMenuItem>
                   <DropdownMenuItem>Sign Up</DropdownMenuItem>
                   <DropdownMenuSeparator />
+                  <Link to="/affiliates">
+                    <DropdownMenuItem>Affiliates</DropdownMenuItem>
+                  </Link>
                   <DropdownMenuItem>Sell on Plaze</DropdownMenuItem>
                   <DropdownMenuItem>Help Center</DropdownMenuItem>
                 </DropdownMenuContent>
