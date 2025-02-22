@@ -97,7 +97,7 @@ export const MainHeader = ({ initialSearchCategory = "Products" }: { initialSear
                     <ChevronDown className="h-3.5 w-3.5" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-[180px]">
+                <DropdownMenuContent align="start" className="w-[200px]">
                   {(location.pathname.includes('/community') || location.pathname.includes('/classroom')) && (
                     <DropdownMenuItem onClick={() => setMobileSearchCategory("This Community")}>
                       This Community
@@ -167,10 +167,10 @@ export const MainHeader = ({ initialSearchCategory = "Products" }: { initialSear
                   defaultValue={getInitialDesktopSearchCategory()}
                   onValueChange={setDesktopSearchCategory}
                 >
-                  <SelectTrigger className="border-0 w-[140px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-7 text-sm [&>span]:whitespace-nowrap [&>span]:overflow-visible">
+                  <SelectTrigger className="border-0 w-[200px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-7 text-sm [&>span]:whitespace-nowrap [&>span]:overflow-visible">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="w-[180px]">
+                  <SelectContent className="w-[240px]">
                     {(location.pathname.includes('/community') || location.pathname.includes('/classroom')) && (
                       <SelectItem value="ThisCommunity" className="whitespace-nowrap">This Community</SelectItem>
                     )}
