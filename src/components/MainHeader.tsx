@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Search, Menu, User, ChevronDown, Home } from "lucide-react";
+import { Search, Menu, User, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -133,17 +133,16 @@ export const MainHeader = () => {
             <DropdownMenuContent align="end" className="w-56">
               <Link to="/">
                 <DropdownMenuItem>
-                  <Home className="mr-2 h-4 w-4" />
                   Home
                 </DropdownMenuItem>
               </Link>
               <DropdownMenuItem>Sign In</DropdownMenuItem>
               <DropdownMenuItem>Sign Up</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Sell on Plaze</DropdownMenuItem>
               <Link to="/affiliates">
                 <DropdownMenuItem>Affiliates</DropdownMenuItem>
               </Link>
+              <DropdownMenuItem>Sell on Plaze</DropdownMenuItem>
               <DropdownMenuItem>Help Center</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -208,17 +207,16 @@ export const MainHeader = () => {
               <DropdownMenuContent align="end" className="w-56">
                 <Link to="/">
                   <DropdownMenuItem>
-                    <Home className="mr-2 h-4 w-4" />
                     Home
                   </DropdownMenuItem>
                 </Link>
                 <DropdownMenuItem>Sign In</DropdownMenuItem>
                 <DropdownMenuItem>Sign Up</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Sell on Plaze</DropdownMenuItem>
                 <Link to="/affiliates">
                   <DropdownMenuItem>Affiliates</DropdownMenuItem>
                 </Link>
+                <DropdownMenuItem>Sell on Plaze</DropdownMenuItem>
                 <DropdownMenuItem>Help Center</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
