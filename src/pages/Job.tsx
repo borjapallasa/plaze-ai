@@ -222,12 +222,73 @@ export default function JobDetails() {
               </div>
             </Card>
 
+            {/* Client Info and Job Link - Visible on mobile, hidden on desktop */}
+            <div className="lg:hidden space-y-4">
+              <Card className="p-6">
+                <h2 className="text-lg font-semibold mb-4">About the client</h2>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    {job.clientInfo.paymentVerified && (
+                      <Badge variant="secondary" className="rounded-full">
+                        Payment method verified
+                      </Badge>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <div className="flex">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-4 w-4 ${
+                            i < Math.floor(job.clientInfo.rating)
+                              ? "fill-yellow-400 text-yellow-400"
+                              : "fill-gray-200 text-gray-200"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-sm text-muted-foreground">
+                      {job.clientInfo.rating} of {job.clientInfo.totalReviews} reviews
+                    </span>
+                  </div>
+
+                  <div className="space-y-2 text-sm">
+                    <p>{job.clientInfo.location}</p>
+                    <p>{job.clientInfo.localTime}</p>
+                    <p>{job.clientInfo.jobsPosted} jobs posted</p>
+                    <p>{job.clientInfo.hireRate}, {job.clientInfo.openJobs} open jobs</p>
+                    <p>{job.clientInfo.totalSpent} total spent</p>
+                    <p>{job.clientInfo.totalHires} hires, {job.clientInfo.activeHires} active</p>
+                    <p>{job.clientInfo.avgHourlyRate}/hr avg hourly rate paid</p>
+                    <p>{job.clientInfo.totalHours} hours</p>
+                    <p>Member since {job.clientInfo.memberSince}</p>
+                  </div>
+
+                  <div className="pt-4 border-t">
+                    <p className="font-medium">{job.clientInfo.category}</p>
+                    <p className="text-sm text-muted-foreground">{job.clientInfo.type}</p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="p-6">
+                <h2 className="text-lg font-semibold mb-4">Job link</h2>
+                <div className="p-2 bg-muted rounded text-sm mb-4">
+                  https://www.plaze.ai/jobs/
+                </div>
+                <Button variant="outline" className="w-full">
+                  Copy link
+                </Button>
+              </Card>
+            </div>
+
             <ProductReviews reviews={reviews} className="p-6 border rounded-lg" />
           </div>
 
-          {/* Sidebar */}
-          <div className="space-y-4">
-            <Button className="w-full hidden lg:block">Apply now</Button>
+          {/* Sidebar - Hidden on mobile */}
+          <div className="hidden lg:block space-y-4">
+            <Button className="w-full">Apply now</Button>
 
             <Card className="p-6">
               <h2 className="text-lg font-semibold mb-4">About the client</h2>
