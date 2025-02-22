@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
-import { Search, Menu, User, Star, Target, Building, DollarSign, ChartBar, ShoppingBag } from "lucide-react";
+import { Search, Menu, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Typewriter from 'typewriter-effect';
 import { Link } from "react-router-dom";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
 import { CategoryHeader } from "@/components/CategoryHeader";
 
 const typewriterStrings = [
@@ -226,21 +225,6 @@ const banners = [
   }
 ];
 
-const departments = [
-  { name: "Business", icon: Building },
-  { name: "Jobs", icon: User },
-  { name: "Partners", icon: User },
-  { name: "Finance", icon: DollarSign },
-  { name: "Analytics", icon: ChartBar },
-  { name: "Teams", icon: User },
-  { name: "Logistics", icon: Star },
-  { name: "Manufacturing", icon: Building },
-  { name: "Payments", icon: DollarSign },
-  { name: "Commerce", icon: ShoppingBag },
-  { name: "Marketing", icon: Target },
-  { name: "Settings", icon: Menu }
-];
-
 const Header = ({ isScrolled, searchCategory, setSearchCategory }) => {
   const isMobile = useIsMobile();
 
@@ -397,8 +381,6 @@ const Index = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchCategory, setSearchCategory] = useState("Products");
-  const [api, setApi] = useState<CarouselApi>();
-  const [canScrollPrev, setCanScrollPrev] = useState(false);
 
   useEffect(() => {
     let ticking = false;
@@ -420,25 +402,6 @@ const Index = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  useEffect(() => {
-    if (!api) {
-      return;
-    }
-
-    const onScroll = () => {
-      setCanScrollPrev(api.canScrollPrev());
-    };
-
-    api.on("scroll", onScroll);
-    api.on("reInit", onScroll);
-    onScroll();
-
-    return () => {
-      api.off("scroll", onScroll);
-      api.off("reInit", onScroll);
-    };
-  }, [api]);
-
   const filteredProducts = useMemo(() => 
     selectedCategory
       ? products.filter(product => product.category === selectedCategory)
@@ -453,47 +416,6 @@ const Index = () => {
         searchCategory={searchCategory}
         setSearchCategory={setSearchCategory}
       />
-
-      <div 
-        className={`sticky bg-background border-b transition-all duration-200 ease-out ${
-          isScrolled ? 'top-20 z-40' : 'top-[140px] z-30'
-        }`}
-      >
-        <div className="container mx-auto px-4 py-6">
-          <Carousel
-            setApi={setApi}
-            opts={{
-              align: "start",
-              dragFree: true,
-            }}
-            className="w-full"
-          >
-            <CarouselContent className="-ml-4">
-              {departments.map((dept, index) => {
-                const Icon = dept.icon;
-                return (
-                  <CarouselItem key={index} className="pl-4 basis-[120px]">
-                    <div className="flex flex-col items-center gap-2">
-                      <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center">
-                        <Icon className="w-6 h-6 text-muted-foreground" />
-                      </div>
-                      <span className="text-xs text-muted-foreground whitespace-nowrap">
-                        {dept.name}
-                      </span>
-                    </div>
-                  </CarouselItem>
-                );
-              })}
-            </CarouselContent>
-            {canScrollPrev && (
-              <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-background via-background to-transparent z-10" />
-            )}
-            <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-background via-background to-transparent z-10" />
-            {canScrollPrev && <CarouselPrevious className="-left-12" />}
-            <CarouselNext className="-right-12" />
-          </Carousel>
-        </div>
-      </div>
 
       <main>
         <CategoryHeader 
