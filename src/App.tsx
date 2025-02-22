@@ -15,6 +15,7 @@ import SignIn from "./pages/sign-in";
 import SignInCommunity from "./pages/sign-in-community";
 import Classroom from "./pages/Classroom";
 import Jobs from "./pages/Jobs";
+import JobDetails from "./pages/JobDetails";
 import ManageSubscriptions from "./pages/ManageSubscriptions";
 import Blog from "./pages/Blog";
 import Affiliates from "./pages/Affiliates";
@@ -40,6 +41,7 @@ const App = () => (
           <Route path="/sign-in/community" element={<SignInCommunity />} />
           <Route path="/community/classroom" element={<Classroom />} />
           <Route path="/jobs" element={<Jobs />} />
+          <Route path="/jobs/:id" element={<JobDetails />} />
           <Route path="/manage-subscriptions" element={<ManageSubscriptions />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/affiliates" element={<Affiliates />} />
