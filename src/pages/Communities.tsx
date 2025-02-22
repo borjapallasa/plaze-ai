@@ -18,7 +18,6 @@ import { Link } from "react-router-dom";
 
 export default function Communities() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [searchCategory, setSearchCategory] = useState("Communities");
 
   useEffect(() => {
     let ticking = false;
@@ -39,23 +38,6 @@ export default function Communities() {
     
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
-
-  const getPlaceholder = (category: string) => {
-    switch(category) {
-      case "This Community":
-        return "Search in this community...";
-      case "Products":
-        return "Search products...";
-      case "Experts":
-        return "Search experts...";
-      case "Communities":
-        return "Search communities...";
-      case "Jobs":
-        return "Search jobs...";
-      default:
-        return "Search...";
-    }
-  };
 
   const categories = [
     { id: 'all', label: 'All', icon: Users },
@@ -207,157 +189,9 @@ export default function Communities() {
     }
   ];
 
-  const typewriterStrings = [
-    "To Learn",
-    "To Connect",
-    "To Grow",
-    "To Share"
-  ];
-
   return (
     <>
-      <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm transition-all duration-200 ease-out bg-background/95 ${
-        isScrolled ? 'bg-background' : ''
-      }`}>
-        <div className="container mx-auto px-4">
-          <div className="hidden sm:flex relative py-6">
-            <div className="w-full flex flex-col items-center">
-              <div className={`transition-all duration-300 ease-out ${
-                isScrolled ? 'opacity-0 h-0 mb-0 overflow-hidden' : 'opacity-100 h-[42px] mb-8'
-              }`}>
-                <div className="text-[2rem] leading-relaxed font-bold whitespace-nowrap flex items-center justify-center">
-                  <span className="text-foreground">Join Communities</span>
-                  <span className="text-muted-foreground ml-2">
-                    <Typewriter
-                      options={{
-                        strings: ["To Grow", "To Learn", "To Share", "To Connect"],
-                        autoStart: true,
-                        loop: true,
-                        delay: 50,
-                        deleteSpeed: 30,
-                      }}
-                    />
-                  </span>
-                </div>
-              </div>
-
-              <div className={`w-full max-w-3xl transition-transform duration-300 ease-in-out ${
-                isScrolled ? 'transform -translate-y-2' : ''
-              }`}>
-                <div className="flex items-center gap-2 px-4 py-3 rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="h-9 w-9 p-0 hover:bg-transparent"
-                      >
-                        <ChevronDown className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="w-[200px]">
-                      <DropdownMenuItem onClick={() => setSearchCategory("Products")}>
-                        Products
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setSearchCategory("Experts")}>
-                        Experts
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setSearchCategory("Communities")}>
-                        Communities
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setSearchCategory("Jobs")}>
-                        Jobs
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                  <div className="flex-1">
-                    <Input
-                      className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9 text-base"
-                      placeholder={getPlaceholder(searchCategory)}
-                      type="search"
-                    />
-                  </div>
-                  <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90 h-9 w-9">
-                    <Search className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Mobile header content */}
-          <div className="sm:hidden py-2">
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex-1">
-                <div className="flex items-center gap-1 px-3 py-1.5 rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background">
-                  <div className="flex items-center">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="h-7 w-7 p-0 hover:bg-transparent"
-                          aria-label="Select search category"
-                        >
-                          <ChevronDown className="h-3.5 w-3.5" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="start" className="w-[200px]">
-                        <DropdownMenuItem onClick={() => setSearchCategory("Products")}>
-                          Products
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setSearchCategory("Experts")}>
-                          Experts
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setSearchCategory("Communities")}>
-                          Communities
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setSearchCategory("Jobs")}>
-                          Jobs
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                  <Input
-                    className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-7 text-sm flex-1"
-                    placeholder={getPlaceholder(searchCategory)}
-                    type="search"
-                  />
-                  <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90 h-7 w-7">
-                    <Search className="h-3.5 w-3.5" />
-                  </Button>
-                </div>
-              </div>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    className="rounded-full px-2.5 py-1.5 h-8 border-2 hover:border-primary/20 transition-colors"
-                  >
-                    <Menu className="h-3.5 w-3.5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <Link to="/">
-                    <DropdownMenuItem>
-                      Home
-                    </DropdownMenuItem>
-                  </Link>
-                  <DropdownMenuItem>Sign In</DropdownMenuItem>
-                  <DropdownMenuItem>Sign Up</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <Link to="/affiliates">
-                    <DropdownMenuItem>Affiliates</DropdownMenuItem>
-                  </Link>
-                  <DropdownMenuItem>Sell on Plaze</DropdownMenuItem>
-                  <DropdownMenuItem>Help Center</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-border" />
-      </header>
+      <MainHeader initialSearchCategory="Communities" />
       <main className="container mx-auto px-4 py-8 max-w-[1200px] space-y-8 mt-32">
         <div className="text-center space-y-4">
           <h1 className="text-4xl md:text-5xl font-bold">
