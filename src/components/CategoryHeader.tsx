@@ -1,6 +1,7 @@
 
 import React, { useMemo, useCallback } from "react";
 import { TrendingUp, Sparkle, Trophy, ThumbsUp, Star, Tags, LucideIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface CategoryHeaderProps {
   selectedCategory: string | null;
@@ -13,6 +14,10 @@ interface BadgeItem {
   category: string | null;
 }
 
+const baseBadgeStyles = "inline-flex items-center rounded-full border px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200";
+const selectedBadgeStyles = "border-transparent bg-primary text-primary-foreground shadow-md";
+const unselectedBadgeStyles = "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary hover:shadow-sm";
+
 const CategoryBadge = React.memo(({ 
   badge, 
   isSelected, 
@@ -23,16 +28,13 @@ const CategoryBadge = React.memo(({
   onClick: () => void;
 }) => {
   const Icon = badge.icon;
+  const badgeStyles = useMemo(() => 
+    cn(baseBadgeStyles, isSelected ? selectedBadgeStyles : unselectedBadgeStyles),
+    [isSelected]
+  );
   
   return (
-    <div
-      onClick={onClick}
-      className={`inline-flex items-center rounded-full border px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200 ${
-        isSelected 
-          ? 'border-transparent bg-primary text-primary-foreground shadow-md' 
-          : 'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary hover:shadow-sm'
-      }`}
-    >
+    <div onClick={onClick} className={badgeStyles}>
       <Icon className="w-4 h-4 mr-2" aria-hidden="true" />
       {badge.label}
     </div>
@@ -41,7 +43,13 @@ const CategoryBadge = React.memo(({
 
 CategoryBadge.displayName = "CategoryBadge";
 
-export const CategoryHeader = ({ selectedCategory, onCategoryChange }: CategoryHeaderProps) => {
+const containerStyles = {
+  wrapper: "container mx-auto px-4",
+  inner: "space-y-4 pt-8 pb-6",
+  badgeContainer: "flex flex-wrap gap-3"
+} as const;
+
+export const CategoryHeader = React.memo(({ selectedCategory, onCategoryChange }: CategoryHeaderProps) => {
   const badges = useMemo(() => [
     { label: "Trending", icon: TrendingUp, category: null },
     { label: "Newest", icon: Sparkle, category: "template" },
@@ -55,20 +63,26 @@ export const CategoryHeader = ({ selectedCategory, onCategoryChange }: CategoryH
     onCategoryChange(selectedCategory === category ? null : category);
   }, [selectedCategory, onCategoryChange]);
 
+  const getBadgeClickHandler = useCallback((category: string | null) => {
+    return () => handleBadgeClick(category);
+  }, [handleBadgeClick]);
+
   return (
-    <div className="container mx-auto px-4">
-      <div className="space-y-4 pt-8 pb-6">
-        <div className="flex flex-wrap gap-3">
+    <div className={containerStyles.wrapper}>
+      <div className={containerStyles.inner}>
+        <div className={containerStyles.badgeContainer}>
           {badges.map((badge) => (
             <CategoryBadge
               key={`${badge.label}-${badge.category}`}
               badge={badge}
               isSelected={selectedCategory === badge.category}
-              onClick={() => handleBadgeClick(badge.category)}
+              onClick={getBadgeClickHandler(badge.category)}
             />
           ))}
         </div>
       </div>
     </div>
   );
-};
+});
+
+CategoryHeader.displayName = "CategoryHeader";
