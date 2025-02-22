@@ -392,6 +392,16 @@ export default function Product() {
               className="mb-6"
             />
           </div>
+          <Button 
+            variant="outline" 
+            className="w-full flex items-center justify-center gap-2 mb-6"
+            onClick={() => {
+              console.log("Contact seller clicked");
+            }}
+          >
+            <MessageCircle className="h-4 w-4" />
+            Contact Seller
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
@@ -490,7 +500,7 @@ export default function Product() {
           <div className="aspect-video bg-accent rounded-lg"></div>
         </Card>
 
-        {/* Mobile Additional Information and Contact Seller */}
+        {/* Mobile Additional Information */}
         <div className="lg:hidden mb-8">
           <Card className="p-6 mb-4">
             <h3 className="font-semibold mb-4">Additional Information</h3>
@@ -530,16 +540,6 @@ export default function Product() {
               </div>
             </div>
           </Card>
-          <Button 
-            variant="outline" 
-            className="w-full flex items-center justify-center gap-2"
-            onClick={() => {
-              console.log("Contact seller clicked");
-            }}
-          >
-            <MessageCircle className="h-4 w-4" />
-            Contact Seller
-          </Button>
         </div>
 
         <ProductReviews reviews={reviews} className="p-6 mb-16" />
