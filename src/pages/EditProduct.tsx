@@ -32,67 +32,69 @@ const EditProduct = () => {
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-12 gap-3 sm:gap-6">
-            <div className="lg:col-span-8 space-y-3 sm:space-y-6">
-              <div className="lg:hidden">
-                <ProductStatus />
+          <div className="space-y-3 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-6">
+            <div className="lg:col-span-8">
+              <div className="space-y-3 sm:space-y-6">
+                <div className="lg:hidden">
+                  <ProductStatus />
+                </div>
+
+                <Card className="p-3 sm:p-6">
+                  <div className="space-y-3 sm:space-y-4">
+                    <div>
+                      <Label htmlFor="title">Title</Label>
+                      <Input
+                        id="title"
+                        placeholder="Enter product title"
+                        defaultValue="Veilleuse LED Personnalisée Pour Enfants Lampe Arc-En-Ciel Avec Prénom"
+                      />
+                    </div>
+                    <div>
+                      <Label>Description</Label>
+                      <ProductEditor />
+                    </div>
+                  </div>
+                </Card>
+
+                <Card className="p-3 sm:p-6">
+                  <h2 className="text-lg font-medium mb-3 sm:mb-4">Product Details</h2>
+                  <div className="space-y-3 sm:space-y-4">
+                    <div>
+                      <Label htmlFor="apps">Apps</Label>
+                      <Input id="apps" placeholder="Enter required apps" />
+                    </div>
+                    <div>
+                      <Label htmlFor="appsPricing">Apps Pricing</Label>
+                      <Input id="appsPricing" placeholder="Enter apps pricing details" />
+                    </div>
+                    <div>
+                      <Label htmlFor="included">Included</Label>
+                      <Input id="included" placeholder="Enter what's included" />
+                    </div>
+                    <div>
+                      <Label htmlFor="difficultyLevel">Difficulty Level</Label>
+                      <Input id="difficultyLevel" placeholder="Select difficulty level" />
+                    </div>
+                    <div>
+                      <Label htmlFor="demo">Demo</Label>
+                      <Input id="demo" placeholder="Enter demo link" type="url" />
+                    </div>
+                    <div>
+                      <Label htmlFor="filesLink">Files Link</Label>
+                      <Input id="filesLink" placeholder="Enter files link" type="url" />
+                    </div>
+                  </div>
+                </Card>
+
+                <Card className="p-3 sm:p-6">
+                  <h2 className="text-lg font-medium mb-3 sm:mb-4">Media</h2>
+                  <ProductMediaUpload />
+                </Card>
+
+                <Card className="p-3 sm:p-6">
+                  <ProductVariants />
+                </Card>
               </div>
-
-              <Card className="p-3 sm:p-6">
-                <div className="space-y-3 sm:space-y-4">
-                  <div>
-                    <Label htmlFor="title">Title</Label>
-                    <Input
-                      id="title"
-                      placeholder="Enter product title"
-                      defaultValue="Veilleuse LED Personnalisée Pour Enfants Lampe Arc-En-Ciel Avec Prénom"
-                    />
-                  </div>
-                  <div>
-                    <Label>Description</Label>
-                    <ProductEditor />
-                  </div>
-                </div>
-              </Card>
-
-              <Card className="p-3 sm:p-6">
-                <h2 className="text-lg font-medium mb-3 sm:mb-4">Product Details</h2>
-                <div className="space-y-3 sm:space-y-4">
-                  <div>
-                    <Label htmlFor="apps">Apps</Label>
-                    <Input id="apps" placeholder="Enter required apps" />
-                  </div>
-                  <div>
-                    <Label htmlFor="appsPricing">Apps Pricing</Label>
-                    <Input id="appsPricing" placeholder="Enter apps pricing details" />
-                  </div>
-                  <div>
-                    <Label htmlFor="included">Included</Label>
-                    <Input id="included" placeholder="Enter what's included" />
-                  </div>
-                  <div>
-                    <Label htmlFor="difficultyLevel">Difficulty Level</Label>
-                    <Input id="difficultyLevel" placeholder="Select difficulty level" />
-                  </div>
-                  <div>
-                    <Label htmlFor="demo">Demo</Label>
-                    <Input id="demo" placeholder="Enter demo link" type="url" />
-                  </div>
-                  <div>
-                    <Label htmlFor="filesLink">Files Link</Label>
-                    <Input id="filesLink" placeholder="Enter files link" type="url" />
-                  </div>
-                </div>
-              </Card>
-
-              <Card className="p-3 sm:p-6">
-                <h2 className="text-lg font-medium mb-3 sm:mb-4">Media</h2>
-                <ProductMediaUpload />
-              </Card>
-
-              <Card className="p-3 sm:p-6">
-                <ProductVariants />
-              </Card>
             </div>
 
             <div className="lg:col-span-4 space-y-3 sm:space-y-6">

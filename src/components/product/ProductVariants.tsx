@@ -150,7 +150,7 @@ export function ProductVariants({
 
       <div className="space-y-4">
         {variants.map((variant) => (
-          <React.Fragment key={variant.id}>
+          <div key={variant.id}>
             {(variants.length > 1 || variant.name || variant.highlight || (variant.tags && variant.tags.length > 0)) && (
               <Card className="p-4 border rounded-lg shadow-sm">
                 <div className="space-y-4">
@@ -267,7 +267,7 @@ export function ProductVariants({
                 </div>
               </Card>
             )}
-          </React.Fragment>
+          </div>
         ))}
       </div>
     </div>
