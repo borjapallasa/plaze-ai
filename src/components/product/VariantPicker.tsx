@@ -28,9 +28,9 @@ export function VariantPicker({
   className = ""
 }: VariantPickerProps) {
   return (
-    <div className={`space-y-4 ${className}`}>
+    <div className={`space-y-3 ${className}`}>
       <h2 className="text-lg font-semibold">Choose your package</h2>
-      <div className="grid gap-4">
+      <div className="grid gap-6">
         {variants.map((variant, index) => {
           const badge = getBadgeLabel(index, variant);
           const isSelected = selectedVariant === variant.id;
