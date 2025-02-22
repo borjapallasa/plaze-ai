@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Search, Music, Users, Banknote, Zap, Monitor, Heart, Dumbbell, BookOpen, Heart as HeartIcon } from "lucide-react";
+import { Search, Music, Users, Banknote, Zap, Monitor, Heart, Dumbbell, BookOpen, Heart as HeartIcon, ArrowRight } from "lucide-react";
 
 export default function Communities() {
   const categories = [
@@ -72,21 +72,25 @@ export default function Communities() {
           {categories.map((category) => {
             const Icon = category.icon;
             return (
-              <Button
+              <Badge
                 key={category.id}
-                variant={category.id === 'all' ? "default" : "outline"}
-                className="flex-shrink-0"
+                variant={category.id === 'all' ? "default" : "secondary"}
+                className={`px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200 ${
+                  category.id === 'all' 
+                    ? 'bg-primary text-primary-foreground shadow-md' 
+                    : 'hover:bg-secondary hover:shadow-sm'
+                }`}
               >
                 <Icon className="w-4 h-4 mr-2" />
                 {category.label}
-              </Button>
+              </Badge>
             );
           })}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {communities.map((community) => (
-            <Card key={community.id} className="group hover:shadow-lg transition-shadow">
+            <Card key={community.id} className="group hover:shadow-lg transition-shadow relative">
               <div className="aspect-video relative overflow-hidden">
                 <img 
                   src={community.image} 
@@ -113,7 +117,7 @@ export default function Communities() {
                   </div>
                 </div>
 
-                <p className="text-muted-foreground text-sm line-clamp-2">
+                <p className="text-muted-foreground text-sm line-clamp-2 text-left">
                   {community.description}
                 </p>
 
@@ -125,6 +129,8 @@ export default function Communities() {
                     {community.price}
                   </div>
                 </div>
+
+                <ArrowRight className="absolute bottom-4 right-4 w-5 h-5 text-primary opacity-0 transform translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0" />
               </CardContent>
             </Card>
           ))}
