@@ -171,26 +171,26 @@ export default function JobDetails() {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="flex items-start gap-3">
-                  <Clock className="h-6 w-6 text-muted-foreground mt-0.5 flex-shrink-0" />
+                  <Clock className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" />
                   <div className="min-w-0">
-                    <p className="font-medium text-base">{job.workDetails.hours}</p>
-                    <p className="text-sm text-muted-foreground">Hourly</p>
+                    <p className="font-medium text-sm">{job.workDetails.hours}</p>
+                    <p className="text-xs text-muted-foreground">Hourly</p>
                   </div>
                 </div>
                 
                 <div className="flex items-start gap-3">
-                  <Calendar className="h-6 w-6 text-muted-foreground mt-0.5 flex-shrink-0" />
+                  <Calendar className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" />
                   <div className="min-w-0">
-                    <p className="font-medium text-base">{job.workDetails.duration}</p>
-                    <p className="text-sm text-muted-foreground">Project Length</p>
+                    <p className="font-medium text-sm">{job.workDetails.duration}</p>
+                    <p className="text-xs text-muted-foreground">Project Length</p>
                   </div>
                 </div>
                 
                 <div className="flex items-start gap-3">
-                  <Briefcase className="h-6 w-6 text-muted-foreground mt-0.5 flex-shrink-0" />
+                  <Briefcase className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" />
                   <div className="min-w-0">
-                    <p className="font-medium text-base leading-snug">{job.workDetails.experience}</p>
-                    <p className="text-sm text-muted-foreground">{job.workDetails.experienceDetails}</p>
+                    <p className="font-medium text-sm leading-snug">{job.workDetails.experience}</p>
+                    <p className="text-xs text-muted-foreground">{job.workDetails.experienceDetails}</p>
                   </div>
                 </div>
               </div>
