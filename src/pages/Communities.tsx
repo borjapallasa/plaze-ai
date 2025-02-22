@@ -18,13 +18,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Search, Music, Users, Banknote, Zap, Monitor, Heart, Dumbbell, BookOpen, Heart as HeartIcon, ArrowRight, Menu, User } from "lucide-react";
+import { Search, Music, Users, Banknote, Zap, Monitor, Heart, Dumbbell, BookOpen, Heart as HeartIcon, ArrowRight, Menu, ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import Typewriter from 'typewriter-effect';
 import { Link } from "react-router-dom";
 
 export default function Communities() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [searchCategory, setSearchCategory] = useState("Communities");
 
   useEffect(() => {
     let ticking = false;
@@ -45,6 +46,23 @@ export default function Communities() {
     
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  const getPlaceholder = (category: string) => {
+    switch(category) {
+      case "This Community":
+        return "Search in this community...";
+      case "Products":
+        return "Search products...";
+      case "Experts":
+        return "Search experts...";
+      case "Communities":
+        return "Search communities...";
+      case "Jobs":
+        return "Search jobs...";
+      default:
+        return "Search...";
+    }
+  };
 
   const categories = [
     { id: 'all', label: 'All', icon: Users },
@@ -241,23 +259,54 @@ export default function Communities() {
                   isScrolled ? 'w-[360px]' : 'w-[540px]'
                 }`}>
                   <div className="flex items-center gap-2 px-4 py-2 rounded-full border shadow-md hover:shadow-lg transition-shadow bg-background">
-                    <div className="flex-1 flex items-center gap-2">
-                      <Select 
-                        defaultValue="Communities"
-                      >
-                        <SelectTrigger className="border-0 w-[140px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
-                          <SelectValue className="pr-4" />
-                        </SelectTrigger>
-                        <SelectContent className="w-[180px]">
-                          <SelectItem value="Products">Products</SelectItem>
-                          <SelectItem value="Experts">Experts</SelectItem>
-                          <SelectItem value="Communities">Communities</SelectItem>
-                          <SelectItem value="Jobs">Jobs</SelectItem>
-                        </SelectContent>
-                      </Select>
+                    <div className="flex items-center gap-2">
+                      <div className="sm:hidden">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="h-7 w-7 p-0 hover:bg-transparent"
+                              aria-label="Select search category"
+                            >
+                              <ChevronDown className="h-3.5 w-3.5" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="start" className="w-[200px]">
+                            <DropdownMenuItem onClick={() => setSearchCategory("Products")}>
+                              Products
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setSearchCategory("Experts")}>
+                              Experts
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setSearchCategory("Communities")}>
+                              Communities
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setSearchCategory("Jobs")}>
+                              Jobs
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                      <div className="hidden sm:block">
+                        <Select 
+                          defaultValue="Communities"
+                          onValueChange={setSearchCategory}
+                        >
+                          <SelectTrigger className="border-0 w-[140px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="w-[180px]">
+                            <SelectItem value="Products">Products</SelectItem>
+                            <SelectItem value="Experts">Experts</SelectItem>
+                            <SelectItem value="Communities">Communities</SelectItem>
+                            <SelectItem value="Jobs">Jobs</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                       <Input
                         className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
-                        placeholder="Search communities..."
+                        placeholder={getPlaceholder(searchCategory)}
                         type="search"
                       />
                     </div>
@@ -307,7 +356,6 @@ export default function Communities() {
             </div>
           </div>
 
-          {/* Mobile Header */}
           <div className="sm:hidden py-2">
             <div className="flex items-center justify-between gap-3">
               <div className="flex-1">
