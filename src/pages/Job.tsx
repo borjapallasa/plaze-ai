@@ -168,31 +168,27 @@ export default function JobDetails() {
 
               <Separator className="mb-6" />
 
-              <div className="flex items-center gap-6 flex-wrap mb-6">
-                <div className="flex items-start gap-2">
-                  <Clock className="h-5 w-5 text-muted-foreground mt-0.5" />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div className="flex items-start gap-3">
+                  <Clock className="h-6 w-6 text-muted-foreground mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="font-medium">{job.workDetails.hours}</p>
+                    <p className="font-medium text-base">{job.workDetails.hours}</p>
                     <p className="text-sm text-muted-foreground">Hourly</p>
                   </div>
                 </div>
                 
-                <Separator orientation="vertical" className="h-8" />
-                
-                <div className="flex items-start gap-2">
-                  <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
+                <div className="flex items-start gap-3">
+                  <Calendar className="h-6 w-6 text-muted-foreground mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="font-medium">{job.workDetails.duration}</p>
+                    <p className="font-medium text-base">{job.workDetails.duration}</p>
                     <p className="text-sm text-muted-foreground">Project Length</p>
                   </div>
                 </div>
                 
-                <Separator orientation="vertical" className="h-8" />
-                
-                <div className="flex items-start gap-2">
-                  <Briefcase className="h-5 w-5 text-muted-foreground mt-0.5" />
+                <div className="flex items-start gap-3">
+                  <Briefcase className="h-6 w-6 text-muted-foreground mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="font-medium">{job.workDetails.experience}</p>
+                    <p className="font-medium text-base">{job.workDetails.experience}</p>
                     <p className="text-sm text-muted-foreground">{job.workDetails.experienceDetails}</p>
                   </div>
                 </div>
