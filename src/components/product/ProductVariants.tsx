@@ -9,21 +9,30 @@ import { Card } from "@/components/ui/card";
 
 interface Variant {
   id: string;
-  price: string;
-  comparePrice: string;
+  name?: string;
+  price: string | number;
+  comparePrice: string | number;
   highlight: boolean;
   tags: string[];
+  label?: string;
+  features?: string[];
 }
 
 interface ProductVariantsProps {
   variants?: Variant[];
   onVariantsChange?: (variants: Variant[]) => void;
+  selectedVariant?: string;
+  onVariantChange?: (variantId: string) => void;
+  onAddToCart?: () => void;
   className?: string;
 }
 
 export function ProductVariants({ 
   variants: externalVariants,
   onVariantsChange,
+  selectedVariant,
+  onVariantChange,
+  onAddToCart,
   className = ""
 }: ProductVariantsProps) {
   const [internalVariants, setInternalVariants] = React.useState<Variant[]>([
@@ -75,7 +84,7 @@ export function ProductVariants({
     setVariants(
       variants.map((v) =>
         v.id === variantId
-          ? { ...v, tags: [...v.tags, tag].slice(0, 2) }
+          ? { ...v, tags: [...(v.tags || []), tag].slice(0, 2) }
           : v
       )
     );
@@ -85,7 +94,7 @@ export function ProductVariants({
     setVariants(
       variants.map((v) =>
         v.id === variantId
-          ? { ...v, tags: v.tags.filter((tag) => tag !== tagToRemove) }
+          ? { ...v, tags: (v.tags || []).filter((tag) => tag !== tagToRemove) }
           : v
       )
     );
@@ -157,7 +166,7 @@ export function ProductVariants({
             <div>
               <Label>Tags (max 2)</Label>
               <div className="flex flex-wrap gap-2 mt-2">
-                {variant.tags.map((tag) => (
+                {(variant.tags || []).map((tag) => (
                   <span
                     key={tag}
                     className="bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-sm flex items-center gap-1"
@@ -173,7 +182,7 @@ export function ProductVariants({
                     </Button>
                   </span>
                 ))}
-                {variant.tags.length < 2 && (
+                {(!variant.tags || variant.tags.length < 2) && (
                   <Input
                     className="w-32"
                     placeholder="Add tag"
