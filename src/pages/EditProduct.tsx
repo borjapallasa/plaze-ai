@@ -18,7 +18,7 @@ const EditProduct = () => {
       <MainHeader />
       <div className="mt-16">
         <div className="w-full max-w-[1400px] mx-auto px-2 xs:px-3 sm:px-6 lg:px-8 py-3 sm:py-6">
-          <div className="space-y-3 sm:space-y-4 mb-6">
+          <div className="space-y-3 sm:space-y-4 mb-6 lg:mb-0">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
               <Link to="/seller/product">
                 <Button variant="ghost" size="icon" className="rounded-full flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10">
@@ -30,7 +30,9 @@ const EditProduct = () => {
                 <p className="text-sm text-muted-foreground mt-1">Product details and configuration</p>
               </div>
             </div>
-            <ProductStatus />
+            <div className="lg:hidden">
+              <ProductStatus />
+            </div>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-3 sm:gap-6">
@@ -93,6 +95,9 @@ const EditProduct = () => {
             </div>
 
             <div className="space-y-3 sm:space-y-6">
+              <div className="hidden lg:block">
+                <ProductStatus />
+              </div>
               <Card className="p-3 sm:p-6">
                 <h2 className="text-lg font-medium mb-3 sm:mb-4">Product Organization</h2>
                 <div className="space-y-3 sm:space-y-4">
