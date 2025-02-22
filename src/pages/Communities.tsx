@@ -1,3 +1,4 @@
+
 import React from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
@@ -89,7 +90,7 @@ const Communities = () => {
       <div className="pt-16">
         <MainHeader />
         
-        <div className="container max-w-6xl mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-8">
           {/* Categories */}
           <ScrollArea className="w-full whitespace-nowrap">
             <div className="flex space-x-3 pb-4">
