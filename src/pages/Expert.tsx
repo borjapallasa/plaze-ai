@@ -7,7 +7,7 @@ import { ExpertServices } from "@/components/expert/ExpertServices";
 import { ExpertCommunity } from "@/components/expert/ExpertCommunity";
 import { MoreFromSeller } from "@/components/product/MoreFromSeller";
 import { ProductReviews } from "@/components/product/ProductReviews";
-import { DefaultHeader } from "@/components/DefaultHeader";
+import { DefaultHeader } from "../components/DefaultHeader";
 
 export default function Expert() {
   const moreProducts = [
