@@ -17,22 +17,22 @@ const EditProduct = () => {
     <div className="min-h-screen bg-background">
       <MainHeader />
       <div className="mt-16">
-        <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
-            <Link to="/products">
-              <Button variant="ghost" size="icon" className="rounded-full flex-shrink-0">
+        <div className="w-full max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <Link to="/seller/product">
+              <Button variant="ghost" size="icon" className="rounded-full flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             </Link>
-            <div className="w-full max-w-4xl">
-              <h1 className="text-xl sm:text-2xl font-semibold break-words">Veilleuse LED Personnalisée Pour Enfants Lampe Arc-En-Ciel Avec Prénom</h1>
+            <div className="w-full">
+              <h1 className="text-lg sm:text-xl md:text-2xl font-semibold break-words">Veilleuse LED Personnalisée Pour Enfants Lampe Arc-En-Ciel Avec Prénom</h1>
               <p className="text-sm text-muted-foreground mt-1">Product details and configuration</p>
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-6">
-              <Card className="p-6">
+          <div className="grid lg:grid-cols-3 gap-4 sm:gap-6">
+            <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+              <Card className="p-4 sm:p-6">
                 <div className="space-y-4">
                   <div>
                     <Label htmlFor="title">Title</Label>
@@ -49,7 +49,7 @@ const EditProduct = () => {
                 </div>
               </Card>
 
-              <Card className="p-6">
+              <Card className="p-4 sm:p-6">
                 <h2 className="text-lg font-medium mb-4">Product Details</h2>
                 <div className="space-y-4">
                   <div>
@@ -79,20 +79,20 @@ const EditProduct = () => {
                 </div>
               </Card>
 
-              <Card className="p-6">
+              <Card className="p-4 sm:p-6">
                 <h2 className="text-lg font-medium mb-4">Media</h2>
                 <ProductMediaUpload />
               </Card>
 
-              <Card className="p-6">
+              <Card className="p-4 sm:p-6">
                 <ProductVariants />
               </Card>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <ProductStatus />
               
-              <Card className="p-6">
+              <Card className="p-4 sm:p-6">
                 <h2 className="text-lg font-medium mb-4">Product Organization</h2>
                 <div className="space-y-4">
                   <div>
