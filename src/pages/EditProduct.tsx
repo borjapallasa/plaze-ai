@@ -23,7 +23,10 @@ const EditProduct = () => {
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
-          <h1 className="text-2xl font-semibold">Edit Product</h1>
+          <div>
+            <h1 className="text-2xl font-semibold">Veilleuse LED Personnalisée Pour Enfants Lampe Arc-En-Ciel Avec Prénom</h1>
+            <p className="text-sm text-muted-foreground mt-1">Product details and configuration</p>
+          </div>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
