@@ -1,10 +1,12 @@
+
 import React from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { 
   PenLine, Coins, Flame, Heart, Music, 
-  Brain, MonitorSmartphone, Activity, Target, Users 
+  Brain, MonitorSmartphone, Activity, Target, Users,
+  ArrowUpRight 
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -113,7 +115,7 @@ const Communities = () => {
           {/* Communities Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
             {filteredCommunities.map((community) => (
-              <Card key={community.id} className="overflow-hidden flex flex-col">
+              <Card key={community.id} className="group overflow-hidden flex flex-col">
                 {/* Community Image */}
                 <div className="relative aspect-[2/1] overflow-hidden">
                   <img
@@ -136,13 +138,19 @@ const Communities = () => {
                     {community.description}
                   </p>
 
-                  {/* Footer */}
-                  <div className="mt-auto flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Users className="h-4 w-4" />
-                      <span>{community.members} Members</span>
+                  {/* Footer with extra padding for arrow */}
+                  <div className="mt-auto pb-8 relative">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Users className="h-4 w-4" />
+                        <span>{community.members} Members</span>
+                      </div>
+                      <Badge variant="outline">{community.pricing}</Badge>
                     </div>
-                    <Badge variant="outline">{community.pricing}</Badge>
+                    {/* Hover Arrow */}
+                    <div className="absolute bottom-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <ArrowUpRight className="h-6 w-6 text-primary" />
+                    </div>
                   </div>
                 </div>
               </Card>
