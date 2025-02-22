@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
@@ -417,7 +418,7 @@ const Index = () => {
         setSearchCategory={setSearchCategory}
       />
 
-      <main>
+      <main className="pt-[180px] md:pt-[200px]"> {/* Added padding top to account for fixed header */}
         <CategoryHeader 
           selectedCategory={selectedCategory}
           onCategoryChange={setSelectedCategory}
