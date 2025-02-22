@@ -88,37 +88,39 @@ export const MainHeader = ({ initialSearchCategory = "Products" }: { initialSear
         <div className="flex md:hidden items-center justify-between h-full gap-3">
           <div className="flex-1">
             <div className="flex items-center gap-1 px-3 py-1.5 rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="h-7 w-7 p-0 hover:bg-transparent"
-                    aria-label="Select search category"
-                  >
-                    <ChevronDown className="h-3.5 w-3.5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-[200px]">
-                  {(location.pathname.includes('/community') || location.pathname.includes('/classroom')) && (
-                    <DropdownMenuItem onClick={() => setMobileSearchCategory("This Community")}>
-                      This Community
+              <div className="flex items-center">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-7 w-7 p-0 hover:bg-transparent"
+                      aria-label="Select search category"
+                    >
+                      <ChevronDown className="h-3.5 w-3.5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-[200px]">
+                    {(location.pathname.includes('/community') || location.pathname.includes('/classroom')) && (
+                      <DropdownMenuItem onClick={() => setMobileSearchCategory("This Community")}>
+                        This Community
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuItem onClick={() => setMobileSearchCategory("Products")}>
+                      Products
                     </DropdownMenuItem>
-                  )}
-                  <DropdownMenuItem onClick={() => setMobileSearchCategory("Products")}>
-                    Products
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setMobileSearchCategory("Experts")}>
-                    Experts
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setMobileSearchCategory("Communities")}>
-                    Communities
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setMobileSearchCategory("Jobs")}>
-                    Jobs
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                    <DropdownMenuItem onClick={() => setMobileSearchCategory("Experts")}>
+                      Experts
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setMobileSearchCategory("Communities")}>
+                      Communities
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setMobileSearchCategory("Jobs")}>
+                      Jobs
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
               <Input
                 className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-7 text-sm flex-1"
                 placeholder={getPlaceholder(mobileSearchCategory)}
