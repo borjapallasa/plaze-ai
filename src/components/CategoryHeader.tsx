@@ -15,7 +15,7 @@ interface BadgeItem {
   category: string | null;
 }
 
-// Memoize static styles object
+// Memoize static styles object outside component
 const STYLES = {
   badge: {
     base: "inline-flex items-center rounded-full border px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200",
@@ -29,14 +29,13 @@ const STYLES = {
     badgeContainer: "flex flex-wrap gap-3"
   },
   mobile: {
-    menuButton: "md:hidden inline-flex items-center rounded-full border px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary hover:shadow-sm",
-    menuTrigger: "cursor-pointer",
-    menuContent: "z-50 min-w-[200px] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md animate-in data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+    button: "p-2 rounded-md hover:bg-accent/50 border border-input",
+    menuContent: "z-50 min-w-[200px] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md",
     menuItem: "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
   }
 } as const;
 
-// Memoize badges array
+// Memoize badges array outside component to prevent recreation
 const BADGES: ReadonlyArray<BadgeItem> = [
   { label: "Trending", icon: TrendingUp, category: null },
   { label: "Newest", icon: Sparkle, category: "template" },
@@ -46,18 +45,25 @@ const BADGES: ReadonlyArray<BadgeItem> = [
   { label: "Affiliate Offers", icon: Tags, category: null }
 ] as const;
 
-// Memoize individual badge component
+// Pure component for rendering icon
+const Icon = React.memo(({ icon: IconComponent, className }: { icon: React.ComponentType<LucideProps>; className: string }) => (
+  <IconComponent className={className} aria-hidden="true" />
+));
+
+Icon.displayName = "Icon";
+
+// Memoized badge component with minimal props
 const CategoryBadge = React.memo(({ 
-  badge, 
+  label,
+  icon,
   isSelected, 
   onClick 
 }: { 
-  badge: BadgeItem; 
+  label: string;
+  icon: React.ComponentType<LucideProps>;
   isSelected: boolean; 
   onClick: () => void;
 }) => {
-  const Icon = badge.icon;
-  
   const badgeClassName = useMemo(() => 
     cn(
       STYLES.badge.base,
@@ -68,67 +74,74 @@ const CategoryBadge = React.memo(({
   
   return (
     <div onClick={onClick} className={badgeClassName}>
-      <Icon className={STYLES.badge.icon} aria-hidden="true" />
-      {badge.label}
+      <Icon icon={icon} className={STYLES.badge.icon} />
+      {label}
     </div>
   );
 });
 
 CategoryBadge.displayName = "CategoryBadge";
 
-// Memoize mobile menu item
+// Memoized mobile menu item with minimal props
 const MobileMenuItem = React.memo(({ 
-  badge, 
+  label,
+  icon,
   isSelected, 
   onClick 
 }: { 
-  badge: BadgeItem; 
+  label: string;
+  icon: React.ComponentType<LucideProps>;
   isSelected: boolean; 
   onClick: () => void;
-}) => {
-  const Icon = badge.icon;
-  return (
-    <DropdownMenuItem 
-      onClick={onClick}
-      className={cn(
-        STYLES.mobile.menuItem,
-        isSelected && "bg-accent text-accent-foreground"
-      )}
-    >
-      <Icon className={STYLES.badge.icon} />
-      {badge.label}
-    </DropdownMenuItem>
-  );
-});
+}) => (
+  <DropdownMenuItem 
+    onClick={onClick}
+    className={cn(
+      STYLES.mobile.menuItem,
+      isSelected && "bg-accent text-accent-foreground"
+    )}
+  >
+    <Icon icon={icon} className={STYLES.badge.icon} />
+    {label}
+  </DropdownMenuItem>
+));
 
 MobileMenuItem.displayName = "MobileMenuItem";
 
-// Memoize the entire CategoryHeader component
+// Memoized trigger button
+const MenuTrigger = React.memo(() => (
+  <button type="button" className={STYLES.mobile.button}>
+    <Menu className="h-6 w-6" />
+  </button>
+));
+
+MenuTrigger.displayName = "MenuTrigger";
+
 export const CategoryHeader = React.memo(({ selectedCategory, onCategoryChange }: CategoryHeaderProps) => {
   const handleBadgeClick = useCallback((category: string | null) => {
     onCategoryChange(selectedCategory === category ? null : category);
   }, [selectedCategory, onCategoryChange]);
 
-  // Memoize badge list
   const badges = useMemo(() => (
-    BADGES.map((badge) => (
+    BADGES.map(({ label, icon, category }) => (
       <CategoryBadge
-        key={`${badge.label}-${badge.category}`}
-        badge={badge}
-        isSelected={selectedCategory === badge.category}
-        onClick={() => handleBadgeClick(badge.category)}
+        key={`${label}-${category}`}
+        label={label}
+        icon={icon}
+        isSelected={selectedCategory === category}
+        onClick={() => handleBadgeClick(category)}
       />
     ))
   ), [selectedCategory, handleBadgeClick]);
 
-  // Memoize mobile menu items
   const mobileMenuItems = useMemo(() => (
-    BADGES.map((badge) => (
+    BADGES.map(({ label, icon, category }) => (
       <MobileMenuItem
-        key={`${badge.label}-${badge.category}`}
-        badge={badge}
-        isSelected={selectedCategory === badge.category}
-        onClick={() => handleBadgeClick(badge.category)}
+        key={`${label}-${category}`}
+        label={label}
+        icon={icon}
+        isSelected={selectedCategory === category}
+        onClick={() => handleBadgeClick(category)}
       />
     ))
   ), [selectedCategory, handleBadgeClick]);
@@ -140,12 +153,7 @@ export const CategoryHeader = React.memo(({ selectedCategory, onCategoryChange }
           <div className="md:hidden">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button 
-                  type="button" 
-                  className="p-2 rounded-md hover:bg-accent/50 border border-input"
-                >
-                  <Menu className="h-6 w-6" />
-                </button>
+                <MenuTrigger />
               </DropdownMenuTrigger>
               <DropdownMenuContent 
                 align="start"
