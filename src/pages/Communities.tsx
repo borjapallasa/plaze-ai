@@ -131,7 +131,7 @@ const Communities = () => {
                   </div>
                 </div>
 
-                <div className="p-6 flex-1 flex flex-col">
+                <div className="p-6 pb-8 flex-1 flex flex-col">
                   <h3 className="font-semibold text-lg leading-none mb-4">
                     {community.name}
                   </h3>
