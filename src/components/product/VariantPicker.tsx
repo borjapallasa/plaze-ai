@@ -75,6 +75,18 @@ export function VariantPicker({
                       ))}
                     </ul>
                   )}
+                  {variant.tags && variant.tags.length > 0 && (
+                    <div className="flex flex-row gap-2 mt-3">
+                      {variant.tags.map((tag) => (
+                        <div
+                          key={tag}
+                          className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm"
+                        >
+                          {tag}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div className="text-right flex flex-col items-end">
                   <div className="text-2xl font-bold">${variant.price}</div>
