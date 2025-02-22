@@ -18,7 +18,7 @@ const EditProduct = () => {
       <MainHeader />
       <div className="mt-16">
         <div className="w-full max-w-[1400px] mx-auto px-2 xs:px-3 sm:px-6 lg:px-8 py-3 sm:py-6">
-          <div className="space-y-6 sm:space-y-8 mb-6 lg:mb-0">
+          <div className="space-y-6 sm:space-y-8 mb-8 lg:mb-0">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
               <Link to="/seller/product">
                 <Button variant="ghost" size="icon" className="rounded-full flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10">
@@ -27,7 +27,7 @@ const EditProduct = () => {
               </Link>
               <div className="w-full">
                 <h1 className="text-lg sm:text-xl md:text-2xl font-semibold break-words pr-2">Veilleuse LED Personnalisée Pour Enfants Lampe Arc-En-Ciel Avec Prénom</h1>
-                <p className="text-sm text-muted-foreground mt-2">Product details and configuration</p>
+                <p className="text-sm text-muted-foreground mt-2 mb-6">Product details and configuration</p>
               </div>
             </div>
             <div className="lg:hidden">
