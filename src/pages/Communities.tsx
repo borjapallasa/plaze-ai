@@ -138,8 +138,8 @@ const Communities = () => {
                     {community.description}
                   </p>
 
-                  {/* Footer with extra padding for arrow */}
-                  <div className="mt-auto pb-8 relative">
+                  {/* Footer with reduced padding for arrow */}
+                  <div className="mt-auto pb-4 relative">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Users className="h-4 w-4" />
@@ -147,9 +147,9 @@ const Communities = () => {
                       </div>
                       <Badge variant="outline">{community.pricing}</Badge>
                     </div>
-                    {/* Hover Arrow */}
-                    <div className="absolute bottom-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <ArrowUpRight className="h-6 w-6 text-primary" />
+                    {/* Horizontal Hover Arrow */}
+                    <div className="absolute -bottom-2 right-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <ArrowUpRight className="h-6 w-6 text-primary -rotate-45" />
                     </div>
                   </div>
                 </div>
