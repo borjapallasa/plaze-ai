@@ -1,5 +1,8 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { MessageCircle } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { ProductHeader } from "@/components/product/ProductHeader";
@@ -429,6 +432,19 @@ export default function Product() {
                 onAddToCart={handleAddToCart}
               />
             </div>
+
+            <Button 
+              variant="outline" 
+              className="w-full flex items-center justify-center gap-2"
+              onClick={() => {
+                // Add contact seller functionality here
+                console.log("Contact seller clicked");
+              }}
+            >
+              <MessageCircle className="h-4 w-4" />
+              Contact Seller
+            </Button>
+
             <Card className="p-6">
               <h3 className="font-semibold mb-4">Additional Information</h3>
               <div className="space-y-4">
