@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, Menu, User, ChevronDown, Home } from "lucide-react";
@@ -138,14 +137,13 @@ export const MainHeader = () => {
                   Home
                 </DropdownMenuItem>
               </Link>
-              <Link to="/affiliates">
-                <DropdownMenuItem>Affiliates</DropdownMenuItem>
-              </Link>
-              <DropdownMenuSeparator />
               <DropdownMenuItem>Sign In</DropdownMenuItem>
               <DropdownMenuItem>Sign Up</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>Sell on Plaze</DropdownMenuItem>
+              <Link to="/affiliates">
+                <DropdownMenuItem>Affiliates</DropdownMenuItem>
+              </Link>
               <DropdownMenuItem>Help Center</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -214,14 +212,13 @@ export const MainHeader = () => {
                     Home
                   </DropdownMenuItem>
                 </Link>
-                <Link to="/affiliates">
-                  <DropdownMenuItem>Affiliates</DropdownMenuItem>
-                </Link>
-                <DropdownMenuSeparator />
                 <DropdownMenuItem>Sign In</DropdownMenuItem>
                 <DropdownMenuItem>Sign Up</DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>Sell on Plaze</DropdownMenuItem>
+                <Link to="/affiliates">
+                  <DropdownMenuItem>Affiliates</DropdownMenuItem>
+                </Link>
                 <DropdownMenuItem>Help Center</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
