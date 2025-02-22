@@ -5,13 +5,6 @@ import { Search, Menu, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -41,32 +34,12 @@ export const MainHeader = ({ initialSearchCategory = "Products" }: { initialSear
     return "Products"; // default fallback
   };
 
-  const getInitialDesktopSearchCategory = () => {
-    if (initialSearchCategory) {
-      return initialSearchCategory;
-    }
-    if (location.pathname.includes('/community') || location.pathname.includes('/classroom')) {
-      return "ThisCommunity";
-    }
-    if (location.pathname.includes('/expert')) {
-      return "Experts";
-    }
-    if (location.pathname.includes('/jobs')) {
-      return "Jobs";
-    }
-    if (location.pathname.includes('/blog')) {
-      return "Products";
-    }
-    return "Products"; // default fallback
-  };
-
   const [mobileSearchCategory, setMobileSearchCategory] = useState(getInitialSearchCategory());
-  const [desktopSearchCategory, setDesktopSearchCategory] = useState(getInitialDesktopSearchCategory());
+  const [desktopSearchCategory, setDesktopSearchCategory] = useState(getInitialSearchCategory());
 
   const getPlaceholder = (category: string) => {
     switch(category) {
       case "This Community":
-      case "ThisCommunity":
         return "Search in this community...";
       case "Products":
         return "Search products...";
@@ -165,25 +138,39 @@ export const MainHeader = ({ initialSearchCategory = "Products" }: { initialSear
           </Link>
 
           <div className="flex-1 max-w-2xl mx-auto">
-            <div className="flex items-center gap-1 px-3 py-1.5 rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background">
+            <div className="flex items-center gap-1 px-3 py-1.5 rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background mb-3">
               <div className="flex-1 flex items-center gap-1">
-                <Select 
-                  defaultValue={getInitialDesktopSearchCategory()}
-                  onValueChange={setDesktopSearchCategory}
-                >
-                  <SelectTrigger className="border-0 w-[200px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-7 text-sm [&>span]:whitespace-nowrap [&>span]:overflow-visible">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="w-[240px]">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-7 w-7 p-0 hover:bg-transparent"
+                      aria-label="Select search category"
+                    >
+                      <ChevronDown className="h-3.5 w-3.5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-[200px]">
                     {(location.pathname.includes('/community') || location.pathname.includes('/classroom')) && (
-                      <SelectItem value="ThisCommunity" className="whitespace-nowrap">This Community</SelectItem>
+                      <DropdownMenuItem onClick={() => setDesktopSearchCategory("This Community")}>
+                        This Community
+                      </DropdownMenuItem>
                     )}
-                    <SelectItem value="Products">Products</SelectItem>
-                    <SelectItem value="Experts">Experts</SelectItem>
-                    <SelectItem value="Communities">Communities</SelectItem>
-                    <SelectItem value="Jobs">Jobs</SelectItem>
-                  </SelectContent>
-                </Select>
+                    <DropdownMenuItem onClick={() => setDesktopSearchCategory("Products")}>
+                      Products
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setDesktopSearchCategory("Experts")}>
+                      Experts
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setDesktopSearchCategory("Communities")}>
+                      Communities
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setDesktopSearchCategory("Jobs")}>
+                      Jobs
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <Input
                   className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-7 text-sm"
                   placeholder={getPlaceholder(desktopSearchCategory)}
