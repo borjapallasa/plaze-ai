@@ -2,7 +2,6 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 
 export function ProductPricing() {
   return (
@@ -32,10 +31,6 @@ export function ProductPricing() {
             />
           </div>
         </div>
-      </div>
-      <div className="flex items-center space-x-2">
-        <Checkbox id="tax" defaultChecked />
-        <Label htmlFor="tax">Charge tax on this product</Label>
       </div>
     </div>
   );
