@@ -94,7 +94,7 @@ export const MainHeader = ({ initialSearchCategory = "Products" }: { initialSear
     <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm transition-all duration-200 ease-out bg-background/95 ${
       isScrolled ? 'bg-background' : ''
     }`}>
-      <div className="container mx-auto px-4 pb-[10px]">
+      <div className="container mx-auto px-4 pb-[5px] sm:pb-[10px]">
         <div className="hidden sm:flex relative py-2">
           <div className="w-[20%] flex items-start">
             <h1 className="text-2xl font-semibold mt-[12px] ml-[15px]">Logo</h1>
