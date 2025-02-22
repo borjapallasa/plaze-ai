@@ -13,7 +13,7 @@ interface Variant {
   price: string | number;
   comparePrice: string | number;
   highlight: boolean;
-  tags: string[];
+  tags?: string[];
   label?: string;
   features?: string[];
 }
