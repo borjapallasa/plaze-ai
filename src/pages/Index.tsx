@@ -375,7 +375,7 @@ export default function Index() {
           })}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {[...Array(12)].map((_, index) => (
             <Card key={index} className="group relative flex flex-col p-4 lg:p-6 hover:bg-accent transition-colors">
               <div className="flex items-start gap-3 lg:gap-4">
