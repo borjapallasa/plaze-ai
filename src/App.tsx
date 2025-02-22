@@ -4,7 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
+import Index from "./pages/index";
 import Product from "./pages/Product";
 import Expert from "./pages/Expert";
 import Experts from "./pages/Experts";
