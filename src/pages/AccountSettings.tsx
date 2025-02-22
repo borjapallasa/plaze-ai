@@ -1,23 +1,30 @@
 
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { Eye, EyeOff, Trash2, Upload } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Upload, User } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 
 export default function AccountSettings() {
   const { toast } = useToast();
-  const [showOldPassword, setShowOldPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      if (file.size > 512 * 1024) { // 512KB limit
+        toast({
+          title: "File too large",
+          description: "Please select an image under 512KB.",
+          variant: "destructive",
+        });
+        return;
+      }
       const reader = new FileReader();
       reader.onloadend = () => {
         setSelectedFile(reader.result as string);
@@ -34,171 +41,108 @@ export default function AccountSettings() {
     });
   };
 
-  const handlePasswordChange = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    toast({
-      title: "Password Changed",
-      description: "Your password has been successfully changed.",
-    });
-  };
-
   return (
     <div className="min-h-screen bg-background">
       <div className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm">
         <MainHeader />
       </div>
 
-      <div className="container mx-auto px-4 pt-[126px] pb-8 max-w-2xl">
-        <div className="space-y-8">
-          {/* Update Profile Section */}
-          <Card className="border-none shadow-lg">
-            <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl">Update Your Profile</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleProfileUpdate} className="space-y-6">
-                <div className="space-y-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="firstName" className="text-base font-medium">Name *</Label>
-                    <Input 
-                      id="firstName" 
-                      placeholder="Enter your first name" 
-                      required 
-                      className="h-11 bg-white dark:bg-gray-800"
-                    />
+      <div className="container mx-auto px-4 pt-[126px] pb-8 max-w-3xl">
+        <Card className="border-none bg-card/50">
+          <CardContent className="p-6 space-y-8">
+            {/* Profile Photo Section */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold">Profile photo</h2>
+              <div className="flex items-start gap-6">
+                <Avatar className="h-24 w-24">
+                  {selectedFile ? (
+                    <AvatarImage src={selectedFile} alt="Profile" />
+                  ) : (
+                    <AvatarFallback>
+                      <User className="h-12 w-12" />
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+                <div className="space-y-2">
+                  <div className="text-sm text-muted-foreground">
+                    You can upload images up to 512KB
                   </div>
-
-                  <div className="grid gap-2">
-                    <Label htmlFor="lastName" className="text-base font-medium">Last Name *</Label>
-                    <Input 
-                      id="lastName" 
-                      placeholder="Enter your last name" 
-                      required 
-                      className="h-11 bg-white dark:bg-gray-800"
+                  <div className="relative">
+                    <Input
+                      type="file"
+                      id="photo"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={handleFileChange}
                     />
-                  </div>
-
-                  <div className="grid gap-2">
-                    <Label htmlFor="email" className="text-base font-medium">Email *</Label>
-                    <Input 
-                      id="email" 
-                      type="email" 
-                      placeholder="Enter your email" 
-                      required 
-                      className="h-11 bg-white dark:bg-gray-800"
-                    />
-                  </div>
-
-                  <div className="grid gap-2">
-                    <Label htmlFor="photo" className="text-base font-medium">Your Account Photo *</Label>
-                    <div className="flex flex-col gap-4">
-                      <div className="flex items-center justify-center border-2 border-dashed rounded-xl p-8 cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all duration-200">
-                        <Input
-                          id="photo"
-                          type="file"
-                          className="hidden"
-                          accept="image/*"
-                          onChange={handleFileChange}
-                        />
-                        <Label htmlFor="photo" className="cursor-pointer text-center space-y-3">
-                          <Upload className="mx-auto h-10 w-10 text-primary/60" />
-                          <div className="text-sm text-muted-foreground">
-                            Drop your image here or{" "}
-                            <span className="text-primary font-medium">browse</span>
-                          </div>
-                        </Label>
-                      </div>
-                      {selectedFile && (
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground bg-primary/5 px-4 py-2 rounded-lg">
-                          <span className="truncate flex-1">Selected file</span>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setSelectedFile(null)}
-                            className="hover:text-destructive"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      )}
-                    </div>
+                    <Label
+                      htmlFor="photo"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer text-sm"
+                    >
+                      <Upload className="h-4 w-4" />
+                      Upload a photo
+                    </Label>
                   </div>
                 </div>
+              </div>
+            </div>
 
-                <Button type="submit" className="w-full h-11 bg-primary hover:bg-primary/90">
-                  Update Profile
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+            {/* Profile Info Section */}
+            <form onSubmit={handleProfileUpdate} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="firstName" className="text-base">First name:</Label>
+                  <Input
+                    id="firstName"
+                    placeholder="Enter your first name"
+                    className="bg-background/50"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName" className="text-base">Last Name:</Label>
+                  <Input
+                    id="lastName"
+                    placeholder="Enter your last name"
+                    className="bg-background/50"
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-base">Email:</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Your email"
+                  className="bg-background/50"
+                />
+              </div>
 
-          {/* Change Password Section */}
-          <Card className="border-none shadow-lg">
-            <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl">Change Password</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handlePasswordChange} className="space-y-6">
-                <div className="space-y-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="oldPassword" className="text-base font-medium">Old password</Label>
-                    <div className="relative">
-                      <Input
-                        id="oldPassword"
-                        type={showOldPassword ? "text" : "password"}
-                        placeholder="Enter your old password"
-                        className="h-11 bg-white dark:bg-gray-800 pr-12"
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                        onClick={() => setShowOldPassword(!showOldPassword)}
-                      >
-                        {showOldPassword ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </div>
+              {/* Notifications Settings */}
+              <div className="space-y-4">
+                <h2 className="text-xl font-semibold">Notifications Settings</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="projectNotifications" />
+                    <Label htmlFor="projectNotifications">Project notifications</Label>
                   </div>
-
-                  <div className="grid gap-2">
-                    <Label htmlFor="newPassword" className="text-base font-medium">New password</Label>
-                    <div className="relative">
-                      <Input
-                        id="newPassword"
-                        type={showNewPassword ? "text" : "password"}
-                        placeholder="Enter your new password"
-                        className="h-11 bg-white dark:bg-gray-800 pr-12"
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                        onClick={() => setShowNewPassword(!showNewPassword)}
-                      >
-                        {showNewPassword ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="comments" />
+                    <Label htmlFor="comments">Comments</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="marketingEmails" />
+                    <Label htmlFor="marketingEmails">Marketing Emails</Label>
                   </div>
                 </div>
+              </div>
 
-                <Button type="submit" className="w-full h-11 bg-primary hover:bg-primary/90">
-                  Change Password
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-        </div>
+              <Button type="submit" className="w-full">
+                Save Changes
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
