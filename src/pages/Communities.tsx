@@ -1,4 +1,3 @@
-
 import React from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
@@ -6,22 +5,19 @@ import { Card } from "@/components/ui/card";
 import { 
   PenLine, Coins, Flame, Heart, Music, 
   Brain, MonitorSmartphone, Activity, Target, Users,
-  ArrowRight
+  ArrowRight, TrendingUp, Sparkle, Trophy, ThumbsUp, Star, Tags
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 
 const categories = [
-  { id: "all", label: "All", icon: Users },
-  { id: "hobbies", label: "Hobbies", icon: PenLine },
-  { id: "music", label: "Music", icon: Music },
-  { id: "money", label: "Money", icon: Coins },
-  { id: "spirituality", label: "Spirituality", icon: Flame },
-  { id: "tech", label: "Tech", icon: MonitorSmartphone },
-  { id: "health", label: "Health", icon: Activity },
-  { id: "sports", label: "Sports", icon: Target },
-  { id: "self-improvement", label: "Self-improvement", icon: Brain },
-  { id: "relationships", label: "Relationships", icon: Heart },
+  { id: "trending", label: "Trending", icon: TrendingUp, dark: true },
+  { id: "newest", label: "Newest", icon: Sparkle },
+  { id: "top-seller", label: "Top Seller", icon: Trophy },
+  { id: "best-reviews", label: "Best Reviews", icon: ThumbsUp },
+  { id: "our-pick", label: "Our Pick", icon: Star },
+  { id: "affiliate-offers", label: "Affiliate Offers", icon: Tags, dark: true }
 ];
 
 const communities = [
@@ -96,12 +92,16 @@ const Communities = () => {
         <div className="container max-w-6xl mx-auto px-4 py-8">
           {/* Categories */}
           <ScrollArea className="w-full whitespace-nowrap">
-            <div className="flex space-x-2 pb-4">
-              {categories.map(({ id, label, icon: Icon }) => (
+            <div className="flex space-x-3 pb-4">
+              {categories.map(({ id, label, icon: Icon, dark }) => (
                 <Button
                   key={id}
-                  variant={selectedCategory === id ? "default" : "outline"}
-                  className="rounded-full"
+                  variant="outline"
+                  className={cn(
+                    "rounded-full px-6 h-11 shadow-sm",
+                    dark ? "bg-[#1A1F2C] text-white hover:bg-[#1A1F2C]/90" : "bg-white hover:bg-white/90",
+                    selectedCategory === id && "ring-2 ring-primary"
+                  )}
                   onClick={() => setSelectedCategory(id)}
                 >
                   <Icon className="mr-2 h-4 w-4" />
