@@ -10,6 +10,11 @@ interface Review {
   rating: number;
   content: string;
   description: string;
+  projectDetails?: {
+    duration: string;
+    rate: string;
+    billed: string;
+  };
   avatar: string;
   date: string;
   itemQuality: number;
@@ -36,8 +41,7 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
         <h2 className="text-2xl font-semibold tracking-tight">Reviews</h2>
         <div className="relative">
           <select className="appearance-none bg-white pl-3 pr-8 py-1.5 border rounded-lg text-sm">
-            <option>Sort by: Suggested</option>
-            <option>Newest</option>
+            <option>Sort by: Most Recent</option>
             <option>Highest Rating</option>
             <option>Lowest Rating</option>
           </select>
@@ -67,6 +71,14 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
                     <h3 className="text-lg font-medium text-gray-900">{review.content}</h3>
                     <p className="text-gray-600 leading-relaxed">{review.description}</p>
                     
+                    {review.projectDetails && (
+                      <div className="space-y-1 text-sm text-gray-500">
+                        <p>{review.projectDetails.duration}</p>
+                        <p>{review.projectDetails.rate}</p>
+                        <p>Billed: {review.projectDetails.billed}</p>
+                      </div>
+                    )}
+
                     <div className="flex items-center gap-3 pt-1">
                       <div className="h-10 w-10 rounded-full overflow-hidden">
                         <img 

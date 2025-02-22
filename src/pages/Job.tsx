@@ -52,28 +52,72 @@ export default function JobDetails() {
 
   const reviews = [
     { 
-      id: 1, 
-      author: "Sarah Johnson", 
-      rating: 5, 
-      content: "Great client to work with!",
-      description: "Very clear communication and reasonable expectations. The project was well-defined and payment was prompt.",
+      id: 1,
+      author: "Client A",
+      rating: 5,
+      content: "Instagram Reels Manager Project",
+      description: "Great work on managing our daily content creation for Instagram Reels. Very organized and efficient in delivering consistent content.",
+      projectDetails: {
+        duration: "Jan 2025 - Feb 2025",
+        rate: "28 hrs @ $4.00/hr",
+        billed: "$125.49"
+      },
       avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
-      date: "2 days ago",
+      date: "Feb 2025",
       itemQuality: 5,
       shipping: 5,
       customerService: 5
     },
     { 
-      id: 2, 
-      author: "Michael Chen", 
-      rating: 4, 
-      content: "Professional and organized",
-      description: "The client provided detailed requirements and was responsive throughout the project. Would work with them again.",
+      id: 2,
+      author: "Client B",
+      rating: 5,
+      content: "Pinterest Management",
+      description: "Fixed-price project completed successfully. Excellent Pinterest management skills and strategic approach to content.",
+      projectDetails: {
+        duration: "Mar 2024 - Feb 2025",
+        rate: "Fixed-price",
+        billed: "$100.00"
+      },
       avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e",
-      date: "1 week ago",
-      itemQuality: 4,
+      date: "Feb 2025",
+      itemQuality: 5,
       shipping: 5,
-      customerService: 4
+      customerService: 5
+    },
+    {
+      id: 3,
+      author: "Avery M.",
+      rating: 5,
+      content: "Social Media Expert Project",
+      description: "It is always pleasure working with them! Communication is great and they provided me with all materials I needed! 10+ experience all around.",
+      projectDetails: {
+        duration: "Feb 2024 - Mar 2024",
+        rate: "Fixed-price",
+        billed: "$155.00"
+      },
+      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb",
+      date: "Mar 2024",
+      itemQuality: 5,
+      shipping: 5,
+      customerService: 5
+    },
+    {
+      id: 4,
+      author: "Marketing Agency",
+      rating: 5,
+      content: "Social Media Management",
+      description: "Amazing to work with, delivers quality work every time! I will continue to work with them for as long as I can. I only wish I had more projects to offer!",
+      projectDetails: {
+        duration: "Mar 2024 - May 2024",
+        rate: "5 hrs @ $20.00/hr",
+        billed: "$1,094.95"
+      },
+      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
+      date: "May 2024",
+      itemQuality: 5,
+      shipping: 5,
+      customerService: 5
     }
   ];
 
