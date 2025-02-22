@@ -32,9 +32,9 @@ const EditProduct = () => {
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-3 sm:gap-6">
-            <div className="lg:col-span-2 space-y-3 sm:space-y-6">
-              <div className="block lg:hidden">
+          <div className="grid lg:grid-cols-12 gap-3 sm:gap-6">
+            <div className="lg:col-span-8 space-y-3 sm:space-y-6">
+              <div className="lg:hidden">
                 <ProductStatus />
               </div>
 
@@ -95,7 +95,7 @@ const EditProduct = () => {
               </Card>
             </div>
 
-            <div className="space-y-3 sm:space-y-6">
+            <div className="lg:col-span-4 space-y-3 sm:space-y-6">
               <div className="hidden lg:block">
                 <ProductStatus />
               </div>
