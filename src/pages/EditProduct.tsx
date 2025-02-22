@@ -14,16 +14,16 @@ import { Link } from "react-router-dom";
 
 const EditProduct = () => {
   return (
-    <>
+    <div className="min-h-screen bg-background">
       <MainHeader />
-      <div className="container py-6">
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
           <Link to="/products">
             <Button variant="ghost" size="icon" className="rounded-full flex-shrink-0">
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
-          <div className="max-w-full">
+          <div className="w-full max-w-4xl">
             <h1 className="text-xl sm:text-2xl font-semibold break-words">Veilleuse LED Personnalisée Pour Enfants Lampe Arc-En-Ciel Avec Prénom</h1>
             <p className="text-sm text-muted-foreground mt-1">Product details and configuration</p>
           </div>
@@ -115,7 +115,7 @@ const EditProduct = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
