@@ -1,4 +1,3 @@
-
 import React from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
@@ -115,7 +114,7 @@ const Communities = () => {
           {/* Communities Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
             {filteredCommunities.map((community) => (
-              <Card key={community.id} className="group overflow-hidden flex flex-col">
+              <Card key={community.id} className="group relative overflow-hidden flex flex-col">
                 {/* Community Image */}
                 <div className="relative aspect-[2/1] overflow-hidden">
                   <img
@@ -138,19 +137,18 @@ const Communities = () => {
                     {community.description}
                   </p>
 
-                  {/* Footer with reduced padding for arrow */}
-                  <div className="mt-auto pb-4 relative">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Users className="h-4 w-4" />
-                        <span>{community.members} Members</span>
-                      </div>
-                      <Badge variant="outline">{community.pricing}</Badge>
+                  {/* Footer */}
+                  <div className="mt-auto flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Users className="h-4 w-4" />
+                      <span>{community.members} Members</span>
                     </div>
-                    {/* Horizontal Hover Arrow */}
-                    <div className="absolute -bottom-2 right-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <ArrowUpRight className="h-6 w-6 text-primary -rotate-45" />
-                    </div>
+                    <Badge variant="outline">{community.pricing}</Badge>
+                  </div>
+
+                  {/* Arrow */}
+                  <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <ArrowUpRight className="h-5 w-5 text-primary" />
                   </div>
                 </div>
               </Card>
