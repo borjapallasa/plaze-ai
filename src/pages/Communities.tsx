@@ -310,28 +310,56 @@ export default function Communities() {
 
           {/* Mobile Header */}
           <div className="sm:hidden py-2">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border shadow-md hover:shadow-lg transition-shadow bg-background">
-              <Select 
-                defaultValue="Communities"
-              >
-                <SelectTrigger className="border-0 w-[140px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9">
-                  <SelectValue className="pr-4" />
-                </SelectTrigger>
-                <SelectContent className="w-[180px]">
-                  <SelectItem value="Products">Products</SelectItem>
-                  <SelectItem value="Experts">Experts</SelectItem>
-                  <SelectItem value="Communities">Communities</SelectItem>
-                  <SelectItem value="Jobs">Jobs</SelectItem>
-                </SelectContent>
-              </Select>
-              <Input
-                className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-9"
-                placeholder="Search communities..."
-                type="search"
-              />
-              <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90">
-                <Search className="h-4 w-4" />
-              </Button>
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex-1">
+                <div className="flex items-center gap-1 px-3 py-1.5 rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background">
+                  <Select defaultValue="Communities">
+                    <SelectTrigger className="border-0 w-[140px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-7">
+                      <SelectValue className="pr-4" />
+                    </SelectTrigger>
+                    <SelectContent className="w-[180px]">
+                      <SelectItem value="Products">Products</SelectItem>
+                      <SelectItem value="Experts">Experts</SelectItem>
+                      <SelectItem value="Communities">Communities</SelectItem>
+                      <SelectItem value="Jobs">Jobs</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-7 text-sm flex-1"
+                    placeholder="Search communities..."
+                    type="search"
+                  />
+                  <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90 h-7 w-7">
+                    <Search className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    className="rounded-full px-2 py-1 h-7 border-2 hover:border-primary/20 transition-colors"
+                  >
+                    <Menu className="h-3 w-3 mr-1" />
+                    <User className="h-3 w-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <Link to="/">
+                    <DropdownMenuItem>
+                      Home
+                    </DropdownMenuItem>
+                  </Link>
+                  <DropdownMenuItem>Sign In</DropdownMenuItem>
+                  <DropdownMenuItem>Sign Up</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <Link to="/affiliates">
+                    <DropdownMenuItem>Affiliates</DropdownMenuItem>
+                  </Link>
+                  <DropdownMenuItem>Sell on Plaze</DropdownMenuItem>
+                  <DropdownMenuItem>Help Center</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>
