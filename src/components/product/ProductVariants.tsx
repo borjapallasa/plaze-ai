@@ -142,6 +142,43 @@ export function ProductVariants({
               />
             </div>
 
+            {variants.length > 1 && (
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor={`price-${variant.id}`}>Price</Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2">€</span>
+                    <Input
+                      id={`price-${variant.id}`}
+                      type="number"
+                      className="pl-7"
+                      value={variant.price}
+                      onChange={(e) =>
+                        updateVariant(variant.id, "price", e.target.value)
+                      }
+                      placeholder="0.00"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor={`compare-price-${variant.id}`}>Compare-at price</Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2">€</span>
+                    <Input
+                      id={`compare-price-${variant.id}`}
+                      type="number"
+                      className="pl-7"
+                      value={variant.comparePrice}
+                      onChange={(e) =>
+                        updateVariant(variant.id, "comparePrice", e.target.value)
+                      }
+                      placeholder="0.00"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="flex items-center space-x-2">
               <Checkbox
                 id={`highlight-${variant.id}`}
