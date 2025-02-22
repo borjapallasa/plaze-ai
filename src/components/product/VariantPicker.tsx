@@ -37,7 +37,7 @@ export function VariantPicker({
           return (
             <Card
               key={variant.id}
-              className={`p-6 cursor-pointer transition-all relative overflow-visible ${
+              className={`p-4 cursor-pointer transition-all relative overflow-visible ${
                 selectedVariant === variant.id
                   ? "ring-2 ring-black"
                   : "hover:ring-1 hover:ring-black/50"
@@ -49,28 +49,28 @@ export function VariantPicker({
                   variant.highlight 
                     ? "bg-black text-white" 
                     : "bg-white text-black border border-gray-200"
-                } px-4 py-1 rounded-full text-sm font-medium`}>
+                } px-3 py-0.5 rounded-full text-xs font-medium`}>
                   {badge}
                 </div>
               )}
               
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {/* Header section with name and price */}
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                  <div className="flex items-center gap-2">
+                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
                       selectedVariant === variant.id ? "border-black" : "border-gray-300"
                     }`}>
                       {selectedVariant === variant.id && (
-                        <div className="w-3 h-3 rounded-full bg-black" />
+                        <div className="w-2 h-2 rounded-full bg-black" />
                       )}
                     </div>
-                    <h3 className="text-lg font-semibold">{variant.name}</h3>
+                    <h3 className="text-base font-medium">{variant.name}</h3>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="text-2xl font-bold">${variant.price}</div>
+                    <div className="text-lg font-bold">${variant.price}</div>
                     {variant.comparePrice && (
-                      <div className="text-sm text-gray-500 line-through">
+                      <div className="text-xs text-gray-500 line-through">
                         ${variant.comparePrice}
                       </div>
                     )}
@@ -78,11 +78,11 @@ export function VariantPicker({
                 </div>
 
                 {/* Features section */}
-                <div className="flex flex-row gap-3 flex-wrap">
+                <div className="flex flex-row gap-2 flex-wrap">
                   {variant.features && variant.features.map((feature, index) => (
                     <span
                       key={index}
-                      className="inline-flex items-center gap-1.5 bg-gray-100 text-gray-700 px-2.5 py-1 rounded-full text-xs"
+                      className="inline-flex items-center gap-1 bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full text-xs"
                     >
                       <Star className="h-3 w-3" />
                       {feature}
