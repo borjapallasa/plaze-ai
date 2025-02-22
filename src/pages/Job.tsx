@@ -172,7 +172,7 @@ export default function JobDetails() {
               <div className="flex items-center gap-8 mb-6 overflow-x-auto">
                 <div className="flex items-start gap-3 flex-shrink-0">
                   <Clock className="h-6 w-6 text-muted-foreground mt-0.5 flex-shrink-0" />
-                  <div>
+                  <div className="min-w-0">
                     <p className="font-medium text-base">{job.workDetails.hours}</p>
                     <p className="text-sm text-muted-foreground">Hourly</p>
                   </div>
@@ -182,7 +182,7 @@ export default function JobDetails() {
                 
                 <div className="flex items-start gap-3 flex-shrink-0">
                   <Calendar className="h-6 w-6 text-muted-foreground mt-0.5 flex-shrink-0" />
-                  <div>
+                  <div className="min-w-0">
                     <p className="font-medium text-base">{job.workDetails.duration}</p>
                     <p className="text-sm text-muted-foreground">Project Length</p>
                   </div>
@@ -192,8 +192,8 @@ export default function JobDetails() {
                 
                 <div className="flex items-start gap-3 flex-shrink-0">
                   <Briefcase className="h-6 w-6 text-muted-foreground mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="font-medium text-base">{job.workDetails.experience}</p>
+                  <div className="min-w-0">
+                    <p className="font-medium text-base leading-snug">{job.workDetails.experience}</p>
                     <p className="text-sm text-muted-foreground">{job.workDetails.experienceDetails}</p>
                   </div>
                 </div>
@@ -201,9 +201,13 @@ export default function JobDetails() {
 
               <div>
                 <h2 className="text-lg font-semibold mb-4">Skills and Expertise</h2>
-                <div className="flex flex-wrap gap-2 mb-6">
+                <div className="flex flex-wrap gap-1.5 mb-6">
                   {job.skills.map((skill, index) => (
-                    <Badge key={index} variant="secondary" className="rounded-full">
+                    <Badge 
+                      key={index} 
+                      variant="secondary" 
+                      className="rounded-full text-xs px-2 py-0.5 bg-[#F4F4F5] hover:bg-[#F4F4F5]"
+                    >
                       {skill}
                     </Badge>
                   ))}
