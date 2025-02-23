@@ -6,27 +6,15 @@ import { MessageCircle } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { ProductHeader } from "@/components/product/ProductHeader";
-import { ProductVariants } from "@/components/product/ProductVariants";
 import { ProductReviews } from "@/components/product/ProductReviews";
 import { MoreFromSeller } from "@/components/product/MoreFromSeller";
 import { StickyATC } from "@/components/product/StickyATC";
 import { useToast } from "@/components/ui/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { ProductCard } from "@/components/ProductCard";
-import { VariantPicker } from "@/components/product/VariantPicker";
-
-const placeholderImages = [
-  "https://images.unsplash.com/photo-1649972904349-6e44c42644a7",
-  "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
-  "https://images.unsplash.com/photo-1518770660439-4636190af475",
-  "https://images.unsplash.com/photo-1461749280684-dccba630e2f6",
-  "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d"
-];
-
-const getRandomImage = () => {
-  const randomIndex = Math.floor(Math.random() * placeholderImages.length);
-  return placeholderImages[randomIndex];
-};
+import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Loader2 } from "lucide-react";
 
 export default function Product() {
   const [selectedVariant, setSelectedVariant] = useState("premium");
@@ -34,6 +22,26 @@ export default function Product() {
   const variantsRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const { id } = useParams();
+
+  const { data: product, isLoading, error } = useQuery({
+    queryKey: ['product', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('product_uuid', id)
+        .single();
+
+      if (error) {
+        console.error('Error fetching product:', error);
+        throw error;
+      }
+
+      console.log('Product data:', data);
+      return data;
+    }
+  });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -44,7 +52,7 @@ export default function Product() {
     };
 
     window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Initial check
+    handleScroll();
     
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -56,19 +64,29 @@ export default function Product() {
     });
   };
 
-  const mainProductImage = getRandomImage();
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <MainHeader />
+        <div className="container mx-auto px-4 pt-24 flex items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      </div>
+    );
+  }
 
-  const product = {
-    title: "Professional UI/UX Design Course",
-    views: "9,995",
-    seller: "Design Master",
-    rating: 4.8,
-    image: mainProductImage,
-    price: "$99.99",
-    description: "Complete guide to mastering UI/UX design principles and tools.",
-    tags: ["design", "ui", "ux"],
-    category: "design"
-  };
+  if (error || !product) {
+    return (
+      <div className="min-h-screen bg-background">
+        <MainHeader />
+        <div className="container mx-auto px-4 pt-24">
+          <div className="text-center text-red-500">
+            Product not found or error loading product details.
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const variants = [
     { 
@@ -376,11 +394,14 @@ export default function Product() {
       <MainHeader />
       <main className="container mx-auto px-4 pt-24">
         <div className="lg:hidden">
-          <ProductGallery image={product.image} className="mb-6" />
+          <ProductGallery 
+            image={product.image || "https://images.unsplash.com/photo-1649972904349-6e44c42644a7"} 
+            className="mb-6" 
+          />
           <ProductHeader 
-            title={product.title}
-            seller={product.seller}
-            rating={product.rating}
+            title={product.name}
+            seller={product.seller || "Design Master"}
+            rating={4.8}
             className="mb-6"
           />
           <div ref={variantsRef}>
@@ -407,32 +428,42 @@ export default function Product() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
           <div className="lg:col-span-2">
             <div className="hidden lg:block">
-              <ProductGallery image={product.image} className="mb-8" />
+              <ProductGallery 
+                image={product.image || "https://images.unsplash.com/photo-1649972904349-6e44c42644a7"} 
+                className="mb-8" 
+              />
             </div>
 
             <Card className="p-6 mb-8">
               <p className="text-muted-foreground leading-relaxed">
                 {product.description}
                 <br /><br />
-                This comprehensive course covers everything you need to know about UI/UX design. From fundamental principles 
-                to advanced techniques, you'll learn how to create beautiful and functional user interfaces. Topics include:
-                <br /><br />
-                • User Research and Analysis<br />
-                • Wireframing and Prototyping<br />
-                • Visual Design Principles<br />
-                • User Testing and Iteration<br />
-                • Industry Standard Tools<br />
-                <br />
-                Perfect for beginners and intermediate designers looking to enhance their skills and create professional-grade designs.
+                {product.tech_stack && (
+                  <>
+                    Tech Stack:
+                    <br />
+                    {product.tech_stack.split(',').map((tech) => (
+                      `• ${tech.trim()}`
+                    )).join('<br />')}
+                    <br /><br />
+                  </>
+                )}
+                {product.product_includes && (
+                  <>
+                    What's Included:
+                    <br />
+                    {product.product_includes}
+                  </>
+                )}
               </p>
             </Card>
           </div>
 
           <div className="hidden lg:block">
             <ProductHeader 
-              title={product.title}
-              seller={product.seller}
-              rating={product.rating}
+              title={product.name}
+              seller={product.seller || "Design Master"}
+              rating={4.8}
               className="mb-6"
             />
             <div ref={variantsRef}>
@@ -459,39 +490,32 @@ export default function Product() {
             <Card className="p-6">
               <h3 className="font-semibold mb-4">Additional Information</h3>
               <div className="space-y-4">
-                <div>
-                  <h4 className="font-medium mb-2">Apps Involved</h4>
-                  <ul className="list-disc list-inside text-sm text-muted-foreground">
-                    <li>Make</li>
-                    <li>Google Sheets</li>
-                    <li>Gmail</li>
-                  </ul>
-                </div>
-
-                <div>
-                  <h4 className="font-medium mb-2">Apps Pricing</h4>
-                  <ul className="list-disc list-inside text-sm text-muted-foreground">
-                    <li>Make: Free tier available</li>
-                    <li>Google Workspace: From $6/month</li>
-                  </ul>
-                </div>
+                {product.tech_stack && (
+                  <div>
+                    <h4 className="font-medium mb-2">Tech Stack</h4>
+                    <ul className="list-disc list-inside text-sm text-muted-foreground">
+                      {product.tech_stack.split(',').map((tech, index) => (
+                        <li key={index}>{tech.trim()}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
 
                 <div>
                   <h4 className="font-medium mb-2">What's Included</h4>
-                  <ul className="list-disc list-inside text-sm text-muted-foreground">
-                    <li>3x Make Templates</li>
-                    <li>1x Google Sheet Template</li>
-                    <li>Setup Documentation</li>
-                    <li>Email Support</li>
-                  </ul>
+                  <div className="text-sm text-muted-foreground">
+                    {product.product_includes || 'No information provided'}
+                  </div>
                 </div>
 
-                <div>
-                  <h4 className="font-medium mb-2">Difficulty Level</h4>
-                  <span className="text-sm text-muted-foreground">
-                    Intermediate - Basic knowledge of Make and Google Sheets required
-                  </span>
-                </div>
+                {product.difficulty_level && (
+                  <div>
+                    <h4 className="font-medium mb-2">Difficulty Level</h4>
+                    <span className="text-sm text-muted-foreground">
+                      {product.difficulty_level}
+                    </span>
+                  </div>
+                )}
               </div>
             </Card>
           </div>
