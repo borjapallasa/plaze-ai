@@ -87,7 +87,7 @@ export default function MyCommunities() {
             {filteredCommunities.map((community) => (
               <Card
                 key={community.id}
-                className="group hover:shadow-md transition-all duration-200"
+                className="group hover:shadow-md transition-shadow duration-200 will-change-transform"
               >
                 <div className="relative aspect-video overflow-hidden rounded-t-lg">
                   <img
@@ -110,10 +110,12 @@ export default function MyCommunities() {
                       <Users className="h-4 w-4" />
                       <span>{community.members} Members</span>
                     </div>
-                    <div className="flex items-center text-transparent group-hover:text-primary transition-all duration-300 ease-in-out">
-                      <div className="flex items-center translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300 ease-in-out">
-                        <span className="text-sm">Open</span>
-                        <ArrowRight className="h-4 w-4 ml-1" />
+                    <div className="overflow-hidden">
+                      <div 
+                        className="flex items-center text-transparent group-hover:text-primary transform translate-x-8 group-hover:translate-x-0 transition-all duration-200 ease-out will-change-transform"
+                      >
+                        <span className="text-sm whitespace-nowrap">Open</span>
+                        <ArrowRight className="h-4 w-4 ml-1 flex-shrink-0" />
                       </div>
                     </div>
                   </div>
