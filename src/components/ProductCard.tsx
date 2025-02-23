@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, DollarSign, Percent } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface ProductCardProps {
   title: string;
@@ -17,8 +18,13 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ title, price, image, seller, description, tags, fromPrice, category, split }: ProductCardProps) => {
+  const navigate = useNavigate();
+
   return (
-    <Card className="group relative flex flex-col p-4 lg:p-6 hover:bg-accent transition-colors">
+    <Card 
+      className="group relative flex flex-col p-4 lg:p-6 hover:bg-accent transition-colors cursor-pointer" 
+      onClick={() => navigate('/product')}
+    >
       <div className="flex items-start gap-3 lg:gap-4">
         <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg bg-accent flex items-center justify-center overflow-hidden flex-shrink-0">
           <img

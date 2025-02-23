@@ -1012,6 +1012,7 @@ export type Database = {
           comments: string | null
           created_at: string
           id: number
+          product_uuid: string | null
           rating: number | null
           review_uuid: string
           seller_user_uuid: string | null
@@ -1029,6 +1030,7 @@ export type Database = {
           comments?: string | null
           created_at?: string
           id?: number
+          product_uuid?: string | null
           rating?: number | null
           review_uuid?: string
           seller_user_uuid?: string | null
@@ -1046,6 +1048,7 @@ export type Database = {
           comments?: string | null
           created_at?: string
           id?: number
+          product_uuid?: string | null
           rating?: number | null
           review_uuid?: string
           seller_user_uuid?: string | null
@@ -1058,6 +1061,13 @@ export type Database = {
           verified?: boolean | null
         }
         Relationships: [
+          {
+            foreignKeyName: "reviews_product_uuid_fkey"
+            columns: ["product_uuid"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["product_uuid"]
+          },
           {
             foreignKeyName: "reviews_seller_user_uuid_fkey"
             columns: ["seller_user_uuid"]
