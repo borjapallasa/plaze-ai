@@ -3,167 +3,132 @@ import React from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { 
-  PenLine, Coins, Flame, Heart, Music, 
-  Brain, MonitorSmartphone, Activity, Target, Users,
-  ArrowRight, TrendingUp, Sparkle, Trophy, ThumbsUp, Star, Tags
+  Search, Users, ArrowRight
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
-
-const categories = [
-  { id: "trending", label: "Trending", icon: TrendingUp, dark: true },
-  { id: "newest", label: "Newest", icon: Sparkle },
-  { id: "top-seller", label: "Top Seller", icon: Trophy },
-  { id: "best-reviews", label: "Best Reviews", icon: ThumbsUp },
-  { id: "our-pick", label: "Our Pick", icon: Star },
-  { id: "affiliate-offers", label: "Affiliate Offers", icon: Tags, dark: true }
-];
 
 const communities = [
   {
     id: 1,
-    name: "Brotherhood Of Scent",
-    description: "#1 Fragrance Community 🏆 Our mission is to help YOU leverage the power of scent to become the man you know yourself to be.",
-    members: "5.3k",
-    pricing: "Free",
-    image: "https://images.unsplash.com/photo-1517022812141-23620dba5c23",
-    category: "hobbies"
+    name: "Optimal Path Automations",
+    description: "Scale your business with our proven automation strategies and expert guidance.",
+    members: "199",
+    image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
+    joined: true
   },
   {
     id: 2,
-    name: "Calligraphy Skool",
-    description: "Modern calligraphy made easy! ✍️",
-    members: "1.1k",
-    pricing: "$9/month",
-    image: "https://images.unsplash.com/photo-1582562124811-c09040d0a901",
-    category: "hobbies"
+    name: "Brotherhood Of Scent",
+    description: "#1 Fragrance Community 🏆 Our mission is to help YOU leverage the power of scent.",
+    members: "5.3k",
+    image: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81",
+    joined: false
   },
   {
     id: 3,
-    name: "The Lady Change",
-    description: "THE #1 community for menopausal (peri & post) women to come together, lose weight, get healthier and regain their confidence.",
-    members: "1.3k",
-    pricing: "$49/month",
-    image: "https://images.unsplash.com/photo-1498936178812-4b2e558d2937",
-    category: "health"
+    name: "Calligraphy Skool",
+    description: "Modern calligraphy made easy! Join our creative community ✍️",
+    members: "1.1k",
+    image: "https://images.unsplash.com/photo-1487252665478-49b61b47f302",
+    joined: true
   },
   {
     id: 4,
-    name: "School of Mentors",
-    description: "🌎 💰 Join The #1 Community In The World For Entrepreneurs And Get Mentored Every Week By The Millionaires And Billionaires Who've Done It.",
-    members: "3.6k",
-    pricing: "$39/month",
+    name: "The Lady Change",
+    description: "THE #1 community for menopausal women to come together and regain their confidence.",
+    members: "1.3k",
     image: "https://images.unsplash.com/photo-1501286353178-1ec881214838",
-    category: "money"
+    joined: false
   },
   {
     id: 5,
-    name: "That Pickleball School",
-    description: "Join a community of obsessed pickleball players, learn the strategies pros rely on & get personalized help so you play confidently.",
-    members: "690",
-    pricing: "$39/month",
-    image: "https://images.unsplash.com/photo-1469041797191-50ace28483c3",
-    category: "sports"
-  },
-  {
-    id: 6,
-    name: "Adonis Gang",
-    description: "Join the #1 masculine self-improvement community... Level up in all areas of your life and finally leave Jeffery behind.",
-    members: "176.4k",
-    pricing: "Free",
-    image: "https://images.unsplash.com/photo-1517022812141-23620dba5c23",
-    category: "self-improvement"
+    name: "School of Mentors",
+    description: "Get mentored by millionaires and billionaires who've done it.",
+    members: "3.6k",
+    image: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05",
+    joined: true
   }
 ];
 
-const Communities = () => {
-  const [selectedCategory, setSelectedCategory] = React.useState("all");
+export default function Communities() {
+  const [searchQuery, setSearchQuery] = React.useState("");
 
-  const filteredCommunities = communities.filter(community => 
-    selectedCategory === "all" || community.category === selectedCategory
+  const filteredCommunities = communities.filter(community =>
+    community.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    community.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="pt-16">
-        <MainHeader />
-        
-        <div className="container mx-auto px-4 py-8">
-          {/* Categories */}
-          <ScrollArea className="w-full whitespace-nowrap">
-            <div className="flex space-x-3 pb-4">
-              {categories.map(({ id, label, icon: Icon, dark }) => (
-                <Button
-                  key={id}
-                  variant="outline"
-                  className={cn(
-                    "rounded-full px-6 py-3 h-auto font-medium transition-colors duration-200",
-                    dark ? "bg-[#1A1A1A] text-white hover:bg-[#1A1A1A]/90 border-transparent" : 
-                          "bg-[#F2F2F2] text-[#1A1A1A] hover:bg-[#E8E8E8] border-transparent",
-                    selectedCategory === id && "ring-2 ring-primary"
-                  )}
-                  onClick={() => setSelectedCategory(id)}
+    <div className="bg-background min-h-screen">
+      <MainHeader />
+      <main className="container mx-auto px-4 py-4 pt-24">
+        <div className="max-w-7xl mx-auto space-y-6">
+          {/* Search Bar */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              placeholder="Type here to search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+
+          {/* Communities Scroll Area */}
+          <ScrollArea className="w-full whitespace-nowrap pb-4">
+            <div className="flex space-x-4">
+              {filteredCommunities.map((community) => (
+                <Card
+                  key={community.id}
+                  className="w-[300px] flex-none group hover:shadow-md transition-all duration-200"
                 >
-                  <Icon className="mr-2 h-4 w-4" />
-                  {label}
-                </Button>
+                  <div className="relative h-32 overflow-hidden rounded-t-lg">
+                    <img
+                      src={community.image}
+                      alt={community.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="p-4 space-y-4">
+                    <div>
+                      <h3 className="font-semibold text-lg leading-tight mb-2">
+                        {community.name}
+                      </h3>
+                      <p className="text-sm text-muted-foreground line-clamp-2">
+                        {community.description}
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                        <Users className="h-4 w-4" />
+                        <span>{community.members} Members</span>
+                      </div>
+                      <Button
+                        variant={community.joined ? "outline" : "default"}
+                        size="sm"
+                        className="rounded-full gap-1"
+                      >
+                        {community.joined ? "Open Community" : "Join Community"}
+                        <ArrowRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
               ))}
             </div>
             <ScrollBar orientation="horizontal" />
           </ScrollArea>
 
-          {/* Communities Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-            {filteredCommunities.map((community) => (
-              <Card 
-                key={community.id} 
-                className="group relative overflow-hidden flex flex-col transition-all duration-200 hover:bg-gray-100 hover:border-gray-300"
-              >
-                {/* Community Image */}
-                <div className="relative aspect-[2/1] overflow-hidden">
-                  <img
-                    src={community.image}
-                    alt={community.name}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute top-2 left-2 bg-black/50 text-white px-2 py-1 rounded text-sm">
-                    #{community.id}
-                  </div>
-                </div>
-
-                <div className="p-6 pb-8 flex-1 flex flex-col">
-                  <h3 className="font-semibold text-lg leading-none mb-4">
-                    {community.name}
-                  </h3>
-
-                  {/* Description */}
-                  <p className="text-muted-foreground text-sm mb-6">
-                    {community.description}
-                  </p>
-
-                  {/* Footer */}
-                  <div className="mt-auto flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Users className="h-4 w-4" />
-                      <span>{community.members} Members</span>
-                    </div>
-                    <Badge variant="outline">{community.pricing}</Badge>
-                  </div>
-
-                  {/* Arrow */}
-                  <div className="absolute bottom-4 right-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <ArrowRight className="h-5 w-5 text-primary" />
-                  </div>
-                </div>
-              </Card>
-            ))}
+          {/* See More Button */}
+          <div className="flex justify-center">
+            <Button variant="outline" size="lg" className="rounded-full">
+              See more communities
+            </Button>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
-};
-
-export default Communities;
+}
