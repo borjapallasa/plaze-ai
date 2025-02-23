@@ -2,8 +2,10 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, ChevronDown } from "lucide-react";
+import { Search, ChevronDown, ArrowDown, ArrowUp } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
 import {
   Select,
   SelectContent,
@@ -12,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { MainHeader } from "@/components/MainHeader";
+import { Separator } from "@/components/ui/separator";
 
 interface Transaction {
   templateName: string;
@@ -205,26 +208,79 @@ const transactions: Transaction[] = [
 ];
 
 export default function AdminTransactions() {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [sortField, setSortField] = useState<keyof Transaction>("createdAt");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
-  const filteredTransactions = transactions.filter(transaction =>
-    transaction.templateName.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "completed":
+        return "bg-green-100 text-green-800 hover:bg-green-100";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800 hover:bg-yellow-100";
+      case "failed":
+        return "bg-red-100 text-red-800 hover:bg-red-100";
+      default:
+        return "bg-gray-100 text-gray-800 hover:bg-gray-100";
+    }
+  };
+
+  const handleSort = (field: keyof Transaction) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("asc");
+    }
+  };
+
+  const getSortIcon = (field: keyof Transaction) => {
+    if (sortField !== field) return null;
+    return sortDirection === "asc" ? 
+      <ArrowUp className="h-4 w-4" /> : 
+      <ArrowDown className="h-4 w-4" />;
+  };
+
+  const filteredTransactions = transactions
+    .filter(transaction => {
+      const matchesSearch = transaction.templateName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          transaction.buyerEmail.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesStatus = statusFilter === "all" || transaction.status.toLowerCase() === statusFilter.toLowerCase();
+      return matchesSearch && matchesStatus;
+    })
+    .sort((a, b) => {
+      const aValue = a[sortField];
+      const bValue = b[sortField];
+      const multiplier = sortDirection === "asc" ? 1 : -1;
+      
+      if (typeof aValue === "string" && typeof bValue === "string") {
+        return aValue.localeCompare(bValue) * multiplier;
+      }
+      
+      if (typeof aValue === "number" && typeof bValue === "number") {
+        return (aValue - bValue) * multiplier;
+      }
+      
+      return 0;
+    });
 
   return (
     <>
       <MainHeader />
-      <div className="container mx-auto px-4 py-8 max-w-[1200px] mt-16"> {/* Added mt-16 for header spacing */}
-        <h1 className="text-2xl font-semibold text-[#1A1F2C] mb-2">All Transactions</h1>
-        <p className="text-[#8E9196] mb-8">Click on the transaction to see all details</p>
+      <div className="container mx-auto px-4 py-8 max-w-[1200px] mt-16">
+        <div className="mb-8">
+          <h1 className="text-2xl font-semibold text-[#1A1F2C] mb-2">All Transactions</h1>
+          <p className="text-[#8E9196]">Manage and review all your transaction records</p>
+        </div>
 
         {/* Search and Filter */}
-        <div className="flex gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row gap-4 mb-8">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
             <Input
-              placeholder="Type here to search"
+              placeholder="Search by template name or buyer email"
               className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C]"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -245,66 +301,117 @@ export default function AdminTransactions() {
 
         {/* Transactions Table with ScrollArea */}
         <div className="rounded-lg border border-[#E5E7EB] bg-white">
-          <ScrollArea className="h-[500px] w-full" type="always">
-            <div className="min-w-[2400px]">
+          <ScrollArea className="h-[600px] w-full" type="always">
+            <div className="min-w-[1400px]">
               {/* Header */}
-              <div className="grid grid-cols-[300px,150px,200px,200px,100px,150px,150px,200px,120px,100px,150px,120px,120px,80px,200px] gap-4 p-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
-                <div className="font-medium text-sm text-[#8E9196]">Template Name</div>
-                <div className="font-medium text-sm text-[#8E9196]">Created @</div>
-                <div className="font-medium text-sm text-[#8E9196]">Buyer User</div>
-                <div className="font-medium text-sm text-[#8E9196]">Deliverables</div>
-                <div className="font-medium text-sm text-[#8E9196]">Amount</div>
-                <div className="font-medium text-sm text-[#8E9196]">Marketplace Fees</div>
-                <div className="font-medium text-sm text-[#8E9196]">Seller Receives</div>
-                <div className="font-medium text-sm text-[#8E9196]">Seller User</div>
-                <div className="font-medium text-sm text-[#8E9196]">Affiliate Fees</div>
+              <div className="grid grid-cols-[2fr,1fr,1.5fr,1fr,1fr,1fr,1fr,1fr] gap-4 p-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
+                <button 
+                  onClick={() => handleSort("templateName")}
+                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
+                >
+                  Template Name {getSortIcon("templateName")}
+                </button>
+                <button 
+                  onClick={() => handleSort("createdAt")}
+                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
+                >
+                  Created {getSortIcon("createdAt")}
+                </button>
+                <button 
+                  onClick={() => handleSort("buyerEmail")}
+                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
+                >
+                  Buyer {getSortIcon("buyerEmail")}
+                </button>
+                <button 
+                  onClick={() => handleSort("amount")}
+                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-end"
+                >
+                  Amount {getSortIcon("amount")}
+                </button>
+                <button 
+                  onClick={() => handleSort("marketplaceFees")}
+                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-end"
+                >
+                  Marketplace Fee {getSortIcon("marketplaceFees")}
+                </button>
+                <button 
+                  onClick={() => handleSort("sellerReceives")}
+                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-end"
+                >
+                  Seller Receives {getSortIcon("sellerReceives")}
+                </button>
+                <button 
+                  onClick={() => handleSort("affiliateFees")}
+                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-end"
+                >
+                  Affiliate Fee {getSortIcon("affiliateFees")}
+                </button>
                 <div className="font-medium text-sm text-[#8E9196]">Status</div>
-                <div className="font-medium text-sm text-[#8E9196]">Completed @</div>
-                <div className="font-medium text-sm text-[#8E9196]">Template Id</div>
-                <div className="font-medium text-sm text-[#8E9196]">Checkout Id</div>
-                <div className="font-medium text-sm text-[#8E9196]">Rating</div>
-                <div className="font-medium text-sm text-[#8E9196]">Review</div>
               </div>
 
               {/* Scrollable Transactions */}
               <div className="divide-y divide-[#E5E7EB]">
-                {filteredTransactions.map((transaction, index) => (
-                  <div
-                    key={index}
-                    className="grid grid-cols-[300px,150px,200px,200px,100px,150px,150px,200px,120px,100px,150px,120px,120px,80px,200px] gap-4 p-4 hover:bg-[#F8F9FC] cursor-pointer transition-colors duration-200"
-                  >
-                    <div className="text-sm text-[#1A1F2C]">{transaction.templateName}</div>
-                    <div className="text-sm text-[#8E9196]">{transaction.createdAt}</div>
-                    <div className="text-sm text-[#8E9196]">{transaction.buyerEmail}</div>
-                    <div className="text-sm text-[#8E9196]">{transaction.deliverables}</div>
-                    <div className="text-sm text-[#8E9196]">${transaction.amount}</div>
-                    <div className="text-sm text-[#8E9196]">${transaction.marketplaceFees}</div>
-                    <div className="text-sm text-[#8E9196]">${transaction.sellerReceives}</div>
-                    <div className="text-sm text-[#8E9196]">{transaction.sellerUser}</div>
-                    <div className="text-sm text-[#8E9196]">${transaction.affiliateFees}</div>
-                    <div className="text-sm text-[#8E9196]">{transaction.status}</div>
-                    <div className="text-sm text-[#8E9196]">{transaction.completedAt}</div>
-                    <div className="text-sm text-[#8E9196]">{transaction.templateId}</div>
-                    <div className="text-sm text-[#8E9196]">{transaction.checkoutId}</div>
-                    <div className="text-sm text-[#8E9196]">{transaction.rating}</div>
-                    <div className="text-sm text-[#8E9196]">{transaction.review}</div>
+                {filteredTransactions.length === 0 ? (
+                  <div className="p-8 text-center text-[#8E9196]">
+                    No transactions found matching your criteria
                   </div>
-                ))}
+                ) : (
+                  filteredTransactions.map((transaction, index) => (
+                    <div
+                      key={index}
+                      onClick={() => navigate(`/a/admin/transactions/${transaction.checkoutId}`)}
+                      className="grid grid-cols-[2fr,1fr,1.5fr,1fr,1fr,1fr,1fr,1fr] gap-4 p-4 hover:bg-[#F8F9FC] cursor-pointer transition-colors duration-200 group"
+                    >
+                      <div className="text-sm text-[#1A1F2C] truncate" title={transaction.templateName}>
+                        {transaction.templateName}
+                      </div>
+                      <div className="text-sm text-[#8E9196]">{transaction.createdAt}</div>
+                      <div className="text-sm text-[#8E9196] truncate" title={transaction.buyerEmail}>
+                        {transaction.buyerEmail}
+                      </div>
+                      <div className="text-sm text-[#8E9196] text-right">
+                        ${transaction.amount.toFixed(2)}
+                      </div>
+                      <div className="text-sm text-[#8E9196] text-right">
+                        ${transaction.marketplaceFees.toFixed(2)}
+                      </div>
+                      <div className="text-sm text-[#8E9196] text-right">
+                        ${transaction.sellerReceives.toFixed(2)}
+                      </div>
+                      <div className="text-sm text-[#8E9196] text-right">
+                        ${transaction.affiliateFees.toFixed(2)}
+                      </div>
+                      <div>
+                        <Badge 
+                          variant="secondary" 
+                          className={`${getStatusColor(transaction.status)} capitalize`}
+                        >
+                          {transaction.status}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
             <ScrollBar orientation="horizontal" />
           </ScrollArea>
         </div>
 
-        {/* See More Button */}
-        <div className="flex justify-center mt-6">
-          <Button 
-            variant="outline" 
-            className="gap-2 border-[#E5E7EB] text-[#1A1F2C] hover:bg-[#F8F9FC]"
-          >
-            See more <ChevronDown className="h-4 w-4" />
-          </Button>
-        </div>
+        {filteredTransactions.length > 0 && (
+          <>
+            <Separator className="my-6" />
+            <div className="flex justify-center">
+              <Button 
+                variant="outline" 
+                className="gap-2 border-[#E5E7EB] text-[#1A1F2C] hover:bg-[#F8F9FC]"
+              >
+                See more <ChevronDown className="h-4 w-4" />
+              </Button>
+            </div>
+          </>
+        )}
       </div>
     </>
   );
