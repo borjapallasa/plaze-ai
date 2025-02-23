@@ -2,7 +2,9 @@
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { MoreHorizontal } from "lucide-react";
+import { Trash2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 interface CartItem {
   id: string;
@@ -12,7 +14,7 @@ interface CartItem {
   type: string;
 }
 
-const cartItems: CartItem[] = [
+const initialCartItems: CartItem[] = [
   {
     id: "1",
     title: "IG Lead Qualification Chatbot With Manychat Poll",
@@ -30,7 +32,13 @@ const cartItems: CartItem[] = [
 ];
 
 export default function Cart() {
+  const [cartItems, setCartItems] = useState<CartItem[]>(initialCartItems);
   const total = cartItems.reduce((sum, item) => sum + item.price, 0);
+
+  const handleRemoveItem = (id: string) => {
+    setCartItems(cartItems.filter(item => item.id !== id));
+    toast.success("Item removed from cart");
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -58,8 +66,14 @@ export default function Cart() {
                   </div>
                   <div className="flex items-center gap-4">
                     <span className="text-xl font-semibold">${item.price}</span>
-                    <Button variant="ghost" size="icon" className="rounded-full">
-                      <MoreHorizontal className="h-5 w-5" />
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="rounded-full text-destructive hover:text-destructive hover:bg-destructive/10"
+                      onClick={() => handleRemoveItem(item.id)}
+                    >
+                      <Trash2 className="h-5 w-5" />
+                      <span className="sr-only">Remove item</span>
                     </Button>
                   </div>
                 </div>
