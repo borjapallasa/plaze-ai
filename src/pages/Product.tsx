@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,7 +17,6 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 
-// Placeholder image function to replace getRandomImage
 const getPlaceholderImage = () => "https://images.unsplash.com/photo-1649972904349-6e44c42644a7";
 
 export default function Product() {
@@ -29,7 +27,6 @@ export default function Product() {
   const isMobile = useIsMobile();
   const { id } = useParams();
 
-  // Fetch product data
   const { data: product, isLoading: isLoadingProduct, error: productError } = useQuery({
     queryKey: ['product', id],
     queryFn: async () => {
@@ -48,7 +45,6 @@ export default function Product() {
     }
   });
 
-  // Fetch variants data
   const { data: variants, isLoading: isLoadingVariants } = useQuery({
     queryKey: ['variants', id],
     queryFn: async () => {
@@ -64,7 +60,6 @@ export default function Product() {
 
       console.log('Variants data:', data);
 
-      // Transform the variants data to match the expected format
       return data.map(variant => ({
         id: variant.variant_uuid,
         name: variant.name || "Lorem Ipsum Package",
@@ -77,10 +72,10 @@ export default function Product() {
     }
   });
 
-  // Set first variant as selected when variants are loaded
   useEffect(() => {
     if (variants && variants.length > 0 && !selectedVariant) {
-      setSelectedVariant(variants[0].id);
+      const highlightedVariant = variants.find(v => v.highlight);
+      setSelectedVariant(highlightedVariant ? highlightedVariant.id : variants[0].id);
     }
   }, [variants, selectedVariant]);
 
@@ -129,7 +124,6 @@ export default function Product() {
     );
   }
 
-  // Use fetched variants or empty array if none exist
   const productVariants = variants || [];
 
   const reviews = [
