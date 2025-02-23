@@ -27,6 +27,7 @@ import AccountSettings from "./pages/AccountSettings";
 import Chats from "./pages/Chats";
 import ThankYou from "./pages/ThankYou";
 import EditProduct from "./pages/EditProduct";
+import AdminTransactions from "./pages/admin/AdminTransactions";
 import { Footer } from "./components/Footer";
 
 const queryClient = new QueryClient();
@@ -59,6 +60,7 @@ const App = () => (
           <Route path="/chats" element={<Chats />} />
           <Route path="/thank-you" element={<ThankYou />} />
           <Route path="/seller/product" element={<EditProduct />} />
+          <Route path="/a/admin/transactions" element={<AdminTransactions />} />
         </Routes>
         <Footer />
       </div>
