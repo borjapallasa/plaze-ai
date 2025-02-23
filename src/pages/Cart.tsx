@@ -2,7 +2,7 @@
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { DotsHorizontalIcon } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 
 interface CartItem {
   id: string;
@@ -59,7 +59,7 @@ export default function Cart() {
                   <div className="flex items-center gap-4">
                     <span className="text-xl font-semibold">${item.price}</span>
                     <Button variant="ghost" size="icon" className="rounded-full">
-                      <DotsHorizontalIcon className="h-5 w-5" />
+                      <MoreHorizontal className="h-5 w-5" />
                     </Button>
                   </div>
                 </div>
