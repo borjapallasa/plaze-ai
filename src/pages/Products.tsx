@@ -19,7 +19,6 @@ export default function Products() {
   const { data: products, isLoading, error } = useQuery({
     queryKey: ['products'],
     queryFn: async () => {
-      // Remove the type filter to see all products
       const { data, error } = await supabase
         .from('products')
         .select('*');
@@ -29,7 +28,6 @@ export default function Products() {
         throw error;
       }
       
-      // Log the response to help debug
       console.log('Products response:', data);
       
       return data;
@@ -70,6 +68,7 @@ export default function Products() {
             {products?.map((product) => (
               <ProductCard
                 key={product.product_uuid}
+                id={product.product_uuid}
                 title={product.name}
                 price="$99.99"
                 image="https://images.unsplash.com/photo-1649972904349-6e44c42644a7"

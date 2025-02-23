@@ -50,7 +50,7 @@ const App = () => (
         <div className="flex flex-col min-h-screen">
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/product" element={<Product />} />
+            <Route path="/product/:id" element={<Product />} />
             <Route path="/products" element={<Products />} />
             <Route path="/expert" element={<Expert />} />
             <Route path="/experts" element={<Experts />} />
