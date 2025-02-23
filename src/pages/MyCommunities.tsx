@@ -1,4 +1,3 @@
-
 import React from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
@@ -110,14 +109,10 @@ export default function MyCommunities() {
                       <Users className="h-4 w-4" />
                       <span>{community.members} Members</span>
                     </div>
-                    <Button
-                      variant="default"
-                      size="sm"
-                      className="rounded-full group/button"
-                    >
-                      Open
-                      <ArrowRight className="h-4 w-4 opacity-0 -ml-2 group-hover/button:opacity-100 group-hover/button:ml-1 transition-all" />
-                    </Button>
+                    <div className="group cursor-pointer flex items-center hover:text-primary transition-colors">
+                      <span className="text-sm">Open</span>
+                      <ArrowRight className="h-4 w-4 opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-1 transition-all" />
+                    </div>
                   </div>
                 </div>
               </Card>
