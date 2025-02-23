@@ -198,12 +198,6 @@ export default function Product() {
                 className="mb-8" 
               />
             </div>
-            <ProductInfo 
-              description={product.description}
-              techStack={product.tech_stack}
-              productIncludes={product.product_includes}
-              difficultyLevel={product.difficulty_level}
-            />
           </div>
 
           <div className="hidden lg:block">
@@ -231,6 +225,15 @@ export default function Product() {
               Contact Seller
             </Button>
           </div>
+        </div>
+
+        <div className="mb-8">
+          <ProductInfo 
+            description={product.description}
+            techStack={product.tech_stack}
+            productIncludes={product.product_includes}
+            difficultyLevel={product.difficulty_level}
+          />
         </div>
 
         <ProductDemo demo={product.demo} />
