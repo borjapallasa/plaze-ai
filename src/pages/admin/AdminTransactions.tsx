@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, ChevronDown } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -107,7 +108,7 @@ export default function AdminTransactions() {
         </Select>
       </div>
 
-      {/* Transactions Table */}
+      {/* Transactions Table with ScrollArea */}
       <div className="rounded-lg border border-[#E5E7EB] bg-white">
         {/* Header */}
         <div className="grid grid-cols-[2fr,1fr,1fr] gap-4 p-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
@@ -116,19 +117,21 @@ export default function AdminTransactions() {
           <div className="font-medium text-sm text-[#8E9196]">Buyer User</div>
         </div>
 
-        {/* Transactions */}
-        <div className="divide-y divide-[#E5E7EB]">
-          {filteredTransactions.map((transaction, index) => (
-            <div
-              key={index}
-              className="grid grid-cols-[2fr,1fr,1fr] gap-4 p-4 hover:bg-[#F8F9FC] cursor-pointer transition-colors duration-200"
-            >
-              <div className="text-sm text-[#1A1F2C] line-clamp-1">{transaction.templateName}</div>
-              <div className="text-sm text-[#8E9196]">{transaction.createdAt}</div>
-              <div className="text-sm text-[#8E9196] line-clamp-1">{transaction.buyerEmail}</div>
-            </div>
-          ))}
-        </div>
+        {/* Scrollable Transactions */}
+        <ScrollArea className="h-[500px]">
+          <div className="divide-y divide-[#E5E7EB]">
+            {filteredTransactions.map((transaction, index) => (
+              <div
+                key={index}
+                className="grid grid-cols-[2fr,1fr,1fr] gap-4 p-4 hover:bg-[#F8F9FC] cursor-pointer transition-colors duration-200"
+              >
+                <div className="text-sm text-[#1A1F2C] line-clamp-1">{transaction.templateName}</div>
+                <div className="text-sm text-[#8E9196]">{transaction.createdAt}</div>
+                <div className="text-sm text-[#8E9196] line-clamp-1">{transaction.buyerEmail}</div>
+              </div>
+            ))}
+          </div>
+        </ScrollArea>
       </div>
 
       {/* See More Button */}
