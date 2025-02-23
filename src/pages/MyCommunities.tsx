@@ -111,8 +111,10 @@ export default function MyCommunities() {
                       <span>{community.members} Members</span>
                     </div>
                     <div className="flex items-center text-transparent group-hover:text-primary transition-all duration-300 ease-in-out">
-                      <span className="text-sm translate-x-4 group-hover:translate-x-0 transition-transform duration-300 ease-in-out">Open</span>
-                      <ArrowRight className="h-4 w-4 ml-1 -translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300 ease-in-out" />
+                      <div className="flex items-center translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300 ease-in-out">
+                        <span className="text-sm">Open</span>
+                        <ArrowRight className="h-4 w-4 ml-1" />
+                      </div>
                     </div>
                   </div>
                 </div>
