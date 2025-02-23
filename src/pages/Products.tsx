@@ -19,12 +19,19 @@ export default function Products() {
   const { data: products, isLoading, error } = useQuery({
     queryKey: ['products'],
     queryFn: async () => {
+      // Remove the type filter to see all products
       const { data, error } = await supabase
         .from('products')
-        .select('*')
-        .eq('type', 'template');
+        .select('*');
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching products:', error);
+        throw error;
+      }
+      
+      // Log the response to help debug
+      console.log('Products response:', data);
+      
       return data;
     }
   });
@@ -58,7 +65,7 @@ export default function Products() {
       <MainHeader />
       <main className="container mx-auto px-4 pt-24">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-2xl font-bold mb-8">All Products</h1>
+          <h1 className="text-2xl font-bold mb-8">All Products ({products?.length ?? 0})</h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {products?.map((product) => (
               <ProductCard
