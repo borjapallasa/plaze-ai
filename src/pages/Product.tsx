@@ -1,3 +1,4 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -73,14 +74,15 @@ export default function Product() {
         highlight: variant.highlighted || false,
         features: ["Core Features", "Basic Support"]
       }));
-    },
-    onSuccess: (data) => {
-      // Set the first variant as selected by default if none is selected
-      if (!selectedVariant && data.length > 0) {
-        setSelectedVariant(data[0].id);
-      }
     }
   });
+
+  // Set first variant as selected when variants are loaded
+  useEffect(() => {
+    if (variants && variants.length > 0 && !selectedVariant) {
+      setSelectedVariant(variants[0].id);
+    }
+  }, [variants, selectedVariant]);
 
   useEffect(() => {
     const handleScroll = () => {
