@@ -190,7 +190,7 @@ export default function Product() {
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             <div className="hidden lg:block">
               <ProductGallery 
@@ -224,16 +224,16 @@ export default function Product() {
               <MessageCircle className="h-4 w-4" />
               Contact Seller
             </Button>
+            
+            <div className="mb-8">
+              <ProductInfo 
+                description={product.description}
+                techStack={product.tech_stack}
+                productIncludes={product.product_includes}
+                difficultyLevel={product.difficulty_level}
+              />
+            </div>
           </div>
-        </div>
-
-        <div className="mb-8">
-          <ProductInfo 
-            description={product.description}
-            techStack={product.tech_stack}
-            productIncludes={product.product_includes}
-            difficultyLevel={product.difficulty_level}
-          />
         </div>
 
         <ProductDemo demo={product.demo} />
