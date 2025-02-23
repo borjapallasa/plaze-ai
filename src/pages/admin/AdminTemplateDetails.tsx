@@ -1,4 +1,3 @@
-
 import { ArrowLeft, FileText, Link as LinkIcon, Play, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { MainHeader } from "@/components/MainHeader";
@@ -7,6 +6,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TransactionFiles } from "./components/TransactionFiles";
 import { Separator } from "@/components/ui/separator";
+import { ProductStatus } from "@/components/product/ProductStatus";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 interface Template {
   title: string;
@@ -226,6 +234,29 @@ export default function AdminTemplateDetails() {
 
           {/* Sidebar */}
           <div className="lg:col-span-4 space-y-6">
+            {/* Status Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Status</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="flex items-center gap-4">
+                  <div className="flex-1">
+                    <Select defaultValue="active">
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="inactive">Inactive</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Button>Save</Button>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Primary Information */}
             <Card>
               <CardHeader>
@@ -264,6 +295,69 @@ export default function AdminTemplateDetails() {
                   <Button variant="outline" className="w-full">
                     Edit Template
                   </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Product Organization */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Product Organization</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="team">Team</Label>
+                  <Select defaultValue="">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select team" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="team1">Team 1</SelectItem>
+                      <SelectItem value="team2">Team 2</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="industries">Industries</Label>
+                  <Select defaultValue="">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select industries" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ecommerce">E-commerce</SelectItem>
+                      <SelectItem value="saas">SaaS</SelectItem>
+                      <SelectItem value="retail">Retail</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="platform">Platform</Label>
+                  <Select defaultValue="">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select platform" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="shopify">Shopify</SelectItem>
+                      <SelectItem value="wordpress">WordPress</SelectItem>
+                      <SelectItem value="wix">Wix</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="useCase">Use Case</Label>
+                  <Select defaultValue="">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select use case" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="automation">Automation</SelectItem>
+                      <SelectItem value="marketing">Marketing</SelectItem>
+                      <SelectItem value="analytics">Analytics</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </CardContent>
             </Card>
