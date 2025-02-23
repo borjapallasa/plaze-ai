@@ -302,9 +302,9 @@ export default function AdminTransactions() {
         {/* Transactions Table with ScrollArea */}
         <div className="rounded-lg border border-[#E5E7EB] bg-white">
           <ScrollArea className="h-[600px] w-full" type="always">
-            <div className="min-w-[1400px]">
+            <div className="min-w-[1800px]"> {/* Increased min-width to accommodate more columns */}
               {/* Header */}
-              <div className="grid grid-cols-[2fr,1fr,1.5fr,1fr,1fr,1fr,1fr,1fr] gap-4 p-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
+              <div className="grid grid-cols-[1.5fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr] gap-4 p-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
                 <button 
                   onClick={() => handleSort("templateName")}
                   className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
@@ -315,14 +315,15 @@ export default function AdminTransactions() {
                   onClick={() => handleSort("createdAt")}
                   className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
                 >
-                  Created {getSortIcon("createdAt")}
+                  Created @ {getSortIcon("createdAt")}
                 </button>
                 <button 
                   onClick={() => handleSort("buyerEmail")}
                   className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
                 >
-                  Buyer {getSortIcon("buyerEmail")}
+                  Buyer User {getSortIcon("buyerEmail")}
                 </button>
+                <div className="font-medium text-sm text-[#8E9196]">Deliverables</div>
                 <button 
                   onClick={() => handleSort("amount")}
                   className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-end"
@@ -333,7 +334,7 @@ export default function AdminTransactions() {
                   onClick={() => handleSort("marketplaceFees")}
                   className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-end"
                 >
-                  Marketplace Fee {getSortIcon("marketplaceFees")}
+                  Marketplace Fees {getSortIcon("marketplaceFees")}
                 </button>
                 <button 
                   onClick={() => handleSort("sellerReceives")}
@@ -342,12 +343,43 @@ export default function AdminTransactions() {
                   Seller Receives {getSortIcon("sellerReceives")}
                 </button>
                 <button 
+                  onClick={() => handleSort("sellerUser")}
+                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
+                >
+                  Seller User {getSortIcon("sellerUser")}
+                </button>
+                <button 
                   onClick={() => handleSort("affiliateFees")}
                   className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-end"
                 >
-                  Affiliate Fee {getSortIcon("affiliateFees")}
+                  Affiliate Fees {getSortIcon("affiliateFees")}
                 </button>
                 <div className="font-medium text-sm text-[#8E9196]">Status</div>
+                <button 
+                  onClick={() => handleSort("completedAt")}
+                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
+                >
+                  Completed @ {getSortIcon("completedAt")}
+                </button>
+                <button 
+                  onClick={() => handleSort("templateId")}
+                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
+                >
+                  Template ID {getSortIcon("templateId")}
+                </button>
+                <button 
+                  onClick={() => handleSort("checkoutId")}
+                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
+                >
+                  Checkout ID {getSortIcon("checkoutId")}
+                </button>
+                <button 
+                  onClick={() => handleSort("rating")}
+                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-end"
+                >
+                  Rating {getSortIcon("rating")}
+                </button>
+                <div className="font-medium text-sm text-[#8E9196]">Review</div>
               </div>
 
               {/* Scrollable Transactions */}
@@ -361,7 +393,7 @@ export default function AdminTransactions() {
                     <div
                       key={index}
                       onClick={() => navigate(`/a/admin/transactions/${transaction.checkoutId}`)}
-                      className="grid grid-cols-[2fr,1fr,1.5fr,1fr,1fr,1fr,1fr,1fr] gap-4 p-4 hover:bg-[#F8F9FC] cursor-pointer transition-colors duration-200 group"
+                      className="grid grid-cols-[1.5fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr] gap-4 p-4 hover:bg-[#F8F9FC] cursor-pointer transition-colors duration-200 group"
                     >
                       <div className="text-sm text-[#1A1F2C] truncate" title={transaction.templateName}>
                         {transaction.templateName}
@@ -369,6 +401,9 @@ export default function AdminTransactions() {
                       <div className="text-sm text-[#8E9196]">{transaction.createdAt}</div>
                       <div className="text-sm text-[#8E9196] truncate" title={transaction.buyerEmail}>
                         {transaction.buyerEmail}
+                      </div>
+                      <div className="text-sm text-[#8E9196] truncate" title={transaction.deliverables}>
+                        {transaction.deliverables}
                       </div>
                       <div className="text-sm text-[#8E9196] text-right">
                         ${transaction.amount.toFixed(2)}
@@ -378,6 +413,9 @@ export default function AdminTransactions() {
                       </div>
                       <div className="text-sm text-[#8E9196] text-right">
                         ${transaction.sellerReceives.toFixed(2)}
+                      </div>
+                      <div className="text-sm text-[#8E9196] truncate" title={transaction.sellerUser}>
+                        {transaction.sellerUser}
                       </div>
                       <div className="text-sm text-[#8E9196] text-right">
                         ${transaction.affiliateFees.toFixed(2)}
@@ -389,6 +427,19 @@ export default function AdminTransactions() {
                         >
                           {transaction.status}
                         </Badge>
+                      </div>
+                      <div className="text-sm text-[#8E9196]">{transaction.completedAt}</div>
+                      <div className="text-sm text-[#8E9196] truncate" title={transaction.templateId}>
+                        {transaction.templateId}
+                      </div>
+                      <div className="text-sm text-[#8E9196] truncate" title={transaction.checkoutId}>
+                        {transaction.checkoutId}
+                      </div>
+                      <div className="text-sm text-[#8E9196] text-right">
+                        {transaction.rating > 0 ? transaction.rating : '-'}
+                      </div>
+                      <div className="text-sm text-[#8E9196] truncate" title={transaction.review}>
+                        {transaction.review || '-'}
                       </div>
                     </div>
                   ))
