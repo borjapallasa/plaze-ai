@@ -83,50 +83,47 @@ export default function MyCommunities() {
             />
           </div>
 
-          {/* Communities Scroll Area */}
-          <ScrollArea className="w-full whitespace-nowrap pb-4">
-            <div className="flex space-x-4">
-              {filteredCommunities.map((community) => (
-                <Card
-                  key={community.id}
-                  className="w-[300px] flex-none group hover:shadow-md transition-all duration-200"
-                >
-                  <div className="relative h-32 overflow-hidden rounded-t-lg">
-                    <img
-                      src={community.image}
-                      alt={community.name}
-                      className="w-full h-full object-cover"
-                    />
+          {/* Communities Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredCommunities.map((community) => (
+              <Card
+                key={community.id}
+                className="group hover:shadow-md transition-all duration-200"
+              >
+                <div className="relative aspect-video overflow-hidden rounded-t-lg">
+                  <img
+                    src={community.image}
+                    alt={community.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="p-4 space-y-4">
+                  <div>
+                    <h3 className="font-semibold text-lg leading-tight mb-2">
+                      {community.name}
+                    </h3>
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {community.description}
+                    </p>
                   </div>
-                  <div className="p-4 space-y-4">
-                    <div>
-                      <h3 className="font-semibold text-lg leading-tight mb-2">
-                        {community.name}
-                      </h3>
-                      <p className="text-sm text-muted-foreground line-clamp-2">
-                        {community.description}
-                      </p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                      <Users className="h-4 w-4" />
+                      <span>{community.members} Members</span>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                        <Users className="h-4 w-4" />
-                        <span>{community.members} Members</span>
-                      </div>
-                      <Button
-                        variant="default"
-                        size="sm"
-                        className="rounded-full gap-1"
-                      >
-                        Open Community
-                        <ArrowRight className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      className="rounded-full gap-1"
+                    >
+                      Open Community
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
                   </div>
-                </Card>
-              ))}
-            </div>
-            <ScrollBar orientation="horizontal" />
-          </ScrollArea>
+                </div>
+              </Card>
+            ))}
+          </div>
 
           {/* See More Button */}
           <div className="flex justify-center">
