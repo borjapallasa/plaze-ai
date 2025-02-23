@@ -45,7 +45,7 @@ export default function Cart() {
   return (
     <div className="bg-background">
       <MainHeader />
-      <main className="container mx-auto px-4 py-4 pt-20">
+      <main className="container mx-auto px-4 py-4 pt-24">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-2xl font-semibold mb-4">Shopping Cart</h1>
           
