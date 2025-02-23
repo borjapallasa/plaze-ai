@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -242,9 +243,9 @@ export default function AdminTransactions() {
       {/* Transactions Table with ScrollArea */}
       <div className="rounded-lg border border-[#E5E7EB] bg-white">
         <ScrollArea className="h-[500px]">
-          <div className="min-w-[1400px]"> {/* Set minimum width to ensure horizontal scroll */}
+          <div className="min-w-[2400px]"> {/* Increased minimum width */}
             {/* Header */}
-            <div className="grid grid-cols-[2fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr] gap-4 p-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
+            <div className="grid grid-cols-[300px,150px,200px,200px,100px,150px,150px,200px,120px,100px,150px,120px,120px,80px,200px] gap-4 p-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
               <div className="font-medium text-sm text-[#8E9196]">Template Name</div>
               <div className="font-medium text-sm text-[#8E9196]">Created @</div>
               <div className="font-medium text-sm text-[#8E9196]">Buyer User</div>
@@ -267,23 +268,23 @@ export default function AdminTransactions() {
               {filteredTransactions.map((transaction, index) => (
                 <div
                   key={index}
-                  className="grid grid-cols-[2fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr] gap-4 p-4 hover:bg-[#F8F9FC] cursor-pointer transition-colors duration-200"
+                  className="grid grid-cols-[300px,150px,200px,200px,100px,150px,150px,200px,120px,100px,150px,120px,120px,80px,200px] gap-4 p-4 hover:bg-[#F8F9FC] cursor-pointer transition-colors duration-200"
                 >
-                  <div className="text-sm text-[#1A1F2C] line-clamp-1">{transaction.templateName}</div>
+                  <div className="text-sm text-[#1A1F2C]">{transaction.templateName}</div>
                   <div className="text-sm text-[#8E9196]">{transaction.createdAt}</div>
-                  <div className="text-sm text-[#8E9196] line-clamp-1">{transaction.buyerEmail}</div>
-                  <div className="text-sm text-[#8E9196] line-clamp-1">{transaction.deliverables}</div>
+                  <div className="text-sm text-[#8E9196]">{transaction.buyerEmail}</div>
+                  <div className="text-sm text-[#8E9196]">{transaction.deliverables}</div>
                   <div className="text-sm text-[#8E9196]">${transaction.amount}</div>
                   <div className="text-sm text-[#8E9196]">${transaction.marketplaceFees}</div>
                   <div className="text-sm text-[#8E9196]">${transaction.sellerReceives}</div>
-                  <div className="text-sm text-[#8E9196] line-clamp-1">{transaction.sellerUser}</div>
+                  <div className="text-sm text-[#8E9196]">{transaction.sellerUser}</div>
                   <div className="text-sm text-[#8E9196]">${transaction.affiliateFees}</div>
                   <div className="text-sm text-[#8E9196]">{transaction.status}</div>
                   <div className="text-sm text-[#8E9196]">{transaction.completedAt}</div>
                   <div className="text-sm text-[#8E9196]">{transaction.templateId}</div>
                   <div className="text-sm text-[#8E9196]">{transaction.checkoutId}</div>
                   <div className="text-sm text-[#8E9196]">{transaction.rating}</div>
-                  <div className="text-sm text-[#8E9196] line-clamp-1">{transaction.review}</div>
+                  <div className="text-sm text-[#8E9196]">{transaction.review}</div>
                 </div>
               ))}
             </div>
