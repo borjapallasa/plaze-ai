@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -53,7 +52,7 @@ export default function Product() {
         .from('variants')
         .select('*')
         .eq('product_uuid', id)
-        .order('price', { ascending: true }); // Order by price ascending in the query
+        .order('price', { ascending: true });
 
       if (error) {
         console.error('Error fetching variants:', error);
@@ -235,18 +234,6 @@ export default function Product() {
             <Card className="p-6 mb-8">
               <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
                 {product.description}
-                {product.tech_stack && (
-                  <>
-                    {"\n\nTech Stack:\n"}
-                    {product.tech_stack.split(',').map(tech => `• ${tech.trim()}`).join('\n')}
-                  </>
-                )}
-                {product.product_includes && (
-                  <>
-                    {"\n\nWhat's Included:\n"}
-                    {product.product_includes}
-                  </>
-                )}
               </p>
             </Card>
           </div>
