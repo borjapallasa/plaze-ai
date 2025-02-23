@@ -2,16 +2,18 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { MainHeader } from "@/components/MainHeader";
-import { Calendar, Clock, Copy, FileText, Star, Link as LinkIcon, User } from "lucide-react";
+import { Calendar, Clock, Copy, FileText, Star, Link as LinkIcon, User, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
+import { Separator } from "@/components/ui/separator";
 
 // Mock data - In a real app, this would come from an API
 const transactionData = {
   title: "Find Customer Email List Of Competitors From Social Media Instagram Account",
   buyerUser: "adamcic.ziga@gmail.com",
   sellerUser: "info@optimalpath.ai",
-  transactionDate: "6/13/2024, 8:33 PM",
+  transactionDate: "June 13, 2024, 8:33 PM",
   transactionAmount: 150.00,
   transactionFees: 15.00,
   affiliateFees: 4.50,
@@ -46,42 +48,77 @@ export default function AdminTransactionDetails() {
     <>
       <MainHeader />
       <div className="container mx-auto px-4 py-8 max-w-[1200px] mt-16">
+        {/* Back Button */}
+        <Link 
+          to="/a/admin/transactions"
+          className="inline-flex items-center gap-2 text-[#8E9196] hover:text-[#1A1F2C] mb-6"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Transactions
+        </Link>
+
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle className="text-2xl font-semibold mb-2">Transaction Details</CardTitle>
-            <CardDescription className="text-lg text-[#1A1F2C]">
-              {transactionData.title}
-            </CardDescription>
+            <div className="flex flex-col gap-4">
+              <CardTitle className="text-2xl font-semibold">Transaction Details</CardTitle>
+              <CardDescription className="text-lg text-[#1A1F2C]">
+                {transactionData.title}
+              </CardDescription>
+              
+              {/* Transaction ID near the top */}
+              <div className="flex items-center gap-2 text-sm bg-gray-50 p-3 rounded-lg">
+                <span className="text-[#8E9196]">Transaction ID:</span>
+                <span className="font-medium flex-1">{transactionData.transactionId}</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-[#8E9196] hover:text-[#1A1F2C]"
+                  onClick={() => copyToClipboard(transactionData.transactionId, "Transaction ID")}
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
           </CardHeader>
 
           <CardContent className="space-y-8">
             {/* Overview Section */}
             <div className="grid md:grid-cols-3 gap-6">
+              {/* Buyer Info */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm text-[#8E9196]">
-                  <User className="h-4 w-4" />
+                  <div className="bg-[#F8F9FC] p-2 rounded-full">
+                    <User className="h-4 w-4" />
+                  </div>
                   <span>Buyer User</span>
                 </div>
-                <div className="font-medium">{transactionData.buyerUser}</div>
+                <div className="font-medium pl-10">{transactionData.buyerUser}</div>
               </div>
 
+              {/* Seller Info */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm text-[#8E9196]">
-                  <User className="h-4 w-4" />
+                  <div className="bg-[#F8F9FC] p-2 rounded-full">
+                    <User className="h-4 w-4" />
+                  </div>
                   <span>Seller User</span>
                 </div>
-                <div className="font-medium">{transactionData.sellerUser}</div>
+                <div className="font-medium pl-10">{transactionData.sellerUser}</div>
               </div>
 
+              {/* Date/Time */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm text-[#8E9196]">
-                  <Calendar className="h-4 w-4" />
-                  <Clock className="h-4 w-4" />
+                  <div className="bg-[#F8F9FC] p-2 rounded-full">
+                    <Calendar className="h-4 w-4" />
+                  </div>
                   <span>Transaction Date</span>
                 </div>
-                <div className="font-medium">{transactionData.transactionDate}</div>
+                <div className="font-medium pl-10">{transactionData.transactionDate}</div>
               </div>
             </div>
+
+            <Separator className="my-8" />
 
             {/* Financial Breakdown */}
             <Card>
@@ -89,42 +126,44 @@ export default function AdminTransactionDetails() {
                 <CardTitle className="text-lg">Financial Breakdown</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                       <span className="text-[#8E9196]">Transaction Amount</span>
-                      <span className="font-medium">${transactionData.transactionAmount}</span>
+                      <span className="font-medium">${transactionData.transactionAmount.toFixed(2)}</span>
                     </div>
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                       <span className="text-[#8E9196]">Transaction Fees</span>
-                      <span className="font-medium">${transactionData.transactionFees}</span>
+                      <span className="font-medium">${transactionData.transactionFees.toFixed(2)}</span>
                     </div>
                   </div>
 
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                       <span className="text-[#8E9196]">Affiliate Fees</span>
-                      <span className="font-medium">${transactionData.affiliateFees}</span>
+                      <span className="font-medium">${transactionData.affiliateFees.toFixed(2)}</span>
                     </div>
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                       <span className="text-[#8E9196]">Stripe Fees</span>
-                      <span className="font-medium">${transactionData.stripeFees}</span>
+                      <span className="font-medium">${transactionData.stripeFees.toFixed(2)}</span>
                     </div>
                   </div>
 
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                       <span className="text-[#8E9196]">Gross Margin</span>
-                      <span className="font-medium">${transactionData.grossMargin}</span>
+                      <span className="font-medium">${transactionData.grossMargin.toFixed(2)}</span>
                     </div>
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center p-3 bg-[#F8F9FC] rounded-lg border-2 border-[#9b87f5]">
                       <span className="font-medium text-lg text-[#1A1F2C]">Net Margin</span>
-                      <span className="font-medium text-lg text-[#9b87f5]">${transactionData.netMargin}</span>
+                      <span className="font-medium text-lg text-[#9b87f5]">${transactionData.netMargin.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
+
+            <Separator className="my-8" />
 
             {/* Files & Links */}
             <Card>
@@ -132,10 +171,15 @@ export default function AdminTransactionDetails() {
                 <CardTitle className="text-lg">Files & Links</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <FileText className="h-4 w-4 text-[#8E9196]" />
-                    <span className="font-medium">Files URL</span>
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-white p-2 rounded-full">
+                      <FileText className="h-5 w-5 text-[#9b87f5]" />
+                    </div>
+                    <div>
+                      <div className="font-medium">View Project Files</div>
+                      <div className="text-sm text-[#8E9196]">Access all project deliverables</div>
+                    </div>
                   </div>
                   <Button
                     variant="ghost"
@@ -147,10 +191,15 @@ export default function AdminTransactionDetails() {
                   </Button>
                 </div>
 
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <LinkIcon className="h-4 w-4 text-[#8E9196]" />
-                    <span className="font-medium">Guides URL</span>
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-white p-2 rounded-full">
+                      <LinkIcon className="h-5 w-5 text-[#9b87f5]" />
+                    </div>
+                    <div>
+                      <div className="font-medium">View Project Guide</div>
+                      <div className="text-sm text-[#8E9196]">Access setup instructions</div>
+                    </div>
                   </div>
                   <Button
                     variant="ghost"
@@ -163,9 +212,11 @@ export default function AdminTransactionDetails() {
                 </div>
 
                 {transactionData.customRequest && (
-                  <div className="p-4 bg-[#F8F9FC] rounded-lg">
-                    <div className="font-medium mb-2">Custom Request</div>
-                    <p className="text-[#8E9196]">{transactionData.customRequest}</p>
+                  <div className="mt-6">
+                    <div className="font-medium mb-3">Custom Requirements</div>
+                    <div className="p-4 bg-[#F8F9FC] rounded-lg text-[#1A1F2C]">
+                      {transactionData.customRequest}
+                    </div>
                   </div>
                 )}
               </CardContent>
@@ -175,34 +226,23 @@ export default function AdminTransactionDetails() {
             {transactionData.review && (
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Review</CardTitle>
+                  <CardTitle className="text-lg">Customer Review</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div className="flex gap-1">
-                      {renderStars(transactionData.rating)}
+                    <div className="flex items-center gap-3">
+                      <div className="flex gap-1">
+                        {renderStars(transactionData.rating)}
+                      </div>
+                      <span className="text-[#8E9196]">({transactionData.rating}/5)</span>
                     </div>
-                    <p className="text-[#1A1F2C] italic">"{transactionData.review}"</p>
+                    <blockquote className="text-[#1A1F2C] italic border-l-4 border-[#9b87f5] pl-4 py-2">
+                      "{transactionData.review}"
+                    </blockquote>
                   </div>
                 </CardContent>
               </Card>
             )}
-
-            {/* Transaction ID */}
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-[#8E9196]">Transaction ID:</span>
-                <span className="font-medium">{transactionData.transactionId}</span>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-[#8E9196] hover:text-[#1A1F2C]"
-                onClick={() => copyToClipboard(transactionData.transactionId, "Transaction ID")}
-              >
-                <Copy className="h-4 w-4" />
-              </Button>
-            </div>
           </CardContent>
         </Card>
       </div>
