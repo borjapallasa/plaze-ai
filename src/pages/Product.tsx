@@ -341,7 +341,7 @@ export default function Product() {
           <ProductDemo demo={product.demo} />
         </div>
         <ProductReviews reviews={productReviews} className="p-6 mb-16" />
-        <MoreFromSeller products={moreFromSeller || []} className="pt-12 mb-24" />
+        <MoreFromSeller products={moreFromSeller || []} className="pt-24 mb-24" />
         <RelatedProducts products={relatedProducts} />
 
         <StickyATC 
