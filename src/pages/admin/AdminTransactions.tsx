@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -275,7 +274,6 @@ export default function AdminTransactions() {
           <p className="text-[#8E9196]">Manage and review all your transaction records</p>
         </div>
 
-        {/* Search and Filter */}
         <div className="flex flex-col sm:flex-row gap-4 mb-8">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
@@ -299,12 +297,10 @@ export default function AdminTransactions() {
           </Select>
         </div>
 
-        {/* Transactions Table with ScrollArea */}
         <div className="rounded-lg border border-[#E5E7EB] bg-white">
           <ScrollArea className="h-[600px] w-full" type="always">
-            <div className="min-w-[2400px]">
-              {/* Header */}
-              <div className="grid grid-cols-[2fr,1.2fr,1.5fr,1.2fr,1fr,1.2fr,1.2fr,1.5fr,1fr,0.8fr,1.2fr,1.2fr,1.2fr,0.8fr,1.5fr] gap-4 p-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
+            <div className="min-w-[2800px]">
+              <div className="grid grid-cols-[2fr,1.5fr,2fr,1.5fr,1.2fr,1.5fr,1.5fr,2fr,1.2fr,1fr,1.5fr,1.2fr,1.2fr,0.8fr,1.5fr] gap-4 p-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
                 <button 
                   onClick={() => handleSort("templateName")}
                   className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
@@ -382,7 +378,6 @@ export default function AdminTransactions() {
                 <div className="font-medium text-sm text-[#8E9196]">Review</div>
               </div>
 
-              {/* Scrollable Transactions */}
               <div className="divide-y divide-[#E5E7EB]">
                 {filteredTransactions.length === 0 ? (
                   <div className="p-8 text-center text-[#8E9196]">
@@ -393,7 +388,7 @@ export default function AdminTransactions() {
                     <div
                       key={index}
                       onClick={() => navigate(`/a/admin/transactions/${transaction.checkoutId}`)}
-                      className="grid grid-cols-[2fr,1.2fr,1.5fr,1.2fr,1fr,1.2fr,1.2fr,1.5fr,1fr,0.8fr,1.2fr,1.2fr,1.2fr,0.8fr,1.5fr] gap-4 p-4 hover:bg-[#F8F9FC] cursor-pointer transition-colors duration-200 group"
+                      className="grid grid-cols-[2fr,1.5fr,2fr,1.5fr,1.2fr,1.5fr,1.5fr,2fr,1.2fr,1fr,1.5fr,1.2fr,1.2fr,0.8fr,1.5fr] gap-4 p-4 hover:bg-[#F8F9FC] cursor-pointer transition-colors duration-200 group"
                     >
                       <div className="text-sm text-[#1A1F2C] truncate" title={transaction.templateName}>
                         {transaction.templateName}
