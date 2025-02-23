@@ -1,3 +1,4 @@
+
 import React from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
@@ -109,9 +110,9 @@ export default function MyCommunities() {
                       <Users className="h-4 w-4" />
                       <span>{community.members} Members</span>
                     </div>
-                    <div className="group cursor-pointer flex items-center hover:text-primary transition-colors">
+                    <div className="flex items-center text-transparent group-hover:text-primary transition-colors">
                       <span className="text-sm">Open</span>
-                      <ArrowRight className="h-4 w-4 opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-1 transition-all" />
+                      <ArrowRight className="h-4 w-4 ml-1" />
                     </div>
                   </div>
                 </div>
