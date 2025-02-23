@@ -9,12 +9,17 @@ import { ProductHeader } from "@/components/product/ProductHeader";
 import { ProductReviews } from "@/components/product/ProductReviews";
 import { MoreFromSeller } from "@/components/product/MoreFromSeller";
 import { StickyATC } from "@/components/product/StickyATC";
+import { VariantPicker } from "@/components/product/VariantPicker";
+import { ProductCard } from "@/components/ProductCard";
 import { useToast } from "@/components/ui/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
+
+// Placeholder image function to replace getRandomImage
+const getPlaceholderImage = () => "https://images.unsplash.com/photo-1649972904349-6e44c42644a7";
 
 export default function Product() {
   const [selectedVariant, setSelectedVariant] = useState("premium");
@@ -123,7 +128,7 @@ export default function Product() {
       rating: 5, 
       content: "Excellent course, very detailed",
       description: "The course content is well structured and easy to follow. I learned a lot about UI/UX design principles.",
-      avatar: getRandomImage(),
+      avatar: getPlaceholderImage(),
       date: "2 days ago",
       itemQuality: 5,
       shipping: 5,
@@ -135,7 +140,7 @@ export default function Product() {
       rating: 4, 
       content: "Great content, well structured",
       description: "Very comprehensive material with practical examples. Could use more exercises.",
-      avatar: getRandomImage(),
+      avatar: getPlaceholderImage(),
       date: "1 week ago",
       itemQuality: 4,
       shipping: 5,
@@ -147,247 +152,33 @@ export default function Product() {
       rating: 5, 
       content: "Best design course I've taken!",
       description: "The instructor explains complex concepts in a very clear and engaging way.",
-      avatar: getRandomImage(),
+      avatar: getPlaceholderImage(),
       date: "2 weeks ago",
       itemQuality: 5,
       shipping: 4,
       customerService: 5
-    },
-    { 
-      id: 4, 
-      author: "Sarah Williams", 
-      rating: 4, 
-      content: "Very comprehensive",
-      description: "Excellent course materials and resources. The practical examples were particularly helpful.",
-      avatar: getRandomImage(),
-      date: "3 weeks ago",
-      itemQuality: 4,
-      shipping: 4,
-      customerService: 5
     }
   ];
 
-  const moreFromSeller = [
-    {
-      title: "Advanced UX Research Methods",
-      price: "$89.99",
-      image: getRandomImage(),
-      seller: "Design Master",
-      description: "Learn professional UX research techniques and methodologies.",
-      tags: ["research", "ux"],
-      category: "design"
-    },
-    {
-      title: "UI Animation Masterclass",
-      price: "$79.99",
-      image: getRandomImage(),
-      seller: "Design Master",
-      description: "Create engaging interface animations and micro-interactions.",
-      tags: ["animation", "ui"],
-      category: "design"
-    },
-    {
-      title: "Design Systems Workshop",
-      price: "$129.99",
-      image: getRandomImage(),
-      seller: "Design Master",
-      description: "Build and maintain scalable design systems for large applications.",
-      tags: ["systems", "workflow"],
-      category: "design"
-    },
-    {
-      title: "Figma Advanced Techniques",
-      price: "$69.99",
-      image: getRandomImage(),
-      seller: "Design Master",
-      description: "Master advanced Figma features and workflows for professional design.",
-      tags: ["figma", "tools"],
-      category: "design"
-    },
-    {
-      title: "User Testing Fundamentals",
-      price: "$94.99",
-      image: getRandomImage(),
-      seller: "Design Master",
-      description: "Learn effective user testing methods and result analysis.",
-      tags: ["testing", "research"],
-      category: "design"
-    },
-    {
-      title: "Design Psychology",
-      price: "$84.99",
-      image: getRandomImage(),
-      seller: "Design Master",
-      description: "Understanding human behavior and cognitive principles in UX design.",
-      tags: ["psychology", "ux"],
-      category: "design"
-    },
-    {
-      title: "Mobile UX Design",
-      price: "$99.99",
-      image: getRandomImage(),
-      seller: "Design Master",
-      description: "Create exceptional mobile user experiences and interfaces.",
-      tags: ["mobile", "ux"],
-      category: "design"
-    },
-    {
-      title: "Design Portfolio Workshop",
-      price: "$59.99",
-      image: getRandomImage(),
-      seller: "Design Master",
-      description: "Build a standout design portfolio that attracts clients.",
-      tags: ["portfolio", "career"],
-      category: "design"
-    },
-    {
-      title: "Enterprise UX Strategy",
-      price: "$149.99",
-      image: getRandomImage(),
-      seller: "Design Master",
-      description: "Strategic approaches to enterprise-level UX design challenges.",
-      tags: ["enterprise", "strategy"],
-      category: "design"
-    },
-    {
-      title: "Design Leadership",
-      price: "$129.99",
-      image: getRandomImage(),
-      seller: "Design Master",
-      description: "Lead design teams and manage design processes effectively.",
-      tags: ["leadership", "management"],
-      category: "design"
-    },
-    {
-      title: "Accessibility in Design",
-      price: "$89.99",
-      image: getRandomImage(),
-      seller: "Design Master",
-      description: "Create inclusive designs that work for everyone.",
-      tags: ["accessibility", "inclusive"],
-      category: "design"
-    },
-    {
-      title: "Design Ethics",
-      price: "$74.99",
-      image: getRandomImage(),
-      seller: "Design Master",
-      description: "Ethical considerations and practices in UX/UI design.",
-      tags: ["ethics", "principles"],
-      category: "design"
-    }
-  ];
+  const moreFromSeller = Array(12).fill(null).map((_, index) => ({
+    title: `Product ${index + 1}`,
+    price: "$99.99",
+    image: getPlaceholderImage(),
+    seller: "Design Master",
+    description: "Sample product description",
+    tags: ["design", "ui"],
+    category: "design"
+  }));
 
-  const relatedProducts = [
-    {
-      title: "Responsive Web Design Course",
-      price: "$79.99",
-      image: getRandomImage(),
-      seller: "WebMaster Pro",
-      description: "Master the art of responsive web design and development.",
-      tags: ["web", "responsive", "design"],
-      category: "development"
-    },
-    {
-      title: "Digital Marketing Fundamentals",
-      price: "$89.99",
-      image: getRandomImage(),
-      seller: "Marketing Guru",
-      description: "Learn essential digital marketing strategies and tools.",
-      tags: ["marketing", "digital"],
-      category: "marketing"
-    },
-    {
-      title: "Product Management Essentials",
-      price: "$99.99",
-      image: getRandomImage(),
-      seller: "PM Expert",
-      description: "Comprehensive guide to modern product management.",
-      tags: ["product", "management"],
-      category: "business"
-    },
-    {
-      title: "JavaScript Advanced Concepts",
-      price: "$94.99",
-      image: getRandomImage(),
-      seller: "JS Master",
-      description: "Deep dive into advanced JavaScript programming.",
-      tags: ["javascript", "programming"],
-      category: "development"
-    },
-    {
-      title: "Graphic Design Masterclass",
-      price: "$84.99",
-      image: getRandomImage(),
-      seller: "Design Pro",
-      description: "Complete guide to professional graphic design.",
-      tags: ["graphic", "design"],
-      category: "design"
-    },
-    {
-      title: "Content Creation Workshop",
-      price: "$69.99",
-      image: getRandomImage(),
-      seller: "Content Creator",
-      description: "Learn to create engaging digital content.",
-      tags: ["content", "creation"],
-      category: "marketing"
-    },
-    {
-      title: "Data Analysis with Python",
-      price: "$109.99",
-      image: getRandomImage(),
-      seller: "Data Expert",
-      description: "Master data analysis using Python.",
-      tags: ["python", "data"],
-      category: "development"
-    },
-    {
-      title: "SEO Optimization Course",
-      price: "$79.99",
-      image: getRandomImage(),
-      seller: "SEO Master",
-      description: "Learn modern SEO techniques and strategies.",
-      tags: ["seo", "marketing"],
-      category: "marketing"
-    },
-    {
-      title: "Business Strategy Planning",
-      price: "$129.99",
-      image: getRandomImage(),
-      seller: "Strategy Pro",
-      description: "Develop effective business strategies.",
-      tags: ["business", "strategy"],
-      category: "business"
-    },
-    {
-      title: "Mobile App Development",
-      price: "$119.99",
-      image: getRandomImage(),
-      seller: "App Developer",
-      description: "Complete mobile app development course.",
-      tags: ["mobile", "development"],
-      category: "development"
-    },
-    {
-      title: "Email Marketing Strategy",
-      price: "$74.99",
-      image: getRandomImage(),
-      seller: "Email Pro",
-      description: "Master email marketing campaigns.",
-      tags: ["email", "marketing"],
-      category: "marketing"
-    },
-    {
-      title: "Photography Basics",
-      price: "$64.99",
-      image: getRandomImage(),
-      seller: "Photo Master",
-      description: "Learn fundamental photography techniques.",
-      tags: ["photography", "creative"],
-      category: "creative"
-    }
-  ];
+  const relatedProducts = Array(12).fill(null).map((_, index) => ({
+    title: `Related Product ${index + 1}`,
+    price: "$99.99",
+    image: getPlaceholderImage(),
+    seller: "Another Seller",
+    description: "Sample related product description",
+    tags: ["design", "ui"],
+    category: "design"
+  }));
 
   return (
     <div className="min-h-screen">
@@ -395,12 +186,12 @@ export default function Product() {
       <main className="container mx-auto px-4 pt-24">
         <div className="lg:hidden">
           <ProductGallery 
-            image={product.image || "https://images.unsplash.com/photo-1649972904349-6e44c42644a7"} 
+            image={getPlaceholderImage()} 
             className="mb-6" 
           />
           <ProductHeader 
             title={product.name}
-            seller={product.seller || "Design Master"}
+            seller="Design Master"
             rating={4.8}
             className="mb-6"
           />
@@ -429,29 +220,23 @@ export default function Product() {
           <div className="lg:col-span-2">
             <div className="hidden lg:block">
               <ProductGallery 
-                image={product.image || "https://images.unsplash.com/photo-1649972904349-6e44c42644a7"} 
+                image={getPlaceholderImage()}
                 className="mb-8" 
               />
             </div>
 
             <Card className="p-6 mb-8">
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
                 {product.description}
-                <br /><br />
                 {product.tech_stack && (
                   <>
-                    Tech Stack:
-                    <br />
-                    {product.tech_stack.split(',').map((tech) => (
-                      `• ${tech.trim()}`
-                    )).join('<br />')}
-                    <br /><br />
+                    {"\n\nTech Stack:\n"}
+                    {product.tech_stack.split(',').map(tech => `• ${tech.trim()}`).join('\n')}
                   </>
                 )}
                 {product.product_includes && (
                   <>
-                    What's Included:
-                    <br />
+                    {"\n\nWhat's Included:\n"}
                     {product.product_includes}
                   </>
                 )}
@@ -462,7 +247,7 @@ export default function Product() {
           <div className="hidden lg:block">
             <ProductHeader 
               title={product.name}
-              seller={product.seller || "Design Master"}
+              seller="Design Master"
               rating={4.8}
               className="mb-6"
             />
@@ -523,49 +308,12 @@ export default function Product() {
 
         <h2 className="text-xl font-semibold mb-4">Demo</h2>
         <Card className="p-6 mb-8">
-          <div className="aspect-video bg-accent rounded-lg"></div>
+          {product.demo ? (
+            <div dangerouslySetInnerHTML={{ __html: product.demo }} />
+          ) : (
+            <div className="aspect-video bg-accent rounded-lg"></div>
+          )}
         </Card>
-
-        <div className="lg:hidden mb-8">
-          <Card className="p-6 mb-4">
-            <h3 className="font-semibold mb-4">Additional Information</h3>
-            <div className="space-y-4">
-              <div>
-                <h4 className="font-medium mb-2">Apps Involved</h4>
-                <ul className="list-disc list-inside text-sm text-muted-foreground">
-                  <li>Make</li>
-                  <li>Google Sheets</li>
-                  <li>Gmail</li>
-                </ul>
-              </div>
-
-              <div>
-                <h4 className="font-medium mb-2">Apps Pricing</h4>
-                <ul className="list-disc list-inside text-sm text-muted-foreground">
-                  <li>Make: Free tier available</li>
-                  <li>Google Workspace: From $6/month</li>
-                </ul>
-              </div>
-
-              <div>
-                <h4 className="font-medium mb-2">What's Included</h4>
-                <ul className="list-disc list-inside text-sm text-muted-foreground">
-                  <li>3x Make Templates</li>
-                  <li>1x Google Sheet Template</li>
-                  <li>Setup Documentation</li>
-                  <li>Email Support</li>
-                </ul>
-              </div>
-
-              <div>
-                <h4 className="font-medium mb-2">Difficulty Level</h4>
-                <span className="text-sm text-muted-foreground">
-                  Intermediate - Basic knowledge of Make and Google Sheets required
-                </span>
-              </div>
-            </div>
-          </Card>
-        </div>
 
         <ProductReviews reviews={reviews} className="p-6 mb-16" />
 
