@@ -87,7 +87,7 @@ export default function MyCommunities() {
             {filteredCommunities.map((community) => (
               <Card
                 key={community.id}
-                className="group hover:shadow-md transition-shadow duration-500 will-change-transform bg-[#F1F0FB]"
+                className="group hover:shadow-md hover:bg-[#FAFAFA] transition-all duration-500 will-change-transform"
               >
                 <div className="relative aspect-video overflow-hidden rounded-t-lg">
                   <img
