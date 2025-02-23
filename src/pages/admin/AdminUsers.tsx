@@ -161,52 +161,52 @@ export default function AdminUsers() {
 
         <div className="rounded-lg border border-[#E5E7EB] bg-white">
           <ScrollArea className="h-[600px] w-full" type="always">
-            <div className="min-w-[2400px]"> {/* Increased minimum width for better spacing */}
+            <div className="min-w-[2400px]">
               <div className="grid grid-cols-[2fr,2fr,1.5fr,1fr,1fr,1fr,1.5fr,1.5fr,1.5fr,1fr,1fr,1.5fr,2fr,1.5fr,2fr] px-6 py-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
-                <button onClick={() => handleSort("email")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left">
-                  User Email {getSortIcon("email")}
+                <button onClick={() => handleSort("email")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
+                  <span className="truncate">User Email</span> {getSortIcon("email")}
                 </button>
-                <button onClick={() => handleSort("fullName")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left">
-                  Full Name {getSortIcon("fullName")}
+                <button onClick={() => handleSort("fullName")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
+                  <span className="truncate">Full Name</span> {getSortIcon("fullName")}
                 </button>
-                <button onClick={() => handleSort("createdAt")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left">
-                  Created @ {getSortIcon("createdAt")}
+                <button onClick={() => handleSort("createdAt")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
+                  <span className="truncate">Created @</span> {getSortIcon("createdAt")}
                 </button>
-                <button onClick={() => handleSort("isCreator")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left">
-                  Creator {getSortIcon("isCreator")}
+                <button onClick={() => handleSort("isCreator")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
+                  <span className="truncate">Creator</span> {getSortIcon("isCreator")}
                 </button>
-                <button onClick={() => handleSort("isAffiliate")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left">
-                  Affiliate {getSortIcon("isAffiliate")}
+                <button onClick={() => handleSort("isAffiliate")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
+                  <span className="truncate">Affiliate</span> {getSortIcon("isAffiliate")}
                 </button>
-                <button onClick={() => handleSort("isAdmin")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left">
-                  Admin {getSortIcon("isAdmin")}
+                <button onClick={() => handleSort("isAdmin")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
+                  <span className="truncate">Admin</span> {getSortIcon("isAdmin")}
                 </button>
-                <button onClick={() => handleSort("spentAmount")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left">
-                  Spent Amount {getSortIcon("spentAmount")}
+                <button onClick={() => handleSort("spentAmount")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
+                  <span className="truncate">Spent Amount</span> {getSortIcon("spentAmount")}
                 </button>
-                <button onClick={() => handleSort("salesAmount")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left">
-                  Sales Amount {getSortIcon("salesAmount")}
+                <button onClick={() => handleSort("salesAmount")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
+                  <span className="truncate">Sales Amount</span> {getSortIcon("salesAmount")}
                 </button>
-                <button onClick={() => handleSort("affiliateFeesGenerated")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left">
-                  Affiliate Fees {getSortIcon("affiliateFeesGenerated")}
+                <button onClick={() => handleSort("affiliateFeesGenerated")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
+                  <span className="truncate">Affiliate Fees</span> {getSortIcon("affiliateFeesGenerated")}
                 </button>
-                <button onClick={() => handleSort("templatesUploaded")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left">
-                  Templates Uploaded {getSortIcon("templatesUploaded")}
+                <button onClick={() => handleSort("templatesUploaded")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
+                  <span className="truncate">Templates Uploaded</span> {getSortIcon("templatesUploaded")}
                 </button>
-                <button onClick={() => handleSort("activeTemplates")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left">
-                  Active Templates {getSortIcon("activeTemplates")}
+                <button onClick={() => handleSort("activeTemplates")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
+                  <span className="truncate">Active Templates</span> {getSortIcon("activeTemplates")}
                 </button>
-                <button onClick={() => handleSort("numberOfTransactions")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left">
-                  Number of Transactions {getSortIcon("numberOfTransactions")}
+                <button onClick={() => handleSort("numberOfTransactions")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
+                  <span className="truncate">Number of Transactions</span> {getSortIcon("numberOfTransactions")}
                 </button>
-                <button onClick={() => handleSort("referredBy")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left">
-                  Referred By {getSortIcon("referredBy")}
+                <button onClick={() => handleSort("referredBy")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
+                  <span className="truncate">Referred By</span> {getSortIcon("referredBy")}
                 </button>
-                <button onClick={() => handleSort("userId")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left">
-                  User Id {getSortIcon("userId")}
+                <button onClick={() => handleSort("userId")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
+                  <span className="truncate">User Id</span> {getSortIcon("userId")}
                 </button>
-                <button onClick={() => handleSort("stripeConnectId")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left">
-                  Stripe Connect Id {getSortIcon("stripeConnectId")}
+                <button onClick={() => handleSort("stripeConnectId")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
+                  <span className="truncate">Stripe Connect Id</span> {getSortIcon("stripeConnectId")}
                 </button>
               </div>
 
