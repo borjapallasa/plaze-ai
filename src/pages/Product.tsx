@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
@@ -14,7 +13,7 @@ import { ProductDemo } from "@/components/product/ProductDemo";
 import { RelatedProducts } from "@/components/product/RelatedProducts";
 import { useToast } from "@/components/ui/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
@@ -22,24 +21,54 @@ import { Card } from "@/components/ui/card";
 
 const getPlaceholderImage = () => "https://images.unsplash.com/photo-1649972904349-6e44c42644a7";
 
+const createSlug = (text: string) => {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)+/g, '');
+};
+
 export default function Product() {
   const [selectedVariant, setSelectedVariant] = useState<string | undefined>();
   const [showStickyATC, setShowStickyATC] = useState(false);
   const variantsRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const { data: product, isLoading: isLoadingProduct, error: productError } = useQuery({
     queryKey: ['product', id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let { data: uuidData, error: uuidError } = await supabase
         .from('products')
         .select('*')
         .eq('product_uuid', id)
         .single();
 
-      if (error) throw error;
-      return data;
+      if (!uuidError && uuidData) {
+        return uuidData;
+      }
+
+      const numericId = parseInt(id?.split('-')[0] || '');
+      if (!isNaN(numericId)) {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('id', numericId)
+          .single();
+
+        if (error) throw error;
+        
+        const slug = createSlug(data.name || '');
+        const canonicalUrl = `/product/${data.id}-${slug}`;
+        if (window.location.pathname !== canonicalUrl) {
+          navigate(canonicalUrl, { replace: true });
+        }
+        
+        return data;
+      }
+
+      throw new Error('Product not found');
     }
   });
 
