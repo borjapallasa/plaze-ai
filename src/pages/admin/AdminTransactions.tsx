@@ -302,9 +302,9 @@ export default function AdminTransactions() {
         {/* Transactions Table with ScrollArea */}
         <div className="rounded-lg border border-[#E5E7EB] bg-white">
           <ScrollArea className="h-[600px] w-full" type="always">
-            <div className="min-w-[1800px]"> {/* Increased min-width to accommodate more columns */}
+            <div className="min-w-[2400px]"> {/* Increased min-width for better content visibility */}
               {/* Header */}
-              <div className="grid grid-cols-[1.5fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr] gap-4 p-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
+              <div className="grid grid-cols-[2fr,1.2fr,1.5fr,1.2fr,1fr,1.2fr,1.2fr,1.5fr,1fr,0.8fr,1.2fr,1.2fr,1.2fr,0.8fr,1.5fr] gap-4 p-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
                 <button 
                   onClick={() => handleSort("templateName")}
                   className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
@@ -313,69 +313,69 @@ export default function AdminTransactions() {
                 </button>
                 <button 
                   onClick={() => handleSort("createdAt")}
-                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
+                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
                 >
                   Created @ {getSortIcon("createdAt")}
                 </button>
                 <button 
                   onClick={() => handleSort("buyerEmail")}
-                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
+                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
                 >
                   Buyer User {getSortIcon("buyerEmail")}
                 </button>
-                <div className="font-medium text-sm text-[#8E9196]">Deliverables</div>
+                <div className="font-medium text-sm text-[#8E9196] whitespace-nowrap">Deliverables</div>
                 <button 
                   onClick={() => handleSort("amount")}
-                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-end"
+                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-end whitespace-nowrap"
                 >
                   Amount {getSortIcon("amount")}
                 </button>
                 <button 
                   onClick={() => handleSort("marketplaceFees")}
-                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-end"
+                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-end whitespace-nowrap"
                 >
                   Marketplace Fees {getSortIcon("marketplaceFees")}
                 </button>
                 <button 
                   onClick={() => handleSort("sellerReceives")}
-                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-end"
+                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-end whitespace-nowrap"
                 >
                   Seller Receives {getSortIcon("sellerReceives")}
                 </button>
                 <button 
                   onClick={() => handleSort("sellerUser")}
-                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
+                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
                 >
                   Seller User {getSortIcon("sellerUser")}
                 </button>
                 <button 
                   onClick={() => handleSort("affiliateFees")}
-                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-end"
+                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-end whitespace-nowrap"
                 >
                   Affiliate Fees {getSortIcon("affiliateFees")}
                 </button>
                 <div className="font-medium text-sm text-[#8E9196]">Status</div>
                 <button 
                   onClick={() => handleSort("completedAt")}
-                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
+                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
                 >
                   Completed @ {getSortIcon("completedAt")}
                 </button>
                 <button 
                   onClick={() => handleSort("templateId")}
-                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
+                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
                 >
                   Template ID {getSortIcon("templateId")}
                 </button>
                 <button 
                   onClick={() => handleSort("checkoutId")}
-                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
+                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
                 >
                   Checkout ID {getSortIcon("checkoutId")}
                 </button>
                 <button 
                   onClick={() => handleSort("rating")}
-                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-end"
+                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-end whitespace-nowrap"
                 >
                   Rating {getSortIcon("rating")}
                 </button>
@@ -393,52 +393,56 @@ export default function AdminTransactions() {
                     <div
                       key={index}
                       onClick={() => navigate(`/a/admin/transactions/${transaction.checkoutId}`)}
-                      className="grid grid-cols-[1.5fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr] gap-4 p-4 hover:bg-[#F8F9FC] cursor-pointer transition-colors duration-200 group"
+                      className="grid grid-cols-[2fr,1.2fr,1.5fr,1.2fr,1fr,1.2fr,1.2fr,1.5fr,1fr,0.8fr,1.2fr,1.2fr,1.2fr,0.8fr,1.5fr] gap-4 p-4 hover:bg-[#F8F9FC] cursor-pointer transition-colors duration-200 group"
                     >
                       <div className="text-sm text-[#1A1F2C] truncate" title={transaction.templateName}>
                         {transaction.templateName}
                       </div>
-                      <div className="text-sm text-[#8E9196]">{transaction.createdAt}</div>
-                      <div className="text-sm text-[#8E9196] truncate" title={transaction.buyerEmail}>
+                      <div className="text-sm text-[#8E9196] whitespace-nowrap">
+                        {transaction.createdAt}
+                      </div>
+                      <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.buyerEmail}>
                         {transaction.buyerEmail}
                       </div>
-                      <div className="text-sm text-[#8E9196] truncate" title={transaction.deliverables}>
+                      <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.deliverables}>
                         {transaction.deliverables}
                       </div>
-                      <div className="text-sm text-[#8E9196] text-right">
+                      <div className="text-sm text-[#8E9196] text-right whitespace-nowrap">
                         ${transaction.amount.toFixed(2)}
                       </div>
-                      <div className="text-sm text-[#8E9196] text-right">
+                      <div className="text-sm text-[#8E9196] text-right whitespace-nowrap">
                         ${transaction.marketplaceFees.toFixed(2)}
                       </div>
-                      <div className="text-sm text-[#8E9196] text-right">
+                      <div className="text-sm text-[#8E9196] text-right whitespace-nowrap">
                         ${transaction.sellerReceives.toFixed(2)}
                       </div>
-                      <div className="text-sm text-[#8E9196] truncate" title={transaction.sellerUser}>
+                      <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.sellerUser}>
                         {transaction.sellerUser}
                       </div>
-                      <div className="text-sm text-[#8E9196] text-right">
+                      <div className="text-sm text-[#8E9196] text-right whitespace-nowrap">
                         ${transaction.affiliateFees.toFixed(2)}
                       </div>
                       <div>
                         <Badge 
                           variant="secondary" 
-                          className={`${getStatusColor(transaction.status)} capitalize`}
+                          className={`${getStatusColor(transaction.status)} capitalize whitespace-nowrap`}
                         >
                           {transaction.status}
                         </Badge>
                       </div>
-                      <div className="text-sm text-[#8E9196]">{transaction.completedAt}</div>
-                      <div className="text-sm text-[#8E9196] truncate" title={transaction.templateId}>
+                      <div className="text-sm text-[#8E9196] whitespace-nowrap">
+                        {transaction.completedAt}
+                      </div>
+                      <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.templateId}>
                         {transaction.templateId}
                       </div>
-                      <div className="text-sm text-[#8E9196] truncate" title={transaction.checkoutId}>
+                      <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.checkoutId}>
                         {transaction.checkoutId}
                       </div>
-                      <div className="text-sm text-[#8E9196] text-right">
+                      <div className="text-sm text-[#8E9196] text-right whitespace-nowrap">
                         {transaction.rating > 0 ? transaction.rating : '-'}
                       </div>
-                      <div className="text-sm text-[#8E9196] truncate" title={transaction.review}>
+                      <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.review}>
                         {transaction.review || '-'}
                       </div>
                     </div>
