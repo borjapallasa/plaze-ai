@@ -1,6 +1,6 @@
 
 export interface Review {
-  id: string;  // Changed from number to string to match the database
+  id: string;  // Changed from number to string to match UUID from database
   author: string;
   rating: number;
   content: string;

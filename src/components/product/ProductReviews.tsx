@@ -1,26 +1,8 @@
 
 import { Card } from "@/components/ui/card";
-import { Star, Clock, Wallet, DollarSign } from "lucide-react";
-import { Check } from "lucide-react";
+import { Star, Check } from "lucide-react";
+import { type Review } from "./types/review";
 import React from "react";
-
-interface Review {
-  id: number;
-  author: string;
-  rating: number;
-  content: string;
-  description: string;
-  projectDetails?: {
-    duration: string;
-    rate: string;
-    billed: string;
-  };
-  avatar: string;
-  date: string;
-  itemQuality: number;
-  shipping: number;
-  customerService: number;
-}
 
 interface ProductReviewsProps {
   reviews: Review[];
@@ -70,23 +52,6 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
 
                     <h3 className="text-lg font-medium text-gray-900">{review.content}</h3>
                     <p className="text-gray-600 leading-relaxed">{review.description}</p>
-                    
-                    {review.projectDetails && (
-                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-6 text-sm text-gray-500">
-                        <div className="flex items-center gap-1.5 min-w-fit">
-                          <Clock className="h-4 w-4 text-gray-400" />
-                          <span>{review.projectDetails.duration}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 min-w-fit">
-                          <Wallet className="h-4 w-4 text-gray-400" />
-                          <span>{review.projectDetails.rate}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 min-w-fit">
-                          <DollarSign className="h-4 w-4 text-gray-400" />
-                          <span>Billed: {review.projectDetails.billed}</span>
-                        </div>
-                      </div>
-                    )}
 
                     <div className="flex items-center gap-3 pt-1">
                       <div className="h-10 w-10 rounded-full overflow-hidden">
