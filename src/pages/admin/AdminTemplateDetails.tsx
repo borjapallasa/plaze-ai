@@ -335,7 +335,7 @@ export default function AdminTemplateDetails() {
                             }
                           }}
                         >
-                          <SelectTrigger className="border-0 bg-transparent p-0 h-6 w-[100px] focus:ring-0">
+                          <SelectTrigger className="border-0 bg-transparent p-0 h-6 w-[100px] focus:ring-0" hideIndicator>
                             <SelectValue placeholder="Add team" />
                           </SelectTrigger>
                           <SelectContent>
@@ -373,7 +373,7 @@ export default function AdminTemplateDetails() {
                             }
                           }}
                         >
-                          <SelectTrigger className="border-0 bg-transparent p-0 h-6 w-[120px] focus:ring-0">
+                          <SelectTrigger className="border-0 bg-transparent p-0 h-6 w-[120px] focus:ring-0" hideIndicator>
                             <SelectValue placeholder="Add industry" />
                           </SelectTrigger>
                           <SelectContent>
@@ -413,7 +413,7 @@ export default function AdminTemplateDetails() {
                             }
                           }}
                         >
-                          <SelectTrigger className="border-0 bg-transparent p-0 h-6 w-[120px] focus:ring-0">
+                          <SelectTrigger className="border-0 bg-transparent p-0 h-6 w-[120px] focus:ring-0" hideIndicator>
                             <SelectValue placeholder="Add platform" />
                           </SelectTrigger>
                           <SelectContent>
@@ -452,7 +452,7 @@ export default function AdminTemplateDetails() {
                             }
                           }}
                         >
-                          <SelectTrigger className="border-0 bg-transparent p-0 h-6 w-[120px] focus:ring-0">
+                          <SelectTrigger className="border-0 bg-transparent p-0 h-6 w-[120px] focus:ring-0" hideIndicator>
                             <SelectValue placeholder="Add use case" />
                           </SelectTrigger>
                           <SelectContent>
