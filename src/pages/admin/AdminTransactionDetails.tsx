@@ -1,12 +1,15 @@
 
-import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { MainHeader } from "@/components/MainHeader";
-import { Calendar, Clock, Copy, FileText, Star, Link as LinkIcon, User, ArrowLeft } from "lucide-react";
+import { ArrowLeft, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
+import { TransactionOverview } from "./components/TransactionOverview";
+import { TransactionFinancials } from "./components/TransactionFinancials";
+import { TransactionFiles } from "./components/TransactionFiles";
+import { TransactionReview } from "./components/TransactionReview";
 
 // Mock data - In a real app, this would come from an API
 const transactionData = {
@@ -33,15 +36,6 @@ export default function AdminTransactionDetails() {
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     toast.success(`${label} copied to clipboard`);
-  };
-
-  const renderStars = (rating: number) => {
-    return Array(5).fill(0).map((_, index) => (
-      <Star 
-        key={index}
-        className={`h-5 w-5 ${index < rating ? 'fill-yellow-400 text-yellow-400' : 'fill-gray-200 text-gray-200'}`}
-      />
-    ));
   };
 
   return (
@@ -82,166 +76,36 @@ export default function AdminTransactionDetails() {
           </CardHeader>
 
           <CardContent className="space-y-8">
-            {/* Overview Section */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Buyer Info */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm text-[#8E9196]">
-                  <div className="bg-[#F8F9FC] p-2 rounded-full shrink-0">
-                    <User className="h-4 w-4" />
-                  </div>
-                  <span>Buyer User</span>
-                </div>
-                <div className="font-medium pl-10 break-all">{transactionData.buyerUser}</div>
-              </div>
-
-              {/* Seller Info */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm text-[#8E9196]">
-                  <div className="bg-[#F8F9FC] p-2 rounded-full shrink-0">
-                    <User className="h-4 w-4" />
-                  </div>
-                  <span>Seller User</span>
-                </div>
-                <div className="font-medium pl-10 break-all">{transactionData.sellerUser}</div>
-              </div>
-
-              {/* Date/Time */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm text-[#8E9196]">
-                  <div className="bg-[#F8F9FC] p-2 rounded-full shrink-0">
-                    <Calendar className="h-4 w-4" />
-                  </div>
-                  <span>Transaction Date</span>
-                </div>
-                <div className="font-medium pl-10">{transactionData.transactionDate}</div>
-              </div>
-            </div>
+            <TransactionOverview
+              buyerUser={transactionData.buyerUser}
+              sellerUser={transactionData.sellerUser}
+              transactionDate={transactionData.transactionDate}
+            />
 
             <Separator className="my-8" />
 
-            {/* Financial Breakdown */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Financial Breakdown</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                      <span className="text-[#8E9196] mr-2">Transaction Amount</span>
-                      <span className="font-medium shrink-0">${transactionData.transactionAmount.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                      <span className="text-[#8E9196] mr-2">Transaction Fees</span>
-                      <span className="font-medium shrink-0">${transactionData.transactionFees.toFixed(2)}</span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                      <span className="text-[#8E9196] mr-2">Affiliate Fees</span>
-                      <span className="font-medium shrink-0">${transactionData.affiliateFees.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                      <span className="text-[#8E9196] mr-2">Stripe Fees</span>
-                      <span className="font-medium shrink-0">${transactionData.stripeFees.toFixed(2)}</span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                      <span className="text-[#8E9196] mr-2">Gross Margin</span>
-                      <span className="font-medium shrink-0">${transactionData.grossMargin.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between items-center p-3 bg-[#F8F9FC] rounded-lg border-2 border-[#9b87f5]">
-                      <span className="font-medium text-lg text-[#1A1F2C] mr-2">Net Margin</span>
-                      <span className="font-medium text-lg text-[#9b87f5] shrink-0">${transactionData.netMargin.toFixed(2)}</span>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <TransactionFinancials
+              transactionAmount={transactionData.transactionAmount}
+              transactionFees={transactionData.transactionFees}
+              affiliateFees={transactionData.affiliateFees}
+              stripeFees={transactionData.stripeFees}
+              grossMargin={transactionData.grossMargin}
+              netMargin={transactionData.netMargin}
+            />
 
             <Separator className="my-8" />
 
-            {/* Files & Links */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Files & Links</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-white p-2 rounded-full shrink-0">
-                      <FileText className="h-5 w-5 text-[#9b87f5]" />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="font-medium">View Project Files</div>
-                      <div className="text-sm text-[#8E9196]">Access all project deliverables</div>
-                    </div>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-[#8E9196] hover:text-[#1A1F2C] shrink-0"
-                    onClick={() => copyToClipboard(transactionData.filesUrl, "Files URL")}
-                  >
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                </div>
+            <TransactionFiles
+              filesUrl={transactionData.filesUrl}
+              guidesUrl={transactionData.guidesUrl}
+              customRequest={transactionData.customRequest}
+            />
 
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-white p-2 rounded-full shrink-0">
-                      <LinkIcon className="h-5 w-5 text-[#9b87f5]" />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="font-medium">View Project Guide</div>
-                      <div className="text-sm text-[#8E9196]">Access setup instructions</div>
-                    </div>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-[#8E9196] hover:text-[#1A1F2C] shrink-0"
-                    onClick={() => copyToClipboard(transactionData.guidesUrl, "Guides URL")}
-                  >
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                </div>
-
-                {transactionData.customRequest && (
-                  <div className="mt-6">
-                    <div className="font-medium mb-3">Custom Requirements</div>
-                    <div className="p-4 bg-[#F8F9FC] rounded-lg text-[#1A1F2C] break-words">
-                      {transactionData.customRequest}
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Review Section */}
             {transactionData.review && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Customer Review</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="flex gap-1">
-                        {renderStars(transactionData.rating)}
-                      </div>
-                      <span className="text-[#8E9196]">({transactionData.rating}/5)</span>
-                    </div>
-                    <blockquote className="text-[#1A1F2C] italic border-l-4 border-[#9b87f5] pl-4 py-2 break-words">
-                      "{transactionData.review}"
-                    </blockquote>
-                  </div>
-                </CardContent>
-              </Card>
+              <TransactionReview
+                rating={transactionData.rating}
+                review={transactionData.review}
+              />
             )}
           </CardContent>
         </Card>
