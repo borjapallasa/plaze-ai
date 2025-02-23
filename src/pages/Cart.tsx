@@ -45,18 +45,18 @@ export default function Cart() {
   return (
     <div className="min-h-screen bg-background">
       <MainHeader />
-      <main className="container mx-auto px-4 py-8 pt-24">
+      <main className="container mx-auto px-4 py-4 pt-20">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-2xl font-semibold mb-8">Shopping Cart</h1>
+          <h1 className="text-2xl font-semibold mb-4">Shopping Cart</h1>
           
-          <div className="lg:grid lg:grid-cols-3 lg:gap-8">
+          <div className="lg:grid lg:grid-cols-3 lg:gap-6">
             {/* Cart Items */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="lg:col-span-2 space-y-4">
               {cartItems.map((item) => (
                 <Card key={item.id} className="overflow-hidden">
-                  <CardContent className="p-6">
-                    <div className="flex items-start gap-6">
-                      <div className="w-24 h-24 rounded-lg overflow-hidden bg-accent flex-shrink-0">
+                  <CardContent className="p-4">
+                    <div className="flex items-start gap-4">
+                      <div className="w-20 h-20 rounded-lg overflow-hidden bg-accent flex-shrink-0">
                         <img
                           src={item.image}
                           alt={item.title}
@@ -64,18 +64,18 @@ export default function Cart() {
                         />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h2 className="text-xl font-semibold leading-tight mb-2 line-clamp-2">
+                        <h2 className="text-lg font-semibold leading-tight mb-2 line-clamp-2">
                           {item.title}
                         </h2>
-                        <div className="inline-block bg-[#F1F0FB] text-primary px-3 py-1 rounded-full text-sm mb-3">
+                        <div className="inline-block bg-[#F1F0FB] text-primary px-3 py-1 rounded-full text-sm mb-2">
                           {item.type}
                         </div>
                         <p className="text-sm text-muted-foreground">
                           Available immediately after purchase
                         </p>
                       </div>
-                      <div className="flex flex-col items-end gap-4">
-                        <span className="text-xl font-semibold">${item.price}</span>
+                      <div className="flex flex-col items-end gap-3">
+                        <span className="text-lg font-semibold">${item.price}</span>
                         <Button 
                           variant="ghost" 
                           size="icon" 
@@ -93,11 +93,11 @@ export default function Cart() {
             </div>
 
             {/* Order Summary */}
-            <div className="mt-8 lg:mt-0">
+            <div className="mt-4 lg:mt-0">
               <Card>
-                <CardContent className="p-6">
-                  <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
-                  <div className="space-y-4">
+                <CardContent className="p-4">
+                  <h2 className="text-lg font-semibold mb-3">Order Summary</h2>
+                  <div className="space-y-3">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Subtotal</span>
                       <span>${subtotal.toFixed(2)}</span>
@@ -106,7 +106,7 @@ export default function Cart() {
                       <span className="text-muted-foreground">Tax (10%)</span>
                       <span>${tax.toFixed(2)}</span>
                     </div>
-                    <div className="border-t pt-4">
+                    <div className="border-t pt-3">
                       <div className="flex justify-between font-semibold">
                         <span>Total</span>
                         <span>${total.toFixed(2)}</span>
@@ -125,7 +125,7 @@ export default function Cart() {
           </div>
 
           {cartItems.length === 0 && (
-            <div className="text-center py-12">
+            <div className="text-center py-8">
               <p className="text-lg text-muted-foreground">Your cart is empty</p>
               <Button 
                 variant="outline" 
