@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
@@ -157,6 +156,10 @@ export default function Product() {
     category: "design"
   }));
 
+  const averageRating = reviews?.length 
+    ? Number((reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length).toFixed(1))
+    : 0;
+
   return (
     <div className="min-h-screen">
       <MainHeader />
@@ -169,7 +172,7 @@ export default function Product() {
           <ProductHeader 
             title={product.name}
             seller="Design Master"
-            rating={4.8}
+            rating={averageRating}
             className="mb-6"
           />
           <div ref={variantsRef}>
@@ -252,7 +255,7 @@ export default function Product() {
             <ProductHeader 
               title={product.name}
               seller="Design Master"
-              rating={4.8}
+              rating={averageRating}
               className="mb-6"
             />
             <div ref={variantsRef}>
