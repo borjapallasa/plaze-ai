@@ -1,9 +1,11 @@
+
 import React, { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+
 interface Product {
   title: string;
   price: string;
@@ -13,16 +15,19 @@ interface Product {
   tags: string[];
   category: string;
 }
+
 interface MoreFromSellerProps {
   products: Product[];
   className?: string;
 }
+
 export function MoreFromSeller({
   products,
   className
 }: MoreFromSellerProps) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
+
   React.useEffect(() => {
     if (!api) {
       return;
@@ -31,8 +36,9 @@ export function MoreFromSeller({
       setCurrent(api.selectedScrollSnap());
     });
   }, [api]);
+
   return <div>
-      <h2 className="text-2xl font-bold mb-6 py-[50px]">More from seller</h2>
+      <h2 className="text-2xl font-bold mb-6">More from seller</h2>
       
       <Carousel setApi={setApi} className="w-full" opts={{
       align: "start",
@@ -50,6 +56,7 @@ export function MoreFromSeller({
       </Carousel>
     </div>;
 }
+
 function ProductCard({
   product
 }: {
