@@ -27,6 +27,7 @@ import AccountSettings from "./pages/AccountSettings";
 import Chats from "./pages/Chats";
 import ThankYou from "./pages/ThankYou";
 import EditProduct from "./pages/EditProduct";
+import Cart from "./pages/Cart";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminTransactions from "./pages/admin/AdminTransactions";
 import AdminTransactionDetails from "./pages/admin/AdminTransactionDetails";
@@ -66,6 +67,7 @@ const App = () => (
           <Route path="/account-settings" element={<AccountSettings />} />
           <Route path="/chats" element={<Chats />} />
           <Route path="/thank-you" element={<ThankYou />} />
+          <Route path="/cart" element={<Cart />} />
           <Route path="/seller/product" element={<EditProduct />} />
           <Route path="/a/admin" element={<AdminDashboard />} />
           <Route path="/a/admin/transactions" element={<AdminTransactions />} />
