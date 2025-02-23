@@ -73,6 +73,36 @@ export default function Product() {
     }
   });
 
+  const { data: reviews, isLoading: isLoadingReviews } = useQuery({
+    queryKey: ['reviews', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('reviews')
+        .select('*')
+        .eq('product_uuid', id)
+        .eq('status', 'published')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching reviews:', error);
+        throw error;
+      }
+
+      return data.map(review => ({
+        id: review.review_uuid,
+        author: review.buyer_name || 'Anonymous',
+        rating: review.rating || 5,
+        content: review.title || 'No title provided',
+        description: review.comments || 'No comments provided',
+        avatar: getPlaceholderImage(),
+        date: new Date(review.created_at).toLocaleDateString(),
+        itemQuality: review.rating || 5,
+        shipping: review.rating || 5,
+        customerService: review.rating || 5
+      }));
+    }
+  });
+
   useEffect(() => {
     if (variants && variants.length > 0 && !selectedVariant) {
       const highlightedVariant = variants.find(v => v.highlight);
@@ -101,7 +131,7 @@ export default function Product() {
     });
   };
 
-  if (isLoadingProduct || isLoadingVariants) {
+  if (isLoadingProduct || isLoadingVariants || isLoadingReviews) {
     return (
       <div className="min-h-screen bg-background">
         <MainHeader />
@@ -126,45 +156,7 @@ export default function Product() {
   }
 
   const productVariants = variants || [];
-
-  const reviews = [
-    { 
-      id: 1, 
-      author: "John Doe", 
-      rating: 5, 
-      content: "Excellent course, very detailed",
-      description: "The course content is well structured and easy to follow. I learned a lot about UI/UX design principles.",
-      avatar: getPlaceholderImage(),
-      date: "2 days ago",
-      itemQuality: 5,
-      shipping: 5,
-      customerService: 5
-    },
-    { 
-      id: 2, 
-      author: "Jane Smith", 
-      rating: 4, 
-      content: "Great content, well structured",
-      description: "Very comprehensive material with practical examples. Could use more exercises.",
-      avatar: getPlaceholderImage(),
-      date: "1 week ago",
-      itemQuality: 4,
-      shipping: 5,
-      customerService: 4
-    },
-    { 
-      id: 3, 
-      author: "Mike Johnson", 
-      rating: 5, 
-      content: "Best design course I've taken!",
-      description: "The instructor explains complex concepts in a very clear and engaging way.",
-      avatar: getPlaceholderImage(),
-      date: "2 weeks ago",
-      itemQuality: 5,
-      shipping: 4,
-      customerService: 5
-    }
-  ];
+  const productReviews = reviews || [];
 
   const moreFromSeller = Array(12).fill(null).map((_, index) => ({
     title: `Product ${index + 1}`,
@@ -309,7 +301,7 @@ export default function Product() {
           )}
         </Card>
 
-        <ProductReviews reviews={reviews} className="p-6 mb-16" />
+        <ProductReviews reviews={productReviews} className="p-6 mb-16" />
 
         <div className="pt-8">
           <MoreFromSeller products={moreFromSeller} className="mt-30" />
