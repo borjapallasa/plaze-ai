@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -22,14 +21,15 @@ import { Loader2 } from "lucide-react";
 const getPlaceholderImage = () => "https://images.unsplash.com/photo-1649972904349-6e44c42644a7";
 
 export default function Product() {
-  const [selectedVariant, setSelectedVariant] = useState("premium");
+  const [selectedVariant, setSelectedVariant] = useState<string | undefined>();
   const [showStickyATC, setShowStickyATC] = useState(false);
   const variantsRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const { id } = useParams();
 
-  const { data: product, isLoading, error } = useQuery({
+  // Fetch product data
+  const { data: product, isLoading: isLoadingProduct, error: productError } = useQuery({
     queryKey: ['product', id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -43,8 +43,42 @@ export default function Product() {
         throw error;
       }
 
-      console.log('Product data:', data);
       return data;
+    }
+  });
+
+  // Fetch variants data
+  const { data: variants, isLoading: isLoadingVariants } = useQuery({
+    queryKey: ['variants', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('variants')
+        .select('*')
+        .eq('product_uuid', id);
+
+      if (error) {
+        console.error('Error fetching variants:', error);
+        throw error;
+      }
+
+      console.log('Variants data:', data);
+
+      // Transform the variants data to match the expected format
+      return data.map(variant => ({
+        id: variant.variant_uuid,
+        name: variant.name || "Lorem Ipsum Package",
+        price: variant.price || 99.99,
+        comparePrice: variant.compare_price || 149.99,
+        label: "Package",
+        highlight: variant.highlighted || false,
+        features: ["Core Features", "Basic Support"]
+      }));
+    },
+    onSuccess: (data) => {
+      // Set the first variant as selected by default if none is selected
+      if (!selectedVariant && data.length > 0) {
+        setSelectedVariant(data[0].id);
+      }
     }
   });
 
@@ -69,7 +103,7 @@ export default function Product() {
     });
   };
 
-  if (isLoading) {
+  if (isLoadingProduct || isLoadingVariants) {
     return (
       <div className="min-h-screen bg-background">
         <MainHeader />
@@ -80,7 +114,7 @@ export default function Product() {
     );
   }
 
-  if (error || !product) {
+  if (productError || !product) {
     return (
       <div className="min-h-screen bg-background">
         <MainHeader />
@@ -93,33 +127,8 @@ export default function Product() {
     );
   }
 
-  const variants = [
-    { 
-      id: "basic",
-      name: "Basic Package",
-      price: 99.99,
-      comparePrice: 149.99,
-      label: "Most Popular",
-      features: ["Core Course", "Basic Resources"]
-    },
-    {
-      id: "premium",
-      name: "Premium Package",
-      price: 149.99,
-      comparePrice: 199.99,
-      label: "Best Value",
-      highlight: true,
-      features: ["Core Course", "Premium Resources"]
-    },
-    {
-      id: "pro",
-      name: "Professional Package",
-      price: 199.99,
-      comparePrice: 299.99,
-      label: "Most Complete",
-      features: ["Core Course", "Premium Resources"]
-    }
-  ];
+  // Use fetched variants or empty array if none exist
+  const productVariants = variants || [];
 
   const reviews = [
     { 
@@ -197,7 +206,7 @@ export default function Product() {
           />
           <div ref={variantsRef}>
             <VariantPicker
-              variants={variants}
+              variants={productVariants}
               selectedVariant={selectedVariant}
               onVariantChange={setSelectedVariant}
               onAddToCart={handleAddToCart}
@@ -253,7 +262,7 @@ export default function Product() {
             />
             <div ref={variantsRef}>
               <VariantPicker
-                variants={variants}
+                variants={productVariants}
                 selectedVariant={selectedVariant}
                 onVariantChange={setSelectedVariant}
                 onAddToCart={handleAddToCart}
@@ -340,7 +349,7 @@ export default function Product() {
         </div>
 
         <StickyATC 
-          variants={variants}
+          variants={productVariants}
           selectedVariant={selectedVariant}
           onVariantChange={setSelectedVariant}
           visible={showStickyATC}
