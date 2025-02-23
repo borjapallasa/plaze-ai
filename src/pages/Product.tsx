@@ -1,3 +1,4 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
@@ -340,7 +341,7 @@ export default function Product() {
           <ProductDemo demo={product.demo} />
         </div>
         <ProductReviews reviews={productReviews} className="p-6 mb-16" />
-        <MoreFromSeller products={moreFromSeller || []} className="mt-30" />
+        <MoreFromSeller products={moreFromSeller || []} className="mb-24" />
         <RelatedProducts products={relatedProducts} />
 
         <StickyATC 
