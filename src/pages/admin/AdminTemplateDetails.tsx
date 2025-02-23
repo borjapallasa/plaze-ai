@@ -1,4 +1,4 @@
-import { ArrowLeft, FileText, Link as LinkIcon, Play, Star } from "lucide-react";
+import { ArrowLeft, FileText, Link as LinkIcon, Play, Star, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { useState } from "react";
 
 interface Template {
   title: string;
@@ -102,6 +103,11 @@ const StarRating = ({ rating }: { rating: number }) => {
 };
 
 export default function AdminTemplateDetails() {
+  const [selectedTeams, setSelectedTeams] = useState<string[]>([]);
+  const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
+  const [selectedUseCases, setSelectedUseCases] = useState<string[]>([]);
+
   return (
     <>
       <MainHeader />
@@ -306,21 +312,49 @@ export default function AdminTemplateDetails() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="team">Team</Label>
-                  <Select defaultValue="">
+                  <Label htmlFor="team">Teams</Label>
+                  <Select
+                    defaultValue=""
+                    onValueChange={(value) => {
+                      if (!selectedTeams.includes(value)) {
+                        setSelectedTeams([...selectedTeams, value]);
+                      }
+                    }}
+                  >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select team" />
+                      <SelectValue placeholder="Select teams" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="team1">Team 1</SelectItem>
                       <SelectItem value="team2">Team 2</SelectItem>
+                      <SelectItem value="team3">Team 3</SelectItem>
                     </SelectContent>
                   </Select>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {selectedTeams.map((team) => (
+                      <Badge
+                        key={team}
+                        variant="secondary"
+                        className="px-2 py-1 hover:bg-destructive/20 cursor-pointer"
+                        onClick={() => setSelectedTeams(selectedTeams.filter(t => t !== team))}
+                      >
+                        {team}
+                        <span className="ml-1">×</span>
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="industries">Industries</Label>
-                  <Select defaultValue="">
+                  <Select
+                    defaultValue=""
+                    onValueChange={(value) => {
+                      if (!selectedIndustries.includes(value)) {
+                        setSelectedIndustries([...selectedIndustries, value]);
+                      }
+                    }}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select industries" />
                     </SelectTrigger>
@@ -328,36 +362,94 @@ export default function AdminTemplateDetails() {
                       <SelectItem value="ecommerce">E-commerce</SelectItem>
                       <SelectItem value="saas">SaaS</SelectItem>
                       <SelectItem value="retail">Retail</SelectItem>
+                      <SelectItem value="healthcare">Healthcare</SelectItem>
+                      <SelectItem value="education">Education</SelectItem>
                     </SelectContent>
                   </Select>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {selectedIndustries.map((industry) => (
+                      <Badge
+                        key={industry}
+                        variant="secondary"
+                        className="px-2 py-1 hover:bg-destructive/20 cursor-pointer"
+                        onClick={() => setSelectedIndustries(selectedIndustries.filter(i => i !== industry))}
+                      >
+                        {industry}
+                        <span className="ml-1">×</span>
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="platform">Platform</Label>
-                  <Select defaultValue="">
+                  <Label htmlFor="platform">Platforms</Label>
+                  <Select
+                    defaultValue=""
+                    onValueChange={(value) => {
+                      if (!selectedPlatforms.includes(value)) {
+                        setSelectedPlatforms([...selectedPlatforms, value]);
+                      }
+                    }}
+                  >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select platform" />
+                      <SelectValue placeholder="Select platforms" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="shopify">Shopify</SelectItem>
                       <SelectItem value="wordpress">WordPress</SelectItem>
                       <SelectItem value="wix">Wix</SelectItem>
+                      <SelectItem value="webflow">Webflow</SelectItem>
                     </SelectContent>
                   </Select>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {selectedPlatforms.map((platform) => (
+                      <Badge
+                        key={platform}
+                        variant="secondary"
+                        className="px-2 py-1 hover:bg-destructive/20 cursor-pointer"
+                        onClick={() => setSelectedPlatforms(selectedPlatforms.filter(p => p !== platform))}
+                      >
+                        {platform}
+                        <span className="ml-1">×</span>
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="useCase">Use Case</Label>
-                  <Select defaultValue="">
+                  <Label htmlFor="useCase">Use Cases</Label>
+                  <Select
+                    defaultValue=""
+                    onValueChange={(value) => {
+                      if (!selectedUseCases.includes(value)) {
+                        setSelectedUseCases([...selectedUseCases, value]);
+                      }
+                    }}
+                  >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select use case" />
+                      <SelectValue placeholder="Select use cases" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="automation">Automation</SelectItem>
                       <SelectItem value="marketing">Marketing</SelectItem>
                       <SelectItem value="analytics">Analytics</SelectItem>
+                      <SelectItem value="crm">CRM</SelectItem>
+                      <SelectItem value="support">Support</SelectItem>
                     </SelectContent>
                   </Select>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {selectedUseCases.map((useCase) => (
+                      <Badge
+                        key={useCase}
+                        variant="secondary"
+                        className="px-2 py-1 hover:bg-destructive/20 cursor-pointer"
+                        onClick={() => setSelectedUseCases(selectedUseCases.filter(u => u !== useCase))}
+                      >
+                        {useCase}
+                        <span className="ml-1">×</span>
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
               </CardContent>
             </Card>
