@@ -29,6 +29,7 @@ import ThankYou from "./pages/ThankYou";
 import EditProduct from "./pages/EditProduct";
 import AdminTransactions from "./pages/admin/AdminTransactions";
 import AdminTransactionDetails from "./pages/admin/AdminTransactionDetails";
+import DraftTemplates from "./pages/admin/DraftTemplates";
 import { Footer } from "./components/Footer";
 
 const queryClient = new QueryClient();
@@ -63,6 +64,7 @@ const App = () => (
           <Route path="/seller/product" element={<EditProduct />} />
           <Route path="/a/admin/transactions" element={<AdminTransactions />} />
           <Route path="/a/admin/transactions/:id" element={<AdminTransactionDetails />} />
+          <Route path="/a/admin/draft-templates" element={<DraftTemplates />} />
         </Routes>
         <Footer />
       </div>
