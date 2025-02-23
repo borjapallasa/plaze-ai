@@ -1011,7 +1011,6 @@ export type Database = {
           buyer_name: string | null
           comments: string | null
           created_at: string
-          id: number
           product_uuid: string | null
           rating: number | null
           review_uuid: string
@@ -1029,7 +1028,6 @@ export type Database = {
           buyer_name?: string | null
           comments?: string | null
           created_at?: string
-          id?: number
           product_uuid?: string | null
           rating?: number | null
           review_uuid?: string
@@ -1047,7 +1045,6 @@ export type Database = {
           buyer_name?: string | null
           comments?: string | null
           created_at?: string
-          id?: number
           product_uuid?: string | null
           rating?: number | null
           review_uuid?: string

@@ -52,7 +52,7 @@ export default function JobDetails() {
 
   const reviews = [
     { 
-      id: 1,
+      id: "1",
       author: "Client A",
       rating: 5,
       content: "Instagram Reels Manager Project",
@@ -69,7 +69,7 @@ export default function JobDetails() {
       customerService: 5
     },
     { 
-      id: 2,
+      id: "2",
       author: "Client B",
       rating: 5,
       content: "Pinterest Management",
@@ -86,7 +86,7 @@ export default function JobDetails() {
       customerService: 5
     },
     {
-      id: 3,
+      id: "3",
       author: "Avery M.",
       rating: 5,
       content: "Social Media Expert Project",
@@ -103,7 +103,7 @@ export default function JobDetails() {
       customerService: 5
     },
     {
-      id: 4,
+      id: "4",
       author: "Marketing Agency",
       rating: 5,
       content: "Social Media Management",

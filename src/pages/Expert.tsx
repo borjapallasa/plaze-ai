@@ -69,7 +69,7 @@ export default function Expert() {
 
   const reviews = [
     { 
-      id: 1, 
+      id: "1", // Changed from number to string
       author: "Sarah Johnson", 
       rating: 5, 
       content: "Outstanding UX expertise!",
@@ -81,7 +81,7 @@ export default function Expert() {
       customerService: 5
     },
     { 
-      id: 2, 
+      id: "2", // Changed from number to string
       author: "Michael Chen", 
       rating: 5, 
       content: "Exceptional design thinking",
@@ -93,7 +93,7 @@ export default function Expert() {
       customerService: 5
     },
     { 
-      id: 3, 
+      id: "3", // Changed from number to string
       author: "Emily Rodriguez", 
       rating: 4, 
       content: "Great collaboration experience",
@@ -105,7 +105,7 @@ export default function Expert() {
       customerService: 4
     },
     { 
-      id: 4, 
+      id: "4", // Changed from number to string
       author: "David Kim", 
       rating: 5, 
       content: "Top-notch UX consultant",
