@@ -1,3 +1,4 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -51,7 +52,8 @@ export default function Product() {
       const { data, error } = await supabase
         .from('variants')
         .select('*')
-        .eq('product_uuid', id);
+        .eq('product_uuid', id)
+        .order('price', { ascending: true }); // Order by price ascending in the query
 
       if (error) {
         console.error('Error fetching variants:', error);
