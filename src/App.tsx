@@ -28,6 +28,7 @@ import Chats from "./pages/Chats";
 import ThankYou from "./pages/ThankYou";
 import EditProduct from "./pages/EditProduct";
 import Cart from "./pages/Cart";
+import MyCommunities from "./pages/MyCommunities";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminTransactions from "./pages/admin/AdminTransactions";
 import AdminTransactionDetails from "./pages/admin/AdminTransactionDetails";
@@ -51,6 +52,7 @@ const App = () => (
           <Route path="/experts" element={<Experts />} />
           <Route path="/community" element={<Community />} />
           <Route path="/communities" element={<Communities />} />
+          <Route path="/my-communities" element={<MyCommunities />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/sign-up/community" element={<SignUpCommunity />} />
           <Route path="/sign-in" element={<SignIn />} />
