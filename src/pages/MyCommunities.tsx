@@ -113,10 +113,10 @@ export default function MyCommunities() {
                     <Button
                       variant="default"
                       size="sm"
-                      className="rounded-full gap-1"
+                      className="rounded-full group/button"
                     >
-                      Open Community
-                      <ArrowRight className="h-4 w-4" />
+                      Open
+                      <ArrowRight className="h-4 w-4 opacity-0 -ml-2 group-hover/button:opacity-100 group-hover/button:ml-1 transition-all" />
                     </Button>
                   </div>
                 </div>
