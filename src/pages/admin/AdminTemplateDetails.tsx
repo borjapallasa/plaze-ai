@@ -313,142 +313,158 @@ export default function AdminTemplateDetails() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="team">Teams</Label>
-                  <Select
-                    defaultValue=""
-                    onValueChange={(value) => {
-                      if (!selectedTeams.includes(value)) {
-                        setSelectedTeams([...selectedTeams, value]);
-                      }
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select teams" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="team1">Team 1</SelectItem>
-                      <SelectItem value="team2">Team 2</SelectItem>
-                      <SelectItem value="team3">Team 3</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {selectedTeams.map((team) => (
-                      <Badge
-                        key={team}
-                        variant="secondary"
-                        className="px-2 py-1 hover:bg-destructive/20 cursor-pointer"
-                        onClick={() => setSelectedTeams(selectedTeams.filter(t => t !== team))}
-                      >
-                        {team}
-                        <span className="ml-1">×</span>
-                      </Badge>
-                    ))}
+                  <div className="relative">
+                    <div className="min-h-[40px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus:ring-ring focus:ring-offset-2">
+                      <div className="flex flex-wrap gap-1">
+                        {selectedTeams.map((team) => (
+                          <Badge
+                            key={team}
+                            variant="secondary"
+                            className="px-2 py-1 hover:bg-destructive/20 cursor-pointer"
+                            onClick={() => setSelectedTeams(selectedTeams.filter(t => t !== team))}
+                          >
+                            {team}
+                            <span className="ml-1">×</span>
+                          </Badge>
+                        ))}
+                        <Select
+                          defaultValue=""
+                          onValueChange={(value) => {
+                            if (!selectedTeams.includes(value)) {
+                              setSelectedTeams([...selectedTeams, value]);
+                            }
+                          }}
+                        >
+                          <SelectTrigger className="border-0 bg-transparent p-0 h-6 w-[100px] focus:ring-0">
+                            <SelectValue placeholder="Add team" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="team1">Team 1</SelectItem>
+                            <SelectItem value="team2">Team 2</SelectItem>
+                            <SelectItem value="team3">Team 3</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="industries">Industries</Label>
-                  <Select
-                    defaultValue=""
-                    onValueChange={(value) => {
-                      if (!selectedIndustries.includes(value)) {
-                        setSelectedIndustries([...selectedIndustries, value]);
-                      }
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select industries" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="ecommerce">E-commerce</SelectItem>
-                      <SelectItem value="saas">SaaS</SelectItem>
-                      <SelectItem value="retail">Retail</SelectItem>
-                      <SelectItem value="healthcare">Healthcare</SelectItem>
-                      <SelectItem value="education">Education</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {selectedIndustries.map((industry) => (
-                      <Badge
-                        key={industry}
-                        variant="secondary"
-                        className="px-2 py-1 hover:bg-destructive/20 cursor-pointer"
-                        onClick={() => setSelectedIndustries(selectedIndustries.filter(i => i !== industry))}
-                      >
-                        {industry}
-                        <span className="ml-1">×</span>
-                      </Badge>
-                    ))}
+                  <div className="relative">
+                    <div className="min-h-[40px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus:ring-ring focus:ring-offset-2">
+                      <div className="flex flex-wrap gap-1">
+                        {selectedIndustries.map((industry) => (
+                          <Badge
+                            key={industry}
+                            variant="secondary"
+                            className="px-2 py-1 hover:bg-destructive/20 cursor-pointer"
+                            onClick={() => setSelectedIndustries(selectedIndustries.filter(i => i !== industry))}
+                          >
+                            {industry}
+                            <span className="ml-1">×</span>
+                          </Badge>
+                        ))}
+                        <Select
+                          defaultValue=""
+                          onValueChange={(value) => {
+                            if (!selectedIndustries.includes(value)) {
+                              setSelectedIndustries([...selectedIndustries, value]);
+                            }
+                          }}
+                        >
+                          <SelectTrigger className="border-0 bg-transparent p-0 h-6 w-[120px] focus:ring-0">
+                            <SelectValue placeholder="Add industry" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="ecommerce">E-commerce</SelectItem>
+                            <SelectItem value="saas">SaaS</SelectItem>
+                            <SelectItem value="retail">Retail</SelectItem>
+                            <SelectItem value="healthcare">Healthcare</SelectItem>
+                            <SelectItem value="education">Education</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="platform">Platforms</Label>
-                  <Select
-                    defaultValue=""
-                    onValueChange={(value) => {
-                      if (!selectedPlatforms.includes(value)) {
-                        setSelectedPlatforms([...selectedPlatforms, value]);
-                      }
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select platforms" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="shopify">Shopify</SelectItem>
-                      <SelectItem value="wordpress">WordPress</SelectItem>
-                      <SelectItem value="wix">Wix</SelectItem>
-                      <SelectItem value="webflow">Webflow</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {selectedPlatforms.map((platform) => (
-                      <Badge
-                        key={platform}
-                        variant="secondary"
-                        className="px-2 py-1 hover:bg-destructive/20 cursor-pointer"
-                        onClick={() => setSelectedPlatforms(selectedPlatforms.filter(p => p !== platform))}
-                      >
-                        {platform}
-                        <span className="ml-1">×</span>
-                      </Badge>
-                    ))}
+                  <div className="relative">
+                    <div className="min-h-[40px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus:ring-ring focus:ring-offset-2">
+                      <div className="flex flex-wrap gap-1">
+                        {selectedPlatforms.map((platform) => (
+                          <Badge
+                            key={platform}
+                            variant="secondary"
+                            className="px-2 py-1 hover:bg-destructive/20 cursor-pointer"
+                            onClick={() => setSelectedPlatforms(selectedPlatforms.filter(p => p !== platform))}
+                          >
+                            {platform}
+                            <span className="ml-1">×</span>
+                          </Badge>
+                        ))}
+                        <Select
+                          defaultValue=""
+                          onValueChange={(value) => {
+                            if (!selectedPlatforms.includes(value)) {
+                              setSelectedPlatforms([...selectedPlatforms, value]);
+                            }
+                          }}
+                        >
+                          <SelectTrigger className="border-0 bg-transparent p-0 h-6 w-[120px] focus:ring-0">
+                            <SelectValue placeholder="Add platform" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="shopify">Shopify</SelectItem>
+                            <SelectItem value="wordpress">WordPress</SelectItem>
+                            <SelectItem value="wix">Wix</SelectItem>
+                            <SelectItem value="webflow">Webflow</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="useCase">Use Cases</Label>
-                  <Select
-                    defaultValue=""
-                    onValueChange={(value) => {
-                      if (!selectedUseCases.includes(value)) {
-                        setSelectedUseCases([...selectedUseCases, value]);
-                      }
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select use cases" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="automation">Automation</SelectItem>
-                      <SelectItem value="marketing">Marketing</SelectItem>
-                      <SelectItem value="analytics">Analytics</SelectItem>
-                      <SelectItem value="crm">CRM</SelectItem>
-                      <SelectItem value="support">Support</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {selectedUseCases.map((useCase) => (
-                      <Badge
-                        key={useCase}
-                        variant="secondary"
-                        className="px-2 py-1 hover:bg-destructive/20 cursor-pointer"
-                        onClick={() => setSelectedUseCases(selectedUseCases.filter(u => u !== useCase))}
-                      >
-                        {useCase}
-                        <span className="ml-1">×</span>
-                      </Badge>
-                    ))}
+                  <div className="relative">
+                    <div className="min-h-[40px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus:ring-ring focus:ring-offset-2">
+                      <div className="flex flex-wrap gap-1">
+                        {selectedUseCases.map((useCase) => (
+                          <Badge
+                            key={useCase}
+                            variant="secondary"
+                            className="px-2 py-1 hover:bg-destructive/20 cursor-pointer"
+                            onClick={() => setSelectedUseCases(selectedUseCases.filter(u => u !== useCase))}
+                          >
+                            {useCase}
+                            <span className="ml-1">×</span>
+                          </Badge>
+                        ))}
+                        <Select
+                          defaultValue=""
+                          onValueChange={(value) => {
+                            if (!selectedUseCases.includes(value)) {
+                              setSelectedUseCases([...selectedUseCases, value]);
+                            }
+                          }}
+                        >
+                          <SelectTrigger className="border-0 bg-transparent p-0 h-6 w-[120px] focus:ring-0">
+                            <SelectValue placeholder="Add use case" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="automation">Automation</SelectItem>
+                            <SelectItem value="marketing">Marketing</SelectItem>
+                            <SelectItem value="analytics">Analytics</SelectItem>
+                            <SelectItem value="crm">CRM</SelectItem>
+                            <SelectItem value="support">Support</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </CardContent>
