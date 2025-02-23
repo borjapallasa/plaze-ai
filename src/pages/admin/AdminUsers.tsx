@@ -19,87 +19,67 @@ import { Separator } from "@/components/ui/separator";
 interface User {
   id: string;
   email: string;
-  name: string;
-  role: string;
-  status: string;
+  fullName: string;
   createdAt: string;
-  lastActive: string;
-  products: number;
-  communities: number;
-  totalSales: number;
+  isCreator: boolean;
+  isAffiliate: boolean;
+  isAdmin: boolean;
+  spentAmount: number;
+  salesAmount: number;
+  affiliateFeesGenerated: number;
+  templatesUploaded: number;
+  activeTemplates: number;
+  numberOfTransactions: number;
+  referredBy: string;
+  userId: string;
+  stripeConnectId: string;
 }
 
 const mockUsers: User[] = [
   {
     id: "1",
     email: "seller@example.com",
-    name: "John Seller",
-    role: "seller",
-    status: "active",
+    fullName: "John Seller",
     createdAt: "2/22/2025, 8:06 PM",
-    lastActive: "2/23/2025, 8:06 PM",
-    products: 5,
-    communities: 1,
-    totalSales: 1299.99
+    isCreator: true,
+    isAffiliate: false,
+    isAdmin: false,
+    spentAmount: 0,
+    salesAmount: 1299.99,
+    affiliateFeesGenerated: 0,
+    templatesUploaded: 5,
+    activeTemplates: 3,
+    numberOfTransactions: 12,
+    referredBy: "admin@example.com",
+    userId: "usr_123",
+    stripeConnectId: "connect_123"
   },
   {
     id: "2",
-    email: "community@example.com",
-    name: "Alice Community",
-    role: "community",
-    status: "pending",
+    email: "affiliate@example.com",
+    fullName: "Alice Affiliate",
     createdAt: "2/22/2025, 2:23 PM",
-    lastActive: "2/22/2025, 3:23 PM",
-    products: 0,
-    communities: 2,
-    totalSales: 0
-  },
-  {
-    id: "3",
-    email: "admin@example.com",
-    name: "Bob Admin",
-    role: "admin",
-    status: "active",
-    createdAt: "2/16/2025, 3:48 AM",
-    lastActive: "2/23/2025, 10:48 AM",
-    products: 0,
-    communities: 0,
-    totalSales: 0
+    isCreator: false,
+    isAffiliate: true,
+    isAdmin: false,
+    spentAmount: 299.99,
+    salesAmount: 0,
+    affiliateFeesGenerated: 150.50,
+    templatesUploaded: 0,
+    activeTemplates: 0,
+    numberOfTransactions: 5,
+    referredBy: "",
+    userId: "usr_456",
+    stripeConnectId: "connect_456"
   }
 ];
 
 export default function AdminUsers() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [roleFilter, setRoleFilter] = useState("all");
   const [sortField, setSortField] = useState<keyof User>("createdAt");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
-
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "active":
-        return "bg-green-100 text-green-800 hover:bg-green-100";
-      case "pending":
-        return "bg-yellow-100 text-yellow-800 hover:bg-yellow-100";
-      case "suspended":
-        return "bg-red-100 text-red-800 hover:bg-red-100";
-      default:
-        return "bg-gray-100 text-gray-800 hover:bg-gray-100";
-    }
-  };
-
-  const getRoleColor = (role: string) => {
-    switch (role.toLowerCase()) {
-      case "admin":
-        return "bg-purple-100 text-purple-800 hover:bg-purple-100";
-      case "seller":
-        return "bg-blue-100 text-blue-800 hover:bg-blue-100";
-      case "community":
-        return "bg-pink-100 text-pink-800 hover:bg-pink-100";
-      default:
-        return "bg-gray-100 text-gray-800 hover:bg-gray-100";
-    }
-  };
 
   const handleSort = (field: keyof User) => {
     if (sortField === field) {
@@ -120,9 +100,12 @@ export default function AdminUsers() {
   const filteredUsers = mockUsers
     .filter(user => {
       const matchesSearch = user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          user.name.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesStatus = statusFilter === "all" || user.status.toLowerCase() === statusFilter.toLowerCase();
-      return matchesSearch && matchesStatus;
+                          user.fullName.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesRole = roleFilter === "all" || 
+        (roleFilter === "creator" && user.isCreator) ||
+        (roleFilter === "affiliate" && user.isAffiliate) ||
+        (roleFilter === "admin" && user.isAdmin);
+      return matchesSearch && matchesRole;
     })
     .sort((a, b) => {
       const aValue = a[sortField];
@@ -135,6 +118,10 @@ export default function AdminUsers() {
       
       if (typeof aValue === "number" && typeof bValue === "number") {
         return (aValue - bValue) * multiplier;
+      }
+      
+      if (typeof aValue === "boolean" && typeof bValue === "boolean") {
+        return (aValue === bValue ? 0 : aValue ? 1 : -1) * multiplier;
       }
       
       return 0;
@@ -153,72 +140,73 @@ export default function AdminUsers() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
             <Input
-              placeholder="Search by name or email"
+              placeholder="Search by email or name"
               className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C]"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <Select value={roleFilter} onValueChange={setRoleFilter}>
             <SelectTrigger className="w-[180px] border-[#E5E7EB]">
-              <SelectValue placeholder="Filter By Status" />
+              <SelectValue placeholder="Filter By Role" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="suspended">Suspended</SelectItem>
+              <SelectItem value="all">All Roles</SelectItem>
+              <SelectItem value="creator">Creators</SelectItem>
+              <SelectItem value="affiliate">Affiliates</SelectItem>
+              <SelectItem value="admin">Admins</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         <div className="rounded-lg border border-[#E5E7EB] bg-white">
           <ScrollArea className="h-[600px] w-full" type="always">
-            <div className="min-w-[1200px]">
-              <div className="grid grid-cols-[2fr,2fr,1fr,1fr,1.5fr,1.5fr,1fr,1fr,1.5fr] gap-4 p-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
-                <button 
-                  onClick={() => handleSort("email")}
-                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
-                >
-                  Email {getSortIcon("email")}
+            <div className="min-w-[1800px]">
+              <div className="grid grid-cols-[2fr,2fr,1.5fr,1fr,1fr,1fr,1.5fr,1.5fr,1.5fr,1fr,1fr,1.5fr,2fr,1.5fr,2fr] gap-4 p-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
+                <button onClick={() => handleSort("email")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]">
+                  User Email {getSortIcon("email")}
                 </button>
-                <button 
-                  onClick={() => handleSort("name")}
-                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
-                >
-                  Name {getSortIcon("name")}
+                <button onClick={() => handleSort("fullName")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]">
+                  Full Name {getSortIcon("fullName")}
                 </button>
-                <div className="font-medium text-sm text-[#8E9196]">Role</div>
-                <div className="font-medium text-sm text-[#8E9196]">Status</div>
-                <button 
-                  onClick={() => handleSort("createdAt")}
-                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
-                >
+                <button onClick={() => handleSort("createdAt")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]">
                   Created @ {getSortIcon("createdAt")}
                 </button>
-                <button 
-                  onClick={() => handleSort("lastActive")}
-                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
-                >
-                  Last Active {getSortIcon("lastActive")}
+                <button onClick={() => handleSort("isCreator")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]">
+                  Creator {getSortIcon("isCreator")}
                 </button>
-                <button 
-                  onClick={() => handleSort("products")}
-                  className="flex items-center justify-end gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
-                >
-                  Products {getSortIcon("products")}
+                <button onClick={() => handleSort("isAffiliate")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]">
+                  Affiliate {getSortIcon("isAffiliate")}
                 </button>
-                <button 
-                  onClick={() => handleSort("communities")}
-                  className="flex items-center justify-end gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
-                >
-                  Communities {getSortIcon("communities")}
+                <button onClick={() => handleSort("isAdmin")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]">
+                  Admin {getSortIcon("isAdmin")}
                 </button>
-                <button 
-                  onClick={() => handleSort("totalSales")}
-                  className="flex items-center justify-end gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
-                >
-                  Total Sales {getSortIcon("totalSales")}
+                <button onClick={() => handleSort("spentAmount")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]">
+                  Spent Amount {getSortIcon("spentAmount")}
+                </button>
+                <button onClick={() => handleSort("salesAmount")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]">
+                  Sales Amount {getSortIcon("salesAmount")}
+                </button>
+                <button onClick={() => handleSort("affiliateFeesGenerated")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]">
+                  Affiliate Fees {getSortIcon("affiliateFeesGenerated")}
+                </button>
+                <button onClick={() => handleSort("templatesUploaded")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]">
+                  Templates Uploaded {getSortIcon("templatesUploaded")}
+                </button>
+                <button onClick={() => handleSort("activeTemplates")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]">
+                  Active Templates {getSortIcon("activeTemplates")}
+                </button>
+                <button onClick={() => handleSort("numberOfTransactions")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]">
+                  Number of Transactions {getSortIcon("numberOfTransactions")}
+                </button>
+                <button onClick={() => handleSort("referredBy")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]">
+                  Referred By {getSortIcon("referredBy")}
+                </button>
+                <button onClick={() => handleSort("userId")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]">
+                  User Id {getSortIcon("userId")}
+                </button>
+                <button onClick={() => handleSort("stripeConnectId")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]">
+                  Stripe Connect Id {getSortIcon("stripeConnectId")}
                 </button>
               </div>
 
@@ -231,46 +219,30 @@ export default function AdminUsers() {
                   filteredUsers.map((user, index) => (
                     <div
                       key={index}
-                      className="grid grid-cols-[2fr,2fr,1fr,1fr,1.5fr,1.5fr,1fr,1fr,1.5fr] gap-4 p-4 hover:bg-[#F8F9FC] cursor-pointer transition-colors duration-200 group"
+                      className="grid grid-cols-[2fr,2fr,1.5fr,1fr,1fr,1fr,1.5fr,1.5fr,1.5fr,1fr,1fr,1.5fr,2fr,1.5fr,2fr] gap-4 p-4 hover:bg-[#F8F9FC] cursor-pointer transition-colors duration-200"
                       onClick={() => navigate(`/a/admin/users/${user.id}`)}
                     >
-                      <div className="text-sm text-[#1A1F2C] truncate" title={user.email}>
-                        {user.email}
+                      <div className="text-sm text-[#1A1F2C] truncate">{user.email}</div>
+                      <div className="text-sm text-[#1A1F2C] truncate">{user.fullName}</div>
+                      <div className="text-sm text-[#8E9196]">{user.createdAt}</div>
+                      <div className="text-sm text-center">
+                        {user.isCreator && <Badge variant="secondary" className="bg-blue-100 text-blue-800">Yes</Badge>}
                       </div>
-                      <div className="text-sm text-[#1A1F2C] truncate" title={user.name}>
-                        {user.name}
+                      <div className="text-sm text-center">
+                        {user.isAffiliate && <Badge variant="secondary" className="bg-green-100 text-green-800">Yes</Badge>}
                       </div>
-                      <div>
-                        <Badge 
-                          variant="secondary" 
-                          className={`${getRoleColor(user.role)} capitalize`}
-                        >
-                          {user.role}
-                        </Badge>
+                      <div className="text-sm text-center">
+                        {user.isAdmin && <Badge variant="secondary" className="bg-purple-100 text-purple-800">Yes</Badge>}
                       </div>
-                      <div>
-                        <Badge 
-                          variant="secondary" 
-                          className={`${getStatusColor(user.status)} capitalize`}
-                        >
-                          {user.status}
-                        </Badge>
-                      </div>
-                      <div className="text-sm text-[#8E9196]">
-                        {user.createdAt}
-                      </div>
-                      <div className="text-sm text-[#8E9196]">
-                        {user.lastActive}
-                      </div>
-                      <div className="text-sm text-[#8E9196] text-right">
-                        {user.products}
-                      </div>
-                      <div className="text-sm text-[#8E9196] text-right">
-                        {user.communities}
-                      </div>
-                      <div className="text-sm text-[#8E9196] text-right">
-                        ${user.totalSales.toFixed(2)}
-                      </div>
+                      <div className="text-sm text-[#8E9196]">${user.spentAmount.toFixed(2)}</div>
+                      <div className="text-sm text-[#8E9196]">${user.salesAmount.toFixed(2)}</div>
+                      <div className="text-sm text-[#8E9196]">${user.affiliateFeesGenerated.toFixed(2)}</div>
+                      <div className="text-sm text-[#8E9196] text-center">{user.templatesUploaded}</div>
+                      <div className="text-sm text-[#8E9196] text-center">{user.activeTemplates}</div>
+                      <div className="text-sm text-[#8E9196] text-center">{user.numberOfTransactions}</div>
+                      <div className="text-sm text-[#8E9196] truncate">{user.referredBy || '-'}</div>
+                      <div className="text-sm text-[#8E9196] truncate">{user.userId}</div>
+                      <div className="text-sm text-[#8E9196] truncate">{user.stripeConnectId}</div>
                     </div>
                   ))
                 )}
