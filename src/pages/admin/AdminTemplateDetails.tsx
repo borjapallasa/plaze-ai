@@ -327,23 +327,44 @@ export default function AdminTemplateDetails() {
                             <span className="ml-1">×</span>
                           </Badge>
                         ))}
-                        <Select
-                          defaultValue=""
-                          onValueChange={(value) => {
-                            if (!selectedTeams.includes(value)) {
-                              setSelectedTeams([...selectedTeams, value]);
-                            }
-                          }}
-                        >
-                          <SelectTrigger className="border-0 bg-transparent p-0 h-6 w-[100px] focus:ring-0" hideIndicator>
-                            <SelectValue placeholder="Add team" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="team1">Team 1</SelectItem>
-                            <SelectItem value="team2">Team 2</SelectItem>
-                            <SelectItem value="team3">Team 3</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        {selectedTeams.length === 0 && (
+                          <Select
+                            defaultValue=""
+                            onValueChange={(value) => {
+                              if (!selectedTeams.includes(value)) {
+                                setSelectedTeams([...selectedTeams, value]);
+                              }
+                            }}
+                          >
+                            <SelectTrigger className="border-0 bg-transparent p-0 h-6 w-[100px] focus:ring-0" hideIndicator>
+                              <SelectValue placeholder="Add team" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="team1">Team 1</SelectItem>
+                              <SelectItem value="team2">Team 2</SelectItem>
+                              <SelectItem value="team3">Team 3</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
+                        {selectedTeams.length > 0 && (
+                          <Select
+                            defaultValue=""
+                            onValueChange={(value) => {
+                              if (!selectedTeams.includes(value)) {
+                                setSelectedTeams([...selectedTeams, value]);
+                              }
+                            }}
+                          >
+                            <SelectTrigger className="border-0 bg-transparent p-0 h-6 w-6 focus:ring-0" hideIndicator>
+                              <span className="text-muted-foreground">+</span>
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="team1">Team 1</SelectItem>
+                              <SelectItem value="team2">Team 2</SelectItem>
+                              <SelectItem value="team3">Team 3</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -365,25 +386,48 @@ export default function AdminTemplateDetails() {
                             <span className="ml-1">×</span>
                           </Badge>
                         ))}
-                        <Select
-                          defaultValue=""
-                          onValueChange={(value) => {
-                            if (!selectedIndustries.includes(value)) {
-                              setSelectedIndustries([...selectedIndustries, value]);
-                            }
-                          }}
-                        >
-                          <SelectTrigger className="border-0 bg-transparent p-0 h-6 w-[120px] focus:ring-0" hideIndicator>
-                            <SelectValue placeholder="Add industry" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="ecommerce">E-commerce</SelectItem>
-                            <SelectItem value="saas">SaaS</SelectItem>
-                            <SelectItem value="retail">Retail</SelectItem>
-                            <SelectItem value="healthcare">Healthcare</SelectItem>
-                            <SelectItem value="education">Education</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        {selectedIndustries.length === 0 && (
+                          <Select
+                            defaultValue=""
+                            onValueChange={(value) => {
+                              if (!selectedIndustries.includes(value)) {
+                                setSelectedIndustries([...selectedIndustries, value]);
+                              }
+                            }}
+                          >
+                            <SelectTrigger className="border-0 bg-transparent p-0 h-6 w-[120px] focus:ring-0" hideIndicator>
+                              <SelectValue placeholder="Add industry" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="ecommerce">E-commerce</SelectItem>
+                              <SelectItem value="saas">SaaS</SelectItem>
+                              <SelectItem value="retail">Retail</SelectItem>
+                              <SelectItem value="healthcare">Healthcare</SelectItem>
+                              <SelectItem value="education">Education</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
+                        {selectedIndustries.length > 0 && (
+                          <Select
+                            defaultValue=""
+                            onValueChange={(value) => {
+                              if (!selectedIndustries.includes(value)) {
+                                setSelectedIndustries([...selectedIndustries, value]);
+                              }
+                            }}
+                          >
+                            <SelectTrigger className="border-0 bg-transparent p-0 h-6 w-6 focus:ring-0" hideIndicator>
+                              <span className="text-muted-foreground">+</span>
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="ecommerce">E-commerce</SelectItem>
+                              <SelectItem value="saas">SaaS</SelectItem>
+                              <SelectItem value="retail">Retail</SelectItem>
+                              <SelectItem value="healthcare">Healthcare</SelectItem>
+                              <SelectItem value="education">Education</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -405,24 +449,46 @@ export default function AdminTemplateDetails() {
                             <span className="ml-1">×</span>
                           </Badge>
                         ))}
-                        <Select
-                          defaultValue=""
-                          onValueChange={(value) => {
-                            if (!selectedPlatforms.includes(value)) {
-                              setSelectedPlatforms([...selectedPlatforms, value]);
-                            }
-                          }}
-                        >
-                          <SelectTrigger className="border-0 bg-transparent p-0 h-6 w-[120px] focus:ring-0" hideIndicator>
-                            <SelectValue placeholder="Add platform" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="shopify">Shopify</SelectItem>
-                            <SelectItem value="wordpress">WordPress</SelectItem>
-                            <SelectItem value="wix">Wix</SelectItem>
-                            <SelectItem value="webflow">Webflow</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        {selectedPlatforms.length === 0 && (
+                          <Select
+                            defaultValue=""
+                            onValueChange={(value) => {
+                              if (!selectedPlatforms.includes(value)) {
+                                setSelectedPlatforms([...selectedPlatforms, value]);
+                              }
+                            }}
+                          >
+                            <SelectTrigger className="border-0 bg-transparent p-0 h-6 w-[120px] focus:ring-0" hideIndicator>
+                              <SelectValue placeholder="Add platform" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="shopify">Shopify</SelectItem>
+                              <SelectItem value="wordpress">WordPress</SelectItem>
+                              <SelectItem value="wix">Wix</SelectItem>
+                              <SelectItem value="webflow">Webflow</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
+                        {selectedPlatforms.length > 0 && (
+                          <Select
+                            defaultValue=""
+                            onValueChange={(value) => {
+                              if (!selectedPlatforms.includes(value)) {
+                                setSelectedPlatforms([...selectedPlatforms, value]);
+                              }
+                            }}
+                          >
+                            <SelectTrigger className="border-0 bg-transparent p-0 h-6 w-6 focus:ring-0" hideIndicator>
+                              <span className="text-muted-foreground">+</span>
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="shopify">Shopify</SelectItem>
+                              <SelectItem value="wordpress">WordPress</SelectItem>
+                              <SelectItem value="wix">Wix</SelectItem>
+                              <SelectItem value="webflow">Webflow</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -444,25 +510,48 @@ export default function AdminTemplateDetails() {
                             <span className="ml-1">×</span>
                           </Badge>
                         ))}
-                        <Select
-                          defaultValue=""
-                          onValueChange={(value) => {
-                            if (!selectedUseCases.includes(value)) {
-                              setSelectedUseCases([...selectedUseCases, value]);
-                            }
-                          }}
-                        >
-                          <SelectTrigger className="border-0 bg-transparent p-0 h-6 w-[120px] focus:ring-0" hideIndicator>
-                            <SelectValue placeholder="Add use case" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="automation">Automation</SelectItem>
-                            <SelectItem value="marketing">Marketing</SelectItem>
-                            <SelectItem value="analytics">Analytics</SelectItem>
-                            <SelectItem value="crm">CRM</SelectItem>
-                            <SelectItem value="support">Support</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        {selectedUseCases.length === 0 && (
+                          <Select
+                            defaultValue=""
+                            onValueChange={(value) => {
+                              if (!selectedUseCases.includes(value)) {
+                                setSelectedUseCases([...selectedUseCases, value]);
+                              }
+                            }}
+                          >
+                            <SelectTrigger className="border-0 bg-transparent p-0 h-6 w-[120px] focus:ring-0" hideIndicator>
+                              <SelectValue placeholder="Add use case" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="automation">Automation</SelectItem>
+                              <SelectItem value="marketing">Marketing</SelectItem>
+                              <SelectItem value="analytics">Analytics</SelectItem>
+                              <SelectItem value="crm">CRM</SelectItem>
+                              <SelectItem value="support">Support</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
+                        {selectedUseCases.length > 0 && (
+                          <Select
+                            defaultValue=""
+                            onValueChange={(value) => {
+                              if (!selectedUseCases.includes(value)) {
+                                setSelectedUseCases([...selectedUseCases, value]);
+                              }
+                            }}
+                          >
+                            <SelectTrigger className="border-0 bg-transparent p-0 h-6 w-6 focus:ring-0" hideIndicator>
+                              <span className="text-muted-foreground">+</span>
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="automation">Automation</SelectItem>
+                              <SelectItem value="marketing">Marketing</SelectItem>
+                              <SelectItem value="analytics">Analytics</SelectItem>
+                              <SelectItem value="crm">CRM</SelectItem>
+                              <SelectItem value="support">Support</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
                       </div>
                     </div>
                   </div>
