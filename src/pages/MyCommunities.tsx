@@ -87,7 +87,7 @@ export default function MyCommunities() {
             {filteredCommunities.map((community) => (
               <Card
                 key={community.id}
-                className="group hover:shadow-md transition-shadow duration-200 will-change-transform"
+                className="group hover:shadow-md transition-shadow duration-500 will-change-transform bg-[#F1F0FB]"
               >
                 <div className="relative aspect-video overflow-hidden rounded-t-lg">
                   <img
@@ -112,7 +112,7 @@ export default function MyCommunities() {
                     </div>
                     <div className="overflow-hidden">
                       <div 
-                        className="flex items-center text-transparent group-hover:text-primary transform translate-x-8 group-hover:translate-x-0 transition-all duration-200 ease-out will-change-transform"
+                        className="flex items-center text-transparent group-hover:text-primary transform translate-x-8 group-hover:translate-x-0 transition-all duration-500 ease-out will-change-transform"
                       >
                         <span className="text-sm whitespace-nowrap">Open</span>
                         <ArrowRight className="h-4 w-4 ml-1 flex-shrink-0" />
