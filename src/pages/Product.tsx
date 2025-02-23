@@ -34,8 +34,9 @@ export default function Product() {
   const [showStickyATC, setShowStickyATC] = useState(false);
   const variantsRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  const { id } = useParams();
+  const params = useParams();
   const navigate = useNavigate();
+  const id = params.id;
 
   const { data: product, isLoading: isLoadingProduct, error: productError } = useQuery({
     queryKey: ['product', id],
@@ -57,7 +58,7 @@ export default function Product() {
         return uuidData;
       }
 
-      // If not found by UUID, try to find by numeric ID
+      // Try to find by numeric ID
       const numericId = parseInt(id || '');
       if (!isNaN(numericId)) {
         const { data, error } = await supabase
