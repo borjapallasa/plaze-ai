@@ -38,7 +38,7 @@ export function MoreFromSeller({
   }, [api]);
 
   return <div>
-      <h2 className="text-2xl font-bold mb-6">More from seller</h2>
+      <h2 className="text-2xl font-bold mb-6 pt-[50px]">More from seller</h2>
       
       <Carousel setApi={setApi} className="w-full" opts={{
       align: "start",
