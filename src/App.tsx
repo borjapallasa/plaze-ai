@@ -32,6 +32,7 @@ import AdminTransactionDetails from "./pages/admin/AdminTransactionDetails";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminUserDetails from "./pages/admin/AdminUserDetails";
 import AdminExperts from "./pages/admin/AdminExperts";
+import AdminTemplateDetails from "./pages/admin/AdminTemplateDetails";
 import DraftTemplates from "./pages/admin/DraftTemplates";
 import { Footer } from "./components/Footer";
 
@@ -68,6 +69,7 @@ const App = () => (
           <Route path="/a/admin/transactions" element={<AdminTransactions />} />
           <Route path="/a/admin/transactions/:id" element={<AdminTransactionDetails />} />
           <Route path="/a/admin/draft-templates" element={<DraftTemplates />} />
+          <Route path="/a/admin/templates/:id" element={<AdminTemplateDetails />} />
           <Route path="/a/admin/users" element={<AdminUsers />} />
           <Route path="/a/admin/users/:id" element={<AdminUserDetails />} />
           <Route path="/a/admin/experts" element={<AdminExperts />} />
