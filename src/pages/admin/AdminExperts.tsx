@@ -226,7 +226,6 @@ export default function AdminExperts() {
                     <div
                       key={index}
                       className="grid grid-cols-[2fr,2fr,1.5fr,2fr,1fr,1.5fr,1.5fr,1fr,1fr,1fr,1fr,1.5fr,1fr,1.5fr,2fr] px-6 py-4 hover:bg-[#F8F9FC] cursor-pointer transition-colors duration-200"
-                      onClick={() => navigate(`/a/admin/experts/${expert.id}`)}
                     >
                       <div className="text-sm text-[#1A1F2C] truncate pr-4">{expert.email}</div>
                       <div className="text-sm text-[#1A1F2C] truncate pr-4">{expert.fullName}</div>
