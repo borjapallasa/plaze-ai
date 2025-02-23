@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./components/AuthProvider";
 import Index from "./pages/index";
 import Product from "./pages/Product";
 import Products from "./pages/Products";
@@ -44,49 +45,51 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <div className="flex flex-col min-h-screen">
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/product" element={<Product />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/expert" element={<Expert />} />
-          <Route path="/experts" element={<Experts />} />
-          <Route path="/community" element={<Community />} />
-          <Route path="/communities" element={<Communities />} />
-          <Route path="/my-communities" element={<MyCommunities />} />
-          <Route path="/sign-up" element={<SignUp />} />
-          <Route path="/sign-up/community" element={<SignUpCommunity />} />
-          <Route path="/sign-in" element={<SignIn />} />
-          <Route path="/sign-in/community" element={<SignInCommunity />} />
-          <Route path="/recover-password" element={<RecoverPassword />} />
-          <Route path="/community/classroom" element={<Classroom />} />
-          <Route path="/jobs" element={<Jobs />} />
-          <Route path="/job/:id" element={<Job />} />
-          <Route path="/manage-subscriptions" element={<ManageSubscriptions />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/affiliates" element={<Affiliates />} />
-          <Route path="/personal-area" element={<PersonalArea />} />
-          <Route path="/transactions" element={<Transactions />} />
-          <Route path="/account-settings" element={<AccountSettings />} />
-          <Route path="/chats" element={<Chats />} />
-          <Route path="/thank-you" element={<ThankYou />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/seller/product" element={<EditProduct />} />
-          <Route path="/a/admin" element={<AdminDashboard />} />
-          <Route path="/a/admin/transactions" element={<AdminTransactions />} />
-          <Route path="/a/admin/transactions/:id" element={<AdminTransactionDetails />} />
-          <Route path="/a/admin/draft-templates" element={<DraftTemplates />} />
-          <Route path="/a/admin/templates/:id" element={<AdminTemplateDetails />} />
-          <Route path="/a/admin/users" element={<AdminUsers />} />
-          <Route path="/a/admin/users/:id" element={<AdminUserDetails />} />
-          <Route path="/a/admin/experts" element={<AdminExperts />} />
-        </Routes>
-        <Footer />
-      </div>
-      <Toaster />
-      <Sonner />
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <div className="flex flex-col min-h-screen">
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/product" element={<Product />} />
+            <Route path="/products" element={<Products />} />
+            <Route path="/expert" element={<Expert />} />
+            <Route path="/experts" element={<Experts />} />
+            <Route path="/community" element={<Community />} />
+            <Route path="/communities" element={<Communities />} />
+            <Route path="/my-communities" element={<MyCommunities />} />
+            <Route path="/sign-up" element={<SignUp />} />
+            <Route path="/sign-up/community" element={<SignUpCommunity />} />
+            <Route path="/sign-in" element={<SignIn />} />
+            <Route path="/sign-in/community" element={<SignInCommunity />} />
+            <Route path="/recover-password" element={<RecoverPassword />} />
+            <Route path="/community/classroom" element={<Classroom />} />
+            <Route path="/jobs" element={<Jobs />} />
+            <Route path="/job/:id" element={<Job />} />
+            <Route path="/manage-subscriptions" element={<ManageSubscriptions />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/affiliates" element={<Affiliates />} />
+            <Route path="/personal-area" element={<PersonalArea />} />
+            <Route path="/transactions" element={<Transactions />} />
+            <Route path="/account-settings" element={<AccountSettings />} />
+            <Route path="/chats" element={<Chats />} />
+            <Route path="/thank-you" element={<ThankYou />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/seller/product" element={<EditProduct />} />
+            <Route path="/a/admin" element={<AdminDashboard />} />
+            <Route path="/a/admin/transactions" element={<AdminTransactions />} />
+            <Route path="/a/admin/transactions/:id" element={<AdminTransactionDetails />} />
+            <Route path="/a/admin/draft-templates" element={<DraftTemplates />} />
+            <Route path="/a/admin/templates/:id" element={<AdminTemplateDetails />} />
+            <Route path="/a/admin/users" element={<AdminUsers />} />
+            <Route path="/a/admin/users/:id" element={<AdminUserDetails />} />
+            <Route path="/a/admin/experts" element={<AdminExperts />} />
+          </Routes>
+          <Footer />
+        </div>
+        <Toaster />
+        <Sonner />
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 
