@@ -161,51 +161,51 @@ export default function AdminUsers() {
 
         <div className="rounded-lg border border-[#E5E7EB] bg-white">
           <ScrollArea className="h-[600px] w-full" type="always">
-            <div className="min-w-[2000px]"> {/* Increased minimum width */}
+            <div className="min-w-[2000px]">
               <div className="grid grid-cols-[2fr,2fr,1.5fr,1fr,1fr,1fr,1.5fr,1.5fr,1.5fr,1fr,1fr,1.5fr,2fr,1.5fr,2fr] gap-4 p-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
-                <button onClick={() => handleSort("email")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap">
+                <button onClick={() => handleSort("email")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap px-1">
                   User Email {getSortIcon("email")}
                 </button>
-                <button onClick={() => handleSort("fullName")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap">
+                <button onClick={() => handleSort("fullName")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap px-1">
                   Full Name {getSortIcon("fullName")}
                 </button>
-                <button onClick={() => handleSort("createdAt")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap">
+                <button onClick={() => handleSort("createdAt")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap px-1">
                   Created @ {getSortIcon("createdAt")}
                 </button>
-                <button onClick={() => handleSort("isCreator")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap">
+                <button onClick={() => handleSort("isCreator")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap px-1">
                   Creator {getSortIcon("isCreator")}
                 </button>
-                <button onClick={() => handleSort("isAffiliate")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap">
+                <button onClick={() => handleSort("isAffiliate")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap px-1">
                   Affiliate {getSortIcon("isAffiliate")}
                 </button>
-                <button onClick={() => handleSort("isAdmin")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap">
+                <button onClick={() => handleSort("isAdmin")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap px-1">
                   Admin {getSortIcon("isAdmin")}
                 </button>
-                <button onClick={() => handleSort("spentAmount")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap">
+                <button onClick={() => handleSort("spentAmount")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap px-1">
                   Spent Amount {getSortIcon("spentAmount")}
                 </button>
-                <button onClick={() => handleSort("salesAmount")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap">
+                <button onClick={() => handleSort("salesAmount")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap px-1">
                   Sales Amount {getSortIcon("salesAmount")}
                 </button>
-                <button onClick={() => handleSort("affiliateFeesGenerated")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap">
+                <button onClick={() => handleSort("affiliateFeesGenerated")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap px-1">
                   Affiliate Fees {getSortIcon("affiliateFeesGenerated")}
                 </button>
-                <button onClick={() => handleSort("templatesUploaded")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap">
+                <button onClick={() => handleSort("templatesUploaded")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap px-1">
                   Templates Uploaded {getSortIcon("templatesUploaded")}
                 </button>
-                <button onClick={() => handleSort("activeTemplates")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap">
+                <button onClick={() => handleSort("activeTemplates")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap px-1">
                   Active Templates {getSortIcon("activeTemplates")}
                 </button>
-                <button onClick={() => handleSort("numberOfTransactions")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap">
+                <button onClick={() => handleSort("numberOfTransactions")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap px-1">
                   Number of Transactions {getSortIcon("numberOfTransactions")}
                 </button>
-                <button onClick={() => handleSort("referredBy")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap">
+                <button onClick={() => handleSort("referredBy")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap px-1">
                   Referred By {getSortIcon("referredBy")}
                 </button>
-                <button onClick={() => handleSort("userId")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap">
+                <button onClick={() => handleSort("userId")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap px-1">
                   User Id {getSortIcon("userId")}
                 </button>
-                <button onClick={() => handleSort("stripeConnectId")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap">
+                <button onClick={() => handleSort("stripeConnectId")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] text-left whitespace-nowrap px-1">
                   Stripe Connect Id {getSortIcon("stripeConnectId")}
                 </button>
               </div>
@@ -222,8 +222,8 @@ export default function AdminUsers() {
                       className="grid grid-cols-[2fr,2fr,1.5fr,1fr,1fr,1fr,1.5fr,1.5fr,1.5fr,1fr,1fr,1.5fr,2fr,1.5fr,2fr] gap-4 p-4 hover:bg-[#F8F9FC] cursor-pointer transition-colors duration-200"
                       onClick={() => navigate(`/a/admin/users/${user.id}`)}
                     >
-                      <div className="text-sm text-[#1A1F2C] truncate px-1">{user.email}</div>
-                      <div className="text-sm text-[#1A1F2C] truncate px-1">{user.fullName}</div>
+                      <div className="text-sm text-[#1A1F2C] px-1">{user.email}</div>
+                      <div className="text-sm text-[#1A1F2C] px-1">{user.fullName}</div>
                       <div className="text-sm text-[#8E9196] px-1">{user.createdAt}</div>
                       <div className="text-sm px-1">
                         {user.isCreator && <Badge variant="secondary" className="bg-blue-100 text-blue-800">Yes</Badge>}
@@ -240,9 +240,9 @@ export default function AdminUsers() {
                       <div className="text-sm text-[#8E9196] px-1">{user.templatesUploaded}</div>
                       <div className="text-sm text-[#8E9196] px-1">{user.activeTemplates}</div>
                       <div className="text-sm text-[#8E9196] px-1">{user.numberOfTransactions}</div>
-                      <div className="text-sm text-[#8E9196] truncate px-1">{user.referredBy || '-'}</div>
-                      <div className="text-sm text-[#8E9196] truncate px-1">{user.userId}</div>
-                      <div className="text-sm text-[#8E9196] truncate px-1">{user.stripeConnectId}</div>
+                      <div className="text-sm text-[#8E9196] px-1">{user.referredBy || '-'}</div>
+                      <div className="text-sm text-[#8E9196] px-1">{user.userId}</div>
+                      <div className="text-sm text-[#8E9196] px-1">{user.stripeConnectId}</div>
                     </div>
                   ))
                 )}
