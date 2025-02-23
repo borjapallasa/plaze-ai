@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { MainHeader } from "@/components/MainHeader";
 
 interface Transaction {
   templateName: string;
@@ -212,96 +213,99 @@ export default function AdminTransactions() {
   );
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-[1200px]">
-      <h1 className="text-2xl font-semibold text-[#1A1F2C] mb-2">All Transactions</h1>
-      <p className="text-[#8E9196] mb-8">Click on the transaction to see all details</p>
+    <>
+      <MainHeader />
+      <div className="container mx-auto px-4 py-8 max-w-[1200px]">
+        <h1 className="text-2xl font-semibold text-[#1A1F2C] mb-2">All Transactions</h1>
+        <p className="text-[#8E9196] mb-8">Click on the transaction to see all details</p>
 
-      {/* Search and Filter */}
-      <div className="flex gap-4 mb-8">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
-          <Input
-            placeholder="Type here to search"
-            className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C]"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[180px] border-[#E5E7EB]">
-            <SelectValue placeholder="Filter By Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="completed">Completed</SelectItem>
-            <SelectItem value="pending">Pending</SelectItem>
-            <SelectItem value="failed">Failed</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      {/* Transactions Table with ScrollArea */}
-      <div className="rounded-lg border border-[#E5E7EB] bg-white">
-        <ScrollArea className="h-[500px] w-full" type="always">
-          <div className="min-w-[2400px]">
-            {/* Header */}
-            <div className="grid grid-cols-[300px,150px,200px,200px,100px,150px,150px,200px,120px,100px,150px,120px,120px,80px,200px] gap-4 p-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
-              <div className="font-medium text-sm text-[#8E9196]">Template Name</div>
-              <div className="font-medium text-sm text-[#8E9196]">Created @</div>
-              <div className="font-medium text-sm text-[#8E9196]">Buyer User</div>
-              <div className="font-medium text-sm text-[#8E9196]">Deliverables</div>
-              <div className="font-medium text-sm text-[#8E9196]">Amount</div>
-              <div className="font-medium text-sm text-[#8E9196]">Marketplace Fees</div>
-              <div className="font-medium text-sm text-[#8E9196]">Seller Receives</div>
-              <div className="font-medium text-sm text-[#8E9196]">Seller User</div>
-              <div className="font-medium text-sm text-[#8E9196]">Affiliate Fees</div>
-              <div className="font-medium text-sm text-[#8E9196]">Status</div>
-              <div className="font-medium text-sm text-[#8E9196]">Completed @</div>
-              <div className="font-medium text-sm text-[#8E9196]">Template Id</div>
-              <div className="font-medium text-sm text-[#8E9196]">Checkout Id</div>
-              <div className="font-medium text-sm text-[#8E9196]">Rating</div>
-              <div className="font-medium text-sm text-[#8E9196]">Review</div>
-            </div>
-
-            {/* Scrollable Transactions */}
-            <div className="divide-y divide-[#E5E7EB]">
-              {filteredTransactions.map((transaction, index) => (
-                <div
-                  key={index}
-                  className="grid grid-cols-[300px,150px,200px,200px,100px,150px,150px,200px,120px,100px,150px,120px,120px,80px,200px] gap-4 p-4 hover:bg-[#F8F9FC] cursor-pointer transition-colors duration-200"
-                >
-                  <div className="text-sm text-[#1A1F2C]">{transaction.templateName}</div>
-                  <div className="text-sm text-[#8E9196]">{transaction.createdAt}</div>
-                  <div className="text-sm text-[#8E9196]">{transaction.buyerEmail}</div>
-                  <div className="text-sm text-[#8E9196]">{transaction.deliverables}</div>
-                  <div className="text-sm text-[#8E9196]">${transaction.amount}</div>
-                  <div className="text-sm text-[#8E9196]">${transaction.marketplaceFees}</div>
-                  <div className="text-sm text-[#8E9196]">${transaction.sellerReceives}</div>
-                  <div className="text-sm text-[#8E9196]">{transaction.sellerUser}</div>
-                  <div className="text-sm text-[#8E9196]">${transaction.affiliateFees}</div>
-                  <div className="text-sm text-[#8E9196]">{transaction.status}</div>
-                  <div className="text-sm text-[#8E9196]">{transaction.completedAt}</div>
-                  <div className="text-sm text-[#8E9196]">{transaction.templateId}</div>
-                  <div className="text-sm text-[#8E9196]">{transaction.checkoutId}</div>
-                  <div className="text-sm text-[#8E9196]">{transaction.rating}</div>
-                  <div className="text-sm text-[#8E9196]">{transaction.review}</div>
-                </div>
-              ))}
-            </div>
+        {/* Search and Filter */}
+        <div className="flex gap-4 mb-8">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
+            <Input
+              placeholder="Type here to search"
+              className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C]"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
-      </div>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-[180px] border-[#E5E7EB]">
+              <SelectValue placeholder="Filter By Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="failed">Failed</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-      {/* See More Button */}
-      <div className="flex justify-center mt-6">
-        <Button 
-          variant="outline" 
-          className="gap-2 border-[#E5E7EB] text-[#1A1F2C] hover:bg-[#F8F9FC]"
-        >
-          See more <ChevronDown className="h-4 w-4" />
-        </Button>
+        {/* Transactions Table with ScrollArea */}
+        <div className="rounded-lg border border-[#E5E7EB] bg-white">
+          <ScrollArea className="h-[500px] w-full" type="always">
+            <div className="min-w-[2400px]">
+              {/* Header */}
+              <div className="grid grid-cols-[300px,150px,200px,200px,100px,150px,150px,200px,120px,100px,150px,120px,120px,80px,200px] gap-4 p-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
+                <div className="font-medium text-sm text-[#8E9196]">Template Name</div>
+                <div className="font-medium text-sm text-[#8E9196]">Created @</div>
+                <div className="font-medium text-sm text-[#8E9196]">Buyer User</div>
+                <div className="font-medium text-sm text-[#8E9196]">Deliverables</div>
+                <div className="font-medium text-sm text-[#8E9196]">Amount</div>
+                <div className="font-medium text-sm text-[#8E9196]">Marketplace Fees</div>
+                <div className="font-medium text-sm text-[#8E9196]">Seller Receives</div>
+                <div className="font-medium text-sm text-[#8E9196]">Seller User</div>
+                <div className="font-medium text-sm text-[#8E9196]">Affiliate Fees</div>
+                <div className="font-medium text-sm text-[#8E9196]">Status</div>
+                <div className="font-medium text-sm text-[#8E9196]">Completed @</div>
+                <div className="font-medium text-sm text-[#8E9196]">Template Id</div>
+                <div className="font-medium text-sm text-[#8E9196]">Checkout Id</div>
+                <div className="font-medium text-sm text-[#8E9196]">Rating</div>
+                <div className="font-medium text-sm text-[#8E9196]">Review</div>
+              </div>
+
+              {/* Scrollable Transactions */}
+              <div className="divide-y divide-[#E5E7EB]">
+                {filteredTransactions.map((transaction, index) => (
+                  <div
+                    key={index}
+                    className="grid grid-cols-[300px,150px,200px,200px,100px,150px,150px,200px,120px,100px,150px,120px,120px,80px,200px] gap-4 p-4 hover:bg-[#F8F9FC] cursor-pointer transition-colors duration-200"
+                  >
+                    <div className="text-sm text-[#1A1F2C]">{transaction.templateName}</div>
+                    <div className="text-sm text-[#8E9196]">{transaction.createdAt}</div>
+                    <div className="text-sm text-[#8E9196]">{transaction.buyerEmail}</div>
+                    <div className="text-sm text-[#8E9196]">{transaction.deliverables}</div>
+                    <div className="text-sm text-[#8E9196]">${transaction.amount}</div>
+                    <div className="text-sm text-[#8E9196]">${transaction.marketplaceFees}</div>
+                    <div className="text-sm text-[#8E9196]">${transaction.sellerReceives}</div>
+                    <div className="text-sm text-[#8E9196]">{transaction.sellerUser}</div>
+                    <div className="text-sm text-[#8E9196]">${transaction.affiliateFees}</div>
+                    <div className="text-sm text-[#8E9196]">{transaction.status}</div>
+                    <div className="text-sm text-[#8E9196]">{transaction.completedAt}</div>
+                    <div className="text-sm text-[#8E9196]">{transaction.templateId}</div>
+                    <div className="text-sm text-[#8E9196]">{transaction.checkoutId}</div>
+                    <div className="text-sm text-[#8E9196]">{transaction.rating}</div>
+                    <div className="text-sm text-[#8E9196]">{transaction.review}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
+        </div>
+
+        {/* See More Button */}
+        <div className="flex justify-center mt-6">
+          <Button 
+            variant="outline" 
+            className="gap-2 border-[#E5E7EB] text-[#1A1F2C] hover:bg-[#F8F9FC]"
+          >
+            See more <ChevronDown className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
