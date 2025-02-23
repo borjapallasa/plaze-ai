@@ -1,3 +1,4 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
@@ -39,6 +40,7 @@ export default function Product() {
   const { data: product, isLoading: isLoadingProduct, error: productError } = useQuery({
     queryKey: ['product', id],
     queryFn: async () => {
+      // First try to find by UUID
       let { data: uuidData, error: uuidError } = await supabase
         .from('products')
         .select('*')
@@ -46,10 +48,17 @@ export default function Product() {
         .single();
 
       if (!uuidError && uuidData) {
+        // Redirect to the new URL format
+        const slug = createSlug(uuidData.name || '');
+        const canonicalUrl = `/product/${slug}/${uuidData.id}`;
+        if (window.location.pathname !== canonicalUrl) {
+          navigate(canonicalUrl, { replace: true });
+        }
         return uuidData;
       }
 
-      const numericId = parseInt(id?.split('-')[0] || '');
+      // If not found by UUID, try to find by numeric ID
+      const numericId = parseInt(id || '');
       if (!isNaN(numericId)) {
         const { data, error } = await supabase
           .from('products')
@@ -59,8 +68,9 @@ export default function Product() {
 
         if (error) throw error;
         
+        // Redirect to the canonical URL if needed
         const slug = createSlug(data.name || '');
-        const canonicalUrl = `/product/${data.id}-${slug}`;
+        const canonicalUrl = `/product/${slug}/${data.id}`;
         if (window.location.pathname !== canonicalUrl) {
           navigate(canonicalUrl, { replace: true });
         }
