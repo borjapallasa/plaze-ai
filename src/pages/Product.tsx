@@ -1,5 +1,5 @@
+
 import { MainHeader } from "@/components/MainHeader";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
@@ -9,7 +9,9 @@ import { ProductReviews } from "@/components/product/ProductReviews";
 import { MoreFromSeller } from "@/components/product/MoreFromSeller";
 import { StickyATC } from "@/components/product/StickyATC";
 import { VariantPicker } from "@/components/product/VariantPicker";
-import { ProductCard } from "@/components/ProductCard";
+import { ProductInfo } from "@/components/product/ProductInfo";
+import { ProductDemo } from "@/components/product/ProductDemo";
+import { RelatedProducts } from "@/components/product/RelatedProducts";
 import { useToast } from "@/components/ui/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useParams } from "react-router-dom";
@@ -24,7 +26,6 @@ export default function Product() {
   const [showStickyATC, setShowStickyATC] = useState(false);
   const variantsRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  const isMobile = useIsMobile();
   const { id } = useParams();
 
   const { data: product, isLoading: isLoadingProduct, error: productError } = useQuery({
@@ -36,11 +37,7 @@ export default function Product() {
         .eq('product_uuid', id)
         .single();
 
-      if (error) {
-        console.error('Error fetching product:', error);
-        throw error;
-      }
-
+      if (error) throw error;
       return data;
     }
   });
@@ -54,12 +51,7 @@ export default function Product() {
         .eq('product_uuid', id)
         .order('price', { ascending: true });
 
-      if (error) {
-        console.error('Error fetching variants:', error);
-        throw error;
-      }
-
-      console.log('Variants data:', data);
+      if (error) throw error;
 
       return data.map(variant => ({
         id: variant.variant_uuid,
@@ -83,10 +75,7 @@ export default function Product() {
         .eq('status', 'published')
         .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error('Error fetching reviews:', error);
-        throw error;
-      }
+      if (error) throw error;
 
       return data.map(review => ({
         id: review.review_uuid,
@@ -104,7 +93,7 @@ export default function Product() {
   });
 
   useEffect(() => {
-    if (variants && variants.length > 0 && !selectedVariant) {
+    if (variants?.length > 0 && !selectedVariant) {
       const highlightedVariant = variants.find(v => v.highlight);
       setSelectedVariant(highlightedVariant ? highlightedVariant.id : variants[0].id);
     }
@@ -120,7 +109,6 @@ export default function Product() {
 
     window.addEventListener('scroll', handleScroll);
     handleScroll();
-    
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -157,16 +145,6 @@ export default function Product() {
 
   const productVariants = variants || [];
   const productReviews = reviews || [];
-
-  const moreFromSeller = Array(12).fill(null).map((_, index) => ({
-    title: `Product ${index + 1}`,
-    price: "$99.99",
-    image: getPlaceholderImage(),
-    seller: "Design Master",
-    description: "Sample product description",
-    tags: ["design", "ui"],
-    category: "design"
-  }));
 
   const relatedProducts = Array(12).fill(null).map((_, index) => ({
     title: `Related Product ${index + 1}`,
@@ -205,9 +183,7 @@ export default function Product() {
           <Button 
             variant="outline" 
             className="w-full flex items-center justify-center gap-2 mb-8"
-            onClick={() => {
-              console.log("Contact seller clicked");
-            }}
+            onClick={() => console.log("Contact seller clicked")}
           >
             <MessageCircle className="h-4 w-4" />
             Contact Seller
@@ -222,12 +198,12 @@ export default function Product() {
                 className="mb-8" 
               />
             </div>
-
-            <Card className="p-6 mb-8">
-              <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
-                {product.description}
-              </p>
-            </Card>
+            <ProductInfo 
+              description={product.description}
+              techStack={product.tech_stack}
+              productIncludes={product.product_includes}
+              difficultyLevel={product.difficulty_level}
+            />
           </div>
 
           <div className="hidden lg:block">
@@ -246,84 +222,21 @@ export default function Product() {
                 className="mb-2"
               />
             </div>
-
             <Button 
               variant="outline" 
               className="w-full flex items-center justify-center gap-2 mb-6"
-              onClick={() => {
-                console.log("Contact seller clicked");
-              }}
+              onClick={() => console.log("Contact seller clicked")}
             >
               <MessageCircle className="h-4 w-4" />
               Contact Seller
             </Button>
-
-            <Card className="p-6">
-              <h3 className="font-semibold mb-4">Additional Information</h3>
-              <div className="space-y-4">
-                {product.tech_stack && (
-                  <div>
-                    <h4 className="font-medium mb-2">Tech Stack</h4>
-                    <ul className="list-disc list-inside text-sm text-muted-foreground">
-                      {product.tech_stack.split(',').map((tech, index) => (
-                        <li key={index}>{tech.trim()}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                <div>
-                  <h4 className="font-medium mb-2">What's Included</h4>
-                  <div className="text-sm text-muted-foreground">
-                    {product.product_includes || 'No information provided'}
-                  </div>
-                </div>
-
-                {product.difficulty_level && (
-                  <div>
-                    <h4 className="font-medium mb-2">Difficulty Level</h4>
-                    <span className="text-sm text-muted-foreground">
-                      {product.difficulty_level}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </Card>
           </div>
         </div>
 
-        <h2 className="text-xl font-semibold mb-4">Demo</h2>
-        <Card className="p-6 mb-8">
-          {product.demo ? (
-            <div dangerouslySetInnerHTML={{ __html: product.demo }} />
-          ) : (
-            <div className="aspect-video bg-accent rounded-lg"></div>
-          )}
-        </Card>
-
+        <ProductDemo demo={product.demo} />
         <ProductReviews reviews={productReviews} className="p-6 mb-16" />
-
-        <div className="pt-8">
-          <MoreFromSeller products={moreFromSeller} className="mt-30" />
-        </div>
-
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold mb-6">Related Products</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {relatedProducts.map((product, index) => (
-              <ProductCard
-                key={index}
-                title={product.title}
-                price={product.price}
-                image={product.image}
-                seller={product.seller}
-                description={product.description}
-                tags={product.tags}
-                category={product.category}
-              />
-            ))}
-          </div>
-        </div>
+        <MoreFromSeller products={relatedProducts} className="mt-30" />
+        <RelatedProducts products={relatedProducts} />
 
         <StickyATC 
           variants={productVariants}
