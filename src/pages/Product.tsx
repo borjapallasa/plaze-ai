@@ -18,6 +18,7 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 const getPlaceholderImage = () => "https://images.unsplash.com/photo-1649972904349-6e44c42644a7";
 
@@ -197,6 +198,11 @@ export default function Product() {
                 image={getPlaceholderImage()}
                 className="mb-8" 
               />
+              <Card className="p-6 mb-8">
+                <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                  {product.description}
+                </p>
+              </Card>
             </div>
           </div>
 
@@ -225,14 +231,37 @@ export default function Product() {
               Contact Seller
             </Button>
             
-            <div className="mb-8">
-              <ProductInfo 
-                description={product.description}
-                techStack={product.tech_stack}
-                productIncludes={product.product_includes}
-                difficultyLevel={product.difficulty_level}
-              />
-            </div>
+            <Card className="p-6">
+              <h3 className="font-semibold mb-4">Additional Information</h3>
+              <div className="space-y-4">
+                {product.tech_stack && (
+                  <div>
+                    <h4 className="font-medium mb-2">Tech Stack</h4>
+                    <ul className="list-disc list-inside text-sm text-muted-foreground">
+                      {product.tech_stack.split(',').map((tech, index) => (
+                        <li key={index}>{tech.trim()}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                <div>
+                  <h4 className="font-medium mb-2">What's Included</h4>
+                  <div className="text-sm text-muted-foreground">
+                    {product.product_includes || 'No information provided'}
+                  </div>
+                </div>
+
+                {product.difficulty_level && (
+                  <div>
+                    <h4 className="font-medium mb-2">Difficulty Level</h4>
+                    <span className="text-sm text-muted-foreground">
+                      {product.difficulty_level}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </Card>
           </div>
         </div>
 
