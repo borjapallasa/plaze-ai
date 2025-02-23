@@ -2,12 +2,11 @@ import { MainHeader } from "@/components/MainHeader";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, Clock, DollarSign, ShoppingCart, Upload, LayoutGrid, User, Copy, Users, Wallet, ListChecks } from "lucide-react";
+import { Calendar, Clock, DollarSign, ShoppingCart, Upload, LayoutGrid, User, Copy, Users, Wallet, ListChecks } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 
-// Mock data - In a real app, this would come from an API
 const userData = {
   id: "1",
   email: "seller@example.com",
@@ -125,15 +124,6 @@ export default function AdminUserDetails() {
           <span className="text-[#1A1F2C]">User Details</span>
         </nav>
 
-        {/* Back Button */}
-        <Link 
-          to="/a/admin/users"
-          className="inline-flex items-center gap-2 text-[#8E9196] hover:text-[#1A1F2C] mb-6"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to Users
-        </Link>
-
         <div className="space-y-6">
           {/* Basic Information Card */}
           <Card className="shadow-sm">
@@ -144,7 +134,6 @@ export default function AdminUserDetails() {
                   {userData.email}
                 </CardDescription>
                 
-                {/* User ID with Copy Button */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 text-sm bg-gray-50 p-3 rounded-lg">
                   <span className="text-[#8E9196] whitespace-nowrap">User ID:</span>
                   <span className="font-medium flex-1 break-all">{userData.userId}</span>
@@ -161,7 +150,6 @@ export default function AdminUserDetails() {
             </CardHeader>
 
             <CardContent className="space-y-8">
-              {/* Basic Information */}
               <div>
                 <h3 className="text-lg font-semibold mb-4">Basic Information</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -185,7 +173,6 @@ export default function AdminUserDetails() {
 
               <Separator />
 
-              {/* Financial Stats */}
               <div>
                 <h3 className="text-lg font-semibold mb-4">Financial & Usage Statistics</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -236,7 +223,6 @@ export default function AdminUserDetails() {
 
               <Separator />
 
-              {/* Permissions */}
               <div>
                 <h3 className="text-lg font-semibold mb-4">User Permissions</h3>
                 <div className="space-y-6">
@@ -279,7 +265,6 @@ export default function AdminUserDetails() {
             </CardContent>
           </Card>
 
-          {/* Services Section */}
           <Card className="shadow-sm">
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -314,7 +299,6 @@ export default function AdminUserDetails() {
             </CardContent>
           </Card>
 
-          {/* Communities Section */}
           <Card className="shadow-sm">
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -325,7 +309,6 @@ export default function AdminUserDetails() {
               </div>
             </CardHeader>
             <CardContent className="space-y-8">
-              {/* Owned Communities */}
               <div>
                 <h4 className="text-sm font-medium mb-4">Owned Communities</h4>
                 {userData.ownedCommunities.length > 0 ? (
@@ -382,7 +365,6 @@ export default function AdminUserDetails() {
 
               <Separator />
 
-              {/* Joined Communities */}
               <div>
                 <h4 className="text-sm font-medium mb-4">Joined Communities</h4>
                 {userData.joinedCommunities.length > 0 ? (
@@ -420,7 +402,6 @@ export default function AdminUserDetails() {
             </CardContent>
           </Card>
 
-          {/* Freelancer Earnings Section */}
           <Card className="shadow-sm">
             <CardHeader>
               <div className="flex items-center justify-between">
