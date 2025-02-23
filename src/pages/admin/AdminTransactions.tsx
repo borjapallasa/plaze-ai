@@ -215,7 +215,7 @@ export default function AdminTransactions() {
   return (
     <>
       <MainHeader />
-      <div className="container mx-auto px-4 py-8 max-w-[1200px]">
+      <div className="container mx-auto px-4 py-8 max-w-[1200px] mt-16"> {/* Added mt-16 for header spacing */}
         <h1 className="text-2xl font-semibold text-[#1A1F2C] mb-2">All Transactions</h1>
         <p className="text-[#8E9196] mb-8">Click on the transaction to see all details</p>
 
