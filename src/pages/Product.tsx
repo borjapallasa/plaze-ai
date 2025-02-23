@@ -92,6 +92,33 @@ export default function Product() {
     }
   });
 
+  const { data: moreFromSeller, isLoading: isLoadingMoreFromSeller } = useQuery({
+    queryKey: ['moreFromSeller', product?.user_uuid],
+    queryFn: async () => {
+      if (!product?.user_uuid) return [];
+      
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('user_uuid', product.user_uuid)
+        .neq('product_uuid', id)
+        .limit(12);
+
+      if (error) throw error;
+
+      return data.map(product => ({
+        title: product.name,
+        price: product.tech_stack_price || "$99.99",
+        image: getPlaceholderImage(),
+        seller: "Design Master",
+        description: product.description || "No description provided",
+        tags: product.tech_stack ? product.tech_stack.split(',').slice(0, 2) : [],
+        category: product.type || "design"
+      }));
+    },
+    enabled: !!product?.user_uuid
+  });
+
   useEffect(() => {
     if (variants?.length > 0 && !selectedVariant) {
       const highlightedVariant = variants.find(v => v.highlight);
@@ -119,7 +146,7 @@ export default function Product() {
     });
   };
 
-  if (isLoadingProduct || isLoadingVariants || isLoadingReviews) {
+  if (isLoadingProduct || isLoadingVariants || isLoadingReviews || isLoadingMoreFromSeller) {
     return (
       <div className="min-h-screen bg-background">
         <MainHeader />
@@ -145,7 +172,6 @@ export default function Product() {
 
   const productVariants = variants || [];
   const productReviews = reviews || [];
-
   const relatedProducts = Array(12).fill(null).map((_, index) => ({
     title: `Related Product ${index + 1}`,
     price: "$99.99",
@@ -314,7 +340,7 @@ export default function Product() {
           <ProductDemo demo={product.demo} />
         </div>
         <ProductReviews reviews={productReviews} className="p-6 mb-16" />
-        <MoreFromSeller products={relatedProducts} className="mt-30" />
+        <MoreFromSeller products={moreFromSeller || []} className="mt-30" />
         <RelatedProducts products={relatedProducts} />
 
         <StickyATC 
