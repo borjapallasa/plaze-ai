@@ -183,12 +183,54 @@ export default function Product() {
           </div>
           <Button 
             variant="outline" 
-            className="w-full flex items-center justify-center gap-2 mb-8"
+            className="w-full flex items-center justify-center gap-2 mb-6"
             onClick={() => console.log("Contact seller clicked")}
           >
             <MessageCircle className="h-4 w-4" />
             Contact Seller
           </Button>
+
+          <Card className="p-6 mb-8">
+            <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+              {product.description}
+            </p>
+          </Card>
+
+          <div className="mb-8">
+            <ProductDemo demo={product.demo} />
+          </div>
+
+          <Card className="p-6 mb-8">
+            <h3 className="font-semibold mb-4">Additional Information</h3>
+            <div className="space-y-4">
+              {product.tech_stack && (
+                <div>
+                  <h4 className="font-medium mb-2">Tech Stack</h4>
+                  <ul className="list-disc list-inside text-sm text-muted-foreground">
+                    {product.tech_stack.split(',').map((tech, index) => (
+                      <li key={index}>{tech.trim()}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              <div>
+                <h4 className="font-medium mb-2">What's Included</h4>
+                <div className="text-sm text-muted-foreground">
+                  {product.product_includes || 'No information provided'}
+                </div>
+              </div>
+
+              {product.difficulty_level && (
+                <div>
+                  <h4 className="font-medium mb-2">Difficulty Level</h4>
+                  <span className="text-sm text-muted-foreground">
+                    {product.difficulty_level}
+                  </span>
+                </div>
+              )}
+            </div>
+          </Card>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -265,7 +307,9 @@ export default function Product() {
           </div>
         </div>
 
-        <ProductDemo demo={product.demo} />
+        <div className="hidden lg:block">
+          <ProductDemo demo={product.demo} />
+        </div>
         <ProductReviews reviews={productReviews} className="p-6 mb-16" />
         <MoreFromSeller products={relatedProducts} className="mt-30" />
         <RelatedProducts products={relatedProducts} />
