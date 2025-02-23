@@ -43,7 +43,27 @@ const userData = {
       dateAdded: "2/1/2025"
     }
   ],
-  communities: [
+  ownedCommunities: [
+    {
+      id: "1",
+      name: "Dev Masters",
+      revenueMRR: 300,
+      members: 120,
+      posts: 45,
+      price: 15,
+      status: "active"
+    },
+    {
+      id: "2",
+      name: "Web Dev Hub",
+      revenueMRR: 150,
+      members: 80,
+      posts: 20,
+      price: 10,
+      status: "active"
+    }
+  ],
+  joinedCommunities: [
     {
       id: "1",
       name: "Design Masters",
@@ -297,35 +317,105 @@ export default function AdminUserDetails() {
           {/* Communities Section */}
           <Card className="shadow-sm">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold">Communities</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg font-semibold">Communities</CardTitle>
+                <Button variant="outline" size="sm">
+                  Add New Community
+                </Button>
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {userData.communities.map((community) => (
-                  <div key={community.id} className="p-4 bg-gray-50 rounded-lg space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Users className="h-4 w-4 text-[#8E9196]" />
-                        <h4 className="font-medium">{community.name}</h4>
+            <CardContent className="space-y-8">
+              {/* Owned Communities */}
+              <div>
+                <h4 className="text-sm font-medium mb-4">Owned Communities</h4>
+                {userData.ownedCommunities.length > 0 ? (
+                  <div className="grid grid-cols-1 gap-4">
+                    {userData.ownedCommunities.map((community) => (
+                      <div key={community.id} className="p-4 bg-gray-50 rounded-lg">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                          <div className="flex items-center gap-2">
+                            <Users className="h-4 w-4 text-[#8E9196]" />
+                            <h4 className="font-medium">{community.name}</h4>
+                          </div>
+                          <Badge 
+                            variant="secondary" 
+                            className="bg-blue-100 text-blue-800 self-start sm:self-center"
+                          >
+                            Owner
+                          </Badge>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4">
+                          <div className="space-y-1">
+                            <span className="text-xs text-[#8E9196]">Revenue MRR</span>
+                            <p className="font-medium text-[#9b87f5]">${community.revenueMRR}/mo</p>
+                          </div>
+                          <div className="space-y-1">
+                            <span className="text-xs text-[#8E9196]">Members</span>
+                            <p className="font-medium">{community.members}</p>
+                          </div>
+                          <div className="space-y-1">
+                            <span className="text-xs text-[#8E9196]">Posts</span>
+                            <p className="font-medium">{community.posts}</p>
+                          </div>
+                          <div className="space-y-1">
+                            <span className="text-xs text-[#8E9196]">Price</span>
+                            <p className="font-medium">${community.price}/mo</p>
+                          </div>
+                        </div>
+
+                        <div className="flex gap-2 mt-4">
+                          <Button variant="outline" size="sm">
+                            Manage Community
+                          </Button>
+                          <Button variant="outline" size="sm">
+                            Edit Price
+                          </Button>
+                        </div>
                       </div>
-                      <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                        {community.role}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-[#8E9196]">Activity Level:</span>
-                      <span className="font-medium">{community.activityLevel}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-[#8E9196]">Total Posts:</span>
-                      <span className="font-medium">{community.posts}</span>
-                    </div>
-                    <div className="text-xs text-[#8E9196] flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />
-                      Joined: {community.joinDate}
-                    </div>
+                    ))}
                   </div>
-                ))}
+                ) : (
+                  <p className="text-sm text-[#8E9196]">No owned communities</p>
+                )}
+              </div>
+
+              <Separator />
+
+              {/* Joined Communities */}
+              <div>
+                <h4 className="text-sm font-medium mb-4">Joined Communities</h4>
+                {userData.joinedCommunities.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {userData.joinedCommunities.map((community) => (
+                      <div key={community.id} className="p-4 bg-gray-50 rounded-lg space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Users className="h-4 w-4 text-[#8E9196]" />
+                            <h4 className="font-medium">{community.name}</h4>
+                          </div>
+                          <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                            {community.role}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-[#8E9196]">Activity Level:</span>
+                          <span className="font-medium">{community.activityLevel}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-[#8E9196]">Total Posts:</span>
+                          <span className="font-medium">{community.posts}</span>
+                        </div>
+                        <div className="text-xs text-[#8E9196] flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
+                          Joined: {community.joinDate}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-[#8E9196]">No joined communities</p>
+                )}
               </div>
             </CardContent>
           </Card>
