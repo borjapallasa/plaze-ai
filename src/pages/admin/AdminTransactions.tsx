@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, ChevronDown } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -242,8 +242,8 @@ export default function AdminTransactions() {
 
       {/* Transactions Table with ScrollArea */}
       <div className="rounded-lg border border-[#E5E7EB] bg-white">
-        <ScrollArea className="h-[500px]">
-          <div className="min-w-[2400px]"> {/* Increased minimum width */}
+        <ScrollArea className="h-[500px] w-full" type="always">
+          <div className="min-w-[2400px]">
             {/* Header */}
             <div className="grid grid-cols-[300px,150px,200px,200px,100px,150px,150px,200px,120px,100px,150px,120px,120px,80px,200px] gap-4 p-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
               <div className="font-medium text-sm text-[#8E9196]">Template Name</div>
@@ -289,6 +289,7 @@ export default function AdminTransactions() {
               ))}
             </div>
           </div>
+          <ScrollBar orientation="horizontal" />
         </ScrollArea>
       </div>
 
