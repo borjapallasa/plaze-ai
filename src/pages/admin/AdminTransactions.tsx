@@ -326,19 +326,19 @@ export default function AdminTransactions() {
                 <div className="font-medium text-sm text-[#8E9196] whitespace-nowrap">Deliverables</div>
                 <button 
                   onClick={() => handleSort("amount")}
-                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+                  className="flex items-center justify-end gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
                 >
                   Amount {getSortIcon("amount")}
                 </button>
                 <button 
                   onClick={() => handleSort("marketplaceFees")}
-                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+                  className="flex items-center justify-end gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
                 >
                   Marketplace Fees {getSortIcon("marketplaceFees")}
                 </button>
                 <button 
                   onClick={() => handleSort("sellerReceives")}
-                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+                  className="flex items-center justify-end gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
                 >
                   Seller Receives {getSortIcon("sellerReceives")}
                 </button>
@@ -350,7 +350,7 @@ export default function AdminTransactions() {
                 </button>
                 <button 
                   onClick={() => handleSort("affiliateFees")}
-                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+                  className="flex items-center justify-end gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
                 >
                   Affiliate Fees {getSortIcon("affiliateFees")}
                 </button>
@@ -439,7 +439,7 @@ export default function AdminTransactions() {
                       <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.checkoutId}>
                         {transaction.checkoutId}
                       </div>
-                      <div className="text-sm text-[#8E9196] whitespace-nowrap">
+                      <div className="text-sm text-[#8E9196] text-right whitespace-nowrap">
                         {transaction.rating > 0 ? transaction.rating : '-'}
                       </div>
                       <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.review}>
