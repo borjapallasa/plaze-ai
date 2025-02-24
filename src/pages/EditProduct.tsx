@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -245,10 +246,22 @@ const EditProduct = () => {
     try {
       console.log('Adding variant for product:', id);
       
+      // Get the current user's UUID
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError) {
+        throw userError;
+      }
+
+      if (!user) {
+        throw new Error('No authenticated user found');
+      }
+
       const { data, error } = await supabase
         .from('variants')
         .insert([
           {
+            user_uuid: user.id,
             product_uuid: id,
             name: "New Variant",
             price: 0,
@@ -294,7 +307,7 @@ const EditProduct = () => {
           price: parseFloat(variantToUpdate.price.toString()),
           compare_price: parseFloat(variantToUpdate.comparePrice.toString()),
           highlighted: variantToUpdate.highlight,
-          tags: variantToUpdate.tags
+          tags: Array.isArray(variantToUpdate.tags) ? variantToUpdate.tags : []
         })
         .eq('variant_uuid', variantToUpdate.id);
 
