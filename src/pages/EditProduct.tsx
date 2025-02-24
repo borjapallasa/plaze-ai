@@ -10,9 +10,11 @@ import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
 import { ProductStatus } from "@/components/product/ProductStatus";
 import { ProductVariantsEditor } from "@/components/product/ProductVariants";
 import { ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const EditProduct = () => {
+  const { id } = useParams();
+  
   return (
     <div className="min-h-screen bg-background">
       <MainHeader />
@@ -20,7 +22,7 @@ const EditProduct = () => {
         <div className="w-full max-w-[1400px] mx-auto px-2 xs:px-3 sm:px-6 lg:px-8 py-3 sm:py-6">
           <div className="mb-6">
             <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
-              <Link to="/seller/product">
+              <Link to="/seller/products">
                 <Button variant="ghost" size="icon" className="rounded-full flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 mt-1">
                   <ArrowLeft className="h-4 w-4" />
                 </Button>
