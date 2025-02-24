@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Globe, Users, GraduationCap, MessageSquare, Package2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { useState } from "react";
 
 interface ExpertCommunityProps {
   community?: any | null;
@@ -35,7 +36,7 @@ const getVideoProvider = (url: string | null) => {
       if (match && match[2].length === 11) {
         return {
           name: 'youtube',
-          embedUrl: `https://www.youtube.com/embed/${match[2]}`
+          embedUrl: `https://www.youtube.com/embed/${match[2]}?rel=0`
         };
       }
     }
@@ -46,7 +47,7 @@ const getVideoProvider = (url: string | null) => {
       if (vimeoId) {
         return {
           name: 'vimeo',
-          embedUrl: `https://player.vimeo.com/video/${vimeoId}`
+          embedUrl: `https://player.vimeo.com/video/${vimeoId}?dnt=1`
         };
       }
     }
@@ -77,11 +78,18 @@ const getVideoProvider = (url: string | null) => {
 };
 
 export const ExpertCommunity = ({ community }: ExpertCommunityProps) => {
+  const [isIframeLoaded, setIsIframeLoaded] = useState(false);
+  const [shouldLoadIframe, setShouldLoadIframe] = useState(false);
+
   if (!community) {
-    return null; // Don't render anything if there's no community
+    return null;
   }
 
   const videoProvider = getVideoProvider(community.intro);
+
+  const handleThumbnailClick = () => {
+    setShouldLoadIframe(true);
+  };
 
   return (
     <div className="col-span-4 col-start-2 lg:col-span-4 lg:col-start-2">
@@ -93,27 +101,33 @@ export const ExpertCommunity = ({ community }: ExpertCommunityProps) => {
             <div className="lg:col-span-7 space-y-4">
               {/* Video thumbnail or iframe */}
               <div className="aspect-video bg-muted rounded-lg overflow-hidden relative">
-                {videoProvider.embedUrl ? (
+                {videoProvider.embedUrl && shouldLoadIframe ? (
                   <iframe
                     src={videoProvider.embedUrl}
                     title="Community video"
-                    className="w-full h-full"
+                    className={`w-full h-full transition-opacity duration-300 ${isIframeLoaded ? 'opacity-100' : 'opacity-0'}`}
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    loading="lazy"
+                    onLoad={() => setIsIframeLoaded(true)}
                     allowFullScreen
                   />
                 ) : (
-                  <>
+                  <button 
+                    onClick={handleThumbnailClick}
+                    className="w-full h-full relative block"
+                  >
                     <img 
                       src={community.thumbnail || "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5"}
                       alt="Community thumbnail"
                       className="w-full h-full object-cover"
+                      loading="lazy"
                     />
                     <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
                       <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center">
                         <div className="w-4 h-4 border-8 border-transparent border-l-primary ml-1" style={{ transform: 'rotate(-45deg)' }} />
                       </div>
                     </div>
-                  </>
+                  </button>
                 )}
               </div>
 
