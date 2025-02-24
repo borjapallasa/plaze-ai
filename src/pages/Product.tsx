@@ -221,15 +221,6 @@ export default function Product() {
 
   const productVariants = variants || [];
   const productReviews = reviews || [];
-  const relatedProducts = Array(12).fill(null).map((_, index) => ({
-    title: `Related Product ${index + 1}`,
-    price: "$99.99",
-    image: getPlaceholderImage(),
-    seller: "Another Seller",
-    description: "Sample related product description",
-    tags: ["design", "ui"],
-    category: "design"
-  }));
 
   const averageRating = reviews?.length 
     ? Number((reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length).toFixed(1))
