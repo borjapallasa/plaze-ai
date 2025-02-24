@@ -84,11 +84,11 @@ const EditProduct = () => {
     if (items.length === 0) return null;
     
     return (
-      <div className="flex flex-wrap gap-1 max-w-full">
+      <div className="flex flex-wrap gap-2 max-w-full py-1">
         {items.map((item) => (
           <span
             key={item}
-            className="inline-flex items-center gap-1 bg-secondary text-secondary-foreground px-2 py-0.5 rounded-md text-sm"
+            className="inline-flex items-center gap-1.5 bg-secondary text-secondary-foreground px-3 py-1 rounded-md text-sm"
           >
             {item}
             <button
@@ -102,7 +102,7 @@ const EditProduct = () => {
               }}
               className="hover:text-primary-foreground"
             >
-              <X className="h-3 w-3" />
+              <X className="h-3.5 w-3.5" />
             </button>
           </span>
         ))}
@@ -363,17 +363,17 @@ const EditProduct = () => {
               </div>
               <Card className="p-3 sm:p-6">
                 <h2 className="text-lg font-medium mb-3 sm:mb-4">Product Organization</h2>
-                <div className="space-y-3 sm:space-y-4">
+                <div className="space-y-4 sm:space-y-5">
                   <div>
-                    <Label htmlFor="type">Type</Label>
+                    <Label htmlFor="type" className="text-base mb-1.5">Type</Label>
                     <Select
                       value={types[0] || ""}
                       onValueChange={(value) => setTypes(prev => 
                         prev.includes(value) ? prev.filter(t => t !== value) : [...prev, value]
                       )}
                     >
-                      <SelectTrigger className="h-auto min-h-[2.5rem] py-1">
-                        {renderSelectedTags(types) || <SelectValue placeholder="Select product types" />}
+                      <SelectTrigger className="h-auto min-h-[3.25rem] py-2 px-4">
+                        {renderSelectedTags(types) || <SelectValue placeholder="Select product types" className="text-base" />}
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
@@ -381,6 +381,7 @@ const EditProduct = () => {
                             <SelectItem 
                               key={productType} 
                               value={productType}
+                              className="text-base"
                             >
                               {productType}
                             </SelectItem>
@@ -390,15 +391,15 @@ const EditProduct = () => {
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="use_case">Use Case</Label>
+                    <Label htmlFor="use_case" className="text-base mb-1.5">Use Case</Label>
                     <Select
                       value={useCases[0] || ""}
                       onValueChange={(value) => setUseCases(prev => 
                         prev.includes(value) ? prev.filter(uc => uc !== value) : [...prev, value]
                       )}
                     >
-                      <SelectTrigger className="h-auto min-h-[2.5rem] py-1">
-                        {renderSelectedTags(useCases) || <SelectValue placeholder="Select use cases" />}
+                      <SelectTrigger className="h-auto min-h-[3.25rem] py-2 px-4">
+                        {renderSelectedTags(useCases) || <SelectValue placeholder="Select use cases" className="text-base" />}
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
@@ -406,6 +407,7 @@ const EditProduct = () => {
                             <SelectItem 
                               key={useCase} 
                               value={useCase}
+                              className="text-base"
                             >
                               {useCase}
                             </SelectItem>
@@ -415,13 +417,13 @@ const EditProduct = () => {
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="platform">Platform</Label>
+                    <Label htmlFor="platform" className="text-base mb-1.5">Platform</Label>
                     <Select
                       value=""
                       onValueChange={handleAddPlatform}
                     >
-                      <SelectTrigger className="h-auto min-h-[2.5rem] py-1">
-                        {renderSelectedTags(platform) || <SelectValue placeholder="Select platforms" />}
+                      <SelectTrigger className="h-auto min-h-[3.25rem] py-2 px-4">
+                        {renderSelectedTags(platform) || <SelectValue placeholder="Select platforms" className="text-base" />}
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
@@ -429,6 +431,7 @@ const EditProduct = () => {
                             <SelectItem 
                               key={p} 
                               value={p}
+                              className="text-base"
                             >
                               {p}
                             </SelectItem>
@@ -438,13 +441,13 @@ const EditProduct = () => {
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="team">Team</Label>
+                    <Label htmlFor="team" className="text-base mb-1.5">Team</Label>
                     <Select
                       value=""
                       onValueChange={handleAddTeam}
                     >
-                      <SelectTrigger className="h-auto min-h-[2.5rem] py-1">
-                        {renderSelectedTags(team) || <SelectValue placeholder="Select team roles" />}
+                      <SelectTrigger className="h-auto min-h-[3.25rem] py-2 px-4">
+                        {renderSelectedTags(team) || <SelectValue placeholder="Select team roles" className="text-base" />}
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
@@ -452,6 +455,7 @@ const EditProduct = () => {
                             <SelectItem 
                               key={role} 
                               value={role}
+                              className="text-base"
                             >
                               {role}
                             </SelectItem>
