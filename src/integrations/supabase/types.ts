@@ -624,7 +624,7 @@ export type Database = {
       }
       experts: {
         Row: {
-          client_satisfaction: string | null
+          client_satisfaction: number | null
           completed_projects: number | null
           created_at: string
           description: string | null
@@ -638,7 +638,7 @@ export type Database = {
           title: string | null
         }
         Insert: {
-          client_satisfaction?: string | null
+          client_satisfaction?: number | null
           completed_projects?: number | null
           created_at?: string
           description?: string | null
@@ -652,7 +652,7 @@ export type Database = {
           title?: string | null
         }
         Update: {
-          client_satisfaction?: string | null
+          client_satisfaction?: number | null
           completed_projects?: number | null
           created_at?: string
           description?: string | null
