@@ -110,9 +110,10 @@ const EditProduct = () => {
           >
             {item}
             <button
+              type="button"
               onClick={(e) => {
+                e.stopPropagation(); // Stop event from reaching the SelectTrigger
                 e.preventDefault();
-                e.stopPropagation();
                 const newItems = items.filter(i => i !== item);
                 if (items === types) setTypes(newItems);
                 if (items === useCases) setUseCases(newItems);
