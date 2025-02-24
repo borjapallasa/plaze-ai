@@ -10,15 +10,21 @@ import { SearchFilters } from "@/components/experts/SearchFilters";
 const Experts = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { data: experts, isLoading } = useQuery({
+  const { data: experts, isLoading, error } = useQuery({
     queryKey: ['experts'],
     queryFn: async () => {
+      console.log('Fetching experts...');
       const { data, error } = await supabase
         .from('experts')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching experts:', error);
+        throw error;
+      }
+      
+      console.log('Fetched experts:', data);
       return data;
     }
   });
@@ -30,6 +36,20 @@ const Experts = () => {
           <MainHeader />
           <div className="container max-w-6xl mx-auto px-4 py-6 flex items-center justify-center">
             <Loader2 className="h-8 w-8 animate-spin" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    console.error('Error in component:', error);
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="pt-16">
+          <MainHeader />
+          <div className="container max-w-6xl mx-auto px-4 py-6">
+            <p className="text-center text-red-500">Error loading experts. Please try again later.</p>
           </div>
         </div>
       </div>
