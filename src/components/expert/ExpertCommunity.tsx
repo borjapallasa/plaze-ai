@@ -9,6 +9,17 @@ interface ExpertCommunityProps {
   community?: any | null;
 }
 
+// Helper function to format numbers
+const formatNumber = (num: number): string => {
+  if (num >= 1000000) {
+    return (num / 1000000).toFixed(1) + 'M';
+  }
+  if (num >= 1000) {
+    return (num / 1000).toFixed(1) + 'k';
+  }
+  return num.toString();
+};
+
 export const ExpertCommunity = ({ community }: ExpertCommunityProps) => {
   if (!community) {
     return null; // Don't render anything if there's no community
@@ -65,28 +76,28 @@ export const ExpertCommunity = ({ community }: ExpertCommunityProps) => {
                     <Users className="w-4 h-4" />
                     <span className="text-xs font-medium uppercase">Members</span>
                   </div>
-                  <p className="text-2xl font-bold">{community.member_count || 0}</p>
+                  <p className="text-2xl font-bold">{formatNumber(community.member_count || 0)}</p>
                 </Card>
                 <Card className="p-3 space-y-1">
                   <div className="flex items-center gap-2 text-muted-foreground mb-1">
                     <GraduationCap className="w-4 h-4" />
                     <span className="text-xs font-medium uppercase">Classrooms</span>
                   </div>
-                  <p className="text-2xl font-bold">{community.classroom_count || 0}</p>
+                  <p className="text-2xl font-bold">{formatNumber(community.classroom_count || 0)}</p>
                 </Card>
                 <Card className="p-3 space-y-1">
                   <div className="flex items-center gap-2 text-muted-foreground mb-1">
                     <MessageSquare className="w-4 h-4" />
                     <span className="text-xs font-medium uppercase">Posts</span>
                   </div>
-                  <p className="text-2xl font-bold">{community.post_count || 0}</p>
+                  <p className="text-2xl font-bold">{formatNumber(community.post_count || 0)}</p>
                 </Card>
                 <Card className="p-3 space-y-1">
                   <div className="flex items-center gap-2 text-muted-foreground mb-1">
                     <Package2 className="w-4 h-4" />
                     <span className="text-xs font-medium uppercase">Products</span>
                   </div>
-                  <p className="text-2xl font-bold">{community.product_count || 0}</p>
+                  <p className="text-2xl font-bold">{formatNumber(community.product_count || 0)}</p>
                 </Card>
               </div>
 
