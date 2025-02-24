@@ -1,16 +1,11 @@
-import { ExpertHeader } from "@/components/expert/ExpertHeader";
-import { ExpertInfo } from "@/components/expert/ExpertInfo";
-import { ExpertSkills } from "@/components/expert/ExpertSkills";
-import { ExpertStats } from "@/components/expert/ExpertStats";
-import { ExpertServices } from "@/components/expert/ExpertServices";
-import { ExpertCommunity } from "@/components/expert/ExpertCommunity";
-import { MoreFromSeller } from "@/components/product/MoreFromSeller";
-import { ProductReviews } from "@/components/product/ProductReviews";
 import { MainHeader } from "@/components/MainHeader";
+import { ExpertHeader } from "@/components/expert/ExpertHeader";
+import { ExpertContent } from "@/components/expert/layout/ExpertContent";
+import { ExpertLoadingState } from "@/components/expert/layout/ExpertLoadingState";
+import { ExpertNotFound } from "@/components/expert/layout/ExpertNotFound";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2 } from "lucide-react";
 import type { Expert, Service } from "@/components/expert/types";
 
 const moreProducts = [
@@ -124,7 +119,6 @@ const reviews = [
 export default function Expert() {
   const { id, slug } = useParams();
 
-  // Fetch expert data
   const { data: expert, isLoading: isLoadingExpert } = useQuery({
     queryKey: ['expert', id],
     queryFn: async () => {
@@ -136,7 +130,6 @@ export default function Expert() {
 
       if (error) throw error;
       
-      // Parse the areas JSON if it exists and convert to string array
       if (data && data.areas) {
         try {
           data.areas = typeof data.areas === 'string' 
@@ -154,7 +147,6 @@ export default function Expert() {
     }
   });
 
-  // Fetch expert's services
   const { data: services, isLoading: isLoadingServices } = useQuery({
     queryKey: ['expert-services', expert?.expert_uuid],
     queryFn: async () => {
@@ -167,7 +159,6 @@ export default function Expert() {
 
       if (error) throw error;
       
-      // Parse features if they exist
       return (data || []).map(service => ({
         ...service,
         features: service.features ? 
@@ -178,32 +169,12 @@ export default function Expert() {
     enabled: !!expert?.expert_uuid
   });
 
-  // Show loading state
   if (isLoadingExpert || isLoadingServices) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="pt-16">
-          <MainHeader />
-          <div className="container mx-auto px-4 flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin" />
-          </div>
-        </div>
-      </div>
-    );
+    return <ExpertLoadingState />;
   }
 
-  // Show error state if expert not found
   if (!expert) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="pt-16">
-          <MainHeader />
-          <div className="container mx-auto px-4 py-12">
-            <p className="text-center text-muted-foreground">Expert not found</p>
-          </div>
-        </div>
-      </div>
-    );
+    return <ExpertNotFound />;
   }
 
   return (
@@ -213,59 +184,12 @@ export default function Expert() {
         <div className="container mx-auto px-4">
           <ExpertHeader expert={expert} />
         </div>
-
-        <div className="container mx-auto px-4">
-          {/* Desktop Layout */}
-          <div className="hidden lg:block space-y-8">
-            <div className="grid grid-cols-5 gap-6">
-              <ExpertInfo expert={expert} />
-              <ExpertSkills expert={expert} />
-            </div>
-
-            <div className="grid grid-cols-5 gap-6">
-              <ExpertStats expert={expert} />
-              <ExpertServices services={services || []} />
-            </div>
-
-            <ExpertCommunity />
-
-            <div className="space-y-8">
-              <MoreFromSeller products={moreProducts} />
-              <ProductReviews reviews={reviews} className="p-6 border-gray-100" />
-            </div>
-          </div>
-
-          {/* Mobile Layout - Reordered */}
-          <div className="lg:hidden space-y-8">
-            <div>
-              <ExpertSkills expert={expert} />
-            </div>
-
-            <div>
-              <ExpertInfo expert={expert} />
-            </div>
-
-            <div>
-              <ExpertServices services={services || []} />
-            </div>
-
-            <div>
-              <ExpertStats expert={expert} />
-            </div>
-
-            <div>
-              <ExpertCommunity />
-            </div>
-
-            <div>
-              <MoreFromSeller products={moreProducts} />
-            </div>
-
-            <div>
-              <ProductReviews reviews={reviews} className="p-6 border-gray-100" />
-            </div>
-          </div>
-        </div>
+        <ExpertContent 
+          expert={expert} 
+          services={services || []} 
+          moreProducts={moreProducts}
+          reviews={reviews}
+        />
       </div>
     </div>
   );

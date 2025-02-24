@@ -1,4 +1,6 @@
 
+import type { Json } from "@/integrations/supabase/types";
+
 export interface Expert {
   id: number;
   expert_uuid: string;
@@ -12,6 +14,7 @@ export interface Expert {
   response_rate?: number;
   areas?: string[];
   info?: string;
+  created_at?: string;
 }
 
 export interface ExpertComponentProps {
