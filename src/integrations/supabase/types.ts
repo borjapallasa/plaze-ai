@@ -992,6 +992,50 @@ export type Database = {
           },
         ]
       }
+      product_images: {
+        Row: {
+          content_type: string | null
+          created_at: string | null
+          file_name: string | null
+          id: number
+          is_primary: boolean | null
+          product_image_uuid: string | null
+          product_uuid: string
+          size: number | null
+          storage_path: string
+        }
+        Insert: {
+          content_type?: string | null
+          created_at?: string | null
+          file_name?: string | null
+          id?: number
+          is_primary?: boolean | null
+          product_image_uuid?: string | null
+          product_uuid: string
+          size?: number | null
+          storage_path: string
+        }
+        Update: {
+          content_type?: string | null
+          created_at?: string | null
+          file_name?: string | null
+          id?: number
+          is_primary?: boolean | null
+          product_image_uuid?: string | null
+          product_uuid?: string
+          size?: number | null
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_product"
+            columns: ["product_uuid"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["product_uuid"]
+          },
+        ]
+      }
       products: {
         Row: {
           accept_terms: boolean | null
