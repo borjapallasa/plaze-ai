@@ -104,18 +104,21 @@ const EditProduct = () => {
     if (items.length === 0) return null;
     
     return (
-      <div className="flex flex-wrap gap-1.5 max-w-full" onClick={(e) => e.stopPropagation()}>
+      <div 
+        className="flex flex-wrap gap-1.5 max-w-full" 
+        onClick={(e) => e.stopPropagation()}
+      >
         {items.map((item) => (
           <span
             key={item}
             className="inline-flex items-center gap-1.5 bg-secondary text-secondary-foreground px-2.5 py-0.5 rounded-md text-sm"
+            onClick={(e) => e.stopPropagation()}
           >
             {item}
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                e.preventDefault();
                 const newItems = items.filter(i => i !== item);
                 if (items === types) setTypes(newItems);
                 if (items === useCases) setUseCases(newItems);
