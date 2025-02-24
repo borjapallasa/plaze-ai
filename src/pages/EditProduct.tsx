@@ -112,18 +112,8 @@ const EditProduct = () => {
         setTypes([]);
       }
       setUseCases(product.use_case ? [product.use_case] : []);
-      setPlatform(product.platform ? 
-        (Array.isArray(product.platform) ? 
-          product.platform.map(p => String(p)) 
-          : []
-        ) : []
-      );
-      setTeam(product.team ? 
-        (Array.isArray(product.team) ? 
-          product.team.map(t => String(t)) 
-          : []
-        ) : []
-      );
+      setPlatform(Array.isArray(product.platform) ? product.platform : []);
+      setTeam(Array.isArray(product.team) ? product.team : []);
     }
   }, [product]);
 
