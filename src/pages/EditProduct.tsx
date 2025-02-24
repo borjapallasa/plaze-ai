@@ -81,20 +81,22 @@ const EditProduct = () => {
   const [team, setTeam] = useState<string[]>([]);
 
   const handleTypeChange = (value: string) => {
+    if (!value) return;
     setTypes(prev => prev.includes(value) ? prev.filter(t => t !== value) : [...prev, value]);
   };
 
   const handleUseCaseChange = (value: string) => {
+    if (!value) return;
     setUseCases(prev => prev.includes(value) ? prev.filter(uc => uc !== value) : [...prev, value]);
   };
 
   const handlePlatformChange = (value: string) => {
-    if (value === "") return;
+    if (!value) return;
     setPlatform(prev => prev.includes(value) ? prev.filter(p => p !== value) : [...prev, value]);
   };
 
   const handleTeamChange = (value: string) => {
-    if (value === "") return;
+    if (!value) return;
     setTeam(prev => prev.includes(value) ? prev.filter(t => t !== value) : [...prev, value]);
   };
 
@@ -102,7 +104,7 @@ const EditProduct = () => {
     if (items.length === 0) return null;
     
     return (
-      <div className="flex flex-wrap gap-1.5 max-w-full">
+      <div className="flex flex-wrap gap-1.5 max-w-full" onClick={(e) => e.stopPropagation()}>
         {items.map((item) => (
           <span
             key={item}
@@ -112,7 +114,7 @@ const EditProduct = () => {
             <button
               type="button"
               onClick={(e) => {
-                e.stopPropagation(); // Stop event from reaching the SelectTrigger
+                e.stopPropagation();
                 e.preventDefault();
                 const newItems = items.filter(i => i !== item);
                 if (items === types) setTypes(newItems);
@@ -387,7 +389,7 @@ const EditProduct = () => {
                   <div>
                     <Label htmlFor="type" className="text-sm mb-1.5">Type</Label>
                     <Select
-                      value={types[0] || ""}
+                      value=""
                       onValueChange={handleTypeChange}
                     >
                       <SelectTrigger className="h-auto min-h-[2.75rem] py-1.5 px-3">
@@ -410,7 +412,7 @@ const EditProduct = () => {
                   <div>
                     <Label htmlFor="use_case" className="text-sm mb-1.5">Use Case</Label>
                     <Select
-                      value={useCases[0] || ""}
+                      value=""
                       onValueChange={handleUseCaseChange}
                     >
                       <SelectTrigger className="h-auto min-h-[2.75rem] py-1.5 px-3">
