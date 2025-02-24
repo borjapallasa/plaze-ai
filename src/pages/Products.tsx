@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 
 interface Product {
-  product_uuid: string;
+  id: number;
   name: string;
   description: string;
   type: string;
@@ -68,8 +68,8 @@ export default function Products() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {products?.map((product) => (
               <ProductCard
-                key={product.product_uuid}
-                id={product.product_uuid}
+                key={product.id}
+                id={product.id.toString()}
                 slug={product.slug}
                 title={product.name}
                 price="$99.99"
