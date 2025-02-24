@@ -43,11 +43,11 @@ export function ProductGallery({ images, className, priority = false }: ProductG
       {/* Mobile Layout */}
       <div className="lg:hidden space-y-4">
         {/* Main Image */}
-        <div className="bg-card rounded-lg overflow-hidden aspect-square">
+        <div className="bg-card rounded-lg overflow-hidden aspect-square flex items-center justify-center">
           <img 
             src={imageSizes.medium}
             alt={currentImage.alt_text || currentImage.file_name}
-            className={`w-full h-full object-cover transition-opacity duration-300 ${
+            className={`max-w-full max-h-full object-contain transition-opacity duration-300 ${
               isLoading ? 'opacity-0' : 'opacity-100'
             }`}
             onLoad={() => setIsLoading(false)}
@@ -116,28 +116,32 @@ export function ProductGallery({ images, className, priority = false }: ProductG
             {images.map((img, i) => {
               const thumbSizes = getImageSizes(img.url);
               return (
-                <img 
+                <div 
                   key={i}
-                  src={thumbSizes.thumbnail}
-                  alt={img.alt_text || img.file_name}
-                  className={`w-24 h-24 rounded-lg object-cover flex-shrink-0 cursor-pointer transition-opacity ${
+                  className={`w-24 h-24 rounded-lg flex-shrink-0 cursor-pointer overflow-hidden bg-card flex items-center justify-center ${
                     i === currentImageIndex ? 'ring-2 ring-primary' : 'hover:opacity-80'
                   }`}
                   onClick={() => setCurrentImageIndex(i)}
-                  loading="lazy"
-                  decoding="async"
-                />
+                >
+                  <img 
+                    src={thumbSizes.thumbnail}
+                    alt={img.alt_text || img.file_name}
+                    className="max-w-full max-h-full object-contain"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
               );
             })}
           </div>
         )}
 
         {/* Main image */}
-        <div className="flex-1 bg-card rounded-lg overflow-hidden aspect-square relative">
+        <div className="flex-1 bg-card rounded-lg overflow-hidden aspect-square relative flex items-center justify-center">
           <img 
             src={imageSizes.large}
             alt={currentImage.alt_text || currentImage.file_name}
-            className={`w-full h-full object-cover transition-opacity duration-300 ${
+            className={`max-w-full max-h-full object-contain transition-opacity duration-300 ${
               isLoading ? 'opacity-0' : 'opacity-100'
             }`}
             onLoad={() => setIsLoading(false)}
