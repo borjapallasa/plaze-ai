@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -81,6 +80,36 @@ const EditProduct = () => {
   const [platform, setPlatform] = useState<string[]>([]);
   const [team, setTeam] = useState<string[]>([]);
 
+  const renderSelectedTags = (items: string[]) => {
+    if (items.length === 0) return null;
+    
+    return (
+      <div className="flex flex-wrap gap-1 max-w-full">
+        {items.map((item) => (
+          <span
+            key={item}
+            className="inline-flex items-center gap-1 bg-secondary text-secondary-foreground px-2 py-0.5 rounded-md text-sm"
+          >
+            {item}
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                const newItems = items.filter(i => i !== item);
+                if (items === types) setTypes(newItems);
+                if (items === useCases) setUseCases(newItems);
+                if (items === platform) setPlatform(newItems);
+                if (items === team) setTeam(newItems);
+              }}
+              className="hover:text-primary-foreground"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          </span>
+        ))}
+      </div>
+    );
+  };
+
   const { data: product, isLoading } = useQuery({
     queryKey: ['product', id],
     queryFn: async () => {
@@ -111,11 +140,9 @@ const EditProduct = () => {
       setTypes(product.type ? [product.type] : []);
       setUseCases(product.use_case ? [product.use_case] : []);
       
-      // Convert platform JSON array to string array
       const platformData = product.platform as unknown[] || [];
       setPlatform(platformData.map(item => String(item)));
       
-      // Convert team JSON array to string array
       const teamData = product.team as unknown[] || [];
       setTeam(teamData.map(item => String(item)));
     }
@@ -345,8 +372,8 @@ const EditProduct = () => {
                         prev.includes(value) ? prev.filter(t => t !== value) : [...prev, value]
                       )}
                     >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select product types" />
+                      <SelectTrigger className="h-auto min-h-[2.5rem] py-1">
+                        {renderSelectedTags(types) || <SelectValue placeholder="Select product types" />}
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
@@ -361,22 +388,6 @@ const EditProduct = () => {
                         </SelectGroup>
                       </SelectContent>
                     </Select>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {types.map((type) => (
-                        <span
-                          key={type}
-                          className="inline-flex items-center gap-1 bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-sm"
-                        >
-                          {type}
-                          <button
-                            onClick={() => setTypes(types.filter(t => t !== type))}
-                            className="hover:text-primary-foreground"
-                          >
-                            <X className="h-3 w-3" />
-                          </button>
-                        </span>
-                      ))}
-                    </div>
                   </div>
                   <div>
                     <Label htmlFor="use_case">Use Case</Label>
@@ -386,8 +397,8 @@ const EditProduct = () => {
                         prev.includes(value) ? prev.filter(uc => uc !== value) : [...prev, value]
                       )}
                     >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select use cases" />
+                      <SelectTrigger className="h-auto min-h-[2.5rem] py-1">
+                        {renderSelectedTags(useCases) || <SelectValue placeholder="Select use cases" />}
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
@@ -402,22 +413,6 @@ const EditProduct = () => {
                         </SelectGroup>
                       </SelectContent>
                     </Select>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {useCases.map((useCase) => (
-                        <span
-                          key={useCase}
-                          className="inline-flex items-center gap-1 bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-sm"
-                        >
-                          {useCase}
-                          <button
-                            onClick={() => setUseCases(useCases.filter(uc => uc !== useCase))}
-                            className="hover:text-primary-foreground"
-                          >
-                            <X className="h-3 w-3" />
-                          </button>
-                        </span>
-                      ))}
-                    </div>
                   </div>
                   <div>
                     <Label htmlFor="platform">Platform</Label>
@@ -425,8 +420,8 @@ const EditProduct = () => {
                       value=""
                       onValueChange={handleAddPlatform}
                     >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select platforms" />
+                      <SelectTrigger className="h-auto min-h-[2.5rem] py-1">
+                        {renderSelectedTags(platform) || <SelectValue placeholder="Select platforms" />}
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
@@ -441,22 +436,6 @@ const EditProduct = () => {
                         </SelectGroup>
                       </SelectContent>
                     </Select>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {platform.map((p) => (
-                        <span
-                          key={p}
-                          className="inline-flex items-center gap-1 bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-sm"
-                        >
-                          {p}
-                          <button
-                            onClick={() => handleRemovePlatform(p)}
-                            className="hover:text-primary-foreground"
-                          >
-                            <X className="h-3 w-3" />
-                          </button>
-                        </span>
-                      ))}
-                    </div>
                   </div>
                   <div>
                     <Label htmlFor="team">Team</Label>
@@ -464,8 +443,8 @@ const EditProduct = () => {
                       value=""
                       onValueChange={handleAddTeam}
                     >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select team roles" />
+                      <SelectTrigger className="h-auto min-h-[2.5rem] py-1">
+                        {renderSelectedTags(team) || <SelectValue placeholder="Select team roles" />}
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
@@ -480,22 +459,6 @@ const EditProduct = () => {
                         </SelectGroup>
                       </SelectContent>
                     </Select>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {team.map((t) => (
-                        <span
-                          key={t}
-                          className="inline-flex items-center gap-1 bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-sm"
-                        >
-                          {t}
-                          <button
-                            onClick={() => handleRemoveTeam(t)}
-                            className="hover:text-primary-foreground"
-                          >
-                            <X className="h-3 w-3" />
-                          </button>
-                        </span>
-                      ))}
-                    </div>
                   </div>
                 </div>
               </Card>
