@@ -139,7 +139,7 @@ const EditProduct = () => {
                 </Card>
 
                 <Card className="p-3 sm:p-6">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between mb-4">
                     <h2 className="text-lg font-medium">Variants</h2>
                     {!showVariantForm && (
                       <Button 
