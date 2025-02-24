@@ -16,32 +16,43 @@ export default function EditProduct() {
   const [variants, setVariants] = React.useState<Variant[]>([]);
   const [isSaving, setIsSaving] = React.useState(false);
 
-  const { data: product, isLoading: isLoadingProduct } = useQuery({
+  const { data: product, isLoading: isLoadingProduct, error: productError } = useQuery({
     queryKey: ['product', id],
     queryFn: async () => {
       console.log('Fetching product with ID:', id);
+      // Use maybeSingle instead of single to handle case where product doesn't exist
       const { data, error } = await supabase
         .from('products')
         .select('*')
         .eq('product_uuid', id)
-        .single();
+        .maybeSingle();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching product:', error);
+        throw error;
+      }
       console.log('Product data:', data);
       return data;
     },
-    enabled: !!id
+    enabled: !!id,
+    retry: 1 // Only retry once if there's an error
   });
 
-  const { data: existingVariants = [], isLoading: isLoadingVariants, refetch: refetchVariants } = useQuery({
+  const { data: existingVariants = [], isLoading: isLoadingVariants, error: variantsError } = useQuery({
     queryKey: ['variants', id],
     queryFn: async () => {
+      console.log('Fetching variants for product:', id);
       const { data, error } = await supabase
         .from('variants')
         .select('*')
         .eq('product_uuid', id);
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching variants:', error);
+        throw error;
+      }
+
+      console.log('Variants data:', data);
 
       // Convert database variants to frontend format
       return (data || []).map(variant => ({
@@ -116,6 +127,22 @@ export default function EditProduct() {
       setIsSaving(false);
     }
   };
+
+  // Show error states if either query fails
+  if (productError || variantsError) {
+    return (
+      <div className="min-h-screen bg-background">
+        <MainHeader />
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-4xl mx-auto">
+            <p className="text-center text-destructive">
+              {productError ? "Error loading product" : "Error loading variants"}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoadingProduct || isLoadingVariants) {
     return (
