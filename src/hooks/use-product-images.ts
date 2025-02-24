@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 export interface ProductImage {
   id: number;
   url: string;
+  storage_path: string;
   is_primary: boolean;
   file_name: string;
 }
@@ -36,6 +37,7 @@ export function useProductImages(productUuid?: string) {
           return {
             id: image.id,
             url: publicUrl,
+            storage_path: image.storage_path,
             is_primary: image.is_primary,
             file_name: image.file_name
           };
@@ -101,6 +103,7 @@ export function useProductImages(productUuid?: string) {
       setImages(prev => [...prev, {
         id: data.id,
         url: publicUrl,
+        storage_path: data.storage_path,
         is_primary: data.is_primary,
         file_name: data.file_name
       }]);
@@ -120,6 +123,35 @@ export function useProductImages(productUuid?: string) {
       setIsUploading(false);
     }
   }, [productUuid, images, toast]);
+
+  const updateImage = async (imageId: number, updates: { file_name?: string }) => {
+    try {
+      const { error } = await supabase
+        .from('product_images')
+        .update(updates)
+        .eq('id', imageId);
+
+      if (error) throw error;
+
+      setImages(prev => prev.map(img => 
+        img.id === imageId 
+          ? { ...img, ...updates }
+          : img
+      ));
+
+      toast({
+        title: "Success",
+        description: "Image updated successfully",
+      });
+    } catch (error) {
+      console.error('Update error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update image",
+        variant: "destructive",
+      });
+    }
+  };
 
   const removeImage = async (imageId: number, storagePath: string) => {
     try {
@@ -157,6 +189,7 @@ export function useProductImages(productUuid?: string) {
     isUploading,
     isLoading,
     uploadImage,
+    updateImage,
     removeImage
   };
 }

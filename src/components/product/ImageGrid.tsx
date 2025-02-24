@@ -30,7 +30,7 @@ export function ImageGrid({ images, onImageClick, onRemoveImage }: ImageGridProp
             className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
             onClick={(e) => {
               e.stopPropagation();
-              onRemoveImage(image.id, image.url);
+              onRemoveImage(image.id, image.storage_path);
             }}
           >
             <X className="h-4 w-4" />
