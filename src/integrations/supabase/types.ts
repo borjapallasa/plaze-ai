@@ -1054,6 +1054,7 @@ export type Database = {
             | null
           id: number
           name: string | null
+          platform: Json | null
           price: number | null
           product_includes: string | null
           product_uuid: string
@@ -1062,6 +1063,7 @@ export type Database = {
           sales_amount: number | null
           sales_count: number | null
           slug: string | null
+          team: Json | null
           tech_stack: string | null
           tech_stack_price: string | null
           type: Database["public"]["Enums"]["product_type"] | null
@@ -1091,6 +1093,7 @@ export type Database = {
             | null
           id?: number
           name?: string | null
+          platform?: Json | null
           price?: number | null
           product_includes?: string | null
           product_uuid?: string
@@ -1099,6 +1102,7 @@ export type Database = {
           sales_amount?: number | null
           sales_count?: number | null
           slug?: string | null
+          team?: Json | null
           tech_stack?: string | null
           tech_stack_price?: string | null
           type?: Database["public"]["Enums"]["product_type"] | null
@@ -1128,6 +1132,7 @@ export type Database = {
             | null
           id?: number
           name?: string | null
+          platform?: Json | null
           price?: number | null
           product_includes?: string | null
           product_uuid?: string
@@ -1136,6 +1141,7 @@ export type Database = {
           sales_amount?: number | null
           sales_count?: number | null
           slug?: string | null
+          team?: Json | null
           tech_stack?: string | null
           tech_stack_price?: string | null
           type?: Database["public"]["Enums"]["product_type"] | null

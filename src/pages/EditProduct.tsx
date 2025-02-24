@@ -144,6 +144,20 @@ const EditProduct = () => {
                     <Label htmlFor="use_case">Use Case</Label>
                     <Input id="use_case" placeholder="Select use case" />
                   </div>
+                  <div>
+                    <Label htmlFor="platform">Platform</Label>
+                    <Input 
+                      id="platform" 
+                      placeholder="Enter platform details (e.g., Web, Mobile)"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="team">Team</Label>
+                    <Input 
+                      id="team" 
+                      placeholder="Enter team configuration"
+                    />
+                  </div>
                 </div>
               </Card>
             </div>
