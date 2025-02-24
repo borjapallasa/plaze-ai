@@ -6,11 +6,12 @@ interface ProductInfoProps {
   techStack?: string;
   productIncludes?: string;
   difficultyLevel?: string;
+  className?: string;
 }
 
-export function ProductInfo({ description, techStack, productIncludes, difficultyLevel }: ProductInfoProps) {
+export function ProductInfo({ description, techStack, productIncludes, difficultyLevel, className }: ProductInfoProps) {
   return (
-    <>
+    <div className={className}>
       <Card className="p-6 mb-8">
         <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
           {description}
@@ -31,12 +32,14 @@ export function ProductInfo({ description, techStack, productIncludes, difficult
             </div>
           )}
 
-          <div>
-            <h4 className="font-medium mb-2">What's Included</h4>
-            <div className="text-sm text-muted-foreground">
-              {productIncludes || 'No information provided'}
+          {productIncludes && (
+            <div>
+              <h4 className="font-medium mb-2">What's Included</h4>
+              <div className="text-sm text-muted-foreground whitespace-pre-wrap">
+                {productIncludes}
+              </div>
             </div>
-          </div>
+          )}
 
           {difficultyLevel && (
             <div>
@@ -48,6 +51,6 @@ export function ProductInfo({ description, techStack, productIncludes, difficult
           )}
         </div>
       </Card>
-    </>
+    </div>
   );
 }

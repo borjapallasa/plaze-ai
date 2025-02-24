@@ -12,6 +12,7 @@ import { ProductReviews } from "@/components/product/ProductReviews";
 import { MoreFromSeller } from "@/components/product/MoreFromSeller";
 import { RelatedProducts } from "@/components/product/RelatedProducts";
 import { StickyATC } from "@/components/product/StickyATC";
+import { ProductInfo } from "@/components/product/ProductInfo";
 import { Card } from "@/components/ui/card";
 
 const getPlaceholderImage = () => "https://images.unsplash.com/photo-1649972904349-6e44c42644a7";
@@ -172,6 +173,13 @@ export default function Product() {
         onVariantChange={setSelectedVariant}
         onAddToCart={handleAddToCart}
       >
+        <ProductInfo 
+          description={product.description}
+          techStack={product.tech_stack}
+          productIncludes={product.product_includes}
+          difficultyLevel={product.difficulty_level}
+          className="mb-8"
+        />
         <ProductDemo demo={product.demo} />
         <ProductReviews reviews={reviews} className="mb-8" />
         <MoreFromSeller expert_uuid={product.expert_uuid} className="mb-8" />
