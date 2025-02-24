@@ -9,9 +9,10 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
 import type { Variant } from "@/components/product/types/variants";
+import { Card } from "@/components/ui/card";
 
 export default function EditProduct() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const { toast } = useToast();
   const [variants, setVariants] = React.useState<Variant[]>([]);
   const [isSaving, setIsSaving] = React.useState(false);
@@ -22,7 +23,12 @@ export default function EditProduct() {
       console.log('Fetching product with ID:', id);
       const { data, error } = await supabase
         .from('products')
-        .select('*')
+        .select(`
+          *,
+          user:user_uuid(
+            email
+          )
+        `)
         .eq('product_uuid', id)
         .maybeSingle();
       
@@ -169,25 +175,54 @@ export default function EditProduct() {
       <MainHeader />
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto space-y-8">
-          <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold">Edit Product Variants</h1>
-            <Button 
-              onClick={handleSave}
-              disabled={isSaving}
-              className="min-w-[100px]"
-            >
-              {isSaving ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                "Save"
+          {/* Product Overview Section */}
+          <Card className="p-6">
+            <div className="space-y-4">
+              <h1 className="text-3xl font-bold">{product.name}</h1>
+              {product.description && (
+                <p className="text-muted-foreground">{product.description}</p>
               )}
-            </Button>
-          </div>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="font-medium">Status: </span>
+                  <span className="capitalize">{product.status || 'Draft'}</span>
+                </div>
+                <div>
+                  <span className="font-medium">Type: </span>
+                  <span className="capitalize">{product.type || 'N/A'}</span>
+                </div>
+                {product.tech_stack && (
+                  <div className="col-span-2">
+                    <span className="font-medium">Tech Stack: </span>
+                    <span>{product.tech_stack}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </Card>
 
-          <ProductVariantsEditor 
-            variants={variants}
-            onVariantsChange={setVariants}
-          />
+          {/* Variants Section */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold">Product Variants</h2>
+              <Button 
+                onClick={handleSave}
+                disabled={isSaving}
+                className="min-w-[100px]"
+              >
+                {isSaving ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  "Save"
+                )}
+              </Button>
+            </div>
+
+            <ProductVariantsEditor 
+              variants={variants}
+              onVariantsChange={setVariants}
+            />
+          </div>
         </div>
       </div>
     </div>
