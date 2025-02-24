@@ -51,7 +51,7 @@ const EditProduct = () => {
     if (product) {
       setProductName(product.name || "");
       setProductDescription(product.description || "");
-      setProductPrice(product.price?.toString() || "");
+      setProductPrice(product.price ? product.price.toString() : "");
       setTechStack(product.tech_stack || "");
       setTechStackPrice(product.tech_stack_price || "");
       setProductIncludes(product.product_includes || "");
@@ -60,8 +60,8 @@ const EditProduct = () => {
       setPublicLink(product.public_link || "");
       setType(product.type || "");
       setUseCase(product.use_case || "");
-      setPlatform(Array.isArray(product.platform) ? JSON.stringify(product.platform) : (product.platform || ""));
-      setTeam(Array.isArray(product.team) ? JSON.stringify(product.team) : (product.team || ""));
+      setPlatform(Array.isArray(product.platform) ? JSON.stringify(product.platform) : (product.platform?.toString() || ""));
+      setTeam(Array.isArray(product.team) ? JSON.stringify(product.team) : (product.team?.toString() || ""));
     }
   }, [product]);
 
@@ -117,7 +117,7 @@ const EditProduct = () => {
                     </div>
                     <div>
                       <Label htmlFor="description">Description</Label>
-                      <ProductEditor defaultValue={productDescription} />
+                      <ProductEditor />
                     </div>
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div>
