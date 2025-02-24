@@ -110,8 +110,14 @@ const EditProduct = () => {
       setPublicLink(product.public_link || "");
       setTypes(product.type ? [product.type] : []);
       setUseCases(product.use_case ? [product.use_case] : []);
-      setPlatform(Array.isArray(product.platform) ? product.platform : []);
-      setTeam(Array.isArray(product.team) ? product.team : []);
+      
+      // Convert platform JSON array to string array
+      const platformData = product.platform as unknown[] || [];
+      setPlatform(platformData.map(item => String(item)));
+      
+      // Convert team JSON array to string array
+      const teamData = product.team as unknown[] || [];
+      setTeam(teamData.map(item => String(item)));
     }
   }, [product]);
 
