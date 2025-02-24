@@ -7,6 +7,8 @@ import { VariantPicker } from "./VariantPicker";
 import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { usePreloadImage } from "@/hooks/use-preload-image";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ProductLayoutProps {
   product: any;
@@ -27,14 +29,21 @@ export function ProductLayout({
   onAddToCart,
   children
 }: ProductLayoutProps) {
+  const isMobile = useIsMobile();
+  const productImage = product.image || "https://images.unsplash.com/photo-1649972904349-6e44c42644a7";
+  
+  // Preload the main product image for mobile
+  usePreloadImage(productImage);
+
   return (
     <div className="min-h-screen">
       <MainHeader />
       <main className="container mx-auto px-4 pt-24">
         <div className="lg:hidden">
           <ProductGallery 
-            image={product.image || "https://images.unsplash.com/photo-1649972904349-6e44c42644a7"} 
+            image={productImage} 
             className="mb-6" 
+            priority={true}
           />
           <ProductHeader 
             title={product.name}
@@ -69,8 +78,9 @@ export function ProductLayout({
           <div className="lg:col-span-2">
             <div className="hidden lg:block">
               <ProductGallery 
-                image={product.image || "https://images.unsplash.com/photo-1649972904349-6e44c42644a7"}
+                image={productImage}
                 className="mb-8" 
+                priority={!isMobile}
               />
               <Card className="p-6 mb-8">
                 <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">

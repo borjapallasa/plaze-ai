@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,26 +5,16 @@ import { Button } from "@/components/ui/button";
 interface ProductGalleryProps {
   image: string;
   className?: string;
+  priority?: boolean;
 }
 
-export function ProductGallery({ image, className }: ProductGalleryProps) {
+export function ProductGallery({ image, className, priority = false }: ProductGalleryProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const totalImages = 5;
 
   // Create an array of the same image repeated 5 times
   const images = Array(totalImages).fill(image);
-
-  // Preload images
-  useEffect(() => {
-    const preloadImages = () => {
-      images.forEach(imgSrc => {
-        const img = new Image();
-        img.src = imgSrc;
-      });
-    };
-    preloadImages();
-  }, [images]);
 
   // Function to generate responsive image sizes
   const getImageSizes = () => {
@@ -52,8 +41,8 @@ export function ProductGallery({ image, className }: ProductGalleryProps) {
               isLoading ? 'opacity-0' : 'opacity-100'
             }`}
             onLoad={() => setIsLoading(false)}
-            loading="eager"
-            fetchPriority="high"
+            loading={priority ? "eager" : "lazy"}
+            fetchPriority={priority ? "high" : "auto"}
             decoding="async"
             sizes="(max-width: 768px) 100vw, 50vw"
             srcSet={`
@@ -135,8 +124,8 @@ export function ProductGallery({ image, className }: ProductGalleryProps) {
               isLoading ? 'opacity-0' : 'opacity-100'
             }`}
             onLoad={() => setIsLoading(false)}
-            loading="eager"
-            fetchPriority="high"
+            loading={priority ? "eager" : "lazy"}
+            fetchPriority={priority ? "high" : "auto"}
             decoding="async"
             sizes="(min-width: 1024px) 50vw, 100vw"
             srcSet={`
