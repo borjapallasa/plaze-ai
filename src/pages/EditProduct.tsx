@@ -8,7 +8,7 @@ import { ProductEditor } from "@/components/product/ProductEditor";
 import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
 import { ProductStatus } from "@/components/product/ProductStatus";
 import { ProductVariantsEditor } from "@/components/product/ProductVariants";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Plus } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 
 const EditProduct = () => {
@@ -53,16 +53,30 @@ const EditProduct = () => {
                       <Label htmlFor="description">Description</Label>
                       <ProductEditor />
                     </div>
-                    <div>
-                      <Label htmlFor="price">Price</Label>
-                      <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2">€</span>
-                        <Input
-                          id="price"
-                          type="number"
-                          placeholder="0.00"
-                          className="pl-7"
-                        />
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="price">Price</Label>
+                        <div className="relative">
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2">€</span>
+                          <Input
+                            id="price"
+                            type="number"
+                            placeholder="0.00"
+                            className="pl-7"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Label htmlFor="compare-price">Compare-at price</Label>
+                        <div className="relative">
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2">€</span>
+                          <Input
+                            id="compare-price"
+                            type="number"
+                            placeholder="0.00"
+                            className="pl-7"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -124,7 +138,13 @@ const EditProduct = () => {
                 </Card>
 
                 <Card className="p-3 sm:p-6">
-                  <ProductVariantsEditor />
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-lg font-medium">Variants</h2>
+                    <Button variant="outline" size="sm">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add variant
+                    </Button>
+                  </div>
                 </Card>
               </div>
             </div>
