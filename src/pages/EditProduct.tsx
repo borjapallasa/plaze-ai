@@ -68,9 +68,9 @@ export default function EditProduct() {
 
     setIsSaving(true);
     try {
-      // Get current user
-      const { data: { user } } = await supabase.auth.getSession();
-      if (!user) throw new Error("User not authenticated");
+      // Get current user from session
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) throw new Error("User not authenticated");
 
       // First delete all existing variants for this product
       const { error: deleteError } = await supabase
@@ -84,7 +84,7 @@ export default function EditProduct() {
       const variantsToInsert = variants.map(variant => ({
         variant_uuid: variant.variant_uuid || variant.id, // Use existing UUID or frontend ID
         product_uuid: id,
-        user_uuid: user.id,
+        user_uuid: session.user.id,
         name: variant.name || '',
         price: typeof variant.price === 'string' ? parseFloat(variant.price) : variant.price,
         compare_price: variant.comparePrice ? (typeof variant.comparePrice === 'string' ? parseFloat(variant.comparePrice) : variant.comparePrice) : null,
