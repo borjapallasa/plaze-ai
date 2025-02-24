@@ -1,5 +1,5 @@
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, UploadCloud, X } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
@@ -23,8 +23,51 @@ interface ProductMediaUploadProps {
 export function ProductMediaUpload({ productUuid }: ProductMediaUploadProps) {
   const [images, setImages] = useState<ProductImage[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [previewImage, setPreviewImage] = useState<ProductImage | null>(null);
   const { toast } = useToast();
+
+  // Fetch existing images
+  useEffect(() => {
+    async function fetchImages() {
+      if (!productUuid) return;
+
+      try {
+        const { data, error } = await supabase
+          .from('product_images')
+          .select('*')
+          .eq('product_uuid', productUuid);
+
+        if (error) throw error;
+
+        const imagesWithUrls = await Promise.all(data.map(async (image) => {
+          const { data: { publicUrl } } = supabase.storage
+            .from('product_images')
+            .getPublicUrl(image.storage_path);
+
+          return {
+            id: image.id,
+            url: publicUrl,
+            is_primary: image.is_primary,
+            file_name: image.file_name
+          };
+        }));
+
+        setImages(imagesWithUrls);
+      } catch (error) {
+        console.error('Error fetching images:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load existing images",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchImages();
+  }, [productUuid, toast]);
 
   const uploadImage = useCallback(async (file: File) => {
     if (!productUuid) {
