@@ -1043,7 +1043,6 @@ export type Database = {
           affiliation_amount: number | null
           change_reasons: string | null
           changes_neeeded: string | null
-          compare_at_price: number | null
           created_at: string
           demo: string | null
           description: string | null
@@ -1056,7 +1055,6 @@ export type Database = {
           id: number
           name: string | null
           platform: Json | null
-          price: number | null
           product_includes: string | null
           product_uuid: string
           public_link: string | null
@@ -1077,6 +1075,7 @@ export type Database = {
           utm_medium: string | null
           utm_source: string | null
           utm_term: string | null
+          variant_count: number | null
         }
         Insert: {
           accept_terms?: boolean | null
@@ -1084,7 +1083,6 @@ export type Database = {
           affiliation_amount?: number | null
           change_reasons?: string | null
           changes_neeeded?: string | null
-          compare_at_price?: number | null
           created_at?: string
           demo?: string | null
           description?: string | null
@@ -1097,7 +1095,6 @@ export type Database = {
           id?: number
           name?: string | null
           platform?: Json | null
-          price?: number | null
           product_includes?: string | null
           product_uuid?: string
           public_link?: string | null
@@ -1118,6 +1115,7 @@ export type Database = {
           utm_medium?: string | null
           utm_source?: string | null
           utm_term?: string | null
+          variant_count?: number | null
         }
         Update: {
           accept_terms?: boolean | null
@@ -1125,7 +1123,6 @@ export type Database = {
           affiliation_amount?: number | null
           change_reasons?: string | null
           changes_neeeded?: string | null
-          compare_at_price?: number | null
           created_at?: string
           demo?: string | null
           description?: string | null
@@ -1138,7 +1135,6 @@ export type Database = {
           id?: number
           name?: string | null
           platform?: Json | null
-          price?: number | null
           product_includes?: string | null
           product_uuid?: string
           public_link?: string | null
@@ -1159,6 +1155,7 @@ export type Database = {
           utm_medium?: string | null
           utm_source?: string | null
           utm_term?: string | null
+          variant_count?: number | null
         }
         Relationships: [
           {
@@ -1814,6 +1811,7 @@ export type Database = {
           name: string | null
           price: number | null
           product_uuid: string | null
+          tags: Json | null
           user_uuid: string | null
           variant_uuid: string
         }
@@ -1825,6 +1823,7 @@ export type Database = {
           name?: string | null
           price?: number | null
           product_uuid?: string | null
+          tags?: Json | null
           user_uuid?: string | null
           variant_uuid?: string
         }
@@ -1836,6 +1835,7 @@ export type Database = {
           name?: string | null
           price?: number | null
           product_uuid?: string | null
+          tags?: Json | null
           user_uuid?: string | null
           variant_uuid?: string
         }

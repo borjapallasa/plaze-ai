@@ -73,11 +73,8 @@ type Variant = {
 
 const EditProduct = () => {
   const { id } = useParams();
-  const [showVariantForm, setShowVariantForm] = useState(false);
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
-  const [productPrice, setProductPrice] = useState("");
-  const [productComparePrice, setProductComparePrice] = useState("");
   const [techStack, setTechStack] = useState("");
   const [techStackPrice, setTechStackPrice] = useState("");
   const [productIncludes, setProductIncludes] = useState("");
@@ -87,7 +84,6 @@ const EditProduct = () => {
   const [useCases, setUseCases] = useState<string[]>([]);
   const [platform, setPlatform] = useState<string[]>([]);
   const [team, setTeam] = useState<string[]>([]);
-  const [variants, setVariants] = useState<Variant[]>([]);
 
   const handleTypeChange = (value: string) => {
     if (!value) return;
@@ -146,28 +142,7 @@ const EditProduct = () => {
     );
   };
 
-  const handleAddVariant = () => {
-    if (variants.length === 0) {
-      const firstVariant: Variant = {
-        id: "1",
-        name: productName || "Default Variant",
-        price: productPrice || "0",
-        comparePrice: productComparePrice || "0",
-        highlight: true,
-        tags: [],
-      };
-      console.log("Creating first variant:", firstVariant);
-      setVariants([firstVariant]);
-      setShowVariantForm(true);
-    }
-  };
-
-  const handleVariantsChange = (newVariants: Variant[]) => {
-    console.log("Updating variants:", newVariants);
-    setVariants(newVariants);
-  };
-
-  const { data: product, isLoading } = useQuery({
+  const { data: product, isLoading: isLoadingProduct } = useQuery({
     queryKey: ['product', id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -182,12 +157,24 @@ const EditProduct = () => {
     enabled: !!id
   });
 
+  const { data: variants = [], isLoading: isLoadingVariants } = useQuery({
+    queryKey: ['variants', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('variants')
+        .select('*')
+        .eq('product_uuid', id);
+      
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!id
+  });
+
   useEffect(() => {
     if (product) {
       setProductName(product.name || "");
       setProductDescription(product.description || "");
-      setProductPrice(product.price ? product.price.toString() : "");
-      setProductComparePrice(product.compare_at_price ? product.compare_at_price.toString() : "");
       setTechStack(product.tech_stack || "");
       setTechStackPrice(product.tech_stack_price || "");
       setProductIncludes(product.product_includes || "");
@@ -204,7 +191,7 @@ const EditProduct = () => {
     }
   }, [product]);
 
-  if (isLoading) {
+  if (isLoadingProduct || isLoadingVariants) {
     return (
       <div className="min-h-screen bg-background">
         <MainHeader />
@@ -213,7 +200,13 @@ const EditProduct = () => {
     );
   }
 
-  console.log("Current state:", { showVariantForm, variants });
+  const handleAddVariant = () => {
+    console.log("Add variant clicked");
+  };
+
+  const handleVariantsChange = (updatedVariants: any[]) => {
+    console.log("Variants updated:", updatedVariants);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -259,58 +252,29 @@ const EditProduct = () => {
                         onChange={setProductDescription}
                       />
                     </div>
-                    {variants.length === 0 && (
-                      <div className="grid sm:grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="price">Price</Label>
-                          <div className="relative">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2">€</span>
-                            <Input
-                              id="price"
-                              type="number"
-                              placeholder="0.00"
-                              className="pl-7"
-                              value={productPrice}
-                              onChange={(e) => setProductPrice(e.target.value)}
-                            />
-                          </div>
-                        </div>
-                        <div>
-                          <Label htmlFor="compare-price">Compare-at price</Label>
-                          <div className="relative">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2">€</span>
-                            <Input
-                              id="compare-price"
-                              type="number"
-                              placeholder="0.00"
-                              className="pl-7"
-                              value={productComparePrice}
-                              onChange={(e) => setProductComparePrice(e.target.value)}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    )}
                     <div className="pt-2">
                       <div className="flex items-center justify-between mb-4">
                         <Label>Variants</Label>
-                        {variants.length === 0 && (
-                          <Button 
-                            onClick={handleAddVariant} 
-                            variant="outline" 
-                            size="sm"
-                          >
-                            <Plus className="h-4 w-4 mr-2" />
-                            Add variant
-                          </Button>
-                        )}
+                        <Button 
+                          onClick={handleAddVariant} 
+                          variant="outline" 
+                          size="sm"
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          Add variant
+                        </Button>
                       </div>
-                      {variants.length > 0 && (
-                        <ProductVariantsEditor
-                          variants={variants}
-                          onVariantsChange={handleVariantsChange}
-                        />
-                      )}
+                      <ProductVariantsEditor
+                        variants={variants.map(v => ({
+                          id: v.variant_uuid,
+                          name: v.name || "",
+                          price: v.price?.toString() || "0",
+                          comparePrice: v.compare_price?.toString() || "0",
+                          highlight: v.highlighted || false,
+                          tags: v.tags || []
+                        }))}
+                        onVariantsChange={handleVariantsChange}
+                      />
                     </div>
                   </div>
                 </Card>
