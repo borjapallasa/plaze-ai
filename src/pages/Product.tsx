@@ -366,7 +366,7 @@ export default function Product() {
         <div className="hidden lg:block">
           <ProductDemo demo={product.demo} />
         </div>
-        <ProductReviews reviews={productReviews} className="p-6 pb-48" />
+        <ProductReviews reviews={productReviews} className="p-6" />
         <MoreFromSeller products={moreFromSeller || []} className="mb-24" />
         <RelatedProducts products={relatedProducts} />
 
