@@ -62,6 +62,15 @@ const TEAM_ROLES = [
   "QA Engineer",
 ];
 
+type Variant = {
+  id: string;
+  name: string;
+  price: string;
+  comparePrice: string;
+  highlight: boolean;
+  tags: string[];
+};
+
 const EditProduct = () => {
   const { id } = useParams();
   const [showVariantForm, setShowVariantForm] = useState(false);
@@ -78,6 +87,7 @@ const EditProduct = () => {
   const [useCases, setUseCases] = useState<string[]>([]);
   const [platform, setPlatform] = useState<string[]>([]);
   const [team, setTeam] = useState<string[]>([]);
+  const [variants, setVariants] = useState<Variant[]>([]);
 
   const handleTypeChange = (value: string) => {
     if (!value) return;
@@ -194,8 +204,20 @@ const EditProduct = () => {
   };
 
   const handleAddVariant = () => {
-    // When adding the first variant, transfer the price values to it
+    const newVariant: Variant = {
+      id: "1",
+      name: productName,
+      price: productPrice || "0",
+      comparePrice: productComparePrice || "0",
+      highlight: true,
+      tags: [],
+    };
+    setVariants([newVariant]);
     setShowVariantForm(true);
+  };
+
+  const handleVariantsChange = (newVariants: Variant[]) => {
+    setVariants(newVariants);
   };
 
   if (isLoading) {
@@ -299,16 +321,8 @@ const EditProduct = () => {
                       </div>
                       {showVariantForm && (
                         <ProductVariantsEditor
-                          variants={[
-                            {
-                              id: "1",
-                              name: productName,
-                              price: productPrice || "0",
-                              comparePrice: productComparePrice || "0",
-                              highlight: true,
-                              tags: [],
-                            },
-                          ]}
+                          variants={variants}
+                          onVariantsChange={handleVariantsChange}
                         />
                       )}
                     </div>
