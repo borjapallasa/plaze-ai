@@ -1,3 +1,4 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
@@ -32,32 +33,29 @@ export default function Product() {
   const { data: product, isLoading: isLoadingProduct, error: productError } = useQuery({
     queryKey: ['product', id],
     queryFn: async () => {
-      const numericId = parseInt(id || '');
-      if (!isNaN(numericId)) {
-        const { data, error } = await supabase
-          .from('products')
-          .select('*')
-          .eq('id', numericId)
-          .single();
-
-        if (!error && data) {
-          if (!slug || slug !== data.slug) {
-            navigate(`/product/${data.slug}/${data.id}`, { replace: true });
-          }
-          return data;
-        }
-      }
-
+      console.log('Fetching product with ID:', id); // Debug log
+      
       const { data, error } = await supabase
         .from('products')
         .select('*')
         .eq('product_uuid', id)
-        .single();
+        .maybeSingle(); // Changed from .single() to .maybeSingle()
+      
+      if (error) {
+        console.error('Error fetching product:', error); // Debug log
+        throw error;
+      }
+      
+      console.log('Product data:', data); // Debug log
+      
+      if (!data) {
+        // If no product is found, return null instead of throwing an error
+        return null;
+      }
 
-      if (error) throw error;
-
-      if (!slug || slug !== data.slug) {
-        navigate(`/product/${data.slug}/${data.id}`, { replace: true });
+      // Only redirect if we found a product and the slug doesn't match
+      if (data && (!slug || slug !== data.slug)) {
+        navigate(`/product/${data.slug}/${data.product_uuid}`, { replace: true });
       }
       
       return data;
@@ -195,7 +193,7 @@ export default function Product() {
     });
   };
 
-  if (isLoadingProduct || isLoadingVariants || isLoadingReviews || isLoadingMoreFromSeller || isLoadingRelated) {
+  if (isLoadingProduct) {
     return (
       <div className="min-h-screen bg-background">
         <MainHeader />
@@ -211,8 +209,17 @@ export default function Product() {
       <div className="min-h-screen bg-background">
         <MainHeader />
         <div className="container mx-auto px-4 pt-24">
-          <div className="text-center text-red-500">
-            Product not found or error loading product details.
+          <div className="max-w-2xl mx-auto text-center">
+            <h1 className="text-2xl font-bold mb-4">Product Not Found</h1>
+            <p className="text-muted-foreground mb-8">
+              Sorry, we couldn't find the product you're looking for. It may have been removed or the URL might be incorrect.
+            </p>
+            <Button 
+              onClick={() => navigate('/')}
+              className="inline-flex items-center"
+            >
+              Return to Home
+            </Button>
           </div>
         </div>
       </div>
