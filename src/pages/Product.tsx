@@ -13,6 +13,7 @@ import { RelatedProducts } from "@/components/product/RelatedProducts";
 import { StickyATC } from "@/components/product/StickyATC";
 import { ProductInfo } from "@/components/product/ProductInfo";
 import { Card } from "@/components/ui/card";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const getPlaceholderImage = () => "https://images.unsplash.com/photo-1649972904349-6e44c42644a7";
 
@@ -23,6 +24,7 @@ export default function Product() {
   const { toast } = useToast();
   const { id, slug } = useParams();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const { data: product, isLoading: isLoadingProduct, error: productError } = useQuery({
     queryKey: ['product', id],
@@ -175,6 +177,14 @@ export default function Product() {
         <div className="lg:col-span-3 grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             <ProductDemo demo={product.demo} />
+            {isMobile && (
+              <ProductInfo 
+                techStack={product.tech_stack}
+                productIncludes={product.product_includes}
+                difficultyLevel={product.difficulty_level}
+                className="mb-8"
+              />
+            )}
             <ProductReviews reviews={reviews} className="mb-8" />
             <MoreFromSeller expert_uuid={product.expert_uuid} className="mb-8" />
             {relatedProducts.length > 0 && (
