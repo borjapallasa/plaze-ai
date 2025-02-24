@@ -16,11 +16,7 @@ export const ExpertServices = ({ services }: ExpertServicesProps) => {
           <CardContent className="p-6 space-y-6">
             <div className="grid grid-cols-3 gap-6">
               {services.map((service, index) => (
-                <ServiceCard 
-                  key={index} 
-                  {...service} 
-                  className={service.highlighted ? "scale-105 shadow-lg" : ""}
-                />
+                <ServiceCard key={index} {...service} />
               ))}
             </div>
           </CardContent>
@@ -35,10 +31,7 @@ export const ExpertServices = ({ services }: ExpertServicesProps) => {
               <CarouselContent>
                 {services.map((service, index) => (
                   <CarouselItem key={index}>
-                    <ServiceCard 
-                      {...service} 
-                      className={service.highlighted ? "scale-105 shadow-lg" : ""}
-                    />
+                    <ServiceCard {...service} />
                   </CarouselItem>
                 ))}
               </CarouselContent>
@@ -59,28 +52,15 @@ export const ExpertServices = ({ services }: ExpertServicesProps) => {
 };
 
 // Service Card Component
-const ServiceCard = ({ 
-  name, 
-  price, 
-  description, 
-  features,
-  highlighted,
-  className = "" 
-}: {
+const ServiceCard = ({ name, price, description, features }: {
   name?: string;
   price?: number;
   description?: string;
   features?: string[];
-  highlighted?: boolean;
-  className?: string;
 }) => {
   return (
-    <Card className={`relative overflow-hidden h-[500px] flex flex-col transition-all duration-300 hover:shadow-lg ${
-      highlighted ? 'ring-2 ring-primary shadow-lg' : ''
-    } ${className}`}>
-      {highlighted && (
-        <div className="absolute inset-x-0 top-0 h-2 bg-primary" />
-      )}
+    <Card className="relative overflow-hidden h-[500px] flex flex-col">
+      <div className="absolute inset-x-0 top-0 h-2 bg-blue-100" />
       <CardContent className="p-6 flex flex-col h-full">
         <div className="space-y-4 flex-1">
           <div className="space-y-2">
@@ -94,7 +74,7 @@ const ServiceCard = ({
           <div className="space-y-3">
             {features?.map((feature, idx) => (
               <div key={idx} className="flex items-center gap-2">
-                <Check className="w-4 h-4 text-primary" />
+                <Check className="w-4 h-4 text-blue-500" />
                 <span className="text-sm">{feature}</span>
               </div>
             ))}
