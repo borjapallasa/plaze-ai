@@ -9,7 +9,7 @@ export const ExpertSkills = ({ expert }: ExpertComponentProps) => {
 
   return (
     <Card className="col-span-4">
-      <CardContent className="p-6">
+      <CardContent className="py-6">
         <p className="text-muted-foreground">
           {expert.description}
         </p>
