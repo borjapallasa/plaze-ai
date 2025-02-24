@@ -624,7 +624,7 @@ export type Database = {
       }
       experts: {
         Row: {
-          areas: string[] | null
+          areas: Json | null
           client_satisfaction: number | null
           completed_projects: number | null
           created_at: string
@@ -639,7 +639,7 @@ export type Database = {
           title: string | null
         }
         Insert: {
-          areas?: string[] | null
+          areas?: Json | null
           client_satisfaction?: number | null
           completed_projects?: number | null
           created_at?: string
@@ -654,7 +654,7 @@ export type Database = {
           title?: string | null
         }
         Update: {
-          areas?: string[] | null
+          areas?: Json | null
           client_satisfaction?: number | null
           completed_projects?: number | null
           created_at?: string

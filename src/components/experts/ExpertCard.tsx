@@ -121,7 +121,7 @@ export const ExpertCard = ({ expert }: ExpertCardProps) => {
               <Badge 
                 key={index}
                 variant="secondary"
-                className="bg-gray-100 text-gray-700 hover:bg-gray-200"
+                className="inline-flex px-3 py-1 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-full text-sm"
               >
                 {area}
               </Badge>
