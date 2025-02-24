@@ -21,6 +21,7 @@ import { Link, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
+import { Variant } from "@/components/product/types/variants";
 
 const PRODUCT_TYPES = [
   "Template",
@@ -180,12 +181,12 @@ const EditProduct = () => {
     if (variants.length > 0) {
       setLocalVariants(variants.map(v => ({
         id: v.variant_uuid,
-        variant_uuid: v.variant_uuid,
         name: v.name || "",
         price: v.price?.toString() || "0",
         comparePrice: v.compare_price?.toString() || "0",
         highlight: v.highlighted || false,
-        tags: Array.isArray(v.tags) ? v.tags.map(tag => String(tag)) : []
+        tags: Array.isArray(v.tags) ? v.tags.map(tag => String(tag)) : [],
+        variant_uuid: v.variant_uuid,
       })));
     }
   }, [variants]);
@@ -332,7 +333,7 @@ const EditProduct = () => {
                       </div>
                       <ProductVariantsEditor
                         variants={localVariants}
-                        onVariantsChange={setLocalVariants}
+                        onVariantsChange={(variants) => setLocalVariants(variants)}
                       />
                     </div>
                   </div>
