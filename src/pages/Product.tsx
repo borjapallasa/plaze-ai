@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
@@ -33,27 +32,25 @@ export default function Product() {
   const { data: product, isLoading: isLoadingProduct, error: productError } = useQuery({
     queryKey: ['product', id],
     queryFn: async () => {
-      console.log('Fetching product with ID:', id); // Debug log
+      console.log('Fetching product with ID:', id);
       
       const { data, error } = await supabase
         .from('products')
         .select('*')
         .eq('product_uuid', id)
-        .maybeSingle(); // Changed from .single() to .maybeSingle()
+        .maybeSingle();
       
       if (error) {
-        console.error('Error fetching product:', error); // Debug log
+        console.error('Error fetching product:', error);
         throw error;
       }
       
-      console.log('Product data:', data); // Debug log
+      console.log('Product data:', data);
       
       if (!data) {
-        // If no product is found, return null instead of throwing an error
         return null;
       }
 
-      // Only redirect if we found a product and the slug doesn't match
       if (data && (!slug || slug !== data.slug)) {
         navigate(`/product/${data.slug}/${data.product_uuid}`, { replace: true });
       }
