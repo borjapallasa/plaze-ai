@@ -39,7 +39,7 @@ const EditProduct = () => {
         .from('products')
         .select('*')
         .eq('product_uuid', id)
-        .single();
+        .maybeSingle();
       if (error) throw error;
       return data;
     },
@@ -78,7 +78,7 @@ const EditProduct = () => {
   useEffect(() => {
     if (variants.length > 0) {
       const mappedVariants = variants.map(v => ({
-        id: v.variant_uuid || crypto.randomUUID(),
+        id: v.variant_uuid,
         name: v.name || "",
         price: v.price?.toString() || "0",
         comparePrice: v.compare_price?.toString() || "0",
@@ -131,6 +131,7 @@ const EditProduct = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) throw new Error("Not authenticated");
 
+      // First, update the product
       const { error: productError } = await supabase
         .from('products')
         .update({
@@ -149,34 +150,44 @@ const EditProduct = () => {
         })
         .eq('product_uuid', id);
 
-      if (productError) throw productError;
+      if (productError) {
+        console.error('Product update error:', productError);
+        throw productError;
+      }
 
-      // Delete existing variants
-      const { error: deleteError } = await supabase
-        .from('variants')
-        .delete()
-        .eq('product_uuid', id);
-
-      if (deleteError) throw deleteError;
-
-      // Insert new variants
+      // Then handle variants
       if (localVariants.length > 0) {
+        // First delete existing variants
+        const { error: deleteError } = await supabase
+          .from('variants')
+          .delete()
+          .eq('product_uuid', id);
+
+        if (deleteError) {
+          console.error('Variant deletion error:', deleteError);
+          throw deleteError;
+        }
+
+        // Then insert new variants
         const variantsToInsert = localVariants.map(variant => ({
           variant_uuid: variant.id,
           product_uuid: id,
           user_uuid: session.user.id,
           name: variant.name,
-          price: parseFloat(variant.price.toString()),
-          compare_price: parseFloat(variant.comparePrice.toString()),
+          price: Number(variant.price) || 0,
+          compare_price: Number(variant.comparePrice) || 0,
           highlighted: variant.highlight,
-          tags: variant.tags
+          tags: variant.tags || []
         }));
 
         const { error: insertError } = await supabase
           .from('variants')
           .insert(variantsToInsert);
 
-        if (insertError) throw insertError;
+        if (insertError) {
+          console.error('Variant insertion error:', insertError);
+          throw insertError;
+        }
       }
 
       toast({
@@ -184,7 +195,7 @@ const EditProduct = () => {
         description: "All changes have been saved successfully",
       });
     } catch (error) {
-      console.error('Error saving changes:', error);
+      console.error('Save error:', error);
       toast({
         title: "Error",
         description: "Failed to save changes. Please try again.",
