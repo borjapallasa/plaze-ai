@@ -26,17 +26,51 @@ const getVideoProvider = (url: string | null) => {
   if (!url) return { name: 'unknown', embedUrl: null };
 
   try {
-    const urlObj = new URL(url);
+    // Handle both full URLs and direct embed URLs
+    const normalizedUrl = url.trim();
+
+    // If it's already an embed URL, return as is with parameters
+    if (normalizedUrl.includes('youtube.com/embed/')) {
+      const videoId = normalizedUrl.split('/embed/')[1]?.split('?')[0];
+      return { 
+        name: 'youtube',
+        embedUrl: `https://www.youtube.com/embed/${videoId}?rel=0` 
+      };
+    }
+    
+    if (normalizedUrl.includes('player.vimeo.com/video/')) {
+      const videoId = normalizedUrl.split('/video/')[1]?.split('?')[0];
+      return { 
+        name: 'vimeo',
+        embedUrl: `https://player.vimeo.com/video/${videoId}?dnt=1` 
+      };
+    }
+    
+    if (normalizedUrl.includes('loom.com/embed/')) {
+      const videoId = normalizedUrl.split('/embed/')[1]?.split('?')[0];
+      return { 
+        name: 'loom',
+        embedUrl: `https://www.loom.com/embed/${videoId}` 
+      };
+    }
+
+    // Parse URL for non-embed links
+    const urlObj = new URL(normalizedUrl);
     
     // YouTube
     if (urlObj.hostname.includes('youtube.com') || urlObj.hostname.includes('youtu.be')) {
-      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-      const match = url.match(regExp);
+      let videoId;
+      if (urlObj.hostname.includes('youtu.be')) {
+        videoId = urlObj.pathname.slice(1);
+      } else {
+        const searchParams = new URLSearchParams(urlObj.search);
+        videoId = searchParams.get('v');
+      }
       
-      if (match && match[2].length === 11) {
+      if (videoId) {
         return {
           name: 'youtube',
-          embedUrl: `https://www.youtube.com/embed/${match[2]}?rel=0`
+          embedUrl: `https://www.youtube.com/embed/${videoId}?rel=0`
         };
       }
     }
@@ -54,7 +88,7 @@ const getVideoProvider = (url: string | null) => {
     
     // Loom
     if (urlObj.hostname.includes('loom.com')) {
-      const loomPath = url.split('loom.com/share/')[1];
+      const loomPath = normalizedUrl.split('loom.com/share/')[1];
       if (loomPath) {
         return {
           name: 'loom',
@@ -63,16 +97,10 @@ const getVideoProvider = (url: string | null) => {
       }
     }
 
-    // If it's already an embed URL, return as is
-    if (url.includes('youtube.com/embed/') || 
-        url.includes('player.vimeo.com/video/') || 
-        url.includes('loom.com/embed/')) {
-      return { name: 'embed', embedUrl: url };
-    }
-
     return { name: 'unknown', embedUrl: null };
   } catch (error) {
     console.error('Error parsing video URL:', error);
+    console.log('Attempted to parse URL:', url);
     return { name: 'unknown', embedUrl: null };
   }
 };
@@ -86,6 +114,7 @@ export const ExpertCommunity = ({ community }: ExpertCommunityProps) => {
   }
 
   const videoProvider = getVideoProvider(community.intro);
+  console.log('Video provider result:', videoProvider); // Debug log
 
   const handleThumbnailClick = () => {
     setShouldLoadIframe(true);
