@@ -271,7 +271,7 @@ const EditProduct = () => {
                           price: v.price?.toString() || "0",
                           comparePrice: v.compare_price?.toString() || "0",
                           highlight: v.highlighted || false,
-                          tags: v.tags || []
+                          tags: Array.isArray(v.tags) ? v.tags.map(tag => String(tag)) : []
                         }))}
                         onVariantsChange={handleVariantsChange}
                       />
