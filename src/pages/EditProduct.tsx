@@ -21,7 +21,6 @@ import { Link, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
-import { Variant } from "@/components/product/types/variants";
 
 const PRODUCT_TYPES = [
   "Template",
@@ -91,6 +90,65 @@ const EditProduct = () => {
   const [platform, setPlatform] = useState<string[]>([]);
   const [team, setTeam] = useState<string[]>([]);
 
+  const { data: product, isLoading: isLoadingProduct } = useQuery({
+    queryKey: ['product', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('product_uuid', id)
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!id
+  });
+
+  useEffect(() => {
+    if (product) {
+      setProductName(product.name || "");
+      setProductDescription(product.description || "");
+      setTechStack(product.tech_stack || "");
+      setTechStackPrice(product.tech_stack_price || "");
+      setProductIncludes(product.product_includes || "");
+      setDifficultyLevel(product.difficulty_level || "");
+      setDemo(product.demo || "");
+      setTypes(product.type ? [product.type] : []);
+      setUseCases(product.use_case ? [product.use_case] : []);
+      setPlatform(product.platform ? (Array.isArray(product.platform) ? product.platform : []) : []);
+      setTeam(product.team ? (Array.isArray(product.team) ? product.team : []) : []);
+    }
+  }, [product]);
+
+  const { data: variants = [], isLoading: isLoadingVariants, refetch: refetchVariants } = useQuery({
+    queryKey: ['variants', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('variants')
+        .select('*')
+        .eq('product_uuid', id);
+      
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!id
+  });
+
+  useEffect(() => {
+    if (variants.length > 0) {
+      setLocalVariants(variants.map(v => ({
+        id: v.variant_uuid,
+        name: v.name || "",
+        price: v.price?.toString() || "0",
+        comparePrice: v.compare_price?.toString() || "0",
+        highlight: v.highlighted || false,
+        tags: Array.isArray(v.tags) ? v.tags.map(tag => String(tag)) : [],
+        variant_uuid: v.variant_uuid,
+      })));
+    }
+  }, [variants]);
+
   const handleTypeChange = (value: string) => {
     if (!value) return;
     setTypes(prev => prev.includes(value) ? prev.filter(t => t !== value) : [...prev, value]);
@@ -147,49 +205,6 @@ const EditProduct = () => {
       </div>
     );
   };
-
-  const { data: product, isLoading: isLoadingProduct } = useQuery({
-    queryKey: ['product', id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .eq('product_uuid', id)
-        .single();
-      
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!id
-  });
-
-  const { data: variants = [], isLoading: isLoadingVariants, refetch: refetchVariants } = useQuery({
-    queryKey: ['variants', id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('variants')
-        .select('*')
-        .eq('product_uuid', id);
-      
-      if (error) throw error;
-      return data || [];
-    },
-    enabled: !!id
-  });
-
-  useEffect(() => {
-    if (variants.length > 0) {
-      setLocalVariants(variants.map(v => ({
-        id: v.variant_uuid,
-        name: v.name || "",
-        price: v.price?.toString() || "0",
-        comparePrice: v.compare_price?.toString() || "0",
-        highlight: v.highlighted || false,
-        tags: Array.isArray(v.tags) ? v.tags.map(tag => String(tag)) : [],
-        variant_uuid: v.variant_uuid,
-      })));
-    }
-  }, [variants]);
 
   const handleAddVariant = () => {
     setLocalVariants(current => [...current, {
