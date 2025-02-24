@@ -8,6 +8,7 @@ export interface Variant {
   tags?: string[];
   label?: string;
   features?: string[];
+  hidden?: boolean;
 }
 
 export interface ProductVariantsEditorProps {

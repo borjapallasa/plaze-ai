@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -34,7 +35,7 @@ export function ProductVariantsEditor({
     setVariants([
       ...variants,
       {
-        id: Math.random().toString(),
+        id: `temp_${Date.now()}`,
         name: "",
         price: "0",
         comparePrice: "0",
@@ -48,7 +49,15 @@ export function ProductVariantsEditor({
     if (variants.length <= 1) {
       return;
     }
-    setVariants(variants.filter((v) => v.id !== id));
+    
+    // Mark the variant as hidden instead of removing it immediately
+    setVariants(
+      variants.map(v => 
+        v.id === id 
+          ? { ...v, hidden: true }
+          : v
+      ).filter(v => !v.hidden)
+    );
   };
 
   const updateVariant = (id: string, field: keyof Variant, value: any) => {
