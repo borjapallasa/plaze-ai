@@ -34,7 +34,7 @@ export const ExpertContent = ({ expert, services, moreProducts, reviews, communi
         <ExpertCommunity community={community} />
 
         <div className="space-y-8">
-          <MoreFromSeller products={moreProducts} />
+          <MoreFromSeller expert_uuid={expert.expert_uuid} />
           <ProductReviews reviews={reviews} className="p-6 border-gray-100" />
         </div>
       </div>
@@ -62,7 +62,7 @@ export const ExpertContent = ({ expert, services, moreProducts, reviews, communi
         </div>
 
         <div>
-          <MoreFromSeller products={moreProducts} />
+          <MoreFromSeller expert_uuid={expert.expert_uuid} />
         </div>
 
         <div>

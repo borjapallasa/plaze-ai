@@ -380,7 +380,7 @@ export default function Product() {
           <ProductDemo demo={product.demo} />
         </div>
         <ProductReviews reviews={productReviews} className="p-6" />
-        <MoreFromSeller products={moreFromSeller || []} className="mb-24" />
+        <MoreFromSeller expert_uuid={product.expert_uuid} className="mb-24" />
         {relatedProducts && relatedProducts.length > 0 && (
           <RelatedProducts products={relatedProducts} />
         )}
