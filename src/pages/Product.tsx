@@ -163,20 +163,22 @@ export default function Product() {
     : 0;
 
   return (
-    <ProductLayout
-      product={product}
-      variants={variants}
-      selectedVariant={selectedVariant}
-      averageRating={averageRating}
-      onVariantChange={setSelectedVariant}
-      onAddToCart={handleAddToCart}
-    >
-      <ProductDemo demo={product.demo} />
-      <ProductReviews reviews={reviews} className="p-6" />
-      <MoreFromSeller expert_uuid={product.expert_uuid} className="mb-24" />
-      {relatedProducts.length > 0 && (
-        <RelatedProducts products={relatedProducts} />
-      )}
+    <div ref={variantsRef}>
+      <ProductLayout
+        product={product}
+        variants={variants}
+        selectedVariant={selectedVariant}
+        averageRating={averageRating}
+        onVariantChange={setSelectedVariant}
+        onAddToCart={handleAddToCart}
+      >
+        <ProductDemo demo={product.demo} />
+        <ProductReviews reviews={reviews} className="mb-8" />
+        <MoreFromSeller expert_uuid={product.expert_uuid} className="mb-8" />
+        {relatedProducts.length > 0 && (
+          <RelatedProducts products={relatedProducts} className="mb-24" />
+        )}
+      </ProductLayout>
       <StickyATC 
         variants={variants}
         selectedVariant={selectedVariant}
@@ -184,6 +186,6 @@ export default function Product() {
         visible={showStickyATC}
         onAddToCart={handleAddToCart}
       />
-    </ProductLayout>
+    </div>
   );
 }
