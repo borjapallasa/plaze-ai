@@ -1773,7 +1773,7 @@ export type Database = {
           total_spent?: number | null
           transaction_count?: number | null
           user_thumbnail?: string | null
-          user_uuid?: string
+          user_uuid: string
           utm_campaign?: string | null
           utm_content?: string | null
           utm_id?: string | null
