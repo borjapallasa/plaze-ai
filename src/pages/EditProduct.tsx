@@ -195,6 +195,8 @@ const EditProduct = () => {
 
   const handleAddVariant = async () => {
     try {
+      console.log('Adding variant for product:', id); // Debug log
+      
       const { data, error } = await supabase
         .from('variants')
         .insert([
@@ -210,7 +212,12 @@ const EditProduct = () => {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error); // Debug log
+        throw error;
+      }
+
+      console.log('Successfully added variant:', data); // Debug log
 
       toast({
         title: "Success",
