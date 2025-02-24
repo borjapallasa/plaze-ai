@@ -20,7 +20,6 @@ export default function EditProduct() {
     queryKey: ['product', id],
     queryFn: async () => {
       console.log('Fetching product with ID:', id);
-      // Use maybeSingle instead of single to handle case where product doesn't exist
       const { data, error } = await supabase
         .from('products')
         .select('*')
@@ -35,10 +34,15 @@ export default function EditProduct() {
       return data;
     },
     enabled: !!id,
-    retry: 1 // Only retry once if there's an error
+    retry: 1
   });
 
-  const { data: existingVariants = [], isLoading: isLoadingVariants, error: variantsError } = useQuery({
+  const { 
+    data: existingVariants = [], 
+    isLoading: isLoadingVariants, 
+    error: variantsError,
+    refetch: refetchVariants 
+  } = useQuery({
     queryKey: ['variants', id],
     queryFn: async () => {
       console.log('Fetching variants for product:', id);
@@ -54,10 +58,9 @@ export default function EditProduct() {
 
       console.log('Variants data:', data);
 
-      // Convert database variants to frontend format
       return (data || []).map(variant => ({
         variant_uuid: variant.variant_uuid,
-        id: variant.variant_uuid, // Use variant_uuid as frontend id
+        id: variant.variant_uuid,
         name: variant.name,
         price: variant.price,
         comparePrice: variant.compare_price,
@@ -79,11 +82,9 @@ export default function EditProduct() {
 
     setIsSaving(true);
     try {
-      // Get current user from session
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) throw new Error("User not authenticated");
 
-      // First delete all existing variants for this product
       const { error: deleteError } = await supabase
         .from('variants')
         .delete()
@@ -91,9 +92,8 @@ export default function EditProduct() {
 
       if (deleteError) throw deleteError;
 
-      // Convert frontend variants to database format
       const variantsToInsert = variants.map(variant => ({
-        variant_uuid: variant.variant_uuid || variant.id, // Use existing UUID or frontend ID
+        variant_uuid: variant.variant_uuid || variant.id,
         product_uuid: id,
         user_uuid: session.user.id,
         name: variant.name || '',
@@ -103,7 +103,6 @@ export default function EditProduct() {
         tags: variant.tags || []
       }));
 
-      // Then insert the new variants
       const { error: insertError } = await supabase
         .from('variants')
         .insert(variantsToInsert);
@@ -128,7 +127,6 @@ export default function EditProduct() {
     }
   };
 
-  // Show error states if either query fails
   if (productError || variantsError) {
     return (
       <div className="min-h-screen bg-background">
