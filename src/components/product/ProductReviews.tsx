@@ -12,6 +12,21 @@ interface ProductReviewsProps {
   className?: string;
 }
 
+const getTypeText = (type: string) => {
+  switch (type) {
+    case 'product':
+      return 'Purchased a product';
+    case 'service':
+      return 'Hired a service';
+    case 'community':
+      return 'Joined a community';
+    case 'job':
+      return 'Completed a job';
+    default:
+      return '';
+  }
+};
+
 export function ProductReviews({ reviews, className }: ProductReviewsProps) {
   return (
     <div className="space-y-6">
@@ -83,8 +98,8 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
                   {review.type && (
                     <>
                       <span className="text-gray-400">•</span>
-                      <span className="text-gray-600 capitalize">
-                        {review.type} review
+                      <span className="text-gray-600">
+                        {getTypeText(review.type)}
                       </span>
                     </>
                   )}
