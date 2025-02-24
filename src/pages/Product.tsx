@@ -1,3 +1,4 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
@@ -59,7 +60,7 @@ export default function Product() {
 
       if (error) throw error;
 
-      // Redirect to the canonical URL
+      // Redirect to the canonical URL if needed
       if (!slug || slug !== data.slug) {
         navigate(`/product/${data.slug}/${data.id}`, { replace: true });
       }

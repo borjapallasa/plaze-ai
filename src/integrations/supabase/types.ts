@@ -900,6 +900,7 @@ export type Database = {
           reviewed_by: string | null
           sales_amount: number | null
           sales_count: number | null
+          slug: string | null
           tech_stack: string | null
           tech_stack_price: string | null
           type: Database["public"]["Enums"]["product_type"] | null
@@ -933,6 +934,7 @@ export type Database = {
           reviewed_by?: string | null
           sales_amount?: number | null
           sales_count?: number | null
+          slug?: string | null
           tech_stack?: string | null
           tech_stack_price?: string | null
           type?: Database["public"]["Enums"]["product_type"] | null
@@ -966,6 +968,7 @@ export type Database = {
           reviewed_by?: string | null
           sales_amount?: number | null
           sales_count?: number | null
+          slug?: string | null
           tech_stack?: string | null
           tech_stack_price?: string | null
           type?: Database["public"]["Enums"]["product_type"] | null
