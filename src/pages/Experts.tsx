@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 import { ExpertCard } from "@/components/experts/ExpertCard";
 import { SearchFilters } from "@/components/experts/SearchFilters";
+import type { Expert } from "@/components/expert/types";
 
 const Experts = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -24,8 +25,20 @@ const Experts = () => {
         throw error;
       }
       
-      console.log('Fetched experts:', data);
-      return data;
+      // Transform the data to ensure areas is always a string array
+      const transformedData = (data || []).map(expert => ({
+        ...expert,
+        areas: expert.areas ? (
+          typeof expert.areas === 'string' 
+            ? JSON.parse(expert.areas)
+            : Array.isArray(expert.areas)
+              ? expert.areas
+              : []
+        ) : []
+      })) as Expert[];
+      
+      console.log('Fetched experts:', transformedData);
+      return transformedData;
     }
   });
 
