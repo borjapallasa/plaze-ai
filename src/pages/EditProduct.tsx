@@ -8,7 +8,7 @@ import { ProductEditor } from "@/components/product/ProductEditor";
 import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
 import { ProductStatus } from "@/components/product/ProductStatus";
 import { ProductVariantsEditor } from "@/components/product/ProductVariants";
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft, Plus, X } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
@@ -28,8 +28,10 @@ const EditProduct = () => {
   const [publicLink, setPublicLink] = useState("");
   const [type, setType] = useState("");
   const [useCase, setUseCase] = useState("");
-  const [platform, setPlatform] = useState("");
-  const [team, setTeam] = useState("");
+  const [platform, setPlatform] = useState<string[]>([]);
+  const [team, setTeam] = useState<string[]>([]);
+  const [newPlatform, setNewPlatform] = useState("");
+  const [newTeam, setNewTeam] = useState("");
   
   const { data: product, isLoading } = useQuery({
     queryKey: ['product', id],
@@ -60,13 +62,31 @@ const EditProduct = () => {
       setPublicLink(product.public_link || "");
       setType(product.type || "");
       setUseCase(product.use_case || "");
-      setPlatform(Array.isArray(product.platform) ? JSON.stringify(product.platform) : (product.platform?.toString() || ""));
-      setTeam(Array.isArray(product.team) ? JSON.stringify(product.team) : (product.team?.toString() || ""));
+      setPlatform(Array.isArray(product.platform) ? product.platform : []);
+      setTeam(Array.isArray(product.team) ? product.team : []);
     }
   }, [product]);
 
-  const handleAddVariant = () => {
-    setShowVariantForm(true);
+  const handleAddPlatform = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && newPlatform.trim()) {
+      setPlatform([...platform, newPlatform.trim()]);
+      setNewPlatform("");
+    }
+  };
+
+  const handleAddTeam = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && newTeam.trim()) {
+      setTeam([...team, newTeam.trim()]);
+      setNewTeam("");
+    }
+  };
+
+  const handleRemovePlatform = (platformToRemove: string) => {
+    setPlatform(platform.filter(p => p !== platformToRemove));
+  };
+
+  const handleRemoveTeam = (teamToRemove: string) => {
+    setTeam(team.filter(t => t !== teamToRemove));
   };
 
   if (isLoading) {
@@ -281,20 +301,54 @@ const EditProduct = () => {
                   </div>
                   <div>
                     <Label htmlFor="platform">Platform</Label>
+                    <div className="flex flex-wrap gap-2 mb-2">
+                      {platform.map((p) => (
+                        <span
+                          key={p}
+                          className="inline-flex items-center gap-1 bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-sm"
+                        >
+                          {p}
+                          <button
+                            onClick={() => handleRemovePlatform(p)}
+                            className="hover:text-primary-foreground"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
                     <Input 
                       id="platform" 
-                      placeholder="Enter platform details (e.g., Web, Mobile)"
-                      value={platform}
-                      onChange={(e) => setPlatform(e.target.value)}
+                      placeholder="Enter platform and press Enter"
+                      value={newPlatform}
+                      onChange={(e) => setNewPlatform(e.target.value)}
+                      onKeyPress={handleAddPlatform}
                     />
                   </div>
                   <div>
                     <Label htmlFor="team">Team</Label>
+                    <div className="flex flex-wrap gap-2 mb-2">
+                      {team.map((t) => (
+                        <span
+                          key={t}
+                          className="inline-flex items-center gap-1 bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-sm"
+                        >
+                          {t}
+                          <button
+                            onClick={() => handleRemoveTeam(t)}
+                            className="hover:text-primary-foreground"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
                     <Input 
                       id="team" 
-                      placeholder="Enter team configuration"
-                      value={team}
-                      onChange={(e) => setTeam(e.target.value)}
+                      placeholder="Enter team member role and press Enter"
+                      value={newTeam}
+                      onChange={(e) => setNewTeam(e.target.value)}
+                      onKeyPress={handleAddTeam}
                     />
                   </div>
                 </div>
