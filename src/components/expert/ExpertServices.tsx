@@ -6,6 +6,11 @@ import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carouse
 import type { ExpertServicesProps } from "./types";
 
 export const ExpertServices = ({ services }: ExpertServicesProps) => {
+  // Sort services by price in ascending order
+  const sortedServices = [...services].sort((a, b) => 
+    (a.price || 0) - (b.price || 0)
+  );
+
   return (
     <div className="col-span-4">
       <h2 className="text-2xl font-bold mb-6">Services</h2>
@@ -15,7 +20,7 @@ export const ExpertServices = ({ services }: ExpertServicesProps) => {
         <Card>
           <CardContent className="p-6 space-y-6">
             <div className="grid grid-cols-3 gap-6">
-              {services.map((service, index) => (
+              {sortedServices.map((service, index) => (
                 <ServiceCard key={index} {...service} />
               ))}
             </div>
@@ -29,14 +34,14 @@ export const ExpertServices = ({ services }: ExpertServicesProps) => {
           <CardContent className="p-6">
             <Carousel className="w-full">
               <CarouselContent>
-                {services.map((service, index) => (
+                {sortedServices.map((service, index) => (
                   <CarouselItem key={index}>
                     <ServiceCard {...service} />
                   </CarouselItem>
                 ))}
               </CarouselContent>
               <div className="flex justify-center gap-2 mt-4">
-                {services.map((_, index) => (
+                {sortedServices.map((_, index) => (
                   <div
                     key={index}
                     className="w-2 h-2 rounded-full bg-primary/20"
