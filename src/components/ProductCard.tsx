@@ -16,15 +16,38 @@ interface ProductCardProps {
   category: string;
   split?: string;
   id?: string;
+  slug?: string;
 }
 
-export const ProductCard = ({ title, price, image, seller, description, tags, fromPrice, category, split, id }: ProductCardProps) => {
+export const ProductCard = ({ 
+  title, 
+  price, 
+  image, 
+  seller, 
+  description, 
+  tags, 
+  fromPrice, 
+  category, 
+  split, 
+  id,
+  slug 
+}: ProductCardProps) => {
   const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (id && slug) {
+      navigate(`/product/${slug}/${id}`);
+    } else if (id) {
+      navigate(`/product/${id}`);
+    } else {
+      navigate('/product');
+    }
+  };
 
   return (
     <Card 
       className="group relative flex flex-col p-4 lg:p-6 hover:bg-accent transition-colors cursor-pointer" 
-      onClick={() => navigate(id ? `/product/${id}` : '/product')}
+      onClick={handleClick}
     >
       <div className="flex items-start gap-3 lg:gap-4">
         <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg bg-accent flex items-center justify-center overflow-hidden flex-shrink-0">
