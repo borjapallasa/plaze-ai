@@ -83,27 +83,33 @@ export const ExpertCard = ({ expert }: ExpertCardProps) => {
 
         {/* Stats Section */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="flex items-center gap-2 bg-gray-50 p-3 rounded-lg">
-            <CheckCircle2 className="h-5 w-5 text-green-600" />
-            <div>
-              <p className="text-sm text-gray-600">Projects completed</p>
-              <p className="text-lg font-semibold">{expert.completed_projects || 0}</p>
+          <div className="flex items-start gap-2 bg-gray-50 p-3 rounded-lg">
+            <div className="w-full">
+              <div className="flex items-center gap-2 mb-1">
+                <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0" />
+                <p className="text-sm text-gray-600">Projects completed</p>
+              </div>
+              <p className="text-lg font-semibold pl-7">{expert.completed_projects || 0}</p>
             </div>
           </div>
           
-          <div className="flex items-center gap-2 bg-gray-50 p-3 rounded-lg">
-            <Users className="h-5 w-5 text-blue-600" />
-            <div>
-              <p className="text-sm text-gray-600">Client satisfaction</p>
-              <p className="text-lg font-semibold">{expert.client_satisfaction || 100}%</p>
+          <div className="flex items-start gap-2 bg-gray-50 p-3 rounded-lg">
+            <div className="w-full">
+              <div className="flex items-center gap-2 mb-1">
+                <Users className="h-5 w-5 text-blue-600 flex-shrink-0" />
+                <p className="text-sm text-gray-600">Client satisfaction</p>
+              </div>
+              <p className="text-lg font-semibold pl-7">{expert.client_satisfaction || 100}%</p>
             </div>
           </div>
           
-          <div className="flex items-center gap-2 bg-gray-50 p-3 rounded-lg">
-            <Timer className="h-5 w-5 text-purple-600" />
-            <div>
-              <p className="text-sm text-gray-600">Response rate</p>
-              <p className="text-lg font-semibold">{expert.response_rate || 100}%</p>
+          <div className="flex items-start gap-2 bg-gray-50 p-3 rounded-lg">
+            <div className="w-full">
+              <div className="flex items-center gap-2 mb-1">
+                <Timer className="h-5 w-5 text-purple-600 flex-shrink-0" />
+                <p className="text-sm text-gray-600">Response rate</p>
+              </div>
+              <p className="text-lg font-semibold pl-7">{expert.response_rate || 100}%</p>
             </div>
           </div>
         </div>
