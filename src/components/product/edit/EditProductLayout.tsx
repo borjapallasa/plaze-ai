@@ -101,9 +101,9 @@ export const EditProductLayout = ({
                   difficultyLevel={difficultyLevel}
                   demo={demo}
                   onTechStackChange={onTechStackChange}
-                  onTechStackPriceChange={onTechStackPrice}
-                  onProductIncludesChange={onProductIncludes}
-                  onDifficultyLevelChange={setDifficultyLevel}
+                  onTechStackPriceChange={onTechStackPriceChange}
+                  onProductIncludesChange={onProductIncludesChange}
+                  onDifficultyLevelChange={onDifficultyLevelChange}
                   onDemoChange={onDemoChange}
                 />
 
