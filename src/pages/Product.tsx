@@ -187,7 +187,7 @@ export default function Product() {
               techStack={product.tech_stack}
               productIncludes={product.product_includes}
               difficultyLevel={product.difficulty_level}
-              className="mb-8 lg:mt-[-24px]"
+              className="mb-8"
             />
           </div>
         </div>
