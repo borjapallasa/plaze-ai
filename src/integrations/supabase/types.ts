@@ -1010,6 +1010,7 @@ export type Database = {
             | null
           id: number
           name: string | null
+          price: number | null
           product_includes: string | null
           product_uuid: string
           public_link: string | null
@@ -1046,6 +1047,7 @@ export type Database = {
             | null
           id?: number
           name?: string | null
+          price?: number | null
           product_includes?: string | null
           product_uuid?: string
           public_link?: string | null
@@ -1082,6 +1084,7 @@ export type Database = {
             | null
           id?: number
           name?: string | null
+          price?: number | null
           product_includes?: string | null
           product_uuid?: string
           public_link?: string | null

@@ -37,6 +37,12 @@ const fetchExpertProducts = async (expert_uuid: string) => {
   return data || [];
 };
 
+// Helper function to format price
+const formatPrice = (price: number | null): string => {
+  if (!price) return '$0.00';
+  return `$${price.toFixed(2)}`;
+};
+
 export function MoreFromSeller({
   expert_uuid,
   className
@@ -80,11 +86,11 @@ export function MoreFromSeller({
             <CarouselItem key={index} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/4">
               <ProductCard product={{
                 title: product.name || '',
-                price: product.price?.toString() || '0',
+                price: formatPrice(product.price),
                 image: product.thumbnail || '',
                 seller: product.seller_name || '',
                 description: product.description || '',
-                tags: product.tags || [],
+                tags: product.tech_stack ? product.tech_stack.split(',') : [],
                 category: product.type || ''
               }} />
             </CarouselItem>
