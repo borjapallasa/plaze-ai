@@ -106,13 +106,11 @@ const EditProduct = () => {
     return (
       <div 
         className="flex flex-wrap gap-1.5 max-w-full" 
-        onClick={(e) => e.stopPropagation()}
       >
         {items.map((item) => (
           <span
             key={item}
-            className="inline-flex items-center gap-1.5 bg-secondary text-secondary-foreground px-2.5 py-0.5 rounded-md text-sm"
-            onClick={(e) => e.stopPropagation()}
+            className="inline-flex items-center gap-1.5 bg-secondary text-secondary-foreground px-2.5 py-0.5 rounded-md text-sm relative isolate cursor-pointer group"
           >
             {item}
             <button
@@ -125,10 +123,14 @@ const EditProduct = () => {
                 if (items === platform) setPlatform(newItems);
                 if (items === team) setTeam(newItems);
               }}
-              className="hover:text-primary-foreground"
+              className="hover:text-primary-foreground relative z-10"
             >
               <X className="h-3.5 w-3.5" />
             </button>
+            <div 
+              className="absolute inset-0 -z-10 opacity-0 group-hover:opacity-100"
+              onClick={(e) => e.stopPropagation()}
+            />
           </span>
         ))}
       </div>
