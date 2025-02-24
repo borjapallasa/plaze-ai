@@ -16,7 +16,11 @@ export const ExpertServices = ({ services }: ExpertServicesProps) => {
           <CardContent className="p-6 space-y-6">
             <div className="grid grid-cols-3 gap-6">
               {services.map((service, index) => (
-                <ServiceCard key={index} {...service} />
+                <ServiceCard 
+                  key={index} 
+                  {...service} 
+                  className={service.highlighted ? "scale-105 shadow-lg" : ""}
+                />
               ))}
             </div>
           </CardContent>
@@ -31,7 +35,10 @@ export const ExpertServices = ({ services }: ExpertServicesProps) => {
               <CarouselContent>
                 {services.map((service, index) => (
                   <CarouselItem key={index}>
-                    <ServiceCard {...service} />
+                    <ServiceCard 
+                      {...service} 
+                      className={service.highlighted ? "scale-105 shadow-lg" : ""}
+                    />
                   </CarouselItem>
                 ))}
               </CarouselContent>
@@ -56,15 +63,24 @@ const ServiceCard = ({
   name, 
   price, 
   description, 
-  features
+  features,
+  highlighted,
+  className = "" 
 }: {
   name?: string;
   price?: number;
   description?: string;
   features?: string[];
+  highlighted?: boolean;
+  className?: string;
 }) => {
   return (
-    <Card className="relative overflow-hidden h-[500px] flex flex-col">
+    <Card className={`relative overflow-hidden h-[500px] flex flex-col transition-all duration-300 hover:shadow-lg ${
+      highlighted ? 'ring-2 ring-primary shadow-lg' : ''
+    } ${className}`}>
+      {highlighted && (
+        <div className="absolute inset-x-0 top-0 h-2 bg-primary" />
+      )}
       <CardContent className="p-6 flex flex-col h-full">
         <div className="space-y-4 flex-1">
           <div className="space-y-2">
