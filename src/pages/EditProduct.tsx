@@ -72,7 +72,6 @@ const EditProduct = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
-  const [isProductSaving, setIsProductSaving] = useState(false);
   const [localVariants, setLocalVariants] = useState<Variant[]>([]);
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
@@ -239,11 +238,31 @@ const EditProduct = () => {
     setLocalVariants([...localVariants, newVariant]);
   };
 
-  const handleSaveVariants = async () => {
+  const handleSaveChanges = async () => {
     setIsSaving(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) throw new Error("Not authenticated");
+
+      const { error: productError } = await supabase
+        .from('products')
+        .update({
+          name: productName,
+          description: productDescription,
+          tech_stack: techStack,
+          tech_stack_price: techStackPrice,
+          product_includes: productIncludes,
+          difficulty_level: difficultyLevel,
+          demo: demo,
+          industries: industries,
+          use_case: useCases[0],
+          platform: platform,
+          team: team,
+          updated_at: new Date().toISOString()
+        })
+        .eq('product_uuid', id);
+
+      if (productError) throw productError;
 
       const { error: deleteError } = await supabase
         .from('variants')
@@ -269,64 +288,19 @@ const EditProduct = () => {
 
       if (insertError) throw insertError;
 
-      await refetchVariants();
-      
       toast({
         title: "Success",
-        description: "All variants have been saved successfully",
+        description: "All changes have been saved successfully",
       });
     } catch (error) {
-      console.error('Error saving variants:', error);
+      console.error('Error saving changes:', error);
       toast({
         title: "Error",
-        description: "Failed to save variants. Please try again.",
+        description: "Failed to save changes. Please try again.",
         variant: "destructive",
       });
     } finally {
       setIsSaving(false);
-    }
-  };
-
-  const handleSaveProduct = async () => {
-    setIsProductSaving(true);
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) throw new Error("Not authenticated");
-
-      const { error } = await supabase
-        .from('products')
-        .update({
-          name: productName,
-          description: productDescription,
-          tech_stack: techStack,
-          tech_stack_price: techStackPrice,
-          product_includes: productIncludes,
-          difficulty_level: difficultyLevel,
-          demo: demo,
-          industries: industries,
-          use_case: useCases[0],
-          platform: platform,
-          team: team,
-          updated_at: new Date().toISOString()
-        })
-        .eq('product_uuid', id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: "Product has been updated successfully",
-      });
-
-    } catch (error) {
-      console.error('Error saving product:', error);
-      toast({
-        title: "Error",
-        description: "Failed to save product. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsProductSaving(false);
     }
   };
 
@@ -359,11 +333,11 @@ const EditProduct = () => {
                   <p className="text-sm text-muted-foreground mt-2">Product details and configuration</p>
                 </div>
                 <Button 
-                  onClick={handleSaveProduct}
-                  disabled={isProductSaving}
+                  onClick={handleSaveChanges}
+                  disabled={isSaving}
                   size="sm"
                 >
-                  {isProductSaving ? (
+                  {isSaving ? (
                     <Loader2 className="h-4 w-4 animate-spin mr-2" />
                   ) : null}
                   Save changes
@@ -400,26 +374,14 @@ const EditProduct = () => {
                     <div className="pt-2">
                       <div className="flex items-center justify-between mb-4">
                         <Label>Variants</Label>
-                        <div className="flex gap-2">
-                          <Button 
-                            onClick={handleAddVariant} 
-                            variant="outline" 
-                            size="sm"
-                          >
-                            <Plus className="h-4 w-4 mr-2" />
-                            Add variant
-                          </Button>
-                          <Button
-                            onClick={handleSaveVariants}
-                            size="sm"
-                            disabled={isSaving}
-                          >
-                            {isSaving ? (
-                              <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                            ) : null}
-                            Save changes
-                          </Button>
-                        </div>
+                        <Button 
+                          onClick={handleAddVariant} 
+                          variant="outline" 
+                          size="sm"
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          Add variant
+                        </Button>
                       </div>
                       <ProductVariantsEditor
                         variants={localVariants}
