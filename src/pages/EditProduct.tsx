@@ -42,7 +42,17 @@ export default function EditProduct() {
         .eq('product_uuid', id);
       
       if (error) throw error;
-      return data || [];
+
+      // Convert database variants to frontend format
+      return (data || []).map(variant => ({
+        variant_uuid: variant.variant_uuid,
+        id: variant.variant_uuid, // Use variant_uuid as frontend id
+        name: variant.name,
+        price: variant.price,
+        comparePrice: variant.compare_price,
+        highlight: variant.highlighted,
+        tags: variant.tags as string[],
+      }));
     },
     enabled: !!id
   });
@@ -58,6 +68,10 @@ export default function EditProduct() {
 
     setIsSaving(true);
     try {
+      // Get current user
+      const { data: { user } } = await supabase.auth.getSession();
+      if (!user) throw new Error("User not authenticated");
+
       // First delete all existing variants for this product
       const { error: deleteError } = await supabase
         .from('variants')
@@ -66,19 +80,22 @@ export default function EditProduct() {
 
       if (deleteError) throw deleteError;
 
+      // Convert frontend variants to database format
+      const variantsToInsert = variants.map(variant => ({
+        variant_uuid: variant.variant_uuid || variant.id, // Use existing UUID or frontend ID
+        product_uuid: id,
+        user_uuid: user.id,
+        name: variant.name || '',
+        price: typeof variant.price === 'string' ? parseFloat(variant.price) : variant.price,
+        compare_price: variant.comparePrice ? (typeof variant.comparePrice === 'string' ? parseFloat(variant.comparePrice) : variant.comparePrice) : null,
+        highlighted: variant.highlight || false,
+        tags: variant.tags || []
+      }));
+
       // Then insert the new variants
       const { error: insertError } = await supabase
         .from('variants')
-        .insert(
-          variants.map(variant => ({
-            ...variant,
-            product_uuid: id,
-            user_uuid: (supabase.auth.getUser())?.data?.user?.id,
-            price: parseFloat(variant.price),
-            compare_price: variant.comparePrice ? parseFloat(variant.comparePrice) : null,
-            tags: variant.tags || []
-          }))
-        );
+        .insert(variantsToInsert);
 
       if (insertError) throw insertError;
 
