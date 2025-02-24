@@ -280,6 +280,35 @@ const EditProduct = () => {
                         </div>
                       </div>
                     </div>
+                    <div className="pt-2">
+                      <div className="flex items-center justify-between mb-4">
+                        <Label>Variants</Label>
+                        {!showVariantForm && (
+                          <Button 
+                            onClick={handleAddVariant} 
+                            variant="outline" 
+                            size="sm"
+                          >
+                            <Plus className="h-4 w-4 mr-2" />
+                            Add variant
+                          </Button>
+                        )}
+                      </div>
+                      {showVariantForm && (
+                        <ProductVariantsEditor
+                          variants={[
+                            {
+                              id: "1",
+                              name: productName,
+                              price: productPrice,
+                              comparePrice: productComparePrice,
+                              highlight: true,
+                              tags: [],
+                            },
+                          ]}
+                        />
+                      )}
+                    </div>
                   </div>
                 </Card>
 
@@ -338,36 +367,6 @@ const EditProduct = () => {
                 <Card className="p-3 sm:p-6">
                   <h2 className="text-lg font-medium mb-3 sm:mb-4">Media</h2>
                   <ProductMediaUpload productUuid={id} />
-                </Card>
-
-                <Card className="p-3 sm:p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-medium">Variants</h2>
-                    {!showVariantForm && (
-                      <Button 
-                        onClick={handleAddVariant} 
-                        variant="outline" 
-                        size="sm"
-                      >
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add variant
-                      </Button>
-                    )}
-                  </div>
-                  {showVariantForm && (
-                    <ProductVariantsEditor
-                      variants={[
-                        {
-                          id: "1",
-                          name: productName,
-                          price: productPrice,
-                          comparePrice: productComparePrice,
-                          highlight: true,
-                          tags: [],
-                        },
-                      ]}
-                    />
-                  )}
                 </Card>
               </div>
             </div>
