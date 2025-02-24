@@ -22,7 +22,8 @@ export default function Products() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('products')
-        .select('*');
+        .select('*')
+        .order('created_at', { ascending: false });
       
       if (error) {
         console.error('Error fetching products:', error);
@@ -66,20 +67,23 @@ export default function Products() {
         <div className="max-w-7xl mx-auto">
           <h1 className="text-2xl font-bold mb-8">All Products ({products?.length ?? 0})</h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {products?.map((product) => (
-              <ProductCard
-                key={product.id}
-                id={product.id.toString()}
-                slug={product.slug}
-                title={product.name}
-                price="$99.99"
-                image="https://images.unsplash.com/photo-1649972904349-6e44c42644a7"
-                seller="Design Master"
-                description={product.description}
-                tags={product.tech_stack ? product.tech_stack.split(',') : []}
-                category={product.type}
-              />
-            ))}
+            {products?.map((product) => {
+              console.log('Product item:', product);
+              return (
+                <ProductCard
+                  key={product.id}
+                  id={product.id.toString()}
+                  slug={product.slug}
+                  title={product.name}
+                  price="$99.99"
+                  image="https://images.unsplash.com/photo-1649972904349-6e44c42644a7"
+                  seller="Design Master"
+                  description={product.description}
+                  tags={product.tech_stack ? product.tech_stack.split(',') : []}
+                  category={product.type}
+                />
+              );
+            })}
           </div>
         </div>
       </main>
