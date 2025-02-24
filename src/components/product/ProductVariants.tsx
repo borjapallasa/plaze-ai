@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -46,6 +45,9 @@ export function ProductVariantsEditor({
   };
 
   const removeVariant = (id: string) => {
+    if (variants.length <= 1) {
+      return;
+    }
     setVariants(variants.filter((v) => v.id !== id));
   };
 
@@ -100,6 +102,15 @@ export function ProductVariantsEditor({
           />
         ))}
       </div>
+
+      <Button
+        onClick={addVariant}
+        variant="outline"
+        className="w-full"
+      >
+        <Plus className="h-4 w-4 mr-2" />
+        Add Variant
+      </Button>
     </div>
   );
 }

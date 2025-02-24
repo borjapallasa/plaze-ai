@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -56,7 +55,7 @@ const TEAM_ROLES = [
   "QA Engineer",
 ];
 
-const EditProduct = () => {
+export default function EditProduct() {
   const { id } = useParams();
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
@@ -299,6 +298,12 @@ const EditProduct = () => {
   };
 
   const handleVariantsChange = (updatedVariants: any[]) => {
+    const removedVariants = localVariants
+      .filter(v => !updatedVariants.find(uv => uv.id === v.id))
+      .filter(v => !v.id.toString().includes('temp_'))
+      .map(v => v.id);
+    
+    setDeletedVariantIds(prev => [...prev, ...removedVariants]);
     setLocalVariants(updatedVariants);
   };
 
@@ -554,6 +559,4 @@ const EditProduct = () => {
       </div>
     </div>
   );
-};
-
-export default EditProduct;
+}
