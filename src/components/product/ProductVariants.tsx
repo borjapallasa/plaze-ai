@@ -87,7 +87,7 @@ export function ProductVariantsEditor({
 
   return (
     <div className={`space-y-4 ${className}`}>
-      <div className="space-y-4">
+      <div className="space-y-3">
         {variants.map((variant) => (
           <VariantCard
             key={variant.id}

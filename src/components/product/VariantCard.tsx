@@ -27,117 +27,104 @@ export function VariantCard({
 }: VariantCardProps) {
   return (
     <Card className="p-4 border rounded-lg shadow-sm">
-      <div className="space-y-4">
-        <div className="flex justify-end">
-          {showRemove && (
+      <div className="space-y-3">
+        {showRemove && (
+          <div className="flex justify-between items-start gap-4">
+            <Input
+              id={`name-${variant.id}`}
+              placeholder="Enter variant name"
+              value={variant.name}
+              onChange={(e) => onUpdate(variant.id, "name", e.target.value)}
+              className="flex-1"
+            />
             <Button
               variant="ghost"
-              size="sm"
+              size="icon"
+              className="h-9 w-9 -mt-1"
               onClick={() => onRemove(variant.id)}
             >
               <X className="h-4 w-4" />
             </Button>
-          )}
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <Label htmlFor={`price-${variant.id}`} className="sr-only">Price</Label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">€</span>
+              <Input
+                id={`price-${variant.id}`}
+                type="number"
+                className="pl-7"
+                value={variant.price}
+                onChange={(e) => onUpdate(variant.id, "price", e.target.value)}
+                placeholder="Price"
+              />
+            </div>
+          </div>
+          <div>
+            <Label htmlFor={`compare-price-${variant.id}`} className="sr-only">Compare-at price</Label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">€</span>
+              <Input
+                id={`compare-price-${variant.id}`}
+                type="number"
+                className="pl-7"
+                value={variant.comparePrice}
+                onChange={(e) => onUpdate(variant.id, "comparePrice", e.target.value)}
+                placeholder="Compare-at price"
+              />
+            </div>
+          </div>
         </div>
 
-        {showRemove && (
-          <>
-            <div>
-              <Label htmlFor={`name-${variant.id}`}>Variant Name</Label>
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id={`highlight-${variant.id}`}
+              checked={variant.highlight || false}
+              onCheckedChange={(checked) => onUpdate(variant.id, "highlight", checked)}
+            />
+            <Label htmlFor={`highlight-${variant.id}`} className="text-sm">
+              Highlight this variant
+            </Label>
+          </div>
+
+          <div className="flex-1 flex items-center gap-2">
+            {(variant.tags || []).map((tag) => (
+              <span
+                key={tag}
+                className="bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-sm flex items-center gap-1"
+              >
+                {tag}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-4 w-4 p-0 hover:bg-transparent"
+                  onClick={() => onRemoveTag(variant.id, tag)}
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              </span>
+            ))}
+            {(!variant.tags || variant.tags.length < 2) && (
               <Input
-                id={`name-${variant.id}`}
-                placeholder="Enter variant name"
-                value={variant.name}
-                onChange={(e) =>
-                  onUpdate(variant.id, "name", e.target.value)
-                }
-              />
-            </div>
-
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor={`price-${variant.id}`}>Price</Label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2">€</span>
-                  <Input
-                    id={`price-${variant.id}`}
-                    type="number"
-                    className="pl-7"
-                    value={variant.price}
-                    onChange={(e) =>
-                      onUpdate(variant.id, "price", e.target.value)
+                className="w-24 h-8 text-sm"
+                placeholder="Add tag"
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    const input = e.currentTarget;
+                    if (input.value) {
+                      onAddTag(variant.id, input.value);
+                      input.value = '';
                     }
-                    placeholder="0.00"
-                  />
-                </div>
-              </div>
-              <div>
-                <Label htmlFor={`compare-price-${variant.id}`}>Compare-at price</Label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2">€</span>
-                  <Input
-                    id={`compare-price-${variant.id}`}
-                    type="number"
-                    className="pl-7"
-                    value={variant.comparePrice}
-                    onChange={(e) =>
-                      onUpdate(variant.id, "comparePrice", e.target.value)
-                    }
-                    placeholder="0.00"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id={`highlight-${variant.id}`}
-                checked={variant.highlight || false}
-                onCheckedChange={(checked) =>
-                  onUpdate(variant.id, "highlight", checked)
-                }
+                  }
+                }}
               />
-              <Label htmlFor={`highlight-${variant.id}`}>Highlight this variant</Label>
-            </div>
-
-            <div>
-              <Label>Tags (max 2)</Label>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {(variant.tags || []).map((tag) => (
-                  <span
-                    key={tag}
-                    className="bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-sm flex items-center gap-1"
-                  >
-                    {tag}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-4 w-4 p-0 hover:bg-transparent"
-                      onClick={() => onRemoveTag(variant.id, tag)}
-                    >
-                      <X className="h-3 w-3" />
-                    </Button>
-                  </span>
-                ))}
-                {(!variant.tags || variant.tags.length < 2) && (
-                  <Input
-                    className="w-32"
-                    placeholder="Add tag"
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        const input = e.currentTarget;
-                        if (input.value) {
-                          onAddTag(variant.id, input.value);
-                          input.value = '';
-                        }
-                      }
-                    }}
-                  />
-                )}
-              </div>
-            </div>
-          </>
-        )}
+            )}
+          </div>
+        </div>
       </div>
     </Card>
   );
