@@ -19,6 +19,7 @@ export function ProductVariantsEditor({
       comparePrice: "",
       highlight: false,
       tags: [],
+      createdAt: new Date().toISOString(), // Adding the new field
     },
   ]);
 
@@ -41,6 +42,7 @@ export function ProductVariantsEditor({
         comparePrice: "0",
         highlight: false,
         tags: [],
+        createdAt: new Date().toISOString(), // Adding the new field
       },
     ]);
   };

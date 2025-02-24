@@ -9,6 +9,7 @@ export interface Variant {
   label?: string;
   features?: string[];
   hidden?: boolean;
+  createdAt?: string; // Adding a new field to force a change
 }
 
 export interface ProductVariantsEditorProps {
