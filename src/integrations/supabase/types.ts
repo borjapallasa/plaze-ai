@@ -1053,7 +1053,6 @@ export type Database = {
             | Database["public"]["Enums"]["product_free_or_paid"]
             | null
           id: number
-          industries: Json | null
           name: string | null
           platform: Json | null
           product_includes: string | null
@@ -1094,7 +1093,6 @@ export type Database = {
             | Database["public"]["Enums"]["product_free_or_paid"]
             | null
           id?: number
-          industries?: Json | null
           name?: string | null
           platform?: Json | null
           product_includes?: string | null
@@ -1135,7 +1133,6 @@ export type Database = {
             | Database["public"]["Enums"]["product_free_or_paid"]
             | null
           id?: number
-          industries?: Json | null
           name?: string | null
           platform?: Json | null
           product_includes?: string | null
