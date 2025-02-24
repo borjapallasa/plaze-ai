@@ -27,9 +27,10 @@ interface MoreFromSellerProps {
 }
 
 const fetchExpertProducts = async (expert_uuid: string) => {
+  // Explicitly select the product_uuid field
   const { data, error } = await supabase
     .from('products')
-    .select('*')
+    .select('name, price, thumbnail, seller_name, description, tech_stack, type, product_uuid, slug')
     .eq('expert_uuid', expert_uuid)
     .order('sales_amount', { ascending: false });
 
@@ -118,6 +119,12 @@ function ProductCard({
   const navigate = useNavigate();
 
   const handleClick = () => {
+    // Add console.log to debug the values
+    console.log('Navigation values:', {
+      slug: product.slug,
+      productUuid: product.productUuid
+    });
+    
     if (product.slug && product.productUuid) {
       navigate(`/product/${product.slug}/${product.productUuid}`);
     }
