@@ -3,29 +3,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, Handshake, DollarSign } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import type { ExpertServicesProps } from "./types";
 
-const services = [
-  {
-    title: "Basic Consultation",
-    price: "$99",
-    description: "Perfect for startups and small projects needing expert UX guidance.",
-    features: ["1-hour consultation", "Basic UX review", "Written recommendations", "1 revision round"]
-  },
-  {
-    title: "Professional Package",
-    price: "$299",
-    description: "Comprehensive UX design solution for established businesses.",
-    features: ["3 consultation sessions", "Detailed UX audit", "Interactive prototypes", "3 revision rounds", "Priority support"]
-  },
-  {
-    title: "Enterprise Solution",
-    price: "$999",
-    description: "Full-service UX design and consultation for large organizations.",
-    features: ["Unlimited consultations", "Complete UX overhaul", "User research & testing", "Custom design system", "Dedicated support team", "Monthly progress reports"]
-  }
-];
-
-export const ExpertServices = () => {
+export const ExpertServices = ({ services }: ExpertServicesProps) => {
   return (
     <div className="col-span-4">
       <h2 className="text-2xl font-bold mb-6">Services</h2>
@@ -72,11 +52,11 @@ export const ExpertServices = () => {
 };
 
 // Service Card Component
-const ServiceCard = ({ title, price, description, features }: {
-  title: string;
-  price: string;
-  description: string;
-  features: string[];
+const ServiceCard = ({ name, price, description, features }: {
+  name?: string;
+  price?: number;
+  description?: string;
+  features?: string[];
 }) => {
   return (
     <Card className="relative overflow-hidden h-[500px] flex flex-col">
@@ -84,15 +64,15 @@ const ServiceCard = ({ title, price, description, features }: {
       <CardContent className="p-6 flex flex-col h-full">
         <div className="space-y-4 flex-1">
           <div className="space-y-2">
-            <h3 className="text-xl font-semibold">{title}</h3>
+            <h3 className="text-xl font-semibold">{name}</h3>
             <div className="flex items-center gap-1">
               <DollarSign className="w-5 h-5 text-muted-foreground" />
-              <span className="text-2xl font-bold">{price}</span>
+              <span className="text-2xl font-bold">${price}</span>
             </div>
             <p className="text-muted-foreground">{description}</p>
           </div>
           <div className="space-y-3">
-            {features.map((feature, idx) => (
+            {features?.map((feature, idx) => (
               <div key={idx} className="flex items-center gap-2">
                 <Check className="w-4 h-4 text-blue-500" />
                 <span className="text-sm">{feature}</span>

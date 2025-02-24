@@ -3,8 +3,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Share2, Save, MapPin, Calendar } from "lucide-react";
+import type { ExpertComponentProps } from "./types";
 
-export const ExpertHeader = () => {
+export const ExpertHeader = ({ expert }: ExpertComponentProps) => {
   return (
     <Card className="mt-8 mb-6">
       <CardContent className="p-6">
@@ -16,7 +17,7 @@ export const ExpertHeader = () => {
             </Avatar>
             <div className="flex-1">
               <div className="flex justify-between items-start">
-                <h1 className="text-2xl font-bold">Expert in UX Design</h1>
+                <h1 className="text-2xl font-bold">{expert.title || "Expert in UX Design"}</h1>
               </div>
             </div>
           </div>
@@ -28,7 +29,7 @@ export const ExpertHeader = () => {
             </Avatar>
             <div className="flex-1">
               <div className="flex justify-between items-start">
-                <h1 className="text-3xl font-bold">Expert in UX Design</h1>
+                <h1 className="text-3xl font-bold">{expert.title || "Expert in UX Design"}</h1>
                 <div className="flex gap-1.5">
                   <Button variant="ghost" size="icon" className="h-6 w-6">
                     <Share2 className="h-3.5 w-3.5" />
@@ -39,11 +40,11 @@ export const ExpertHeader = () => {
                 </div>
               </div>
               <div className="flex items-center gap-2.5 mt-2">
-                <p className="text-xl text-muted-foreground">John Doe</p>
+                <p className="text-xl text-muted-foreground">{expert.name || "John Doe"}</p>
                 <div className="text-muted-foreground">•</div>
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-base text-muted-foreground">San Francisco, CA</span>
+                  <span className="text-base text-muted-foreground">{expert.location || "San Francisco, CA"}</span>
                 </div>
                 <div className="text-muted-foreground">•</div>
                 <div className="flex items-center gap-2">
@@ -56,11 +57,11 @@ export const ExpertHeader = () => {
 
           <div className="flex flex-col sm:hidden items-start gap-2.5">
             <div className="flex items-center gap-2.5">
-              <p className="text-lg text-muted-foreground">John Doe</p>
+              <p className="text-lg text-muted-foreground">{expert.name || "John Doe"}</p>
               <div className="text-muted-foreground">•</div>
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-muted-foreground" />
-                <span className="text-base text-muted-foreground">San Francisco, CA</span>
+                <span className="text-base text-muted-foreground">{expert.location || "San Francisco, CA"}</span>
               </div>
             </div>
             <div className="flex items-center justify-between w-full">
