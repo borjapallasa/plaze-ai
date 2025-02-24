@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 
 interface ProductDemoProps {
   demo?: string;
+  children?: React.ReactNode;
 }
 
 type VideoProvider = {
@@ -10,7 +11,7 @@ type VideoProvider = {
   embedUrl: string | null;
 };
 
-export function ProductDemo({ demo }: ProductDemoProps) {
+export function ProductDemo({ demo, children }: ProductDemoProps) {
   const getVideoProvider = (url: string): VideoProvider => {
     try {
       const urlObj = new URL(url);
@@ -99,6 +100,7 @@ export function ProductDemo({ demo }: ProductDemoProps) {
           <div className="aspect-video bg-accent rounded-lg" />
         )}
       </Card>
+      {children}
     </>
   );
 }

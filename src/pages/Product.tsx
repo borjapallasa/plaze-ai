@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -176,15 +177,14 @@ export default function Product() {
       >
         <div className="lg:col-span-3 grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            <ProductDemo demo={product.demo} />
-            {isMobile && (
+            <ProductDemo demo={product.demo}>
               <ProductInfo 
                 techStack={product.tech_stack}
                 productIncludes={product.product_includes}
                 difficultyLevel={product.difficulty_level}
-                className="mb-8"
+                className="lg:hidden mb-8"
               />
-            )}
+            </ProductDemo>
             <ProductReviews reviews={reviews} className="mb-8" />
             <MoreFromSeller expert_uuid={product.expert_uuid} className="mb-8" />
             {relatedProducts.length > 0 && (
