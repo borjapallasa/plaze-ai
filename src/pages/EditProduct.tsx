@@ -21,6 +21,8 @@ import { Link, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
+import { Variant } from "@/components/product/types/variants";
+import type { Json } from "@/integrations/supabase/types";
 
 const PRODUCT_TYPES = [
   "Template",
@@ -116,8 +118,18 @@ const EditProduct = () => {
       setDemo(product.demo || "");
       setTypes(product.type ? [product.type] : []);
       setUseCases(product.use_case ? [product.use_case] : []);
-      setPlatform(product.platform ? (Array.isArray(product.platform) ? product.platform : []) : []);
-      setTeam(product.team ? (Array.isArray(product.team) ? product.team : []) : []);
+      setPlatform(product.platform ? 
+        (Array.isArray(product.platform) ? 
+          product.platform.map(p => String(p)) 
+          : []
+        ) : []
+      );
+      setTeam(product.team ? 
+        (Array.isArray(product.team) ? 
+          product.team.map(t => String(t)) 
+          : []
+        ) : []
+      );
     }
   }, [product]);
 
@@ -137,7 +149,7 @@ const EditProduct = () => {
 
   useEffect(() => {
     if (variants.length > 0) {
-      setLocalVariants(variants.map(v => ({
+      const mappedVariants: Variant[] = variants.map(v => ({
         id: v.variant_uuid,
         name: v.name || "",
         price: v.price?.toString() || "0",
@@ -145,7 +157,8 @@ const EditProduct = () => {
         highlight: v.highlighted || false,
         tags: Array.isArray(v.tags) ? v.tags.map(tag => String(tag)) : [],
         variant_uuid: v.variant_uuid,
-      })));
+      }));
+      setLocalVariants(mappedVariants);
     }
   }, [variants]);
 
@@ -207,14 +220,15 @@ const EditProduct = () => {
   };
 
   const handleAddVariant = () => {
-    setLocalVariants(current => [...current, {
+    const newVariant: Variant = {
       id: crypto.randomUUID(),
       name: "New Variant",
       price: "0",
       comparePrice: "0",
       highlight: false,
       tags: []
-    }]);
+    };
+    setLocalVariants(current => [...current, newVariant]);
   };
 
   const handleSaveVariants = async () => {
@@ -223,7 +237,6 @@ const EditProduct = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) throw new Error("Not authenticated");
 
-      // First, delete all existing variants for this product
       const { error: deleteError } = await supabase
         .from('variants')
         .delete()
@@ -231,7 +244,6 @@ const EditProduct = () => {
 
       if (deleteError) throw deleteError;
 
-      // Then, insert all updated variants
       const variantsToInsert = localVariants.map(variant => ({
         variant_uuid: variant.variant_uuid || variant.id,
         product_uuid: id,
