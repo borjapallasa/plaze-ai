@@ -16,14 +16,16 @@ export function ProductStatus() {
       <h2 className="text-lg font-medium mb-3 sm:mb-4">Status</h2>
       <div className="flex items-center gap-4">
         <div className="flex-1">
-          <Select defaultValue="active">
+          <Select defaultValue="draft">
             <SelectTrigger>
               <SelectValue placeholder="Select status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="active">Active</SelectItem>
               <SelectItem value="draft">Draft</SelectItem>
-              <SelectItem value="archived">Archived</SelectItem>
+              <SelectItem value="pending">Pending Review</SelectItem>
+              <SelectItem value="published">Published</SelectItem>
+              <SelectItem value="rejected">Rejected</SelectItem>
+              <SelectItem value="changes_needed">Changes Needed</SelectItem>
             </SelectContent>
           </Select>
         </div>

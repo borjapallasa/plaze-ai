@@ -1882,6 +1882,7 @@ export type Database = {
         | "disputed"
       payout_status: "requested" | "paid out"
       product_free_or_paid: "free" | "paid"
+      product_status: "active" | "draft" | "inactive"
       product_type: "template" | "guide or manual"
       review_status: "published" | "not published"
       review_type: "product" | "service" | "job" | "community"
