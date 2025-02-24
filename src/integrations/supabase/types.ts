@@ -255,24 +255,98 @@ export type Database = {
       }
       communities: {
         Row: {
+          active_price_id: string | null
+          active_product_id: string | null
+          classroom_count: number | null
+          community_price_uuid: string | null
           community_uuid: string
           created_at: string
+          description: string | null
+          expert_uuid: string | null
           id: number
+          intro: string | null
+          member_count: number | null
+          monthly_recurring_revenue: number | null
+          name: string | null
+          paid_member_count: number | null
+          payment_link: string | null
+          post_count: number | null
+          price: number | null
+          product_count: number | null
+          slug: string | null
+          thumbnail: string | null
+          title: string | null
+          type: Database["public"]["Enums"]["community_type"] | null
           user_uuid: string | null
+          webhook: string | null
         }
         Insert: {
+          active_price_id?: string | null
+          active_product_id?: string | null
+          classroom_count?: number | null
+          community_price_uuid?: string | null
           community_uuid?: string
           created_at?: string
+          description?: string | null
+          expert_uuid?: string | null
           id?: number
+          intro?: string | null
+          member_count?: number | null
+          monthly_recurring_revenue?: number | null
+          name?: string | null
+          paid_member_count?: number | null
+          payment_link?: string | null
+          post_count?: number | null
+          price?: number | null
+          product_count?: number | null
+          slug?: string | null
+          thumbnail?: string | null
+          title?: string | null
+          type?: Database["public"]["Enums"]["community_type"] | null
           user_uuid?: string | null
+          webhook?: string | null
         }
         Update: {
+          active_price_id?: string | null
+          active_product_id?: string | null
+          classroom_count?: number | null
+          community_price_uuid?: string | null
           community_uuid?: string
           created_at?: string
+          description?: string | null
+          expert_uuid?: string | null
           id?: number
+          intro?: string | null
+          member_count?: number | null
+          monthly_recurring_revenue?: number | null
+          name?: string | null
+          paid_member_count?: number | null
+          payment_link?: string | null
+          post_count?: number | null
+          price?: number | null
+          product_count?: number | null
+          slug?: string | null
+          thumbnail?: string | null
+          title?: string | null
+          type?: Database["public"]["Enums"]["community_type"] | null
           user_uuid?: string | null
+          webhook?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "communities_community_price_uuid_fkey"
+            columns: ["community_price_uuid"]
+            isOneToOne: false
+            referencedRelation: "community_prices"
+            referencedColumns: ["community_price_uuid"]
+          },
+          {
+            foreignKeyName: "communities_expert_uuid_fkey"
+            columns: ["expert_uuid"]
+            isOneToOne: false
+            referencedRelation: "experts"
+            referencedColumns: ["expert_uuid"]
+          },
           {
             foreignKeyName: "communities_user_uuid_fkey"
             columns: ["user_uuid"]
@@ -1719,6 +1793,7 @@ export type Database = {
       classroom_status: "visible" | "not visible"
       community_price_status: "active" | "inactive"
       community_subscription_status: "active" | "inactive"
+      community_type: "free" | "paid"
       conversation_source: "template" | "job request" | "information request"
       conversation_status: "open" | "closed" | "need attention"
       job_status:

@@ -170,6 +170,27 @@ export default function Expert() {
     enabled: !!expert?.expert_uuid
   });
 
+  const { data: randomCommunity } = useQuery({
+    queryKey: ['expert-community', expert?.expert_uuid],
+    queryFn: async () => {
+      if (!expert?.expert_uuid) return null;
+
+      const { data, error } = await supabase
+        .from('communities')
+        .select('*')
+        .eq('expert_uuid', expert.expert_uuid);
+
+      if (error) throw error;
+      
+      if (!data || data.length === 0) return null;
+      
+      // Get a random community from the results
+      const randomIndex = Math.floor(Math.random() * data.length);
+      return data[randomIndex];
+    },
+    enabled: !!expert?.expert_uuid
+  });
+
   if (isLoadingExpert || isLoadingServices) {
     return <ExpertLoadingState />;
   }
@@ -190,6 +211,7 @@ export default function Expert() {
           services={services || []} 
           moreProducts={moreProducts}
           reviews={reviews}
+          community={randomCommunity}
         />
       </div>
     </div>
