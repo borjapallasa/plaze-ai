@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -51,7 +50,7 @@ const EditProduct = () => {
                       />
                     </div>
                     <div>
-                      <Label>Description</Label>
+                      <Label htmlFor="description">Description</Label>
                       <ProductEditor />
                     </div>
                     <div>
