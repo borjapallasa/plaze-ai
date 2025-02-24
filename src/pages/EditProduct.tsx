@@ -21,16 +21,15 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
+import { Variant } from "@/components/product/types/variants";
 import type { Json } from "@/integrations/supabase/types";
 
+type ProductType = "template" | "guide or manual";
+
 const PRODUCT_TYPES = [
-  "Template",
-  "Plugin",
-  "Component",
-  "Full Application",
-  "API",
-  "Library",
-];
+  "template",
+  "guide or manual"
+] as const;
 
 const USE_CASES = [
   "E-commerce",
@@ -71,7 +70,7 @@ type Variant = {
   comparePrice: string;
   highlight: boolean;
   tags: string[];
-  variant_uuid?: string;
+  features: string[];
 };
 
 const EditProduct = () => {
@@ -88,7 +87,7 @@ const EditProduct = () => {
   const [productIncludes, setProductIncludes] = useState("");
   const [difficultyLevel, setDifficultyLevel] = useState("");
   const [demo, setDemo] = useState("");
-  const [types, setTypes] = useState<string[]>([]);
+  const [types, setTypes] = useState<ProductType[]>([]);
   const [useCases, setUseCases] = useState<string[]>([]);
   const [platform, setPlatform] = useState<string[]>([]);
   const [team, setTeam] = useState<string[]>([]);
@@ -117,7 +116,7 @@ const EditProduct = () => {
       setProductIncludes(product.product_includes || "");
       setDifficultyLevel(product.difficulty_level || "");
       setDemo(product.demo || "");
-      setTypes(product.type ? [product.type] : []);
+      setTypes(product.type ? [product.type as ProductType] : []);
       setUseCases(product.use_case ? [product.use_case] : []);
       setPlatform(product.platform ? 
         (Array.isArray(product.platform) ? 
@@ -157,7 +156,7 @@ const EditProduct = () => {
         comparePrice: v.compare_price?.toString() || "0",
         highlight: v.highlighted || false,
         tags: Array.isArray(v.tags) ? v.tags.map(tag => String(tag)) : [],
-        variant_uuid: v.variant_uuid,
+        features: []
       }));
       setLocalVariants(mappedVariants);
     }
@@ -165,7 +164,9 @@ const EditProduct = () => {
 
   const handleTypeChange = (value: string) => {
     if (!value) return;
-    setTypes(prev => prev.includes(value) ? prev.filter(t => t !== value) : [...prev, value]);
+    if (value === "template" || value === "guide or manual") {
+      setTypes(prev => prev.includes(value) ? prev.filter(t => t !== value) : [value]);
+    }
   };
 
   const handleUseCaseChange = (value: string) => {
@@ -227,7 +228,8 @@ const EditProduct = () => {
       price: "0",
       comparePrice: "0",
       highlight: false,
-      tags: []
+      tags: [],
+      features: []
     };
     setLocalVariants(current => [...current, newVariant]);
   };
