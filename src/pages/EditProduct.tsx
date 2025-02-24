@@ -18,7 +18,7 @@ const EditProduct = () => {
   const params = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const productId = params.id;
+  const productId = params.product_uuid;
 
   useEffect(() => {
     if (!productId || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(productId)) {
