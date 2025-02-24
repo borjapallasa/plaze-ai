@@ -58,11 +58,11 @@ export function ProductLayout({
             selectedVariant={selectedVariant}
             onVariantChange={onVariantChange}
             onAddToCart={onAddToCart}
-            className="mb-2"
+            className="mb-6"
           />
           <Button 
             variant="outline" 
-            className="w-full flex items-center justify-center gap-2 mb-6"
+            className="w-full flex items-center justify-center gap-2 mb-8"
             onClick={() => console.log("Contact seller clicked")}
           >
             <MessageCircle className="h-4 w-4" />
@@ -74,6 +74,8 @@ export function ProductLayout({
               {product.description}
             </p>
           </Card>
+
+          {children}
 
           <ProductInfo 
             techStack={product.tech_stack}
@@ -129,7 +131,9 @@ export function ProductLayout({
           </div>
         </div>
 
-        {children}
+        <div className="hidden lg:block">
+          {children}
+        </div>
       </main>
     </div>
   );

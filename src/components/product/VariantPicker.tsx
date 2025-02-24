@@ -28,8 +28,8 @@ export function VariantPicker({
   className = ""
 }: VariantPickerProps) {
   return (
-    <div className={`space-y-3 ${className}`}>
-      <h2 className="text-lg font-semibold">Choose your package</h2>
+    <div className={`space-y-4 ${className}`}>
+      <h2 className="text-lg font-semibold pb-2">Choose your package</h2>
       <div className="grid gap-6">
         {variants.map((variant, index) => {
           const badge = getBadgeLabel(index, variant);
@@ -57,7 +57,6 @@ export function VariantPicker({
               )}
               
               <div className="space-y-2">
-                {/* Header section with name and price */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors duration-200 ${
@@ -79,7 +78,6 @@ export function VariantPicker({
                   </div>
                 </div>
 
-                {/* Features section */}
                 <div className="flex flex-row gap-2 flex-wrap">
                   {variant.features && variant.features.map((feature, index) => (
                     <span
@@ -97,7 +95,7 @@ export function VariantPicker({
         })}
       </div>
       {onAddToCart && (
-        <div className="space-y-2 pt-4">
+        <div className="space-y-4 pt-4">
           <Button
             className="w-full"
             size="lg"
