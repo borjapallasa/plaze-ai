@@ -7,7 +7,7 @@ import { Heart, Crown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface Expert {
-  id: number; // Changed from string to number to match database schema
+  id: number;
   expert_uuid: string;
   name?: string;
   slug?: string;
@@ -15,7 +15,8 @@ interface Expert {
   location?: string;
   description?: string;
   completed_projects?: number;
-  client_satisfaction?: string;
+  client_satisfaction?: number;  // Changed from string to number
+  response_rate?: number;
 }
 
 interface ExpertCardProps {
@@ -84,7 +85,7 @@ export const ExpertCard = ({ expert }: ExpertCardProps) => {
           <span className="text-base text-[#333333]">Projects completed: {expert.completed_projects || 0}</span>
           <div className="flex items-center gap-1">
             <Crown className="h-4 w-4 text-[#555555]" />
-            <span className="text-base text-[#333333]">{expert.client_satisfaction || '100%'} Client Satisfaction</span>
+            <span className="text-base text-[#333333]">{expert.client_satisfaction || 100}% Client Satisfaction</span>
           </div>
         </div>
 
