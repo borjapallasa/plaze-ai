@@ -182,8 +182,22 @@ const EditProduct = () => {
     try {
       setIsSaving(true);
       console.log('Saving product with ID:', id);
+      console.log('Data being sent:', {
+        name: productName,
+        description: productDescription,
+        tech_stack: techStack,
+        tech_stack_price: techStackPrice,
+        product_includes: productIncludes,
+        difficulty_level: difficultyLevel,
+        demo: demo,
+        status: productStatus,
+        industries: industries,
+        use_case: useCases,
+        platform: platform,
+        team: team
+      });
       
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('products')
         .update({
           name: productName,
@@ -199,12 +213,15 @@ const EditProduct = () => {
           platform: platform,
           team: team
         })
-        .eq('product_uuid', id);
+        .eq('product_uuid', id)
+        .select();
 
       if (error) {
         console.error('Supabase error:', error);
         throw error;
       }
+
+      console.log('Update response:', data);
 
       toast({
         title: "Success",
