@@ -62,8 +62,12 @@ const EditProduct = () => {
       setPublicLink(product.public_link || "");
       setType(product.type || "");
       setUseCase(product.use_case || "");
-      setPlatform(Array.isArray(product.platform) ? product.platform : []);
-      setTeam(Array.isArray(product.team) ? product.team : []);
+      
+      const platformArray = product.platform as unknown as (string | number)[];
+      setPlatform(platformArray ? platformArray.map(item => String(item)) : []);
+      
+      const teamArray = product.team as unknown as (string | number)[];
+      setTeam(teamArray ? teamArray.map(item => String(item)) : []);
     }
   }, [product]);
 
@@ -87,6 +91,10 @@ const EditProduct = () => {
 
   const handleRemoveTeam = (teamToRemove: string) => {
     setTeam(team.filter(t => t !== teamToRemove));
+  };
+
+  const handleAddVariant = () => {
+    setShowVariantForm(true);
   };
 
   if (isLoading) {
