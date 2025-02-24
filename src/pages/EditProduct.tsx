@@ -150,7 +150,7 @@ const EditProduct = () => {
     if (variants.length === 0) {
       const firstVariant: Variant = {
         id: "1",
-        name: productName,
+        name: productName || "Default Variant",
         price: productPrice || "0",
         comparePrice: productComparePrice || "0",
         highlight: true,
@@ -255,7 +255,7 @@ const EditProduct = () => {
                         onChange={setProductDescription}
                       />
                     </div>
-                    {!showVariantForm && (
+                    {!showVariantForm && variants.length === 0 && (
                       <div className="grid sm:grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="price">Price</Label>
@@ -301,7 +301,7 @@ const EditProduct = () => {
                           </Button>
                         )}
                       </div>
-                      {showVariantForm && (
+                      {showVariantForm && variants.length > 0 && (
                         <ProductVariantsEditor
                           variants={variants}
                           onVariantsChange={handleVariantsChange}
