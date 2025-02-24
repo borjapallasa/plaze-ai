@@ -64,7 +64,7 @@ export default function Product() {
         comparePrice: variant.compare_price || 149.99,
         label: "Package",
         highlight: index === 1, // Make the second variant highlighted by default
-        features: variant.features || ["Core Features", "Basic Support"]
+        features: Array.isArray(variant.tags) ? variant.tags : ["Core Features", "Basic Support"]
       }));
     },
     enabled: !!id
