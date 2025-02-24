@@ -194,6 +194,7 @@ const EditProduct = () => {
   };
 
   const handleAddVariant = () => {
+    // When adding the first variant, transfer the price values to it
     setShowVariantForm(true);
   };
 
@@ -250,36 +251,38 @@ const EditProduct = () => {
                         onChange={setProductDescription}
                       />
                     </div>
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="price">Price</Label>
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2">€</span>
-                          <Input
-                            id="price"
-                            type="number"
-                            placeholder="0.00"
-                            className="pl-7"
-                            value={productPrice}
-                            onChange={(e) => setProductPrice(e.target.value)}
-                          />
+                    {!showVariantForm && (
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="price">Price</Label>
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2">€</span>
+                            <Input
+                              id="price"
+                              type="number"
+                              placeholder="0.00"
+                              className="pl-7"
+                              value={productPrice}
+                              onChange={(e) => setProductPrice(e.target.value)}
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <Label htmlFor="compare-price">Compare-at price</Label>
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2">€</span>
+                            <Input
+                              id="compare-price"
+                              type="number"
+                              placeholder="0.00"
+                              className="pl-7"
+                              value={productComparePrice}
+                              onChange={(e) => setProductComparePrice(e.target.value)}
+                            />
+                          </div>
                         </div>
                       </div>
-                      <div>
-                        <Label htmlFor="compare-price">Compare-at price</Label>
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2">€</span>
-                          <Input
-                            id="compare-price"
-                            type="number"
-                            placeholder="0.00"
-                            className="pl-7"
-                            value={productComparePrice}
-                            onChange={(e) => setProductComparePrice(e.target.value)}
-                          />
-                        </div>
-                      </div>
-                    </div>
+                    )}
                     <div className="pt-2">
                       <div className="flex items-center justify-between mb-4">
                         <Label>Variants</Label>
@@ -300,8 +303,8 @@ const EditProduct = () => {
                             {
                               id: "1",
                               name: productName,
-                              price: productPrice,
-                              comparePrice: productComparePrice,
+                              price: productPrice || "0",
+                              comparePrice: productComparePrice || "0",
                               highlight: true,
                               tags: [],
                             },
