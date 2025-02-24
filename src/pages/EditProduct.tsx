@@ -195,6 +195,9 @@ const EditProduct = () => {
 
   const handleAddVariant = async () => {
     try {
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+
       const { data, error } = await supabase
         .from('variants')
         .insert([
@@ -204,7 +207,8 @@ const EditProduct = () => {
             price: 0,
             compare_price: 0,
             highlighted: false,
-            tags: []
+            tags: [],
+            user_uuid: userData.user.id
           }
         ])
         .select()
