@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -14,6 +13,7 @@ import { Link, useParams } from "react-router-dom";
 
 const EditProduct = () => {
   const { id } = useParams();
+  const [showVariantForm, setShowVariantForm] = useState(false);
   
   return (
     <div className="min-h-screen bg-background">
@@ -141,11 +141,18 @@ const EditProduct = () => {
                 <Card className="p-3 sm:p-6">
                   <div className="flex items-center justify-between">
                     <h2 className="text-lg font-medium">Variants</h2>
-                    <Button onClick={() => {}} variant="outline" size="sm">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add variant
-                    </Button>
+                    {!showVariantForm && (
+                      <Button 
+                        onClick={() => setShowVariantForm(true)} 
+                        variant="outline" 
+                        size="sm"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add variant
+                      </Button>
+                    )}
                   </div>
+                  {showVariantForm && <ProductVariantsEditor />}
                 </Card>
               </div>
             </div>
