@@ -1,3 +1,4 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { ExpertHeader } from "@/components/expert/ExpertHeader";
 import { ExpertContent } from "@/components/expert/layout/ExpertContent";
@@ -155,7 +156,7 @@ export default function Expert() {
       const { data, error } = await supabase
         .from('services')
         .select('*')
-        .eq('user_uuid', expert.expert_uuid);
+        .eq('expert_uuid', expert.expert_uuid);
 
       if (error) throw error;
       

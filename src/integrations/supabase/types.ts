@@ -637,6 +637,7 @@ export type Database = {
           response_rate: number | null
           slug: string | null
           title: string | null
+          user_uuid: string | null
         }
         Insert: {
           areas?: Json | null
@@ -652,6 +653,7 @@ export type Database = {
           response_rate?: number | null
           slug?: string | null
           title?: string | null
+          user_uuid?: string | null
         }
         Update: {
           areas?: Json | null
@@ -667,8 +669,17 @@ export type Database = {
           response_rate?: number | null
           slug?: string | null
           title?: string | null
+          user_uuid?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "experts_user_uuid_fkey"
+            columns: ["user_uuid"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["user_uuid"]
+          },
+        ]
       }
       jobs: {
         Row: {
@@ -1316,6 +1327,7 @@ export type Database = {
           active_subscriptions_count: number | null
           created_at: string
           description: string | null
+          expert_uuid: string | null
           features: Json | null
           id: number
           monthly_recurring_revenue: number | null
@@ -1333,6 +1345,7 @@ export type Database = {
           active_subscriptions_count?: number | null
           created_at?: string
           description?: string | null
+          expert_uuid?: string | null
           features?: Json | null
           id?: number
           monthly_recurring_revenue?: number | null
@@ -1350,6 +1363,7 @@ export type Database = {
           active_subscriptions_count?: number | null
           created_at?: string
           description?: string | null
+          expert_uuid?: string | null
           features?: Json | null
           id?: number
           monthly_recurring_revenue?: number | null
@@ -1364,6 +1378,13 @@ export type Database = {
           user_uuid?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "services_expert_uuid_fkey"
+            columns: ["expert_uuid"]
+            isOneToOne: false
+            referencedRelation: "experts"
+            referencedColumns: ["expert_uuid"]
+          },
           {
             foreignKeyName: "services_user_uuid_fkey"
             columns: ["user_uuid"]
