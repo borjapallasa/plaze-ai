@@ -20,6 +20,7 @@ import { ArrowLeft, Plus, X } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { useToast } from "@/components/ui/use-toast";
 
 const PRODUCT_TYPES = [
   "Template",
@@ -73,6 +74,7 @@ type Variant = {
 
 const EditProduct = () => {
   const { id } = useParams();
+  const { toast } = useToast();
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [techStack, setTechStack] = useState("");
@@ -157,7 +159,7 @@ const EditProduct = () => {
     enabled: !!id
   });
 
-  const { data: variants = [], isLoading: isLoadingVariants } = useQuery({
+  const { data: variants = [], isLoading: isLoadingVariants, refetch: refetchVariants } = useQuery({
     queryKey: ['variants', id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -191,6 +193,69 @@ const EditProduct = () => {
     }
   }, [product]);
 
+  const handleAddVariant = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('variants')
+        .insert([
+          {
+            product_uuid: id,
+            name: "New Variant",
+            price: 0,
+            compare_price: 0,
+            highlighted: false,
+            tags: []
+          }
+        ])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "New variant has been added",
+      });
+
+      refetchVariants();
+    } catch (error) {
+      console.error('Error adding variant:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add variant",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleVariantsChange = async (updatedVariants: Variant[]) => {
+    try {
+      const variantToUpdate = updatedVariants[updatedVariants.length - 1];
+      
+      const { error } = await supabase
+        .from('variants')
+        .update({
+          name: variantToUpdate.name,
+          price: parseFloat(variantToUpdate.price.toString()),
+          compare_price: parseFloat(variantToUpdate.comparePrice.toString()),
+          highlighted: variantToUpdate.highlight,
+          tags: variantToUpdate.tags
+        })
+        .eq('variant_uuid', variantToUpdate.id);
+
+      if (error) throw error;
+
+      refetchVariants();
+    } catch (error) {
+      console.error('Error updating variant:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update variant",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (isLoadingProduct || isLoadingVariants) {
     return (
       <div className="min-h-screen bg-background">
@@ -199,14 +264,6 @@ const EditProduct = () => {
       </div>
     );
   }
-
-  const handleAddVariant = () => {
-    console.log("Add variant clicked");
-  };
-
-  const handleVariantsChange = (updatedVariants: any[]) => {
-    console.log("Variants updated:", updatedVariants);
-  };
 
   return (
     <div className="min-h-screen bg-background">
