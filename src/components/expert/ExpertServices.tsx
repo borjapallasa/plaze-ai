@@ -16,7 +16,11 @@ export const ExpertServices = ({ services }: ExpertServicesProps) => {
           <CardContent className="p-6 space-y-6">
             <div className="grid grid-cols-3 gap-6">
               {services.map((service, index) => (
-                <ServiceCard key={index} {...service} />
+                <ServiceCard 
+                  key={index} 
+                  {...service} 
+                  className={service.highlight ? "scale-105 shadow-lg" : ""}
+                />
               ))}
             </div>
           </CardContent>
@@ -31,7 +35,10 @@ export const ExpertServices = ({ services }: ExpertServicesProps) => {
               <CarouselContent>
                 {services.map((service, index) => (
                   <CarouselItem key={index}>
-                    <ServiceCard {...service} />
+                    <ServiceCard 
+                      {...service} 
+                      className={service.highlight ? "scale-105 shadow-lg" : ""}
+                    />
                   </CarouselItem>
                 ))}
               </CarouselContent>
@@ -52,15 +59,28 @@ export const ExpertServices = ({ services }: ExpertServicesProps) => {
 };
 
 // Service Card Component
-const ServiceCard = ({ name, price, description, features }: {
+const ServiceCard = ({ 
+  name, 
+  price, 
+  description, 
+  features,
+  highlight,
+  className = "" 
+}: {
   name?: string;
   price?: number;
   description?: string;
   features?: string[];
+  highlight?: boolean;
+  className?: string;
 }) => {
   return (
-    <Card className="relative overflow-hidden h-[500px] flex flex-col">
-      <div className="absolute inset-x-0 top-0 h-2 bg-blue-100" />
+    <Card className={`relative overflow-hidden h-[500px] flex flex-col transition-all duration-300 hover:shadow-lg ${
+      highlight ? 'ring-2 ring-primary shadow-lg' : ''
+    } ${className}`}>
+      {highlight && (
+        <div className="absolute inset-x-0 top-0 h-2 bg-primary" />
+      )}
       <CardContent className="p-6 flex flex-col h-full">
         <div className="space-y-4 flex-1">
           <div className="space-y-2">
@@ -74,7 +94,7 @@ const ServiceCard = ({ name, price, description, features }: {
           <div className="space-y-3">
             {features?.map((feature, idx) => (
               <div key={idx} className="flex items-center gap-2">
-                <Check className="w-4 h-4 text-blue-500" />
+                <Check className="w-4 h-4 text-primary" />
                 <span className="text-sm">{feature}</span>
               </div>
             ))}
