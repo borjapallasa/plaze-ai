@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,20 +20,25 @@ const formatNumber = (num: number): string => {
   return num.toString();
 };
 
-// Video provider helper
+// Helper function to get YouTube video thumbnail
+const getYouTubeThumbnail = (videoId: string): string => {
+  return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+};
+
+// Video provider helper with thumbnail support
 const getVideoProvider = (url: string | null) => {
-  if (!url) return { name: 'unknown', embedUrl: null };
+  if (!url) return { name: 'unknown', embedUrl: null, thumbnailUrl: null };
 
   try {
-    // Handle both full URLs and direct embed URLs
     const normalizedUrl = url.trim();
 
-    // If it's already an embed URL, return as is with parameters
+    // If it's already an embed URL, extract video ID
     if (normalizedUrl.includes('youtube.com/embed/')) {
       const videoId = normalizedUrl.split('/embed/')[1]?.split('?')[0];
       return { 
         name: 'youtube',
-        embedUrl: `https://www.youtube.com/embed/${videoId}?rel=0` 
+        embedUrl: `https://www.youtube.com/embed/${videoId}?rel=0`,
+        thumbnailUrl: getYouTubeThumbnail(videoId)
       };
     }
     
@@ -42,7 +46,8 @@ const getVideoProvider = (url: string | null) => {
       const videoId = normalizedUrl.split('/video/')[1]?.split('?')[0];
       return { 
         name: 'vimeo',
-        embedUrl: `https://player.vimeo.com/video/${videoId}?dnt=1` 
+        embedUrl: `https://player.vimeo.com/video/${videoId}?dnt=1`,
+        thumbnailUrl: null
       };
     }
     
@@ -50,7 +55,8 @@ const getVideoProvider = (url: string | null) => {
       const videoId = normalizedUrl.split('/embed/')[1]?.split('?')[0];
       return { 
         name: 'loom',
-        embedUrl: `https://www.loom.com/embed/${videoId}` 
+        embedUrl: `https://www.loom.com/embed/${videoId}`,
+        thumbnailUrl: null
       };
     }
 
@@ -70,7 +76,8 @@ const getVideoProvider = (url: string | null) => {
       if (videoId) {
         return {
           name: 'youtube',
-          embedUrl: `https://www.youtube.com/embed/${videoId}?rel=0`
+          embedUrl: `https://www.youtube.com/embed/${videoId}?rel=0`,
+          thumbnailUrl: getYouTubeThumbnail(videoId)
         };
       }
     }
@@ -81,7 +88,8 @@ const getVideoProvider = (url: string | null) => {
       if (vimeoId) {
         return {
           name: 'vimeo',
-          embedUrl: `https://player.vimeo.com/video/${vimeoId}?dnt=1`
+          embedUrl: `https://player.vimeo.com/video/${vimeoId}?dnt=1`,
+          thumbnailUrl: null
         };
       }
     }
@@ -92,16 +100,17 @@ const getVideoProvider = (url: string | null) => {
       if (loomPath) {
         return {
           name: 'loom',
-          embedUrl: `https://www.loom.com/embed/${loomPath}`
+          embedUrl: `https://www.loom.com/embed/${loomPath}`,
+          thumbnailUrl: null
         };
       }
     }
 
-    return { name: 'unknown', embedUrl: null };
+    return { name: 'unknown', embedUrl: null, thumbnailUrl: null };
   } catch (error) {
     console.error('Error parsing video URL:', error);
     console.log('Attempted to parse URL:', url);
-    return { name: 'unknown', embedUrl: null };
+    return { name: 'unknown', embedUrl: null, thumbnailUrl: null };
   }
 };
 
@@ -114,7 +123,7 @@ export const ExpertCommunity = ({ community }: ExpertCommunityProps) => {
   }
 
   const videoProvider = getVideoProvider(community.intro);
-  console.log('Video provider result:', videoProvider); // Debug log
+  console.log('Video provider result:', videoProvider);
 
   const handleThumbnailClick = () => {
     setShouldLoadIframe(true);
@@ -146,7 +155,7 @@ export const ExpertCommunity = ({ community }: ExpertCommunityProps) => {
                     className="w-full h-full relative block"
                   >
                     <img 
-                      src={community.thumbnail || "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5"}
+                      src={videoProvider.thumbnailUrl || community.thumbnail || "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5"}
                       alt="Community thumbnail"
                       className="w-full h-full object-cover"
                       loading="lazy"
