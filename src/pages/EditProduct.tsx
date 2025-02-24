@@ -77,6 +77,7 @@ const EditProduct = () => {
   const { id } = useParams();
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
+  const [localVariants, setLocalVariants] = useState<Variant[]>([]);
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [techStack, setTechStack] = useState("");
@@ -176,65 +177,31 @@ const EditProduct = () => {
   });
 
   useEffect(() => {
-    if (product) {
-      setProductName(product.name || "");
-      setProductDescription(product.description || "");
-      setTechStack(product.tech_stack || "");
-      setTechStackPrice(product.tech_stack_price || "");
-      setProductIncludes(product.product_includes || "");
-      setDifficultyLevel(product.difficulty_level || "");
-      setDemo(product.demo || "");
-      setTypes(product.type ? [product.type] : []);
-      setUseCases(product.use_case ? [product.use_case] : []);
-      
-      const platformData = product.platform as unknown[] || [];
-      setPlatform(platformData.map(item => String(item)));
-      
-      const teamData = product.team as unknown[] || [];
-      setTeam(teamData.map(item => String(item)));
+    if (variants.length > 0) {
+      setLocalVariants(variants.map(v => ({
+        id: v.variant_uuid,
+        variant_uuid: v.variant_uuid,
+        name: v.name || "",
+        price: v.price?.toString() || "0",
+        comparePrice: v.compare_price?.toString() || "0",
+        highlight: v.highlighted || false,
+        tags: Array.isArray(v.tags) ? v.tags.map(tag => String(tag)) : []
+      })));
     }
-  }, [product]);
+  }, [variants]);
 
-  const handleAddVariant = async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) throw new Error("Not authenticated");
-
-      const { data, error } = await supabase
-        .from('variants')
-        .insert([
-          {
-            product_uuid: id,
-            user_uuid: session.user.id,
-            name: "New Variant",
-            price: 0,
-            compare_price: 0,
-            highlighted: false,
-            tags: []
-          }
-        ])
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: "New variant has been added",
-      });
-
-      refetchVariants();
-    } catch (error) {
-      console.error('Error adding variant:', error);
-      toast({
-        title: "Error",
-        description: "Failed to add variant",
-        variant: "destructive",
-      });
-    }
+  const handleAddVariant = () => {
+    setLocalVariants(current => [...current, {
+      id: crypto.randomUUID(),
+      name: "New Variant",
+      price: "0",
+      comparePrice: "0",
+      highlight: false,
+      tags: []
+    }]);
   };
 
-  const handleVariantsChange = async (updatedVariants: Variant[]) => {
+  const handleSaveVariants = async () => {
     setIsSaving(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -249,7 +216,7 @@ const EditProduct = () => {
       if (deleteError) throw deleteError;
 
       // Then, insert all updated variants
-      const variantsToInsert = updatedVariants.map(variant => ({
+      const variantsToInsert = localVariants.map(variant => ({
         variant_uuid: variant.variant_uuid || variant.id,
         product_uuid: id,
         user_uuid: session.user.id,
@@ -342,27 +309,30 @@ const EditProduct = () => {
                     <div className="pt-2">
                       <div className="flex items-center justify-between mb-4">
                         <Label>Variants</Label>
-                        <Button 
-                          onClick={handleAddVariant} 
-                          variant="outline" 
-                          size="sm"
-                          disabled={isSaving}
-                        >
-                          <Plus className="h-4 w-4 mr-2" />
-                          Add variant
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button 
+                            onClick={handleAddVariant} 
+                            variant="outline" 
+                            size="sm"
+                          >
+                            <Plus className="h-4 w-4 mr-2" />
+                            Add variant
+                          </Button>
+                          <Button
+                            onClick={handleSaveVariants}
+                            size="sm"
+                            disabled={isSaving}
+                          >
+                            {isSaving ? (
+                              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                            ) : null}
+                            Save changes
+                          </Button>
+                        </div>
                       </div>
                       <ProductVariantsEditor
-                        variants={variants.map(v => ({
-                          id: v.variant_uuid,
-                          variant_uuid: v.variant_uuid,
-                          name: v.name || "",
-                          price: v.price?.toString() || "0",
-                          comparePrice: v.compare_price?.toString() || "0",
-                          highlight: v.highlighted || false,
-                          tags: Array.isArray(v.tags) ? v.tags.map(tag => String(tag)) : []
-                        }))}
-                        onVariantsChange={handleVariantsChange}
+                        variants={localVariants}
+                        onVariantsChange={setLocalVariants}
                       />
                     </div>
                   </div>
