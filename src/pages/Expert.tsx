@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { ExpertHeader } from "@/components/expert/ExpertHeader";
 import { ExpertContent } from "@/components/expert/layout/ExpertContent";
@@ -66,57 +65,6 @@ const moreProducts = [
   }
 ];
 
-const reviews = [
-  { 
-    id: "1",
-    author: "Sarah Johnson", 
-    rating: 5, 
-    content: "Outstanding UX expertise!",
-    description: "Worked with this expert on our app redesign. Their insights and attention to detail transformed our user experience completely.",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
-    date: "2 days ago",
-    itemQuality: 5,
-    shipping: 5,
-    customerService: 5
-  },
-  { 
-    id: "2",
-    author: "Michael Chen", 
-    rating: 5, 
-    content: "Exceptional design thinking",
-    description: "The expert provided invaluable feedback on our product's UX. Their systematic approach to problem-solving was impressive.",
-    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e",
-    date: "1 week ago",
-    itemQuality: 5,
-    shipping: 4,
-    customerService: 5
-  },
-  { 
-    id: "3",
-    author: "Emily Rodriguez", 
-    rating: 4, 
-    content: "Great collaboration experience",
-    description: "Very professional and knowledgeable. They helped us identify key pain points in our user journey and provided actionable solutions.",
-    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
-    date: "2 weeks ago",
-    itemQuality: 4,
-    shipping: 5,
-    customerService: 4
-  },
-  { 
-    id: "4",
-    author: "David Kim", 
-    rating: 5, 
-    content: "Top-notch UX consultant",
-    description: "Their expertise in user research and prototyping helped us create a much more intuitive interface. Highly recommended!",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
-    date: "3 weeks ago",
-    itemQuality: 5,
-    shipping: 5,
-    customerService: 5
-  }
-];
-
 export default function Expert() {
   const { id, slug } = useParams();
 
@@ -146,6 +94,32 @@ export default function Expert() {
       
       return data as Expert;
     }
+  });
+
+  const { data: reviews } = useQuery({
+    queryKey: ['expert-reviews', expert?.expert_uuid],
+    queryFn: async () => {
+      if (!expert?.expert_uuid) return [];
+
+      const { data, error } = await supabase
+        .from('reviews')
+        .select('*')
+        .eq('expert_uuid', expert.expert_uuid);
+
+      if (error) throw error;
+      
+      return data.map(review => ({
+        id: review.review_uuid,
+        author: review.buyer_name || 'Anonymous',
+        rating: review.rating || 0,
+        content: review.title || '',
+        description: review.comments || '',
+        avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330',
+        date: new Date(review.created_at).toLocaleDateString(),
+        type: review.type
+      }));
+    },
+    enabled: !!expert?.expert_uuid
   });
 
   const { data: services, isLoading: isLoadingServices } = useQuery({
@@ -210,7 +184,7 @@ export default function Expert() {
           expert={expert} 
           services={services || []} 
           moreProducts={moreProducts}
-          reviews={reviews}
+          reviews={reviews || []}
           community={randomCommunity}
         />
       </div>

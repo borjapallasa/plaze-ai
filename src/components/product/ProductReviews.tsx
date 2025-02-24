@@ -58,6 +58,12 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
                         <span className="font-medium text-gray-900">{review.author}</span>
                         <span className="text-gray-400">•</span>
                         <span className="text-gray-600">{review.date}</span>
+                        {review.type && (
+                          <>
+                            <span className="text-gray-400">•</span>
+                            <span className="text-gray-600 capitalize">{review.type} review</span>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
