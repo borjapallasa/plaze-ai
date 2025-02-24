@@ -9,6 +9,7 @@ import { MessageCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { usePreloadImage } from "@/hooks/use-preload-image";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useProductImages } from "@/hooks/use-product-images";
 
 interface ProductLayoutProps {
   product: any;
@@ -30,10 +31,11 @@ export function ProductLayout({
   children
 }: ProductLayoutProps) {
   const isMobile = useIsMobile();
-  const productImage = product.image || "https://images.unsplash.com/photo-1649972904349-6e44c42644a7";
+  const { images, isLoading: isLoadingImages } = useProductImages(product.product_uuid);
   
-  // Preload the main product image for mobile
-  usePreloadImage(productImage);
+  // Preload the main product image for mobile if we have images
+  const mainImage = images[0]?.url;
+  usePreloadImage(mainImage);
 
   return (
     <div className="min-h-screen">
@@ -41,7 +43,7 @@ export function ProductLayout({
       <main className="container mx-auto px-4 pt-24">
         <div className="lg:hidden">
           <ProductGallery 
-            image={productImage} 
+            images={images}
             className="mb-6" 
             priority={true}
           />
@@ -78,7 +80,7 @@ export function ProductLayout({
           <div className="lg:col-span-2">
             <div className="hidden lg:block">
               <ProductGallery 
-                image={productImage}
+                images={images}
                 className="mb-8" 
                 priority={!isMobile}
               />
