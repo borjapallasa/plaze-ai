@@ -34,9 +34,8 @@ export default function Product() {
   const [showStickyATC, setShowStickyATC] = useState(false);
   const variantsRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  const params = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
-  const id = params.id;
 
   const { data: product, isLoading: isLoadingProduct, error: productError } = useQuery({
     queryKey: ['product', id],
