@@ -385,7 +385,7 @@ const EditProduct = () => {
                       </div>
                       <ProductVariantsEditor
                         variants={localVariants}
-                        onVariantsChange={(variants) => setLocalVariants(variants)}
+                        onVariantsChange={setLocalVariants}
                       />
                     </div>
                   </div>
