@@ -74,7 +74,6 @@ const EditProduct = () => {
   const [productIncludes, setProductIncludes] = useState("");
   const [difficultyLevel, setDifficultyLevel] = useState("");
   const [demo, setDemo] = useState("");
-  const [publicLink, setPublicLink] = useState("");
   const [types, setTypes] = useState<string[]>([]);
   const [useCases, setUseCases] = useState<string[]>([]);
   const [platform, setPlatform] = useState<string[]>([]);
@@ -163,7 +162,6 @@ const EditProduct = () => {
       setProductIncludes(product.product_includes || "");
       setDifficultyLevel(product.difficulty_level || "");
       setDemo(product.demo || "");
-      setPublicLink(product.public_link || "");
       setTypes(product.type ? [product.type] : []);
       setUseCases(product.use_case ? [product.use_case] : []);
       
@@ -332,16 +330,6 @@ const EditProduct = () => {
                         type="url"
                         value={demo}
                         onChange={(e) => setDemo(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="public_link">Public Link</Label>
-                      <Input 
-                        id="public_link" 
-                        placeholder="Enter public link" 
-                        type="url"
-                        value={publicLink}
-                        onChange={(e) => setPublicLink(e.target.value)}
                       />
                     </div>
                   </div>
