@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -58,7 +59,6 @@ const TEAM_ROLES = [
 const EditProduct = () => {
   const { id } = useParams();
   const { toast } = useToast();
-  const navigate = useNavigate();
   const [isSaving, setIsSaving] = useState(false);
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
