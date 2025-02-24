@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./components/AuthProvider";
 import Index from "./pages/index";
 import Product from "./pages/Product";
@@ -50,6 +50,7 @@ const App = () => (
         <div className="flex flex-col min-h-screen">
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/product/:slug/:id" element={<Product />} />
             <Route path="/product/:id" element={<Product />} />
             <Route path="/products" element={<Products />} />
             <Route path="/expert" element={<Expert />} />

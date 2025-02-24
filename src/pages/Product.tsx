@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
@@ -34,30 +33,13 @@ export default function Product() {
   const [showStickyATC, setShowStickyATC] = useState(false);
   const variantsRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  const { id } = useParams();
+  const { id, slug } = useParams();
   const navigate = useNavigate();
 
   const { data: product, isLoading: isLoadingProduct, error: productError } = useQuery({
     queryKey: ['product', id],
     queryFn: async () => {
-      // First try to find by UUID
-      let { data: uuidData, error: uuidError } = await supabase
-        .from('products')
-        .select('*')
-        .eq('product_uuid', id)
-        .single();
-
-      if (!uuidError && uuidData) {
-        // Redirect to the new URL format
-        const slug = createSlug(uuidData.name || '');
-        const canonicalUrl = `/product/${slug}/${uuidData.id}`;
-        if (window.location.pathname !== canonicalUrl) {
-          navigate(canonicalUrl, { replace: true });
-        }
-        return uuidData;
-      }
-
-      // Try to find by numeric ID
+      // Try to find by numeric ID first
       const numericId = parseInt(id || '');
       if (!isNaN(numericId)) {
         const { data, error } = await supabase
@@ -66,19 +48,32 @@ export default function Product() {
           .eq('id', numericId)
           .single();
 
-        if (error) throw error;
-        
-        // Redirect to the canonical URL if needed
-        const slug = createSlug(data.name || '');
-        const canonicalUrl = `/product/${slug}/${data.id}`;
-        if (window.location.pathname !== canonicalUrl) {
-          navigate(canonicalUrl, { replace: true });
+        if (!error && data) {
+          // Redirect to the canonical URL if needed
+          const correctSlug = createSlug(data.name || '');
+          if (!slug || slug !== correctSlug) {
+            navigate(`/product/${correctSlug}/${data.id}`, { replace: true });
+          }
+          return data;
         }
-        
-        return data;
       }
 
-      throw new Error('Product not found');
+      // If not found by ID, try UUID
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('product_uuid', id)
+        .single();
+
+      if (error) throw error;
+
+      // Redirect to the canonical URL
+      const correctSlug = createSlug(data.name || '');
+      if (!slug || slug !== correctSlug) {
+        navigate(`/product/${correctSlug}/${data.id}`, { replace: true });
+      }
+      
+      return data;
     }
   });
 
