@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -40,6 +42,27 @@ const USE_CASES = [
   "Authentication",
 ];
 
+const PLATFORMS = [
+  "Web",
+  "Mobile",
+  "Desktop",
+  "iOS",
+  "Android",
+  "Windows",
+  "macOS",
+  "Linux",
+];
+
+const TEAM_ROLES = [
+  "Frontend Developer",
+  "Backend Developer",
+  "Full Stack Developer",
+  "UI/UX Designer",
+  "Product Manager",
+  "DevOps Engineer",
+  "QA Engineer",
+];
+
 const EditProduct = () => {
   const { id } = useParams();
   const [showVariantForm, setShowVariantForm] = useState(false);
@@ -53,12 +76,10 @@ const EditProduct = () => {
   const [difficultyLevel, setDifficultyLevel] = useState("");
   const [demo, setDemo] = useState("");
   const [publicLink, setPublicLink] = useState("");
-  const [type, setType] = useState<string>("");
-  const [useCase, setUseCase] = useState<string>("");
+  const [types, setTypes] = useState<string[]>([]);
+  const [useCases, setUseCases] = useState<string[]>([]);
   const [platform, setPlatform] = useState<string[]>([]);
   const [team, setTeam] = useState<string[]>([]);
-  const [newPlatform, setNewPlatform] = useState("");
-  const [newTeam, setNewTeam] = useState("");
 
   const { data: product, isLoading } = useQuery({
     queryKey: ['product', id],
@@ -87,28 +108,22 @@ const EditProduct = () => {
       setDifficultyLevel(product.difficulty_level || "");
       setDemo(product.demo || "");
       setPublicLink(product.public_link || "");
-      setType(product.type || "");
-      setUseCase(product.use_case || "");
-      
-      const platformArray = product.platform as unknown as (string | number)[];
-      setPlatform(platformArray ? platformArray.map(item => String(item)) : []);
-      
-      const teamArray = product.team as unknown as (string | number)[];
-      setTeam(teamArray ? teamArray.map(item => String(item)) : []);
+      setTypes(product.type ? [product.type] : []);
+      setUseCases(product.use_case ? [product.use_case] : []);
+      setPlatform(Array.isArray(product.platform) ? product.platform : []);
+      setTeam(Array.isArray(product.team) ? product.team : []);
     }
   }, [product]);
 
-  const handleAddPlatform = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && newPlatform.trim()) {
-      setPlatform([...platform, newPlatform.trim()]);
-      setNewPlatform("");
+  const handleAddPlatform = (value: string) => {
+    if (!platform.includes(value)) {
+      setPlatform([...platform, value]);
     }
   };
 
-  const handleAddTeam = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && newTeam.trim()) {
-      setTeam([...team, newTeam.trim()]);
-      setNewTeam("");
+  const handleAddTeam = (value: string) => {
+    if (!team.includes(value)) {
+      setTeam([...team, value]);
     }
   };
 
@@ -319,42 +334,108 @@ const EditProduct = () => {
                   <div>
                     <Label htmlFor="type">Type</Label>
                     <Select
-                      value={type}
-                      onValueChange={setType}
+                      value={types[0] || ""}
+                      onValueChange={(value) => setTypes(prev => 
+                        prev.includes(value) ? prev.filter(t => t !== value) : [...prev, value]
+                      )}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select product type" />
+                        <SelectValue placeholder="Select product types" />
                       </SelectTrigger>
                       <SelectContent>
-                        {PRODUCT_TYPES.map((productType) => (
-                          <SelectItem key={productType} value={productType}>
-                            {productType}
-                          </SelectItem>
-                        ))}
+                        <SelectGroup>
+                          {PRODUCT_TYPES.map((productType) => (
+                            <SelectItem 
+                              key={productType} 
+                              value={productType}
+                            >
+                              {productType}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
                       </SelectContent>
                     </Select>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {types.map((type) => (
+                        <span
+                          key={type}
+                          className="inline-flex items-center gap-1 bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-sm"
+                        >
+                          {type}
+                          <button
+                            onClick={() => setTypes(types.filter(t => t !== type))}
+                            className="hover:text-primary-foreground"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
                   </div>
                   <div>
                     <Label htmlFor="use_case">Use Case</Label>
                     <Select
-                      value={useCase}
-                      onValueChange={setUseCase}
+                      value={useCases[0] || ""}
+                      onValueChange={(value) => setUseCases(prev => 
+                        prev.includes(value) ? prev.filter(uc => uc !== value) : [...prev, value]
+                      )}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select use case" />
+                        <SelectValue placeholder="Select use cases" />
                       </SelectTrigger>
                       <SelectContent>
-                        {USE_CASES.map((useCase) => (
-                          <SelectItem key={useCase} value={useCase}>
-                            {useCase}
-                          </SelectItem>
-                        ))}
+                        <SelectGroup>
+                          {USE_CASES.map((useCase) => (
+                            <SelectItem 
+                              key={useCase} 
+                              value={useCase}
+                            >
+                              {useCase}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
                       </SelectContent>
                     </Select>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {useCases.map((useCase) => (
+                        <span
+                          key={useCase}
+                          className="inline-flex items-center gap-1 bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-sm"
+                        >
+                          {useCase}
+                          <button
+                            onClick={() => setUseCases(useCases.filter(uc => uc !== useCase))}
+                            className="hover:text-primary-foreground"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
                   </div>
                   <div>
                     <Label htmlFor="platform">Platform</Label>
-                    <div className="flex flex-wrap gap-2 mb-2">
+                    <Select
+                      value=""
+                      onValueChange={handleAddPlatform}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select platforms" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {PLATFORMS.map((p) => (
+                            <SelectItem 
+                              key={p} 
+                              value={p}
+                            >
+                              {p}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                    <div className="flex flex-wrap gap-2 mt-2">
                       {platform.map((p) => (
                         <span
                           key={p}
@@ -370,17 +451,30 @@ const EditProduct = () => {
                         </span>
                       ))}
                     </div>
-                    <Input 
-                      id="platform" 
-                      placeholder="Enter platform and press Enter"
-                      value={newPlatform}
-                      onChange={(e) => setNewPlatform(e.target.value)}
-                      onKeyPress={handleAddPlatform}
-                    />
                   </div>
                   <div>
                     <Label htmlFor="team">Team</Label>
-                    <div className="flex flex-wrap gap-2 mb-2">
+                    <Select
+                      value=""
+                      onValueChange={handleAddTeam}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select team roles" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {TEAM_ROLES.map((role) => (
+                            <SelectItem 
+                              key={role} 
+                              value={role}
+                            >
+                              {role}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                    <div className="flex flex-wrap gap-2 mt-2">
                       {team.map((t) => (
                         <span
                           key={t}
@@ -396,13 +490,6 @@ const EditProduct = () => {
                         </span>
                       ))}
                     </div>
-                    <Input 
-                      id="team" 
-                      placeholder="Enter team member role and press Enter"
-                      value={newTeam}
-                      onChange={(e) => setNewTeam(e.target.value)}
-                      onKeyPress={handleAddTeam}
-                    />
                   </div>
                 </div>
               </Card>
