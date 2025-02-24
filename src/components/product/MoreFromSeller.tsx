@@ -17,7 +17,7 @@ interface Product {
   description: string;
   tags: string[];
   category: string;
-  id?: string;
+  productUuid?: string;
   slug?: string;
 }
 
@@ -95,7 +95,7 @@ export function MoreFromSeller({
                 description: product.description || '',
                 tags: product.tech_stack ? product.tech_stack.split(',') : [],
                 category: product.type || '',
-                id: product.id?.toString(),
+                productUuid: product.product_uuid,
                 slug: product.slug
               }} />
             </CarouselItem>
@@ -118,8 +118,8 @@ function ProductCard({
   const navigate = useNavigate();
 
   const handleClick = () => {
-    if (product.slug && product.id) {
-      navigate(`/product/${product.slug}/${product.id}`);
+    if (product.slug && product.productUuid) {
+      navigate(`/product/${product.slug}/${product.productUuid}`);
     }
   };
 
