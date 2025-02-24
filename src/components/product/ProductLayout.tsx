@@ -1,3 +1,4 @@
+
 import React from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { ProductGallery } from "./ProductGallery";
@@ -78,15 +79,18 @@ export function ProductLayout({
           </Card>
 
           <div className="space-y-8">
-            {children}
+            <div>
+              {children}
+            </div>
             <ProductInfo 
               techStack={product.tech_stack}
               productIncludes={product.product_includes}
               difficultyLevel={product.difficulty_level}
             />
-            <ProductReviews reviews={[]} />
-            <MoreFromSeller expert_uuid={""} />
-            {[]}
+            <MoreFromSeller expert_uuid={product.expert_uuid} />
+            {product.related_products?.length > 0 && (
+              <RelatedProducts products={product.related_products} className="mb-24" />
+            )}
           </div>
         </div>
 
@@ -103,6 +107,21 @@ export function ProductLayout({
                   {product.description}
                 </p>
               </Card>
+              <div className="space-y-8">
+                <div>
+                  {children}
+                </div>
+                <ProductInfo 
+                  techStack={product.tech_stack}
+                  productIncludes={product.product_includes}
+                  difficultyLevel={product.difficulty_level}
+                />
+                <ProductReviews reviews={[]} />
+                <MoreFromSeller expert_uuid={product.expert_uuid} />
+                {product.related_products?.length > 0 && (
+                  <RelatedProducts products={product.related_products} className="mb-24" />
+                )}
+              </div>
             </div>
           </div>
 
@@ -128,16 +147,7 @@ export function ProductLayout({
               <MessageCircle className="h-4 w-4" />
               Contact Seller
             </Button>
-            <ProductInfo 
-              techStack={product.tech_stack}
-              productIncludes={product.product_includes}
-              difficultyLevel={product.difficulty_level}
-            />
           </div>
-        </div>
-
-        <div className="hidden lg:block">
-          {children}
         </div>
       </main>
     </div>
