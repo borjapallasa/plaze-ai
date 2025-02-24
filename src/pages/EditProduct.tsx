@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Card } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
@@ -16,8 +15,22 @@ import { ProductStatus } from "@/components/product/ProductStatus";
 import { ProductOrganizationDetails } from "@/components/product/edit/ProductOrganizationDetails";
 
 const EditProduct = () => {
-  const { id } = useParams();
+  const params = useParams();
+  const navigate = useNavigate();
   const { toast } = useToast();
+  const productId = params.id;
+
+  useEffect(() => {
+    if (!productId || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(productId)) {
+      toast({
+        title: "Error",
+        description: "Invalid product ID",
+        variant: "destructive",
+      });
+      navigate("/seller/products");
+    }
+  }, [productId, navigate, toast]);
+
   const [isSaving, setIsSaving] = useState(false);
   const [localVariants, setLocalVariants] = useState<Variant[]>([]);
   const [productName, setProductName] = useState("");
@@ -33,30 +46,42 @@ const EditProduct = () => {
   const [team, setTeam] = useState<string[]>([]);
 
   const { data: product, isLoading: isLoadingProduct } = useQuery({
-    queryKey: ['product', id],
+    queryKey: ['product', productId],
     queryFn: async () => {
+      if (!productId) throw new Error("No product ID provided");
+      
       const { data, error } = await supabase
         .from('products')
         .select('*')
-        .eq('product_uuid', id)
+        .eq('product_uuid', productId)
         .maybeSingle();
-      if (error) throw error;
+        
+      if (error) {
+        console.error('Product fetch error:', error);
+        throw error;
+      }
       return data;
     },
-    enabled: !!id
+    enabled: !!productId
   });
 
   const { data: variants = [], isLoading: isLoadingVariants } = useQuery({
-    queryKey: ['variants', id],
+    queryKey: ['variants', productId],
     queryFn: async () => {
+      if (!productId) throw new Error("No product ID provided");
+
       const { data, error } = await supabase
         .from('variants')
         .select('*')
-        .eq('product_uuid', id);
-      if (error) throw error;
+        .eq('product_uuid', productId);
+        
+      if (error) {
+        console.error('Variants fetch error:', error);
+        throw error;
+      }
       return data || [];
     },
-    enabled: !!id
+    enabled: !!productId
   });
 
   useEffect(() => {
@@ -124,14 +149,22 @@ const EditProduct = () => {
   };
 
   const handleSaveChanges = async () => {
-    if (!id) return;
+    if (!productId) {
+      toast({
+        title: "Error",
+        description: "No product ID provided",
+        variant: "destructive",
+      });
+      return;
+    }
     
     setIsSaving(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) throw new Error("Not authenticated");
 
-      // First, update the product
+      console.log('Saving product with ID:', productId);
+
       const { error: productError } = await supabase
         .from('products')
         .update({
@@ -148,30 +181,27 @@ const EditProduct = () => {
           team: team,
           updated_at: new Date().toISOString()
         })
-        .eq('product_uuid', id);
+        .eq('product_uuid', productId);
 
       if (productError) {
         console.error('Product update error:', productError);
         throw productError;
       }
 
-      // Then handle variants
       if (localVariants.length > 0) {
-        // First delete existing variants
         const { error: deleteError } = await supabase
           .from('variants')
           .delete()
-          .eq('product_uuid', id);
+          .eq('product_uuid', productId);
 
         if (deleteError) {
           console.error('Variant deletion error:', deleteError);
           throw deleteError;
         }
 
-        // Then insert new variants
         const variantsToInsert = localVariants.map(variant => ({
           variant_uuid: variant.id,
-          product_uuid: id,
+          product_uuid: productId,
           user_uuid: session.user.id,
           name: variant.name,
           price: Number(variant.price) || 0,
@@ -179,6 +209,8 @@ const EditProduct = () => {
           highlighted: variant.highlight,
           tags: variant.tags || []
         }));
+
+        console.log('Inserting variants:', variantsToInsert);
 
         const { error: insertError } = await supabase
           .from('variants')
@@ -256,7 +288,7 @@ const EditProduct = () => {
 
                 <Card className="p-3 sm:p-6">
                   <h2 className="text-lg font-medium mb-3 sm:mb-4">Media</h2>
-                  <ProductMediaUpload productUuid={id} />
+                  <ProductMediaUpload productUuid={productId} />
                 </Card>
               </div>
             </div>
