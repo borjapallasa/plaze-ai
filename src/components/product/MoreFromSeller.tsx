@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 interface Product {
   title: string;
@@ -16,6 +17,8 @@ interface Product {
   description: string;
   tags: string[];
   category: string;
+  id?: string;
+  slug?: string;
 }
 
 interface MoreFromSellerProps {
@@ -91,7 +94,9 @@ export function MoreFromSeller({
                 seller: product.seller_name || '',
                 description: product.description || '',
                 tags: product.tech_stack ? product.tech_stack.split(',') : [],
-                category: product.type || ''
+                category: product.type || '',
+                id: product.id?.toString(),
+                slug: product.slug
               }} />
             </CarouselItem>
           ))}
@@ -110,8 +115,19 @@ function ProductCard({
 }: {
   product: Product;
 }) {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (product.slug && product.id) {
+      navigate(`/product/${product.slug}/${product.id}`);
+    }
+  };
+
   return (
-    <Card className="group relative flex flex-col space-y-4 p-4 lg:p-6 hover:bg-accent transition-colors max-w-full py-[24px]">
+    <Card 
+      className="group relative flex flex-col space-y-4 p-4 lg:p-6 hover:bg-accent transition-colors cursor-pointer" 
+      onClick={handleClick}
+    >
       <div className="flex items-start gap-3 lg:gap-4">
         <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg bg-accent flex items-center justify-center overflow-hidden flex-shrink-0">
           <img src={product.image} alt={product.title} className="w-full h-full object-cover" />
