@@ -28,7 +28,7 @@ const EditProduct = () => {
                 </Button>
               </Link>
               <div className="w-full">
-                <h1 className="text-lg sm:text-xl md:text-2xl font-semibold break-words pr-2">Veilleuse LED Personnalisée Pour Enfants Lampe Arc-En-Ciel Avec Prénom</h1>
+                <h1 className="text-lg sm:text-xl md:text-2xl font-semibold break-words pr-2">Edit Product</h1>
                 <p className="text-sm text-muted-foreground mt-2">Product details and configuration</p>
               </div>
             </div>
@@ -44,16 +44,27 @@ const EditProduct = () => {
                 <Card className="p-3 sm:p-6">
                   <div className="space-y-3 sm:space-y-4">
                     <div>
-                      <Label htmlFor="title">Title</Label>
+                      <Label htmlFor="name">Name</Label>
                       <Input
-                        id="title"
-                        placeholder="Enter product title"
-                        defaultValue="Veilleuse LED Personnalisée Pour Enfants Lampe Arc-En-Ciel Avec Prénom"
+                        id="name"
+                        placeholder="Enter product name"
                       />
                     </div>
                     <div>
                       <Label>Description</Label>
                       <ProductEditor />
+                    </div>
+                    <div>
+                      <Label htmlFor="price">Price</Label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2">€</span>
+                        <Input
+                          id="price"
+                          type="number"
+                          placeholder="0.00"
+                          className="pl-7"
+                        />
+                      </div>
                     </div>
                   </div>
                 </Card>
@@ -62,35 +73,55 @@ const EditProduct = () => {
                   <h2 className="text-lg font-medium mb-3 sm:mb-4">Product Details</h2>
                   <div className="space-y-3 sm:space-y-4">
                     <div>
-                      <Label htmlFor="apps">Apps</Label>
-                      <Input id="apps" placeholder="Enter required apps" />
+                      <Label htmlFor="tech_stack">Tech Stack</Label>
+                      <Input 
+                        id="tech_stack" 
+                        placeholder="Enter required tech stack"
+                      />
                     </div>
                     <div>
-                      <Label htmlFor="appsPricing">Apps Pricing</Label>
-                      <Input id="appsPricing" placeholder="Enter apps pricing details" />
+                      <Label htmlFor="tech_stack_price">Tech Stack Pricing</Label>
+                      <Input 
+                        id="tech_stack_price" 
+                        placeholder="Enter tech stack pricing details"
+                      />
                     </div>
                     <div>
-                      <Label htmlFor="included">Included</Label>
-                      <Input id="included" placeholder="Enter what's included" />
+                      <Label htmlFor="product_includes">What's Included</Label>
+                      <Input 
+                        id="product_includes" 
+                        placeholder="Enter what's included in the product"
+                      />
                     </div>
                     <div>
-                      <Label htmlFor="difficultyLevel">Difficulty Level</Label>
-                      <Input id="difficultyLevel" placeholder="Select difficulty level" />
+                      <Label htmlFor="difficulty_level">Difficulty Level</Label>
+                      <Input 
+                        id="difficulty_level" 
+                        placeholder="Select difficulty level"
+                      />
                     </div>
                     <div>
-                      <Label htmlFor="demo">Demo</Label>
-                      <Input id="demo" placeholder="Enter demo link" type="url" />
+                      <Label htmlFor="demo">Demo Link</Label>
+                      <Input 
+                        id="demo" 
+                        placeholder="Enter demo URL" 
+                        type="url"
+                      />
                     </div>
                     <div>
-                      <Label htmlFor="filesLink">Files Link</Label>
-                      <Input id="filesLink" placeholder="Enter files link" type="url" />
+                      <Label htmlFor="public_link">Public Link</Label>
+                      <Input 
+                        id="public_link" 
+                        placeholder="Enter public link" 
+                        type="url"
+                      />
                     </div>
                   </div>
                 </Card>
 
                 <Card className="p-3 sm:p-6">
                   <h2 className="text-lg font-medium mb-3 sm:mb-4">Media</h2>
-                  <ProductMediaUpload />
+                  <ProductMediaUpload productUuid={id} />
                 </Card>
 
                 <Card className="p-3 sm:p-6">
@@ -107,20 +138,12 @@ const EditProduct = () => {
                 <h2 className="text-lg font-medium mb-3 sm:mb-4">Product Organization</h2>
                 <div className="space-y-3 sm:space-y-4">
                   <div>
-                    <Label htmlFor="team">Team</Label>
-                    <Input id="team" placeholder="Select team" />
+                    <Label htmlFor="type">Type</Label>
+                    <Input id="type" placeholder="Select product type" />
                   </div>
                   <div>
-                    <Label htmlFor="industries">Industries</Label>
-                    <Input id="industries" placeholder="Select industries" />
-                  </div>
-                  <div>
-                    <Label htmlFor="platform">Platform</Label>
-                    <Input id="platform" placeholder="Select platform" />
-                  </div>
-                  <div>
-                    <Label htmlFor="useCase">Use Case</Label>
-                    <Input id="useCase" placeholder="Select use case" />
+                    <Label htmlFor="use_case">Use Case</Label>
+                    <Input id="use_case" placeholder="Select use case" />
                   </div>
                 </div>
               </Card>
