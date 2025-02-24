@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,14 @@ import { Link, useParams } from "react-router-dom";
 const EditProduct = () => {
   const { id } = useParams();
   const [showVariantForm, setShowVariantForm] = useState(false);
+  const [productName, setProductName] = useState("");
+  const [productPrice, setProductPrice] = useState("");
+  const [productComparePrice, setProductComparePrice] = useState("");
   
+  const handleAddVariant = () => {
+    setShowVariantForm(true);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <MainHeader />
@@ -48,6 +55,8 @@ const EditProduct = () => {
                       <Input
                         id="name"
                         placeholder="Enter product name"
+                        value={productName}
+                        onChange={(e) => setProductName(e.target.value)}
                       />
                     </div>
                     <div>
@@ -64,6 +73,8 @@ const EditProduct = () => {
                             type="number"
                             placeholder="0.00"
                             className="pl-7"
+                            value={productPrice}
+                            onChange={(e) => setProductPrice(e.target.value)}
                           />
                         </div>
                       </div>
@@ -76,6 +87,8 @@ const EditProduct = () => {
                             type="number"
                             placeholder="0.00"
                             className="pl-7"
+                            value={productComparePrice}
+                            onChange={(e) => setProductComparePrice(e.target.value)}
                           />
                         </div>
                       </div>
@@ -143,7 +156,7 @@ const EditProduct = () => {
                     <h2 className="text-lg font-medium">Variants</h2>
                     {!showVariantForm && (
                       <Button 
-                        onClick={() => setShowVariantForm(true)} 
+                        onClick={handleAddVariant} 
                         variant="outline" 
                         size="sm"
                       >
@@ -152,7 +165,20 @@ const EditProduct = () => {
                       </Button>
                     )}
                   </div>
-                  {showVariantForm && <ProductVariantsEditor />}
+                  {showVariantForm && (
+                    <ProductVariantsEditor
+                      variants={[
+                        {
+                          id: "1",
+                          name: productName,
+                          price: productPrice,
+                          comparePrice: productComparePrice,
+                          highlight: true,
+                          tags: [],
+                        },
+                      ]}
+                    />
+                  )}
                 </Card>
               </div>
             </div>
