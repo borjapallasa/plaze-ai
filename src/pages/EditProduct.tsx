@@ -156,12 +156,14 @@ const EditProduct = () => {
         highlight: true,
         tags: [],
       };
+      console.log("Creating first variant:", firstVariant);
       setVariants([firstVariant]);
       setShowVariantForm(true);
     }
   };
 
   const handleVariantsChange = (newVariants: Variant[]) => {
+    console.log("Updating variants:", newVariants);
     setVariants(newVariants);
   };
 
@@ -211,6 +213,8 @@ const EditProduct = () => {
     );
   }
 
+  console.log("Current state:", { showVariantForm, variants });
+
   return (
     <div className="min-h-screen bg-background">
       <MainHeader />
@@ -255,7 +259,7 @@ const EditProduct = () => {
                         onChange={setProductDescription}
                       />
                     </div>
-                    {!showVariantForm && variants.length === 0 && (
+                    {variants.length === 0 && (
                       <div className="grid sm:grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="price">Price</Label>
@@ -290,7 +294,7 @@ const EditProduct = () => {
                     <div className="pt-2">
                       <div className="flex items-center justify-between mb-4">
                         <Label>Variants</Label>
-                        {!showVariantForm && variants.length === 0 && (
+                        {variants.length === 0 && (
                           <Button 
                             onClick={handleAddVariant} 
                             variant="outline" 
@@ -301,7 +305,7 @@ const EditProduct = () => {
                           </Button>
                         )}
                       </div>
-                      {showVariantForm && variants.length > 0 && (
+                      {variants.length > 0 && (
                         <ProductVariantsEditor
                           variants={variants}
                           onVariantsChange={handleVariantsChange}
