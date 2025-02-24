@@ -1003,6 +1003,7 @@ export type Database = {
           demo: string | null
           description: string | null
           difficulty_level: string | null
+          expert_uuid: string | null
           fees_amount: number | null
           free_or_paid:
             | Database["public"]["Enums"]["product_free_or_paid"]
@@ -1038,6 +1039,7 @@ export type Database = {
           demo?: string | null
           description?: string | null
           difficulty_level?: string | null
+          expert_uuid?: string | null
           fees_amount?: number | null
           free_or_paid?:
             | Database["public"]["Enums"]["product_free_or_paid"]
@@ -1073,6 +1075,7 @@ export type Database = {
           demo?: string | null
           description?: string | null
           difficulty_level?: string | null
+          expert_uuid?: string | null
           fees_amount?: number | null
           free_or_paid?:
             | Database["public"]["Enums"]["product_free_or_paid"]
@@ -1099,6 +1102,13 @@ export type Database = {
           utm_term?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "products_expert_uuid_fkey"
+            columns: ["expert_uuid"]
+            isOneToOne: false
+            referencedRelation: "experts"
+            referencedColumns: ["expert_uuid"]
+          },
           {
             foreignKeyName: "products_user_uuid_fkey"
             columns: ["user_uuid"]

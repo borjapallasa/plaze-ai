@@ -5,6 +5,8 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 
 interface Product {
   title: string;
@@ -17,16 +19,36 @@ interface Product {
 }
 
 interface MoreFromSellerProps {
-  products: Product[];
+  expert_uuid?: string;
   className?: string;
 }
 
+const fetchExpertProducts = async (expert_uuid: string) => {
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('expert_uuid', expert_uuid)
+    .order('sales_amount', { ascending: false });
+
+  if (error) {
+    throw error;
+  }
+
+  return data || [];
+};
+
 export function MoreFromSeller({
-  products,
+  expert_uuid,
   className
 }: MoreFromSellerProps) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
+
+  const { data: products = [], isLoading } = useQuery({
+    queryKey: ['expertProducts', expert_uuid],
+    queryFn: () => expert_uuid ? fetchExpertProducts(expert_uuid) : Promise.resolve([]),
+    enabled: !!expert_uuid
+  });
 
   React.useEffect(() => {
     if (!api) {
@@ -37,24 +59,44 @@ export function MoreFromSeller({
     });
   }, [api]);
 
-  return <div>
+  if (isLoading || !products.length) {
+    return null;
+  }
+
+  return (
+    <div>
       <h2 className="text-2xl font-bold mb-6 pt-[50px]">More from seller</h2>
       
-      <Carousel setApi={setApi} className="w-full" opts={{
-      align: "start",
-      dragFree: true
-    }}>
+      <Carousel 
+        setApi={setApi} 
+        className="w-full" 
+        opts={{
+          align: "start",
+          dragFree: true
+        }}
+      >
         <CarouselContent className="-ml-4">
-          {products.map((product, index) => <CarouselItem key={index} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/4">
-              <ProductCard product={product} />
-            </CarouselItem>)}
+          {products.map((product, index) => (
+            <CarouselItem key={index} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/4">
+              <ProductCard product={{
+                title: product.name || '',
+                price: product.price?.toString() || '0',
+                image: product.thumbnail || '',
+                seller: product.seller_name || '',
+                description: product.description || '',
+                tags: product.tags || [],
+                category: product.type || ''
+              }} />
+            </CarouselItem>
+          ))}
         </CarouselContent>
         <div className="flex items-center justify-end gap-2 mt-4">
           <CarouselPrevious className="static translate-y-0" />
           <CarouselNext className="static translate-y-0" />
         </div>
       </Carousel>
-    </div>;
+    </div>
+  );
 }
 
 function ProductCard({
@@ -62,7 +104,8 @@ function ProductCard({
 }: {
   product: Product;
 }) {
-  return <Card className="group relative flex flex-col space-y-4 p-4 lg:p-6 hover:bg-accent transition-colors max-w-full py-[24px]">
+  return (
+    <Card className="group relative flex flex-col space-y-4 p-4 lg:p-6 hover:bg-accent transition-colors max-w-full py-[24px]">
       <div className="flex items-start gap-3 lg:gap-4">
         <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg bg-accent flex items-center justify-center overflow-hidden flex-shrink-0">
           <img src={product.image} alt={product.title} className="w-full h-full object-cover" />
@@ -87,13 +130,16 @@ function ProductCard({
 
       <div className="flex items-center justify-between -mt-3">
         <div className="flex gap-2 flex-wrap">
-          {product.tags.slice(0, 2).map((tag, index) => <span key={index} className="text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full text-xs">
+          {product.tags.slice(0, 2).map((tag, index) => (
+            <span key={index} className="text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full text-xs">
               #{tag}
-            </span>)}
+            </span>
+          ))}
         </div>
         <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
           <ArrowRight className="h-4 w-4" />
         </Button>
       </div>
-    </Card>;
+    </Card>
+  );
 }
