@@ -13,9 +13,10 @@ interface ExpertContentProps {
   services: Service[];
   moreProducts: any[];
   reviews: any[];
+  community?: any | null; // Making it optional since it might be null
 }
 
-export const ExpertContent = ({ expert, services, moreProducts, reviews }: ExpertContentProps) => {
+export const ExpertContent = ({ expert, services, moreProducts, reviews, community }: ExpertContentProps) => {
   return (
     <div className="container mx-auto px-4">
       {/* Desktop Layout */}
