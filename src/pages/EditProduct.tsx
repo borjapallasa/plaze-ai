@@ -15,7 +15,6 @@ import {
 import { MainHeader } from "@/components/MainHeader";
 import { ProductEditor } from "@/components/product/ProductEditor";
 import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
-import { ProductStatus } from "@/components/product/ProductStatus";
 import { ProductVariantsEditor } from "@/components/product/ProductVariants";
 import { ArrowLeft, Plus, X } from "lucide-react";
 import { Link, useParams, useNavigate } from "react-router-dom";
@@ -23,14 +22,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
 
+type ProductStatus = 'draft' | 'published' | 'archived';
+type ProductType = 'template' | 'guide or manual';
+
 const PRODUCT_TYPES = [
-  "Template",
-  "Plugin",
-  "Component",
-  "Full Application",
-  "API",
-  "Library",
-];
+  "template",
+  "guide or manual"
+] as const;
 
 const USE_CASES = [
   "E-commerce",
@@ -76,14 +74,18 @@ const EditProduct = () => {
   const [productIncludes, setProductIncludes] = useState("");
   const [difficultyLevel, setDifficultyLevel] = useState("");
   const [demo, setDemo] = useState("");
-  const [types, setTypes] = useState<string[]>([]);
+  const [productStatus, setProductStatus] = useState<ProductStatus>("draft");
+  const [type, setType] = useState<ProductType>("template");
   const [useCases, setUseCases] = useState<string[]>([]);
   const [platform, setPlatform] = useState<string[]>([]);
   const [team, setTeam] = useState<string[]>([]);
 
-  const handleTypeChange = (value: string) => {
-    if (!value) return;
-    setTypes(prev => prev.includes(value) ? prev.filter(t => t !== value) : [...prev, value]);
+  const handleStatusChange = (value: ProductStatus) => {
+    setProductStatus(value);
+  };
+
+  const handleTypeChange = (value: ProductType) => {
+    setType(value);
   };
 
   const handleUseCaseChange = (value: string) => {
@@ -117,7 +119,6 @@ const EditProduct = () => {
               onClick={(e) => {
                 e.stopPropagation();
                 const newItems = items.filter(i => i !== item);
-                if (items === types) setTypes(newItems);
                 if (items === useCases) setUseCases(newItems);
                 if (items === platform) setPlatform(newItems);
                 if (items === team) setTeam(newItems);
@@ -174,10 +175,11 @@ const EditProduct = () => {
       setProductIncludes(product.product_includes || "");
       setDifficultyLevel(product.difficulty_level || "");
       setDemo(product.demo || "");
-      setTypes(product.type ? [product.type] : []);
-      setUseCases(product.use_case ? product.use_case : []);
-      setPlatform(product.platform || []);
-      setTeam(product.team || []);
+      setProductStatus(product.status || "draft");
+      setType(product.type || "template");
+      setUseCases(Array.isArray(product.use_case) ? product.use_case : []);
+      setPlatform(Array.isArray(product.platform) ? product.platform : []);
+      setTeam(Array.isArray(product.team) ? product.team : []);
     }
   }, [product]);
 
@@ -194,7 +196,8 @@ const EditProduct = () => {
           product_includes: productIncludes,
           difficulty_level: difficultyLevel,
           demo: demo,
-          type: types[0], // Since the database schema expects a single type
+          status: productStatus,
+          type: type,
           use_case: useCases,
           platform: platform,
           team: team
@@ -317,12 +320,24 @@ const EditProduct = () => {
                 <h1 className="text-lg sm:text-xl md:text-2xl font-semibold break-words pr-2">Edit Product</h1>
                 <div className="flex items-center justify-between mt-2">
                   <p className="text-sm text-muted-foreground">Product details and configuration</p>
-                  <Button 
-                    onClick={handleSave}
-                    disabled={isSaving}
-                  >
-                    {isSaving ? "Saving..." : "Save changes"}
-                  </Button>
+                  <div className="flex items-center gap-4">
+                    <Select value={productStatus} onValueChange={handleStatusChange}>
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="draft">Draft</SelectItem>
+                        <SelectItem value="published">Published</SelectItem>
+                        <SelectItem value="archived">Archived</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button 
+                      onClick={handleSave}
+                      disabled={isSaving}
+                    >
+                      {isSaving ? "Saving..." : "Save changes"}
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -331,10 +346,6 @@ const EditProduct = () => {
           <div className="space-y-3 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-6">
             <div className="lg:col-span-8">
               <div className="space-y-3 sm:space-y-6">
-                <div className="lg:hidden">
-                  <ProductStatus />
-                </div>
-
                 <Card className="p-3 sm:p-6">
                   <div className="space-y-3 sm:space-y-4">
                     <div>
@@ -440,20 +451,17 @@ const EditProduct = () => {
             </div>
 
             <div className="lg:col-span-4 space-y-3 sm:space-y-6">
-              <div className="hidden lg:block">
-                <ProductStatus />
-              </div>
               <Card className="p-3 sm:p-6">
                 <h2 className="text-lg font-medium mb-3 sm:mb-4">Product Organization</h2>
                 <div className="space-y-4">
                   <div>
                     <Label htmlFor="type" className="text-sm mb-1.5">Type</Label>
                     <Select
-                      value=""
+                      value={type}
                       onValueChange={handleTypeChange}
                     >
                       <SelectTrigger className="h-auto min-h-[2.75rem] py-1.5 px-3">
-                        {renderSelectedTags(types) || <SelectValue placeholder="Select product types" />}
+                        <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
