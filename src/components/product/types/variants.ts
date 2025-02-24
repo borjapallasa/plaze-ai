@@ -1,7 +1,6 @@
 
 export interface Variant {
-  variant_uuid?: string; // Database ID
-  id: string;           // Frontend ID
+  id: string;
   name?: string;
   price: string | number;
   comparePrice: string | number;
@@ -9,8 +8,6 @@ export interface Variant {
   tags?: string[];
   label?: string;
   features?: string[];
-  product_uuid?: string;
-  user_uuid?: string;
 }
 
 export interface ProductVariantsEditorProps {
