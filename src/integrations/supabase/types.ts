@@ -1043,6 +1043,7 @@ export type Database = {
           affiliation_amount: number | null
           change_reasons: string | null
           changes_neeeded: string | null
+          compare_at_price: number | null
           created_at: string
           demo: string | null
           description: string | null
@@ -1083,6 +1084,7 @@ export type Database = {
           affiliation_amount?: number | null
           change_reasons?: string | null
           changes_neeeded?: string | null
+          compare_at_price?: number | null
           created_at?: string
           demo?: string | null
           description?: string | null
@@ -1123,6 +1125,7 @@ export type Database = {
           affiliation_amount?: number | null
           change_reasons?: string | null
           changes_neeeded?: string | null
+          compare_at_price?: number | null
           created_at?: string
           demo?: string | null
           description?: string | null

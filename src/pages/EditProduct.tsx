@@ -51,6 +51,7 @@ const EditProduct = () => {
       setProductName(product.name || "");
       setProductDescription(product.description || "");
       setProductPrice(product.price ? product.price.toString() : "");
+      setProductComparePrice(product.compare_at_price ? product.compare_at_price.toString() : "");
       setTechStack(product.tech_stack || "");
       setTechStackPrice(product.tech_stack_price || "");
       setProductIncludes(product.product_includes || "");
