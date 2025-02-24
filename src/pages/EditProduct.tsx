@@ -16,7 +16,7 @@ import { ProductEditor } from "@/components/product/ProductEditor";
 import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
 import { ProductVariantsEditor } from "@/components/product/ProductVariants";
 import { ArrowLeft, Plus, X } from "lucide-react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
@@ -181,6 +181,8 @@ const EditProduct = () => {
   const handleSave = async () => {
     try {
       setIsSaving(true);
+      console.log('Saving product with ID:', id);
+      
       const { error } = await supabase
         .from('products')
         .update({
@@ -199,15 +201,16 @@ const EditProduct = () => {
         })
         .eq('product_uuid', id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
 
       toast({
         title: "Success",
         description: "Product updated successfully",
       });
-
-      // Navigate back to the products list
-      navigate('/seller/products');
+      
     } catch (error) {
       console.error('Error updating product:', error);
       toast({
