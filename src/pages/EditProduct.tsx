@@ -240,34 +240,43 @@ const EditProduct = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) throw new Error("Not authenticated");
 
-      const lastVariant = updatedVariants[updatedVariants.length - 1];
-      
-      const { error } = await supabase
+      // First, delete all existing variants for this product
+      const { error: deleteError } = await supabase
         .from('variants')
-        .upsert({
-          variant_uuid: lastVariant.variant_uuid || lastVariant.id,
-          product_uuid: id,
-          user_uuid: session.user.id,
-          name: lastVariant.name,
-          price: parseFloat(lastVariant.price),
-          compare_price: parseFloat(lastVariant.comparePrice),
-          highlighted: lastVariant.highlight,
-          tags: lastVariant.tags
-        });
+        .delete()
+        .eq('product_uuid', id);
 
-      if (error) throw error;
+      if (deleteError) throw deleteError;
+
+      // Then, insert all updated variants
+      const variantsToInsert = updatedVariants.map(variant => ({
+        variant_uuid: variant.variant_uuid || variant.id,
+        product_uuid: id,
+        user_uuid: session.user.id,
+        name: variant.name || '',
+        price: parseFloat(variant.price.toString()),
+        compare_price: parseFloat(variant.comparePrice.toString()),
+        highlighted: variant.highlight || false,
+        tags: variant.tags || []
+      }));
+
+      const { error: insertError } = await supabase
+        .from('variants')
+        .insert(variantsToInsert);
+
+      if (insertError) throw insertError;
 
       await refetchVariants();
       
       toast({
         title: "Success",
-        description: "Variant has been updated",
+        description: "All variants have been saved successfully",
       });
     } catch (error) {
-      console.error('Error updating variant:', error);
+      console.error('Error saving variants:', error);
       toast({
         title: "Error",
-        description: "Failed to update variant",
+        description: "Failed to save variants. Please try again.",
         variant: "destructive",
       });
     } finally {
