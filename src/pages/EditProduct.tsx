@@ -17,11 +17,10 @@ import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
 import { ProductStatus } from "@/components/product/ProductStatus";
 import { ProductVariantsEditor } from "@/components/product/ProductVariants";
 import { ArrowLeft, Plus, X, Loader2 } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
-import { Variant } from "@/components/product/types/variants";
 import type { Json } from "@/integrations/supabase/types";
 
 const PRODUCT_TYPES = [
@@ -77,8 +76,10 @@ type Variant = {
 
 const EditProduct = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
+  const [isProductSaving, setIsProductSaving] = useState(false);
   const [localVariants, setLocalVariants] = useState<Variant[]>([]);
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
@@ -279,6 +280,49 @@ const EditProduct = () => {
     }
   };
 
+  const handleSaveProduct = async () => {
+    setIsProductSaving(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) throw new Error("Not authenticated");
+
+      const { error } = await supabase
+        .from('products')
+        .update({
+          name: productName,
+          description: productDescription,
+          tech_stack: techStack,
+          tech_stack_price: techStackPrice,
+          product_includes: productIncludes,
+          difficulty_level: difficultyLevel,
+          demo: demo,
+          type: types[0],
+          use_case: useCases[0],
+          platform: platform,
+          team: team,
+          updated_at: new Date().toISOString()
+        })
+        .eq('product_uuid', id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Product has been updated successfully",
+      });
+
+    } catch (error) {
+      console.error('Error saving product:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save product. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsProductSaving(false);
+    }
+  };
+
   if (isLoadingProduct || isLoadingVariants) {
     return (
       <div className="min-h-screen bg-background">
@@ -302,9 +346,21 @@ const EditProduct = () => {
                   <ArrowLeft className="h-4 w-4" />
                 </Button>
               </Link>
-              <div className="w-full">
-                <h1 className="text-lg sm:text-xl md:text-2xl font-semibold break-words pr-2">Edit Product</h1>
-                <p className="text-sm text-muted-foreground mt-2">Product details and configuration</p>
+              <div className="w-full flex justify-between items-start">
+                <div>
+                  <h1 className="text-lg sm:text-xl md:text-2xl font-semibold break-words pr-2">Edit Product</h1>
+                  <p className="text-sm text-muted-foreground mt-2">Product details and configuration</p>
+                </div>
+                <Button 
+                  onClick={handleSaveProduct}
+                  disabled={isProductSaving}
+                  size="sm"
+                >
+                  {isProductSaving ? (
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  ) : null}
+                  Save changes
+                </Button>
               </div>
             </div>
           </div>
