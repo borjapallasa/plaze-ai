@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Heart, Crown } from "lucide-react";
+import { Heart, Crown, CheckCircle2, Users, Timer } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface Expert {
@@ -15,8 +15,9 @@ interface Expert {
   location?: string;
   description?: string;
   completed_projects?: number;
-  client_satisfaction?: number;  // Changed from string to number
+  client_satisfaction?: number;
   response_rate?: number;
+  areas?: string[];
 }
 
 interface ExpertCardProps {
@@ -81,13 +82,46 @@ export const ExpertCard = ({ expert }: ExpertCardProps) => {
         </div>
 
         {/* Stats Section */}
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-          <span className="text-base text-[#333333]">Projects completed: {expert.completed_projects || 0}</span>
-          <div className="flex items-center gap-1">
-            <Crown className="h-4 w-4 text-[#555555]" />
-            <span className="text-base text-[#333333]">{expert.client_satisfaction || 100}% Client Satisfaction</span>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="flex items-center gap-2 bg-gray-50 p-3 rounded-lg">
+            <CheckCircle2 className="h-5 w-5 text-green-600" />
+            <div>
+              <p className="text-sm text-gray-600">Projects completed</p>
+              <p className="text-lg font-semibold">{expert.completed_projects || 0}</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2 bg-gray-50 p-3 rounded-lg">
+            <Users className="h-5 w-5 text-blue-600" />
+            <div>
+              <p className="text-sm text-gray-600">Client satisfaction</p>
+              <p className="text-lg font-semibold">{expert.client_satisfaction || 100}%</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2 bg-gray-50 p-3 rounded-lg">
+            <Timer className="h-5 w-5 text-purple-600" />
+            <div>
+              <p className="text-sm text-gray-600">Response rate</p>
+              <p className="text-lg font-semibold">{expert.response_rate || 100}%</p>
+            </div>
           </div>
         </div>
+
+        {/* Areas of Expertise */}
+        {expert.areas && expert.areas.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {expert.areas.map((area, index) => (
+              <Badge 
+                key={index}
+                variant="secondary"
+                className="bg-gray-100 text-gray-700 hover:bg-gray-200"
+              >
+                {area}
+              </Badge>
+            ))}
+          </div>
+        )}
 
         {/* Description Section */}
         <p className="text-base text-[#888888]">{expert.description || 'No description available'}</p>
