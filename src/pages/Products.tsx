@@ -14,6 +14,7 @@ interface Product {
   user_uuid: string;
   tech_stack: string;
   slug: string;
+  product_uuid: string;
 }
 
 export default function Products() {
@@ -72,7 +73,7 @@ export default function Products() {
               return (
                 <ProductCard
                   key={product.id}
-                  id={product.id.toString()}
+                  id={product.product_uuid}
                   slug={product.slug}
                   title={product.name}
                   price="$99.99"
