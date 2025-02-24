@@ -21,7 +21,7 @@ export function ImageGrid({ images, onImageClick, onRemoveImage }: ImageGridProp
         >
           <img
             src={image.url}
-            alt={image.file_name}
+            alt={image.alt_text || image.file_name}
             className="w-full h-full object-cover rounded-lg transition-transform group-hover:scale-105"
           />
           <Button

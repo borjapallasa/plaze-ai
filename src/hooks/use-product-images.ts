@@ -9,6 +9,7 @@ export interface ProductImage {
   storage_path: string;
   is_primary: boolean;
   file_name: string;
+  alt_text?: string;
 }
 
 export function useProductImages(productUuid?: string) {
@@ -124,7 +125,7 @@ export function useProductImages(productUuid?: string) {
     }
   }, [productUuid, images, toast]);
 
-  const updateImage = async (imageId: number, updates: { file_name?: string }) => {
+  const updateImage = async (imageId: number, updates: { file_name?: string; alt_text?: string }) => {
     try {
       const { error } = await supabase
         .from('product_images')

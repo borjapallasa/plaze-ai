@@ -18,10 +18,14 @@ export function ProductMediaUpload({ productUuid }: ProductMediaUploadProps) {
   const [previewImage, setPreviewImage] = useState<ProductImage | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editedFileName, setEditedFileName] = useState("");
+  const [editedAltText, setEditedAltText] = useState("");
 
   const handleSaveEdit = async () => {
     if (!previewImage) return;
-    await updateImage(previewImage.id, { file_name: editedFileName });
+    await updateImage(previewImage.id, { 
+      file_name: editedFileName,
+      alt_text: editedAltText
+    });
     setIsEditing(false);
   };
 
@@ -36,6 +40,7 @@ export function ProductMediaUpload({ productUuid }: ProductMediaUploadProps) {
 
   const handleEditClick = (image: ProductImage) => {
     setEditedFileName(image.file_name);
+    setEditedAltText(image.alt_text || image.file_name);
     setIsEditing(true);
   };
 
@@ -62,14 +67,26 @@ export function ProductMediaUpload({ productUuid }: ProductMediaUploadProps) {
               <DialogHeader>
                 <DialogTitle className="flex items-center justify-between">
                   {isEditing ? (
-                    <div className="flex-1 space-y-2">
-                      <Label htmlFor="fileName">File name</Label>
-                      <Input
-                        id="fileName"
-                        value={editedFileName}
-                        onChange={(e) => setEditedFileName(e.target.value)}
-                        className="w-full"
-                      />
+                    <div className="flex-1 space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="fileName">File name</Label>
+                        <Input
+                          id="fileName"
+                          value={editedFileName}
+                          onChange={(e) => setEditedFileName(e.target.value)}
+                          className="w-full"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="altText">Alt text</Label>
+                        <Input
+                          id="altText"
+                          value={editedAltText}
+                          onChange={(e) => setEditedAltText(e.target.value)}
+                          className="w-full"
+                          placeholder="Describe the image for accessibility"
+                        />
+                      </div>
                     </div>
                   ) : (
                     <span>{previewImage.file_name}</span>
@@ -80,7 +97,7 @@ export function ProductMediaUpload({ productUuid }: ProductMediaUploadProps) {
               <div className="relative aspect-[3/2] w-full overflow-hidden rounded-lg">
                 <img
                   src={previewImage.url}
-                  alt={previewImage.file_name}
+                  alt={previewImage.alt_text || previewImage.file_name}
                   className="w-full h-full object-contain"
                 />
               </div>
@@ -99,7 +116,7 @@ export function ProductMediaUpload({ productUuid }: ProductMediaUploadProps) {
                       className="gap-2"
                     >
                       <Pencil className="h-4 w-4" />
-                      Rename
+                      Edit details
                     </Button>
                   )}
                 </div>
