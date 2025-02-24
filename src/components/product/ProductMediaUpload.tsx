@@ -4,6 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Plus, UploadCloud, X } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  Dialog,
+  DialogContent,
+} from "@/components/ui/dialog";
 
 interface ProductImage {
   id: number;
@@ -19,6 +23,7 @@ interface ProductMediaUploadProps {
 export function ProductMediaUpload({ productUuid }: ProductMediaUploadProps) {
   const [images, setImages] = useState<ProductImage[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [previewImage, setPreviewImage] = useState<ProductImage | null>(null);
   const { toast } = useToast();
 
   const uploadImage = useCallback(async (file: File) => {
@@ -175,23 +180,44 @@ export function ProductMediaUpload({ productUuid }: ProductMediaUploadProps) {
 
       <div className="grid grid-cols-4 gap-4">
         {images.map((image) => (
-          <div key={image.id} className="relative group aspect-square rounded-lg border bg-muted">
+          <div 
+            key={image.id} 
+            className="relative group aspect-square rounded-lg border bg-muted cursor-pointer overflow-hidden"
+            onClick={() => setPreviewImage(image)}
+          >
             <img
               src={image.url}
               alt={image.file_name}
-              className="w-full h-full object-cover rounded-lg"
+              className="w-full h-full object-cover rounded-lg transition-transform group-hover:scale-105"
             />
             <Button
               variant="destructive"
               size="icon"
               className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-              onClick={() => handleRemoveImage(image.id, image.url)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRemoveImage(image.id, image.url);
+              }}
             >
               <X className="h-4 w-4" />
             </Button>
           </div>
         ))}
       </div>
+
+      <Dialog open={!!previewImage} onOpenChange={() => setPreviewImage(null)}>
+        <DialogContent className="max-w-3xl">
+          {previewImage && (
+            <div className="relative aspect-[3/2] w-full overflow-hidden rounded-lg">
+              <img
+                src={previewImage.url}
+                alt={previewImage.file_name}
+                className="w-full h-full object-contain"
+              />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
