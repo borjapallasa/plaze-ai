@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,7 +15,7 @@ import { MainHeader } from "@/components/MainHeader";
 import { ProductEditor } from "@/components/product/ProductEditor";
 import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
 import { ProductVariantsEditor } from "@/components/product/ProductVariants";
-import { ArrowLeft, Plus, X } from "lucide-react";
+import { ArrowLeft, Plus, X, Check } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
@@ -26,7 +25,7 @@ type ProductStatus = 'draft' | 'active' | 'inactive';
 
 const USE_CASES = [
   "E-commerce",
-  "Blog",
+  "Blog", 
   "Portfolio",
   "Dashboard",
   "Social Network",
@@ -224,8 +223,10 @@ const EditProduct = () => {
       console.log('Update response:', data);
 
       toast({
-        title: "Success",
-        description: "Product updated successfully",
+        title: "Saved",
+        description: "All changes have been saved successfully",
+        className: "bg-[#F2FCE2] border-green-100 text-green-800",
+        duration: 2000,
       });
       
     } catch (error) {
