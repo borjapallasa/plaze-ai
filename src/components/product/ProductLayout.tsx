@@ -58,7 +58,7 @@ export function ProductLayout({
             selectedVariant={selectedVariant}
             onVariantChange={onVariantChange}
             onAddToCart={onAddToCart}
-            className="mb-2"
+            className="mb-1"
           />
           <Button 
             variant="outline" 
@@ -104,7 +104,7 @@ export function ProductLayout({
               selectedVariant={selectedVariant}
               onVariantChange={onVariantChange}
               onAddToCart={onAddToCart}
-              className="mb-2"
+              className="mb-1"
             />
             <Button 
               variant="outline" 
