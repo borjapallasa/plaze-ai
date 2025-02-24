@@ -173,21 +173,23 @@ export default function Product() {
         onVariantChange={setSelectedVariant}
         onAddToCart={handleAddToCart}
       >
-        <div className="hidden lg:block lg:col-span-1 lg:col-start-3">
-          <ProductInfo 
-            techStack={product.tech_stack}
-            productIncludes={product.product_includes}
-            difficultyLevel={product.difficulty_level}
-            className="mb-8"
-          />
-        </div>
-        <div className="lg:col-span-3">
-          <ProductDemo demo={product.demo} />
-          <ProductReviews reviews={reviews} className="mb-8" />
-          <MoreFromSeller expert_uuid={product.expert_uuid} className="mb-8" />
-          {relatedProducts.length > 0 && (
-            <RelatedProducts products={relatedProducts} className="mb-24" />
-          )}
+        <div className="lg:col-span-3 grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2">
+            <ProductDemo demo={product.demo} />
+            <ProductReviews reviews={reviews} className="mb-8" />
+            <MoreFromSeller expert_uuid={product.expert_uuid} className="mb-8" />
+            {relatedProducts.length > 0 && (
+              <RelatedProducts products={relatedProducts} className="mb-24" />
+            )}
+          </div>
+          <div className="lg:col-span-1">
+            <ProductInfo 
+              techStack={product.tech_stack}
+              productIncludes={product.product_includes}
+              difficultyLevel={product.difficulty_level}
+              className="mb-8 lg:mt-[-24px]"
+            />
+          </div>
         </div>
       </ProductLayout>
       <StickyATC 
