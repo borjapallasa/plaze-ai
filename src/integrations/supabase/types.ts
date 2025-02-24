@@ -622,6 +622,51 @@ export type Database = {
         }
         Relationships: []
       }
+      experts: {
+        Row: {
+          client_satisfaction: string | null
+          completed_projects: number | null
+          created_at: string
+          description: string | null
+          expert_uuid: string
+          id: number
+          info: string | null
+          location: string | null
+          name: string | null
+          response_rate: number | null
+          slug: string | null
+          title: string | null
+        }
+        Insert: {
+          client_satisfaction?: string | null
+          completed_projects?: number | null
+          created_at?: string
+          description?: string | null
+          expert_uuid: string
+          id?: number
+          info?: string | null
+          location?: string | null
+          name?: string | null
+          response_rate?: number | null
+          slug?: string | null
+          title?: string | null
+        }
+        Update: {
+          client_satisfaction?: string | null
+          completed_projects?: number | null
+          created_at?: string
+          description?: string | null
+          expert_uuid?: string
+          id?: number
+          info?: string | null
+          location?: string | null
+          name?: string | null
+          response_rate?: number | null
+          slug?: string | null
+          title?: string | null
+        }
+        Relationships: []
+      }
       jobs: {
         Row: {
           amount: number | null
@@ -772,24 +817,6 @@ export type Database = {
             referencedColumns: ["user_uuid"]
           },
         ]
-      }
-      members: {
-        Row: {
-          created_at: string
-          id: number
-          member_uuid: string
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          member_uuid: string
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          member_uuid?: string
-        }
-        Relationships: []
       }
       messages: {
         Row: {
@@ -1283,21 +1310,54 @@ export type Database = {
       }
       services: {
         Row: {
+          active_subscriptions_count: number | null
           created_at: string
+          description: string | null
+          features: Json | null
           id: number
+          monthly_recurring_revenue: number | null
+          name: string | null
+          payment_url: string | null
+          price: number | null
+          revenue_amount: number | null
           service_uuid: string
+          stripe_price_id: string | null
+          stripe_product_id: string | null
+          type: Database["public"]["Enums"]["service_type"] | null
           user_uuid: string | null
         }
         Insert: {
+          active_subscriptions_count?: number | null
           created_at?: string
+          description?: string | null
+          features?: Json | null
           id?: number
+          monthly_recurring_revenue?: number | null
+          name?: string | null
+          payment_url?: string | null
+          price?: number | null
+          revenue_amount?: number | null
           service_uuid?: string
+          stripe_price_id?: string | null
+          stripe_product_id?: string | null
+          type?: Database["public"]["Enums"]["service_type"] | null
           user_uuid?: string | null
         }
         Update: {
+          active_subscriptions_count?: number | null
           created_at?: string
+          description?: string | null
+          features?: Json | null
           id?: number
+          monthly_recurring_revenue?: number | null
+          name?: string | null
+          payment_url?: string | null
+          price?: number | null
+          revenue_amount?: number | null
           service_uuid?: string
+          stripe_price_id?: string | null
+          stripe_product_id?: string | null
+          type?: Database["public"]["Enums"]["service_type"] | null
           user_uuid?: string | null
         }
         Relationships: [
@@ -1648,6 +1708,7 @@ export type Database = {
       review_status: "published" | "not published"
       service_price_status: "active" | "inactive"
       service_subscription_status: "active" | "inactive"
+      service_type: "one time" | "monthly"
       signup_via:
         | "sign-up"
         | "sign-up community"
