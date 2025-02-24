@@ -22,7 +22,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
 
-type ProductStatus = 'draft' | 'published' | 'archived';
+type ProductStatus = 'draft' | 'active' | 'inactive';
 type ProductType = 'template' | 'guide or manual';
 
 const PRODUCT_TYPES = [
@@ -175,11 +175,11 @@ const EditProduct = () => {
       setProductIncludes(product.product_includes || "");
       setDifficultyLevel(product.difficulty_level || "");
       setDemo(product.demo || "");
-      setProductStatus(product.status || "draft");
-      setType(product.type || "template");
-      setUseCases(Array.isArray(product.use_case) ? product.use_case : []);
-      setPlatform(Array.isArray(product.platform) ? product.platform : []);
-      setTeam(Array.isArray(product.team) ? product.team : []);
+      setProductStatus((product.status as ProductStatus) || "draft");
+      setType((product.type as ProductType) || "template");
+      setUseCases(Array.isArray(product.use_case) ? product.use_case.map(String) : []);
+      setPlatform(Array.isArray(product.platform) ? product.platform.map(String) : []);
+      setTeam(Array.isArray(product.team) ? product.team.map(String) : []);
     }
   }, [product]);
 
@@ -327,8 +327,8 @@ const EditProduct = () => {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="draft">Draft</SelectItem>
-                        <SelectItem value="published">Published</SelectItem>
-                        <SelectItem value="archived">Archived</SelectItem>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="inactive">Inactive</SelectItem>
                       </SelectContent>
                     </Select>
                     <Button 
