@@ -146,6 +146,25 @@ const EditProduct = () => {
     );
   };
 
+  const handleAddVariant = () => {
+    if (variants.length === 0) {
+      const firstVariant: Variant = {
+        id: "1",
+        name: productName,
+        price: productPrice || "0",
+        comparePrice: productComparePrice || "0",
+        highlight: true,
+        tags: [],
+      };
+      setVariants([firstVariant]);
+      setShowVariantForm(true);
+    }
+  };
+
+  const handleVariantsChange = (newVariants: Variant[]) => {
+    setVariants(newVariants);
+  };
+
   const { data: product, isLoading } = useQuery({
     queryKey: ['product', id],
     queryFn: async () => {
@@ -182,43 +201,6 @@ const EditProduct = () => {
       setTeam(teamData.map(item => String(item)));
     }
   }, [product]);
-
-  const handleAddPlatform = (value: string) => {
-    if (!platform.includes(value)) {
-      setPlatform([...platform, value]);
-    }
-  };
-
-  const handleAddTeam = (value: string) => {
-    if (!team.includes(value)) {
-      setTeam([...team, value]);
-    }
-  };
-
-  const handleRemovePlatform = (platformToRemove: string) => {
-    setPlatform(platform.filter(p => p !== platformToRemove));
-  };
-
-  const handleRemoveTeam = (teamToRemove: string) => {
-    setTeam(team.filter(t => t !== teamToRemove));
-  };
-
-  const handleAddVariant = () => {
-    const newVariant: Variant = {
-      id: "1",
-      name: productName,
-      price: productPrice || "0",
-      comparePrice: productComparePrice || "0",
-      highlight: true,
-      tags: [],
-    };
-    setVariants([newVariant]);
-    setShowVariantForm(true);
-  };
-
-  const handleVariantsChange = (newVariants: Variant[]) => {
-    setVariants(newVariants);
-  };
 
   if (isLoading) {
     return (
@@ -308,7 +290,7 @@ const EditProduct = () => {
                     <div className="pt-2">
                       <div className="flex items-center justify-between mb-4">
                         <Label>Variants</Label>
-                        {!showVariantForm && (
+                        {!showVariantForm && variants.length === 0 && (
                           <Button 
                             onClick={handleAddVariant} 
                             variant="outline" 
