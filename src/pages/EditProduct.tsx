@@ -3,6 +3,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { MainHeader } from "@/components/MainHeader";
 import { ProductEditor } from "@/components/product/ProductEditor";
 import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
@@ -12,6 +19,26 @@ import { ArrowLeft, Plus, X } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+
+const PRODUCT_TYPES = [
+  "Template",
+  "Plugin",
+  "Component",
+  "Full Application",
+  "API",
+  "Library",
+];
+
+const USE_CASES = [
+  "E-commerce",
+  "Blog",
+  "Portfolio",
+  "Dashboard",
+  "Social Network",
+  "Analytics",
+  "CMS",
+  "Authentication",
+];
 
 const EditProduct = () => {
   const { id } = useParams();
@@ -26,13 +53,13 @@ const EditProduct = () => {
   const [difficultyLevel, setDifficultyLevel] = useState("");
   const [demo, setDemo] = useState("");
   const [publicLink, setPublicLink] = useState("");
-  const [type, setType] = useState("");
-  const [useCase, setUseCase] = useState("");
+  const [type, setType] = useState<string>("");
+  const [useCase, setUseCase] = useState<string>("");
   const [platform, setPlatform] = useState<string[]>([]);
   const [team, setTeam] = useState<string[]>([]);
   const [newPlatform, setNewPlatform] = useState("");
   const [newTeam, setNewTeam] = useState("");
-  
+
   const { data: product, isLoading } = useQuery({
     queryKey: ['product', id],
     queryFn: async () => {
@@ -291,21 +318,39 @@ const EditProduct = () => {
                 <div className="space-y-3 sm:space-y-4">
                   <div>
                     <Label htmlFor="type">Type</Label>
-                    <Input 
-                      id="type" 
-                      placeholder="Select product type"
+                    <Select
                       value={type}
-                      onChange={(e) => setType(e.target.value)}
-                    />
+                      onValueChange={setType}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select product type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {PRODUCT_TYPES.map((productType) => (
+                          <SelectItem key={productType} value={productType}>
+                            {productType}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div>
                     <Label htmlFor="use_case">Use Case</Label>
-                    <Input 
-                      id="use_case" 
-                      placeholder="Select use case"
+                    <Select
                       value={useCase}
-                      onChange={(e) => setUseCase(e.target.value)}
-                    />
+                      onValueChange={setUseCase}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select use case" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {USE_CASES.map((useCase) => (
+                          <SelectItem key={useCase} value={useCase}>
+                            {useCase}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div>
                     <Label htmlFor="platform">Platform</Label>
