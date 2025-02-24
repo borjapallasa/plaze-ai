@@ -16,7 +16,7 @@ import { ProductEditor } from "@/components/product/ProductEditor";
 import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
 import { ProductStatus } from "@/components/product/ProductStatus";
 import { ProductVariantsEditor } from "@/components/product/ProductVariants";
-import { ArrowLeft, Plus, X } from "lucide-react";
+import { ArrowLeft, Plus, X, Loader2 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
@@ -70,11 +70,13 @@ type Variant = {
   comparePrice: string;
   highlight: boolean;
   tags: string[];
+  variant_uuid?: string;
 };
 
 const EditProduct = () => {
   const { id } = useParams();
   const { toast } = useToast();
+  const [isSaving, setIsSaving] = useState(false);
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [techStack, setTechStack] = useState("");
@@ -195,13 +197,15 @@ const EditProduct = () => {
 
   const handleAddVariant = async () => {
     try {
-      console.log('Adding variant for product:', id); // Debug log
-      
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) throw new Error("Not authenticated");
+
       const { data, error } = await supabase
         .from('variants')
         .insert([
           {
             product_uuid: id,
+            user_uuid: session.user.id,
             name: "New Variant",
             price: 0,
             compare_price: 0,
@@ -212,12 +216,7 @@ const EditProduct = () => {
         .select()
         .single();
 
-      if (error) {
-        console.error('Supabase error:', error); // Debug log
-        throw error;
-      }
-
-      console.log('Successfully added variant:', data); // Debug log
+      if (error) throw error;
 
       toast({
         title: "Success",
@@ -236,23 +235,34 @@ const EditProduct = () => {
   };
 
   const handleVariantsChange = async (updatedVariants: Variant[]) => {
+    setIsSaving(true);
     try {
-      const variantToUpdate = updatedVariants[updatedVariants.length - 1];
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) throw new Error("Not authenticated");
+
+      const lastVariant = updatedVariants[updatedVariants.length - 1];
       
       const { error } = await supabase
         .from('variants')
-        .update({
-          name: variantToUpdate.name,
-          price: parseFloat(variantToUpdate.price.toString()),
-          compare_price: parseFloat(variantToUpdate.comparePrice.toString()),
-          highlighted: variantToUpdate.highlight,
-          tags: variantToUpdate.tags
-        })
-        .eq('variant_uuid', variantToUpdate.id);
+        .upsert({
+          variant_uuid: lastVariant.variant_uuid || lastVariant.id,
+          product_uuid: id,
+          user_uuid: session.user.id,
+          name: lastVariant.name,
+          price: parseFloat(lastVariant.price),
+          compare_price: parseFloat(lastVariant.comparePrice),
+          highlighted: lastVariant.highlight,
+          tags: lastVariant.tags
+        });
 
       if (error) throw error;
 
-      refetchVariants();
+      await refetchVariants();
+      
+      toast({
+        title: "Success",
+        description: "Variant has been updated",
+      });
     } catch (error) {
       console.error('Error updating variant:', error);
       toast({
@@ -260,6 +270,8 @@ const EditProduct = () => {
         description: "Failed to update variant",
         variant: "destructive",
       });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -267,7 +279,9 @@ const EditProduct = () => {
     return (
       <div className="min-h-screen bg-background">
         <MainHeader />
-        <div className="mt-16 p-6">Loading...</div>
+        <div className="mt-16 p-6 flex justify-center">
+          <Loader2 className="h-6 w-6 animate-spin" />
+        </div>
       </div>
     );
   }
@@ -323,6 +337,7 @@ const EditProduct = () => {
                           onClick={handleAddVariant} 
                           variant="outline" 
                           size="sm"
+                          disabled={isSaving}
                         >
                           <Plus className="h-4 w-4 mr-2" />
                           Add variant
@@ -331,6 +346,7 @@ const EditProduct = () => {
                       <ProductVariantsEditor
                         variants={variants.map(v => ({
                           id: v.variant_uuid,
+                          variant_uuid: v.variant_uuid,
                           name: v.name || "",
                           price: v.price?.toString() || "0",
                           comparePrice: v.compare_price?.toString() || "0",
