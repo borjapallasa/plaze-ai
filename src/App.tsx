@@ -76,7 +76,7 @@ const App = () => (
             <Route path="/chats" element={<Chats />} />
             <Route path="/thank-you" element={<ThankYou />} />
             <Route path="/cart" element={<Cart />} />
-            <Route path="/seller/product" element={<EditProduct />} />
+            <Route path="/seller/products/product/:id" element={<EditProduct />} /> {/* Updated route */}
             <Route path="/a/admin" element={<AdminDashboard />} />
             <Route path="/a/admin/transactions" element={<AdminTransactions />} />
             <Route path="/a/admin/transactions/:id" element={<AdminTransactionDetails />} />
