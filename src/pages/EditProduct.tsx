@@ -3,14 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MainHeader } from "@/components/MainHeader";
 import { ProductEditor } from "@/components/product/ProductEditor";
 import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
@@ -23,54 +16,18 @@ import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
 import { Variant } from "@/components/product/types/variants";
 import type { Json } from "@/integrations/supabase/types";
-
-const INDUSTRIES = [
-  "E-commerce",
-  "Blog",
-  "Portfolio",
-  "Dashboard",
-  "Social Network",
-  "Analytics",
-  "CMS",
-  "Authentication",
-];
-
-const USE_CASES = [
-  "E-commerce",
-  "Blog",
-  "Portfolio",
-  "Dashboard",
-  "Social Network",
-  "Analytics",
-  "CMS",
-  "Authentication",
-];
-
-const PLATFORMS = [
-  "Web",
-  "Mobile",
-  "Desktop",
-  "iOS",
-  "Android",
-  "Windows",
-  "macOS",
-  "Linux",
-];
-
-const TEAM_ROLES = [
-  "Frontend Developer",
-  "Backend Developer",
-  "Full Stack Developer",
-  "UI/UX Designer",
-  "Product Manager",
-  "DevOps Engineer",
-  "QA Engineer",
-];
-
+const INDUSTRIES = ["E-commerce", "Blog", "Portfolio", "Dashboard", "Social Network", "Analytics", "CMS", "Authentication"];
+const USE_CASES = ["E-commerce", "Blog", "Portfolio", "Dashboard", "Social Network", "Analytics", "CMS", "Authentication"];
+const PLATFORMS = ["Web", "Mobile", "Desktop", "iOS", "Android", "Windows", "macOS", "Linux"];
+const TEAM_ROLES = ["Frontend Developer", "Backend Developer", "Full Stack Developer", "UI/UX Designer", "Product Manager", "DevOps Engineer", "QA Engineer"];
 const EditProduct = () => {
-  const { id } = useParams();
+  const {
+    id
+  } = useParams();
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [isSaving, setIsSaving] = useState(false);
   const [localVariants, setLocalVariants] = useState<Variant[]>([]);
   const [productName, setProductName] = useState("");
@@ -84,22 +41,21 @@ const EditProduct = () => {
   const [useCases, setUseCases] = useState<string[]>([]);
   const [platform, setPlatform] = useState<string[]>([]);
   const [team, setTeam] = useState<string[]>([]);
-
-  const { data: product, isLoading: isLoadingProduct } = useQuery({
+  const {
+    data: product,
+    isLoading: isLoadingProduct
+  } = useQuery({
     queryKey: ['product', id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .eq('product_uuid', id)
-        .single();
-      
+      const {
+        data,
+        error
+      } = await supabase.from('products').select('*').eq('product_uuid', id).single();
       if (error) throw error;
       return data;
     },
     enabled: !!id
   });
-
   useEffect(() => {
     if (product) {
       setProductName(product.name || "");
@@ -109,36 +65,28 @@ const EditProduct = () => {
       setProductIncludes(product.product_includes || "");
       setDifficultyLevel(product.difficulty_level || "");
       setDemo(product.demo || "");
-      setIndustries(Array.isArray(product.industries) ? 
-        product.industries.map(i => String(i)) 
-        : []
-      );
+      setIndustries(Array.isArray(product.industries) ? product.industries.map(i => String(i)) : []);
       setUseCases(product.use_case ? [product.use_case] : []);
-      setPlatform(Array.isArray(product.platform) ? 
-        product.platform.map(p => String(p)) 
-        : []
-      );
-      setTeam(Array.isArray(product.team) ? 
-        product.team.map(t => String(t)) 
-        : []
-      );
+      setPlatform(Array.isArray(product.platform) ? product.platform.map(p => String(p)) : []);
+      setTeam(Array.isArray(product.team) ? product.team.map(t => String(t)) : []);
     }
   }, [product]);
-
-  const { data: variants = [], isLoading: isLoadingVariants, refetch: refetchVariants } = useQuery({
+  const {
+    data: variants = [],
+    isLoading: isLoadingVariants,
+    refetch: refetchVariants
+  } = useQuery({
     queryKey: ['variants', id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('variants')
-        .select('*')
-        .eq('product_uuid', id);
-      
+      const {
+        data,
+        error
+      } = await supabase.from('variants').select('*').eq('product_uuid', id);
       if (error) throw error;
       return data || [];
     },
     enabled: !!id
   });
-
   useEffect(() => {
     if (variants.length > 0) {
       const mappedVariants = variants.map(v => ({
@@ -153,78 +101,41 @@ const EditProduct = () => {
       setLocalVariants(mappedVariants);
     }
   }, [variants]);
-
   const handleIndustryChange = (value: string) => {
     if (!value) return;
-    setIndustries(prev => 
-      prev.includes(value) ? 
-        prev.filter(ind => ind !== value) : 
-        [...prev, value]
-    );
+    setIndustries(prev => prev.includes(value) ? prev.filter(ind => ind !== value) : [...prev, value]);
   };
-
   const handleUseCaseChange = (value: string) => {
     if (!value) return;
-    setUseCases(prev => 
-      prev.includes(value) ? 
-        prev.filter(uc => uc !== value) : 
-        [...prev, value]
-    );
+    setUseCases(prev => prev.includes(value) ? prev.filter(uc => uc !== value) : [...prev, value]);
   };
-
   const handlePlatformChange = (value: string) => {
     if (!value) return;
-    setPlatform(prev => 
-      prev.includes(value) ? 
-        prev.filter(p => p !== value) : 
-        [...prev, value]
-    );
+    setPlatform(prev => prev.includes(value) ? prev.filter(p => p !== value) : [...prev, value]);
   };
-
   const handleTeamChange = (value: string) => {
     if (!value) return;
-    setTeam(prev => 
-      prev.includes(value) ? 
-        prev.filter(t => t !== value) : 
-        [...prev, value]
-    );
+    setTeam(prev => prev.includes(value) ? prev.filter(t => t !== value) : [...prev, value]);
   };
-
   const renderSelectedTags = (items: string[]) => {
     if (items.length === 0) return null;
-    
-    return (
-      <div className="flex flex-wrap gap-1.5 max-w-full">
-        {items.map((item) => (
-          <span
-            key={item}
-            className="inline-flex items-center gap-1.5 bg-secondary text-secondary-foreground px-2.5 py-0.5 rounded-md text-sm relative isolate cursor-pointer group"
-          >
+    return <div className="flex flex-wrap gap-1.5 max-w-full">
+        {items.map(item => <span key={item} className="inline-flex items-center gap-1.5 bg-secondary text-secondary-foreground px-2.5 py-0.5 rounded-md text-sm relative isolate cursor-pointer group">
             {item}
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                const newItems = items.filter(i => i !== item);
-                if (items === industries) setIndustries(newItems);
-                if (items === useCases) setUseCases(newItems);
-                if (items === platform) setPlatform(newItems);
-                if (items === team) setTeam(newItems);
-              }}
-              className="hover:text-primary-foreground relative z-10"
-            >
+            <button type="button" onClick={e => {
+          e.stopPropagation();
+          const newItems = items.filter(i => i !== item);
+          if (items === industries) setIndustries(newItems);
+          if (items === useCases) setUseCases(newItems);
+          if (items === platform) setPlatform(newItems);
+          if (items === team) setTeam(newItems);
+        }} className="hover:text-primary-foreground relative z-10">
               <X className="h-3.5 w-3.5" />
             </button>
-            <div 
-              className="absolute inset-0 -z-10 opacity-0 group-hover:opacity-100"
-              onClick={(e) => e.stopPropagation()}
-            />
-          </span>
-        ))}
-      </div>
-    );
+            <div className="absolute inset-0 -z-10 opacity-0 group-hover:opacity-100" onClick={e => e.stopPropagation()} />
+          </span>)}
+      </div>;
   };
-
   const handleAddVariant = () => {
     const newVariant: Variant = {
       id: crypto.randomUUID(),
@@ -237,40 +148,36 @@ const EditProduct = () => {
     };
     setLocalVariants([...localVariants, newVariant]);
   };
-
   const handleSaveChanges = async () => {
     setIsSaving(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: {
+          session
+        }
+      } = await supabase.auth.getSession();
       if (!session?.user) throw new Error("Not authenticated");
-
-      const { error: productError } = await supabase
-        .from('products')
-        .update({
-          name: productName,
-          description: productDescription,
-          tech_stack: techStack,
-          tech_stack_price: techStackPrice,
-          product_includes: productIncludes,
-          difficulty_level: difficultyLevel,
-          demo: demo,
-          industries: industries,
-          use_case: useCases[0],
-          platform: platform,
-          team: team,
-          updated_at: new Date().toISOString()
-        })
-        .eq('product_uuid', id);
-
+      const {
+        error: productError
+      } = await supabase.from('products').update({
+        name: productName,
+        description: productDescription,
+        tech_stack: techStack,
+        tech_stack_price: techStackPrice,
+        product_includes: productIncludes,
+        difficulty_level: difficultyLevel,
+        demo: demo,
+        industries: industries,
+        use_case: useCases[0],
+        platform: platform,
+        team: team,
+        updated_at: new Date().toISOString()
+      }).eq('product_uuid', id);
       if (productError) throw productError;
-
-      const { error: deleteError } = await supabase
-        .from('variants')
-        .delete()
-        .eq('product_uuid', id);
-
+      const {
+        error: deleteError
+      } = await supabase.from('variants').delete().eq('product_uuid', id);
       if (deleteError) throw deleteError;
-
       const variantsToInsert = localVariants.map(variant => ({
         variant_uuid: variant.id,
         product_uuid: id,
@@ -281,42 +188,34 @@ const EditProduct = () => {
         highlighted: variant.highlight,
         tags: variant.tags
       }));
-
-      const { error: insertError } = await supabase
-        .from('variants')
-        .insert(variantsToInsert);
-
+      const {
+        error: insertError
+      } = await supabase.from('variants').insert(variantsToInsert);
       if (insertError) throw insertError;
-
       toast({
         title: "Success",
-        description: "All changes have been saved successfully",
+        description: "All changes have been saved successfully"
       });
     } catch (error) {
       console.error('Error saving changes:', error);
       toast({
         title: "Error",
         description: "Failed to save changes. Please try again.",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setIsSaving(false);
     }
   };
-
   if (isLoadingProduct || isLoadingVariants) {
-    return (
-      <div className="min-h-screen bg-background">
+    return <div className="min-h-screen bg-background">
         <MainHeader />
         <div className="mt-16 p-6 flex justify-center">
           <Loader2 className="h-6 w-6 animate-spin" />
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       <MainHeader />
       <div className="mt-16">
         <div className="w-full max-w-[1400px] mx-auto px-2 xs:px-3 sm:px-6 lg:px-8 py-3 sm:py-6">
@@ -332,16 +231,7 @@ const EditProduct = () => {
                   <h1 className="text-lg sm:text-xl md:text-2xl font-semibold break-words pr-2">Edit Product</h1>
                   <p className="text-sm text-muted-foreground mt-2">Product details and configuration</p>
                 </div>
-                <Button 
-                  onClick={handleSaveChanges}
-                  disabled={isSaving}
-                  size="sm"
-                >
-                  {isSaving ? (
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  ) : null}
-                  Save changes
-                </Button>
+                
               </div>
             </div>
           </div>
@@ -357,36 +247,21 @@ const EditProduct = () => {
                   <div className="space-y-3 sm:space-y-4">
                     <div>
                       <Label htmlFor="name">Name</Label>
-                      <Input
-                        id="name"
-                        placeholder="Enter product name"
-                        value={productName}
-                        onChange={(e) => setProductName(e.target.value)}
-                      />
+                      <Input id="name" placeholder="Enter product name" value={productName} onChange={e => setProductName(e.target.value)} />
                     </div>
                     <div>
                       <Label htmlFor="description">Description</Label>
-                      <ProductEditor 
-                        value={productDescription}
-                        onChange={setProductDescription}
-                      />
+                      <ProductEditor value={productDescription} onChange={setProductDescription} />
                     </div>
                     <div className="pt-2">
                       <div className="flex items-center justify-between mb-4">
                         <Label>Variants</Label>
-                        <Button 
-                          onClick={handleAddVariant} 
-                          variant="outline" 
-                          size="sm"
-                        >
+                        <Button onClick={handleAddVariant} variant="outline" size="sm">
                           <Plus className="h-4 w-4 mr-2" />
                           Add variant
                         </Button>
                       </div>
-                      <ProductVariantsEditor
-                        variants={localVariants}
-                        onVariantsChange={setLocalVariants}
-                      />
+                      <ProductVariantsEditor variants={localVariants} onVariantsChange={setLocalVariants} />
                     </div>
                   </div>
                 </Card>
@@ -396,49 +271,23 @@ const EditProduct = () => {
                   <div className="space-y-3 sm:space-y-4">
                     <div>
                       <Label htmlFor="tech_stack">Tech Stack</Label>
-                      <Input 
-                        id="tech_stack" 
-                        placeholder="Enter required tech stack"
-                        value={techStack}
-                        onChange={(e) => setTechStack(e.target.value)}
-                      />
+                      <Input id="tech_stack" placeholder="Enter required tech stack" value={techStack} onChange={e => setTechStack(e.target.value)} />
                     </div>
                     <div>
                       <Label htmlFor="tech_stack_price">Tech Stack Pricing</Label>
-                      <Input 
-                        id="tech_stack_price" 
-                        placeholder="Enter tech stack pricing details"
-                        value={techStackPrice}
-                        onChange={(e) => setTechStackPrice(e.target.value)}
-                      />
+                      <Input id="tech_stack_price" placeholder="Enter tech stack pricing details" value={techStackPrice} onChange={e => setTechStackPrice(e.target.value)} />
                     </div>
                     <div>
                       <Label htmlFor="product_includes">What's Included</Label>
-                      <Input 
-                        id="product_includes" 
-                        placeholder="Enter what's included in the product"
-                        value={productIncludes}
-                        onChange={(e) => setProductIncludes(e.target.value)}
-                      />
+                      <Input id="product_includes" placeholder="Enter what's included in the product" value={productIncludes} onChange={e => setProductIncludes(e.target.value)} />
                     </div>
                     <div>
                       <Label htmlFor="difficulty_level">Difficulty Level</Label>
-                      <Input 
-                        id="difficulty_level" 
-                        placeholder="Select difficulty level"
-                        value={difficultyLevel}
-                        onChange={(e) => setDifficultyLevel(e.target.value)}
-                      />
+                      <Input id="difficulty_level" placeholder="Select difficulty level" value={difficultyLevel} onChange={e => setDifficultyLevel(e.target.value)} />
                     </div>
                     <div>
                       <Label htmlFor="demo">Demo Link</Label>
-                      <Input 
-                        id="demo" 
-                        placeholder="Enter demo URL" 
-                        type="url"
-                        value={demo}
-                        onChange={(e) => setDemo(e.target.value)}
-                      />
+                      <Input id="demo" placeholder="Enter demo URL" type="url" value={demo} onChange={e => setDemo(e.target.value)} />
                     </div>
                   </div>
                 </Card>
@@ -459,92 +308,60 @@ const EditProduct = () => {
                 <div className="space-y-4">
                   <div>
                     <Label htmlFor="industries" className="text-sm mb-1.5">Industries</Label>
-                    <Select
-                      value=""
-                      onValueChange={handleIndustryChange}
-                    >
+                    <Select value="" onValueChange={handleIndustryChange}>
                       <SelectTrigger className="h-auto min-h-[2.75rem] py-1.5 px-3">
                         {renderSelectedTags(industries) || <SelectValue placeholder="Select industries" />}
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          {INDUSTRIES.map((industry) => (
-                            <SelectItem 
-                              key={industry} 
-                              value={industry}
-                            >
+                          {INDUSTRIES.map(industry => <SelectItem key={industry} value={industry}>
                               {industry}
-                            </SelectItem>
-                          ))}
+                            </SelectItem>)}
                         </SelectGroup>
                       </SelectContent>
                     </Select>
                   </div>
                   <div>
                     <Label htmlFor="use_case" className="text-sm mb-1.5">Use Case</Label>
-                    <Select
-                      value=""
-                      onValueChange={handleUseCaseChange}
-                    >
+                    <Select value="" onValueChange={handleUseCaseChange}>
                       <SelectTrigger className="h-auto min-h-[2.75rem] py-1.5 px-3">
                         {renderSelectedTags(useCases) || <SelectValue placeholder="Select use cases" />}
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          {USE_CASES.map((useCase) => (
-                            <SelectItem 
-                              key={useCase} 
-                              value={useCase}
-                            >
+                          {USE_CASES.map(useCase => <SelectItem key={useCase} value={useCase}>
                               {useCase}
-                            </SelectItem>
-                          ))}
+                            </SelectItem>)}
                         </SelectGroup>
                       </SelectContent>
                     </Select>
                   </div>
                   <div>
                     <Label htmlFor="platform" className="text-sm mb-1.5">Platform</Label>
-                    <Select
-                      value=""
-                      onValueChange={handlePlatformChange}
-                    >
+                    <Select value="" onValueChange={handlePlatformChange}>
                       <SelectTrigger className="h-auto min-h-[2.75rem] py-1.5 px-3">
                         {renderSelectedTags(platform) || <SelectValue placeholder="Select platforms" />}
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          {PLATFORMS.map((p) => (
-                            <SelectItem 
-                              key={p} 
-                              value={p}
-                            >
+                          {PLATFORMS.map(p => <SelectItem key={p} value={p}>
                               {p}
-                            </SelectItem>
-                          ))}
+                            </SelectItem>)}
                         </SelectGroup>
                       </SelectContent>
                     </Select>
                   </div>
                   <div>
                     <Label htmlFor="team" className="text-sm mb-1.5">Team</Label>
-                    <Select
-                      value=""
-                      onValueChange={handleTeamChange}
-                    >
+                    <Select value="" onValueChange={handleTeamChange}>
                       <SelectTrigger className="h-auto min-h-[2.75rem] py-1.5 px-3">
                         {renderSelectedTags(team) || <SelectValue placeholder="Select team roles" />}
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          {TEAM_ROLES.map((role) => (
-                            <SelectItem 
-                              key={role} 
-                              value={role}
-                            >
+                          {TEAM_ROLES.map(role => <SelectItem key={role} value={role}>
                               {role}
-                            </SelectItem>
-                          ))}
+                            </SelectItem>)}
                         </SelectGroup>
                       </SelectContent>
                     </Select>
@@ -555,8 +372,6 @@ const EditProduct = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default EditProduct;
