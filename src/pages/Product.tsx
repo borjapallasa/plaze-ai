@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -56,14 +57,14 @@ export default function Product() {
 
       if (error) throw error;
 
-      return data.map(variant => ({
+      return data.map((variant, index) => ({
         id: variant.variant_uuid,
         name: variant.name || "Lorem Ipsum Package",
         price: variant.price || 99.99,
         comparePrice: variant.compare_price || 149.99,
         label: "Package",
-        highlight: variant.highlighted || false,
-        features: ["Core Features", "Basic Support"]
+        highlight: index === 1, // Make the second variant highlighted by default
+        features: variant.features || ["Core Features", "Basic Support"]
       }));
     },
     enabled: !!id
