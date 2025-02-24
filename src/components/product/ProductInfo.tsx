@@ -2,7 +2,7 @@
 import { Card } from "@/components/ui/card";
 
 interface ProductInfoProps {
-  description: string;
+  description?: string;
   techStack?: string;
   productIncludes?: string;
   difficultyLevel?: string;
@@ -12,12 +12,6 @@ interface ProductInfoProps {
 export function ProductInfo({ description, techStack, productIncludes, difficultyLevel, className }: ProductInfoProps) {
   return (
     <div className={className}>
-      <Card className="p-6 mb-8">
-        <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
-          {description}
-        </p>
-      </Card>
-
       <Card className="p-6">
         <h3 className="font-semibold mb-4">Additional Information</h3>
         <div className="space-y-4">
