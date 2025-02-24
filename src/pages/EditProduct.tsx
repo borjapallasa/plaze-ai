@@ -63,16 +63,6 @@ const TEAM_ROLES = [
   "QA Engineer",
 ];
 
-type Variant = {
-  id: string;
-  name: string;
-  price: string;
-  comparePrice: string;
-  highlight: boolean;
-  tags: string[];
-  features: string[];
-};
-
 const EditProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -116,7 +106,11 @@ const EditProduct = () => {
       setProductIncludes(product.product_includes || "");
       setDifficultyLevel(product.difficulty_level || "");
       setDemo(product.demo || "");
-      setTypes(product.type ? [product.type as ProductType] : []);
+      if (product.type === "template" || product.type === "guide or manual") {
+        setTypes([product.type]);
+      } else {
+        setTypes([]);
+      }
       setUseCases(product.use_case ? [product.use_case] : []);
       setPlatform(product.platform ? 
         (Array.isArray(product.platform) ? 
@@ -149,8 +143,8 @@ const EditProduct = () => {
 
   useEffect(() => {
     if (variants.length > 0) {
-      const mappedVariants: Variant[] = variants.map(v => ({
-        id: v.variant_uuid,
+      const mappedVariants = variants.map(v => ({
+        id: v.variant_uuid || crypto.randomUUID(),
         name: v.name || "",
         price: v.price?.toString() || "0",
         comparePrice: v.compare_price?.toString() || "0",
@@ -165,7 +159,7 @@ const EditProduct = () => {
   const handleTypeChange = (value: string) => {
     if (!value) return;
     if (value === "template" || value === "guide or manual") {
-      setTypes(prev => prev.includes(value) ? prev.filter(t => t !== value) : [value]);
+      setTypes([value as ProductType]);
     }
   };
 
@@ -231,7 +225,7 @@ const EditProduct = () => {
       tags: [],
       features: []
     };
-    setLocalVariants(current => [...current, newVariant]);
+    setLocalVariants([...localVariants, newVariant]);
   };
 
   const handleSaveVariants = async () => {
@@ -248,14 +242,14 @@ const EditProduct = () => {
       if (deleteError) throw deleteError;
 
       const variantsToInsert = localVariants.map(variant => ({
-        variant_uuid: variant.variant_uuid || variant.id,
+        variant_uuid: variant.id,
         product_uuid: id,
         user_uuid: session.user.id,
-        name: variant.name || '',
+        name: variant.name,
         price: parseFloat(variant.price.toString()),
         compare_price: parseFloat(variant.comparePrice.toString()),
-        highlighted: variant.highlight || false,
-        tags: variant.tags || []
+        highlighted: variant.highlight,
+        tags: variant.tags
       }));
 
       const { error: insertError } = await supabase
