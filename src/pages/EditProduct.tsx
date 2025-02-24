@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -117,7 +116,10 @@ const EditProduct = () => {
                     </div>
                     <div>
                       <Label htmlFor="description">Description</Label>
-                      <ProductEditor />
+                      <ProductEditor 
+                        value={productDescription}
+                        onChange={setProductDescription}
+                      />
                     </div>
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div>

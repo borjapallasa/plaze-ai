@@ -3,7 +3,12 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Bold, Italic, Underline, Link as LinkIcon, List, Image, Video, MoreHorizontal, Code } from "lucide-react";
 
-export function ProductEditor() {
+interface ProductEditorProps {
+  value?: string;
+  onChange?: (value: string) => void;
+}
+
+export function ProductEditor({ value, onChange }: ProductEditorProps) {
   return (
     <div className="rounded-md border">
       <div className="flex items-center gap-1 border-b p-2">
@@ -39,7 +44,8 @@ export function ProductEditor() {
       <textarea
         className="w-full min-h-[200px] resize-none border-0 bg-transparent p-4 focus:outline-none"
         placeholder="Write your product description..."
-        defaultValue="Chauffez le coeur de votre enfant avec une veilleuse LED personnalisée ! Offrez-lui un arc-en-ciel lumineux orné de son prénom, un cadeau original pour marquer les moments doux au coucher."
+        value={value}
+        onChange={(e) => onChange?.(e.target.value)}
       />
     </div>
   );
