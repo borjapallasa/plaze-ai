@@ -6,7 +6,7 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 
 interface EditProductHeaderProps {
   isSaving: boolean;
-  onSave: () => void;
+  onSave: () => Promise<void>;
 }
 
 export function EditProductHeader({ isSaving, onSave }: EditProductHeaderProps) {

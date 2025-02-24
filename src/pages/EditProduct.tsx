@@ -124,6 +124,8 @@ const EditProduct = () => {
   };
 
   const handleSaveChanges = async () => {
+    if (!id) return;
+    
     setIsSaving(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -149,6 +151,7 @@ const EditProduct = () => {
 
       if (productError) throw productError;
 
+      // Delete existing variants
       const { error: deleteError } = await supabase
         .from('variants')
         .delete()
@@ -156,22 +159,25 @@ const EditProduct = () => {
 
       if (deleteError) throw deleteError;
 
-      const variantsToInsert = localVariants.map(variant => ({
-        variant_uuid: variant.id,
-        product_uuid: id,
-        user_uuid: session.user.id,
-        name: variant.name,
-        price: parseFloat(variant.price.toString()),
-        compare_price: parseFloat(variant.comparePrice.toString()),
-        highlighted: variant.highlight,
-        tags: variant.tags
-      }));
+      // Insert new variants
+      if (localVariants.length > 0) {
+        const variantsToInsert = localVariants.map(variant => ({
+          variant_uuid: variant.id,
+          product_uuid: id,
+          user_uuid: session.user.id,
+          name: variant.name,
+          price: parseFloat(variant.price.toString()),
+          compare_price: parseFloat(variant.comparePrice.toString()),
+          highlighted: variant.highlight,
+          tags: variant.tags
+        }));
 
-      const { error: insertError } = await supabase
-        .from('variants')
-        .insert(variantsToInsert);
+        const { error: insertError } = await supabase
+          .from('variants')
+          .insert(variantsToInsert);
 
-      if (insertError) throw insertError;
+        if (insertError) throw insertError;
+      }
 
       toast({
         title: "Success",
