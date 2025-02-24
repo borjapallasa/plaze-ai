@@ -994,6 +994,7 @@ export type Database = {
       }
       product_images: {
         Row: {
+          alt_text: string | null
           content_type: string | null
           created_at: string | null
           file_name: string | null
@@ -1005,6 +1006,7 @@ export type Database = {
           storage_path: string
         }
         Insert: {
+          alt_text?: string | null
           content_type?: string | null
           created_at?: string | null
           file_name?: string | null
@@ -1016,6 +1018,7 @@ export type Database = {
           storage_path: string
         }
         Update: {
+          alt_text?: string | null
           content_type?: string | null
           created_at?: string | null
           file_name?: string | null
