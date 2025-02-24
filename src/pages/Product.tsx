@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -181,14 +180,6 @@ export default function Product() {
             {relatedProducts.length > 0 && (
               <RelatedProducts products={relatedProducts} className="mb-24" />
             )}
-          </div>
-          <div className="lg:col-span-1">
-            <ProductInfo 
-              techStack={product.tech_stack}
-              productIncludes={product.product_includes}
-              difficultyLevel={product.difficulty_level}
-              className="mb-8"
-            />
           </div>
         </div>
       </ProductLayout>

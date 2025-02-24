@@ -10,6 +10,7 @@ import { Card } from "@/components/ui/card";
 import { usePreloadImage } from "@/hooks/use-preload-image";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useProductImages } from "@/hooks/use-product-images";
+import { ProductInfo } from "./ProductInfo";
 
 interface ProductLayoutProps {
   product: any;
@@ -33,7 +34,6 @@ export function ProductLayout({
   const isMobile = useIsMobile();
   const { images, isLoading: isLoadingImages } = useProductImages(product.product_uuid);
   
-  // Preload the main product image for mobile if we have images
   const mainImage = images[0]?.url;
   usePreloadImage(mainImage);
 
@@ -92,7 +92,7 @@ export function ProductLayout({
             </div>
           </div>
 
-          <div className="hidden lg:block">
+          <div className="hidden lg:block lg:space-y-6">
             <ProductHeader 
               title={product.name}
               seller="Design Master"
@@ -108,12 +108,17 @@ export function ProductLayout({
             />
             <Button 
               variant="outline" 
-              className="w-full flex items-center justify-center gap-2 mb-6"
+              className="w-full flex items-center justify-center gap-2"
               onClick={() => console.log("Contact seller clicked")}
             >
               <MessageCircle className="h-4 w-4" />
               Contact Seller
             </Button>
+            <ProductInfo 
+              techStack={product.tech_stack}
+              productIncludes={product.product_includes}
+              difficultyLevel={product.difficulty_level}
+            />
           </div>
         </div>
 
