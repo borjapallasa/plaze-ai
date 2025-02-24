@@ -28,8 +28,8 @@ export function VariantPicker({
   className = ""
 }: VariantPickerProps) {
   return (
-    <div className={`space-y-4 ${className}`}>
-      <h2 className="text-lg font-semibold pb-2">Choose your package</h2>
+    <div className={`space-y-3.5 ${className}`}>
+      <h2 className="text-lg font-semibold pb-1.5">Choose your package</h2>
       <div className="grid gap-6">
         {variants.map((variant, index) => {
           const badge = getBadgeLabel(index, variant);
@@ -95,7 +95,7 @@ export function VariantPicker({
         })}
       </div>
       {onAddToCart && (
-        <div className="space-y-4 pt-4">
+        <div className="space-y-3 pt-4">
           <Button
             className="w-full"
             size="lg"

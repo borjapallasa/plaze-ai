@@ -1,4 +1,3 @@
-
 import React from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { ProductGallery } from "./ProductGallery";
@@ -11,6 +10,9 @@ import { usePreloadImage } from "@/hooks/use-preload-image";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useProductImages } from "@/hooks/use-product-images";
 import { ProductInfo } from "./ProductInfo";
+import { ProductReviews } from "./ProductReviews";
+import { MoreFromSeller } from "./MoreFromSeller";
+import { RelatedProducts } from "./RelatedProducts";
 
 interface ProductLayoutProps {
   product: any;
@@ -62,7 +64,7 @@ export function ProductLayout({
           />
           <Button 
             variant="outline" 
-            className="w-full flex items-center justify-center gap-2 mb-8"
+            className="w-full flex items-center justify-center gap-2 mb-7"
             onClick={() => console.log("Contact seller clicked")}
           >
             <MessageCircle className="h-4 w-4" />
@@ -75,14 +77,17 @@ export function ProductLayout({
             </p>
           </Card>
 
-          {children}
-
-          <ProductInfo 
-            techStack={product.tech_stack}
-            productIncludes={product.product_includes}
-            difficultyLevel={product.difficulty_level}
-            className="mb-8"
-          />
+          <div className="space-y-8">
+            {children}
+            <ProductInfo 
+              techStack={product.tech_stack}
+              productIncludes={product.product_includes}
+              difficultyLevel={product.difficulty_level}
+            />
+            <ProductReviews reviews={[]} />
+            <MoreFromSeller expert_uuid={""} />
+            {[]}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
