@@ -1,6 +1,6 @@
 
 import { Card } from "@/components/ui/card";
-import { Star, Check } from "lucide-react";
+import { Star } from "lucide-react";
 import { type Review } from "./types/review";
 import React from "react";
 
@@ -8,13 +8,6 @@ interface ProductReviewsProps {
   reviews: Review[];
   className?: string;
 }
-
-const RatingCategory = ({ label, rating }: { label: string; rating: number }) => (
-  <div className="flex items-center justify-between py-1.5">
-    <span className="text-sm text-gray-600">{label}</span>
-    <Star className="h-[18px] w-[18px] fill-yellow-400 text-yellow-400" />
-  </div>
-);
 
 export function ProductReviews({ reviews, className }: ProductReviewsProps) {
   return (
@@ -35,8 +28,8 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
           {reviews.map((review) => (
             <div key={review.id}>
               <div className="px-4 sm:px-8 py-7">
-                <div className="flex flex-col md:flex-row md:gap-16">
-                  <div className="flex-1 space-y-4">
+                <div>
+                  <div className="space-y-4">
                     <div className="flex gap-1">
                       {Array(5).fill(0).map((_, i) => (
                         <Star 
@@ -66,18 +59,6 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
                         <span className="text-gray-400">•</span>
                         <span className="text-gray-600">{review.date}</span>
                       </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 md:mt-0 md:w-48">
-                    <div className="flex items-center gap-1.5 text-sm text-green-600 mb-6">
-                      <Check className="h-4 w-4" />
-                      <span>Recommends this expert</span>
-                    </div>
-                    <div className="space-y-2">
-                      <RatingCategory label="Expertise" rating={review.itemQuality} />
-                      <RatingCategory label="Communication" rating={review.shipping} />
-                      <RatingCategory label="Service quality" rating={review.customerService} />
                     </div>
                   </div>
                 </div>

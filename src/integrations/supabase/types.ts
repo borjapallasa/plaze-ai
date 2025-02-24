@@ -1145,6 +1145,7 @@ export type Database = {
           buyer_name: string | null
           comments: string | null
           created_at: string
+          expert_uuid: string | null
           product_uuid: string | null
           rating: number | null
           review_uuid: string
@@ -1155,6 +1156,7 @@ export type Database = {
             | Database["public"]["Enums"]["transaction_type"]
             | null
           transaction_uuid: string | null
+          type: Database["public"]["Enums"]["review_type"] | null
           verified: boolean | null
         }
         Insert: {
@@ -1162,6 +1164,7 @@ export type Database = {
           buyer_name?: string | null
           comments?: string | null
           created_at?: string
+          expert_uuid?: string | null
           product_uuid?: string | null
           rating?: number | null
           review_uuid?: string
@@ -1172,6 +1175,7 @@ export type Database = {
             | Database["public"]["Enums"]["transaction_type"]
             | null
           transaction_uuid?: string | null
+          type?: Database["public"]["Enums"]["review_type"] | null
           verified?: boolean | null
         }
         Update: {
@@ -1179,6 +1183,7 @@ export type Database = {
           buyer_name?: string | null
           comments?: string | null
           created_at?: string
+          expert_uuid?: string | null
           product_uuid?: string | null
           rating?: number | null
           review_uuid?: string
@@ -1189,9 +1194,17 @@ export type Database = {
             | Database["public"]["Enums"]["transaction_type"]
             | null
           transaction_uuid?: string | null
+          type?: Database["public"]["Enums"]["review_type"] | null
           verified?: boolean | null
         }
         Relationships: [
+          {
+            foreignKeyName: "reviews_expert_uuid_fkey"
+            columns: ["expert_uuid"]
+            isOneToOne: false
+            referencedRelation: "experts"
+            referencedColumns: ["expert_uuid"]
+          },
           {
             foreignKeyName: "reviews_product_uuid_fkey"
             columns: ["product_uuid"]
@@ -1821,6 +1834,7 @@ export type Database = {
       product_free_or_paid: "free" | "paid"
       product_type: "template" | "guide or manual"
       review_status: "published" | "not published"
+      review_type: "product" | "service" | "job" | "community"
       service_price_status: "active" | "inactive"
       service_subscription_status: "active" | "inactive"
       service_type: "one time" | "monthly"
