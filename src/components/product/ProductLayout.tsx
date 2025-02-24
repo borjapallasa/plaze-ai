@@ -74,13 +74,6 @@ export function ProductLayout({
               {product.description}
             </p>
           </Card>
-
-          <ProductInfo 
-            techStack={product.tech_stack}
-            productIncludes={product.product_includes}
-            difficultyLevel={product.difficulty_level}
-            className="mb-8"
-          />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
