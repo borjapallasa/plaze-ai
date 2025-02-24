@@ -7,7 +7,8 @@ import { Heart, Crown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface Expert {
-  id: string;
+  id: number; // Changed from string to number to match database schema
+  expert_uuid: string;
   name?: string;
   slug?: string;
   title?: string;
