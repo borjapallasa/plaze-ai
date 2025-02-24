@@ -1,8 +1,12 @@
+
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Search, Menu, User, ChevronDown } from "lucide-react";
+import { Search, Menu, User, ChevronDown, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "@/lib/auth";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import {
   Select,
   SelectContent,
@@ -20,6 +24,8 @@ import {
 
 export const MainHeader = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   
   const getInitialSearchCategory = () => {
     if (location.pathname.includes('/community') || location.pathname.includes('/classroom')) {
@@ -55,6 +61,16 @@ export const MainHeader = () => {
 
   const [mobileSearchCategory, setMobileSearchCategory] = useState(getInitialSearchCategory());
   const [desktopSearchCategory, setDesktopSearchCategory] = useState(getInitialDesktopSearchCategory());
+
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      toast.success("Successfully signed out");
+      navigate("/");
+    } catch (error) {
+      toast.error("Error signing out");
+    }
+  };
 
   const getPlaceholder = (category: string) => {
     switch(category) {
@@ -136,8 +152,20 @@ export const MainHeader = () => {
                   Home
                 </DropdownMenuItem>
               </Link>
-              <DropdownMenuItem>Sign In</DropdownMenuItem>
-              <DropdownMenuItem>Sign Up</DropdownMenuItem>
+              {user ? (
+                <>
+                  <DropdownMenuItem onClick={handleSignOut}>Sign Out</DropdownMenuItem>
+                </>
+              ) : (
+                <>
+                  <Link to="/sign-in">
+                    <DropdownMenuItem>Sign In</DropdownMenuItem>
+                  </Link>
+                  <Link to="/sign-up">
+                    <DropdownMenuItem>Sign Up</DropdownMenuItem>
+                  </Link>
+                </>
+              )}
               <DropdownMenuSeparator />
               <Link to="/affiliates">
                 <DropdownMenuItem>Affiliates</DropdownMenuItem>
@@ -210,8 +238,23 @@ export const MainHeader = () => {
                     Home
                   </DropdownMenuItem>
                 </Link>
-                <DropdownMenuItem>Sign In</DropdownMenuItem>
-                <DropdownMenuItem>Sign Up</DropdownMenuItem>
+                {user ? (
+                  <>
+                    <DropdownMenuItem onClick={handleSignOut}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Sign Out
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/sign-in">
+                      <DropdownMenuItem>Sign In</DropdownMenuItem>
+                    </Link>
+                    <Link to="/sign-up">
+                      <DropdownMenuItem>Sign Up</DropdownMenuItem>
+                    </Link>
+                  </>
+                )}
                 <DropdownMenuSeparator />
                 <Link to="/affiliates">
                   <DropdownMenuItem>Affiliates</DropdownMenuItem>
