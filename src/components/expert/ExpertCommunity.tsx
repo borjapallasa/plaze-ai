@@ -20,10 +20,68 @@ const formatNumber = (num: number): string => {
   return num.toString();
 };
 
+// Video provider helper
+const getVideoProvider = (url: string | null) => {
+  if (!url) return { name: 'unknown', embedUrl: null };
+
+  try {
+    const urlObj = new URL(url);
+    
+    // YouTube
+    if (urlObj.hostname.includes('youtube.com') || urlObj.hostname.includes('youtu.be')) {
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+      const match = url.match(regExp);
+      
+      if (match && match[2].length === 11) {
+        return {
+          name: 'youtube',
+          embedUrl: `https://www.youtube.com/embed/${match[2]}`
+        };
+      }
+    }
+    
+    // Vimeo
+    if (urlObj.hostname.includes('vimeo.com')) {
+      const vimeoId = urlObj.pathname.split('/').pop();
+      if (vimeoId) {
+        return {
+          name: 'vimeo',
+          embedUrl: `https://player.vimeo.com/video/${vimeoId}`
+        };
+      }
+    }
+    
+    // Loom
+    if (urlObj.hostname.includes('loom.com')) {
+      const loomPath = url.split('loom.com/share/')[1];
+      if (loomPath) {
+        return {
+          name: 'loom',
+          embedUrl: `https://www.loom.com/embed/${loomPath}`
+        };
+      }
+    }
+
+    // If it's already an embed URL, return as is
+    if (url.includes('youtube.com/embed/') || 
+        url.includes('player.vimeo.com/video/') || 
+        url.includes('loom.com/embed/')) {
+      return { name: 'embed', embedUrl: url };
+    }
+
+    return { name: 'unknown', embedUrl: null };
+  } catch (error) {
+    console.error('Error parsing video URL:', error);
+    return { name: 'unknown', embedUrl: null };
+  }
+};
+
 export const ExpertCommunity = ({ community }: ExpertCommunityProps) => {
   if (!community) {
     return null; // Don't render anything if there's no community
   }
+
+  const videoProvider = getVideoProvider(community.intro);
 
   return (
     <div className="col-span-4 col-start-2 lg:col-span-4 lg:col-start-2">
@@ -33,18 +91,30 @@ export const ExpertCommunity = ({ community }: ExpertCommunityProps) => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Left Column - Video and Description */}
             <div className="lg:col-span-7 space-y-4">
-              {/* Video thumbnail */}
+              {/* Video thumbnail or iframe */}
               <div className="aspect-video bg-muted rounded-lg overflow-hidden relative">
-                <img 
-                  src={community.thumbnail || "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5"}
-                  alt="Community thumbnail"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                  <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center">
-                    <div className="w-4 h-4 border-8 border-transparent border-l-primary ml-1" style={{ transform: 'rotate(-45deg)' }} />
-                  </div>
-                </div>
+                {videoProvider.embedUrl ? (
+                  <iframe
+                    src={videoProvider.embedUrl}
+                    title="Community video"
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : (
+                  <>
+                    <img 
+                      src={community.thumbnail || "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5"}
+                      alt="Community thumbnail"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                      <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center">
+                        <div className="w-4 h-4 border-8 border-transparent border-l-primary ml-1" style={{ transform: 'rotate(-45deg)' }} />
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* Title and badges moved here */}
@@ -63,7 +133,7 @@ export const ExpertCommunity = ({ community }: ExpertCommunityProps) => {
 
               {/* Description */}
               <p className="text-sm leading-relaxed text-muted-foreground">
-                {community.description || community.intro}
+                {community.description}
               </p>
             </div>
 
