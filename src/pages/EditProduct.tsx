@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -72,6 +71,8 @@ const EditProduct = () => {
   const [useCases, setUseCases] = useState<string[]>([]);
   const [platform, setPlatform] = useState<string[]>([]);
   const [team, setTeam] = useState<string[]>([]);
+  const [localVariants, setLocalVariants] = useState<any[]>([]);
+  const [deletedVariantIds, setDeletedVariantIds] = useState<string[]>([]);
 
   const handleStatusChange = (value: ProductStatus) => {
     setProductStatus(value);
@@ -147,7 +148,7 @@ const EditProduct = () => {
     enabled: !!id
   });
 
-  const { data: variants = [], isLoading: isLoadingVariants, refetch: refetchVariants } = useQuery({
+  const { data: variants = [], isLoading: isLoadingVariants } = useQuery({
     queryKey: ['variants', id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -160,6 +161,19 @@ const EditProduct = () => {
     },
     enabled: !!id
   });
+
+  useEffect(() => {
+    if (variants.length > 0) {
+      setLocalVariants(variants.map(v => ({
+        id: v.variant_uuid,
+        name: v.name || "",
+        price: v.price?.toString() || "0",
+        comparePrice: v.compare_price?.toString() || "0",
+        highlight: v.highlighted || false,
+        tags: Array.isArray(v.tags) ? v.tags : []
+      })));
+    }
+  }, [variants]);
 
   useEffect(() => {
     if (product) {
@@ -182,22 +196,12 @@ const EditProduct = () => {
     try {
       setIsSaving(true);
       console.log('Saving product with ID:', id);
-      console.log('Data being sent:', {
-        name: productName,
-        description: productDescription,
-        tech_stack: techStack,
-        tech_stack_price: techStackPrice,
-        product_includes: productIncludes,
-        difficulty_level: difficultyLevel,
-        demo: demo,
-        status: productStatus,
-        industries: industries,
-        use_case: useCases,
-        platform: platform,
-        team: team
-      });
       
-      const { data, error } = await supabase
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+      if (!user) throw new Error('No authenticated user found');
+
+      const { error: productError } = await supabase
         .from('products')
         .update({
           name: productName,
@@ -213,15 +217,49 @@ const EditProduct = () => {
           platform: platform,
           team: team
         })
-        .eq('product_uuid', id)
-        .select();
+        .eq('product_uuid', id);
 
-      if (error) {
-        console.error('Supabase error:', error);
-        throw error;
+      if (productError) throw productError;
+
+      if (deletedVariantIds.length > 0) {
+        const { error: deleteError } = await supabase
+          .from('variants')
+          .delete()
+          .in('variant_uuid', deletedVariantIds);
+        
+        if (deleteError) throw deleteError;
       }
 
-      console.log('Update response:', data);
+      for (const variant of localVariants) {
+        if (variant.id.toString().includes('temp_')) {
+          const { error: insertError } = await supabase
+            .from('variants')
+            .insert({
+              user_uuid: user.id,
+              product_uuid: id,
+              name: variant.name,
+              price: parseFloat(variant.price),
+              compare_price: parseFloat(variant.comparePrice),
+              highlighted: variant.highlight,
+              tags: Array.isArray(variant.tags) ? variant.tags : []
+            });
+          
+          if (insertError) throw insertError;
+        } else {
+          const { error: updateError } = await supabase
+            .from('variants')
+            .update({
+              name: variant.name,
+              price: parseFloat(variant.price),
+              compare_price: parseFloat(variant.comparePrice),
+              highlighted: variant.highlight,
+              tags: Array.isArray(variant.tags) ? variant.tags : []
+            })
+            .eq('variant_uuid', variant.id);
+          
+          if (updateError) throw updateError;
+        }
+      }
 
       toast({
         title: "Saved",
@@ -229,6 +267,10 @@ const EditProduct = () => {
         className: "bg-[#F2FCE2] border-green-100 text-green-800",
         duration: 2000,
       });
+      
+      setDeletedVariantIds([]);
+      
+      refetchVariants();
       
     } catch (error) {
       console.error('Error updating product:', error);
@@ -242,86 +284,21 @@ const EditProduct = () => {
     }
   };
 
-  const handleAddVariant = async () => {
-    try {
-      console.log('Adding variant for product:', id);
-      
-      // Get the current user's UUID
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      
-      if (userError) {
-        throw userError;
-      }
-
-      if (!user) {
-        throw new Error('No authenticated user found');
-      }
-
-      const { data, error } = await supabase
-        .from('variants')
-        .insert([
-          {
-            user_uuid: user.id,
-            product_uuid: id,
-            name: "New Variant",
-            price: 0,
-            compare_price: 0,
-            highlighted: false,
-            tags: []
-          }
-        ])
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Supabase error:', error);
-        throw error;
-      }
-
-      console.log('Successfully added variant:', data);
-
-      toast({
-        title: "Success",
-        description: "New variant has been added",
-      });
-
-      refetchVariants();
-    } catch (error) {
-      console.error('Error adding variant:', error);
-      toast({
-        title: "Error",
-        description: "Failed to add variant",
-        variant: "destructive",
-      });
-    }
+  const handleAddVariant = () => {
+    const newVariant = {
+      id: `temp_${Date.now()}`,
+      name: "New Variant",
+      price: "0",
+      comparePrice: "0",
+      highlight: false,
+      tags: []
+    };
+    
+    setLocalVariants(prev => [...prev, newVariant]);
   };
 
-  const handleVariantsChange = async (updatedVariants: any[]) => {
-    try {
-      const variantToUpdate = updatedVariants[updatedVariants.length - 1];
-      
-      const { error } = await supabase
-        .from('variants')
-        .update({
-          name: variantToUpdate.name,
-          price: parseFloat(variantToUpdate.price.toString()),
-          compare_price: parseFloat(variantToUpdate.comparePrice.toString()),
-          highlighted: variantToUpdate.highlight,
-          tags: Array.isArray(variantToUpdate.tags) ? variantToUpdate.tags : []
-        })
-        .eq('variant_uuid', variantToUpdate.id);
-
-      if (error) throw error;
-
-      refetchVariants();
-    } catch (error) {
-      console.error('Error updating variant:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update variant",
-        variant: "destructive",
-      });
-    }
+  const handleVariantsChange = (updatedVariants: any[]) => {
+    setLocalVariants(updatedVariants);
   };
 
   if (isLoadingProduct || isLoadingVariants) {
@@ -406,14 +383,7 @@ const EditProduct = () => {
                         </Button>
                       </div>
                       <ProductVariantsEditor
-                        variants={variants.map(v => ({
-                          id: v.variant_uuid,
-                          name: v.name || "",
-                          price: v.price?.toString() || "0",
-                          comparePrice: v.compare_price?.toString() || "0",
-                          highlight: v.highlighted || false,
-                          tags: Array.isArray(v.tags) ? v.tags.map(tag => String(tag)) : []
-                        }))}
+                        variants={localVariants}
                         onVariantsChange={handleVariantsChange}
                       />
                     </div>
