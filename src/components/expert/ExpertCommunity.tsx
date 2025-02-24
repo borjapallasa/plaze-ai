@@ -5,7 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Globe, Users, GraduationCap, MessageSquare, Package2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
-export const ExpertCommunity = () => {
+interface ExpertCommunityProps {
+  community?: any | null;
+}
+
+export const ExpertCommunity = ({ community }: ExpertCommunityProps) => {
+  if (!community) {
+    return null; // Don't render anything if there's no community
+  }
+
   return (
     <div className="col-span-4 col-start-2 lg:col-span-4 lg:col-start-2">
       <h2 className="text-2xl font-bold mb-6">Community</h2>
@@ -17,7 +25,7 @@ export const ExpertCommunity = () => {
               {/* Video thumbnail */}
               <div className="aspect-video bg-muted rounded-lg overflow-hidden relative">
                 <img 
-                  src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5"
+                  src={community.thumbnail || "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5"}
                   alt="Community thumbnail"
                   className="w-full h-full object-cover"
                 />
@@ -30,22 +38,21 @@ export const ExpertCommunity = () => {
 
               {/* Title and badges moved here */}
               <div className="space-y-3">
-                <h3 className="text-xl font-semibold">UX Design Community</h3>
+                <h3 className="text-xl font-semibold">{community.name}</h3>
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-1.5">
                     <Globe className="w-3.5 h-3.5 text-muted-foreground" />
                     <span className="text-sm text-muted-foreground">Public Community</span>
                   </div>
-                  <Badge variant="secondary" className="text-xs px-2 py-0.5">Free Access</Badge>
+                  <Badge variant="secondary" className="text-xs px-2 py-0.5">
+                    {community.type === 'paid' ? `$${community.price}/month` : 'Free Access'}
+                  </Badge>
                 </div>
               </div>
 
               {/* Description */}
               <p className="text-sm leading-relaxed text-muted-foreground">
-                Join our vibrant community of UX designers where we share insights, 
-                collaborate on projects, and help each other grow. Get access to exclusive 
-                resources, participate in discussions, and connect with fellow designers 
-                from around the world.
+                {community.description || community.intro}
               </p>
             </div>
 
@@ -58,28 +65,28 @@ export const ExpertCommunity = () => {
                     <Users className="w-4 h-4" />
                     <span className="text-xs font-medium uppercase">Members</span>
                   </div>
-                  <p className="text-2xl font-bold">1,234</p>
+                  <p className="text-2xl font-bold">{community.member_count || 0}</p>
                 </Card>
                 <Card className="p-3 space-y-1">
                   <div className="flex items-center gap-2 text-muted-foreground mb-1">
                     <GraduationCap className="w-4 h-4" />
                     <span className="text-xs font-medium uppercase">Classrooms</span>
                   </div>
-                  <p className="text-2xl font-bold">12</p>
+                  <p className="text-2xl font-bold">{community.classroom_count || 0}</p>
                 </Card>
                 <Card className="p-3 space-y-1">
                   <div className="flex items-center gap-2 text-muted-foreground mb-1">
                     <MessageSquare className="w-4 h-4" />
                     <span className="text-xs font-medium uppercase">Posts</span>
                   </div>
-                  <p className="text-2xl font-bold">456</p>
+                  <p className="text-2xl font-bold">{community.post_count || 0}</p>
                 </Card>
                 <Card className="p-3 space-y-1">
                   <div className="flex items-center gap-2 text-muted-foreground mb-1">
                     <Package2 className="w-4 h-4" />
                     <span className="text-xs font-medium uppercase">Products</span>
                   </div>
-                  <p className="text-2xl font-bold">89</p>
+                  <p className="text-2xl font-bold">{community.product_count || 0}</p>
                 </Card>
               </div>
 

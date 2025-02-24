@@ -13,7 +13,7 @@ interface ExpertContentProps {
   services: Service[];
   moreProducts: any[];
   reviews: any[];
-  community?: any | null; // Making it optional since it might be null
+  community?: any | null;
 }
 
 export const ExpertContent = ({ expert, services, moreProducts, reviews, community }: ExpertContentProps) => {
@@ -31,7 +31,7 @@ export const ExpertContent = ({ expert, services, moreProducts, reviews, communi
           <ExpertServices services={services} />
         </div>
 
-        <ExpertCommunity />
+        <ExpertCommunity community={community} />
 
         <div className="space-y-8">
           <MoreFromSeller products={moreProducts} />
@@ -58,7 +58,7 @@ export const ExpertContent = ({ expert, services, moreProducts, reviews, communi
         </div>
 
         <div>
-          <ExpertCommunity />
+          <ExpertCommunity community={community} />
         </div>
 
         <div>
