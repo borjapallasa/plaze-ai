@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,7 +18,7 @@ import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
 import { ProductStatus } from "@/components/product/ProductStatus";
 import { ProductVariantsEditor } from "@/components/product/ProductVariants";
 import { ArrowLeft, Plus, X } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
@@ -63,18 +64,11 @@ const TEAM_ROLES = [
   "QA Engineer",
 ];
 
-type Variant = {
-  id: string;
-  name: string;
-  price: string;
-  comparePrice: string;
-  highlight: boolean;
-  tags: string[];
-};
-
 const EditProduct = () => {
   const { id } = useParams();
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const [isSaving, setIsSaving] = useState(false);
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [techStack, setTechStack] = useState("");
@@ -111,9 +105,7 @@ const EditProduct = () => {
     if (items.length === 0) return null;
     
     return (
-      <div 
-        className="flex flex-wrap gap-1.5 max-w-full" 
-      >
+      <div className="flex flex-wrap gap-1.5 max-w-full">
         {items.map((item) => (
           <span
             key={item}
@@ -183,19 +175,56 @@ const EditProduct = () => {
       setDifficultyLevel(product.difficulty_level || "");
       setDemo(product.demo || "");
       setTypes(product.type ? [product.type] : []);
-      setUseCases(product.use_case ? [product.use_case] : []);
-      
-      const platformData = product.platform as unknown[] || [];
-      setPlatform(platformData.map(item => String(item)));
-      
-      const teamData = product.team as unknown[] || [];
-      setTeam(teamData.map(item => String(item)));
+      setUseCases(product.use_case ? product.use_case : []);
+      setPlatform(product.platform || []);
+      setTeam(product.team || []);
     }
   }, [product]);
 
+  const handleSave = async () => {
+    try {
+      setIsSaving(true);
+      const { error } = await supabase
+        .from('products')
+        .update({
+          name: productName,
+          description: productDescription,
+          tech_stack: techStack,
+          tech_stack_price: techStackPrice,
+          product_includes: productIncludes,
+          difficulty_level: difficultyLevel,
+          demo: demo,
+          type: types[0], // Since the database schema expects a single type
+          use_case: useCases,
+          platform: platform,
+          team: team
+        })
+        .eq('product_uuid', id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Product updated successfully",
+      });
+
+      // Navigate back to the products list
+      navigate('/seller/products');
+    } catch (error) {
+      console.error('Error updating product:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update product",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleAddVariant = async () => {
     try {
-      console.log('Adding variant for product:', id); // Debug log
+      console.log('Adding variant for product:', id);
       
       const { data, error } = await supabase
         .from('variants')
@@ -213,11 +242,11 @@ const EditProduct = () => {
         .single();
 
       if (error) {
-        console.error('Supabase error:', error); // Debug log
+        console.error('Supabase error:', error);
         throw error;
       }
 
-      console.log('Successfully added variant:', data); // Debug log
+      console.log('Successfully added variant:', data);
 
       toast({
         title: "Success",
@@ -235,7 +264,7 @@ const EditProduct = () => {
     }
   };
 
-  const handleVariantsChange = async (updatedVariants: Variant[]) => {
+  const handleVariantsChange = async (updatedVariants: any[]) => {
     try {
       const variantToUpdate = updatedVariants[updatedVariants.length - 1];
       
@@ -286,7 +315,15 @@ const EditProduct = () => {
               </Link>
               <div className="w-full">
                 <h1 className="text-lg sm:text-xl md:text-2xl font-semibold break-words pr-2">Edit Product</h1>
-                <p className="text-sm text-muted-foreground mt-2">Product details and configuration</p>
+                <div className="flex items-center justify-between mt-2">
+                  <p className="text-sm text-muted-foreground">Product details and configuration</p>
+                  <Button 
+                    onClick={handleSave}
+                    disabled={isSaving}
+                  >
+                    {isSaving ? "Saving..." : "Save changes"}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

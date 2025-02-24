@@ -1053,6 +1053,7 @@ export type Database = {
             | Database["public"]["Enums"]["product_free_or_paid"]
             | null
           id: number
+          industries: Json | null
           name: string | null
           platform: Json | null
           product_includes: string | null
@@ -1067,7 +1068,7 @@ export type Database = {
           tech_stack: string | null
           tech_stack_price: string | null
           type: Database["public"]["Enums"]["product_type"] | null
-          use_case: string | null
+          use_case: Json | null
           user_uuid: string | null
           utm_campaign: string | null
           utm_content: string | null
@@ -1093,6 +1094,7 @@ export type Database = {
             | Database["public"]["Enums"]["product_free_or_paid"]
             | null
           id?: number
+          industries?: Json | null
           name?: string | null
           platform?: Json | null
           product_includes?: string | null
@@ -1107,7 +1109,7 @@ export type Database = {
           tech_stack?: string | null
           tech_stack_price?: string | null
           type?: Database["public"]["Enums"]["product_type"] | null
-          use_case?: string | null
+          use_case?: Json | null
           user_uuid?: string | null
           utm_campaign?: string | null
           utm_content?: string | null
@@ -1133,6 +1135,7 @@ export type Database = {
             | Database["public"]["Enums"]["product_free_or_paid"]
             | null
           id?: number
+          industries?: Json | null
           name?: string | null
           platform?: Json | null
           product_includes?: string | null
@@ -1147,7 +1150,7 @@ export type Database = {
           tech_stack?: string | null
           tech_stack_price?: string | null
           type?: Database["public"]["Enums"]["product_type"] | null
-          use_case?: string | null
+          use_case?: Json | null
           user_uuid?: string | null
           utm_campaign?: string | null
           utm_content?: string | null
