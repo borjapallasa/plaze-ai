@@ -21,13 +21,6 @@ import { Card } from "@/components/ui/card";
 
 const getPlaceholderImage = () => "https://images.unsplash.com/photo-1649972904349-6e44c42644a7";
 
-const createSlug = (text: string) => {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)+/g, '');
-};
-
 export default function Product() {
   const [selectedVariant, setSelectedVariant] = useState<string | undefined>();
   const [showStickyATC, setShowStickyATC] = useState(false);
@@ -50,9 +43,8 @@ export default function Product() {
 
         if (!error && data) {
           // Redirect to the canonical URL if needed
-          const correctSlug = createSlug(data.name || '');
-          if (!slug || slug !== correctSlug) {
-            navigate(`/product/${correctSlug}/${data.id}`, { replace: true });
+          if (!slug || slug !== data.slug) {
+            navigate(`/product/${data.slug}/${data.id}`, { replace: true });
           }
           return data;
         }
@@ -68,9 +60,8 @@ export default function Product() {
       if (error) throw error;
 
       // Redirect to the canonical URL
-      const correctSlug = createSlug(data.name || '');
-      if (!slug || slug !== correctSlug) {
-        navigate(`/product/${correctSlug}/${data.id}`, { replace: true });
+      if (!slug || slug !== data.slug) {
+        navigate(`/product/${data.slug}/${data.id}`, { replace: true });
       }
       
       return data;
