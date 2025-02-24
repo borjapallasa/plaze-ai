@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -148,7 +149,7 @@ const EditProduct = () => {
     enabled: !!id
   });
 
-  const { data: variants = [], isLoading: isLoadingVariants } = useQuery({
+  const { data: variants = [], isLoading: isLoadingVariants, refetch: refetchVariants } = useQuery({
     queryKey: ['variants', id],
     queryFn: async () => {
       const { data, error } = await supabase
