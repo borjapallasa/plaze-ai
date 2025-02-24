@@ -1063,6 +1063,7 @@ export type Database = {
           sales_amount: number | null
           sales_count: number | null
           slug: string | null
+          status: Database["public"]["Enums"]["product_status"] | null
           team: Json | null
           tech_stack: string | null
           tech_stack_price: string | null
@@ -1102,6 +1103,7 @@ export type Database = {
           sales_amount?: number | null
           sales_count?: number | null
           slug?: string | null
+          status?: Database["public"]["Enums"]["product_status"] | null
           team?: Json | null
           tech_stack?: string | null
           tech_stack_price?: string | null
@@ -1141,6 +1143,7 @@ export type Database = {
           sales_amount?: number | null
           sales_count?: number | null
           slug?: string | null
+          status?: Database["public"]["Enums"]["product_status"] | null
           team?: Json | null
           tech_stack?: string | null
           tech_stack_price?: string | null

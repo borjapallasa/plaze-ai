@@ -21,11 +21,9 @@ export function ProductStatus() {
               <SelectValue placeholder="Select status" />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="active">Active</SelectItem>
               <SelectItem value="draft">Draft</SelectItem>
-              <SelectItem value="pending">Pending Review</SelectItem>
-              <SelectItem value="published">Published</SelectItem>
-              <SelectItem value="rejected">Rejected</SelectItem>
-              <SelectItem value="changes_needed">Changes Needed</SelectItem>
+              <SelectItem value="inactive">Inactive</SelectItem>
             </SelectContent>
           </Select>
         </div>
