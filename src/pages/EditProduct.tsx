@@ -80,6 +80,24 @@ const EditProduct = () => {
   const [platform, setPlatform] = useState<string[]>([]);
   const [team, setTeam] = useState<string[]>([]);
 
+  const handleTypeChange = (value: string) => {
+    setTypes(prev => prev.includes(value) ? prev.filter(t => t !== value) : [...prev, value]);
+  };
+
+  const handleUseCaseChange = (value: string) => {
+    setUseCases(prev => prev.includes(value) ? prev.filter(uc => uc !== value) : [...prev, value]);
+  };
+
+  const handlePlatformChange = (value: string) => {
+    if (value === "") return;
+    setPlatform(prev => prev.includes(value) ? prev.filter(p => p !== value) : [...prev, value]);
+  };
+
+  const handleTeamChange = (value: string) => {
+    if (value === "") return;
+    setTeam(prev => prev.includes(value) ? prev.filter(t => t !== value) : [...prev, value]);
+  };
+
   const renderSelectedTags = (items: string[]) => {
     if (items.length === 0) return null;
     
@@ -94,6 +112,7 @@ const EditProduct = () => {
             <button
               onClick={(e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 const newItems = items.filter(i => i !== item);
                 if (items === types) setTypes(newItems);
                 if (items === useCases) setUseCases(newItems);
@@ -368,9 +387,7 @@ const EditProduct = () => {
                     <Label htmlFor="type" className="text-sm mb-1.5">Type</Label>
                     <Select
                       value={types[0] || ""}
-                      onValueChange={(value) => setTypes(prev => 
-                        prev.includes(value) ? prev.filter(t => t !== value) : [...prev, value]
-                      )}
+                      onValueChange={handleTypeChange}
                     >
                       <SelectTrigger className="h-auto min-h-[2.75rem] py-1.5 px-3">
                         {renderSelectedTags(types) || <SelectValue placeholder="Select product types" />}
@@ -393,9 +410,7 @@ const EditProduct = () => {
                     <Label htmlFor="use_case" className="text-sm mb-1.5">Use Case</Label>
                     <Select
                       value={useCases[0] || ""}
-                      onValueChange={(value) => setUseCases(prev => 
-                        prev.includes(value) ? prev.filter(uc => uc !== value) : [...prev, value]
-                      )}
+                      onValueChange={handleUseCaseChange}
                     >
                       <SelectTrigger className="h-auto min-h-[2.75rem] py-1.5 px-3">
                         {renderSelectedTags(useCases) || <SelectValue placeholder="Select use cases" />}
@@ -418,7 +433,7 @@ const EditProduct = () => {
                     <Label htmlFor="platform" className="text-sm mb-1.5">Platform</Label>
                     <Select
                       value=""
-                      onValueChange={handleAddPlatform}
+                      onValueChange={handlePlatformChange}
                     >
                       <SelectTrigger className="h-auto min-h-[2.75rem] py-1.5 px-3">
                         {renderSelectedTags(platform) || <SelectValue placeholder="Select platforms" />}
@@ -441,7 +456,7 @@ const EditProduct = () => {
                     <Label htmlFor="team" className="text-sm mb-1.5">Team</Label>
                     <Select
                       value=""
-                      onValueChange={handleAddTeam}
+                      onValueChange={handleTeamChange}
                     >
                       <SelectTrigger className="h-auto min-h-[2.75rem] py-1.5 px-3">
                         {renderSelectedTags(team) || <SelectValue placeholder="Select team roles" />}
