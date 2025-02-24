@@ -1,4 +1,5 @@
 
+import { MainHeader } from "@/components/MainHeader";
 import { Card } from "@/components/ui/card";
 import { EditProductHeader } from "./EditProductHeader";
 import { ProductBasicInfo } from "./ProductBasicInfo";
@@ -100,9 +101,9 @@ export const EditProductLayout = ({
                   difficultyLevel={difficultyLevel}
                   demo={demo}
                   onTechStackChange={onTechStackChange}
-                  onTechStackPriceChange={onTechStackPriceChange}
-                  onProductIncludesChange={onProductIncludesChange}
-                  onDifficultyLevelChange={onDifficultyLevelChange}
+                  onTechStackPriceChange={onTechStackPrice}
+                  onProductIncludesChange={onProductIncludes}
+                  onDifficultyLevelChange={setDifficultyLevel}
                   onDemoChange={onDemoChange}
                 />
 
