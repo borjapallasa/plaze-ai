@@ -24,12 +24,16 @@ import { useToast } from "@/components/ui/use-toast";
 import { Variant } from "@/components/product/types/variants";
 import type { Json } from "@/integrations/supabase/types";
 
-type ProductType = "template" | "guide or manual";
-
-const PRODUCT_TYPES = [
-  "template",
-  "guide or manual"
-] as const;
+const INDUSTRIES = [
+  "E-commerce",
+  "Blog",
+  "Portfolio",
+  "Dashboard",
+  "Social Network",
+  "Analytics",
+  "CMS",
+  "Authentication",
+];
 
 const USE_CASES = [
   "E-commerce",
@@ -77,7 +81,7 @@ const EditProduct = () => {
   const [productIncludes, setProductIncludes] = useState("");
   const [difficultyLevel, setDifficultyLevel] = useState("");
   const [demo, setDemo] = useState("");
-  const [types, setTypes] = useState<ProductType[]>([]);
+  const [industries, setIndustries] = useState<string[]>([]);
   const [useCases, setUseCases] = useState<string[]>([]);
   const [platform, setPlatform] = useState<string[]>([]);
   const [team, setTeam] = useState<string[]>([]);
@@ -106,14 +110,19 @@ const EditProduct = () => {
       setProductIncludes(product.product_includes || "");
       setDifficultyLevel(product.difficulty_level || "");
       setDemo(product.demo || "");
-      if (product.type === "template" || product.type === "guide or manual") {
-        setTypes([product.type]);
-      } else {
-        setTypes([]);
-      }
+      setIndustries(Array.isArray(product.industries) ? 
+        product.industries.map(i => String(i)) 
+        : []
+      );
       setUseCases(product.use_case ? [product.use_case] : []);
-      setPlatform(Array.isArray(product.platform) ? product.platform : []);
-      setTeam(Array.isArray(product.team) ? product.team : []);
+      setPlatform(Array.isArray(product.platform) ? 
+        product.platform.map(p => String(p)) 
+        : []
+      );
+      setTeam(Array.isArray(product.team) ? 
+        product.team.map(t => String(t)) 
+        : []
+      );
     }
   }, [product]);
 
@@ -146,35 +155,47 @@ const EditProduct = () => {
     }
   }, [variants]);
 
-  const handleTypeChange = (value: string) => {
+  const handleIndustryChange = (value: string) => {
     if (!value) return;
-    if (value === "template" || value === "guide or manual") {
-      setTypes([value as ProductType]);
-    }
+    setIndustries(prev => 
+      prev.includes(value) ? 
+        prev.filter(ind => ind !== value) : 
+        [...prev, value]
+    );
   };
 
   const handleUseCaseChange = (value: string) => {
     if (!value) return;
-    setUseCases(prev => prev.includes(value) ? prev.filter(uc => uc !== value) : [...prev, value]);
+    setUseCases(prev => 
+      prev.includes(value) ? 
+        prev.filter(uc => uc !== value) : 
+        [...prev, value]
+    );
   };
 
   const handlePlatformChange = (value: string) => {
     if (!value) return;
-    setPlatform(prev => prev.includes(value) ? prev.filter(p => p !== value) : [...prev, value]);
+    setPlatform(prev => 
+      prev.includes(value) ? 
+        prev.filter(p => p !== value) : 
+        [...prev, value]
+    );
   };
 
   const handleTeamChange = (value: string) => {
     if (!value) return;
-    setTeam(prev => prev.includes(value) ? prev.filter(t => t !== value) : [...prev, value]);
+    setTeam(prev => 
+      prev.includes(value) ? 
+        prev.filter(t => t !== value) : 
+        [...prev, value]
+    );
   };
 
   const renderSelectedTags = (items: string[]) => {
     if (items.length === 0) return null;
     
     return (
-      <div 
-        className="flex flex-wrap gap-1.5 max-w-full" 
-      >
+      <div className="flex flex-wrap gap-1.5 max-w-full">
         {items.map((item) => (
           <span
             key={item}
@@ -186,7 +207,7 @@ const EditProduct = () => {
               onClick={(e) => {
                 e.stopPropagation();
                 const newItems = items.filter(i => i !== item);
-                if (items === types) setTypes(newItems);
+                if (items === industries) setIndustries(newItems);
                 if (items === useCases) setUseCases(newItems);
                 if (items === platform) setPlatform(newItems);
                 if (items === team) setTeam(newItems);
@@ -282,7 +303,7 @@ const EditProduct = () => {
           product_includes: productIncludes,
           difficulty_level: difficultyLevel,
           demo: demo,
-          type: types[0],
+          industries: industries,
           use_case: useCases[0],
           platform: platform,
           team: team,
@@ -475,22 +496,22 @@ const EditProduct = () => {
                 <h2 className="text-lg font-medium mb-3 sm:mb-4">Product Organization</h2>
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="type" className="text-sm mb-1.5">Type</Label>
+                    <Label htmlFor="industries" className="text-sm mb-1.5">Industries</Label>
                     <Select
                       value=""
-                      onValueChange={handleTypeChange}
+                      onValueChange={handleIndustryChange}
                     >
                       <SelectTrigger className="h-auto min-h-[2.75rem] py-1.5 px-3">
-                        {renderSelectedTags(types) || <SelectValue placeholder="Select product types" />}
+                        {renderSelectedTags(industries) || <SelectValue placeholder="Select industries" />}
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          {PRODUCT_TYPES.map((productType) => (
+                          {INDUSTRIES.map((industry) => (
                             <SelectItem 
-                              key={productType} 
-                              value={productType}
+                              key={industry} 
+                              value={industry}
                             >
-                              {productType}
+                              {industry}
                             </SelectItem>
                           ))}
                         </SelectGroup>
