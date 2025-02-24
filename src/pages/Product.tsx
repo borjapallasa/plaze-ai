@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
@@ -33,7 +32,6 @@ export default function Product() {
   const { data: product, isLoading: isLoadingProduct, error: productError } = useQuery({
     queryKey: ['product', id],
     queryFn: async () => {
-      // Try to find by numeric ID first
       const numericId = parseInt(id || '');
       if (!isNaN(numericId)) {
         const { data, error } = await supabase
@@ -43,7 +41,6 @@ export default function Product() {
           .single();
 
         if (!error && data) {
-          // Redirect to the canonical URL if needed
           if (!slug || slug !== data.slug) {
             navigate(`/product/${data.slug}/${data.id}`, { replace: true });
           }
@@ -51,7 +48,6 @@ export default function Product() {
         }
       }
 
-      // If not found by ID, try UUID
       const { data, error } = await supabase
         .from('products')
         .select('*')
@@ -60,7 +56,6 @@ export default function Product() {
 
       if (error) throw error;
 
-      // Redirect to the canonical URL if needed
       if (!slug || slug !== data.slug) {
         navigate(`/product/${data.slug}/${data.id}`, { replace: true });
       }
@@ -146,6 +141,33 @@ export default function Product() {
     enabled: !!product?.user_uuid
   });
 
+  const { data: relatedProducts, isLoading: isLoadingRelated } = useQuery({
+    queryKey: ['relatedProducts', product?.use_case],
+    queryFn: async () => {
+      if (!product?.use_case) return [];
+      
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('use_case', product.use_case)
+        .neq('product_uuid', id)
+        .limit(12);
+
+      if (error) throw error;
+
+      return data.map(product => ({
+        title: product.name,
+        price: product.tech_stack_price || "$99.99",
+        image: getPlaceholderImage(),
+        seller: "Design Master",
+        description: product.description || "No description provided",
+        tags: product.tech_stack ? product.tech_stack.split(',').slice(0, 2) : [],
+        category: product.type || "design"
+      }));
+    },
+    enabled: !!product?.use_case
+  });
+
   useEffect(() => {
     if (variants?.length > 0 && !selectedVariant) {
       const highlightedVariant = variants.find(v => v.highlight);
@@ -173,7 +195,7 @@ export default function Product() {
     });
   };
 
-  if (isLoadingProduct || isLoadingVariants || isLoadingReviews || isLoadingMoreFromSeller) {
+  if (isLoadingProduct || isLoadingVariants || isLoadingReviews || isLoadingMoreFromSeller || isLoadingRelated) {
     return (
       <div className="min-h-screen bg-background">
         <MainHeader />
@@ -368,8 +390,9 @@ export default function Product() {
         </div>
         <ProductReviews reviews={productReviews} className="p-6" />
         <MoreFromSeller products={moreFromSeller || []} className="mb-24" />
-        <RelatedProducts products={relatedProducts} />
-
+        {relatedProducts && relatedProducts.length > 0 && (
+          <RelatedProducts products={relatedProducts} />
+        )}
         <StickyATC 
           variants={productVariants}
           selectedVariant={selectedVariant}

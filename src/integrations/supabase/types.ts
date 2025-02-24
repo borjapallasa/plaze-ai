@@ -904,6 +904,7 @@ export type Database = {
           tech_stack: string | null
           tech_stack_price: string | null
           type: Database["public"]["Enums"]["product_type"] | null
+          use_case: string | null
           user_uuid: string | null
           utm_campaign: string | null
           utm_content: string | null
@@ -938,6 +939,7 @@ export type Database = {
           tech_stack?: string | null
           tech_stack_price?: string | null
           type?: Database["public"]["Enums"]["product_type"] | null
+          use_case?: string | null
           user_uuid?: string | null
           utm_campaign?: string | null
           utm_content?: string | null
@@ -972,6 +974,7 @@ export type Database = {
           tech_stack?: string | null
           tech_stack_price?: string | null
           type?: Database["public"]["Enums"]["product_type"] | null
+          use_case?: string | null
           user_uuid?: string | null
           utm_campaign?: string | null
           utm_content?: string | null
