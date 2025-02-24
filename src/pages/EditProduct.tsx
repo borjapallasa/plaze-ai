@@ -18,8 +18,19 @@ const EditProduct = () => {
   const { id } = useParams();
   const [showVariantForm, setShowVariantForm] = useState(false);
   const [productName, setProductName] = useState("");
+  const [productDescription, setProductDescription] = useState("");
   const [productPrice, setProductPrice] = useState("");
   const [productComparePrice, setProductComparePrice] = useState("");
+  const [techStack, setTechStack] = useState("");
+  const [techStackPrice, setTechStackPrice] = useState("");
+  const [productIncludes, setProductIncludes] = useState("");
+  const [difficultyLevel, setDifficultyLevel] = useState("");
+  const [demo, setDemo] = useState("");
+  const [publicLink, setPublicLink] = useState("");
+  const [type, setType] = useState("");
+  const [useCase, setUseCase] = useState("");
+  const [platform, setPlatform] = useState("");
+  const [team, setTeam] = useState("");
   
   const { data: product, isLoading } = useQuery({
     queryKey: ['product', id],
@@ -39,9 +50,18 @@ const EditProduct = () => {
   useEffect(() => {
     if (product) {
       setProductName(product.name || "");
+      setProductDescription(product.description || "");
       setProductPrice(product.price?.toString() || "");
-      // Since compare price isn't in our schema, we'll leave it as is
-      setProductComparePrice("");
+      setTechStack(product.tech_stack || "");
+      setTechStackPrice(product.tech_stack_price || "");
+      setProductIncludes(product.product_includes || "");
+      setDifficultyLevel(product.difficulty_level || "");
+      setDemo(product.demo || "");
+      setPublicLink(product.public_link || "");
+      setType(product.type || "");
+      setUseCase(product.use_case || "");
+      setPlatform(Array.isArray(product.platform) ? JSON.stringify(product.platform) : (product.platform || ""));
+      setTeam(Array.isArray(product.team) ? JSON.stringify(product.team) : (product.team || ""));
     }
   }, [product]);
 
@@ -97,7 +117,7 @@ const EditProduct = () => {
                     </div>
                     <div>
                       <Label htmlFor="description">Description</Label>
-                      <ProductEditor />
+                      <ProductEditor defaultValue={productDescription} />
                     </div>
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div>
@@ -140,6 +160,8 @@ const EditProduct = () => {
                       <Input 
                         id="tech_stack" 
                         placeholder="Enter required tech stack"
+                        value={techStack}
+                        onChange={(e) => setTechStack(e.target.value)}
                       />
                     </div>
                     <div>
@@ -147,6 +169,8 @@ const EditProduct = () => {
                       <Input 
                         id="tech_stack_price" 
                         placeholder="Enter tech stack pricing details"
+                        value={techStackPrice}
+                        onChange={(e) => setTechStackPrice(e.target.value)}
                       />
                     </div>
                     <div>
@@ -154,6 +178,8 @@ const EditProduct = () => {
                       <Input 
                         id="product_includes" 
                         placeholder="Enter what's included in the product"
+                        value={productIncludes}
+                        onChange={(e) => setProductIncludes(e.target.value)}
                       />
                     </div>
                     <div>
@@ -161,6 +187,8 @@ const EditProduct = () => {
                       <Input 
                         id="difficulty_level" 
                         placeholder="Select difficulty level"
+                        value={difficultyLevel}
+                        onChange={(e) => setDifficultyLevel(e.target.value)}
                       />
                     </div>
                     <div>
@@ -169,6 +197,8 @@ const EditProduct = () => {
                         id="demo" 
                         placeholder="Enter demo URL" 
                         type="url"
+                        value={demo}
+                        onChange={(e) => setDemo(e.target.value)}
                       />
                     </div>
                     <div>
@@ -177,6 +207,8 @@ const EditProduct = () => {
                         id="public_link" 
                         placeholder="Enter public link" 
                         type="url"
+                        value={publicLink}
+                        onChange={(e) => setPublicLink(e.target.value)}
                       />
                     </div>
                   </div>
@@ -228,17 +260,29 @@ const EditProduct = () => {
                 <div className="space-y-3 sm:space-y-4">
                   <div>
                     <Label htmlFor="type">Type</Label>
-                    <Input id="type" placeholder="Select product type" />
+                    <Input 
+                      id="type" 
+                      placeholder="Select product type"
+                      value={type}
+                      onChange={(e) => setType(e.target.value)}
+                    />
                   </div>
                   <div>
                     <Label htmlFor="use_case">Use Case</Label>
-                    <Input id="use_case" placeholder="Select use case" />
+                    <Input 
+                      id="use_case" 
+                      placeholder="Select use case"
+                      value={useCase}
+                      onChange={(e) => setUseCase(e.target.value)}
+                    />
                   </div>
                   <div>
                     <Label htmlFor="platform">Platform</Label>
                     <Input 
                       id="platform" 
                       placeholder="Enter platform details (e.g., Web, Mobile)"
+                      value={platform}
+                      onChange={(e) => setPlatform(e.target.value)}
                     />
                   </div>
                   <div>
@@ -246,6 +290,8 @@ const EditProduct = () => {
                     <Input 
                       id="team" 
                       placeholder="Enter team configuration"
+                      value={team}
+                      onChange={(e) => setTeam(e.target.value)}
                     />
                   </div>
                 </div>
