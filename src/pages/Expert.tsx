@@ -11,31 +11,7 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
-
-interface Expert {
-  id: number;
-  expert_uuid: string;
-  name?: string;
-  slug?: string;
-  title?: string;
-  location?: string;
-  description?: string;
-  completed_projects?: number;
-  client_satisfaction?: number;
-  response_rate?: number;
-  areas?: string[];
-  info?: string;
-}
-
-interface Service {
-  id: number;
-  service_uuid: string;
-  name?: string;
-  description?: string;
-  price?: number;
-  features?: string[];
-  type?: string;
-}
+import { Expert, Service } from "@/components/expert/types";
 
 export default function Expert() {
   const { id, slug } = useParams();
@@ -47,14 +23,23 @@ export default function Expert() {
       const { data, error } = await supabase
         .from('experts')
         .select('*')
-        .eq('id', id)
+        .eq('id', Number(id))
         .single();
 
       if (error) throw error;
       
-      // Parse the areas JSON if it exists
+      // Parse the areas JSON if it exists and convert to string array
       if (data && data.areas) {
-        data.areas = Array.isArray(data.areas) ? data.areas : JSON.parse(data.areas as string);
+        try {
+          data.areas = typeof data.areas === 'string' 
+            ? JSON.parse(data.areas) 
+            : Array.isArray(data.areas) 
+              ? data.areas 
+              : [];
+        } catch (e) {
+          console.error('Error parsing areas:', e);
+          data.areas = [];
+        }
       }
       
       return data as Expert;
@@ -73,7 +58,14 @@ export default function Expert() {
         .eq('user_uuid', expert.expert_uuid);
 
       if (error) throw error;
-      return data as Service[];
+      
+      // Parse features if they exist
+      return (data || []).map(service => ({
+        ...service,
+        features: service.features ? 
+          (Array.isArray(service.features) ? service.features : JSON.parse(service.features as string)) 
+          : []
+      })) as Service[];
     },
     enabled: !!expert?.expert_uuid
   });
