@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,6 +11,8 @@ import { ProductStatus } from "@/components/product/ProductStatus";
 import { ProductVariantsEditor } from "@/components/product/ProductVariants";
 import { ArrowLeft, Plus } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 
 const EditProduct = () => {
   const { id } = useParams();
@@ -18,9 +21,42 @@ const EditProduct = () => {
   const [productPrice, setProductPrice] = useState("");
   const [productComparePrice, setProductComparePrice] = useState("");
   
+  const { data: product, isLoading } = useQuery({
+    queryKey: ['product', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('product_uuid', id)
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!id
+  });
+
+  useEffect(() => {
+    if (product) {
+      setProductName(product.name || "");
+      setProductPrice(product.price?.toString() || "");
+      // Since compare price isn't in our schema, we'll leave it as is
+      setProductComparePrice("");
+    }
+  }, [product]);
+
   const handleAddVariant = () => {
     setShowVariantForm(true);
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <MainHeader />
+        <div className="mt-16 p-6">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
