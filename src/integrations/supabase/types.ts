@@ -642,7 +642,7 @@ export type Database = {
           completed_projects?: number | null
           created_at?: string
           description?: string | null
-          expert_uuid: string
+          expert_uuid?: string
           id?: number
           info?: string | null
           location?: string | null
