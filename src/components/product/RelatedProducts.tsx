@@ -20,8 +20,8 @@ interface RelatedProductsProps {
   className?: string;
 }
 
-const fetchRelatedProducts = async (currentProductId: string) => {
-  console.log('Fetching related products for:', currentProductId);
+const fetchRelatedProducts = async () => {
+  console.log('Fetching all products');
   
   const { data, error } = await supabase
     .from('products')
@@ -35,7 +35,6 @@ const fetchRelatedProducts = async (currentProductId: string) => {
       product_uuid,
       slug
     `)
-    .neq('product_uuid', currentProductId)
     .order('created_at', { ascending: false })
     .limit(12);
 
@@ -44,7 +43,7 @@ const fetchRelatedProducts = async (currentProductId: string) => {
     throw error;
   }
 
-  console.log('Fetched related products:', data);
+  console.log('Fetched products:', data);
   return data || [];
 };
 
@@ -53,7 +52,7 @@ export function RelatedProducts({ className }: RelatedProductsProps) {
 
   const { data: products = [], isLoading } = useQuery({
     queryKey: ['relatedProducts', id],
-    queryFn: () => id ? fetchRelatedProducts(id) : Promise.resolve([]),
+    queryFn: fetchRelatedProducts,
     enabled: !!id
   });
 
