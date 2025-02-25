@@ -38,6 +38,7 @@ const fetchExpertProducts = async (expert_uuid: string) => {
     throw error;
   }
 
+  console.log('Expert products:', data); // Debug log
   return data || [];
 };
 
