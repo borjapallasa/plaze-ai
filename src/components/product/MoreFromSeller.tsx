@@ -26,8 +26,8 @@ interface MoreFromSellerProps {
   className?: string;
 }
 
-const fetchMarketplaceProducts = async () => {
-  console.log('Fetching all marketplace products');
+const fetchSellerProducts = async (expert_uuid: string) => {
+  console.log('Fetching all seller products for expert:', expert_uuid);
   
   const { data, error } = await supabase
     .from('products')
@@ -42,6 +42,7 @@ const fetchMarketplaceProducts = async () => {
       slug,
       use_case
     `)
+    .eq('expert_uuid', expert_uuid)
     .order('created_at', { ascending: false })
     .limit(12);
 
@@ -56,7 +57,7 @@ const fetchMarketplaceProducts = async () => {
     use_case: Array.isArray(product.use_case) ? product.use_case : []
   }));
 
-  console.log('Fetched products:', parsedData);
+  console.log('Fetched seller products:', parsedData);
   return parsedData || [];
 };
 
@@ -75,9 +76,9 @@ export function MoreFromSeller({
   const [current, setCurrent] = useState(0);
 
   const { data: products = [], isLoading } = useQuery({
-    queryKey: ['marketplaceProducts'],
-    queryFn: fetchMarketplaceProducts,
-    enabled: true
+    queryKey: ['sellerProducts', expert_uuid],
+    queryFn: () => expert_uuid ? fetchSellerProducts(expert_uuid) : Promise.resolve([]),
+    enabled: !!expert_uuid
   });
 
   React.useEffect(() => {
@@ -99,7 +100,7 @@ export function MoreFromSeller({
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-6 pt-[50px]">More products</h2>
+      <h2 className="text-2xl font-bold mb-6 pt-[50px]">More from seller</h2>
       
       <Carousel 
         setApi={setApi} 
