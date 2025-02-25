@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -23,6 +22,8 @@ export default function SellerPage() {
           *,
           services(*),
           products(
+            product_uuid,
+            slug,
             thumbnail,
             name,
             description,
@@ -54,14 +55,11 @@ export default function SellerPage() {
       </div>
 
       <main className="container mx-auto px-4 pt-24 pb-8">
-        {/* Enhanced Profile Section */}
         <div className="relative mb-8 overflow-hidden">
-          {/* Improved Background */}
           <div className="absolute inset-0 bg-gradient-to-br from-muted/50 to-background rounded-xl" />
           
           <div className="relative px-6 py-10 sm:px-10 sm:py-12">
             <div className="flex flex-col sm:flex-row items-start gap-10 max-w-6xl mx-auto">
-              {/* Enhanced Avatar Section */}
               <div className="relative flex-shrink-0">
                 <Avatar className="h-32 w-32 sm:h-40 sm:w-40 rounded-full ring-4 ring-background shadow-xl border-2 border-primary/10">
                   <AvatarImage 
@@ -75,9 +73,7 @@ export default function SellerPage() {
                 </div>
               </div>
 
-              {/* Enhanced Content Section */}
               <div className="flex-1 space-y-8">
-                {/* Improved Header */}
                 <div className="space-y-3">
                   <div className="flex flex-wrap items-center gap-3">
                     <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
@@ -93,14 +89,12 @@ export default function SellerPage() {
                   </p>
                 </div>
 
-                {/* Enhanced Description */}
                 <p className="text-base text-muted-foreground leading-relaxed max-w-3xl">
                   Passionate designer and developer with over 8 years of experience creating beautiful, 
                   functional digital experiences. Specializing in user interface design, web applications, 
                   and design systems that scale.
                 </p>
 
-                {/* Enhanced Stats */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   {stats.map((stat) => (
                     <div 
@@ -122,7 +116,6 @@ export default function SellerPage() {
           </div>
         </div>
 
-        {/* Tabs Section */}
         <Tabs defaultValue="products" className="animate-fade-in">
           <TabsList className="grid grid-cols-4 h-12 items-center bg-muted/50 mb-6">
             <TabsTrigger value="products" className="data-[state=active]:bg-background">
@@ -155,7 +148,7 @@ export default function SellerPage() {
                   image={product.thumbnail}
                   seller={seller.first_name}
                   description={product.description}
-                  tags={product.use_case || []}
+                  tags={Array.isArray(product.use_case) ? product.use_case : []}
                   category={product.type}
                 />
               ))}
