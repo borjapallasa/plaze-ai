@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -23,6 +22,8 @@ export default function Product() {
   const { id, slug } = useParams();
   const navigate = useNavigate();
 
+  console.log("Current product ID:", id);
+
   const { data: product, isLoading: isLoadingProduct, error: productError } = useQuery({
     queryKey: ['product', id],
     queryFn: async () => {
@@ -36,12 +37,20 @@ export default function Product() {
       
       if (!data) return null;
 
+      console.log("Product data:", data);
+      console.log("Demo URL:", data.demo);
+
       if (data && (!slug || slug !== data.slug)) {
         navigate(`/product/${data.slug}/${data.product_uuid}`, { replace: true });
       }
       
-      return data;
-    }
+      // Ensure demo URL is treated as a string
+      return {
+        ...data,
+        demo: data.demo || null
+      };
+    },
+    enabled: !!id
   });
 
   const { data: variants = [] } = useQuery({
@@ -162,6 +171,8 @@ export default function Product() {
   const averageRating = reviews.length 
     ? Number((reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length).toFixed(1))
     : 0;
+
+  console.log("Rendering product with demo:", product.demo);
 
   return (
     <div ref={variantsRef}>
