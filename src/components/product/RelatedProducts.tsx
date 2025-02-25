@@ -53,31 +53,35 @@ export function RelatedProducts({ className }: RelatedProductsProps) {
   const { data: products = [], isLoading } = useQuery({
     queryKey: ['relatedProducts', id],
     queryFn: fetchRelatedProducts,
-    enabled: !!id
+    enabled: true // Changed this to always be enabled
   });
 
-  if (isLoading || !products.length) {
-    return null;
-  }
+  // Removed the conditional return
 
   return (
     <div className={className}>
       <h2 className="text-2xl font-bold mb-6">Related Products</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {products.map((product) => (
-          <ProductCard
-            key={product.product_uuid}
-            id={product.product_uuid}
-            slug={product.slug}
-            title={product.name}
-            price={`$${product.price_from?.toFixed(2) || '0.00'}`}
-            image={product.thumbnail || "https://images.unsplash.com/photo-1649972904349-6e44c42644a7"}
-            seller="Design Master"
-            description={product.description}
-            tags={product.tech_stack ? product.tech_stack.split(',').slice(0, 2) : []}
-            category={product.type}
-          />
-        ))}
+        {isLoading ? (
+          <div>Loading products...</div>
+        ) : products.length === 0 ? (
+          <div>No products found</div>
+        ) : (
+          products.map((product) => (
+            <ProductCard
+              key={product.product_uuid}
+              id={product.product_uuid}
+              slug={product.slug}
+              title={product.name}
+              price={`$${product.price_from?.toFixed(2) || '0.00'}`}
+              image={product.thumbnail || "https://images.unsplash.com/photo-1649972904349-6e44c42644a7"}
+              seller="Design Master"
+              description={product.description}
+              tags={product.tech_stack ? product.tech_stack.split(',').slice(0, 2) : []}
+              category={product.type}
+            />
+          ))
+        )}
       </div>
     </div>
   );
