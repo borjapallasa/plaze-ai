@@ -1,3 +1,4 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { ExpertHeader } from "@/components/expert/ExpertHeader";
 import { ExpertContent } from "@/components/expert/layout/ExpertContent";
@@ -66,15 +67,15 @@ const moreProducts = [
 ];
 
 export default function Expert() {
-  const { id, slug } = useParams();
+  const { id: expert_uuid } = useParams();
 
   const { data: expert, isLoading: isLoadingExpert } = useQuery({
-    queryKey: ['expert', id],
+    queryKey: ['expert', expert_uuid],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('experts')
         .select('*')
-        .eq('id', Number(id))
+        .eq('expert_uuid', expert_uuid)
         .single();
 
       if (error) throw error;
@@ -93,7 +94,8 @@ export default function Expert() {
       }
       
       return data as Expert;
-    }
+    },
+    enabled: !!expert_uuid
   });
 
   const { data: reviews } = useQuery({
