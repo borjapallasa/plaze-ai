@@ -106,10 +106,9 @@ export function ProductLayout({
                   {product.description}
                 </p>
               </Card>
+              {children}
               <div className="space-y-8">
-                {children}
                 <MoreFromSeller expert_uuid={product.expert_uuid} />
-                <ProductReviews reviews={[]} />
                 {product.related_products?.length > 0 && (
                   <RelatedProducts products={product.related_products} className="mb-24" />
                 )}
@@ -146,6 +145,7 @@ export function ProductLayout({
             />
           </div>
         </div>
+        <ProductReviews reviews={[]} className="mt-8" />
       </main>
     </div>
   );
