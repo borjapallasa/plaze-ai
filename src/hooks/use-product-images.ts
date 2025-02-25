@@ -102,6 +102,16 @@ export function useProductImages(productUuid?: string) {
 
       if (dbError) throw dbError;
 
+      // If this is the first image (primary), update the product thumbnail
+      if (images.length === 0) {
+        const { error: thumbnailError } = await supabase
+          .from('products')
+          .update({ thumbnail: publicUrl })
+          .eq('product_uuid', productUuid);
+
+        if (thumbnailError) throw thumbnailError;
+      }
+
       setImages(prev => [...prev, {
         id: data.id,
         url: publicUrl,
@@ -147,6 +157,16 @@ export function useProductImages(productUuid?: string) {
         .eq('id', targetId);
 
       if (updateError2) throw updateError2;
+
+      // Update product thumbnail with the new primary image URL
+      if (productUuid) {
+        const { error: thumbnailError } = await supabase
+          .from('products')
+          .update({ thumbnail: sourceImage.url })
+          .eq('product_uuid', productUuid);
+
+        if (thumbnailError) throw thumbnailError;
+      }
 
       // Update local state and reorder immediately
       setImages(prev => {

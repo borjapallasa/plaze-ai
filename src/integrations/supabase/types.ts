@@ -1071,6 +1071,7 @@ export type Database = {
           team: Json | null
           tech_stack: string | null
           tech_stack_price: string | null
+          thumbnail: string | null
           type: Database["public"]["Enums"]["product_type"] | null
           use_case: Json | null
           user_uuid: string | null
@@ -1113,6 +1114,7 @@ export type Database = {
           team?: Json | null
           tech_stack?: string | null
           tech_stack_price?: string | null
+          thumbnail?: string | null
           type?: Database["public"]["Enums"]["product_type"] | null
           use_case?: Json | null
           user_uuid?: string | null
@@ -1155,6 +1157,7 @@ export type Database = {
           team?: Json | null
           tech_stack?: string | null
           tech_stack_price?: string | null
+          thumbnail?: string | null
           type?: Database["public"]["Enums"]["product_type"] | null
           use_case?: Json | null
           user_uuid?: string | null
