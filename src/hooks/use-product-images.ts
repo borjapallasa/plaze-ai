@@ -1,16 +1,11 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import type { ProductImage } from "@/types/product-images";
+import { uploadImageToStorage, updateProductThumbnail, updateImagePrimaryStatus, sortImagesByPrimary } from "@/utils/product-image-utils";
+import { fetchProductImages, insertProductImage, updateProductImage, deleteProductImage } from "@/services/product-images-service";
 
-export interface ProductImage {
-  id: number;
-  url: string;
-  storage_path: string;
-  is_primary: boolean;
-  file_name: string;
-  alt_text?: string;
-}
+export type { ProductImage };
 
 export function useProductImages(productUuid?: string) {
   const [images, setImages] = useState<ProductImage[]>([]);
@@ -19,33 +14,12 @@ export function useProductImages(productUuid?: string) {
   const { toast } = useToast();
 
   useEffect(() => {
-    async function fetchImages() {
+    async function loadImages() {
       if (!productUuid) return;
 
       try {
-        const { data, error } = await supabase
-          .from('product_images')
-          .select('*')
-          .eq('product_uuid', productUuid)
-          .order('is_primary', { ascending: false });
-
-        if (error) throw error;
-
-        const imagesWithUrls = await Promise.all(data.map(async (image) => {
-          const { data: { publicUrl } } = supabase.storage
-            .from('product_images')
-            .getPublicUrl(image.storage_path);
-
-          return {
-            id: image.id,
-            url: publicUrl,
-            storage_path: image.storage_path,
-            is_primary: image.is_primary,
-            file_name: image.file_name
-          };
-        }));
-
-        setImages(imagesWithUrls);
+        const fetchedImages = await fetchProductImages(productUuid);
+        setImages(fetchedImages);
       } catch (error) {
         console.error('Error fetching images:', error);
         toast({
@@ -58,7 +32,7 @@ export function useProductImages(productUuid?: string) {
       }
     }
 
-    fetchImages();
+    loadImages();
   }, [productUuid, toast]);
 
   const uploadImage = useCallback(async (file: File) => {
@@ -73,51 +47,26 @@ export function useProductImages(productUuid?: string) {
 
     try {
       setIsUploading(true);
-
-      const fileExt = file.name.split('.').pop();
-      const storagePath = `${productUuid}/${crypto.randomUUID()}.${fileExt}`;
+      const { publicUrl, storagePath } = await uploadImageToStorage(file, productUuid);
       
-      const { error: uploadError } = await supabase.storage
-        .from('product_images')
-        .upload(storagePath, file);
+      const newImage = await insertProductImage(productUuid, {
+        storage_path: storagePath,
+        file_name: file.name,
+        content_type: file.type,
+        size: file.size,
+        is_primary: images.length === 0
+      });
 
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('product_images')
-        .getPublicUrl(storagePath);
-
-      const { data, error: dbError } = await supabase
-        .from('product_images')
-        .insert({
-          product_uuid: productUuid,
-          storage_path: storagePath,
-          file_name: file.name,
-          content_type: file.type,
-          size: file.size,
-          is_primary: images.length === 0
-        })
-        .select()
-        .single();
-
-      if (dbError) throw dbError;
-
-      // If this is the first image (primary), update the product thumbnail
       if (images.length === 0) {
-        const { error: thumbnailError } = await supabase
-          .from('products')
-          .update({ thumbnail: publicUrl })
-          .eq('product_uuid', productUuid);
-
-        if (thumbnailError) throw thumbnailError;
+        await updateProductThumbnail(productUuid, publicUrl);
       }
 
       setImages(prev => [...prev, {
-        id: data.id,
+        id: newImage.id,
         url: publicUrl,
-        storage_path: data.storage_path,
-        is_primary: data.is_primary,
-        file_name: data.file_name
+        storage_path: newImage.storage_path,
+        is_primary: newImage.is_primary,
+        file_name: newImage.file_name
       }]);
 
       toast({
@@ -134,7 +83,7 @@ export function useProductImages(productUuid?: string) {
     } finally {
       setIsUploading(false);
     }
-  }, [productUuid, images, toast]);
+  }, [productUuid, images.length, toast]);
 
   const reorderImages = async (sourceId: number, targetId: number) => {
     try {
@@ -143,39 +92,19 @@ export function useProductImages(productUuid?: string) {
 
       if (!sourceImage || !targetImage) return;
 
-      // Update is_primary status in database
-      const { error: updateError } = await supabase
-        .from('product_images')
-        .update({ is_primary: true })
-        .eq('id', sourceId);
+      await updateImagePrimaryStatus(sourceId, true);
+      await updateImagePrimaryStatus(targetId, false);
 
-      if (updateError) throw updateError;
-
-      const { error: updateError2 } = await supabase
-        .from('product_images')
-        .update({ is_primary: false })
-        .eq('id', targetId);
-
-      if (updateError2) throw updateError2;
-
-      // Update product thumbnail with the new primary image URL
       if (productUuid) {
-        const { error: thumbnailError } = await supabase
-          .from('products')
-          .update({ thumbnail: sourceImage.url })
-          .eq('product_uuid', productUuid);
-
-        if (thumbnailError) throw thumbnailError;
+        await updateProductThumbnail(productUuid, sourceImage.url);
       }
 
-      // Update local state and reorder immediately
       setImages(prev => {
         const updatedImages = prev.map(img => ({
           ...img,
-          is_primary: img.id === sourceId ? true : false
+          is_primary: img.id === sourceId
         }));
-        // Sort images to show primary first
-        return [...updatedImages].sort((a, b) => (b.is_primary ? 1 : 0) - (a.is_primary ? 1 : 0));
+        return sortImagesByPrimary(updatedImages);
       });
 
       toast({
@@ -194,13 +123,8 @@ export function useProductImages(productUuid?: string) {
 
   const updateImage = async (imageId: number, updates: { file_name?: string; alt_text?: string }) => {
     try {
-      const { error } = await supabase
-        .from('product_images')
-        .update(updates)
-        .eq('id', imageId);
-
-      if (error) throw error;
-
+      await updateProductImage(imageId, updates);
+      
       setImages(prev => prev.map(img => 
         img.id === imageId 
           ? { ...img, ...updates }
@@ -223,19 +147,7 @@ export function useProductImages(productUuid?: string) {
 
   const removeImage = async (imageId: number, storagePath: string) => {
     try {
-      const { error: storageError } = await supabase.storage
-        .from('product_images')
-        .remove([storagePath]);
-
-      if (storageError) throw storageError;
-
-      const { error: dbError } = await supabase
-        .from('product_images')
-        .delete()
-        .eq('id', imageId);
-
-      if (dbError) throw dbError;
-
+      await deleteProductImage(imageId, storagePath);
       setImages(prev => prev.filter(img => img.id !== imageId));
 
       toast({
