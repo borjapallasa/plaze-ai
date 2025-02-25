@@ -43,7 +43,11 @@ export default function EditService() {
       if (data) {
         setServiceName(data.name || "");
         setServiceDescription(data.description || "");
-        setFeatures(Array.isArray(data.features) ? data.features : [""]);
+        // Convert features to array of strings and handle potential non-array or null values
+        const featuresArray = Array.isArray(data.features) 
+          ? data.features.map(feature => String(feature)) 
+          : [""];
+        setFeatures(featuresArray);
         setPrice(data.price?.toString() || "");
         setServiceType(data.type || "one time");
       }
