@@ -36,7 +36,14 @@ export async function insertProductImage(productUuid: string, data: {
 }) {
   const { data: insertedData, error } = await supabase
     .from('product_images')
-    .insert(data)
+    .insert({
+      product_uuid: productUuid, // Add this field
+      storage_path: data.storage_path,
+      file_name: data.file_name,
+      content_type: data.content_type,
+      size: data.size,
+      is_primary: data.is_primary
+    })
     .select()
     .single();
 
