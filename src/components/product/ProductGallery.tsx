@@ -28,18 +28,9 @@ export function ProductGallery({ images, className, priority = false }: ProductG
 
   useEffect(() => {
     if (emblaApi) {
-      const onSelect = () => {
+      emblaApi.on('select', () => {
         setCurrentImageIndex(emblaApi.selectedScrollSnap());
-      };
-
-      emblaApi.on('select', onSelect);
-      
-      // Initial sync
-      onSelect();
-
-      return () => {
-        emblaApi.off('select', onSelect);
-      };
+      });
     }
   }, [emblaApi]);
 
@@ -110,7 +101,6 @@ export function ProductGallery({ images, className, priority = false }: ProductG
                     index === currentImageIndex ? 'bg-primary' : 'bg-gray-300'
                   }`}
                   onClick={() => emblaApi?.scrollTo(index)}
-                  aria-label={`Go to slide ${index + 1}`}
                 />
               ))}
             </div>
