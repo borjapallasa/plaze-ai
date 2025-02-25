@@ -19,21 +19,21 @@ export function ServiceFeatures({
   onFeatureChange,
 }: ServiceFeaturesProps) {
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <Label className="text-sm font-medium">Features</Label>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between mb-2">
+        <Label className="text-base font-medium">Features</Label>
         <Button
           type="button"
           variant="outline"
           size="sm"
-          className="h-8"
+          className="h-9 px-4"
           onClick={onAddFeature}
         >
-          <Plus className="h-4 w-4 mr-1" />
+          <Plus className="h-4 w-4 mr-2" />
           Add Feature
         </Button>
       </div>
-      <div className="space-y-2">
+      <div className="space-y-3">
         {features.map((feature, index) => (
           <div key={index} className="flex gap-2">
             <Input
@@ -47,8 +47,8 @@ export function ServiceFeatures({
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="h-11 w-11 flex-shrink-0"
                 onClick={() => onRemoveFeature(index)}
+                className="h-11 w-11 flex-shrink-0 hover:bg-destructive/10 hover:text-destructive"
               >
                 <X className="h-4 w-4" />
               </Button>

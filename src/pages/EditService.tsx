@@ -159,9 +159,9 @@ export default function EditService() {
           <div className="space-y-4 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-8">
             <div className="lg:col-span-8">
               <Card className="p-4 sm:p-6">
-                <div className="space-y-6">
+                <div className="space-y-8">
                   <div>
-                    <Label htmlFor="name" className="text-sm font-medium mb-1.5 block">
+                    <Label htmlFor="name" className="text-base font-medium mb-2 block">
                       Service Name
                     </Label>
                     <Input
@@ -174,7 +174,7 @@ export default function EditService() {
                   </div>
                   
                   <div>
-                    <Label htmlFor="description" className="text-sm font-medium mb-1.5 block">
+                    <Label htmlFor="description" className="text-base font-medium mb-2 block">
                       Description
                     </Label>
                     <ProductEditor 
@@ -190,9 +190,9 @@ export default function EditService() {
                     onFeatureChange={handleFeatureChange}
                   />
 
-                  <div className="flex flex-col sm:flex-row sm:items-end gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-end gap-6">
                     <div>
-                      <Label htmlFor="price" className="text-sm font-medium mb-1.5 block">
+                      <Label htmlFor="price" className="text-base font-medium mb-2 block">
                         Price
                       </Label>
                       <Input
@@ -205,7 +205,7 @@ export default function EditService() {
                       />
                     </div>
                     <div className="flex-1 max-w-[240px]">
-                      <Label htmlFor="type" className="text-sm font-medium mb-1.5 block">
+                      <Label htmlFor="type" className="text-base font-medium mb-2 block">
                         Service Type
                       </Label>
                       <Select 
