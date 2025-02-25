@@ -18,6 +18,7 @@ interface Product {
   type: string;
   product_uuid: string;
   slug: string;
+  use_case: string[];
 }
 
 interface MoreFromSellerProps {
@@ -26,16 +27,21 @@ interface MoreFromSellerProps {
 }
 
 const fetchExpertProducts = async (expert_uuid: string) => {
+  console.log('Fetching products for expert:', expert_uuid);
+  
   const { data, error } = await supabase
     .from('products')
-    .select('name, price_from, thumbnail, description, tech_stack, type, product_uuid, slug')
+    .select('name, price_from, thumbnail, description, tech_stack, type, product_uuid, slug, use_case')
     .eq('expert_uuid', expert_uuid)
-    .order('sales_amount', { ascending: false });
+    .order('created_at', { ascending: false })
+    .limit(12);
 
   if (error) {
+    console.error('Error fetching products:', error);
     throw error;
   }
 
+  console.log('Fetched products:', data);
   return data || [];
 };
 
