@@ -45,7 +45,7 @@ export default function EditService() {
         setServiceDescription(data.description || "");
         // Convert features to array of strings and handle potential non-array or null values
         const featuresArray = Array.isArray(data.features) 
-          ? data.features.map(feature => String(feature)) 
+          ? (data.features as Array<string | number>).map(feature => String(feature)) 
           : [""];
         setFeatures(featuresArray);
         setPrice(data.price?.toString() || "");

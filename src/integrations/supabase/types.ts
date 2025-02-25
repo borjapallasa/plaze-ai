@@ -1516,6 +1516,7 @@ export type Database = {
           expert_uuid: string | null
           features: Json | null
           id: number
+          main_category: string | null
           monthly_recurring_revenue: number | null
           name: string | null
           payment_url: string | null
@@ -1524,6 +1525,7 @@ export type Database = {
           service_uuid: string
           stripe_price_id: string | null
           stripe_product_id: string | null
+          subcategory: string | null
           type: Database["public"]["Enums"]["service_type"] | null
           user_uuid: string | null
         }
@@ -1534,6 +1536,7 @@ export type Database = {
           expert_uuid?: string | null
           features?: Json | null
           id?: number
+          main_category?: string | null
           monthly_recurring_revenue?: number | null
           name?: string | null
           payment_url?: string | null
@@ -1542,6 +1545,7 @@ export type Database = {
           service_uuid?: string
           stripe_price_id?: string | null
           stripe_product_id?: string | null
+          subcategory?: string | null
           type?: Database["public"]["Enums"]["service_type"] | null
           user_uuid?: string | null
         }
@@ -1552,6 +1556,7 @@ export type Database = {
           expert_uuid?: string | null
           features?: Json | null
           id?: number
+          main_category?: string | null
           monthly_recurring_revenue?: number | null
           name?: string | null
           payment_url?: string | null
@@ -1560,6 +1565,7 @@ export type Database = {
           service_uuid?: string
           stripe_price_id?: string | null
           stripe_product_id?: string | null
+          subcategory?: string | null
           type?: Database["public"]["Enums"]["service_type"] | null
           user_uuid?: string | null
         }
