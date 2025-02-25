@@ -27,7 +27,8 @@ interface MoreFromSellerProps {
 }
 
 const fetchExpertProducts = async (expert_uuid: string) => {
-  // Explicitly select the product_uuid field
+  console.log('Fetching products for expert:', expert_uuid); // Debug log for expert_uuid
+
   const { data, error } = await supabase
     .from('products')
     .select('name, price, thumbnail, seller_name, description, tech_stack, type, product_uuid, slug')
@@ -35,10 +36,11 @@ const fetchExpertProducts = async (expert_uuid: string) => {
     .order('sales_amount', { ascending: false });
 
   if (error) {
+    console.error('Error fetching products:', error); // Debug log for errors
     throw error;
   }
 
-  console.log('Expert products:', data); // Debug log
+  console.log('Expert products raw data:', data); // Debug log for raw data
   return data || [];
 };
 
@@ -55,11 +57,16 @@ export function MoreFromSeller({
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
 
+  console.log('MoreFromSeller received expert_uuid:', expert_uuid); // Debug log for props
+
   const { data: products = [], isLoading } = useQuery({
     queryKey: ['expertProducts', expert_uuid],
     queryFn: () => expert_uuid ? fetchExpertProducts(expert_uuid) : Promise.resolve([]),
     enabled: !!expert_uuid
   });
+
+  console.log('Query result - products:', products); // Debug log for query results
+  console.log('Query loading state:', isLoading); // Debug log for loading state
 
   React.useEffect(() => {
     if (!api) {
@@ -70,7 +77,13 @@ export function MoreFromSeller({
     });
   }, [api]);
 
-  if (isLoading || !products.length) {
+  // Early return with visual feedback if loading or no products
+  if (isLoading) {
+    return <div>Loading products...</div>;
+  }
+
+  if (!products.length) {
+    console.log('No products found for expert'); // Debug log for empty state
     return null;
   }
 
@@ -87,21 +100,24 @@ export function MoreFromSeller({
         }}
       >
         <CarouselContent className="-ml-4">
-          {products.map((product, index) => (
-            <CarouselItem key={index} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/4">
-              <ProductCard product={{
-                title: product.name || '',
-                price: formatPrice(product.price),
-                image: product.thumbnail || '',
-                seller: product.seller_name || '',
-                description: product.description || '',
-                tags: product.tech_stack ? product.tech_stack.split(',') : [],
-                category: product.type || '',
-                productUuid: product.product_uuid,
-                slug: product.slug
-              }} />
-            </CarouselItem>
-          ))}
+          {products.map((product, index) => {
+            console.log('Rendering product:', product); // Debug log for each product
+            return (
+              <CarouselItem key={index} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/4">
+                <ProductCard product={{
+                  title: product.name || '',
+                  price: formatPrice(product.price),
+                  image: product.thumbnail || '',
+                  seller: product.seller_name || '',
+                  description: product.description || '',
+                  tags: product.tech_stack ? product.tech_stack.split(',') : [],
+                  category: product.type || '',
+                  productUuid: product.product_uuid,
+                  slug: product.slug
+                }} />
+              </CarouselItem>
+            );
+          })}
         </CarouselContent>
         <div className="flex items-center justify-end gap-2 mt-4">
           <CarouselPrevious className="static translate-y-0" />
@@ -120,11 +136,7 @@ function ProductCard({
   const navigate = useNavigate();
 
   const handleClick = () => {
-    // Add console.log to debug the values
-    console.log('Navigation values:', {
-      slug: product.slug,
-      productUuid: product.productUuid
-    });
+    console.log('Product card clicked:', product); // Debug log for click handling
     
     if (product.slug && product.productUuid) {
       navigate(`/product/${product.slug}/${product.productUuid}`);
