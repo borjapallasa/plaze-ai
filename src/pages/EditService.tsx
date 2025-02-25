@@ -190,7 +190,7 @@ export default function EditService() {
                     onFeatureChange={handleFeatureChange}
                   />
 
-                  <div className="flex flex-col sm:flex-row sm:items-end gap-6">
+                  <div className="grid sm:grid-cols-2 gap-6">
                     <div>
                       <Label htmlFor="price" className="text-base font-medium mb-2 block">
                         Price
@@ -201,10 +201,10 @@ export default function EditService() {
                         placeholder="Enter service price"
                         value={price}
                         onChange={(e) => setPrice(e.target.value)}
-                        className="h-11 w-[240px]"
+                        className="h-11 w-full"
                       />
                     </div>
-                    <div className="flex-1 max-w-[240px]">
+                    <div>
                       <Label htmlFor="type" className="text-base font-medium mb-2 block">
                         Service Type
                       </Label>
