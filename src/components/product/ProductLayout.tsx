@@ -13,6 +13,7 @@ import { useProductImages } from "@/hooks/use-product-images";
 import { ProductInfo } from "./ProductInfo";
 import { MoreFromSeller } from "./MoreFromSeller";
 import { RelatedProducts } from "./RelatedProducts";
+import { ProductReviews } from "./ProductReviews";
 
 interface ProductLayoutProps {
   product: any;
@@ -21,6 +22,7 @@ interface ProductLayoutProps {
   averageRating: number;
   onVariantChange: (variantId: string) => void;
   onAddToCart: () => void;
+  reviews: any[];
 }
 
 export function ProductLayout({
@@ -30,6 +32,7 @@ export function ProductLayout({
   averageRating,
   onVariantChange,
   onAddToCart,
+  reviews
 }: ProductLayoutProps) {
   const isMobile = useIsMobile();
   const { images, isLoading: isLoadingImages } = useProductImages(product.product_uuid);
@@ -69,13 +72,26 @@ export function ProductLayout({
             Contact Seller
           </Button>
 
-          <Card className="p-6 mb-8">
-            <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
-              {product.description}
-            </p>
-          </Card>
-
           <div className="space-y-8">
+            <Card className="p-6">
+              <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                {product.description}
+              </p>
+            </Card>
+
+            {product.demo && (
+              <Card className="p-6">
+                <iframe
+                  src={product.demo}
+                  className="w-full aspect-video rounded-lg"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </Card>
+            )}
+
+            <ProductReviews reviews={reviews} />
+
             <ProductInfo 
               techStack={product.tech_stack}
               productIncludes={product.product_includes}
@@ -101,6 +117,20 @@ export function ProductLayout({
                   {product.description}
                 </p>
               </Card>
+
+              {product.demo && (
+                <Card className="p-6">
+                  <iframe
+                    src={product.demo}
+                    className="w-full aspect-video rounded-lg"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                </Card>
+              )}
+
+              <ProductReviews reviews={reviews} />
+              
               <MoreFromSeller expert_uuid={product.expert_uuid} />
               {product.related_products?.length > 0 && (
                 <RelatedProducts products={product.related_products} className="mb-24" />

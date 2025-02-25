@@ -172,6 +172,7 @@ export default function Product() {
         averageRating={averageRating}
         onVariantChange={setSelectedVariant}
         onAddToCart={handleAddToCart}
+        reviews={reviews}
       />
       <StickyATC 
         variants={variants}
