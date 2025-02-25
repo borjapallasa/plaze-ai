@@ -49,9 +49,6 @@ const fetchExpertProducts = async (expert_uuid: string, currentProductUuid?: str
     query = query.neq('product_uuid', currentProductUuid);
   }
 
-  // Add the use_case contains check using proper JSONB syntax
-  query = query.contains('use_case', ['Blog', 'Dashboard', 'Social Network']);
-
   // Add ordering and limit after all filters
   query = query
     .order('created_at', { ascending: false })
