@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -23,8 +22,6 @@ export default function SellerPage() {
           *,
           services(*),
           products(
-            product_uuid,
-            slug,
             thumbnail,
             name,
             description,
@@ -141,13 +138,10 @@ export default function SellerPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {seller?.products?.map((product) => (
                 <ProductCard
-                  key={product.product_uuid}
-                  id={product.product_uuid}
-                  slug={product.slug}
+                  key={product.name}
                   title={product.name}
                   price={`$${product.price_from}`}
                   image={product.thumbnail}
-                  seller={seller.first_name}
                   description={product.description}
                   tags={Array.isArray(product.use_case) ? product.use_case.map(tag => String(tag)) : []}
                   category={product.type}
