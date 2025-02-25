@@ -63,10 +63,10 @@ export function ServiceCategories({
               <SelectItem 
                 key={subcat.value} 
                 value={subcat.value}
-                className="relative"
+                className="relative py-2.5"
               >
                 <div className="flex items-center justify-between w-full">
-                  <span>{subcat.label}</span>
+                  <span className="text-base">{subcat.label}</span>
                   {selectedSubcategories.includes(subcat.value) && (
                     <span className="text-primary">✓</span>
                   )}
