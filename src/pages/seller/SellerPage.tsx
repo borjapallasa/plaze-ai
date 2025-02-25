@@ -1,6 +1,5 @@
-
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { MainHeader } from "@/components/MainHeader";
@@ -8,8 +7,19 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ProductCard } from "@/components/ProductCard";
-import { Star, Users, BookOpen, Badge, ShoppingBag, BriefcaseIcon, UsersRound, AppWindow } from "lucide-react";
+import { 
+  Star, 
+  Users, 
+  BookOpen, 
+  Badge, 
+  ShoppingBag, 
+  BriefcaseIcon, 
+  UsersRound, 
+  AppWindow,
+  Plus
+} from "lucide-react";
 import { Badge as UIBadge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export default function SellerPage() {
   const { id } = useParams();
@@ -28,7 +38,10 @@ export default function SellerPage() {
             description,
             price_from,
             type,
-            use_case
+            use_case,
+            product_uuid,
+            status,
+            created_at
           )
         `)
         .eq('user_uuid', id)
@@ -116,40 +129,98 @@ export default function SellerPage() {
         </div>
 
         <Tabs defaultValue="products" className="animate-fade-in">
-          <TabsList className="grid grid-cols-4 h-12 items-center bg-muted/50 mb-6">
-            <TabsTrigger value="products" className="data-[state=active]:bg-background">
-              <ShoppingBag className="h-4 w-4 mr-2" />
-              Products
-            </TabsTrigger>
-            <TabsTrigger value="services" className="data-[state=active]:bg-background">
-              <BriefcaseIcon className="h-4 w-4 mr-2" />
-              Services
-            </TabsTrigger>
-            <TabsTrigger value="communities" className="data-[state=active]:bg-background">
-              <UsersRound className="h-4 w-4 mr-2" />
-              Communities
-            </TabsTrigger>
-            <TabsTrigger value="applications" className="data-[state=active]:bg-background">
-              <AppWindow className="h-4 w-4 mr-2" />
-              Applications
-            </TabsTrigger>
-          </TabsList>
+          <div className="flex items-center justify-between mb-6">
+            <TabsList className="grid grid-cols-4 h-12 items-center bg-muted/50">
+              <TabsTrigger value="products" className="data-[state=active]:bg-background">
+                <ShoppingBag className="h-4 w-4 mr-2" />
+                Products
+              </TabsTrigger>
+              <TabsTrigger value="services" className="data-[state=active]:bg-background">
+                <BriefcaseIcon className="h-4 w-4 mr-2" />
+                Services
+              </TabsTrigger>
+              <TabsTrigger value="communities" className="data-[state=active]:bg-background">
+                <UsersRound className="h-4 w-4 mr-2" />
+                Communities
+              </TabsTrigger>
+              <TabsTrigger value="applications" className="data-[state=active]:bg-background">
+                <AppWindow className="h-4 w-4 mr-2" />
+                Applications
+              </TabsTrigger>
+            </TabsList>
+            <Button asChild>
+              <Link to="/seller/products/new">
+                <Plus className="h-4 w-4 mr-2" />
+                Add product
+              </Link>
+            </Button>
+          </div>
 
           <TabsContent value="products" className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {seller?.products?.map((product) => (
-                <ProductCard
-                  key={product.name}
-                  title={product.name}
-                  price={`$${product.price_from}`}
-                  image={product.thumbnail}
-                  description={product.description}
-                  tags={Array.isArray(product.use_case) ? product.use_case.map(tag => String(tag)) : []}
-                  category={product.type}
-                  seller="Expert" // Adding a default seller name since it's required by the component
-                />
-              ))}
-            </div>
+            <Card className="p-6">
+              <div className="rounded-lg overflow-hidden border border-border">
+                <table className="w-full">
+                  <thead className="bg-muted/50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Product</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Status</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Type</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Price</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Created</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {seller?.products?.map((product) => (
+                      <tr key={product.product_uuid} className="hover:bg-muted/50 transition-colors">
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded bg-muted flex-shrink-0 overflow-hidden">
+                              {product.thumbnail && (
+                                <img 
+                                  src={product.thumbnail} 
+                                  alt={product.name}
+                                  className="w-full h-full object-cover"
+                                />
+                              )}
+                            </div>
+                            <div>
+                              <h3 className="font-medium text-sm">{product.name}</h3>
+                              <p className="text-xs text-muted-foreground line-clamp-1">{product.description}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <UIBadge 
+                            variant={product.status === 'active' ? 'default' : 'secondary'}
+                            className="capitalize"
+                          >
+                            {product.status || 'Draft'}
+                          </UIBadge>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className="text-sm capitalize">{product.type}</span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className="text-sm">${product.price_from || '0.00'}</span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className="text-sm text-muted-foreground">
+                            {new Date(product.created_at).toLocaleDateString()}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                    {(!seller?.products || seller.products.length === 0) && (
+                      <tr>
+                        <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
+                          No products found
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
           </TabsContent>
 
           <TabsContent value="services" className="space-y-6">
