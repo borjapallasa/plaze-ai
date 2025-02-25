@@ -67,18 +67,25 @@ const moreProducts = [
 ];
 
 export default function Expert() {
-  const { id: expert_uuid } = useParams();
+  const { expert_uuid } = useParams();
+  console.log("Expert UUID:", expert_uuid); // Debug log
 
   const { data: expert, isLoading: isLoadingExpert } = useQuery({
     queryKey: ['expert', expert_uuid],
     queryFn: async () => {
+      console.log("Fetching expert with UUID:", expert_uuid); // Debug log
       const { data, error } = await supabase
         .from('experts')
         .select('*')
         .eq('expert_uuid', expert_uuid)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error:", error); // Debug log
+        throw error;
+      }
+      
+      console.log("Expert data:", data); // Debug log
       
       if (data && data.areas) {
         try {
