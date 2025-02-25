@@ -14,7 +14,6 @@ interface Product {
   type: string;
   product_uuid: string;
   slug: string;
-  use_case: string;
 }
 
 interface RelatedProductsProps {
@@ -22,16 +21,8 @@ interface RelatedProductsProps {
 }
 
 const fetchRelatedProducts = async (productId: string) => {
-  console.log('Fetching all products');
+  console.log('Fetching related products');
   
-  // First get the current product's use case
-  const { data: currentProduct } = await supabase
-    .from('products')
-    .select('use_case')
-    .eq('product_uuid', productId)
-    .single();
-
-  // Then fetch related products with the same use case
   const { data, error } = await supabase
     .from('products')
     .select(`
@@ -42,10 +33,8 @@ const fetchRelatedProducts = async (productId: string) => {
       tech_stack,
       type,
       product_uuid,
-      slug,
-      use_case
+      slug
     `)
-    .eq('use_case', currentProduct?.use_case)
     .neq('product_uuid', productId)
     .order('created_at', { ascending: false })
     .limit(12);
