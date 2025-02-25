@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -340,8 +341,8 @@ export default function EditService() {
                       Subcategories
                     </Label>
                     <Select 
-                      value={selectedSubcategories}
-                      onValueChange={(value) => {
+                      value=""
+                      onValueChange={(value: string) => {
                         if (selectedSubcategories.includes(value)) {
                           setSelectedSubcategories(selectedSubcategories.filter(v => v !== value));
                         } else {
