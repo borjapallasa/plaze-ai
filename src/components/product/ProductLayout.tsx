@@ -101,13 +101,14 @@ export function ProductLayout({
 
             {renderDemo()}
 
-            <ProductReviews reviews={reviews} />
-
             <ProductInfo 
               techStack={product.tech_stack}
               productIncludes={product.product_includes}
               difficultyLevel={product.difficulty_level}
             />
+
+            <ProductReviews reviews={reviews} />
+
             <MoreFromSeller expert_uuid={product.expert_uuid} />
             {product.related_products?.length > 0 && (
               <RelatedProducts products={product.related_products} className="mb-24" />
