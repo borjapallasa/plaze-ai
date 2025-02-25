@@ -14,13 +14,12 @@ export function ProductGallery({ images, className, priority = false }: ProductG
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Function to generate responsive image sizes
   const getImageSizes = (url: string) => {
     return {
-      small: `${url}?w=400&q=75`,  // Mobile
-      medium: `${url}?w=800&q=75`, // Tablet
-      large: `${url}?w=1200&q=75`, // Desktop
-      thumbnail: `${url}?w=200&q=75` // Thumbnails
+      small: `${url}?w=400&q=75`,
+      medium: `${url}?w=800&q=75`,
+      large: `${url}?w=1200&q=75`,
+      thumbnail: `${url}?w=200&q=75`
     };
   };
 
@@ -37,7 +36,6 @@ export function ProductGallery({ images, className, priority = false }: ProductG
   const currentImage = images[currentImageIndex];
   const imageSizes = currentImage ? getImageSizes(currentImage.url) : null;
 
-  // Reset current index when images change
   useEffect(() => {
     if (images.length && currentImageIndex >= images.length) {
       setCurrentImageIndex(0);
@@ -92,19 +90,6 @@ export function ProductGallery({ images, className, priority = false }: ProductG
               </>
             )}
           </div>
-          {images.length > 1 && (
-            <div className="flex justify-center gap-2 mt-4">
-              {images.map((_, index) => (
-                <button
-                  key={index}
-                  className={`w-2 h-2 rounded-full transition-colors ${
-                    index === currentImageIndex ? 'bg-primary' : 'bg-gray-300'
-                  }`}
-                  onClick={() => emblaApi?.scrollTo(index)}
-                />
-              ))}
-            </div>
-          )}
         </Carousel>
       </div>
 
