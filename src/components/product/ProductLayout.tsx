@@ -108,13 +108,8 @@ export function ProductLayout({
               </Card>
               <div className="space-y-8">
                 {children}
-                <ProductInfo 
-                  techStack={product.tech_stack}
-                  productIncludes={product.product_includes}
-                  difficultyLevel={product.difficulty_level}
-                />
-                <ProductReviews reviews={[]} />
                 <MoreFromSeller expert_uuid={product.expert_uuid} />
+                <ProductReviews reviews={[]} />
                 {product.related_products?.length > 0 && (
                   <RelatedProducts products={product.related_products} className="mb-24" />
                 )}
@@ -138,12 +133,17 @@ export function ProductLayout({
             />
             <Button 
               variant="outline" 
-              className="w-full flex items-center justify-center gap-2"
+              className="w-full flex items-center justify-center gap-2 mb-6"
               onClick={() => console.log("Contact seller clicked")}
             >
               <MessageCircle className="h-4 w-4" />
               Contact Seller
             </Button>
+            <ProductInfo 
+              techStack={product.tech_stack}
+              productIncludes={product.product_includes}
+              difficultyLevel={product.difficulty_level}
+            />
           </div>
         </div>
       </main>
