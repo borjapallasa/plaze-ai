@@ -144,24 +144,13 @@ export default function EditService() {
                 <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">Edit Service</h1>
                 <div className="flex items-center justify-between mt-4">
                   <p className="text-sm text-muted-foreground">Service details and configuration</p>
-                  <div className="flex items-center gap-4">
-                    <Select value={serviceType} onValueChange={(value: ServiceType) => setServiceType(value)}>
-                      <SelectTrigger className="w-[140px]">
-                        <SelectValue placeholder="Status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="one time">One Time</SelectItem>
-                        <SelectItem value="monthly">Monthly</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Button 
-                      onClick={handleSave}
-                      disabled={isSaving}
-                      className="min-w-[120px]"
-                    >
-                      {isSaving ? "Saving..." : "Save changes"}
-                    </Button>
-                  </div>
+                  <Button 
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className="min-w-[120px]"
+                  >
+                    {isSaving ? "Saving..." : "Save changes"}
+                  </Button>
                 </div>
               </div>
             </div>
@@ -201,39 +190,40 @@ export default function EditService() {
                     onFeatureChange={handleFeatureChange}
                   />
 
-                  <div>
-                    <Label htmlFor="price" className="text-sm font-medium mb-1.5 block">
-                      Price
-                    </Label>
-                    <Input
-                      id="price"
-                      type="number"
-                      placeholder="Enter service price"
-                      value={price}
-                      onChange={(e) => setPrice(e.target.value)}
-                      className="h-11 max-w-[240px]"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="type" className="text-sm font-medium mb-1.5 block">
-                      Service Type
-                    </Label>
-                    <Select 
-                      value={serviceType} 
-                      onValueChange={(value: ServiceType) => setServiceType(value)}
-                    >
-                      <SelectTrigger className="h-11">
-                        <SelectValue placeholder="Select service type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {SERVICE_TYPES.map((type) => (
-                          <SelectItem key={type.value} value={type.value}>
-                            {type.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                  <div className="flex flex-col sm:flex-row sm:items-end gap-4">
+                    <div>
+                      <Label htmlFor="price" className="text-sm font-medium mb-1.5 block">
+                        Price
+                      </Label>
+                      <Input
+                        id="price"
+                        type="number"
+                        placeholder="Enter service price"
+                        value={price}
+                        onChange={(e) => setPrice(e.target.value)}
+                        className="h-11 w-[240px]"
+                      />
+                    </div>
+                    <div className="flex-1 max-w-[240px]">
+                      <Label htmlFor="type" className="text-sm font-medium mb-1.5 block">
+                        Service Type
+                      </Label>
+                      <Select 
+                        value={serviceType} 
+                        onValueChange={(value: ServiceType) => setServiceType(value)}
+                      >
+                        <SelectTrigger className="h-11">
+                          <SelectValue placeholder="Select service type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {SERVICE_TYPES.map((type) => (
+                            <SelectItem key={type.value} value={type.value}>
+                              {type.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                 </div>
               </Card>
@@ -248,7 +238,7 @@ export default function EditService() {
                     selectedSubcategories={selectedSubcategories}
                     onCategoryChange={(value: CategoryType) => {
                       setCategory(value);
-                      setSelectedSubcategories([]); // Reset subcategories when category changes
+                      setSelectedSubcategories([]);
                     }}
                     onSubcategoriesChange={(value: string) => {
                       if (selectedSubcategories.includes(value)) {
