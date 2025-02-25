@@ -17,7 +17,7 @@ const Experts = () => {
       console.log('Fetching experts...');
       const { data, error } = await supabase
         .from('experts')
-        .select('*, users!inner(*)')
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (error) {
