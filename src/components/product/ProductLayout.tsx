@@ -110,9 +110,8 @@ export function ProductLayout({
             <ProductReviews reviews={reviews} />
 
             <MoreFromSeller expert_uuid={product.expert_uuid} />
-            {product.related_products?.length > 0 && (
-              <RelatedProducts products={product.related_products} className="mb-24" />
-            )}
+            
+            <RelatedProducts className="mb-24" />
           </div>
         </div>
 
@@ -135,9 +134,8 @@ export function ProductLayout({
               <ProductReviews reviews={reviews} />
               
               <MoreFromSeller expert_uuid={product.expert_uuid} />
-              {product.related_products?.length > 0 && (
-                <RelatedProducts products={product.related_products} className="mb-24" />
-              )}
+              
+              <RelatedProducts className="mb-24" />
             </div>
           </div>
 
