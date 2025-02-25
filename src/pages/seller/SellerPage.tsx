@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ProductCard } from "@/components/ProductCard";
 import { Star, Users, BookOpen, Badge, ShoppingBag, BriefcaseIcon, UsersRound, AppWindow } from "lucide-react";
+import { Badge as UIBadge } from "@/components/ui/badge";
 
 export default function SellerPage() {
   const { id } = useParams();
@@ -29,10 +30,10 @@ export default function SellerPage() {
   });
 
   const stats = [
-    { icon: Star, label: "Rating", value: "4.9" },
-    { icon: ShoppingBag, label: "Products", value: "12" },
-    { icon: Users, label: "Clients", value: "250+" },
-    { icon: Badge, label: "Member Since", value: "2022" },
+    { icon: Star, label: "Rating", value: "4.9", color: "text-yellow-500" },
+    { icon: ShoppingBag, label: "Products", value: "12", color: "text-blue-500" },
+    { icon: Users, label: "Clients", value: "250+", color: "text-green-500" },
+    { icon: Badge, label: "Member Since", value: "2022", color: "text-purple-500" },
   ];
 
   return (
@@ -42,61 +43,62 @@ export default function SellerPage() {
       </div>
 
       <main className="container mx-auto px-4 pt-24 pb-8">
-        {/* Profile Section */}
-        <div className="relative mb-8">
-          {/* Background accent */}
-          <div className="absolute inset-0 bg-muted/30 rounded-lg -z-10" />
+        {/* Enhanced Profile Section */}
+        <div className="relative mb-8 overflow-hidden">
+          {/* Improved Background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-muted/50 to-background rounded-xl" />
           
-          <div className="px-6 py-8 sm:px-8 sm:py-10">
-            <div className="flex flex-col sm:flex-row items-start gap-8 max-w-6xl mx-auto">
-              {/* Avatar Section */}
-              <div className="relative">
-                <Avatar className="h-28 w-28 sm:h-32 sm:w-32 rounded-full ring-4 ring-background shadow-lg">
+          <div className="relative px-6 py-10 sm:px-10 sm:py-12">
+            <div className="flex flex-col sm:flex-row items-start gap-10 max-w-6xl mx-auto">
+              {/* Enhanced Avatar Section */}
+              <div className="relative flex-shrink-0">
+                <Avatar className="h-32 w-32 sm:h-40 sm:w-40 rounded-full ring-4 ring-background shadow-xl border-2 border-primary/10">
                   <AvatarImage 
                     src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e"
                     className="object-cover"
                   />
-                  <AvatarFallback className="text-2xl">JP</AvatarFallback>
+                  <AvatarFallback className="text-3xl">JP</AvatarFallback>
                 </Avatar>
-                <div className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground text-xs font-medium px-2 py-0.5 rounded-full">
-                  Pro
+                <div className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full shadow-lg">
+                  Pro Seller
                 </div>
               </div>
 
-              {/* Content Section */}
-              <div className="flex-1 space-y-6">
-                {/* Header */}
-                <div className="space-y-2">
-                  <div className="flex items-center gap-3">
-                    <h1 className="text-3xl font-bold tracking-tight">
+              {/* Enhanced Content Section */}
+              <div className="flex-1 space-y-8">
+                {/* Improved Header */}
+                <div className="space-y-3">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                       {seller?.first_name || "John Professional"}
                     </h1>
-                    <Badge className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">
+                    <UIBadge variant="secondary" className="font-semibold px-3 py-1">
+                      <Badge className="w-4 h-4 mr-1" />
                       Verified Expert
-                    </Badge>
+                    </UIBadge>
                   </div>
-                  <p className="text-lg text-muted-foreground font-medium">
+                  <p className="text-xl text-muted-foreground font-medium">
                     Expert in UI/UX Design & Development
                   </p>
                 </div>
 
-                {/* Description */}
+                {/* Enhanced Description */}
                 <p className="text-base text-muted-foreground leading-relaxed max-w-3xl">
                   Passionate designer and developer with over 8 years of experience creating beautiful, 
                   functional digital experiences. Specializing in user interface design, web applications, 
                   and design systems that scale.
                 </p>
 
-                {/* Stats */}
+                {/* Enhanced Stats */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   {stats.map((stat) => (
                     <div 
                       key={stat.label}
-                      className="bg-background rounded-lg px-4 py-3 shadow-sm border border-border/40"
+                      className="bg-card rounded-xl px-4 py-4 shadow-lg border border-border/20 hover:border-border/40 transition-colors"
                     >
-                      <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                        <stat.icon className="h-4 w-4" />
-                        <span className="text-xs font-medium">{stat.label}</span>
+                      <div className="flex items-center gap-2 text-muted-foreground mb-2">
+                        <stat.icon className={`h-5 w-5 ${stat.color}`} />
+                        <span className="text-sm font-medium">{stat.label}</span>
                       </div>
                       <p className="text-2xl font-bold tracking-tight">
                         {stat.value}
