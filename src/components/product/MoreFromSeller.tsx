@@ -31,7 +31,17 @@ const fetchExpertProducts = async (expert_uuid: string, currentProductUuid?: str
   
   let query = supabase
     .from('products')
-    .select('name, price_from, thumbnail, description, tech_stack, type, product_uuid, slug, use_case')
+    .select(`
+      name,
+      price_from,
+      thumbnail,
+      description,
+      tech_stack,
+      type,
+      product_uuid,
+      slug,
+      use_case
+    `)
     .eq('expert_uuid', expert_uuid)
     .order('created_at', { ascending: false })
     .limit(12);
@@ -48,8 +58,14 @@ const fetchExpertProducts = async (expert_uuid: string, currentProductUuid?: str
     throw error;
   }
 
-  console.log('Fetched products:', data);
-  return data || [];
+  // Parse JSONB use_case field if it exists
+  const parsedData = data?.map(product => ({
+    ...product,
+    use_case: Array.isArray(product.use_case) ? product.use_case : []
+  }));
+
+  console.log('Fetched products:', parsedData);
+  return parsedData || [];
 };
 
 const formatPrice = (price: number | null): string => {
