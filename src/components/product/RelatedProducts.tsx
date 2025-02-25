@@ -20,23 +20,13 @@ interface RelatedProductsProps {
   className?: string;
 }
 
-const fetchRelatedProducts = async (productId: string) => {
-  console.log('Starting to fetch related products, productId:', productId);
+const fetchRelatedProducts = async () => {
+  console.log('Starting to fetch related products');
   
   try {
     const { data, error } = await supabase
       .from('products')
-      .select(`
-        name,
-        price_from,
-        thumbnail,
-        description,
-        tech_stack,
-        type,
-        product_uuid,
-        slug
-      `)
-      .order('created_at', { ascending: false })
+      .select('name, price_from, thumbnail, description, tech_stack, type, product_uuid, slug')
       .limit(12);
 
     if (error) {
@@ -45,7 +35,6 @@ const fetchRelatedProducts = async (productId: string) => {
     }
 
     console.log('Successfully fetched products:', data?.length || 0, 'items');
-    console.log('First few products:', data?.slice(0, 3));
     return data || [];
   } catch (err) {
     console.error('Exception in fetchRelatedProducts:', err);
@@ -55,15 +44,12 @@ const fetchRelatedProducts = async (productId: string) => {
 
 export function RelatedProducts({ className }: RelatedProductsProps) {
   const { id } = useParams<{ id: string }>();
-  console.log('RelatedProducts component mounted, id from params:', id);
 
   const { data: products = [], isLoading, error } = useQuery({
-    queryKey: ['relatedProducts', id],
-    queryFn: () => id ? fetchRelatedProducts(id) : Promise.resolve([]),
-    enabled: !!id
+    queryKey: ['relatedProducts'],
+    queryFn: fetchRelatedProducts,
+    enabled: true
   });
-
-  console.log('Query state:', { isLoading, error, productsCount: products.length });
 
   if (error) {
     console.error('Query error:', error);
