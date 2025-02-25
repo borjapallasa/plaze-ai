@@ -21,8 +21,18 @@ interface RelatedProductsProps {
 }
 
 const fetchRelatedProducts = async (currentProductId: string) => {
-  console.log('Fetching marketplace products for:', currentProductId);
+  console.log('Fetching related products for:', currentProductId);
   
+  const { data: currentProduct } = await supabase
+    .from('products')
+    .select('use_case')
+    .eq('product_uuid', currentProductId)
+    .maybeSingle();
+
+  if (!currentProduct) {
+    return [];
+  }
+
   const { data, error } = await supabase
     .from('products')
     .select(`
@@ -35,6 +45,7 @@ const fetchRelatedProducts = async (currentProductId: string) => {
       product_uuid,
       slug
     `)
+    .neq('product_uuid', currentProductId)
     .order('created_at', { ascending: false })
     .limit(12);
 
@@ -56,11 +67,8 @@ export function RelatedProducts({ className }: RelatedProductsProps) {
     enabled: !!id
   });
 
-  if (isLoading) {
-    return <div>Loading related products...</div>;
-  }
-
-  if (!products.length) {
+  // Don't render anything while loading or if no products
+  if (isLoading || !products.length) {
     return null;
   }
 

@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface Product {
   name: string;
@@ -26,8 +26,8 @@ interface MoreFromSellerProps {
   className?: string;
 }
 
-const fetchSellerProducts = async (expert_uuid: string, currentProductId: string) => {
-  console.log('Fetching all seller products for expert:', expert_uuid, 'current product:', currentProductId);
+const fetchSellerProducts = async (expert_uuid: string) => {
+  console.log('Fetching seller products for expert:', expert_uuid);
   
   if (!expert_uuid) {
     console.log('No expert UUID provided');
@@ -56,14 +56,8 @@ const fetchSellerProducts = async (expert_uuid: string, currentProductId: string
     throw error;
   }
 
-  // Parse JSONB use_case field and ensure it's always an array
-  const parsedData = data?.map(product => ({
-    ...product,
-    use_case: Array.isArray(product.use_case) ? product.use_case : []
-  }));
-
-  console.log('Fetched seller products:', parsedData);
-  return parsedData || [];
+  console.log('Fetched seller products:', data);
+  return data || [];
 };
 
 const formatPrice = (price: number | null): string => {
@@ -76,14 +70,13 @@ export function MoreFromSeller({
   className
 }: MoreFromSellerProps) {
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
 
   const { data: products = [], isLoading } = useQuery({
-    queryKey: ['sellerProducts', expert_uuid, id],
-    queryFn: () => expert_uuid && id ? fetchSellerProducts(expert_uuid, id) : Promise.resolve([]),
-    enabled: !!(expert_uuid && id)
+    queryKey: ['sellerProducts', expert_uuid],
+    queryFn: () => expert_uuid ? fetchSellerProducts(expert_uuid) : Promise.resolve([]),
+    enabled: !!expert_uuid
   });
 
   React.useEffect(() => {
@@ -95,11 +88,8 @@ export function MoreFromSeller({
     });
   }, [api]);
 
-  if (isLoading) {
-    return <div>Loading products...</div>;
-  }
-
-  if (!products.length) {
+  // Don't render anything while loading or if no products
+  if (isLoading || !products.length) {
     return null;
   }
 
