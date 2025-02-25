@@ -261,11 +261,6 @@ export default function EditService() {
                       setSelectedSubcategories(selectedSubcategories.filter(s => s !== value));
                     }}
                   />
-                  <div className="border-t border-border/40 pt-4 mt-4">
-                    <p className="text-xs text-muted-foreground">
-                      More configuration options will be available soon.
-                    </p>
-                  </div>
                 </div>
               </Card>
             </div>
