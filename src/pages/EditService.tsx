@@ -6,13 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ProductEditor } from "@/components/product/ProductEditor";
 import { useToast } from "@/components/ui/use-toast";
 import { ServiceFeatures } from "@/components/service/ServiceFeatures";
 import { ServiceCategories } from "@/components/service/ServiceCategories";
 import { SERVICE_TYPES, CategoryType, ServiceType } from "@/constants/service-categories";
+import { DefaultHeader } from "@/components/DefaultHeader";
 
 export default function EditService() {
   const { id } = useParams();
@@ -128,34 +128,22 @@ export default function EditService() {
   return (
     <div className="min-h-screen bg-background">
       <div className="mt-16">
-        <div className="w-full max-w-[1400px] mx-auto px-2 xs:px-3 sm:px-6 lg:px-8 py-3 sm:py-6">
-          <div className="mb-8">
-            <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
-              <Link to="/seller/services">
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="rounded-full flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 mt-1 hover:bg-accent"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                </Button>
-              </Link>
-              <div className="w-full">
-                <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">Edit Service</h1>
-                <div className="flex items-center justify-between mt-4">
-                  <p className="text-sm text-muted-foreground">Service details and configuration</p>
-                  <Button 
-                    onClick={handleSave}
-                    disabled={isSaving}
-                    className="min-w-[120px]"
-                  >
-                    {isSaving ? "Saving..." : "Save changes"}
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
+        <DefaultHeader 
+          title="Edit Service"
+          subtitle="Service details and configuration"
+          backLink="/seller/services"
+          action={
+            <Button 
+              onClick={handleSave}
+              disabled={isSaving}
+              className="min-w-[120px]"
+            >
+              {isSaving ? "Saving..." : "Save changes"}
+            </Button>
+          }
+        />
 
+        <div className="w-full max-w-[1400px] mx-auto px-2 xs:px-3 sm:px-6 lg:px-8 py-3 sm:py-6">
           <div className="space-y-4 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-8">
             <div className="lg:col-span-8">
               <Card className="p-4 sm:p-6">
