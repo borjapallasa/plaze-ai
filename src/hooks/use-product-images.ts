@@ -148,13 +148,14 @@ export function useProductImages(productUuid?: string) {
 
       if (updateError2) throw updateError2;
 
-      // Update local state
+      // Update local state and reorder immediately
       setImages(prev => {
         const updatedImages = prev.map(img => ({
           ...img,
-          is_primary: img.id === sourceId
+          is_primary: img.id === sourceId ? true : false
         }));
-        return updatedImages;
+        // Sort images to show primary first
+        return [...updatedImages].sort((a, b) => (b.is_primary ? 1 : 0) - (a.is_primary ? 1 : 0));
       });
 
       toast({
