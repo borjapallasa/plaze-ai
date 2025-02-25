@@ -17,13 +17,15 @@ const Experts = () => {
       console.log('Fetching experts...');
       const { data, error } = await supabase
         .from('experts')
-        .select('*')
+        .select('*, users!inner(*)')
         .order('created_at', { ascending: false });
 
       if (error) {
         console.error('Error fetching experts:', error);
         throw error;
       }
+      
+      console.log('Raw expert data:', data);
       
       // Transform the data to ensure areas is always a string array
       const transformedData = (data || []).map(expert => ({
@@ -37,10 +39,25 @@ const Experts = () => {
         ) : []
       })) as Expert[];
       
-      console.log('Fetched experts:', transformedData);
+      console.log('Transformed experts:', transformedData);
       return transformedData;
     }
   });
+
+  // Filter experts based on search query
+  const filteredExperts = experts?.filter(expert => {
+    if (!searchQuery) return true;
+    
+    const searchLower = searchQuery.toLowerCase();
+    return (
+      expert.name?.toLowerCase().includes(searchLower) ||
+      expert.title?.toLowerCase().includes(searchLower) ||
+      expert.location?.toLowerCase().includes(searchLower) ||
+      expert.areas?.some(area => area.toLowerCase().includes(searchLower))
+    );
+  });
+
+  console.log('Filtered experts:', filteredExperts);
 
   if (isLoading) {
     return (
@@ -81,11 +98,11 @@ const Experts = () => {
 
           {/* Experts List */}
           <div className="space-y-4">
-            {experts?.map((expert) => (
+            {filteredExperts?.map((expert) => (
               <ExpertCard key={expert.id} expert={expert} />
             ))}
 
-            {experts?.length === 0 && (
+            {filteredExperts?.length === 0 && (
               <div className="text-center text-muted-foreground py-8">
                 No experts found. Check back later!
               </div>
