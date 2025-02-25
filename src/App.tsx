@@ -29,6 +29,7 @@ import AccountSettings from "./pages/AccountSettings";
 import Chats from "./pages/Chats";
 import ThankYou from "./pages/ThankYou";
 import EditProduct from "./pages/EditProduct";
+import EditService from "./pages/EditService";
 import Cart from "./pages/Cart";
 import MyCommunities from "./pages/MyCommunities";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -77,6 +78,7 @@ const App = () => (
             <Route path="/thank-you" element={<ThankYou />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/seller/products/product/:id" element={<EditProduct />} />
+            <Route path="/seller/services/service/:id" element={<EditService />} />
             <Route path="/a/admin" element={<AdminDashboard />} />
             <Route path="/a/admin/transactions" element={<AdminTransactions />} />
             <Route path="/a/admin/transactions/:id" element={<AdminTransactionDetails />} />
