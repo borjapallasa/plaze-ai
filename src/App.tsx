@@ -41,6 +41,7 @@ import AdminExperts from "./pages/admin/AdminExperts";
 import AdminTemplateDetails from "./pages/admin/AdminTemplateDetails";
 import DraftTemplates from "./pages/admin/DraftTemplates";
 import { Footer } from "./components/Footer";
+import SellerPage from "./pages/seller/SellerPage";
 
 const queryClient = new QueryClient();
 
@@ -77,6 +78,7 @@ const App = () => (
             <Route path="/chats" element={<Chats />} />
             <Route path="/thank-you" element={<ThankYou />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/seller/:id" element={<SellerPage />} />
             <Route path="/seller/products/product/:id" element={<EditProduct />} />
             <Route path="/seller/services/service/:id" element={<EditService />} />
             <Route path="/a/admin" element={<AdminDashboard />} />
