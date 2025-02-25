@@ -23,16 +23,14 @@ interface RelatedProductsProps {
 const fetchRelatedProducts = async (currentProductId: string) => {
   console.log('Fetching related products for:', currentProductId);
   
+  // First fetch the current product to get its use case
   const { data: currentProduct } = await supabase
     .from('products')
     .select('use_case')
     .eq('product_uuid', currentProductId)
     .maybeSingle();
 
-  if (!currentProduct) {
-    return [];
-  }
-
+  // Fetch other products, without filtering by use_case for now
   const { data, error } = await supabase
     .from('products')
     .select(`
@@ -67,7 +65,6 @@ export function RelatedProducts({ className }: RelatedProductsProps) {
     enabled: !!id
   });
 
-  // Don't render anything while loading or if no products
   if (isLoading || !products.length) {
     return null;
   }
