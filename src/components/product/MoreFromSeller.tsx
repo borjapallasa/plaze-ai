@@ -27,7 +27,7 @@ interface MoreFromSellerProps {
 }
 
 const fetchExpertProducts = async (expert_uuid: string, currentProductUuid?: string) => {
-  console.log('Fetching products for expert:', expert_uuid);
+  console.log('Fetching marketplace products, excluding:', currentProductUuid);
   
   let query = supabase
     .from('products')
@@ -41,15 +41,14 @@ const fetchExpertProducts = async (expert_uuid: string, currentProductUuid?: str
       product_uuid,
       slug,
       use_case
-    `)
-    .eq('expert_uuid', expert_uuid);
+    `);
 
-  // Filter out current product if we have a UUID
+  // Only exclude the current product if we have its UUID
   if (currentProductUuid) {
     query = query.neq('product_uuid', currentProductUuid);
   }
 
-  // Add ordering and limit after all filters
+  // Add ordering and limit
   query = query
     .order('created_at', { ascending: false })
     .limit(12);
@@ -86,9 +85,9 @@ export function MoreFromSeller({
   const [current, setCurrent] = useState(0);
 
   const { data: products = [], isLoading } = useQuery({
-    queryKey: ['expertProducts', expert_uuid, currentProductUuid],
-    queryFn: () => expert_uuid ? fetchExpertProducts(expert_uuid, currentProductUuid) : Promise.resolve([]),
-    enabled: !!expert_uuid
+    queryKey: ['marketplaceProducts', currentProductUuid],
+    queryFn: () => fetchExpertProducts(expert_uuid || '', currentProductUuid),
+    enabled: true // Always enabled since we want to show marketplace products
   });
 
   React.useEffect(() => {
@@ -110,7 +109,7 @@ export function MoreFromSeller({
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-6 pt-[50px]">More from seller</h2>
+      <h2 className="text-2xl font-bold mb-6 pt-[50px]">More products</h2>
       
       <Carousel 
         setApi={setApi} 
