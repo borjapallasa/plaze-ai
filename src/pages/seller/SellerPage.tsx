@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -129,34 +130,35 @@ export default function SellerPage() {
         </div>
 
         <Tabs defaultValue="products" className="animate-fade-in">
-          <div className="flex items-center justify-between mb-6">
-            <TabsList className="grid grid-cols-4 h-12 items-center bg-muted/50">
-              <TabsTrigger value="products" className="data-[state=active]:bg-background">
-                <ShoppingBag className="h-4 w-4 mr-2" />
-                Products
-              </TabsTrigger>
-              <TabsTrigger value="services" className="data-[state=active]:bg-background">
-                <BriefcaseIcon className="h-4 w-4 mr-2" />
-                Services
-              </TabsTrigger>
-              <TabsTrigger value="communities" className="data-[state=active]:bg-background">
-                <UsersRound className="h-4 w-4 mr-2" />
-                Communities
-              </TabsTrigger>
-              <TabsTrigger value="applications" className="data-[state=active]:bg-background">
-                <AppWindow className="h-4 w-4 mr-2" />
-                Applications
-              </TabsTrigger>
-            </TabsList>
-            <Button asChild>
-              <Link to="/seller/products/new">
-                <Plus className="h-4 w-4 mr-2" />
-                Add product
-              </Link>
-            </Button>
-          </div>
+          <TabsList className="grid grid-cols-4 h-12 items-center bg-muted/50">
+            <TabsTrigger value="products" className="data-[state=active]:bg-background">
+              <ShoppingBag className="h-4 w-4 mr-2" />
+              Products
+            </TabsTrigger>
+            <TabsTrigger value="services" className="data-[state=active]:bg-background">
+              <BriefcaseIcon className="h-4 w-4 mr-2" />
+              Services
+            </TabsTrigger>
+            <TabsTrigger value="communities" className="data-[state=active]:bg-background">
+              <UsersRound className="h-4 w-4 mr-2" />
+              Communities
+            </TabsTrigger>
+            <TabsTrigger value="applications" className="data-[state=active]:bg-background">
+              <AppWindow className="h-4 w-4 mr-2" />
+              Applications
+            </TabsTrigger>
+          </TabsList>
 
           <TabsContent value="products" className="space-y-6">
+            <div className="flex justify-end mb-4">
+              <Button asChild>
+                <Link to="/seller/products/new">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add product
+                </Link>
+              </Button>
+            </div>
+
             <Card className="p-6">
               <div className="rounded-lg overflow-hidden border border-border">
                 <table className="w-full">
