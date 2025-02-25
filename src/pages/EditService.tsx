@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -236,7 +235,14 @@ export default function EditService() {
                       </SelectContent>
                     </Select>
                   </div>
+                </div>
+              </Card>
+            </div>
 
+            <div className="lg:col-span-4">
+              <Card className="p-4 sm:p-6 border border-border/40 bg-card/40">
+                <h2 className="text-lg font-semibold tracking-tight mb-4">Service Organization</h2>
+                <div className="space-y-4">
                   <ServiceCategories 
                     category={category}
                     selectedSubcategories={selectedSubcategories}
@@ -255,18 +261,7 @@ export default function EditService() {
                       setSelectedSubcategories(selectedSubcategories.filter(s => s !== value));
                     }}
                   />
-                </div>
-              </Card>
-            </div>
-
-            <div className="lg:col-span-4">
-              <Card className="p-4 sm:p-6 border border-border/40 bg-card/40">
-                <h2 className="text-lg font-semibold tracking-tight mb-4">Service Organization</h2>
-                <div className="space-y-4">
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    Configure additional service settings, organization details, and metadata to better manage your service offerings.
-                  </p>
-                  <div className="border-t border-border/40 pt-4">
+                  <div className="border-t border-border/40 pt-4 mt-4">
                     <p className="text-xs text-muted-foreground">
                       More configuration options will be available soon.
                     </p>
