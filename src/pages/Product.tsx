@@ -7,8 +7,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { ProductLayout } from "@/components/product/ProductLayout";
 import { ProductSkeleton } from "@/components/product/ProductSkeleton";
 import { ProductNotFound } from "@/components/product/ProductNotFound";
-import { ProductDemo } from "@/components/product/ProductDemo";
-import { ProductReviews } from "@/components/product/ProductReviews";
 import { MoreFromSeller } from "@/components/product/MoreFromSeller";
 import { RelatedProducts } from "@/components/product/RelatedProducts";
 import { StickyATC } from "@/components/product/StickyATC";
@@ -174,18 +172,7 @@ export default function Product() {
         averageRating={averageRating}
         onVariantChange={setSelectedVariant}
         onAddToCart={handleAddToCart}
-      >
-        <div className="lg:col-span-3 grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <ProductDemo demo={product.demo} />
-            <ProductReviews reviews={reviews} className="mb-8" />
-            <MoreFromSeller expert_uuid={product.expert_uuid} className="mb-8" />
-            {relatedProducts.length > 0 && (
-              <RelatedProducts products={relatedProducts} className="mb-24" />
-            )}
-          </div>
-        </div>
-      </ProductLayout>
+      />
       <StickyATC 
         variants={variants}
         selectedVariant={selectedVariant}
