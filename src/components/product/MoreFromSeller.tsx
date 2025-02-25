@@ -42,14 +42,20 @@ const fetchExpertProducts = async (expert_uuid: string, currentProductUuid?: str
       slug,
       use_case
     `)
-    .eq('expert_uuid', expert_uuid)
-    .order('created_at', { ascending: false })
-    .limit(12);
+    .eq('expert_uuid', expert_uuid);
 
-  // Only add the not equals filter if we have a current product UUID
+  // Filter out current product if we have a UUID
   if (currentProductUuid) {
     query = query.neq('product_uuid', currentProductUuid);
   }
+
+  // Add the use_case contains check using proper JSONB syntax
+  query = query.contains('use_case', ['Blog', 'Dashboard', 'Social Network']);
+
+  // Add ordering and limit after all filters
+  query = query
+    .order('created_at', { ascending: false })
+    .limit(12);
 
   const { data, error } = await query;
 
@@ -58,7 +64,7 @@ const fetchExpertProducts = async (expert_uuid: string, currentProductUuid?: str
     throw error;
   }
 
-  // Parse JSONB use_case field if it exists
+  // Parse JSONB use_case field and ensure it's always an array
   const parsedData = data?.map(product => ({
     ...product,
     use_case: Array.isArray(product.use_case) ? product.use_case : []
