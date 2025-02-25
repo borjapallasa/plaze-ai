@@ -27,20 +27,20 @@ interface MoreFromSellerProps {
 }
 
 const fetchExpertProducts = async (expert_uuid: string) => {
-  console.log('Fetching products for expert:', expert_uuid); // Debug log for expert_uuid
+  console.log('Fetching products for expert:', expert_uuid);
 
   const { data, error } = await supabase
     .from('products')
-    .select('name, price, thumbnail, seller_name, description, tech_stack, type, product_uuid, slug')
+    .select('name, price_from, thumbnail, seller_name, description, tech_stack, type, product_uuid, slug')
     .eq('expert_uuid', expert_uuid)
     .order('sales_amount', { ascending: false });
 
   if (error) {
-    console.error('Error fetching products:', error); // Debug log for errors
+    console.error('Error fetching products:', error);
     throw error;
   }
 
-  console.log('Expert products raw data:', data); // Debug log for raw data
+  console.log('Expert products raw data:', data);
   return data || [];
 };
 
@@ -57,7 +57,7 @@ export function MoreFromSeller({
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
 
-  console.log('MoreFromSeller received expert_uuid:', expert_uuid); // Debug log for props
+  console.log('MoreFromSeller received expert_uuid:', expert_uuid);
 
   const { data: products = [], isLoading } = useQuery({
     queryKey: ['expertProducts', expert_uuid],
@@ -65,8 +65,8 @@ export function MoreFromSeller({
     enabled: !!expert_uuid
   });
 
-  console.log('Query result - products:', products); // Debug log for query results
-  console.log('Query loading state:', isLoading); // Debug log for loading state
+  console.log('Query result - products:', products);
+  console.log('Query loading state:', isLoading);
 
   React.useEffect(() => {
     if (!api) {
@@ -77,13 +77,12 @@ export function MoreFromSeller({
     });
   }, [api]);
 
-  // Early return with visual feedback if loading or no products
   if (isLoading) {
     return <div>Loading products...</div>;
   }
 
   if (!products.length) {
-    console.log('No products found for expert'); // Debug log for empty state
+    console.log('No products found for expert');
     return null;
   }
 
@@ -101,12 +100,12 @@ export function MoreFromSeller({
       >
         <CarouselContent className="-ml-4">
           {products.map((product, index) => {
-            console.log('Rendering product:', product); // Debug log for each product
+            console.log('Rendering product:', product);
             return (
               <CarouselItem key={index} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/4">
                 <ProductCard product={{
                   title: product.name || '',
-                  price: formatPrice(product.price),
+                  price: formatPrice(product.price_from), // Changed from price to price_from
                   image: product.thumbnail || '',
                   seller: product.seller_name || '',
                   description: product.description || '',
@@ -136,7 +135,7 @@ function ProductCard({
   const navigate = useNavigate();
 
   const handleClick = () => {
-    console.log('Product card clicked:', product); // Debug log for click handling
+    console.log('Product card clicked:', product);
     
     if (product.slug && product.productUuid) {
       navigate(`/product/${product.slug}/${product.productUuid}`);
