@@ -19,7 +19,18 @@ export default function SellerPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('users')
-        .select('*, services(*), products(*)')
+        .select(`
+          *,
+          services(*),
+          products(
+            thumbnail,
+            name,
+            description,
+            price_from,
+            type,
+            use_case
+          )
+        `)
         .eq('user_uuid', id)
         .single();
 
@@ -134,18 +145,18 @@ export default function SellerPage() {
 
           <TabsContent value="products" className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2, 3].map((i) => (
+              {seller?.products?.map((product) => (
                 <ProductCard
-                  key={i}
-                  id="sample"
-                  slug="sample"
-                  title="Sample Product"
-                  price="$99.99"
-                  image="https://images.unsplash.com/photo-1649972904349-6e44c42644a7"
-                  seller="Design Master"
-                  description="A beautiful product description goes here"
-                  tags={["design", "ui"]}
-                  category="design"
+                  key={product.product_uuid}
+                  id={product.product_uuid}
+                  slug={product.slug}
+                  title={product.name}
+                  price={`$${product.price_from}`}
+                  image={product.thumbnail}
+                  seller={seller.first_name}
+                  description={product.description}
+                  tags={product.use_case || []}
+                  category={product.type}
                 />
               ))}
             </div>
