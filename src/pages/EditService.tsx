@@ -7,54 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, Plus, X } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ProductEditor } from "@/components/product/ProductEditor";
 import { useToast } from "@/components/ui/use-toast";
-
-const CATEGORIES = [
-  { value: "development", label: "Development" },
-  { value: "design", label: "Design" },
-  { value: "marketing", label: "Marketing" },
-  { value: "business", label: "Business" },
-] as const;
-
-const SUBCATEGORIES = {
-  development: [
-    { value: "web", label: "Web Development" },
-    { value: "mobile", label: "Mobile Development" },
-    { value: "desktop", label: "Desktop Development" },
-    { value: "database", label: "Database" },
-    { value: "devops", label: "DevOps" },
-  ],
-  design: [
-    { value: "ui", label: "UI Design" },
-    { value: "ux", label: "UX Design" },
-    { value: "graphic", label: "Graphic Design" },
-    { value: "brand", label: "Brand Design" },
-  ],
-  marketing: [
-    { value: "social", label: "Social Media" },
-    { value: "content", label: "Content Marketing" },
-    { value: "seo", label: "SEO" },
-    { value: "email", label: "Email Marketing" },
-  ],
-  business: [
-    { value: "strategy", label: "Business Strategy" },
-    { value: "consulting", label: "Consulting" },
-    { value: "analytics", label: "Analytics" },
-    { value: "planning", label: "Planning" },
-  ],
-} as const;
-
-type CategoryType = typeof CATEGORIES[number]['value'];
-
-const SERVICE_TYPES = [
-  { value: "one time", label: "One Time" },
-  { value: "monthly", label: "Monthly" }
-] as const;
-
-type ServiceType = typeof SERVICE_TYPES[number]['value'];
+import { ServiceFeatures } from "@/components/service/ServiceFeatures";
+import { ServiceCategories } from "@/components/service/ServiceCategories";
+import { SERVICE_TYPES, CategoryType, ServiceType } from "@/constants/service-categories";
 
 export default function EditService() {
   const { id } = useParams();
@@ -102,8 +61,6 @@ export default function EditService() {
     },
     enabled: !!id
   });
-
-  const availableSubcategories = category ? SUBCATEGORIES[category] : [];
 
   const handleSave = async () => {
     try {
@@ -238,44 +195,12 @@ export default function EditService() {
                     />
                   </div>
 
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <Label className="text-sm font-medium">Features</Label>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="h-8"
-                        onClick={handleAddFeature}
-                      >
-                        <Plus className="h-4 w-4 mr-1" />
-                        Add Feature
-                      </Button>
-                    </div>
-                    <div className="space-y-2">
-                      {features.map((feature, index) => (
-                        <div key={index} className="flex gap-2">
-                          <Input
-                            value={feature}
-                            onChange={(e) => handleFeatureChange(index, e.target.value)}
-                            placeholder={`Feature ${index + 1}`}
-                            className="h-11"
-                          />
-                          {features.length > 1 && (
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              className="h-11 w-11 flex-shrink-0"
-                              onClick={() => handleRemoveFeature(index)}
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                  <ServiceFeatures 
+                    features={features}
+                    onAddFeature={handleAddFeature}
+                    onRemoveFeature={handleRemoveFeature}
+                    onFeatureChange={handleFeatureChange}
+                  />
 
                   <div>
                     <Label htmlFor="price" className="text-sm font-medium mb-1.5 block">
@@ -312,89 +237,24 @@ export default function EditService() {
                     </Select>
                   </div>
 
-                  <div>
-                    <Label htmlFor="category" className="text-sm font-medium mb-1.5 block">
-                      Category
-                    </Label>
-                    <Select 
-                      value={category} 
-                      onValueChange={(value: CategoryType) => {
-                        setCategory(value);
-                        setSelectedSubcategories([]); // Reset subcategories when category changes
-                      }}
-                    >
-                      <SelectTrigger className="h-11">
-                        <SelectValue placeholder="Select a category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {CATEGORIES.map((cat) => (
-                          <SelectItem key={cat.value} value={cat.value}>
-                            {cat.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="subcategories" className="text-sm font-medium mb-1.5 block">
-                      Subcategories
-                    </Label>
-                    <Select 
-                      value=""
-                      onValueChange={(value: string) => {
-                        if (selectedSubcategories.includes(value)) {
-                          setSelectedSubcategories(selectedSubcategories.filter(v => v !== value));
-                        } else {
-                          setSelectedSubcategories([...selectedSubcategories, value]);
-                        }
-                      }}
-                    >
-                      <SelectTrigger className="h-11">
-                        <SelectValue placeholder="Select subcategories" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availableSubcategories.map((subcat) => (
-                          <SelectItem 
-                            key={subcat.value} 
-                            value={subcat.value}
-                            className="relative"
-                          >
-                            <div className="flex items-center">
-                              {subcat.label}
-                              {selectedSubcategories.includes(subcat.value) && (
-                                <div className="ml-auto">✓</div>
-                              )}
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {selectedSubcategories.length > 0 && (
-                      <div className="mt-2 flex flex-wrap gap-2">
-                        {selectedSubcategories.map((sub) => {
-                          const subcatLabel = availableSubcategories.find(s => s.value === sub)?.label;
-                          return (
-                            <div
-                              key={sub}
-                              className="bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-sm flex items-center gap-1"
-                            >
-                              {subcatLabel}
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                className="h-4 w-4 p-0 hover:bg-transparent"
-                                onClick={() => setSelectedSubcategories(selectedSubcategories.filter(s => s !== sub))}
-                              >
-                                <X className="h-3 w-3" />
-                              </Button>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
+                  <ServiceCategories 
+                    category={category}
+                    selectedSubcategories={selectedSubcategories}
+                    onCategoryChange={(value: CategoryType) => {
+                      setCategory(value);
+                      setSelectedSubcategories([]); // Reset subcategories when category changes
+                    }}
+                    onSubcategoriesChange={(value: string) => {
+                      if (selectedSubcategories.includes(value)) {
+                        setSelectedSubcategories(selectedSubcategories.filter(v => v !== value));
+                      } else {
+                        setSelectedSubcategories([...selectedSubcategories, value]);
+                      }
+                    }}
+                    onRemoveSubcategory={(value: string) => {
+                      setSelectedSubcategories(selectedSubcategories.filter(s => s !== value));
+                    }}
+                  />
                 </div>
               </Card>
             </div>
