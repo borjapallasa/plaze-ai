@@ -48,6 +48,7 @@ export function MoreFromSeller({
   expert_uuid,
   className
 }: MoreFromSellerProps) {
+  const navigate = useNavigate();
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
 
