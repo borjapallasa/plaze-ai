@@ -30,7 +30,14 @@ const fetchRelatedProducts = async (currentProductId: string) => {
     .eq('product_uuid', currentProductId)
     .maybeSingle();
 
-  // Fetch other products, without filtering by use_case for now
+  if (!currentProduct?.use_case) {
+    console.log('No use case found for current product');
+    return [];
+  }
+
+  console.log('Current product use case:', currentProduct.use_case);
+
+  // Fetch other products with the same use case
   const { data, error } = await supabase
     .from('products')
     .select(`
@@ -44,6 +51,7 @@ const fetchRelatedProducts = async (currentProductId: string) => {
       slug
     `)
     .neq('product_uuid', currentProductId)
+    .containedBy('use_case', currentProduct.use_case)
     .order('created_at', { ascending: false })
     .limit(12);
 
