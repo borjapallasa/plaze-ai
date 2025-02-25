@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { CATEGORIES, SUBCATEGORIES, CategoryType } from "@/constants/service-categories";
 
 interface ServiceCategoriesProps {
@@ -24,7 +25,7 @@ export function ServiceCategories({
   const availableSubcategories = category ? SUBCATEGORIES[category] : [];
 
   return (
-    <>
+    <div className="space-y-4">
       <div>
         <Label htmlFor="category" className="text-sm font-medium mb-1.5 block">
           Category
@@ -64,10 +65,10 @@ export function ServiceCategories({
                 value={subcat.value}
                 className="relative"
               >
-                <div className="flex items-center">
-                  {subcat.label}
+                <div className="flex items-center justify-between w-full">
+                  <span>{subcat.label}</span>
                   {selectedSubcategories.includes(subcat.value) && (
-                    <div className="ml-auto">✓</div>
+                    <span className="text-primary">✓</span>
                   )}
                 </div>
               </SelectItem>
@@ -75,30 +76,31 @@ export function ServiceCategories({
           </SelectContent>
         </Select>
         {selectedSubcategories.length > 0 && (
-          <div className="mt-2 flex flex-wrap gap-2">
+          <div className="mt-3 flex flex-wrap gap-2">
             {selectedSubcategories.map((sub) => {
               const subcatLabel = availableSubcategories.find(s => s.value === sub)?.label;
               return (
-                <div
+                <Badge
                   key={sub}
-                  className="bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-sm flex items-center gap-1"
+                  variant="secondary"
+                  className="py-1 pl-3 pr-2 text-sm font-normal flex items-center gap-1"
                 >
                   {subcatLabel}
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="h-4 w-4 p-0 hover:bg-transparent"
                     onClick={() => onRemoveSubcategory(sub)}
+                    className="h-4 w-4 p-0 hover:bg-transparent opacity-60 hover:opacity-100"
                   >
                     <X className="h-3 w-3" />
                   </Button>
-                </div>
+                </Badge>
               );
             })}
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }
