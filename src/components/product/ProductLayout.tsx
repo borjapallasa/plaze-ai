@@ -1,3 +1,4 @@
+
 import React from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { ProductGallery } from "./ProductGallery";
@@ -112,6 +113,7 @@ export function ProductLayout({
                   productIncludes={product.product_includes}
                   difficultyLevel={product.difficulty_level}
                 />
+                <ProductReviews reviews={[]} />
                 <MoreFromSeller expert_uuid={product.expert_uuid} />
                 {product.related_products?.length > 0 && (
                   <RelatedProducts products={product.related_products} className="mb-24" />
