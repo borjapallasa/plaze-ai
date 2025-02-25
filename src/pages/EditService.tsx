@@ -1,19 +1,12 @@
+
 import React, { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ProductEditor } from "@/components/product/ProductEditor";
 import { useToast } from "@/components/ui/use-toast";
-import { ServiceFeatures } from "@/components/service/ServiceFeatures";
-import { ServiceCategories } from "@/components/service/ServiceCategories";
-import { SERVICE_TYPES, CategoryType, ServiceType } from "@/constants/service-categories";
 import { MainHeader } from "@/components/MainHeader";
-import { ArrowLeft } from "lucide-react";
+import { ServiceForm } from "@/components/service/ServiceForm";
+import { CategoryType, ServiceType } from "@/constants/service-categories";
 
 export default function EditService() {
   const { id } = useParams();
@@ -132,117 +125,35 @@ export default function EditService() {
         <MainHeader />
       </div>
       
-      <div className="container mx-auto px-4 pt-24 pb-8">
-        <div className="flex items-center justify-between mb-6">
-          <Link to="/seller/services" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Services
-          </Link>
-          <Button onClick={handleSave} disabled={isSaving} className="min-w-[120px]">
-            {isSaving ? "Saving..." : "Save changes"}
-          </Button>
-        </div>
-
-        <div className="space-y-4 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-8">
-          <div className="lg:col-span-8">
-            <Card className="p-4 sm:p-6">
-              <div className="space-y-8">
-                <div>
-                  <Label htmlFor="name" className="text-base font-medium mb-2 block">
-                    Service Name
-                  </Label>
-                  <Input
-                    id="name"
-                    placeholder="Enter a clear, descriptive name for your service"
-                    value={serviceName}
-                    onChange={(e) => setServiceName(e.target.value)}
-                    className="h-11"
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="description" className="text-base font-medium mb-2 block">
-                    Description
-                  </Label>
-                  <ProductEditor 
-                    value={serviceDescription}
-                    onChange={setServiceDescription}
-                  />
-                </div>
-
-                <ServiceFeatures 
-                  features={features}
-                  onAddFeature={handleAddFeature}
-                  onRemoveFeature={handleRemoveFeature}
-                  onFeatureChange={handleFeatureChange}
-                />
-
-                <div className="grid sm:grid-cols-2 gap-6">
-                  <div>
-                    <Label htmlFor="price" className="text-base font-medium mb-2 block">
-                      Price
-                    </Label>
-                    <Input
-                      id="price"
-                      type="number"
-                      placeholder="Enter service price"
-                      value={price}
-                      onChange={(e) => setPrice(e.target.value)}
-                      className="h-11 w-full"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="type" className="text-base font-medium mb-2 block">
-                      Service Type
-                    </Label>
-                    <Select 
-                      value={serviceType} 
-                      onValueChange={(value: ServiceType) => setServiceType(value)}
-                    >
-                      <SelectTrigger className="h-11">
-                        <SelectValue placeholder="Select service type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {SERVICE_TYPES.map((type) => (
-                          <SelectItem key={type.value} value={type.value}>
-                            {type.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          </div>
-
-          <div className="lg:col-span-4">
-            <Card className="p-4 sm:p-6 border border-border/40 bg-card/40">
-              <h2 className="text-lg font-semibold tracking-tight mb-4">Service Organization</h2>
-              <div className="space-y-4">
-                <ServiceCategories 
-                  category={category}
-                  selectedSubcategories={selectedSubcategories}
-                  onCategoryChange={(value: CategoryType) => {
-                    setCategory(value);
-                    setSelectedSubcategories([]);
-                  }}
-                  onSubcategoriesChange={(value: string) => {
-                    if (selectedSubcategories.includes(value)) {
-                      setSelectedSubcategories(selectedSubcategories.filter(v => v !== value));
-                    } else {
-                      setSelectedSubcategories([...selectedSubcategories, value]);
-                    }
-                  }}
-                  onRemoveSubcategory={(value: string) => {
-                    setSelectedSubcategories(selectedSubcategories.filter(s => s !== value));
-                  }}
-                />
-              </div>
-            </Card>
-          </div>
-        </div>
-      </div>
+      <ServiceForm 
+        serviceName={serviceName}
+        serviceDescription={serviceDescription}
+        features={features}
+        price={price}
+        serviceType={serviceType}
+        category={category}
+        selectedSubcategories={selectedSubcategories}
+        isSaving={isSaving}
+        onServiceNameChange={setServiceName}
+        onServiceDescriptionChange={setServiceDescription}
+        onAddFeature={handleAddFeature}
+        onRemoveFeature={handleRemoveFeature}
+        onFeatureChange={handleFeatureChange}
+        onPriceChange={setPrice}
+        onServiceTypeChange={setServiceType}
+        onCategoryChange={setCategory}
+        onSubcategoriesChange={(value: string) => {
+          if (selectedSubcategories.includes(value)) {
+            setSelectedSubcategories(selectedSubcategories.filter(v => v !== value));
+          } else {
+            setSelectedSubcategories([...selectedSubcategories, value]);
+          }
+        }}
+        onRemoveSubcategory={(value: string) => {
+          setSelectedSubcategories(selectedSubcategories.filter(s => s !== value));
+        }}
+        onSave={handleSave}
+      />
     </div>
   );
 }
