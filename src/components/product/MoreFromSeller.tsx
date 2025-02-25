@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface Product {
   name: string;
@@ -26,15 +26,22 @@ interface MoreFromSellerProps {
   className?: string;
 }
 
-const fetchExpertProducts = async (expert_uuid: string) => {
+const fetchExpertProducts = async (expert_uuid: string, currentProductUuid?: string) => {
   console.log('Fetching products for expert:', expert_uuid);
   
-  const { data, error } = await supabase
+  let query = supabase
     .from('products')
     .select('name, price_from, thumbnail, description, tech_stack, type, product_uuid, slug, use_case')
     .eq('expert_uuid', expert_uuid)
     .order('created_at', { ascending: false })
     .limit(12);
+
+  // Only add the not equals filter if we have a current product UUID
+  if (currentProductUuid) {
+    query = query.neq('product_uuid', currentProductUuid);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.error('Error fetching products:', error);
@@ -55,12 +62,13 @@ export function MoreFromSeller({
   className
 }: MoreFromSellerProps) {
   const navigate = useNavigate();
+  const { id: currentProductUuid } = useParams();
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
 
   const { data: products = [], isLoading } = useQuery({
-    queryKey: ['expertProducts', expert_uuid],
-    queryFn: () => expert_uuid ? fetchExpertProducts(expert_uuid) : Promise.resolve([]),
+    queryKey: ['expertProducts', expert_uuid, currentProductUuid],
+    queryFn: () => expert_uuid ? fetchExpertProducts(expert_uuid, currentProductUuid) : Promise.resolve([]),
     enabled: !!expert_uuid
   });
 
