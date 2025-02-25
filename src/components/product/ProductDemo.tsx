@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 
 interface ProductDemoProps {
@@ -85,13 +84,12 @@ export function ProductDemo({ demo }: ProductDemoProps) {
       );
     }
 
-    // Fallback for non-video content or invalid URLs
     return <div dangerouslySetInnerHTML={{ __html: url }} />;
   };
 
   return (
-    <>
-      <h2 className="text-xl font-semibold mb-4">Demo</h2>
+    <div className="w-full">
+      <h2 className="text-2xl font-semibold mb-4">Demo</h2>
       <Card className="p-6 mb-8">
         {demo ? (
           renderVideoEmbed(demo)
@@ -99,6 +97,6 @@ export function ProductDemo({ demo }: ProductDemoProps) {
           <div className="aspect-video bg-accent rounded-lg" />
         )}
       </Card>
-    </>
+    </div>
   );
 }
