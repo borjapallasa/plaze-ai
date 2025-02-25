@@ -11,7 +11,6 @@ import { usePreloadImage } from "@/hooks/use-preload-image";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useProductImages } from "@/hooks/use-product-images";
 import { ProductInfo } from "./ProductInfo";
-import { ProductReviews } from "./ProductReviews";
 import { MoreFromSeller } from "./MoreFromSeller";
 import { RelatedProducts } from "./RelatedProducts";
 
@@ -22,7 +21,6 @@ interface ProductLayoutProps {
   averageRating: number;
   onVariantChange: (variantId: string) => void;
   onAddToCart: () => void;
-  children?: React.ReactNode;
 }
 
 export function ProductLayout({
@@ -32,7 +30,6 @@ export function ProductLayout({
   averageRating,
   onVariantChange,
   onAddToCart,
-  children
 }: ProductLayoutProps) {
   const isMobile = useIsMobile();
   const { images, isLoading: isLoadingImages } = useProductImages(product.product_uuid);
@@ -79,7 +76,6 @@ export function ProductLayout({
           </Card>
 
           <div className="space-y-8">
-            {children}
             <ProductInfo 
               techStack={product.tech_stack}
               productIncludes={product.product_includes}
@@ -100,14 +96,11 @@ export function ProductLayout({
                 className="mb-8" 
                 priority={!isMobile}
               />
-              <div className="space-y-8">
-                <Card className="p-6">
-                  <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
-                    {product.description}
-                  </p>
-                </Card>
-                {children}
-              </div>
+              <Card className="p-6">
+                <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                  {product.description}
+                </p>
+              </Card>
               <MoreFromSeller expert_uuid={product.expert_uuid} />
               {product.related_products?.length > 0 && (
                 <RelatedProducts products={product.related_products} className="mb-24" />
@@ -143,10 +136,6 @@ export function ProductLayout({
               difficultyLevel={product.difficulty_level}
             />
           </div>
-        </div>
-
-        <div className="mt-8">
-          <ProductReviews reviews={[]} />
         </div>
       </main>
     </div>
