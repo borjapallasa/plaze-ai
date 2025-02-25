@@ -43,43 +43,71 @@ export default function SellerPage() {
 
       <main className="container mx-auto px-4 pt-24 pb-8">
         {/* Profile Section */}
-        <Card className="p-6 sm:p-8 mb-8 animate-fade-in">
-          <div className="flex flex-col sm:flex-row gap-6 items-start">
-            <Avatar className="h-24 w-24 border-2 border-border">
-              <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e" />
-              <AvatarFallback>JP</AvatarFallback>
-            </Avatar>
-
-            <div className="flex-1 space-y-4">
-              <div>
-                <h1 className="text-2xl font-semibold tracking-tight">
-                  {seller?.first_name || "John Professional"}
-                </h1>
-                <p className="text-muted-foreground mt-1">
-                  Expert in UI/UX Design & Development
-                </p>
+        <div className="relative mb-8">
+          {/* Background accent */}
+          <div className="absolute inset-0 bg-muted/30 rounded-lg -z-10" />
+          
+          <div className="px-6 py-8 sm:px-8 sm:py-10">
+            <div className="flex flex-col sm:flex-row items-start gap-8 max-w-6xl mx-auto">
+              {/* Avatar Section */}
+              <div className="relative">
+                <Avatar className="h-28 w-28 sm:h-32 sm:w-32 rounded-full ring-4 ring-background shadow-lg">
+                  <AvatarImage 
+                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e"
+                    className="object-cover"
+                  />
+                  <AvatarFallback className="text-2xl">JP</AvatarFallback>
+                </Avatar>
+                <div className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground text-xs font-medium px-2 py-0.5 rounded-full">
+                  Pro
+                </div>
               </div>
 
-              <p className="text-sm text-muted-foreground leading-relaxed max-w-3xl">
-                Passionate designer and developer with over 8 years of experience creating beautiful, 
-                functional digital experiences. Specializing in user interface design, web applications, 
-                and design systems that scale.
-              </p>
+              {/* Content Section */}
+              <div className="flex-1 space-y-6">
+                {/* Header */}
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3">
+                    <h1 className="text-3xl font-bold tracking-tight">
+                      {seller?.first_name || "John Professional"}
+                    </h1>
+                    <Badge className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">
+                      Verified Expert
+                    </Badge>
+                  </div>
+                  <p className="text-lg text-muted-foreground font-medium">
+                    Expert in UI/UX Design & Development
+                  </p>
+                </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                {stats.map((stat) => (
-                  <Card key={stat.label} className="p-4 bg-muted/50">
-                    <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                      <stat.icon className="h-4 w-4" />
-                      <span className="text-xs">{stat.label}</span>
+                {/* Description */}
+                <p className="text-base text-muted-foreground leading-relaxed max-w-3xl">
+                  Passionate designer and developer with over 8 years of experience creating beautiful, 
+                  functional digital experiences. Specializing in user interface design, web applications, 
+                  and design systems that scale.
+                </p>
+
+                {/* Stats */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  {stats.map((stat) => (
+                    <div 
+                      key={stat.label}
+                      className="bg-background rounded-lg px-4 py-3 shadow-sm border border-border/40"
+                    >
+                      <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                        <stat.icon className="h-4 w-4" />
+                        <span className="text-xs font-medium">{stat.label}</span>
+                      </div>
+                      <p className="text-2xl font-bold tracking-tight">
+                        {stat.value}
+                      </p>
                     </div>
-                    <p className="text-xl font-semibold">{stat.value}</p>
-                  </Card>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </Card>
+        </div>
 
         {/* Tabs Section */}
         <Tabs defaultValue="products" className="animate-fade-in">
