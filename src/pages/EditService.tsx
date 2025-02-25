@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -11,6 +10,43 @@ import { ArrowLeft, Plus, X } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ProductEditor } from "@/components/product/ProductEditor";
 import { useToast } from "@/components/ui/use-toast";
+
+const CATEGORIES = [
+  { value: "development", label: "Development" },
+  { value: "design", label: "Design" },
+  { value: "marketing", label: "Marketing" },
+  { value: "business", label: "Business" },
+] as const;
+
+const SUBCATEGORIES = {
+  development: [
+    { value: "web", label: "Web Development" },
+    { value: "mobile", label: "Mobile Development" },
+    { value: "desktop", label: "Desktop Development" },
+    { value: "database", label: "Database" },
+    { value: "devops", label: "DevOps" },
+  ],
+  design: [
+    { value: "ui", label: "UI Design" },
+    { value: "ux", label: "UX Design" },
+    { value: "graphic", label: "Graphic Design" },
+    { value: "brand", label: "Brand Design" },
+  ],
+  marketing: [
+    { value: "social", label: "Social Media" },
+    { value: "content", label: "Content Marketing" },
+    { value: "seo", label: "SEO" },
+    { value: "email", label: "Email Marketing" },
+  ],
+  business: [
+    { value: "strategy", label: "Business Strategy" },
+    { value: "consulting", label: "Consulting" },
+    { value: "analytics", label: "Analytics" },
+    { value: "planning", label: "Planning" },
+  ],
+} as const;
+
+type CategoryType = typeof CATEGORIES[number]['value'];
 
 const SERVICE_TYPES = [
   { value: "one time", label: "One Time" },
@@ -28,6 +64,8 @@ export default function EditService() {
   const [features, setFeatures] = useState<string[]>([""]);
   const [price, setPrice] = useState("");
   const [serviceType, setServiceType] = useState<ServiceType>("one time");
+  const [category, setCategory] = useState<CategoryType | "">("");
+  const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
 
   const { data: service, isLoading } = useQuery({
     queryKey: ['service', id],
@@ -43,13 +81,20 @@ export default function EditService() {
       if (data) {
         setServiceName(data.name || "");
         setServiceDescription(data.description || "");
-        // Convert features to array of strings and handle potential non-array or null values
         const featuresArray = Array.isArray(data.features) 
           ? (data.features as Array<string | number>).map(feature => String(feature)) 
           : [""];
         setFeatures(featuresArray);
         setPrice(data.price?.toString() || "");
         setServiceType(data.type || "one time");
+        
+        const mainCategory = data.main_category ? String(data.main_category) : "";
+        setCategory(mainCategory as CategoryType);
+        
+        const subcategories = Array.isArray(data.subcategory) 
+          ? data.subcategory.map(sub => String(sub))
+          : [];
+        setSelectedSubcategories(subcategories);
       }
 
       return data;
@@ -57,30 +102,12 @@ export default function EditService() {
     enabled: !!id
   });
 
-  const handleAddFeature = () => {
-    setFeatures([...features, ""]);
-  };
-
-  const handleRemoveFeature = (index: number) => {
-    const newFeatures = features.filter((_, i) => i !== index);
-    if (newFeatures.length === 0) {
-      setFeatures([""]);
-    } else {
-      setFeatures(newFeatures);
-    }
-  };
-
-  const handleFeatureChange = (index: number, value: string) => {
-    const newFeatures = [...features];
-    newFeatures[index] = value;
-    setFeatures(newFeatures);
-  };
+  const availableSubcategories = category ? SUBCATEGORIES[category] : [];
 
   const handleSave = async () => {
     try {
       setIsSaving(true);
       
-      // Filter out empty features
       const cleanedFeatures = features.filter(feature => feature.trim() !== "");
 
       const { error } = await supabase
@@ -90,7 +117,9 @@ export default function EditService() {
           description: serviceDescription,
           features: cleanedFeatures,
           price: parseFloat(price) || 0,
-          type: serviceType
+          type: serviceType,
+          main_category: category,
+          subcategory: selectedSubcategories
         })
         .eq('service_uuid', id);
 
@@ -110,6 +139,25 @@ export default function EditService() {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleAddFeature = () => {
+    setFeatures([...features, ""]);
+  };
+
+  const handleRemoveFeature = (index: number) => {
+    const newFeatures = features.filter((_, i) => i !== index);
+    if (newFeatures.length === 0) {
+      setFeatures([""]);
+    } else {
+      setFeatures(newFeatures);
+    }
+  };
+
+  const handleFeatureChange = (index: number, value: string) => {
+    const newFeatures = [...features];
+    newFeatures[index] = value;
+    setFeatures(newFeatures);
   };
 
   if (isLoading) {
@@ -261,6 +309,90 @@ export default function EditService() {
                         ))}
                       </SelectContent>
                     </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="category" className="text-sm font-medium mb-1.5 block">
+                      Category
+                    </Label>
+                    <Select 
+                      value={category} 
+                      onValueChange={(value: CategoryType) => {
+                        setCategory(value);
+                        setSelectedSubcategories([]); // Reset subcategories when category changes
+                      }}
+                    >
+                      <SelectTrigger className="h-11">
+                        <SelectValue placeholder="Select a category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {CATEGORIES.map((cat) => (
+                          <SelectItem key={cat.value} value={cat.value}>
+                            {cat.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="subcategories" className="text-sm font-medium mb-1.5 block">
+                      Subcategories
+                    </Label>
+                    <Select 
+                      value={selectedSubcategories}
+                      onValueChange={(value) => {
+                        if (selectedSubcategories.includes(value)) {
+                          setSelectedSubcategories(selectedSubcategories.filter(v => v !== value));
+                        } else {
+                          setSelectedSubcategories([...selectedSubcategories, value]);
+                        }
+                      }}
+                    >
+                      <SelectTrigger className="h-11">
+                        <SelectValue placeholder="Select subcategories" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableSubcategories.map((subcat) => (
+                          <SelectItem 
+                            key={subcat.value} 
+                            value={subcat.value}
+                            className="relative"
+                          >
+                            <div className="flex items-center">
+                              {subcat.label}
+                              {selectedSubcategories.includes(subcat.value) && (
+                                <div className="ml-auto">✓</div>
+                              )}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {selectedSubcategories.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {selectedSubcategories.map((sub) => {
+                          const subcatLabel = availableSubcategories.find(s => s.value === sub)?.label;
+                          return (
+                            <div
+                              key={sub}
+                              className="bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-sm flex items-center gap-1"
+                            >
+                              {subcatLabel}
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="h-4 w-4 p-0 hover:bg-transparent"
+                                onClick={() => setSelectedSubcategories(selectedSubcategories.filter(s => s !== sub))}
+                              >
+                                <X className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 </div>
               </Card>
