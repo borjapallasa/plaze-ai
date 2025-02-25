@@ -26,9 +26,14 @@ interface MoreFromSellerProps {
   className?: string;
 }
 
-const fetchSellerProducts = async (expert_uuid: string) => {
-  console.log('Fetching all seller products for expert:', expert_uuid);
+const fetchSellerProducts = async (expert_uuid: string, currentProductId: string) => {
+  console.log('Fetching all seller products for expert:', expert_uuid, 'current product:', currentProductId);
   
+  if (!expert_uuid) {
+    console.log('No expert UUID provided');
+    return [];
+  }
+
   const { data, error } = await supabase
     .from('products')
     .select(`
@@ -71,14 +76,14 @@ export function MoreFromSeller({
   className
 }: MoreFromSellerProps) {
   const navigate = useNavigate();
-  const { id: currentProductUuid } = useParams();
+  const { id } = useParams<{ id: string }>();
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
 
   const { data: products = [], isLoading } = useQuery({
-    queryKey: ['sellerProducts', expert_uuid],
-    queryFn: () => expert_uuid ? fetchSellerProducts(expert_uuid) : Promise.resolve([]),
-    enabled: !!expert_uuid
+    queryKey: ['sellerProducts', expert_uuid, id],
+    queryFn: () => expert_uuid && id ? fetchSellerProducts(expert_uuid, id) : Promise.resolve([]),
+    enabled: !!(expert_uuid && id)
   });
 
   React.useEffect(() => {
