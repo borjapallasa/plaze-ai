@@ -78,7 +78,7 @@ export default function Expert() {
         .from('experts')
         .select('*')
         .eq('expert_uuid', expert_uuid)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error("Supabase error:", error); // Debug log
@@ -87,7 +87,11 @@ export default function Expert() {
       
       console.log("Expert data:", data); // Debug log
       
-      if (data && data.areas) {
+      if (!data) {
+        return null;
+      }
+      
+      if (data.areas) {
         try {
           data.areas = typeof data.areas === 'string' 
             ? JSON.parse(data.areas) 
@@ -98,6 +102,8 @@ export default function Expert() {
           console.error('Error parsing areas:', e);
           data.areas = [];
         }
+      } else {
+        data.areas = [];
       }
       
       return data as Expert;
