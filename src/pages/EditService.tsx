@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Plus, X } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ProductEditor } from "@/components/product/ProductEditor";
 import { useToast } from "@/components/ui/use-toast";
@@ -25,7 +25,7 @@ export default function EditService() {
   const [isSaving, setIsSaving] = useState(false);
   const [serviceName, setServiceName] = useState("");
   const [serviceDescription, setServiceDescription] = useState("");
-  const [features, setFeatures] = useState("");
+  const [features, setFeatures] = useState<string[]>([""]);
   const [price, setPrice] = useState("");
   const [serviceType, setServiceType] = useState<ServiceType>("one time");
 
@@ -43,7 +43,7 @@ export default function EditService() {
       if (data) {
         setServiceName(data.name || "");
         setServiceDescription(data.description || "");
-        setFeatures(JSON.stringify(data.features || [], null, 2));
+        setFeatures(Array.isArray(data.features) ? data.features : [""]);
         setPrice(data.price?.toString() || "");
         setServiceType(data.type || "one time");
       }
@@ -53,28 +53,38 @@ export default function EditService() {
     enabled: !!id
   });
 
+  const handleAddFeature = () => {
+    setFeatures([...features, ""]);
+  };
+
+  const handleRemoveFeature = (index: number) => {
+    const newFeatures = features.filter((_, i) => i !== index);
+    if (newFeatures.length === 0) {
+      setFeatures([""]);
+    } else {
+      setFeatures(newFeatures);
+    }
+  };
+
+  const handleFeatureChange = (index: number, value: string) => {
+    const newFeatures = [...features];
+    newFeatures[index] = value;
+    setFeatures(newFeatures);
+  };
+
   const handleSave = async () => {
     try {
       setIsSaving(true);
       
-      let parsedFeatures;
-      try {
-        parsedFeatures = JSON.parse(features);
-      } catch (e) {
-        toast({
-          title: "Invalid JSON",
-          description: "Please check your features format",
-          variant: "destructive"
-        });
-        return;
-      }
+      // Filter out empty features
+      const cleanedFeatures = features.filter(feature => feature.trim() !== "");
 
       const { error } = await supabase
         .from('services')
         .update({
           name: serviceName,
           description: serviceDescription,
-          features: parsedFeatures,
+          features: cleanedFeatures,
           price: parseFloat(price) || 0,
           type: serviceType
         })
@@ -175,24 +185,43 @@ export default function EditService() {
                     />
                   </div>
 
-                  <div>
-                    <Label htmlFor="features" className="text-sm font-medium mb-1.5 block">
-                      Features (JSON format)
-                    </Label>
-                    <textarea
-                      id="features"
-                      className="min-h-[180px] w-full rounded-md border border-input bg-background px-3 py-3 font-mono text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      placeholder={`[
-  "Feature 1",
-  "Feature 2",
-  "Feature 3"
-]`}
-                      value={features}
-                      onChange={(e) => setFeatures(e.target.value)}
-                    />
-                    <p className="mt-1.5 text-xs text-muted-foreground">
-                      Enter features as a valid JSON array of strings
-                    </p>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm font-medium">Features</Label>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="h-8"
+                        onClick={handleAddFeature}
+                      >
+                        <Plus className="h-4 w-4 mr-1" />
+                        Add Feature
+                      </Button>
+                    </div>
+                    <div className="space-y-2">
+                      {features.map((feature, index) => (
+                        <div key={index} className="flex gap-2">
+                          <Input
+                            value={feature}
+                            onChange={(e) => handleFeatureChange(index, e.target.value)}
+                            placeholder={`Feature ${index + 1}`}
+                            className="h-11"
+                          />
+                          {features.length > 1 && (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="h-11 w-11 flex-shrink-0"
+                              onClick={() => handleRemoveFeature(index)}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
                   <div>
