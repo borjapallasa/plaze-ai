@@ -26,7 +26,8 @@ export function useProductImages(productUuid?: string) {
         const { data, error } = await supabase
           .from('product_images')
           .select('*')
-          .eq('product_uuid', productUuid);
+          .eq('product_uuid', productUuid)
+          .order('is_primary', { ascending: false });
 
         if (error) throw error;
 
@@ -125,6 +126,51 @@ export function useProductImages(productUuid?: string) {
     }
   }, [productUuid, images, toast]);
 
+  const reorderImages = async (sourceId: number, targetId: number) => {
+    try {
+      const sourceImage = images.find(img => img.id === sourceId);
+      const targetImage = images.find(img => img.id === targetId);
+
+      if (!sourceImage || !targetImage) return;
+
+      // Update is_primary status in database
+      const { error: updateError } = await supabase
+        .from('product_images')
+        .update({ is_primary: true })
+        .eq('id', sourceId);
+
+      if (updateError) throw updateError;
+
+      const { error: updateError2 } = await supabase
+        .from('product_images')
+        .update({ is_primary: false })
+        .eq('id', targetId);
+
+      if (updateError2) throw updateError2;
+
+      // Update local state
+      setImages(prev => {
+        const updatedImages = prev.map(img => ({
+          ...img,
+          is_primary: img.id === sourceId
+        }));
+        return updatedImages;
+      });
+
+      toast({
+        title: "Success",
+        description: "Image order updated successfully",
+      });
+    } catch (error) {
+      console.error('Reorder error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update image order",
+        variant: "destructive",
+      });
+    }
+  };
+
   const updateImage = async (imageId: number, updates: { file_name?: string; alt_text?: string }) => {
     try {
       const { error } = await supabase
@@ -191,6 +237,7 @@ export function useProductImages(productUuid?: string) {
     isLoading,
     uploadImage,
     updateImage,
-    removeImage
+    removeImage,
+    reorderImages
   };
 }

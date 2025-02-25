@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -14,7 +13,7 @@ interface ProductMediaUploadProps {
 }
 
 export function ProductMediaUpload({ productUuid }: ProductMediaUploadProps) {
-  const { images, isUploading, uploadImage, updateImage, removeImage } = useProductImages(productUuid);
+  const { images, isUploading, uploadImage, updateImage, removeImage, reorderImages } = useProductImages(productUuid);
   const [previewImage, setPreviewImage] = useState<ProductImage | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editedFileName, setEditedFileName] = useState("");
@@ -55,6 +54,7 @@ export function ProductMediaUpload({ productUuid }: ProductMediaUploadProps) {
         images={images}
         onImageClick={setPreviewImage}
         onRemoveImage={removeImage}
+        onReorderImages={reorderImages}
       />
 
       <Dialog open={!!previewImage} onOpenChange={() => {
