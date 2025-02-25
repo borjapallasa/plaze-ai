@@ -110,21 +110,35 @@ export default function EditService() {
     <div className="min-h-screen bg-background">
       <div className="mt-16">
         <div className="w-full max-w-[1400px] mx-auto px-2 xs:px-3 sm:px-6 lg:px-8 py-3 sm:py-6">
-          <div className="mb-6">
-            <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
+          <div className="mb-8">
+            <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
               <Link to="/seller/services">
-                <Button variant="ghost" size="icon" className="rounded-full flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 mt-1">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="rounded-full flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 mt-1 hover:bg-accent"
+                >
                   <ArrowLeft className="h-4 w-4" />
                 </Button>
               </Link>
               <div className="w-full">
-                <h1 className="text-lg sm:text-xl md:text-2xl font-semibold break-words pr-2">Edit Service</h1>
-                <div className="flex items-center justify-between mt-2">
+                <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">Edit Service</h1>
+                <div className="flex items-center justify-between mt-4">
                   <p className="text-sm text-muted-foreground">Service details and configuration</p>
                   <div className="flex items-center gap-4">
+                    <Select value={serviceType} onValueChange={(value: ServiceType) => setServiceType(value)}>
+                      <SelectTrigger className="w-[140px]">
+                        <SelectValue placeholder="Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="one time">One Time</SelectItem>
+                        <SelectItem value="monthly">Monthly</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <Button 
                       onClick={handleSave}
                       disabled={isSaving}
+                      className="min-w-[120px]"
                     >
                       {isSaving ? "Saving..." : "Save changes"}
                     </Button>
@@ -134,22 +148,27 @@ export default function EditService() {
             </div>
           </div>
 
-          <div className="space-y-3 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-6">
+          <div className="space-y-4 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-8">
             <div className="lg:col-span-8">
-              <Card className="p-3 sm:p-6">
-                <div className="space-y-4">
+              <Card className="p-4 sm:p-6">
+                <div className="space-y-6">
                   <div>
-                    <Label htmlFor="name">Service Name</Label>
+                    <Label htmlFor="name" className="text-sm font-medium mb-1.5 block">
+                      Service Name
+                    </Label>
                     <Input
                       id="name"
-                      placeholder="Enter service name"
+                      placeholder="Enter a clear, descriptive name for your service"
                       value={serviceName}
                       onChange={(e) => setServiceName(e.target.value)}
+                      className="h-11"
                     />
                   </div>
                   
                   <div>
-                    <Label htmlFor="description">Description</Label>
+                    <Label htmlFor="description" className="text-sm font-medium mb-1.5 block">
+                      Description
+                    </Label>
                     <ProductEditor 
                       value={serviceDescription}
                       onChange={setServiceDescription}
@@ -157,31 +176,48 @@ export default function EditService() {
                   </div>
 
                   <div>
-                    <Label htmlFor="features">Features (JSON format)</Label>
+                    <Label htmlFor="features" className="text-sm font-medium mb-1.5 block">
+                      Features (JSON format)
+                    </Label>
                     <textarea
                       id="features"
-                      className="min-h-[150px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      placeholder='Enter features in JSON format, e.g.: ["Feature 1", "Feature 2"]'
+                      className="min-h-[180px] w-full rounded-md border border-input bg-background px-3 py-3 font-mono text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      placeholder={`[
+  "Feature 1",
+  "Feature 2",
+  "Feature 3"
+]`}
                       value={features}
                       onChange={(e) => setFeatures(e.target.value)}
                     />
+                    <p className="mt-1.5 text-xs text-muted-foreground">
+                      Enter features as a valid JSON array of strings
+                    </p>
                   </div>
 
                   <div>
-                    <Label htmlFor="price">Price</Label>
+                    <Label htmlFor="price" className="text-sm font-medium mb-1.5 block">
+                      Price
+                    </Label>
                     <Input
                       id="price"
                       type="number"
-                      placeholder="Enter price"
+                      placeholder="Enter service price"
                       value={price}
                       onChange={(e) => setPrice(e.target.value)}
+                      className="h-11 max-w-[240px]"
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="type">Service Type</Label>
-                    <Select value={serviceType} onValueChange={(value: ServiceType) => setServiceType(value)}>
-                      <SelectTrigger>
+                    <Label htmlFor="type" className="text-sm font-medium mb-1.5 block">
+                      Service Type
+                    </Label>
+                    <Select 
+                      value={serviceType} 
+                      onValueChange={(value: ServiceType) => setServiceType(value)}
+                    >
+                      <SelectTrigger className="h-11">
                         <SelectValue placeholder="Select service type" />
                       </SelectTrigger>
                       <SelectContent>
@@ -198,12 +234,17 @@ export default function EditService() {
             </div>
 
             <div className="lg:col-span-4">
-              <Card className="p-3 sm:p-6">
-                <h2 className="text-lg font-medium mb-4">Service Organization</h2>
+              <Card className="p-4 sm:p-6 border border-border/40 bg-card/40">
+                <h2 className="text-lg font-semibold tracking-tight mb-4">Service Organization</h2>
                 <div className="space-y-4">
-                  <p className="text-sm text-muted-foreground">
-                    Additional service configuration options will be available here.
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Configure additional service settings, organization details, and metadata to better manage your service offerings.
                   </p>
+                  <div className="border-t border-border/40 pt-4">
+                    <p className="text-xs text-muted-foreground">
+                      More configuration options will be available soon.
+                    </p>
+                  </div>
                 </div>
               </Card>
             </div>
