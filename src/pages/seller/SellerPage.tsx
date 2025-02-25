@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -145,6 +146,7 @@ export default function SellerPage() {
                   description={product.description}
                   tags={Array.isArray(product.use_case) ? product.use_case.map(tag => String(tag)) : []}
                   category={product.type}
+                  seller="Expert" // Adding a default seller name since it's required by the component
                 />
               ))}
             </div>

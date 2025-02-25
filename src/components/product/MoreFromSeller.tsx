@@ -13,7 +13,6 @@ interface Product {
   title: string;
   price: string;
   image: string;
-  seller: string;
   description: string;
   tags: string[];
   category: string;
@@ -31,7 +30,7 @@ const fetchExpertProducts = async (expert_uuid: string) => {
 
   const { data, error } = await supabase
     .from('products')
-    .select('name, price_from, thumbnail, seller_name, description, tech_stack, type, product_uuid, slug')
+    .select('name, price_from, thumbnail, description, tech_stack, type, product_uuid, slug')
     .eq('expert_uuid', expert_uuid)
     .order('sales_amount', { ascending: false });
 
@@ -44,7 +43,6 @@ const fetchExpertProducts = async (expert_uuid: string) => {
   return data || [];
 };
 
-// Helper function to format price
 const formatPrice = (price: number | null): string => {
   if (!price) return '$0.00';
   return `$${price.toFixed(2)}`;
@@ -57,16 +55,11 @@ export function MoreFromSeller({
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
 
-  console.log('MoreFromSeller received expert_uuid:', expert_uuid);
-
   const { data: products = [], isLoading } = useQuery({
     queryKey: ['expertProducts', expert_uuid],
     queryFn: () => expert_uuid ? fetchExpertProducts(expert_uuid) : Promise.resolve([]),
     enabled: !!expert_uuid
   });
-
-  console.log('Query result - products:', products);
-  console.log('Query loading state:', isLoading);
 
   React.useEffect(() => {
     if (!api) {
@@ -82,7 +75,6 @@ export function MoreFromSeller({
   }
 
   if (!products.length) {
-    console.log('No products found for expert');
     return null;
   }
 
@@ -100,19 +92,18 @@ export function MoreFromSeller({
       >
         <CarouselContent className="-ml-4">
           {products.map((product, index) => {
-            console.log('Rendering product:', product);
             return (
               <CarouselItem key={index} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/4">
                 <ProductCard product={{
                   title: product.name || '',
-                  price: formatPrice(product.price_from), // Changed from price to price_from
+                  price: formatPrice(product.price_from),
                   image: product.thumbnail || '',
-                  seller: product.seller_name || '',
                   description: product.description || '',
                   tags: product.tech_stack ? product.tech_stack.split(',') : [],
                   category: product.type || '',
                   productUuid: product.product_uuid,
-                  slug: product.slug
+                  slug: product.slug,
+                  seller: 'Expert' // Adding a default seller name since it's required by the component
                 }} />
               </CarouselItem>
             );
@@ -130,13 +121,11 @@ export function MoreFromSeller({
 function ProductCard({
   product
 }: {
-  product: Product;
+  product: Product & { seller: string }; // Ensuring seller is required
 }) {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    console.log('Product card clicked:', product);
-    
     if (product.slug && product.productUuid) {
       navigate(`/product/${product.slug}/${product.productUuid}`);
     }
