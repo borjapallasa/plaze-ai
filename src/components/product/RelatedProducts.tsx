@@ -1,3 +1,4 @@
+
 import React from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
@@ -13,15 +14,24 @@ interface Product {
   type: string;
   product_uuid: string;
   slug: string;
+  use_case: string;
 }
 
 interface RelatedProductsProps {
   className?: string;
 }
 
-const fetchRelatedProducts = async () => {
+const fetchRelatedProducts = async (productId: string) => {
   console.log('Fetching all products');
   
+  // First get the current product's use case
+  const { data: currentProduct } = await supabase
+    .from('products')
+    .select('use_case')
+    .eq('product_uuid', productId)
+    .single();
+
+  // Then fetch related products with the same use case
   const { data, error } = await supabase
     .from('products')
     .select(`
@@ -32,8 +42,11 @@ const fetchRelatedProducts = async () => {
       tech_stack,
       type,
       product_uuid,
-      slug
+      slug,
+      use_case
     `)
+    .eq('use_case', currentProduct?.use_case)
+    .neq('product_uuid', productId)
     .order('created_at', { ascending: false })
     .limit(12);
 
@@ -42,7 +55,7 @@ const fetchRelatedProducts = async () => {
     throw error;
   }
 
-  console.log('Fetched products:', data);
+  console.log('Fetched related products:', data);
   return data || [];
 };
 
@@ -51,8 +64,8 @@ export function RelatedProducts({ className }: RelatedProductsProps) {
 
   const { data: products = [], isLoading } = useQuery({
     queryKey: ['relatedProducts', id],
-    queryFn: fetchRelatedProducts,
-    enabled: true
+    queryFn: () => id ? fetchRelatedProducts(id) : Promise.resolve([]),
+    enabled: !!id
   });
 
   return (
