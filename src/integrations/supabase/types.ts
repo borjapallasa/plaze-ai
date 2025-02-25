@@ -1515,7 +1515,6 @@ export type Database = {
           description: string | null
           expert_uuid: string | null
           features: Json | null
-          highlighted: boolean | null
           id: number
           monthly_recurring_revenue: number | null
           name: string | null
@@ -1534,7 +1533,6 @@ export type Database = {
           description?: string | null
           expert_uuid?: string | null
           features?: Json | null
-          highlighted?: boolean | null
           id?: number
           monthly_recurring_revenue?: number | null
           name?: string | null
@@ -1553,7 +1551,6 @@ export type Database = {
           description?: string | null
           expert_uuid?: string | null
           features?: Json | null
-          highlighted?: boolean | null
           id?: number
           monthly_recurring_revenue?: number | null
           name?: string | null
