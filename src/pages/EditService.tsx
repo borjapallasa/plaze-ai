@@ -13,10 +13,11 @@ import { ProductEditor } from "@/components/product/ProductEditor";
 import { useToast } from "@/components/ui/use-toast";
 
 const SERVICE_TYPES = [
-  { value: "basic", label: "Basic" },
-  { value: "pro", label: "Pro" },
-  { value: "enterprise", label: "Enterprise" }
-];
+  { value: "one time", label: "One Time" },
+  { value: "monthly", label: "Monthly" }
+] as const;
+
+type ServiceType = typeof SERVICE_TYPES[number]['value'];
 
 export default function EditService() {
   const { id } = useParams();
@@ -26,8 +27,7 @@ export default function EditService() {
   const [serviceDescription, setServiceDescription] = useState("");
   const [features, setFeatures] = useState("");
   const [price, setPrice] = useState("");
-  const [serviceType, setServiceType] = useState<string>("");
-  const [status, setStatus] = useState<string>("draft");
+  const [serviceType, setServiceType] = useState<ServiceType>("one time");
 
   const { data: service, isLoading } = useQuery({
     queryKey: ['service', id],
@@ -45,8 +45,7 @@ export default function EditService() {
         setServiceDescription(data.description || "");
         setFeatures(JSON.stringify(data.features || [], null, 2));
         setPrice(data.price?.toString() || "");
-        setServiceType(data.type || "");
-        setStatus(data.status || "draft");
+        setServiceType(data.type || "one time");
       }
 
       return data;
@@ -77,8 +76,7 @@ export default function EditService() {
           description: serviceDescription,
           features: parsedFeatures,
           price: parseFloat(price) || 0,
-          type: serviceType,
-          status: status
+          type: serviceType
         })
         .eq('service_uuid', id);
 
@@ -124,16 +122,6 @@ export default function EditService() {
                 <div className="flex items-center justify-between mt-2">
                   <p className="text-sm text-muted-foreground">Service details and configuration</p>
                   <div className="flex items-center gap-4">
-                    <Select value={status} onValueChange={setStatus}>
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="draft">Draft</SelectItem>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="inactive">Inactive</SelectItem>
-                      </SelectContent>
-                    </Select>
                     <Button 
                       onClick={handleSave}
                       disabled={isSaving}
@@ -192,7 +180,7 @@ export default function EditService() {
 
                   <div>
                     <Label htmlFor="type">Service Type</Label>
-                    <Select value={serviceType} onValueChange={setServiceType}>
+                    <Select value={serviceType} onValueChange={(value: ServiceType) => setServiceType(value)}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select service type" />
                       </SelectTrigger>
@@ -213,7 +201,6 @@ export default function EditService() {
               <Card className="p-3 sm:p-6">
                 <h2 className="text-lg font-medium mb-4">Service Organization</h2>
                 <div className="space-y-4">
-                  {/* Placeholder for additional metadata or organization options */}
                   <p className="text-sm text-muted-foreground">
                     Additional service configuration options will be available here.
                   </p>
