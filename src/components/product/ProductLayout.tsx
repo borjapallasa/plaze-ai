@@ -14,6 +14,7 @@ import { ProductInfo } from "./ProductInfo";
 import { MoreFromSeller } from "./MoreFromSeller";
 import { RelatedProducts } from "./RelatedProducts";
 import { ProductReviews } from "./ProductReviews";
+import { getVideoEmbedUrl } from "@/utils/videoEmbed";
 
 interface ProductLayoutProps {
   product: any;
@@ -39,6 +40,25 @@ export function ProductLayout({
   
   const mainImage = images[0]?.url;
   usePreloadImage(mainImage);
+
+  const embedUrl = getVideoEmbedUrl(product.demo);
+
+  const renderDemo = () => {
+    if (!embedUrl) return null;
+
+    return (
+      <Card className="p-6">
+        <div className="relative w-full aspect-video rounded-lg overflow-hidden">
+          <iframe
+            src={embedUrl}
+            className="absolute inset-0 w-full h-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
+      </Card>
+    );
+  };
 
   return (
     <div className="min-h-screen">
@@ -79,16 +99,7 @@ export function ProductLayout({
               </p>
             </Card>
 
-            {product.demo && (
-              <Card className="p-6">
-                <iframe
-                  src={product.demo}
-                  className="w-full aspect-video rounded-lg"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </Card>
-            )}
+            {renderDemo()}
 
             <ProductReviews reviews={reviews} />
 
@@ -118,16 +129,7 @@ export function ProductLayout({
                 </p>
               </Card>
 
-              {product.demo && (
-                <Card className="p-6">
-                  <iframe
-                    src={product.demo}
-                    className="w-full aspect-video rounded-lg"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                </Card>
-              )}
+              {renderDemo()}
 
               <ProductReviews reviews={reviews} />
               
