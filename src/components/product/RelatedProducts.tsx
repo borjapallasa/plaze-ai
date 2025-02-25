@@ -1,4 +1,3 @@
-
 import React from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
@@ -53,15 +52,13 @@ export function RelatedProducts({ className }: RelatedProductsProps) {
   const { data: products = [], isLoading } = useQuery({
     queryKey: ['relatedProducts', id],
     queryFn: fetchRelatedProducts,
-    enabled: true // Changed this to always be enabled
+    enabled: true
   });
-
-  // Removed the conditional return
 
   return (
     <div className={className}>
       <h2 className="text-2xl font-bold mb-6">Related Products</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {isLoading ? (
           <div>Loading products...</div>
         ) : products.length === 0 ? (

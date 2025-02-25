@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
@@ -88,7 +87,6 @@ export function MoreFromSeller({
     });
   }, [api]);
 
-  // Don't render anything while loading or if no products
   if (isLoading || !products.length) {
     return null;
   }
@@ -107,7 +105,7 @@ export function MoreFromSeller({
       >
         <CarouselContent className="-ml-4">
           {products.map((product, index) => (
-            <CarouselItem key={index} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/4">
+            <CarouselItem key={index} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3">
               <Card 
                 className="group relative flex flex-col space-y-4 p-4 lg:p-6 hover:bg-accent transition-colors cursor-pointer" 
                 onClick={() => {
