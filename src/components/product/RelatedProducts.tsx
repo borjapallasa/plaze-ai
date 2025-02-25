@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { ProductCard } from "@/components/ProductCard";
-import { Json } from "@/integrations/supabase/types";
 
 interface Product {
   name: string;
@@ -24,24 +23,6 @@ interface RelatedProductsProps {
 const fetchRelatedProducts = async (currentProductId: string) => {
   console.log('Fetching related products for:', currentProductId);
   
-  // First fetch the current product to get its use case
-  const { data: currentProduct } = await supabase
-    .from('products')
-    .select('use_case')
-    .eq('product_uuid', currentProductId)
-    .maybeSingle();
-
-  if (!currentProduct?.use_case || !Array.isArray(currentProduct.use_case)) {
-    console.log('No valid use case found for current product');
-    return [];
-  }
-
-  console.log('Current product use case:', currentProduct.use_case);
-
-  // Ensure use_case is treated as an array of Json values
-  const useCase = currentProduct.use_case as Json[];
-
-  // Fetch other products with the same use case
   const { data, error } = await supabase
     .from('products')
     .select(`
@@ -55,7 +36,6 @@ const fetchRelatedProducts = async (currentProductId: string) => {
       slug
     `)
     .neq('product_uuid', currentProductId)
-    .containedBy('use_case', useCase)
     .order('created_at', { ascending: false })
     .limit(12);
 
