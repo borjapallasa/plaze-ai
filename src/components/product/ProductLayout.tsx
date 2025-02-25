@@ -61,7 +61,7 @@ export function ProductLayout({
             selectedVariant={selectedVariant}
             onVariantChange={onVariantChange}
             onAddToCart={onAddToCart}
-            className="mb-6"
+            className="mb-4"
           />
           <Button 
             variant="outline" 
@@ -79,14 +79,13 @@ export function ProductLayout({
           </Card>
 
           <div className="space-y-8">
-            <div>
-              {children}
-            </div>
+            {children}
             <ProductInfo 
               techStack={product.tech_stack}
               productIncludes={product.product_includes}
               difficultyLevel={product.difficulty_level}
             />
+            <ProductReviews reviews={[]} />
             <MoreFromSeller expert_uuid={product.expert_uuid} />
             {product.related_products?.length > 0 && (
               <RelatedProducts products={product.related_products} className="mb-24" />
@@ -108,9 +107,7 @@ export function ProductLayout({
                 </p>
               </Card>
               <div className="space-y-8">
-                <div>
-                  {children}
-                </div>
+                {children}
                 <ProductInfo 
                   techStack={product.tech_stack}
                   productIncludes={product.product_includes}

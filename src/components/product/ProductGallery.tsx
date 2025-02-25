@@ -1,9 +1,8 @@
 
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import type { ProductImage } from "@/hooks/use-product-images";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface ProductGalleryProps {
   images: ProductImage[];
@@ -43,7 +42,7 @@ export function ProductGallery({ images, className, priority = false }: ProductG
     <div className={className}>
       {/* Mobile Layout */}
       <div className="lg:hidden">
-        <Carousel>
+        <Carousel opts={{ align: "center" }}>
           <CarouselContent>
             {images.map((image, index) => {
               const sizes = getImageSizes(image.url);
@@ -80,6 +79,19 @@ export function ProductGallery({ images, className, priority = false }: ProductG
               <CarouselPrevious className="left-2" />
               <CarouselNext className="right-2" />
             </>
+          )}
+          {images.length > 1 && (
+            <div className="flex justify-center gap-2 mt-4">
+              {images.map((_, index) => (
+                <button
+                  key={index}
+                  className={`w-2 h-2 rounded-full transition-colors ${
+                    index === currentImageIndex ? 'bg-primary' : 'bg-gray-300'
+                  }`}
+                  onClick={() => setCurrentImageIndex(index)}
+                />
+              ))}
+            </div>
           )}
         </Carousel>
       </div>
