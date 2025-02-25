@@ -22,8 +22,6 @@ export default function Product() {
   const { id, slug } = useParams();
   const navigate = useNavigate();
 
-  console.log("Current product ID:", id);
-
   const { data: product, isLoading: isLoadingProduct, error: productError } = useQuery({
     queryKey: ['product', id],
     queryFn: async () => {
@@ -37,14 +35,10 @@ export default function Product() {
       
       if (!data) return null;
 
-      console.log("Product data:", data);
-      console.log("Demo URL:", data.demo);
-
       if (data && (!slug || slug !== data.slug)) {
         navigate(`/product/${data.slug}/${data.product_uuid}`, { replace: true });
       }
       
-      // Ensure demo URL is treated as a string
       return {
         ...data,
         demo: data.demo || null
@@ -70,9 +64,9 @@ export default function Product() {
         price: variant.price || 99.99,
         comparePrice: variant.compare_price || 149.99,
         label: "Package",
-        highlight: index === 1, // Make the second variant highlighted by default
+        highlight: index === 1,
         features: Array.isArray(variant.tags) 
-          ? variant.tags.map(tag => String(tag))  // Convert each tag to string
+          ? variant.tags.map(tag => String(tag))
           : ["Core Features", "Basic Support"]
       }));
     },
@@ -101,9 +95,11 @@ export default function Product() {
         date: new Date(review.created_at).toLocaleDateString(),
         itemQuality: review.rating || 5,
         shipping: review.rating || 5,
-        customerService: review.rating || 5
+        customerService: review.rating || 5,
+        type: review.transaction_type?.toLowerCase() || 'product'
       }));
-    }
+    },
+    enabled: !!id
   });
 
   const { data: relatedProducts = [] } = useQuery({
@@ -171,8 +167,6 @@ export default function Product() {
   const averageRating = reviews.length 
     ? Number((reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length).toFixed(1))
     : 0;
-
-  console.log("Rendering product with demo:", product.demo);
 
   return (
     <div ref={variantsRef}>
