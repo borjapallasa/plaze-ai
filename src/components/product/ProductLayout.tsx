@@ -94,24 +94,22 @@ export function ProductLayout({
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            <div className="hidden lg:block">
+            <div className="hidden lg:block space-y-8">
               <ProductGallery 
                 images={images}
                 className="mb-8" 
                 priority={!isMobile}
               />
-              <Card className="p-6 mb-8 w-full">
+              <Card className="p-6">
                 <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
                   {product.description}
                 </p>
               </Card>
-              <div className="w-full">{children}</div>
-              <div className="space-y-8">
-                <MoreFromSeller expert_uuid={product.expert_uuid} />
-                {product.related_products?.length > 0 && (
-                  <RelatedProducts products={product.related_products} className="mb-24" />
-                )}
-              </div>
+              {children}
+              <MoreFromSeller expert_uuid={product.expert_uuid} />
+              {product.related_products?.length > 0 && (
+                <RelatedProducts products={product.related_products} className="mb-24" />
+              )}
             </div>
           </div>
 
@@ -144,6 +142,7 @@ export function ProductLayout({
             />
           </div>
         </div>
+
         <div className="mt-8">
           <ProductReviews reviews={[]} />
         </div>

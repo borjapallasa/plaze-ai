@@ -50,15 +50,15 @@ export function ProductDemo({ demo }: ProductDemoProps) {
         }
       }
 
-      // If it's already an embed URL, return as is with the corresponding provider
-      if (url.includes('youtube.com/embed/')) {
-        return { name: 'youtube', embedUrl: url };
-      }
-      if (url.includes('player.vimeo.com/video/')) {
-        return { name: 'vimeo', embedUrl: url };
-      }
-      if (url.includes('loom.com/embed/')) {
-        return { name: 'loom', embedUrl: url };
+      // If it's already an embed URL, return as is
+      if (url.includes('youtube.com/embed/') || 
+          url.includes('player.vimeo.com/video/') || 
+          url.includes('loom.com/embed/')) {
+        return { 
+          name: url.includes('youtube.com') ? 'youtube' : 
+               url.includes('vimeo.com') ? 'vimeo' : 'loom',
+          embedUrl: url 
+        };
       }
 
       return { name: 'unknown', embedUrl: null };
@@ -89,15 +89,13 @@ export function ProductDemo({ demo }: ProductDemoProps) {
   };
 
   return (
-    <div className="w-full">
+    <Card className="p-6 mb-8 w-full">
       <h2 className="text-2xl font-semibold mb-4">Demo</h2>
-      <Card className="p-6 mb-8">
-        {demo ? (
-          renderVideoEmbed(demo)
-        ) : (
-          <div className="aspect-video bg-accent rounded-lg" />
-        )}
-      </Card>
-    </div>
+      {demo ? (
+        renderVideoEmbed(demo)
+      ) : (
+        <div className="aspect-video bg-accent rounded-lg" />
+      )}
+    </Card>
   );
 }
