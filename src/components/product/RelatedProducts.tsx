@@ -35,7 +35,6 @@ const fetchRelatedProducts = async (productId: string) => {
       product_uuid,
       slug
     `)
-    .neq('product_uuid', productId)
     .order('created_at', { ascending: false })
     .limit(12);
 
