@@ -85,7 +85,6 @@ export function ProductLayout({
               productIncludes={product.product_includes}
               difficultyLevel={product.difficulty_level}
             />
-            <ProductReviews reviews={[]} />
             <MoreFromSeller expert_uuid={product.expert_uuid} />
             {product.related_products?.length > 0 && (
               <RelatedProducts products={product.related_products} className="mb-24" />
@@ -101,12 +100,12 @@ export function ProductLayout({
                 className="mb-8" 
                 priority={!isMobile}
               />
-              <Card className="p-6 mb-8">
+              <Card className="p-6 mb-8 w-full">
                 <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
                   {product.description}
                 </p>
               </Card>
-              {children}
+              <div className="w-full">{children}</div>
               <div className="space-y-8">
                 <MoreFromSeller expert_uuid={product.expert_uuid} />
                 {product.related_products?.length > 0 && (
@@ -145,7 +144,9 @@ export function ProductLayout({
             />
           </div>
         </div>
-        <ProductReviews reviews={[]} className="mt-8" />
+        <div className="mt-8">
+          <ProductReviews reviews={[]} />
+        </div>
       </main>
     </div>
   );

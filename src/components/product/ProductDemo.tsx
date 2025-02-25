@@ -89,7 +89,7 @@ export function ProductDemo({ demo }: ProductDemoProps) {
   };
 
   return (
-    <div className="lg:col-span-2 w-full">
+    <div className="w-full">
       <h2 className="text-2xl font-semibold mb-4">Demo</h2>
       <Card className="p-6 mb-8">
         {demo ? (
