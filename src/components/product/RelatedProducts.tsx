@@ -21,40 +21,53 @@ interface RelatedProductsProps {
 }
 
 const fetchRelatedProducts = async (productId: string) => {
-  console.log('Fetching related products');
+  console.log('Starting to fetch related products, productId:', productId);
   
-  const { data, error } = await supabase
-    .from('products')
-    .select(`
-      name,
-      price_from,
-      thumbnail,
-      description,
-      tech_stack,
-      type,
-      product_uuid,
-      slug
-    `)
-    .order('created_at', { ascending: false })
-    .limit(12);
+  try {
+    const { data, error } = await supabase
+      .from('products')
+      .select(`
+        name,
+        price_from,
+        thumbnail,
+        description,
+        tech_stack,
+        type,
+        product_uuid,
+        slug
+      `)
+      .order('created_at', { ascending: false })
+      .limit(12);
 
-  if (error) {
-    console.error('Error fetching products:', error);
-    throw error;
+    if (error) {
+      console.error('Error fetching products:', error);
+      throw error;
+    }
+
+    console.log('Successfully fetched products:', data?.length || 0, 'items');
+    console.log('First few products:', data?.slice(0, 3));
+    return data || [];
+  } catch (err) {
+    console.error('Exception in fetchRelatedProducts:', err);
+    throw err;
   }
-
-  console.log('Fetched related products:', data);
-  return data || [];
 };
 
 export function RelatedProducts({ className }: RelatedProductsProps) {
   const { id } = useParams<{ id: string }>();
+  console.log('RelatedProducts component mounted, id from params:', id);
 
-  const { data: products = [], isLoading } = useQuery({
+  const { data: products = [], isLoading, error } = useQuery({
     queryKey: ['relatedProducts', id],
     queryFn: () => id ? fetchRelatedProducts(id) : Promise.resolve([]),
     enabled: !!id
   });
+
+  console.log('Query state:', { isLoading, error, productsCount: products.length });
+
+  if (error) {
+    console.error('Query error:', error);
+  }
 
   return (
     <div className={className}>
