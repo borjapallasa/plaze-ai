@@ -77,8 +77,9 @@ export default function EditService() {
       if (error) throw error;
 
       toast({
-        title: "Success",
-        description: "Service updated successfully",
+        title: "Changes saved",
+        description: "Your service has been updated successfully",
+        className: "bg-green-50 border-green-200",
       });
     } catch (error) {
       console.error('Error updating service:', error);
