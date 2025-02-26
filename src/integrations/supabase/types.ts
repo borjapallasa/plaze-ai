@@ -361,6 +361,7 @@ export type Database = {
       }
       community_images: {
         Row: {
+          alt_text: string | null
           community_uuid: string | null
           content_type: string | null
           created_at: string | null
@@ -372,6 +373,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          alt_text?: string | null
           community_uuid?: string | null
           content_type?: string | null
           created_at?: string | null
@@ -383,6 +385,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          alt_text?: string | null
           community_uuid?: string | null
           content_type?: string | null
           created_at?: string | null
