@@ -31,19 +31,7 @@ import {
 import { Badge as UIBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-
-interface Service {
-  service_uuid: string;
-  name: string;
-  description: string;
-  price: number;
-  features: string[];
-  type: string;
-  monthly_recurring_revenue: number;
-  revenue_amount: number;
-  active_subscriptions_count: number;
-  created_at: string;
-}
+import type { Service } from "@/components/expert/types";
 
 type SortField = 'name' | 'status' | 'variant_count' | 'price_from' | 'created_at';
 type SortDirection = 'asc' | 'desc';
@@ -107,6 +95,7 @@ export default function SellerPage() {
           price,
           features,
           type,
+          status,
           service_uuid,
           monthly_recurring_revenue,
           revenue_amount,
