@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { MessageSquare, Heart, Send, ThumbsUp } from "lucide-react";
-import { useRef, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useRef, useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth";
+import { toast } from "sonner";
 
 interface ThreadDialogProps {
   isOpen: boolean;
@@ -16,6 +18,29 @@ interface ThreadDialogProps {
 }
 
 export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
+  const { user } = useAuth();
+  const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const queryClient = useQueryClient();
+
+  // Query authenticated user details
+  const { data: userData } = useQuery({
+    queryKey: ['user-details', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      
+      const { data, error } = await supabase
+        .from('users')
+        .select('first_name, last_name')
+        .eq('user_uuid', user.id)
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id
+  });
+
   // Query thread messages
   const { data: messages, isLoading: isMessagesLoading } = useQuery({
     queryKey: ['thread-messages', thread?.thread_uuid],
@@ -34,6 +59,63 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
     },
     enabled: !!thread?.thread_uuid
   });
+
+  // Handle message submit
+  const handleSubmitMessage = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    
+    if (!message.trim() || !user || !thread || isSubmitting) return;
+
+    try {
+      setIsSubmitting(true);
+      
+      const userName = userData ? 
+        `${userData.first_name} ${userData.last_name}`.trim() : 
+        'Anonymous';
+
+      const { error } = await supabase
+        .from('threads_messages')
+        .insert({
+          thread_uuid: thread.thread_uuid,
+          user_uuid: user.id,
+          message: message.trim(),
+          user_name: userName
+        });
+
+      if (error) throw error;
+
+      // Update messages count in thread
+      await supabase
+        .from('threads')
+        .update({ 
+          number_messages: (thread.number_messages || 0) + 1,
+          last_message_at: new Date().toISOString()
+        })
+        .eq('thread_uuid', thread.thread_uuid);
+
+      // Clear message input
+      setMessage("");
+      
+      // Invalidate queries to refresh the data
+      queryClient.invalidateQueries({ queryKey: ['thread-messages', thread.thread_uuid] });
+      queryClient.invalidateQueries({ queryKey: ['community-threads'] });
+
+      toast.success("Message sent successfully");
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast.error("Failed to send message");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Handle Enter key press
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmitMessage();
+    }
+  };
 
   // Handle upvote click
   const handleUpvote = async () => {
@@ -148,15 +230,21 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
             <div className="flex-1 flex items-center gap-2">
               <div className="flex-1">
                 <textarea
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onKeyDown={handleKeyPress}
                   placeholder="Write a comment..."
                   className="w-full min-h-[36px] max-h-[150px] rounded-full border border-input bg-background px-3 py-1.5 text-sm resize-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring overflow-hidden"
                   rows={1}
                   onInput={handleTextareaInput}
+                  disabled={isSubmitting}
                 />
               </div>
               <Button 
                 size="icon" 
                 className="h-8 w-8 rounded-full shrink-0"
+                onClick={() => handleSubmitMessage()}
+                disabled={isSubmitting || !message.trim()}
               >
                 <Send className="h-3.5 w-3.5" />
               </Button>
