@@ -20,67 +20,87 @@ export function usePendingImages() {
     if (pendingImages.length === 0) return;
 
     try {
-      const uploadPromises = pendingImages.map(async (pendingImage, index) => {
-        const fileExt = pendingImage.file.name.split('.').pop();
-        const filePath = `${productUuid}/${crypto.randomUUID()}.${fileExt}`;
+      // First, upload all files to storage and collect their data
+      const uploadResults = await Promise.all(
+        pendingImages.map(async (pendingImage, index) => {
+          const fileExt = pendingImage.file.name.split('.').pop();
+          const filePath = `${productUuid}/${crypto.randomUUID()}.${fileExt}`;
 
-        // Upload the file to storage
-        const { error: uploadError } = await supabase.storage
-          .from('product_images')
-          .upload(filePath, pendingImage.file);
+          // Upload to storage
+          const { error: uploadError } = await supabase.storage
+            .from('product_images')
+            .upload(filePath, pendingImage.file, {
+              cacheControl: '3600',
+              upsert: false
+            });
 
-        if (uploadError) throw uploadError;
+          if (uploadError) {
+            console.error('Storage upload error:', uploadError);
+            throw uploadError;
+          }
 
-        // Get the public URL
-        const { data: { publicUrl } } = supabase.storage
-          .from('product_images')
-          .getPublicUrl(filePath);
+          // Get public URL
+          const { data: { publicUrl } } = supabase.storage
+            .from('product_images')
+            .getPublicUrl(filePath);
 
-        // Return the image data for database insertion
-        return {
-          product_uuid: productUuid,
-          storage_path: filePath,
-          file_name: pendingImage.file.name,
-          content_type: pendingImage.file.type,
-          size: pendingImage.file.size,
-          is_primary: index === 0,
-        };
-      });
+          return {
+            filePath,
+            publicUrl,
+            file: pendingImage.file,
+            isPrimary: index === 0
+          };
+        })
+      );
 
-      // Wait for all uploads to complete
-      const uploadedImages = await Promise.all(uploadPromises);
+      // Prepare database records
+      const imageRecords = uploadResults.map(({ filePath, file, isPrimary }) => ({
+        product_uuid: productUuid,
+        storage_path: filePath,
+        file_name: file.name,
+        content_type: file.type,
+        size: file.size,
+        is_primary: isPrimary,
+      }));
 
-      // Insert the image records into the database
+      // Insert all image records in a single transaction
       const { error: dbError } = await supabase
         .from('product_images')
-        .insert(uploadedImages);
+        .insert(imageRecords);
 
-      if (dbError) throw dbError;
+      if (dbError) {
+        console.error('Database insert error:', dbError);
+        throw dbError;
+      }
 
-      // Update product thumbnail with the first image
-      if (uploadedImages.length > 0) {
-        const primaryImage = uploadedImages[0];
-        const { data: { publicUrl } } = supabase.storage
-          .from('product_images')
-          .getPublicUrl(primaryImage.storage_path);
-
+      // Update product thumbnail with first image's URL
+      if (uploadResults.length > 0) {
         const { error: thumbnailError } = await supabase
           .from('products')
-          .update({ thumbnail: publicUrl })
+          .update({ thumbnail: uploadResults[0].publicUrl })
           .eq('product_uuid', productUuid);
 
-        if (thumbnailError) throw thumbnailError;
+        if (thumbnailError) {
+          console.error('Thumbnail update error:', thumbnailError);
+          throw thumbnailError;
+        }
       }
 
       // Clean up preview URLs
       pendingImages.forEach(image => URL.revokeObjectURL(image.previewUrl));
       setPendingImages([]);
 
+      toast({
+        title: "Success",
+        description: "Images uploaded successfully",
+        className: "bg-[#F2FCE2] border-green-100 text-green-800",
+      });
+
     } catch (error) {
-      console.error('Error uploading images:', error);
+      console.error('Error in uploadPendingImages:', error);
       toast({
         title: "Error",
-        description: "Failed to upload images",
+        description: "Failed to upload images. Please try again.",
         variant: "destructive",
       });
       throw error;

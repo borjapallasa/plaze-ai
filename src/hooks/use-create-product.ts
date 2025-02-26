@@ -79,7 +79,7 @@ export function useCreateProduct() {
     try {
       setIsSaving(true);
 
-      // Create the product first
+      // Create the product
       const { data: product, error: productError } = await supabase
         .from('products')
         .insert({
@@ -103,7 +103,10 @@ export function useCreateProduct() {
 
       if (productError) throw productError;
 
-      // Create variants
+      // Upload images immediately after product creation
+      await uploadPendingImages(product.product_uuid);
+
+      // Create variants after images are uploaded
       if (productData.variants.length > 0) {
         const variantsToInsert = productData.variants.map(variant => ({
           name: variant.name,
@@ -122,9 +125,6 @@ export function useCreateProduct() {
 
         if (variantsError) throw variantsError;
       }
-
-      // Upload images using the product UUID
-      await uploadPendingImages(product.product_uuid);
 
       toast({
         title: "Success",
