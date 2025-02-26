@@ -281,7 +281,7 @@ export default function Community() {
                   </div>
                 )}
 
-                <div className="grid grid-cols-3 gap-4 py-4 border-y">
+                <div className="grid grid-cols-2 gap-4 py-4 border-y">
                   <div className="text-center">
                     <p className="text-2xl font-bold">{community?.member_count || 0}</p>
                     <p className="text-sm text-muted-foreground">Members</p>
@@ -293,6 +293,10 @@ export default function Community() {
                   <div className="text-center">
                     <p className="text-2xl font-bold">{community?.post_count || 0}</p>
                     <p className="text-sm text-muted-foreground">Posts</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-bold">{community?.product_count || 0}</p>
+                    <p className="text-sm text-muted-foreground">Products</p>
                   </div>
                 </div>
 
