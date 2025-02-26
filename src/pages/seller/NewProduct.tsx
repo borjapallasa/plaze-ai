@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Card } from "@/components/ui/card";
@@ -5,7 +6,6 @@ import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
 import { ProductVariantsEditor } from "@/components/product/ProductVariants";
 import { ProductDetailsForm } from "@/components/product/ProductDetailsForm";
 import { ProductOrganization } from "@/components/product/ProductOrganization";
-import { ProductHeader } from "@/components/product/ProductHeader";
 import { Variant } from "@/components/product/types/variants";
 import { useCreateProduct, ProductStatus } from "@/hooks/use-create-product";
 import { usePendingImages } from "@/hooks/use-pending-images";

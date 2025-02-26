@@ -2,8 +2,6 @@
 import React from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { ProductGallery } from "./ProductGallery";
-import { ProductHeader } from "./ProductHeader";
-import { VariantPicker } from "./VariantPicker";
 import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -14,6 +12,7 @@ import { ProductInfo } from "./ProductInfo";
 import { MoreFromSeller } from "./MoreFromSeller";
 import { RelatedProducts } from "./RelatedProducts";
 import { ProductReviews } from "./ProductReviews";
+import { VariantPicker } from "./VariantPicker";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
 
 interface ProductLayoutProps {
@@ -24,6 +23,26 @@ interface ProductLayoutProps {
   onVariantChange: (variantId: string) => void;
   onAddToCart: () => void;
   reviews: any[];
+}
+
+interface ProductHeaderProps {
+  title: string;
+  seller: string;
+  rating: number;
+  className?: string;
+}
+
+function ProductHeader({ title, seller, rating, className = "" }: ProductHeaderProps) {
+  return (
+    <div className={className}>
+      <h1 className="text-2xl font-semibold mb-2">{title}</h1>
+      <div className="flex items-center gap-2">
+        <span className="text-muted-foreground">{seller}</span>
+        <span className="text-muted-foreground">•</span>
+        <span className="text-muted-foreground">{rating.toFixed(1)} Rating</span>
+      </div>
+    </div>
+  );
 }
 
 export function ProductLayout({
