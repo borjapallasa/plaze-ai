@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -19,7 +18,9 @@ import {
   UsersRound, 
   AppWindow,
   Plus,
-  Search
+  Search,
+  Sparkles,
+  ArrowRight
 } from "lucide-react";
 import { Badge as UIBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -65,6 +66,27 @@ export default function SellerPage() {
       }
 
       console.log('Fetched products:', data);
+      return data || [];
+    },
+    enabled: !!id
+  });
+
+  const { data: services = [] } = useQuery({
+    queryKey: ['sellerServices', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('services')
+        .select(`
+          name,
+          description,
+          price,
+          features,
+          type,
+          service_uuid
+        `)
+        .eq('expert_uuid', id);
+
+      if (error) throw error;
       return data || [];
     },
     enabled: !!id
@@ -251,13 +273,69 @@ export default function SellerPage() {
           </TabsContent>
 
           <TabsContent value="services" className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2, 3].map((i) => (
-                <Card key={i} className="p-6">
-                  <h3 className="font-semibold mb-2">UI/UX Design Service</h3>
-                  <p className="text-sm text-muted-foreground">Professional design services for your project</p>
+            <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 sm:items-center">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input 
+                  placeholder="Search services..." 
+                  className="pl-9"
+                />
+              </div>
+              <Button className="sm:w-auto">
+                <Plus className="h-4 w-4 mr-2" />
+                Add service
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4">
+              {services.map((service) => (
+                <Card key={service.service_uuid} className="p-6">
+                  <div className="flex flex-col sm:flex-row gap-6">
+                    <div className="flex-1 space-y-4">
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <h3 className="text-lg font-semibold">{service.name}</h3>
+                          <p className="text-sm text-muted-foreground mt-1">{service.description}</p>
+                        </div>
+                        <UIBadge variant="secondary" className="capitalize">
+                          {service.type}
+                        </UIBadge>
+                      </div>
+
+                      {service.features && Array.isArray(service.features) && service.features.length > 0 && (
+                        <div className="space-y-2">
+                          <h4 className="text-sm font-medium flex items-center gap-1.5">
+                            <Sparkles className="h-4 w-4 text-blue-500" />
+                            Features
+                          </h4>
+                          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            {service.features.map((feature, index) => (
+                              <li key={index} className="text-sm text-muted-foreground flex items-center gap-2">
+                                <ArrowRight className="h-3 w-3" />
+                                {feature}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="sm:border-l sm:pl-6 sm:w-48 flex sm:flex-col items-center sm:items-start justify-between gap-4">
+                      <div className="text-center sm:text-left">
+                        <div className="text-sm text-muted-foreground">Starting at</div>
+                        <div className="text-2xl font-bold">${service.price || '0.00'}</div>
+                      </div>
+                      <Button className="w-full sm:w-auto">View Details</Button>
+                    </div>
+                  </div>
                 </Card>
               ))}
+
+              {services.length === 0 && (
+                <Card className="p-8 text-center text-muted-foreground">
+                  No services found
+                </Card>
+              )}
             </div>
           </TabsContent>
 
