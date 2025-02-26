@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -13,6 +14,7 @@ import { MainHeader } from "@/components/MainHeader";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { getVideoEmbedUrl } from "@/utils/videoEmbed";
 
 export default function Community() {
   const { id } = useParams();
@@ -36,6 +38,9 @@ export default function Community() {
     },
     enabled: !!id
   });
+
+  // Get the embed URL for the video
+  const videoEmbedUrl = getVideoEmbedUrl(community?.intro);
 
   if (isLoading) {
     return (
@@ -172,17 +177,20 @@ export default function Community() {
           <div className="lg:col-span-8">
             <Card className="p-6 space-y-6">
               <div className="aspect-video bg-muted rounded-lg overflow-hidden relative">
-                <img 
-                  src={community.thumbnail || "/lovable-uploads/890bbce9-6ca6-4a0e-958a-d7ba6f61bf73.png"}
-                  alt="Community thumbnail"
-                  className="w-full h-full object-cover"
-                />
-                {community.intro && (
-                  <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                    <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center cursor-pointer hover:bg-white transition-colors">
-                      <div className="w-6 h-6 border-8 border-transparent border-l-primary ml-1" style={{ transform: 'rotate(-45deg)' }} />
-                    </div>
-                  </div>
+                {videoEmbedUrl ? (
+                  <iframe
+                    src={videoEmbedUrl}
+                    className="absolute inset-0 w-full h-full"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : (
+                  <img 
+                    src={community.thumbnail || "/lovable-uploads/890bbce9-6ca6-4a0e-958a-d7ba6f61bf73.png"}
+                    alt="Community thumbnail"
+                    className="w-full h-full object-cover"
+                  />
                 )}
               </div>
 
@@ -215,7 +223,7 @@ export default function Community() {
                 </div>
 
                 <div className="space-y-2">
-                  {community.intro && (
+                  {community.intro && !videoEmbedUrl && (
                     <a href={community.intro} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
                       <Link className="w-4 h-4" />
                       <span className="font-medium">Introduction Video</span>
