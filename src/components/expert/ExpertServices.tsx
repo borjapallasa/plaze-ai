@@ -89,24 +89,24 @@ const ServiceCard = ({
   return (
     <Card className="relative overflow-hidden">
       <div className="absolute inset-x-0 top-0 h-2 bg-blue-100" />
-      <div className="grid md:grid-cols-[2fr,1fr,1fr] gap-6">
+      <div className="grid md:grid-cols-3 gap-6">
         {/* Main Content */}
         <div className="p-6">
           <div className="space-y-4">
             <div>
               <div className="flex items-center justify-between gap-4">
-                <h3 className="text-xl font-semibold">{name}</h3>
-                <Badge variant="secondary" className="capitalize whitespace-nowrap">
+                <h3 className="text-xl font-semibold leading-tight">{name}</h3>
+                <Badge variant="secondary" className="capitalize whitespace-nowrap shrink-0">
                   {type}
                 </Badge>
               </div>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
                 {description}
               </p>
             </div>
-            <div>
-              <div className="text-sm font-medium text-muted-foreground">Starting at</div>
-              <div className="text-2xl font-bold flex items-center gap-1">
+            <div className="flex items-center gap-2">
+              <div className="text-sm font-medium text-muted-foreground whitespace-nowrap">Starting at</div>
+              <div className="text-2xl font-bold flex items-center gap-1 whitespace-nowrap">
                 <DollarSign className="w-5 h-5" />
                 {price?.toLocaleString() || '0'}
               </div>
@@ -114,21 +114,21 @@ const ServiceCard = ({
           </div>
         </div>
 
-        {/* Features Column */}
-        <div className="p-6 border-t md:border-t-0 md:border-l border-border bg-muted/10">
+        {/* Features Column - Always Vertical */}
+        <div className="p-6 border-t md:border-t-0 md:border-l border-border bg-muted/5">
           <div className="space-y-4">
             <h4 className="text-sm font-medium flex items-center gap-1.5">
               <Sparkles className="h-4 w-4 text-blue-500" />
               Features
             </h4>
-            <ul className="space-y-2">
+            <div className="flex flex-col gap-2">
               {features?.map((feature, idx) => (
-                <li key={idx} className="flex items-start gap-2 text-sm text-muted-foreground">
-                  <Check className="w-4 h-4 mt-0.5 text-blue-500 flex-shrink-0" />
-                  <span>{feature}</span>
-                </li>
+                <div key={idx} className="flex items-start gap-2">
+                  <Check className="w-4 h-4 mt-1 text-blue-500 flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground">{feature}</span>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
         </div>
 
@@ -142,7 +142,7 @@ const ServiceCard = ({
                   <DollarSign className="w-3 h-3" />
                   MRR
                 </div>
-                <div className="font-medium">
+                <div className="font-medium whitespace-nowrap">
                   ${monthly_recurring_revenue?.toLocaleString() || '0'}/mo
                 </div>
               </div>
@@ -151,7 +151,7 @@ const ServiceCard = ({
                   <DollarSign className="w-3 h-3" />
                   Revenue
                 </div>
-                <div className="font-medium">
+                <div className="font-medium whitespace-nowrap">
                   ${revenue_amount?.toLocaleString() || '0'}
                 </div>
               </div>
@@ -169,7 +169,7 @@ const ServiceCard = ({
                   <CalendarDays className="w-3 h-3" />
                   Created
                 </div>
-                <div className="font-medium">
+                <div className="font-medium whitespace-nowrap">
                   {created_at ? format(new Date(created_at), 'MMM d, yyyy') : '-'}
                 </div>
               </div>
