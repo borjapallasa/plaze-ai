@@ -1,6 +1,7 @@
 
 import React, { useState } from "react";
 import { ImageUploadArea } from "@/components/product/ImageUploadArea";
+import { uploadImageToStorage } from "@/utils/product-image-utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
@@ -30,38 +31,22 @@ export function ProductMediaUpload({ productUuid, onFileSelect }: ProductMediaUp
     try {
       console.log('ProductMediaUpload: Starting immediate upload for existing product');
       setIsUploading(true);
-      const fileExt = file.name.split('.').pop();
-      const filePath = `${productUuid}/${crypto.randomUUID()}.${fileExt}`;
 
-      console.log('ProductMediaUpload: Uploading to path:', filePath);
+      const { publicUrl, storagePath } = await uploadImageToStorage(file, productUuid);
 
-      // Upload to storage
-      const { error: uploadError } = await supabase.storage
-        .from('product_images')
-        .upload(filePath, file);
-
-      if (uploadError) {
-        console.error('ProductMediaUpload: Storage upload error:', uploadError);
-        throw uploadError;
-      }
-
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('product_images')
-        .getPublicUrl(filePath);
-
-      console.log('ProductMediaUpload: File uploaded, public URL:', publicUrl);
+      console.log('ProductMediaUpload: Image uploaded, creating database record');
 
       // Create database record
       const { error: dbError } = await supabase
         .from('product_images')
         .insert({
           product_uuid: productUuid,
-          storage_path: filePath,
+          storage_path: storagePath,
           file_name: file.name,
           content_type: file.type,
           size: file.size,
           is_primary: false,
+          url: publicUrl
         });
 
       if (dbError) {
@@ -71,7 +56,7 @@ export function ProductMediaUpload({ productUuid, onFileSelect }: ProductMediaUp
 
       console.log('ProductMediaUpload: Database record created successfully');
 
-      // Invalidate product images query using the correct object syntax
+      // Invalidate product images query
       queryClient.invalidateQueries({
         queryKey: ['productImages', productUuid]
       });
