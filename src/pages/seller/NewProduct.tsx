@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Card } from "@/components/ui/card";
@@ -10,6 +9,7 @@ import { Variant } from "@/components/product/types/variants";
 import { useCreateProduct, ProductStatus } from "@/hooks/use-create-product";
 import { usePendingImages } from "@/hooks/use-pending-images";
 import { ProductCreateHeader } from "@/components/product/ProductCreateHeader";
+import { ProductBasicDetailsForm } from "@/components/product/ProductBasicDetailsForm";
 
 export default function NewProduct() {
   const [productName, setProductName] = useState("");
@@ -117,18 +117,16 @@ export default function NewProduct() {
                 {/* Product Details Form - Name and Description */}
                 <Card className="p-3 sm:p-6">
                   <div className="space-y-3 sm:space-y-4">
-                    <div>
-                      <ProductDetailsForm
-                        productName={productName}
-                        setProductName={setProductName}
-                        productDescription={productDescription}
-                        setProductDescription={setProductDescription}
-                      />
-                    </div>
+                    <ProductBasicDetailsForm
+                      productName={productName}
+                      setProductName={setProductName}
+                      productDescription={productDescription}
+                      setProductDescription={setProductDescription}
+                    />
                   </div>
                 </Card>
 
-                {/* Variants Section - Moved up */}
+                {/* Variants Section */}
                 <Card className="p-3 sm:p-6">
                   <div className="pt-2">
                     <ProductVariantsEditor 
