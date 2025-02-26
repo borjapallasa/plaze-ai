@@ -369,7 +369,7 @@ export default function SellerPage() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="services" className="space-y-6">
+          <TabsContent value="services" className="space-y-6 mt-6">
             <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 sm:items-center">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
