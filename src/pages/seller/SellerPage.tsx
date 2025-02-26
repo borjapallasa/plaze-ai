@@ -8,6 +8,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ProductCard } from "@/components/ProductCard";
+import { Input } from "@/components/ui/input";
 import { 
   Star, 
   Users, 
@@ -17,7 +18,8 @@ import {
   BriefcaseIcon, 
   UsersRound, 
   AppWindow,
-  Plus
+  Plus,
+  Search
 } from "lucide-react";
 import { Badge as UIBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -149,9 +151,16 @@ export default function SellerPage() {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="products" className="space-y-6">
-            <div className="flex justify-end mb-4">
-              <Button asChild>
+          <TabsContent value="products" className="space-y-6 mt-6">
+            <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 sm:items-center">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input 
+                  placeholder="Search products..." 
+                  className="pl-9"
+                />
+              </div>
+              <Button asChild className="sm:w-auto">
                 <Link to="/seller/products/new">
                   <Plus className="h-4 w-4 mr-2" />
                   Add product
