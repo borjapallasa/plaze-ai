@@ -395,114 +395,118 @@ export default function SellerPage() {
               </Button>
             </div>
 
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 gap-6">
               {services.map((service) => (
                 <Card 
                   key={service.service_uuid} 
-                  className="overflow-hidden border bg-card shadow-sm transition-all hover:shadow-md"
+                  className="overflow-hidden border bg-card shadow-sm hover:shadow-md transition-all duration-200"
                 >
-                  <div className="grid sm:grid-cols-[2.5fr,1fr,1fr]">
-                    <div className="flex-1 p-6">
+                  <div className="grid lg:grid-cols-[2fr,1fr,1fr] divide-y lg:divide-y-0 lg:divide-x divide-border">
+                    <div className="p-6 space-y-4">
+                      <div className="space-y-2">
+                        <div className="flex items-start justify-between gap-4">
+                          <h3 className="text-2xl font-semibold tracking-tight text-foreground">
+                            {service.name}
+                          </h3>
+                          <UIBadge 
+                            variant={service.status === 'active' ? 'default' : 'secondary'}
+                            className="capitalize whitespace-nowrap shrink-0"
+                          >
+                            {service.status}
+                          </UIBadge>
+                        </div>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          {service.description}
+                        </p>
+                      </div>
+
+                      <div className="pt-4 flex flex-wrap items-baseline gap-x-3 gap-y-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-muted-foreground">Starting at</span>
+                          <span className="text-2xl font-semibold tracking-tight">
+                            ${service.price?.toLocaleString() || '0'}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-muted-foreground">•</span>
+                          <span className="text-sm text-muted-foreground">Type:</span>
+                          <span className="text-lg font-medium capitalize">
+                            {service.type}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-6 bg-muted/5">
                       <div className="space-y-4">
-                        <div className="space-y-3">
-                          <div className="flex items-start justify-between gap-4">
-                            <div>
-                              <h3 className="text-xl font-semibold tracking-tight text-foreground">
-                                {service.name}
-                              </h3>
-                              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                                {service.description}
-                              </p>
-                            </div>
-                            <UIBadge 
-                              variant={service.status === 'active' ? 'default' : 'secondary'}
-                              className="capitalize whitespace-nowrap shrink-0"
+                        <h4 className="text-sm font-medium flex items-center gap-1.5 text-foreground">
+                          <Sparkles className="h-4 w-4 text-blue-500" />
+                          Features
+                        </h4>
+                        <ul className="space-y-2">
+                          {service.features?.map((feature, index) => (
+                            <li 
+                              key={index}
+                              className="flex items-start gap-2 text-sm text-muted-foreground"
                             >
-                              {service.status}
-                            </UIBadge>
-                          </div>
-
-                          <div className="flex items-center space-x-2 text-lg">
-                            <span className="text-sm text-muted-foreground">Starting at</span>
-                            <span className="font-bold text-2xl">
-                              ${service.price?.toLocaleString() || '0'}
-                            </span>
-                            <span className="text-sm text-muted-foreground">•</span>
-                            <span className="text-sm text-muted-foreground">Service Type:</span>
-                            <span className="font-bold text-2xl capitalize">
-                              {service.type}
-                            </span>
-                          </div>
-                        </div>
+                              <ArrowRight className="h-4 w-4 text-blue-500 shrink-0 mt-0.5" />
+                              <span>{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     </div>
 
-                    <div className="border-t sm:border-t-0 sm:border-l border-border/50 bg-muted/20">
-                      <div className="p-6 space-y-6">
-                        <div>
-                          <h4 className="text-sm font-medium flex items-center gap-1.5 text-foreground">
-                            <Sparkles className="h-4 w-4 text-blue-500" />
-                            Features
-                          </h4>
-                          <ul className="mt-3 space-y-2">
-                            {service.features?.map((feature, index) => (
-                              <li 
-                                key={index} 
-                                className="text-sm text-muted-foreground flex items-center gap-2"
-                              >
-                                <ArrowRight className="h-3 w-3 text-blue-500" />
-                                {feature}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="border-t sm:border-t-0 sm:border-l border-border/50 bg-muted/20">
-                      <div className="p-6 space-y-6">
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-1">
-                            <div className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-                              <DollarSign className="w-3 h-3" />
-                              MRR
+                    <div className="p-6 bg-muted/5">
+                      <div className="h-full flex flex-col">
+                        <div className="space-y-4 flex-grow">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1">
+                              <div className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                                <DollarSign className="w-3 h-3" />
+                                MRR
+                              </div>
+                              <div className="font-medium whitespace-nowrap">
+                                ${service.monthly_recurring_revenue?.toLocaleString() || '0'}/mo
+                              </div>
                             </div>
-                            <div className="font-medium">
-                              ${service.monthly_recurring_revenue?.toLocaleString() || '0'}/mo
+                            <div className="space-y-1">
+                              <div className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                                <DollarSign className="w-3 h-3" />
+                                Revenue
+                              </div>
+                              <div className="font-medium whitespace-nowrap">
+                                ${service.revenue_amount?.toLocaleString() || '0'}
+                              </div>
                             </div>
-                          </div>
-                          <div className="space-y-1">
-                            <div className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-                              <DollarSign className="w-3 h-3" />
-                              Revenue
+                            <div className="space-y-1">
+                              <div className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                                <Users2 className="w-3 h-3" />
+                                Active Subs
+                              </div>
+                              <div className="font-medium">
+                                {service.active_subscriptions_count || 0}
+                              </div>
                             </div>
-                            <div className="font-medium">
-                              ${service.revenue_amount?.toLocaleString() || '0'}
-                            </div>
-                          </div>
-                          <div className="space-y-1">
-                            <div className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-                              <Users2 className="w-3 h-3" />
-                              Active Subs
-                            </div>
-                            <div className="font-medium">
-                              {service.active_subscriptions_count || 0}
-                            </div>
-                          </div>
-                          <div className="space-y-1">
-                            <div className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-                              <CalendarDays className="w-3 h-3" />
-                              Created
-                            </div>
-                            <div className="font-medium">
-                              {format(new Date(service.created_at), 'MMM d, yyyy')}
+                            <div className="space-y-1">
+                              <div className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                                <CalendarDays className="w-3 h-3" />
+                                Created
+                              </div>
+                              <div className="font-medium whitespace-nowrap">
+                                {format(new Date(service.created_at), 'MMM d, yyyy')}
+                              </div>
                             </div>
                           </div>
                         </div>
-
-                        <Button className="w-full bg-primary hover:bg-primary/90">
-                          View Details
-                        </Button>
+                        
+                        <div className="mt-6">
+                          <Button 
+                            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                          >
+                            View Details
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </div>
