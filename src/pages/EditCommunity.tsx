@@ -13,6 +13,7 @@ import { CommunityMediaUpload } from "@/components/community/CommunityMediaUploa
 import { ArrowLeft, Link as LinkIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
+import { Copy, Check } from "lucide-react";
 
 export default function EditCommunity() {
   const { id } = useParams();
@@ -24,6 +25,7 @@ export default function EditCommunity() {
   const [price, setPrice] = useState("");
   const [paymentLink, setPaymentLink] = useState("");
   const [webhook, setWebhook] = useState("");
+  const [hasCopied, setHasCopied] = useState(false);
 
   const { data: community, isLoading } = useQuery({
     queryKey: ['community', id],
@@ -108,6 +110,28 @@ export default function EditCommunity() {
       });
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleCopyPaymentLink = async () => {
+    if (!paymentLink) return;
+    
+    try {
+      await navigator.clipboard.writeText(paymentLink);
+      setHasCopied(true);
+      toast({
+        description: "Payment link copied to clipboard",
+      });
+      
+      setTimeout(() => {
+        setHasCopied(false);
+      }, 2000);
+    } catch (err) {
+      toast({
+        title: "Failed to copy",
+        description: "Please try again",
+        variant: "destructive",
+      });
     }
   };
 
@@ -248,6 +272,29 @@ export default function EditCommunity() {
             <Card className="p-4 sm:p-6 border border-border/40 bg-card/40">
               <h2 className="text-lg font-semibold tracking-tight mb-4">Community Information</h2>
               <div className="space-y-4">
+                <div>
+                  <p className="text-sm text-muted-foreground mb-2">Payment Link</p>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      value={paymentLink}
+                      readOnly
+                      className="h-9 text-sm font-medium bg-muted"
+                    />
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="shrink-0"
+                      onClick={handleCopyPaymentLink}
+                    >
+                      {hasCopied ? (
+                        <Check className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <Copy className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-muted-foreground">Products</p>
