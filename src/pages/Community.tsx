@@ -281,22 +281,22 @@ export default function Community() {
                   </div>
                 )}
 
-                <div className="grid grid-cols-2 gap-4 py-4 border-y">
+                <div className="grid grid-cols-4 gap-2 py-4 border-y">
                   <div className="text-center">
-                    <p className="text-2xl font-bold">{community?.member_count || 0}</p>
-                    <p className="text-sm text-muted-foreground">Members</p>
+                    <p className="text-xl font-bold">{community?.member_count || 0}</p>
+                    <p className="text-xs text-muted-foreground">Members</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-2xl font-bold">{community?.classroom_count || 0}</p>
-                    <p className="text-sm text-muted-foreground">Classrooms</p>
+                    <p className="text-xl font-bold">{community?.classroom_count || 0}</p>
+                    <p className="text-xs text-muted-foreground">Classrooms</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-2xl font-bold">{community?.post_count || 0}</p>
-                    <p className="text-sm text-muted-foreground">Posts</p>
+                    <p className="text-xl font-bold">{community?.post_count || 0}</p>
+                    <p className="text-xs text-muted-foreground">Posts</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-2xl font-bold">{community?.product_count || 0}</p>
-                    <p className="text-sm text-muted-foreground">Products</p>
+                    <p className="text-xl font-bold">{community?.product_count || 0}</p>
+                    <p className="text-xs text-muted-foreground">Products</p>
                   </div>
                 </div>
 
