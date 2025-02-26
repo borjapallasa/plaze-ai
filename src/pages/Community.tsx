@@ -207,10 +207,7 @@ export default function Community() {
                     <AvatarImage src={community.expert_thumbnail || "https://github.com/shadcn.png"} />
                     <AvatarFallback>CM</AvatarFallback>
                   </Avatar>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Hosted by</p>
-                    <p className="font-semibold">{community.expert_name}</p>
-                  </div>
+                  <p className="text-sm">Hosted by {community.expert_name}</p>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
