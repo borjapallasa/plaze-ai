@@ -246,8 +246,8 @@ export default function Community() {
           <div className="lg:col-span-4 space-y-6">
             <Card className="overflow-hidden">
               <div className="p-6 space-y-6">
-                <div className="flex items-center gap-4">
-                  <Avatar className="h-10 w-10 ring-2 ring-primary/10">
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-8 w-8 ring-1 ring-primary/10">
                     <AvatarImage src={community?.expert_thumbnail || "https://github.com/shadcn.png"} />
                     <AvatarFallback>EX</AvatarFallback>
                   </Avatar>
@@ -259,20 +259,20 @@ export default function Community() {
 
                 <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">Products</p>
-                    <p className="text-2xl font-bold mt-1">{community?.product_count || 0}</p>
+                    <p className="text-sm font-medium text-muted-foreground">Members</p>
+                    <p className="text-2xl font-bold mt-1">{community?.member_count || 0}</p>
                   </div>
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Classrooms</p>
                     <p className="text-2xl font-bold mt-1">{community?.classroom_count || 0}</p>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">Posts</p>
-                    <p className="text-2xl font-bold mt-1">{community?.post_count || 0}</p>
+                    <p className="text-sm font-medium text-muted-foreground">Products</p>
+                    <p className="text-2xl font-bold mt-1">{community?.product_count || 0}</p>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">Members</p>
-                    <p className="text-2xl font-bold mt-1">{community?.member_count || 0}</p>
+                    <p className="text-sm font-medium text-muted-foreground">Posts</p>
+                    <p className="text-2xl font-bold mt-1">{community?.post_count || 0}</p>
                   </div>
                 </div>
 
