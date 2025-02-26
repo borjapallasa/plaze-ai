@@ -137,15 +137,24 @@ export default function NewProduct() {
           <div className="space-y-3 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-6">
             <div className="lg:col-span-8">
               <div className="space-y-3 sm:space-y-6">
-                {/* Product Details Form - Name and Description */}
+                {/* Basic Details and Variants */}
                 <Card className="p-3 sm:p-6">
-                  <div className="space-y-3 sm:space-y-4">
+                  <div className="space-y-4">
                     <ProductBasicDetailsForm
                       productName={productName}
                       setProductName={setProductName}
                       productDescription={productDescription}
                       setProductDescription={setProductDescription}
                     />
+                    <div className="pt-2">
+                      <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-lg font-medium">Variants</h2>
+                      </div>
+                      <ProductVariantsEditor 
+                        variants={variants}
+                        onVariantsChange={setVariants}
+                      />
+                    </div>
                   </div>
                 </Card>
 
@@ -186,16 +195,6 @@ export default function NewProduct() {
                       setDifficultyLevel={setDifficultyLevel}
                       demo={demo}
                       setDemo={setDemo}
-                    />
-                  </div>
-                </Card>
-
-                {/* Variants Section */}
-                <Card className="p-3 sm:p-6">
-                  <div className="pt-2">
-                    <ProductVariantsEditor 
-                      variants={variants}
-                      onVariantsChange={setVariants}
                     />
                   </div>
                 </Card>
