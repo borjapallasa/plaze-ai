@@ -539,7 +539,7 @@ export default function SellerPage() {
                     <div className="p-6 space-y-4">
                       <div className="space-y-3">
                         <div className="flex items-start gap-4">
-                          <Avatar className="h-12 w-12 rounded-full shrink-0">
+                          <Avatar className="h-12 w-12 rounded-full shrink-0 ring-4 ring-white shadow-[0_0_15px_rgba(0,0,0,0.08)]">
                             <AvatarImage 
                               src={community.thumbnail} 
                               alt={community.name}
