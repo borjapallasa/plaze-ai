@@ -60,7 +60,7 @@ export default function Community() {
   const { user } = useAuth();
   const { images } = useCommunityImages(id);
 
-  const { data: community, isLoading } = useQuery({
+  const { data: community, isLoading: isCommunityLoading } = useQuery({
     queryKey: ['community', id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -78,10 +78,32 @@ export default function Community() {
     enabled: !!id
   });
 
+  const { data: threads, isLoading: isThreadsLoading } = useQuery({
+    queryKey: ['community-threads', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('threads')
+        .select(`
+          *,
+          user:user_uuid(*)
+        `)
+        .eq('community_uuid', id)
+        .eq('status', 'open')
+        .order('last_message_at', { ascending: false });
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    },
+    enabled: !!id
+  });
+
   const videoEmbedUrl = getVideoEmbedUrl(community?.intro);
   const links = parseLinks(community?.links);
   
-  if (isLoading) {
+  if (isCommunityLoading) {
     return (
       <>
         <MainHeader />
@@ -350,43 +372,72 @@ export default function Community() {
               <Button className="w-full sm:w-auto">Create New Thread</Button>
               <Input placeholder="Search thread" className="flex-1" />
             </div>
-            <Card 
-              className="group hover:bg-accent transition-colors cursor-pointer"
-              onClick={() => setIsThreadOpen(true)}
-            >
-              <CardContent className="p-6 space-y-4">
-                <div className="flex items-start gap-4">
-                  <Avatar className="h-12 w-12 flex-shrink-0">
-                    <AvatarImage src="https://github.com/shadcn.png" />
-                    <AvatarFallback>BP</AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col gap-1">
-                    <h3 className="font-semibold">Letter from Borja</h3>
-                    <div className="text-sm text-muted-foreground">
-                      Created by Borja P
-                    </div>
-                    <Badge variant="secondary" className="text-xs w-fit">Messages: 1</Badge>
-                  </div>
-                </div>
 
-                <div className="space-y-4">
-                  <p>👋 Welcome to Optimal Path Automations! 👋</p>
-                  <p className="text-muted-foreground">
-                    Hey everyone! I'm Borja, and I'm thrilled to welcome you to our community. Creating this space is a dream come true for me because I am passionate about helping others discover the power of no-code automation...
-                  </p>
-                  
-                  <div className="flex justify-between items-end">
-                    <div className="text-sm text-muted-foreground">
-                      Last Message: 10/24/2024, 8:31 PM
+            {isThreadsLoading ? (
+              <div className="space-y-4">
+                {[...Array(3)].map((_, i) => (
+                  <Card key={i} className="p-6">
+                    <div className="animate-pulse space-y-4">
+                      <div className="flex gap-4">
+                        <div className="w-12 h-12 bg-muted rounded-full" />
+                        <div className="flex-1 space-y-2">
+                          <div className="h-4 w-1/4 bg-muted rounded" />
+                          <div className="h-3 w-1/3 bg-muted rounded" />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="h-4 w-full bg-muted rounded" />
+                        <div className="h-4 w-2/3 bg-muted rounded" />
+                      </div>
                     </div>
-                    <Badge variant="outline" className="flex items-center gap-1 w-fit">
-                      <ThumbsUp className="w-3 h-3" />
-                      8
-                    </Badge>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                  </Card>
+                ))}
+              </div>
+            ) : threads && threads.length > 0 ? (
+              <div className="space-y-4">
+                {threads.map((thread) => (
+                  <Card 
+                    key={thread.thread_uuid}
+                    className="group hover:bg-accent transition-colors cursor-pointer"
+                    onClick={() => setIsThreadOpen(true)}
+                  >
+                    <CardContent className="p-6 space-y-4">
+                      <div className="flex items-start gap-4">
+                        <Avatar className="h-12 w-12 flex-shrink-0">
+                          <AvatarImage src="https://github.com/shadcn.png" />
+                          <AvatarFallback>{thread.user_name?.substring(0, 2).toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col gap-1">
+                          <h3 className="font-semibold">{thread.title}</h3>
+                          <div className="text-sm text-muted-foreground">
+                            Created by {thread.user_name}
+                          </div>
+                          <Badge variant="secondary" className="text-xs w-fit">Messages: {thread.number_messages || 0}</Badge>
+                        </div>
+                      </div>
+
+                      <div className="space-y-4">
+                        <p className="text-muted-foreground line-clamp-3">{thread.initial_message}</p>
+                        
+                        <div className="flex justify-between items-end">
+                          <div className="text-sm text-muted-foreground">
+                            Last Message: {thread.last_message_at ? new Date(thread.last_message_at).toLocaleString() : 'No messages yet'}
+                          </div>
+                          <Badge variant="outline" className="flex items-center gap-1 w-fit">
+                            <ThumbsUp className="w-3 h-3" />
+                            {thread.upvote_count || 0}
+                          </Badge>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <Card className="p-6">
+                <p className="text-center text-muted-foreground">No threads found in this community.</p>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="classrooms" className="space-y-6">

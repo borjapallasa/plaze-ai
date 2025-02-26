@@ -196,12 +196,12 @@ export type Database = {
           community_uuid: string | null
           created_at: string
           description: string | null
+          expert_uuid: string | null
           id: number
           lesson_count: number | null
           name: string | null
           notified: boolean | null
           notify: boolean | null
-          owner_user_uuid: string | null
           status: Database["public"]["Enums"]["classroom_status"] | null
           summary: string | null
           video_url: string | null
@@ -211,12 +211,12 @@ export type Database = {
           community_uuid?: string | null
           created_at?: string
           description?: string | null
+          expert_uuid?: string | null
           id?: number
           lesson_count?: number | null
           name?: string | null
           notified?: boolean | null
           notify?: boolean | null
-          owner_user_uuid?: string | null
           status?: Database["public"]["Enums"]["classroom_status"] | null
           summary?: string | null
           video_url?: string | null
@@ -226,12 +226,12 @@ export type Database = {
           community_uuid?: string | null
           created_at?: string
           description?: string | null
+          expert_uuid?: string | null
           id?: number
           lesson_count?: number | null
           name?: string | null
           notified?: boolean | null
           notify?: boolean | null
-          owner_user_uuid?: string | null
           status?: Database["public"]["Enums"]["classroom_status"] | null
           summary?: string | null
           video_url?: string | null
@@ -245,8 +245,8 @@ export type Database = {
             referencedColumns: ["community_uuid"]
           },
           {
-            foreignKeyName: "classrooms_owner_user_uuid_fkey"
-            columns: ["owner_user_uuid"]
+            foreignKeyName: "classrooms_expert_uuid_fkey"
+            columns: ["expert_uuid"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["user_uuid"]
@@ -424,51 +424,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "communities"
             referencedColumns: ["community_uuid"]
-          },
-        ]
-      }
-      community_messages: {
-        Row: {
-          community_message_uuid: string
-          created_at: string
-          id: number
-          message: string | null
-          thread_uuid: string | null
-          user_name: string | null
-          user_uuid: string | null
-        }
-        Insert: {
-          community_message_uuid?: string
-          created_at?: string
-          id?: number
-          message?: string | null
-          thread_uuid?: string | null
-          user_name?: string | null
-          user_uuid?: string | null
-        }
-        Update: {
-          community_message_uuid?: string
-          created_at?: string
-          id?: number
-          message?: string | null
-          thread_uuid?: string | null
-          user_name?: string | null
-          user_uuid?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "community_messages_thread_uuid_fkey"
-            columns: ["thread_uuid"]
-            isOneToOne: false
-            referencedRelation: "threads"
-            referencedColumns: ["thread_uuid"]
-          },
-          {
-            foreignKeyName: "community_messages_user_uuid_fkey"
-            columns: ["user_uuid"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["user_uuid"]
           },
         ]
       }
@@ -1670,42 +1625,48 @@ export type Database = {
         Row: {
           community_uuid: string | null
           created_at: string
+          expert_uuid: string | null
           id: number
           initial_message: string | null
-          last_message: string | null
+          last_message_at: string | null
           number_messages: number | null
           status: Database["public"]["Enums"]["thread_status"] | null
           tag: Database["public"]["Enums"]["thread_tag"] | null
           thread_uuid: string
           title: string | null
+          upvote_count: number | null
           user_name: string | null
           user_uuid: string | null
         }
         Insert: {
           community_uuid?: string | null
           created_at?: string
+          expert_uuid?: string | null
           id?: number
           initial_message?: string | null
-          last_message?: string | null
+          last_message_at?: string | null
           number_messages?: number | null
           status?: Database["public"]["Enums"]["thread_status"] | null
           tag?: Database["public"]["Enums"]["thread_tag"] | null
           thread_uuid?: string
           title?: string | null
+          upvote_count?: number | null
           user_name?: string | null
           user_uuid?: string | null
         }
         Update: {
           community_uuid?: string | null
           created_at?: string
+          expert_uuid?: string | null
           id?: number
           initial_message?: string | null
-          last_message?: string | null
+          last_message_at?: string | null
           number_messages?: number | null
           status?: Database["public"]["Enums"]["thread_status"] | null
           tag?: Database["public"]["Enums"]["thread_tag"] | null
           thread_uuid?: string
           title?: string | null
+          upvote_count?: number | null
           user_name?: string | null
           user_uuid?: string | null
         }
@@ -1718,7 +1679,59 @@ export type Database = {
             referencedColumns: ["community_uuid"]
           },
           {
+            foreignKeyName: "threads_expert_uuid_fkey"
+            columns: ["expert_uuid"]
+            isOneToOne: false
+            referencedRelation: "experts"
+            referencedColumns: ["expert_uuid"]
+          },
+          {
             foreignKeyName: "threads_user_uuid_fkey"
+            columns: ["user_uuid"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["user_uuid"]
+          },
+        ]
+      }
+      threads_messages: {
+        Row: {
+          created_at: string
+          id: number
+          message: string | null
+          thread_message_uuid: string
+          thread_uuid: string | null
+          user_name: string | null
+          user_uuid: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          message?: string | null
+          thread_message_uuid?: string
+          thread_uuid?: string | null
+          user_name?: string | null
+          user_uuid?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          message?: string | null
+          thread_message_uuid?: string
+          thread_uuid?: string | null
+          user_name?: string | null
+          user_uuid?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_messages_thread_uuid_fkey"
+            columns: ["thread_uuid"]
+            isOneToOne: false
+            referencedRelation: "threads"
+            referencedColumns: ["thread_uuid"]
+          },
+          {
+            foreignKeyName: "community_messages_user_uuid_fkey"
             columns: ["user_uuid"]
             isOneToOne: false
             referencedRelation: "users"
