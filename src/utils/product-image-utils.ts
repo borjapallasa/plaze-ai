@@ -2,24 +2,8 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { ProductImage } from "@/types/product-images";
 
-// Ensure bucket exists before uploading
-async function ensureBucketExists() {
-  const { data: buckets } = await supabase.storage.listBuckets();
-  if (!buckets?.some(bucket => bucket.id === 'product_images')) {
-    const { error } = await supabase.storage.createBucket('product_images', {
-      public: true,
-      fileSizeLimit: 10485760, // 10MB
-      allowedMimeTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
-    });
-    if (error) throw error;
-  }
-}
-
 export async function uploadImageToStorage(file: File, productUuid: string): Promise<{ publicUrl: string; storagePath: string }> {
   console.log('uploadImageToStorage: Starting upload for product:', productUuid);
-  
-  // Ensure bucket exists
-  await ensureBucketExists();
   
   const fileExt = file.name.split('.').pop();
   const storagePath = `${productUuid}/${crypto.randomUUID()}.${fileExt}`;
@@ -74,4 +58,3 @@ export async function updateImagePrimaryStatus(imageId: number, isPrimary: boole
 export const sortImagesByPrimary = (images: ProductImage[]): ProductImage[] => {
   return [...images].sort((a, b) => (b.is_primary ? 1 : 0) - (a.is_primary ? 1 : 0));
 };
-
