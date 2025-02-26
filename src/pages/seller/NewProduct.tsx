@@ -52,7 +52,6 @@ export default function NewProduct() {
     }
   ]);
 
-  // Get current user to set as expert_uuid
   const { data: currentUser } = useQuery({
     queryKey: ['currentUser'],
     queryFn: async () => {
@@ -142,20 +141,20 @@ export default function NewProduct() {
 
       // If we have variants, create them
       if (variants.length > 0) {
+        const variantsToInsert = variants.map(variant => ({
+          name: variant.name,
+          price: Number(variant.price) || 0,
+          compare_price: Number(variant.comparePrice) || 0,
+          highlighted: variant.highlight,
+          tags: variant.tags,
+          product_uuid: product.product_uuid,
+          user_uuid: currentUser.id,
+          created_at: variant.createdAt,
+        }));
+
         const { error: variantsError } = await supabase
           .from('variants')
-          .insert(
-            variants.map(variant => ({
-              name: variant.name,
-              price: variant.price,
-              compare_price: variant.comparePrice,
-              highlighted: variant.highlight,
-              tags: variant.tags,
-              product_uuid: product.product_uuid,
-              user_uuid: currentUser.id,
-              created_at: variant.createdAt,
-            }))
-          );
+          .insert(variantsToInsert);
 
         if (variantsError) throw variantsError;
       }
