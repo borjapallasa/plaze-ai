@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { ProductEditor } from "@/components/product/ProductEditor";
-import { ImageUploadArea } from "@/components/product/ImageUploadArea";
+import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
 import { ArrowLeft, Link as LinkIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
@@ -19,7 +19,6 @@ export default function EditCommunity() {
   const { id } = useParams();
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
   const [communityName, setCommunityName] = useState("");
   const [communityDescription, setCommunityDescription] = useState("");
   const [communityIntro, setCommunityIntro] = useState("");
@@ -91,7 +90,6 @@ export default function EditCommunity() {
 
   const handleThumbnailUpload = async (file: File) => {
     try {
-      setIsUploading(true);
       const fileExt = file.name.split('.').pop();
       const filePath = `${id}/${crypto.randomUUID()}.${fileExt}`;
 
@@ -105,8 +103,20 @@ export default function EditCommunity() {
         .from('community_images')
         .getPublicUrl(filePath);
 
+      // Update the thumbnail URL in state and database
       setThumbnail(publicUrl);
+      const { error: updateError } = await supabase
+        .from('communities')
+        .update({ thumbnail: publicUrl })
+        .eq('community_uuid', id);
 
+      if (updateError) throw updateError;
+
+      toast({
+        title: "Success",
+        description: "Image uploaded successfully",
+        className: "bg-green-50 border-green-200",
+      });
     } catch (error) {
       console.error('Error uploading thumbnail:', error);
       toast({
@@ -114,8 +124,6 @@ export default function EditCommunity() {
         description: "Failed to upload thumbnail",
         variant: "destructive",
       });
-    } finally {
-      setIsUploading(false);
     }
   };
 
@@ -228,9 +236,9 @@ export default function EditCommunity() {
                   <Label className="text-base font-medium mb-2 block">
                     Thumbnail
                   </Label>
-                  <ImageUploadArea
+                  <ProductMediaUpload
+                    productUuid={id || ''}
                     onFileSelect={handleThumbnailUpload}
-                    isUploading={isUploading}
                   />
                 </div>
               </div>
