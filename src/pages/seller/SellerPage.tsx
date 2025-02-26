@@ -63,6 +63,10 @@ export default function SellerPage() {
     navigate(`/community/${communityId}`);
   };
 
+  const handleServiceClick = (serviceId: string) => {
+    navigate(`/service/${serviceId}/edit`);
+  };
+
   const { data: seller } = useQuery({
     queryKey: ['seller', id],
     queryFn: async () => {
@@ -421,7 +425,8 @@ export default function SellerPage() {
               {services.map((service) => (
                 <Card 
                   key={service.service_uuid} 
-                  className="overflow-hidden border bg-card shadow-sm hover:shadow-md transition-all duration-200"
+                  className="overflow-hidden border bg-card shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
+                  onClick={() => handleServiceClick(service.service_uuid)}
                 >
                   <div className="grid lg:grid-cols-[2fr,1fr,1fr] divide-y lg:divide-y-0 lg:divide-x divide-border">
                     <div className="p-6 space-y-4">
@@ -524,6 +529,10 @@ export default function SellerPage() {
                         <div className="mt-6">
                           <Button 
                             className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleServiceClick(service.service_uuid);
+                            }}
                           >
                             View Details
                           </Button>
