@@ -17,75 +17,11 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
 import { useAuth } from "@/lib/auth";
-import { cn } from "@/lib/utils";
 
 interface Link {
   name: string;
   url: string;
 }
-
-interface Classroom {
-  title: string;
-  description: string;
-}
-
-interface Template {
-  title: string;
-  description: string;
-  price: number;
-  image: string;
-  seller: string;
-  tags: string[];
-  category: string;
-}
-
-interface Stat {
-  label: string;
-  value: string;
-  icon: React.ComponentType<{ className?: string }>;
-}
-
-const classrooms: Classroom[] = [
-  {
-    title: "Introduction to Community Building",
-    description: "Learn the fundamentals of building and growing your community"
-  },
-  {
-    title: "Engagement Strategies",
-    description: "Discover effective ways to keep your community engaged"
-  },
-  {
-    title: "Advanced Community Management",
-    description: "Master the art of managing a thriving community"
-  }
-];
-
-const templates: Template[] = [
-  {
-    title: "Community Starter Kit",
-    description: "Everything you need to start your community",
-    price: 49,
-    image: "/lovable-uploads/890bbce9-6ca6-4a0e-958a-d7ba6f61bf73.png",
-    seller: "Community Expert",
-    tags: ["community", "starter"],
-    category: "Templates"
-  },
-  {
-    title: "Engagement Toolkit",
-    description: "Tools and templates for community engagement",
-    price: 29,
-    image: "/lovable-uploads/890bbce9-6ca6-4a0e-958a-d7ba6f61bf73.png",
-    seller: "Community Expert",
-    tags: ["engagement", "tools"],
-    category: "Templates"
-  }
-];
-
-const events: Date[] = [
-  new Date(2024, 3, 15),
-  new Date(2024, 3, 22),
-  new Date(2024, 4, 5)
-];
 
 function isValidLink(link: unknown): link is Link {
   if (typeof link !== 'object' || link === null) return false;
@@ -130,7 +66,13 @@ export default function Community() {
         .eq('community_uuid', id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
+
+      console.log('Community data:', data);
+      console.log('Links from community:', data?.links);
+
       return data;
     },
     enabled: !!id
@@ -138,31 +80,7 @@ export default function Community() {
 
   const videoEmbedUrl = getVideoEmbedUrl(community?.intro);
   const links = parseLinks(community?.links);
-  const isOwner = user?.id === community?.expert?.user_uuid;
-
-  const stats: Stat[] = [
-    {
-      label: "Products",
-      value: `${community?.product_count ?? 0}`,
-      icon: BookOpen,
-    },
-    {
-      label: "Classrooms",
-      value: `${community?.classroom_count ?? 0}`,
-      icon: Users,
-    },
-    {
-      label: "Posts",
-      value: `${community?.post_count ?? 0}`,
-      icon: MessageSquare,
-    },
-    {
-      label: "Members",
-      value: `${community?.member_count ?? 0}`,
-      icon: Users,
-    },
-  ];
-
+  
   if (isLoading) {
     return (
       <>
@@ -193,6 +111,104 @@ export default function Community() {
       </>
     );
   }
+
+  const isOwner = user?.id === community?.expert?.user_uuid;
+
+  const templates = [
+    {
+      title: "Automated Email Workflow",
+      price: "$49.99",
+      image: "/placeholder.svg",
+      seller: "Automation Pro",
+      description: "Streamline your email marketing with this automated workflow template.",
+      tags: ["email", "automation"],
+      category: "marketing"
+    },
+    {
+      title: "CRM Integration Template",
+      price: "$79.99",
+      image: "/placeholder.svg",
+      seller: "CRM Expert",
+      description: "Connect your favorite CRM with other tools seamlessly.",
+      tags: ["crm", "integration"],
+      category: "business"
+    },
+    {
+      title: "Social Media Manager",
+      price: "$39.99",
+      image: "/placeholder.svg",
+      seller: "Social Pro",
+      description: "Manage all your social media accounts from one place.",
+      tags: ["social", "management"],
+      category: "marketing"
+    },
+    {
+      title: "Project Tracker",
+      price: "$59.99",
+      image: "/placeholder.svg",
+      seller: "PM Tools",
+      description: "Keep track of your projects with this comprehensive template.",
+      tags: ["project", "management"],
+      category: "business"
+    },
+    {
+      title: "Lead Generation System",
+      price: "$89.99",
+      image: "/placeholder.svg",
+      seller: "Lead Gen Pro",
+      description: "Generate and nurture leads automatically.",
+      tags: ["leads", "automation"],
+      category: "sales"
+    },
+    {
+      title: "Customer Support Flow",
+      price: "$69.99",
+      image: "/placeholder.svg",
+      seller: "Support Expert",
+      description: "Streamline your customer support process.",
+      tags: ["support", "workflow"],
+      category: "service"
+    }
+  ];
+
+  const events = [
+    {
+      title: "Community Meetup",
+      date: new Date(2024, 3, 15), // April 15, 2024
+      type: "meetup",
+      description: "Monthly community gathering to discuss automation trends"
+    },
+    {
+      title: "Workshop: No-Code Automation",
+      date: new Date(2024, 3, 20), // April 20, 2024
+      type: "workshop",
+      description: "Learn how to build powerful automation without coding"
+    },
+    {
+      title: "Q&A Session",
+      date: new Date(2024, 3, 25), // April 25, 2024
+      type: "qa",
+      description: "Open Q&A session with automation experts"
+    }
+  ];
+
+  const classrooms = [
+    {
+      title: "How To Create Automated SEO Blogs With AI?",
+      description: "In this classroom you will learn how to create SEO blogs automatically with AI, using Make.com and Airtable.",
+      image: "/lovable-uploads/0f691532-4ffb-4ec9-82cb-3be9cc93d658.png"
+    },
+    {
+      title: "Fully Automated Affiliate Marketing Dashboard",
+      description: "Learn how to create an Affiliate Marketing Dashboard in Airtable, seamlessly integrating HubSpot and Google Analytics with Make.com.",
+      image: "/lovable-uploads/0f691532-4ffb-4ec9-82cb-3be9cc93d658.png"
+    },
+    {
+      title: "How To Obtain The Emails Of The Followers Of An Instagram Account",
+      description: "In this classroom we explain how you can obtain the emails of the followers of certain instagram user, using Make.com, RapidAPI and Airtable.",
+      image: "/lovable-uploads/0f691532-4ffb-4ec9-82cb-3be9cc93d658.png"
+    },
+  ];
 
   return (
     <>
@@ -227,80 +243,59 @@ export default function Community() {
           </div>
 
           <div className="lg:col-span-4 space-y-6">
-            <Card className="overflow-hidden">
-              <div className="p-6 space-y-6">
-                <div className="flex items-center gap-4">
-                  <Avatar className="h-16 w-16 ring-1 ring-primary/10">
-                    <AvatarImage 
-                      src={community?.expert_thumbnail || "https://github.com/shadcn.png"} 
-                      alt={community?.expert_name}
-                    />
-                    <AvatarFallback className="bg-primary/5">
-                      {community?.expert_name?.charAt(0)}
-                    </AvatarFallback>
+            <Card className="p-6">
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-12 w-12 ring-1 ring-border">
+                    <AvatarImage src={community?.expert_thumbnail || "https://github.com/shadcn.png"} />
+                    <AvatarFallback>CM</AvatarFallback>
                   </Avatar>
                   <div>
                     <p className="text-sm text-muted-foreground">Hosted by</p>
-                    <h3 className="font-semibold text-lg">
-                      {community?.expert_name}
-                    </h3>
+                    <p className="font-semibold">{community?.expert_name}</p>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Products</p>
+                    <p className="font-semibold">{community?.product_count || 0}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Classrooms</p>
+                    <p className="font-semibold">{community?.classroom_count || 0}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Posts</p>
+                    <p className="font-semibold">{community?.post_count || 0}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Members</p>
+                    <p className="font-semibold">{community?.member_count || 0}</p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  {stats.map((stat, index) => {
-                    const Icon = stat.icon;
-                    return (
-                      <div 
-                        key={index}
-                        className="p-3 rounded-xl border bg-card/50 hover:bg-accent/50 transition-colors"
-                      >
-                        <div className="flex items-center gap-2 text-muted-foreground mb-1.5">
-                          <Icon className="w-4 h-4" />
-                          <span className="text-sm">{stat.label}</span>
-                        </div>
-                        <p className="text-xl font-semibold">
-                          {stat.value}
-                        </p>
-                      </div>
-                    );
-                  })}
-                </div>
-
                 {!isOwner && (
-                  <Button className="w-full" size="lg">
-                    Join Community
-                  </Button>
+                  <Button className="w-full">Join Community</Button>
                 )}
 
                 {links.length > 0 && (
                   <>
                     <Separator className="my-4" />
-                    <div className="space-y-2">
-                      <h3 className="font-semibold flex items-center gap-2">
-                        <LinkIcon className="w-4 h-4" />
-                        Quick Links
-                      </h3>
-                      <nav className="space-y-1.5">
-                        {links.map((link, index) => (
-                          <a 
-                            key={index}
-                            href={link.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={cn(
-                              "flex items-center gap-2 p-2.5 rounded-lg",
-                              "text-muted-foreground hover:text-foreground",
-                              "hover:bg-accent/50 transition-colors",
-                              "border border-transparent hover:border-border"
-                            )}
-                          >
-                            <LinkIcon className="w-4 h-4" />
-                            <span className="flex-1">{link.name}</span>
-                            <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                          </a>
-                        ))}
-                      </nav>
+                    <div className="space-y-3">
+                      <h3 className="font-semibold">Quick Links</h3>
+                      {links.map((link, index) => (
+                        <a 
+                          key={index}
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                          <LinkIcon className="w-4 h-4" />
+                          <span>{link.name}</span>
+                        </a>
+                      ))}
                     </div>
                   </>
                 )}
@@ -431,7 +426,7 @@ export default function Community() {
                   selected={date}
                   onSelect={setDate}
                   modifiers={{
-                    event: events
+                    event: events.map(event => event.date)
                   }}
                   modifiersClassNames={{
                     event: "text-primary font-bold underline"
