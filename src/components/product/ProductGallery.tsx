@@ -37,8 +37,8 @@ export function ProductGallery({ images, className, priority = false }: ProductG
   return (
     <div className={className}>
       {/* Desktop Layout */}
-      <div className="hidden lg:flex flex-col gap-4">
-        {/* Main image */}
+      <div className="hidden lg:block space-y-4">
+        {/* Main image container */}
         <div className="w-full aspect-video bg-card rounded-lg overflow-hidden relative flex items-center justify-center">
           <img 
             src={imageSizes.large}
@@ -61,31 +61,33 @@ export function ProductGallery({ images, className, priority = false }: ProductG
           )}
         </div>
 
-        {/* Thumbnails below */}
+        {/* Thumbnails in a scrollable container below */}
         {images.length > 1 && (
-          <div className="flex gap-4 overflow-x-auto pb-2">
-            {images.map((img, i) => {
-              const thumbSizes = getImageSizes(img.url);
-              return (
-                <button 
-                  key={i}
-                  className={`flex-shrink-0 cursor-pointer overflow-hidden rounded-lg transition-all ${
-                    i === currentImageIndex ? 'ring-2 ring-primary' : 'hover:opacity-80'
-                  }`}
-                  onClick={() => setCurrentImageIndex(i)}
-                >
-                  <div className="aspect-video w-24 relative">
-                    <img 
-                      src={thumbSizes.thumbnail}
-                      alt={img.alt_text || img.file_name}
-                      className="absolute inset-0 w-full h-full object-cover"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                </button>
-              );
-            })}
+          <div className="relative w-full">
+            <div className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory">
+              {images.map((img, i) => {
+                const thumbSizes = getImageSizes(img.url);
+                return (
+                  <button 
+                    key={i}
+                    className={`flex-shrink-0 cursor-pointer overflow-hidden rounded-lg transition-all snap-start ${
+                      i === currentImageIndex ? 'ring-2 ring-primary' : 'hover:opacity-80'
+                    }`}
+                    onClick={() => setCurrentImageIndex(i)}
+                  >
+                    <div className="aspect-video w-24 relative">
+                      <img 
+                        src={thumbSizes.thumbnail}
+                        alt={img.alt_text || img.file_name}
+                        className="absolute inset-0 w-full h-full object-cover"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         )}
       </div>
