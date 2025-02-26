@@ -26,12 +26,15 @@ import {
   ArrowUp,
   DollarSign,
   CalendarDays,
-  Users2
+  Users2,
+  Building2,
+  MessageCircle
 } from "lucide-react";
 import { Badge as UIBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import type { Service } from "@/components/expert/types";
+import { useExpertCommunities } from "@/hooks/expert/useExpertCommunities";
 
 type SortField = 'name' | 'status' | 'variant_count' | 'price_from' | 'created_at';
 type SortDirection = 'asc' | 'desc';
@@ -113,6 +116,8 @@ export default function SellerPage() {
     },
     enabled: !!id
   });
+
+  const { data: communities } = useExpertCommunities(id);
 
   const sortedProducts = [...(products || [])].sort((a, b) => {
     const direction = sortDirection === 'asc' ? 1 : -1;
@@ -509,14 +514,118 @@ export default function SellerPage() {
             </div>
           </TabsContent>
 
-          <TabsContent value="communities" className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2].map((i) => (
-                <Card key={i} className="p-6">
-                  <h3 className="font-semibold mb-2">Design Community</h3>
-                  <p className="text-sm text-muted-foreground">Join our community of designers</p>
+          <TabsContent value="communities" className="space-y-6 mt-6">
+            <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 sm:items-center">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input 
+                  placeholder="Search communities..." 
+                  className="pl-9"
+                />
+              </div>
+              <Button className="sm:w-auto">
+                <Plus className="h-4 w-4 mr-2" />
+                Create community
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6">
+              {communities?.map((community) => (
+                <Card 
+                  key={community.community_uuid}
+                  className="overflow-hidden border bg-card shadow-sm hover:shadow-md transition-all duration-200"
+                >
+                  <div className="grid lg:grid-cols-[2fr,1fr,1fr] divide-y lg:divide-y-0 lg:divide-x divide-border">
+                    <div className="p-6 space-y-4">
+                      <div className="space-y-2">
+                        <div className="flex items-start justify-between gap-4">
+                          <h3 className="text-2xl font-semibold tracking-tight text-foreground">
+                            {community.name}
+                          </h3>
+                          <UIBadge 
+                            variant="secondary"
+                            className="capitalize whitespace-nowrap"
+                          >
+                            {community.type}
+                          </UIBadge>
+                        </div>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          {community.description || community.intro}
+                        </p>
+                      </div>
+
+                      <div className="pt-4 flex flex-wrap items-baseline gap-x-6">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-muted-foreground">Price</span>
+                          <span className="text-2xl font-semibold tracking-tight">
+                            ${community.price?.toLocaleString() || '0'}/mo
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-6 bg-muted/5">
+                      <div className="space-y-4">
+                        <h4 className="text-sm font-medium flex items-center gap-1.5 text-foreground">
+                          <Building2 className="h-4 w-4 text-blue-500" />
+                          Community Stats
+                        </h4>
+                        <div className="grid gap-4">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-muted-foreground">Total Members</span>
+                            <span className="font-medium">{community.member_count || 0}</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-muted-foreground">Paid Members</span>
+                            <span className="font-medium">{community.paid_member_count || 0}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-6 bg-muted/5">
+                      <div className="h-full flex flex-col">
+                        <div className="space-y-4 flex-grow">
+                          <div className="space-y-2">
+                            <div className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                              <DollarSign className="w-3 h-3" />
+                              Monthly Recurring Revenue
+                            </div>
+                            <div className="font-medium text-xl">
+                              ${community.monthly_recurring_revenue?.toLocaleString() || '0'}
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <div className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                              <CalendarDays className="w-3 h-3" />
+                              Created
+                            </div>
+                            <div className="font-medium">
+                              {format(new Date(community.created_at), 'MMM d, yyyy')}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="mt-6 flex flex-col gap-2">
+                          <Button className="w-full">
+                            <MessageCircle className="h-4 w-4 mr-2" />
+                            View Discussion
+                          </Button>
+                          <Button variant="outline" className="w-full">
+                            Manage Community
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </Card>
               ))}
+
+              {!communities || communities.length === 0 && (
+                <Card className="p-8 text-center text-muted-foreground">
+                  No communities found
+                </Card>
+              )}
             </div>
           </TabsContent>
 
