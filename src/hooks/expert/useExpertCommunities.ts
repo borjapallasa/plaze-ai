@@ -21,7 +21,10 @@ export function useExpertCommunities(expert_uuid: string | undefined) {
           paid_member_count,
           monthly_recurring_revenue,
           thumbnail,
-          created_at
+          created_at,
+          product_count,
+          classroom_count,
+          post_count
         `)
         .eq('expert_uuid', expert_uuid);
 
