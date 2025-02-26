@@ -1529,7 +1529,6 @@ export type Database = {
           price: number | null
           revenue_amount: number | null
           service_uuid: string
-          status: Database["public"]["Enums"]["service_status"] | null
           stripe_price_id: string | null
           stripe_product_id: string | null
           subcategory: Json | null
@@ -1550,7 +1549,6 @@ export type Database = {
           price?: number | null
           revenue_amount?: number | null
           service_uuid?: string
-          status?: Database["public"]["Enums"]["service_status"] | null
           stripe_price_id?: string | null
           stripe_product_id?: string | null
           subcategory?: Json | null
@@ -1571,7 +1569,6 @@ export type Database = {
           price?: number | null
           revenue_amount?: number | null
           service_uuid?: string
-          status?: Database["public"]["Enums"]["service_status"] | null
           stripe_price_id?: string | null
           stripe_product_id?: string | null
           subcategory?: Json | null
@@ -1938,7 +1935,6 @@ export type Database = {
       review_status: "published" | "not published"
       review_type: "product" | "service" | "job" | "community"
       service_price_status: "active" | "inactive"
-      service_status: "draft" | "active" | "archived"
       service_subscription_status: "active" | "inactive"
       service_type: "one time" | "monthly"
       signup_via:

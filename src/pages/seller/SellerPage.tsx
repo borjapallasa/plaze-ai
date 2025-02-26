@@ -409,9 +409,9 @@ export default function SellerPage() {
                         <div>
                           <div className="flex items-center justify-between gap-4">
                             <h3 className="text-xl font-semibold leading-tight">{service.name}</h3>
-                            <UIBadge variant="secondary" className="capitalize whitespace-nowrap shrink-0">
+                            <Badge variant="secondary" className="capitalize whitespace-nowrap shrink-0">
                               {service.type}
-                            </UIBadge>
+                            </Badge>
                           </div>
                           <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
                             {service.description}
