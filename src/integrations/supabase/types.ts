@@ -257,9 +257,6 @@ export type Database = {
         Row: {
           active_price_id: string | null
           active_product_id: string | null
-          billing_period:
-            | Database["public"]["Enums"]["community_billing_period"]
-            | null
           classroom_count: number | null
           community_price_uuid: string | null
           community_uuid: string
@@ -279,6 +276,9 @@ export type Database = {
           payment_link: string | null
           post_count: number | null
           price: number | null
+          price_period:
+            | Database["public"]["Enums"]["community_price_period"]
+            | null
           product_count: number | null
           slug: string | null
           thumbnail: string | null
@@ -291,9 +291,6 @@ export type Database = {
         Insert: {
           active_price_id?: string | null
           active_product_id?: string | null
-          billing_period?:
-            | Database["public"]["Enums"]["community_billing_period"]
-            | null
           classroom_count?: number | null
           community_price_uuid?: string | null
           community_uuid?: string
@@ -313,6 +310,9 @@ export type Database = {
           payment_link?: string | null
           post_count?: number | null
           price?: number | null
+          price_period?:
+            | Database["public"]["Enums"]["community_price_period"]
+            | null
           product_count?: number | null
           slug?: string | null
           thumbnail?: string | null
@@ -325,9 +325,6 @@ export type Database = {
         Update: {
           active_price_id?: string | null
           active_product_id?: string | null
-          billing_period?:
-            | Database["public"]["Enums"]["community_billing_period"]
-            | null
           classroom_count?: number | null
           community_price_uuid?: string | null
           community_uuid?: string
@@ -347,6 +344,9 @@ export type Database = {
           payment_link?: string | null
           post_count?: number | null
           price?: number | null
+          price_period?:
+            | Database["public"]["Enums"]["community_price_period"]
+            | null
           product_count?: number | null
           slug?: string | null
           thumbnail?: string | null
@@ -1989,7 +1989,7 @@ export type Database = {
         | "withdrawn"
         | "open conversation"
       classroom_status: "visible" | "not visible"
-      community_billing_period: "monthly" | "yearly"
+      community_price_period: "monthly" | "yearly"
       community_price_status: "active" | "inactive"
       community_subscription_status: "active" | "inactive"
       community_type: "free" | "paid"
