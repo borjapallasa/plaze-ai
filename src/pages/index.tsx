@@ -256,8 +256,8 @@ const Index = () => {
           onCategoryChange={setSelectedCategory}
         />
 
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="w-full max-w-[1400px] mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {filteredProducts?.map((product) => (
               <ProductCard
                 key={product.product_uuid}
