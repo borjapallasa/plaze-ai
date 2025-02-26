@@ -37,10 +37,18 @@ export function useExpertServices(expert_uuid: string | undefined) {
           (Array.isArray(service.features) ? service.features : JSON.parse(service.features as string)) 
           : [],
         // Ensure status is one of the allowed values
-        status: (service.status as ServiceStatus) || 'draft',
+        status: validateServiceStatus(service.status) || 'draft',
         type: service.type || 'one time'
       })) as Service[];
     },
     enabled: !!expert_uuid && expert_uuid !== ':id'
   });
+}
+
+// Helper function to validate status
+function validateServiceStatus(status: unknown): ServiceStatus | undefined {
+  if (status === 'active' || status === 'draft' || status === 'archived') {
+    return status;
+  }
+  return undefined;
 }
