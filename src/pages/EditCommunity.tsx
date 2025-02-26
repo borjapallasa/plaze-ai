@@ -95,13 +95,13 @@ export default function EditCommunity() {
       const filePath = `${id}/${crypto.randomUUID()}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
-        .from('community_thumbnails')
+        .from('community_images')
         .upload(filePath, file);
 
       if (uploadError) throw uploadError;
 
       const { data: { publicUrl } } = supabase.storage
-        .from('community_thumbnails')
+        .from('community_images')
         .getPublicUrl(filePath);
 
       setThumbnail(publicUrl);
