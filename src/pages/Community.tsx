@@ -19,6 +19,7 @@ import { getVideoEmbedUrl } from "@/utils/videoEmbed";
 import { useAuth } from "@/lib/auth";
 import { useCommunityImages } from "@/hooks/use-community-images";
 import { ProductGallery } from "@/components/product/ProductGallery";
+import type { ProductImage } from "@/types/product-images";
 
 interface Link {
   name: string;
@@ -222,10 +223,11 @@ export default function Community() {
                   images={images.map(img => ({
                     id: img.id,
                     url: img.url,
-                    alt_text: img.alt_text || img.file_name,
+                    storage_path: img.storage_path,
+                    is_primary: img.is_primary,
                     file_name: img.file_name,
-                    is_primary: img.is_primary
-                  }))}
+                    alt_text: img.alt_text || img.file_name
+                  } as ProductImage))}
                   priority
                 />
               ) : (
