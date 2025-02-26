@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { ImageUploadArea } from "@/components/product/ImageUploadArea";
 import { Card } from "@/components/ui/card";
@@ -12,6 +11,13 @@ import { useCommunityImages } from "@/hooks/use-community-images";
 interface CommunityMediaUploadProps {
   communityUuid: string;
   onFileSelect?: (file: File) => void;
+  initialImages?: Array<{
+    id: number;
+    url: string;
+    storage_path: string;
+    is_primary: boolean;
+    file_name: string;
+  }>;
 }
 
 interface ImageDetailsDialogProps {
@@ -129,7 +135,11 @@ function ImageDetailsDialog({ open, onClose, image, onSave }: ImageDetailsDialog
   );
 }
 
-export function CommunityMediaUpload({ communityUuid, onFileSelect }: CommunityMediaUploadProps) {
+export function CommunityMediaUpload({ 
+  communityUuid, 
+  onFileSelect,
+  initialImages = []
+}: CommunityMediaUploadProps) {
   const [selectedImage, setSelectedImage] = useState<null | any>(null);
   const {
     images,

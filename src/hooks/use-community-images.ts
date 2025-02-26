@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { uploadImageToStorage, updateCommunityThumbnail, updateImagePrimaryStatus, sortImagesByPrimary } from "@/utils/community-image-utils";
@@ -13,8 +12,8 @@ export interface CommunityImage {
   alt_text?: string;
 }
 
-export function useCommunityImages(communityUuid?: string) {
-  const [images, setImages] = useState<CommunityImage[]>([]);
+export function useCommunityImages(communityUuid?: string, initialImages: CommunityImage[] = []) {
+  const [images, setImages] = useState<CommunityImage[]>(initialImages);
   const [isUploading, setIsUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
@@ -38,8 +37,13 @@ export function useCommunityImages(communityUuid?: string) {
       }
     }
 
-    loadImages();
-  }, [communityUuid, toast]);
+    if (initialImages.length === 0) {
+      loadImages();
+    } else {
+      setImages(initialImages);
+      setIsLoading(false);
+    }
+  }, [communityUuid, initialImages, toast]);
 
   const uploadImage = useCallback(async (file: File) => {
     if (!communityUuid) {
