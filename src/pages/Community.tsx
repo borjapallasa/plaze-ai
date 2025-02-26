@@ -17,6 +17,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
 import { useAuth } from "@/lib/auth";
+import { useCommunityImages } from "@/hooks/use-community-images";
+import { ProductGallery } from "@/components/product/ProductGallery";
 
 interface Link {
   name: string;
@@ -56,6 +58,7 @@ export default function Community() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [isThreadOpen, setIsThreadOpen] = useState(false);
   const { user } = useAuth();
+  const { images } = useCommunityImages(id);
 
   const { data: community, isLoading } = useQuery({
     queryKey: ['community', id],
@@ -69,9 +72,6 @@ export default function Community() {
       if (error) {
         throw error;
       }
-
-      console.log('Community data:', data);
-      console.log('Links from community:', data?.links);
 
       return data;
     },
@@ -217,23 +217,26 @@ export default function Community() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-8">
             <Card className="p-6 space-y-6">
-              <div className="aspect-video bg-muted rounded-lg overflow-hidden relative">
-                {videoEmbedUrl ? (
-                  <iframe
-                    src={videoEmbedUrl}
-                    className="absolute inset-0 w-full h-full"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                ) : (
+              {images && images.length > 0 ? (
+                <ProductGallery 
+                  images={images.map(img => ({
+                    id: img.id,
+                    url: img.url,
+                    alt_text: img.alt_text || img.file_name,
+                    file_name: img.file_name,
+                    is_primary: img.is_primary
+                  }))}
+                  priority
+                />
+              ) : (
+                <div className="aspect-video bg-muted rounded-lg overflow-hidden relative">
                   <img 
                     src={community.thumbnail || "/lovable-uploads/890bbce9-6ca6-4a0e-958a-d7ba6f61bf73.png"}
                     alt="Community thumbnail"
                     className="w-full h-full object-cover"
                   />
-                )}
-              </div>
+                </div>
+              )}
 
               <div className="space-y-4">
                 <h1 className="text-2xl font-bold">{community.name}</h1>
