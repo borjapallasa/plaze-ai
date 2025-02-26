@@ -25,7 +25,7 @@ export default function NewProduct() {
   const [useCases, setUseCases] = useState<string[]>([]);
   const [platform, setPlatform] = useState<string[]>([]);
   const [team, setTeam] = useState<string[]>([]);
-  const { pendingImages, addPendingImage } = usePendingImages();
+  const { pendingImages, addPendingImage, uploadPendingImages } = usePendingImages();
 
   const [variants, setVariants] = useState<Variant[]>([
     {
@@ -149,38 +149,6 @@ export default function NewProduct() {
                   </div>
                 </Card>
 
-                {/* Variants Section */}
-                <Card className="p-3 sm:p-6">
-                  <div className="pt-2">
-                    <ProductVariantsEditor 
-                      variants={variants}
-                      onVariantsChange={setVariants}
-                    />
-                  </div>
-                </Card>
-
-                {/* Technical Details Form */}
-                <Card className="p-3 sm:p-6">
-                  <div className="space-y-3 sm:space-y-4">
-                    <ProductDetailsForm
-                      techStack={techStack}
-                      setTechStack={setTechStack}
-                      techStackPrice={techStackPrice}
-                      setTechStackPrice={setTechStackPrice}
-                      productIncludes={productIncludes}
-                      setProductIncludes={setProductIncludes}
-                      difficultyLevel={difficultyLevel}
-                      setDifficultyLevel={setDifficultyLevel}
-                      demo={demo}
-                      setDemo={setDemo}
-                      productName={productName}
-                      setProductName={setProductName}
-                      productDescription={productDescription}
-                      setProductDescription={setProductDescription}
-                    />
-                  </div>
-                </Card>
-
                 {/* Media Section */}
                 <Card className="p-3 sm:p-6">
                   <h2 className="text-lg font-medium mb-3 sm:mb-4">Media</h2>
@@ -198,6 +166,34 @@ export default function NewProduct() {
                       ))}
                     </div>
                   )}
+                </Card>
+
+                {/* Technical Details Form */}
+                <Card className="p-3 sm:p-6">
+                  <div className="space-y-3 sm:space-y-4">
+                    <ProductDetailsForm
+                      techStack={techStack}
+                      setTechStack={setTechStack}
+                      techStackPrice={techStackPrice}
+                      setTechStackPrice={setTechStackPrice}
+                      productIncludes={productIncludes}
+                      setProductIncludes={setProductIncludes}
+                      difficultyLevel={difficultyLevel}
+                      setDifficultyLevel={setDifficultyLevel}
+                      demo={demo}
+                      setDemo={setDemo}
+                    />
+                  </div>
+                </Card>
+
+                {/* Variants Section */}
+                <Card className="p-3 sm:p-6">
+                  <div className="pt-2">
+                    <ProductVariantsEditor 
+                      variants={variants}
+                      onVariantsChange={setVariants}
+                    />
+                  </div>
                 </Card>
               </div>
             </div>
