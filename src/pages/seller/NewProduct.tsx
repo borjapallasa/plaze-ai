@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -14,6 +13,7 @@ import { Variant } from "@/components/product/types/variants";
 import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { usePendingImages } from "@/hooks/use-pending-images";
+import { useExpertQuery } from "@/hooks/expert/useExpertQuery";
 import {
   Select,
   SelectContent,
@@ -61,6 +61,8 @@ export default function NewProduct() {
       return user;
     }
   });
+
+  const { data: expert } = useExpertQuery(useParams().id);
 
   const handleStatusChange = (value: ProductStatus) => {
     setProductStatus(value);
@@ -113,6 +115,15 @@ export default function NewProduct() {
       return;
     }
 
+    if (!expert?.expert_uuid) {
+      toast({
+        title: "Error",
+        description: "Expert profile not found",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       setIsSaving(true);
 
@@ -132,7 +143,7 @@ export default function NewProduct() {
           platform: platform,
           team: team,
           user_uuid: currentUser.id,
-          expert_uuid: currentUser.id,
+          expert_uuid: expert.expert_uuid,
         })
         .select()
         .single();
