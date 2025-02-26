@@ -18,6 +18,7 @@ export function useExpertServices(expert_uuid: string | undefined) {
           price,
           features,
           type,
+          status,
           monthly_recurring_revenue,
           revenue_amount,
           active_subscriptions_count,
@@ -34,7 +35,9 @@ export function useExpertServices(expert_uuid: string | undefined) {
         ...service,
         features: service.features ? 
           (Array.isArray(service.features) ? service.features : JSON.parse(service.features as string)) 
-          : []
+          : [],
+        status: service.status || 'draft' as const, // Ensure status always has a value
+        type: service.type || 'one time' as const // Ensure type always has a value
       })) as Service[];
     },
     enabled: !!expert_uuid && expert_uuid !== ':id'
