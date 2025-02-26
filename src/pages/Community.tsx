@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -281,14 +282,10 @@ export default function Community() {
                   </div>
                 )}
 
-                <div className="grid grid-cols-2 gap-4 py-4 border-y">
+                <div className="grid grid-cols-4 gap-4 py-4 border-y">
                   <div className="text-center">
                     <p className="text-2xl font-bold">{community?.member_count || 0}</p>
                     <p className="text-sm text-muted-foreground">Members</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold">{community?.classroom_count || 0}</p>
-                    <p className="text-sm text-muted-foreground">Classrooms</p>
                   </div>
                   <div className="text-center">
                     <p className="text-2xl font-bold">{community?.post_count || 0}</p>
@@ -297,6 +294,10 @@ export default function Community() {
                   <div className="text-center">
                     <p className="text-2xl font-bold">{community?.product_count || 0}</p>
                     <p className="text-sm text-muted-foreground">Products</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-bold">{community?.classroom_count || 0}</p>
+                    <p className="text-sm text-muted-foreground">Classrooms</p>
                   </div>
                 </div>
 
