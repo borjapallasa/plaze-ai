@@ -78,6 +78,7 @@ export function useCreateProduct() {
 
     try {
       setIsSaving(true);
+      console.log('Starting product creation...');
 
       // Step 1: Create the product first and wait for the response
       const { data: product, error: productError } = await supabase
@@ -101,7 +102,12 @@ export function useCreateProduct() {
         .select()
         .single();
 
-      if (productError) throw productError;
+      if (productError) {
+        console.error('Product creation error:', productError);
+        throw productError;
+      }
+
+      console.log('Product created successfully:', product);
 
       // Step 2: Double-check that we have a valid product UUID
       if (!product?.product_uuid) {
@@ -110,6 +116,7 @@ export function useCreateProduct() {
 
       // Step 3: Create variants if any
       if (productData.variants.length > 0) {
+        console.log('Creating variants...');
         const variantsToInsert = productData.variants.map(variant => ({
           name: variant.name,
           price: Number(variant.price) || 0,
@@ -125,20 +132,32 @@ export function useCreateProduct() {
           .from('variants')
           .insert(variantsToInsert);
 
-        if (variantsError) throw variantsError;
+        if (variantsError) {
+          console.error('Variants creation error:', variantsError);
+          throw variantsError;
+        }
+        console.log('Variants created successfully');
       }
 
-      // Step 4: Upload images after we're sure we have a product UUID
-      try {
-        await uploadPendingImages(product.product_uuid);
-      } catch (imageError) {
-        console.error('Error uploading images:', imageError);
-        toast({
-          title: "Warning",
-          description: "Product created but some images failed to upload",
-          variant: "destructive",
-        });
+      // Step 4: Upload images and wait for completion
+      console.log('Starting image upload...');
+      await uploadPendingImages(product.product_uuid);
+      console.log('Images uploaded successfully');
+
+      // Step 5: Verify the product and its images
+      console.log('Verifying product creation...');
+      const { data: verifyProduct, error: verifyError } = await supabase
+        .from('products')
+        .select('*, product_images(*)')
+        .eq('product_uuid', product.product_uuid)
+        .single();
+
+      if (verifyError) {
+        console.error('Product verification error:', verifyError);
+        throw verifyError;
       }
+
+      console.log('Product verified with images:', verifyProduct);
 
       toast({
         title: "Success",
@@ -146,10 +165,11 @@ export function useCreateProduct() {
         className: "bg-[#F2FCE2] border-green-100 text-green-800",
       });
 
+      // Finally, navigate to the product page
       navigate(`/seller/products/product/${product.product_uuid}`);
       
     } catch (error) {
-      console.error('Error creating product:', error);
+      console.error('Error in handleSave:', error);
       toast({
         title: "Error",
         description: "Failed to create product",
