@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -42,7 +41,7 @@ export default function EditCommunity() {
   const [hasCopied, setHasCopied] = useState(false);
   const [links, setLinks] = useState<Link[]>([{ name: "", url: "" }]);
 
-  // Use the community images hook
+  // Use the community images hook with staleTime and cacheTime
   const { images: communityImages } = useCommunityImages(id);
 
   const { data: community, isLoading } = useQuery({
@@ -69,7 +68,14 @@ export default function EditCommunity() {
 
       return data;
     },
-    enabled: !!id
+    enabled: !!id,
+    // Add staleTime to prevent unnecessary refetches
+    staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
+    // Add cacheTime to keep data in cache
+    gcTime: 1000 * 60 * 10, // Keep in cache for 10 minutes
+    // Disable automatic refetching
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false
   });
 
   const handleSave = async () => {
