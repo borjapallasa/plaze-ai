@@ -1,5 +1,7 @@
 
 import React, { useState, useEffect } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import type { ProductImage } from "@/hooks/use-product-images";
 
 interface ProductGalleryProps {
@@ -32,6 +34,14 @@ export function ProductGallery({ images, className, priority = false }: ProductG
     if (a.is_primary === b.is_primary) return 0;
     return a.is_primary ? -1 : 1;
   });
+
+  const handlePrevious = () => {
+    setCurrentImageIndex((prev) => (prev > 0 ? prev - 1 : sortedImages.length - 1));
+  };
+
+  const handleNext = () => {
+    setCurrentImageIndex((prev) => (prev < sortedImages.length - 1 ? prev + 1 : 0));
+  };
 
   const currentImage = sortedImages[currentImageIndex];
   const imageSizes = currentImage ? getImageSizes(currentImage.url) : null;
@@ -99,7 +109,7 @@ export function ProductGallery({ images, className, priority = false }: ProductG
       </div>
 
       {/* Mobile Layout */}
-      <div className="lg:hidden">
+      <div className="lg:hidden relative">
         <div className="aspect-video bg-card rounded-lg overflow-hidden relative flex items-center justify-center">
           <img 
             src={imageSizes.large}
@@ -121,7 +131,30 @@ export function ProductGallery({ images, className, priority = false }: ProductG
           {isLoading && (
             <div className="absolute inset-0 bg-muted animate-pulse" />
           )}
+
+          {sortedImages.length > 1 && (
+            <>
+              {/* Navigation Arrows */}
+              <Button
+                variant="secondary"
+                size="icon"
+                className="absolute left-2 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur-sm hover:bg-background/90"
+                onClick={handlePrevious}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="secondary"
+                size="icon"
+                className="absolute right-2 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur-sm hover:bg-background/90"
+                onClick={handleNext}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </>
+          )}
         </div>
+        
         {sortedImages.length > 1 && (
           <div className="flex justify-center gap-2 mt-4">
             {sortedImages.map((_, i) => (
