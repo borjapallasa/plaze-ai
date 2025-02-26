@@ -260,7 +260,7 @@ export default function Community() {
                 <div>
                   <h2 className="text-2xl font-bold mb-2">{community?.name}</h2>
                   <p className="text-muted-foreground text-sm mb-4">
-                    {community?.short_description || community?.description?.substring(0, 150)}
+                    {community?.description?.substring(0, 150)}...
                   </p>
                 </div>
 
