@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { MainHeader } from "@/components/MainHeader";
@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { ProductEditor } from "@/components/product/ProductEditor";
-import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
+import { CommunityMediaUpload } from "@/components/community/CommunityMediaUpload";
 import { ArrowLeft, Link as LinkIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
@@ -18,7 +18,6 @@ import { Toaster } from "@/components/ui/toaster";
 export default function EditCommunity() {
   const { id } = useParams();
   const { toast } = useToast();
-  const queryClient = useQueryClient();
   const [isSaving, setIsSaving] = useState(false);
   const [communityName, setCommunityName] = useState("");
   const [communityDescription, setCommunityDescription] = useState("");
@@ -112,64 +111,6 @@ export default function EditCommunity() {
       });
     } finally {
       setIsSaving(false);
-    }
-  };
-
-  const handleImageUpload = async (file: File) => {
-    try {
-      const fileExt = file.name.split('.').pop();
-      const filePath = `${id}/${crypto.randomUUID()}.${fileExt}`;
-
-      // Upload file to storage
-      const { error: uploadError } = await supabase.storage
-        .from('community_images')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('community_images')
-        .getPublicUrl(filePath);
-
-      // Create database record
-      const { error: dbError } = await supabase
-        .from('community_images')
-        .insert({
-          community_uuid: id,
-          storage_path: filePath,
-          file_name: file.name,
-          content_type: file.type,
-          size: file.size,
-          is_primary: communityImages.length === 0 // Make first image primary by default
-        });
-
-      if (dbError) throw dbError;
-
-      // If this is the first image, update community thumbnail
-      if (communityImages.length === 0) {
-        const { error: updateError } = await supabase
-          .from('communities')
-          .update({ thumbnail: publicUrl })
-          .eq('community_uuid', id);
-
-        if (updateError) throw updateError;
-      }
-
-      // Invalidate queries to refresh the data
-      queryClient.invalidateQueries({ queryKey: ['communityImages', id] });
-
-      toast({
-        title: "Success",
-        description: "Image uploaded successfully",
-        className: "bg-green-50 border-green-200",
-      });
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      toast({
-        title: "Error",
-        description: "Failed to upload image",
-        variant: "destructive",
-      });
     }
   };
 
@@ -283,9 +224,8 @@ export default function EditCommunity() {
                     Images
                   </Label>
                   <div className="space-y-4">
-                    <ProductMediaUpload
-                      productUuid={id || ''}
-                      onFileSelect={handleImageUpload}
+                    <CommunityMediaUpload
+                      communityUuid={id || ''}
                       initialImages={communityImages}
                     />
                   </div>
