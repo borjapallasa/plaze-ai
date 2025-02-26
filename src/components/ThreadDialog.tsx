@@ -65,11 +65,11 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl h-[85vh] flex flex-col p-0 gap-0 bg-background/95 backdrop-blur-sm">
+      <DialogContent className="max-w-3xl h-[85vh] flex flex-col p-0 gap-0 bg-background">
         {/* Header Area */}
-        <div className="flex items-start justify-between p-6 border-b">
+        <div className="flex items-start justify-between p-6 border-b bg-background/95">
           <div className="flex items-center gap-4">
-            <Avatar className="h-12 w-12 border-2 border-background">
+            <Avatar className="h-12 w-12 ring-2 ring-background shadow-sm">
               <AvatarImage src={thread.user?.avatar_url || "https://github.com/shadcn.png"} />
               <AvatarFallback>{thread.user_name?.substring(0, 2).toUpperCase()}</AvatarFallback>
             </Avatar>
@@ -81,14 +81,14 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Badge variant="secondary" className="h-6">
+            <Badge variant="outline" className="h-6 bg-background/80">
               <MessageSquare className="mr-1 h-3 w-3" />
               {thread.number_messages || 0}
             </Badge>
             <Button 
               variant="ghost" 
               size="sm" 
-              className="gap-1.5"
+              className="gap-1.5 hover:bg-accent"
               onClick={handleUpvote}
             >
               <ThumbsUp className="h-4 w-4" />
@@ -98,9 +98,21 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
         </div>
 
         {/* Scrollable Content Area */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-accent/10">
           {/* Initial Post */}
-          <div className="rounded-lg bg-muted/30 p-6 border shadow-sm">
+          <div className="rounded-lg bg-card p-6 shadow-sm border">
+            <div className="flex items-center gap-3 mb-3 pb-3 border-b">
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={thread.user?.avatar_url || "https://github.com/shadcn.png"} />
+                <AvatarFallback>{thread.user_name?.substring(0, 2).toUpperCase()}</AvatarFallback>
+              </Avatar>
+              <div className="flex-1 flex justify-between items-center">
+                <p className="text-sm font-medium">{thread.user_name}</p>
+                <time className="text-xs text-muted-foreground">
+                  {new Date(thread.created_at).toLocaleString()}
+                </time>
+              </div>
+            </div>
             <p className="text-sm leading-relaxed text-foreground/90 whitespace-pre-wrap">
               {thread.initial_message}
             </p>
@@ -124,16 +136,16 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
               messages.map((message) => (
                 <Card 
                   key={message.thread_message_uuid} 
-                  className="p-4 transition-colors hover:bg-muted/50"
+                  className="p-4 transition-colors hover:bg-accent/5 border-muted/40"
                 >
                   <div className="flex gap-4">
-                    <Avatar className="h-9 w-9">
+                    <Avatar className="h-8 w-8">
                       <AvatarImage src="https://github.com/shadcn.png" />
                       <AvatarFallback>{message.user_name?.substring(0, 2).toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1 space-y-1.5">
                       <div className="flex items-center justify-between">
-                        <p className="font-medium text-sm">
+                        <p className="text-sm font-medium">
                           {message.user_name}
                         </p>
                         <time className="text-xs text-muted-foreground">
@@ -149,7 +161,7 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
               ))
             ) : (
               <div className="text-center py-8">
-                <MessageSquare className="h-8 w-8 mx-auto mb-3 text-muted-foreground/50" />
+                <MessageSquare className="h-8 w-8 mx-auto mb-3 text-muted-foreground/40" />
                 <p className="text-sm text-muted-foreground">No messages yet</p>
               </div>
             )}
@@ -157,7 +169,7 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
         </div>
 
         {/* Message Input Area */}
-        <div className="border-t p-4 bg-background/95 backdrop-blur-sm">
+        <div className="border-t p-4 bg-background/90">
           <div className="flex items-center gap-3 max-w-3xl mx-auto">
             <Avatar className="h-8 w-8 shrink-0">
               <AvatarImage src="https://github.com/shadcn.png" />
@@ -169,7 +181,7 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Write a comment..."
-                  className="w-full min-h-[40px] max-h-[160px] rounded-full border bg-background/50 backdrop-blur-sm px-4 py-2 text-sm resize-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring placeholder:text-muted-foreground/70"
+                  className="w-full min-h-[40px] max-h-[160px] rounded-full border bg-background px-4 py-2 text-sm resize-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring placeholder:text-muted-foreground/70"
                   rows={1}
                   onInput={handleTextareaInput}
                 />
