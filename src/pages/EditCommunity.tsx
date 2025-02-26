@@ -10,7 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { ProductEditor } from "@/components/product/ProductEditor";
-import { ArrowLeft } from "lucide-react";
+import { ImageUploadArea } from "@/components/product/ImageUploadArea";
+import { ArrowLeft, Link as LinkIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 
@@ -22,6 +23,9 @@ export default function EditCommunity() {
   const [communityDescription, setCommunityDescription] = useState("");
   const [communityIntro, setCommunityIntro] = useState("");
   const [price, setPrice] = useState("");
+  const [paymentLink, setPaymentLink] = useState("");
+  const [webhook, setWebhook] = useState("");
+  const [thumbnail, setThumbnail] = useState("");
 
   const { data: community, isLoading } = useQuery({
     queryKey: ['community', id],
@@ -39,6 +43,9 @@ export default function EditCommunity() {
         setCommunityDescription(data.description || "");
         setCommunityIntro(data.intro || "");
         setPrice(data.price?.toString() || "");
+        setPaymentLink(data.payment_link || "");
+        setWebhook(data.webhook || "");
+        setThumbnail(data.thumbnail || "");
       }
 
       return data;
@@ -57,6 +64,8 @@ export default function EditCommunity() {
           description: communityDescription,
           intro: communityIntro,
           price: parseFloat(price) || 0,
+          webhook: webhook,
+          thumbnail: thumbnail
         })
         .eq('community_uuid', id);
 
@@ -76,6 +85,33 @@ export default function EditCommunity() {
       });
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleThumbnailUpload = async (file: File) => {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${id}/${crypto.randomUUID()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('community_thumbnails')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('community_thumbnails')
+        .getPublicUrl(filePath);
+
+      setThumbnail(publicUrl);
+
+    } catch (error) {
+      console.error('Error uploading thumbnail:', error);
+      toast({
+        title: "Error",
+        description: "Failed to upload thumbnail",
+        variant: "destructive",
+      });
     }
   };
 
@@ -122,12 +158,15 @@ export default function EditCommunity() {
                 </div>
                 
                 <div>
-                  <Label htmlFor="intro" className="text-base font-medium mb-2 block">
-                    Introduction
+                  <Label htmlFor="intro" className="text-base font-medium mb-2 flex items-center gap-2">
+                    Introduction Link <LinkIcon className="h-4 w-4 text-muted-foreground" />
                   </Label>
-                  <ProductEditor 
+                  <Input
+                    id="intro"
+                    placeholder="Enter introduction link"
                     value={communityIntro}
-                    onChange={setCommunityIntro}
+                    onChange={(e) => setCommunityIntro(e.target.value)}
+                    className="h-11"
                   />
                 </div>
 
@@ -152,6 +191,43 @@ export default function EditCommunity() {
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
                     className="h-11 w-full max-w-[200px]"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="webhook" className="text-base font-medium mb-2 block">
+                    Webhook URL
+                  </Label>
+                  <Input
+                    id="webhook"
+                    placeholder="Enter webhook URL"
+                    value={webhook}
+                    onChange={(e) => setWebhook(e.target.value)}
+                    className="h-11"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="payment-link" className="text-base font-medium mb-2 block">
+                    Payment Link
+                  </Label>
+                  <Input
+                    id="payment-link"
+                    value={paymentLink}
+                    readOnly
+                    disabled
+                    className="h-11 bg-muted"
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-base font-medium mb-2 block">
+                    Thumbnail
+                  </Label>
+                  <ImageUploadArea
+                    onImageSelected={handleThumbnailUpload}
+                    imageUrl={thumbnail}
+                    className="w-full aspect-video"
                   />
                 </div>
               </div>
