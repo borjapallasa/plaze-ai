@@ -24,7 +24,8 @@ export function useExpertCommunities(expert_uuid: string | undefined) {
           created_at,
           product_count,
           classroom_count,
-          post_count
+          post_count,
+          last_activity
         `)
         .eq('expert_uuid', expert_uuid);
 

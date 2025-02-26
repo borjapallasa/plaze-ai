@@ -265,6 +265,7 @@ export type Database = {
           expert_uuid: string | null
           id: number
           intro: string | null
+          last_activity: string | null
           member_count: number | null
           monthly_recurring_revenue: number | null
           name: string | null
@@ -291,6 +292,7 @@ export type Database = {
           expert_uuid?: string | null
           id?: number
           intro?: string | null
+          last_activity?: string | null
           member_count?: number | null
           monthly_recurring_revenue?: number | null
           name?: string | null
@@ -317,6 +319,7 @@ export type Database = {
           expert_uuid?: string | null
           id?: number
           intro?: string | null
+          last_activity?: string | null
           member_count?: number | null
           monthly_recurring_revenue?: number | null
           name?: string | null

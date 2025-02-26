@@ -538,31 +538,28 @@ export default function SellerPage() {
                   <div className="grid lg:grid-cols-[2fr,1fr,1fr] divide-y lg:divide-y-0 lg:divide-x divide-border">
                     <div className="p-6 space-y-4">
                       <div className="space-y-3">
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="space-y-1">
-                            <h3 className="text-2xl font-semibold tracking-tight text-foreground">
-                              {community.name}
-                            </h3>
-                            <div className="flex items-center gap-2">
+                        <div className="flex items-start gap-4">
+                          <Avatar className="h-12 w-12 rounded-full shrink-0">
+                            <AvatarImage 
+                              src={community.thumbnail} 
+                              alt={community.name}
+                              className="object-cover"
+                            />
+                            <AvatarFallback>{community.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between gap-2">
+                              <h3 className="text-2xl font-semibold tracking-tight text-foreground truncate">
+                                {community.name}
+                              </h3>
                               <UIBadge 
                                 variant={community.price > 0 ? "default" : "secondary"}
-                                className="capitalize whitespace-nowrap"
+                                className="capitalize whitespace-nowrap shrink-0"
                               >
-                                {community.price > 0 ? 'Paid' : 'Free'}
+                                {community.price > 0 ? `$${community.price}/mo` : 'Free'}
                               </UIBadge>
-                              {community.price > 0 && (
-                                <span className="text-sm font-medium text-muted-foreground">
-                                  ${community.price}/mo
-                                </span>
-                              )}
                             </div>
                           </div>
-                          <UIBadge 
-                            variant="outline"
-                            className="capitalize whitespace-nowrap"
-                          >
-                            {community.type}
-                          </UIBadge>
                         </div>
                         <p className="text-sm text-muted-foreground leading-relaxed">
                           {community.description || community.intro}
@@ -621,19 +618,21 @@ export default function SellerPage() {
                               ${community.monthly_recurring_revenue?.toLocaleString() || '0'}
                             </div>
                           </div>
-                          <div className="pt-2 space-y-2">
+                          <div className="space-y-2">
                             <div className="text-xs font-medium text-muted-foreground flex items-center gap-1">
                               <CalendarDays className="w-3 h-3" />
-                              Created
+                              Last Activity
                             </div>
                             <div className="font-medium">
-                              {format(new Date(community.created_at), 'MMM d, yyyy')}
+                              {community.last_activity 
+                                ? format(new Date(community.last_activity), 'MMM d, yyyy')
+                                : 'No activity yet'}
                             </div>
                           </div>
                         </div>
                         
                         <div className="mt-6 flex flex-col gap-2">
-                          <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                          <Button className="w-full bg-black hover:bg-black/90 text-white">
                             <MessageCircle className="h-4 w-4 mr-2" />
                             View Discussion
                           </Button>
