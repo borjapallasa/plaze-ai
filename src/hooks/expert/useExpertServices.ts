@@ -7,7 +7,7 @@ export function useExpertServices(expert_uuid: string | undefined) {
   return useQuery({
     queryKey: ['expert-services', expert_uuid],
     queryFn: async () => {
-      if (!expert_uuid) return [];
+      if (!expert_uuid || expert_uuid === ':id') return [];
 
       const { data, error } = await supabase
         .from('services')
@@ -37,6 +37,6 @@ export function useExpertServices(expert_uuid: string | undefined) {
           : []
       })) as Service[];
     },
-    enabled: !!expert_uuid
+    enabled: !!expert_uuid && expert_uuid !== ':id'
   });
 }

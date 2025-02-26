@@ -96,7 +96,7 @@ const ServiceCard = ({
             <div>
               <div className="flex items-center justify-between gap-4">
                 <h3 className="text-xl font-semibold">{name}</h3>
-                <Badge variant="secondary" className="capitalize">
+                <Badge variant="secondary" className="capitalize whitespace-nowrap">
                   {type}
                 </Badge>
               </div>
