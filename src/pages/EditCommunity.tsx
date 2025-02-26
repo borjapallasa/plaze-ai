@@ -16,6 +16,18 @@ interface Link {
   url: string;
 }
 
+function isValidLink(link: unknown): link is Link {
+  if (typeof link !== 'object' || link === null) return false;
+  const l = link as any;
+  return typeof l.name === 'string' && typeof l.url === 'string';
+}
+
+function parseLinks(data: unknown): Link[] {
+  if (!Array.isArray(data)) return [{ name: "", url: "" }];
+  const validLinks = data.filter(isValidLink);
+  return validLinks.length > 0 ? validLinks : [{ name: "", url: "" }];
+}
+
 export default function EditCommunity() {
   const { id } = useParams();
   const { toast } = useToast();
@@ -52,9 +64,7 @@ export default function EditCommunity() {
         setPricePeriod(data.price_period || "monthly");
         setPaymentLink(data.payment_link || "");
         setWebhook(data.webhook || "");
-        // Safely cast the links data
-        const fetchedLinks = data.links as Link[] || [{ name: "", url: "" }];
-        setLinks(Array.isArray(fetchedLinks) ? fetchedLinks : [{ name: "", url: "" }]);
+        setLinks(parseLinks(data.links));
       }
 
       return data;
