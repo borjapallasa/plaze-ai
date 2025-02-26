@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -39,7 +38,6 @@ export default function Community() {
     enabled: !!id
   });
 
-  // Get the embed URL for the video
   const videoEmbedUrl = getVideoEmbedUrl(community?.intro);
 
   if (isLoading) {
@@ -210,8 +208,8 @@ export default function Community() {
                     <AvatarFallback>CM</AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="text-sm text-muted-foreground">This community is hosted by</p>
-                    <p className="font-semibold">{community.name}</p>
+                    <p className="text-sm text-muted-foreground">Hosted by</p>
+                    <p className="font-semibold">{community.expert_name}</p>
                   </div>
                 </div>
                 

@@ -262,6 +262,7 @@ export type Database = {
           community_uuid: string
           created_at: string
           description: string | null
+          expert_name: string | null
           expert_thumbnail: string | null
           expert_uuid: string | null
           id: number
@@ -294,6 +295,7 @@ export type Database = {
           community_uuid?: string
           created_at?: string
           description?: string | null
+          expert_name?: string | null
           expert_thumbnail?: string | null
           expert_uuid?: string | null
           id?: number
@@ -326,6 +328,7 @@ export type Database = {
           community_uuid?: string
           created_at?: string
           description?: string | null
+          expert_name?: string | null
           expert_thumbnail?: string | null
           expert_uuid?: string | null
           id?: number
