@@ -226,7 +226,7 @@ export default function Community() {
             <Card className="overflow-hidden">
               <div className="p-6 space-y-6">
                 <div className="flex items-center gap-4">
-                  <Avatar className="h-16 w-16 ring-2 ring-primary/10">
+                  <Avatar className="h-16 w-16 ring-1 ring-primary/10">
                     <AvatarImage 
                       src={community?.expert_thumbnail || "https://github.com/shadcn.png"} 
                       alt={community?.expert_name}
@@ -243,20 +243,20 @@ export default function Community() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   {stats.map((stat, index) => {
                     const Icon = stat.icon;
                     return (
                       <div 
                         key={index}
-                        className="p-4 rounded-xl border bg-card/50 hover:bg-accent/50 transition-colors"
+                        className="p-3 rounded-xl border bg-card/50 hover:bg-accent/50 transition-colors"
                       >
-                        <div className="flex items-center gap-2 text-muted-foreground mb-2">
+                        <div className="flex items-center gap-2 text-muted-foreground mb-1.5">
                           <Icon className="w-4 h-4" />
                           <span className="text-sm">{stat.label}</span>
                         </div>
-                        <p className="text-2xl font-semibold">
-                          {stat.value.toString()}
+                        <p className="text-xl font-semibold">
+                          {stat.value}
                         </p>
                       </div>
                     );
@@ -272,12 +272,12 @@ export default function Community() {
                 {links.length > 0 && (
                   <>
                     <Separator className="my-4" />
-                    <div className="space-y-3">
+                    <div className="space-y-2">
                       <h3 className="font-semibold flex items-center gap-2">
                         <LinkIcon className="w-4 h-4" />
                         Quick Links
                       </h3>
-                      <nav className="space-y-2">
+                      <nav className="space-y-1.5">
                         {links.map((link, index) => (
                           <a 
                             key={index}
@@ -285,7 +285,7 @@ export default function Community() {
                             target="_blank"
                             rel="noopener noreferrer"
                             className={cn(
-                              "flex items-center gap-2 p-3 rounded-lg",
+                              "flex items-center gap-2 p-2.5 rounded-lg",
                               "text-muted-foreground hover:text-foreground",
                               "hover:bg-accent/50 transition-colors",
                               "border border-transparent hover:border-border"
