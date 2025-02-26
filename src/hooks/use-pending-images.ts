@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/components/ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 
 interface PendingImage {
   file: File;
@@ -17,6 +17,11 @@ export function usePendingImages() {
   };
 
   const uploadPendingImages = async (productUuid: string) => {
+    if (!productUuid) {
+      console.error('No product UUID provided for image upload');
+      return;
+    }
+
     if (pendingImages.length === 0) return;
 
     try {

@@ -79,7 +79,7 @@ export function useCreateProduct() {
     try {
       setIsSaving(true);
 
-      // Create the product
+      // Step 1: Create the product first and wait for the response
       const { data: product, error: productError } = await supabase
         .from('products')
         .insert({
@@ -103,10 +103,12 @@ export function useCreateProduct() {
 
       if (productError) throw productError;
 
-      // Upload images immediately after product creation
-      await uploadPendingImages(product.product_uuid);
+      // Step 2: Double-check that we have a valid product UUID
+      if (!product?.product_uuid) {
+        throw new Error('Product created but no UUID was returned');
+      }
 
-      // Create variants after images are uploaded
+      // Step 3: Create variants if any
       if (productData.variants.length > 0) {
         const variantsToInsert = productData.variants.map(variant => ({
           name: variant.name,
@@ -124,6 +126,18 @@ export function useCreateProduct() {
           .insert(variantsToInsert);
 
         if (variantsError) throw variantsError;
+      }
+
+      // Step 4: Upload images after we're sure we have a product UUID
+      try {
+        await uploadPendingImages(product.product_uuid);
+      } catch (imageError) {
+        console.error('Error uploading images:', imageError);
+        toast({
+          title: "Warning",
+          description: "Product created but some images failed to upload",
+          variant: "destructive",
+        });
       }
 
       toast({
