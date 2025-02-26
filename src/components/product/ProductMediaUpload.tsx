@@ -58,8 +58,10 @@ export function ProductMediaUpload({ productUuid, onFileSelect }: ProductMediaUp
         throw dbError;
       }
 
-      // Invalidate product images query
-      queryClient.invalidateQueries(['productImages', productUuid]);
+      // Invalidate product images query using the correct object syntax
+      queryClient.invalidateQueries({
+        queryKey: ['productImages', productUuid]
+      });
 
       toast({
         title: "Success",
