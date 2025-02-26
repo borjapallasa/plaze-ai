@@ -401,54 +401,65 @@ export default function SellerPage() {
                   key={service.service_uuid} 
                   className="overflow-hidden border bg-card shadow-sm transition-all hover:shadow-md"
                 >
-                  <div className="flex flex-col sm:flex-row">
+                  <div className="grid sm:grid-cols-[2.5fr,1fr,1fr]">
                     <div className="flex-1 p-6">
                       <div className="space-y-4">
-                        <div className="flex items-start justify-between gap-4">
-                          <div>
-                            <h3 className="text-xl font-semibold tracking-tight text-foreground">
-                              {service.name}
-                            </h3>
-                            <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                              {service.description}
-                            </p>
+                        <div className="space-y-3">
+                          <div className="flex items-start justify-between gap-4">
+                            <div>
+                              <h3 className="text-xl font-semibold tracking-tight text-foreground">
+                                {service.name}
+                              </h3>
+                              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                                {service.description}
+                              </p>
+                            </div>
+                            <UIBadge 
+                              variant={service.status === 'active' ? 'default' : 'secondary'}
+                              className="capitalize whitespace-nowrap shrink-0"
+                            >
+                              {service.status || 'draft'}
+                            </UIBadge>
                           </div>
-                          <UIBadge variant="secondary" className="capitalize font-medium">
-                            {service.type}
-                          </UIBadge>
-                        </div>
 
-                        {service.features && service.features.length > 0 && (
-                          <div className="space-y-3">
-                            <h4 className="text-sm font-medium flex items-center gap-1.5 text-foreground">
-                              <Sparkles className="h-4 w-4 text-blue-500" />
-                              Features
-                            </h4>
-                            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                              {service.features.map((feature, index) => (
-                                <li 
-                                  key={index} 
-                                  className="text-sm text-muted-foreground flex items-center gap-2"
-                                >
-                                  <ArrowRight className="h-3 w-3 text-blue-500" />
-                                  {feature}
-                                </li>
-                              ))}
-                            </ul>
+                          <div className="flex items-center gap-2">
+                            <div className="text-sm font-medium text-muted-foreground">Starting at</div>
+                            <div className="text-2xl font-bold text-foreground flex items-center gap-1">
+                              ${service.price?.toLocaleString() || '0.00'}
+                            </div>
+                            <span className="text-sm text-muted-foreground">•</span>
+                            <span className="text-sm text-muted-foreground capitalize">
+                              {service.type}
+                            </span>
                           </div>
-                        )}
+                        </div>
                       </div>
                     </div>
 
                     <div className="border-t sm:border-t-0 sm:border-l border-border/50 bg-muted/20">
                       <div className="p-6 space-y-6">
-                        <div className="text-center sm:text-left">
-                          <div className="text-sm font-medium text-muted-foreground">Starting at</div>
-                          <div className="text-2xl font-bold text-foreground">
-                            ${service.price?.toLocaleString() || '0.00'}
-                          </div>
+                        <div>
+                          <h4 className="text-sm font-medium flex items-center gap-1.5 text-foreground">
+                            <Sparkles className="h-4 w-4 text-blue-500" />
+                            Features
+                          </h4>
+                          <ul className="mt-3 space-y-2">
+                            {service.features?.map((feature, index) => (
+                              <li 
+                                key={index} 
+                                className="text-sm text-muted-foreground flex items-center gap-2"
+                              >
+                                <ArrowRight className="h-3 w-3 text-blue-500" />
+                                {feature}
+                              </li>
+                            ))}
+                          </ul>
                         </div>
+                      </div>
+                    </div>
 
+                    <div className="border-t sm:border-t-0 sm:border-l border-border/50 bg-muted/20">
+                      <div className="p-6 space-y-6">
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-1">
                             <div className="text-xs font-medium text-muted-foreground flex items-center gap-1">
