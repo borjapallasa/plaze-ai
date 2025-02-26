@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Card } from "@/components/ui/card";
@@ -10,6 +9,7 @@ import { ProductHeader } from "@/components/product/ProductHeader";
 import { Variant } from "@/components/product/types/variants";
 import { useCreateProduct, ProductStatus } from "@/hooks/use-create-product";
 import { usePendingImages } from "@/hooks/use-pending-images";
+import { ProductCreateHeader } from "@/components/product/ProductCreateHeader";
 
 export default function NewProduct() {
   const [productName, setProductName] = useState("");
@@ -103,7 +103,7 @@ export default function NewProduct() {
       <MainHeader />
       <div className="mt-16">
         <div className="w-full max-w-[1400px] mx-auto px-2 xs:px-3 sm:px-6 lg:px-8 py-3 sm:py-6">
-          <ProductHeader 
+          <ProductCreateHeader 
             productStatus={productStatus}
             onStatusChange={handleStatusChange}
             onSave={handleCreateProduct}

@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { ProductStatus } from "@/hooks/use-create-product";
 
-interface ProductHeaderProps {
+interface ProductCreateHeaderProps {
   productStatus: ProductStatus;
   onStatusChange: (value: ProductStatus) => void;
   onSave: () => void;
@@ -20,13 +20,13 @@ interface ProductHeaderProps {
   isValid: boolean;
 }
 
-export function ProductHeader({ 
+export function ProductCreateHeader({ 
   productStatus, 
   onStatusChange, 
   onSave, 
   isSaving,
   isValid 
-}: ProductHeaderProps) {
+}: ProductCreateHeaderProps) {
   return (
     <div className="mb-6">
       <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
