@@ -44,6 +44,16 @@ export default function SellerPage() {
   const [sortField, setSortField] = useState<SortField>('created_at');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
+  const [activeTab, setActiveTab] = useState(() => {
+    const hash = window.location.hash.replace('#', '');
+    return ['products', 'services', 'communities', 'applications'].includes(hash) ? hash : 'products';
+  });
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    window.location.hash = value;
+  };
+
   const { data: seller } = useQuery({
     queryKey: ['seller', id],
     queryFn: async () => {
@@ -229,7 +239,12 @@ export default function SellerPage() {
           </div>
         </div>
 
-        <Tabs defaultValue="products" className="animate-fade-in">
+        <Tabs 
+          defaultValue={activeTab} 
+          value={activeTab}
+          onValueChange={handleTabChange}
+          className="animate-fade-in"
+        >
           <TabsList className="grid grid-cols-4 h-12 items-center bg-muted/50">
             <TabsTrigger value="products" className="data-[state=active]:bg-background">
               <ShoppingBag className="h-4 w-4 mr-2" />
