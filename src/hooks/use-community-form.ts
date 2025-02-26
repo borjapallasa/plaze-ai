@@ -63,11 +63,10 @@ export function useCommunityForm(id: string | undefined) {
         setCommunityDescription(data.description || "");
         setCommunityIntro(data.intro || "");
         setPrice(data.price?.toString() || "");
-        setPricePeriod(data.price_period || "monthly");
+        setPricePeriod(data.billing_period || "monthly"); // Changed from price_period to billing_period
         setPaymentLink(data.payment_link || "");
         setWebhook(data.webhook || "");
         
-        // Parse and set the links from the database
         const parsedLinks = parseLinks(data.links);
         setLinks(parsedLinks);
       }
@@ -92,7 +91,7 @@ export function useCommunityForm(id: string | undefined) {
           description: communityDescription,
           intro: communityIntro,
           price: parseFloat(price) || 0,
-          price_period: pricePeriod,
+          billing_period: pricePeriod, // Changed from price_period to billing_period
           webhook: webhook,
           links: JSON.stringify(links.filter(link => link.name && link.url))
         })
