@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -6,7 +7,6 @@ import { MainHeader } from "@/components/MainHeader";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
 import { 
   Star, 
@@ -44,6 +44,7 @@ export default function SellerPage() {
   const { data: products = [] } = useQuery({
     queryKey: ['sellerProducts', id],
     queryFn: async () => {
+      console.log('Fetching products for seller:', id);
       const { data, error } = await supabase
         .from('products')
         .select(`
@@ -57,7 +58,12 @@ export default function SellerPage() {
         `)
         .eq('expert_uuid', id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching seller products:', error);
+        throw error;
+      }
+
+      console.log('Fetched products:', data);
       return data || [];
     },
     enabled: !!id
@@ -65,7 +71,7 @@ export default function SellerPage() {
 
   const stats = [
     { icon: Star, label: "Rating", value: "4.9", color: "text-yellow-500" },
-    { icon: ShoppingBag, label: "Products", value: "12", color: "text-blue-500" },
+    { icon: ShoppingBag, label: "Products", value: products.length.toString(), color: "text-blue-500" },
     { icon: Users, label: "Clients", value: "250+", color: "text-green-500" },
     { icon: Badge, label: "Member Since", value: "2022", color: "text-purple-500" },
   ];
