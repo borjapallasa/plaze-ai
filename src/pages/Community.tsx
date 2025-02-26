@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -140,22 +139,22 @@ export default function Community() {
   const stats = [
     {
       label: "Products",
-      value: community?.product_count || 0,
+      value: String(community?.product_count || 0),
       icon: BookOpen,
     },
     {
       label: "Classrooms",
-      value: community?.classroom_count || 0,
+      value: String(community?.classroom_count || 0),
       icon: Users,
     },
     {
       label: "Posts",
-      value: community?.post_count || 0,
+      value: String(community?.post_count || 0),
       icon: MessageSquare,
     },
     {
       label: "Members",
-      value: community?.member_count || 0,
+      value: String(community?.member_count || 0),
       icon: Users,
     },
   ];
@@ -428,7 +427,7 @@ export default function Community() {
                   selected={date}
                   onSelect={setDate}
                   modifiers={{
-                    event: events.map(event => event.date)
+                    event: events
                   }}
                   modifiersClassNames={{
                     event: "text-primary font-bold underline"
