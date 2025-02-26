@@ -1,8 +1,6 @@
 
 import React, { useState, useEffect } from "react";
 import type { ProductImage } from "@/hooks/use-product-images";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import useEmblaCarousel from "embla-carousel-react";
 
 interface ProductGalleryProps {
   images: ProductImage[];
@@ -23,24 +21,14 @@ export function ProductGallery({ images, className, priority = false }: ProductG
     };
   };
 
-  const [emblaRef, emblaApi] = useEmblaCarousel({ align: "center" });
-
-  useEffect(() => {
-    if (emblaApi) {
-      emblaApi.on('select', () => {
-        setCurrentImageIndex(emblaApi.selectedScrollSnap());
-      });
-    }
-  }, [emblaApi]);
-
-  const currentImage = images[currentImageIndex];
-  const imageSizes = currentImage ? getImageSizes(currentImage.url) : null;
-
   useEffect(() => {
     if (images.length && currentImageIndex >= images.length) {
       setCurrentImageIndex(0);
     }
   }, [images, currentImageIndex]);
+
+  const currentImage = images[currentImageIndex];
+  const imageSizes = currentImage ? getImageSizes(currentImage.url) : null;
 
   if (!images.length || !imageSizes) {
     return null;
@@ -48,51 +36,6 @@ export function ProductGallery({ images, className, priority = false }: ProductG
 
   return (
     <div className={className}>
-      {/* Mobile Layout */}
-      <div className="lg:hidden">
-        <Carousel>
-          <div className="relative" ref={emblaRef}>
-            <CarouselContent>
-              {images.map((image, index) => {
-                const sizes = getImageSizes(image.url);
-                return (
-                  <CarouselItem key={index}>
-                    <div className="bg-card rounded-lg overflow-hidden aspect-square flex items-center justify-center">
-                      <img 
-                        src={sizes.medium}
-                        alt={image.alt_text || image.file_name}
-                        className={`max-w-full max-h-full object-contain transition-opacity duration-300 ${
-                          isLoading ? 'opacity-0' : 'opacity-100'
-                        }`}
-                        onLoad={() => setIsLoading(false)}
-                        loading={priority ? "eager" : "lazy"}
-                        fetchPriority={priority ? "high" : "auto"}
-                        decoding="async"
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                        srcSet={`
-                          ${sizes.small} 400w,
-                          ${sizes.medium} 800w,
-                          ${sizes.large} 1200w
-                        `}
-                      />
-                      {isLoading && (
-                        <div className="absolute inset-0 bg-muted animate-pulse" />
-                      )}
-                    </div>
-                  </CarouselItem>
-                );
-              })}
-            </CarouselContent>
-            {images.length > 1 && (
-              <>
-                <CarouselPrevious className="left-2" />
-                <CarouselNext className="right-2" />
-              </>
-            )}
-          </div>
-        </Carousel>
-      </div>
-
       {/* Desktop Layout */}
       <div className="hidden lg:flex gap-4">
         {/* Thumbnails on the left */}
@@ -143,6 +86,43 @@ export function ProductGallery({ images, className, priority = false }: ProductG
             <div className="absolute inset-0 bg-muted animate-pulse" />
           )}
         </div>
+      </div>
+
+      {/* Mobile Layout */}
+      <div className="lg:hidden bg-card rounded-lg overflow-hidden relative flex items-center justify-center aspect-square">
+        <img 
+          src={imageSizes.large}
+          alt={currentImage.alt_text || currentImage.file_name}
+          className={`max-w-full max-h-full object-contain transition-opacity duration-300 ${
+            isLoading ? 'opacity-0' : 'opacity-100'
+          }`}
+          onLoad={() => setIsLoading(false)}
+          loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority ? "high" : "auto"}
+          decoding="async"
+          sizes="(max-width: 768px) 100vw, 50vw"
+          srcSet={`
+            ${imageSizes.small} 400w,
+            ${imageSizes.medium} 800w,
+            ${imageSizes.large} 1200w
+          `}
+        />
+        {isLoading && (
+          <div className="absolute inset-0 bg-muted animate-pulse" />
+        )}
+        {images.length > 1 && (
+          <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
+            {images.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentImageIndex(i)}
+                className={`w-2 h-2 rounded-full transition-colors ${
+                  i === currentImageIndex ? 'bg-primary' : 'bg-primary/50'
+                }`}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

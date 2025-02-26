@@ -237,7 +237,7 @@ export default function Community() {
                   <img 
                     src={community?.thumbnail || "/lovable-uploads/890bbce9-6ca6-4a0e-958a-d7ba6f61bf73.png"}
                     alt="Community thumbnail"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                   />
                 </div>
               )}
