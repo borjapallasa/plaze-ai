@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -311,12 +310,6 @@ export default function Community() {
                     <span className="font-medium">{community?.expert_name}</span>
                   </div>
                 </div>
-
-                {!isOwner && (
-                  <Button className="w-full bg-primary hover:bg-primary/90 text-white">
-                    Join Community
-                  </Button>
-                )}
               </div>
             </Card>
           </div>
