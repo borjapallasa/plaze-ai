@@ -37,35 +37,9 @@ export function ProductGallery({ images, className, priority = false }: ProductG
   return (
     <div className={className}>
       {/* Desktop Layout */}
-      <div className="hidden lg:flex gap-4">
-        {/* Thumbnails on the left */}
-        {images.length > 1 && (
-          <div className="flex flex-col gap-4 w-24">
-            {images.map((img, i) => {
-              const thumbSizes = getImageSizes(img.url);
-              return (
-                <div 
-                  key={i}
-                  className={`w-24 h-24 rounded-lg flex-shrink-0 cursor-pointer overflow-hidden bg-card flex items-center justify-center ${
-                    i === currentImageIndex ? 'ring-2 ring-primary' : 'hover:opacity-80'
-                  }`}
-                  onClick={() => setCurrentImageIndex(i)}
-                >
-                  <img 
-                    src={thumbSizes.thumbnail}
-                    alt={img.alt_text || img.file_name}
-                    className="max-w-full max-h-full object-contain"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-              );
-            })}
-          </div>
-        )}
-
+      <div className="hidden lg:flex flex-col gap-4">
         {/* Main image */}
-        <div className="flex-1 bg-card rounded-lg overflow-hidden aspect-square relative flex items-center justify-center">
+        <div className="w-full aspect-video bg-card rounded-lg overflow-hidden relative flex items-center justify-center">
           <img 
             src={imageSizes.large}
             alt={currentImage.alt_text || currentImage.file_name}
@@ -86,32 +60,62 @@ export function ProductGallery({ images, className, priority = false }: ProductG
             <div className="absolute inset-0 bg-muted animate-pulse" />
           )}
         </div>
+
+        {/* Thumbnails below */}
+        {images.length > 1 && (
+          <div className="flex gap-4 overflow-x-auto pb-2">
+            {images.map((img, i) => {
+              const thumbSizes = getImageSizes(img.url);
+              return (
+                <button 
+                  key={i}
+                  className={`flex-shrink-0 cursor-pointer overflow-hidden rounded-lg transition-all ${
+                    i === currentImageIndex ? 'ring-2 ring-primary' : 'hover:opacity-80'
+                  }`}
+                  onClick={() => setCurrentImageIndex(i)}
+                >
+                  <div className="aspect-video w-24 relative">
+                    <img 
+                      src={thumbSizes.thumbnail}
+                      alt={img.alt_text || img.file_name}
+                      className="absolute inset-0 w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Mobile Layout */}
-      <div className="lg:hidden bg-card rounded-lg overflow-hidden relative flex items-center justify-center aspect-square">
-        <img 
-          src={imageSizes.large}
-          alt={currentImage.alt_text || currentImage.file_name}
-          className={`max-w-full max-h-full object-contain transition-opacity duration-300 ${
-            isLoading ? 'opacity-0' : 'opacity-100'
-          }`}
-          onLoad={() => setIsLoading(false)}
-          loading={priority ? "eager" : "lazy"}
-          fetchPriority={priority ? "high" : "auto"}
-          decoding="async"
-          sizes="(max-width: 768px) 100vw, 50vw"
-          srcSet={`
-            ${imageSizes.small} 400w,
-            ${imageSizes.medium} 800w,
-            ${imageSizes.large} 1200w
-          `}
-        />
-        {isLoading && (
-          <div className="absolute inset-0 bg-muted animate-pulse" />
-        )}
+      <div className="lg:hidden">
+        <div className="aspect-video bg-card rounded-lg overflow-hidden relative flex items-center justify-center">
+          <img 
+            src={imageSizes.large}
+            alt={currentImage.alt_text || currentImage.file_name}
+            className={`max-w-full max-h-full object-contain transition-opacity duration-300 ${
+              isLoading ? 'opacity-0' : 'opacity-100'
+            }`}
+            onLoad={() => setIsLoading(false)}
+            loading={priority ? "eager" : "lazy"}
+            fetchPriority={priority ? "high" : "auto"}
+            decoding="async"
+            sizes="(max-width: 768px) 100vw, 50vw"
+            srcSet={`
+              ${imageSizes.small} 400w,
+              ${imageSizes.medium} 800w,
+              ${imageSizes.large} 1200w
+            `}
+          />
+          {isLoading && (
+            <div className="absolute inset-0 bg-muted animate-pulse" />
+          )}
+        </div>
         {images.length > 1 && (
-          <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
+          <div className="flex justify-center gap-2 mt-4">
             {images.map((_, i) => (
               <button
                 key={i}
