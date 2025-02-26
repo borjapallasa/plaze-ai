@@ -1,46 +1,63 @@
 
-import { Star } from "lucide-react";
 import React from "react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ProductStatus } from "@/hooks/use-create-product";
 
 interface ProductHeaderProps {
-  title: string;
-  seller: string;
-  rating: number;
-  className?: string;
+  productStatus: ProductStatus;
+  onStatusChange: (value: ProductStatus) => void;
+  onSave: () => void;
+  isSaving: boolean;
+  isValid: boolean;
 }
 
-export function ProductHeader({ title, seller, rating, className }: ProductHeaderProps) {
-  // Convert rating to number of full and half stars
-  const fullStars = Math.floor(rating);
-  const hasHalfStar = rating % 1 >= 0.5;
-  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-
+export function ProductHeader({ 
+  productStatus, 
+  onStatusChange, 
+  onSave, 
+  isSaving,
+  isValid 
+}: ProductHeaderProps) {
   return (
-    <div className={className}>
-      <h1 className="text-2xl font-semibold mb-2">{title}</h1>
-      <div className="flex items-center gap-2">
-        <div className="w-6 h-6 rounded-full bg-accent overflow-hidden flex-shrink-0">
-          <img src="/placeholder.svg" alt={seller} className="w-full h-full object-cover" />
-        </div>
-        <h3 className="text-base font-medium">{seller}</h3>
-        <div className="flex items-center gap-0.5 ml-2">
-          {/* Full stars */}
-          {[...Array(fullStars)].map((_, i) => (
-            <Star key={`full-${i}`} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-          ))}
-          
-          {/* Half star */}
-          {hasHalfStar && (
-            <span className="relative">
-              <Star className="w-4 h-4 text-gray-200" />
-              <Star className="absolute top-0 left-0 w-4 h-4 fill-yellow-400 text-yellow-400 [clip-path:inset(0_50%_0_0)]" />
-            </span>
-          )}
-          
-          {/* Empty stars */}
-          {[...Array(emptyStars)].map((_, i) => (
-            <Star key={`empty-${i}`} className="w-4 h-4 text-gray-200" />
-          ))}
+    <div className="mb-6">
+      <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
+        <Link to="/seller/products">
+          <Button variant="ghost" size="icon" className="rounded-full flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 mt-1">
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+        </Link>
+        <div className="w-full">
+          <h1 className="text-lg sm:text-xl md:text-2xl font-semibold break-words pr-2">Create New Product</h1>
+          <div className="flex items-center justify-between mt-2">
+            <p className="text-sm text-muted-foreground">Enter the details for your new product</p>
+            <div className="flex items-center gap-4">
+              <Select value={productStatus} onValueChange={onStatusChange}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="draft">Draft</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button 
+                onClick={onSave}
+                disabled={isSaving || !isValid}
+              >
+                {isSaving ? "Creating..." : "Create product"}
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
