@@ -1,3 +1,4 @@
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,10 +11,11 @@ import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { useState } from "react";
 import { ThreadDialog } from "@/components/ThreadDialog";
 import { MainHeader } from "@/components/MainHeader";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
+import { useAuth } from "@/lib/auth";
 
 interface Link {
   name: string;
@@ -29,7 +31,6 @@ function isValidLink(link: unknown): link is Link {
 function parseLinks(data: unknown): Link[] {
   console.log('Raw links data:', data);
   
-  // If it's a string, try to parse it
   if (typeof data === 'string') {
     try {
       data = JSON.parse(data);
@@ -39,7 +40,6 @@ function parseLinks(data: unknown): Link[] {
     }
   }
   
-  // Now check if it's an array
   if (!Array.isArray(data)) {
     console.log('Links data is not an array, returning empty array');
     return [];
@@ -54,13 +54,14 @@ export default function Community() {
   const { id } = useParams();
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [isThreadOpen, setIsThreadOpen] = useState(false);
+  const { user } = useAuth();
 
   const { data: community, isLoading } = useQuery({
     queryKey: ['community', id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('communities')
-        .select('*')
+        .select('*, expert:expert_uuid(*)')
         .eq('community_uuid', id)
         .single();
 
@@ -68,7 +69,6 @@ export default function Community() {
         throw error;
       }
 
-      // Debug log
       console.log('Community data:', data);
       console.log('Links from community:', data?.links);
 
@@ -80,9 +80,6 @@ export default function Community() {
   const videoEmbedUrl = getVideoEmbedUrl(community?.intro);
   const links = parseLinks(community?.links);
   
-  // Debug log
-  console.log('Processed links:', links);
-
   if (isLoading) {
     return (
       <>
@@ -113,6 +110,8 @@ export default function Community() {
       </>
     );
   }
+
+  const isOwner = user?.id === community?.expert?.user_uuid;
 
   const templates = [
     {
@@ -247,35 +246,39 @@ export default function Community() {
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <Avatar className="h-12 w-12 ring-1 ring-border">
-                    <AvatarImage src={community.expert_thumbnail || "https://github.com/shadcn.png"} />
+                    <AvatarImage src={community?.expert_thumbnail || "https://github.com/shadcn.png"} />
                     <AvatarFallback>CM</AvatarFallback>
                   </Avatar>
                   <div>
                     <p className="text-sm text-muted-foreground">Hosted by</p>
-                    <p className="font-semibold">{community.expert_name}</p>
+                    <p className="font-semibold">{community?.expert_name}</p>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-muted-foreground">Products</p>
-                    <p className="font-semibold">{community.product_count || 0}</p>
+                    <p className="font-semibold">{community?.product_count || 0}</p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Classrooms</p>
-                    <p className="font-semibold">{community.classroom_count || 0}</p>
+                    <p className="font-semibold">{community?.classroom_count || 0}</p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Posts</p>
-                    <p className="font-semibold">{community.post_count || 0}</p>
+                    <p className="font-semibold">{community?.post_count || 0}</p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Members</p>
-                    <p className="font-semibold">{community.member_count || 0}</p>
+                    <p className="font-semibold">{community?.member_count || 0}</p>
                   </div>
                 </div>
 
-                <Button className="w-full">Join Community</Button>
+                {isOwner ? (
+                  <Link to={`/edit-community/${community?.community_uuid}`}>
+                    <Button className="w-full">Manage Community</Button>
+                  </Link>
+                ) : null}
               </div>
             </Card>
 
