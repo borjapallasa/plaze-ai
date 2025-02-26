@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,7 +23,7 @@ export function useCommunityImages(communityUuid: string | undefined) {
 
       if (error) throw error;
 
-      // Map the data to include the public URL
+      // Map the data to include the public URL for each image
       return (data || []).map(image => ({
         ...image,
         url: supabase.storage
@@ -53,19 +54,18 @@ export function useCommunityImages(communityUuid: string | undefined) {
 
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('community_images')
-        .getPublicUrl(filePath);
-
-      const { error: dbError } = await supabase
+      const { data: insertData, error: dbError } = await supabase
         .from('community_images')
         .insert({
           community_uuid: communityUuid,
           storage_path: filePath,
-          url: publicUrl,
           file_name: file.name,
+          content_type: file.type,
+          size: file.size,
           is_primary: images.length === 0 // Make first image primary
-        });
+        })
+        .select()
+        .single();
 
       if (dbError) throw dbError;
 

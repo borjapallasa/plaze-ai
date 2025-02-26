@@ -6,6 +6,8 @@ export interface CommunityImage {
   is_primary: boolean;
   file_name: string;
   alt_text?: string;
+  content_type?: string;
+  size?: number;
   created_at?: string;
   community_uuid: string;
 }
