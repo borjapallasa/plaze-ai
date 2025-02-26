@@ -3,9 +3,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { ProductEditor } from "@/components/product/ProductEditor";
-import { Link as LinkIcon } from "lucide-react";
+import { Link as LinkIcon, PlusCircle, XCircle } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CommunityMediaUpload } from "@/components/community/CommunityMediaUpload";
+import { Button } from "@/components/ui/button";
+
+interface Link {
+  name: string;
+  url: string;
+}
 
 interface CommunityBasicInfoProps {
   communityName: string;
@@ -28,6 +34,10 @@ interface CommunityBasicInfoProps {
     is_primary: boolean;
     file_name: string;
   }>;
+  links: Link[];
+  onLinkChange: (index: number, field: keyof Link, value: string) => void;
+  onAddLink: () => void;
+  onRemoveLink: (index: number) => void;
 }
 
 export function CommunityBasicInfo({
@@ -41,8 +51,14 @@ export function CommunityBasicInfo({
   setPrice,
   pricePeriod,
   setPricePeriod,
+  webhook,
+  setWebhook,
   communityUuid,
   communityImages,
+  links,
+  onLinkChange,
+  onAddLink,
+  onRemoveLink,
 }: CommunityBasicInfoProps) {
   return (
     <Card className="p-4 sm:p-6">
@@ -110,6 +126,55 @@ export function CommunityBasicInfo({
                 <SelectItem value="yearly">Yearly</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+        </div>
+
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <Label className="text-base font-medium">Links</Label>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onAddLink}
+              className="flex items-center gap-2"
+            >
+              <PlusCircle className="h-4 w-4" />
+              Add Link
+            </Button>
+          </div>
+          <div className="space-y-4">
+            {links.map((link, index) => (
+              <div key={index} className="grid grid-cols-2 gap-4 items-start">
+                <div>
+                  <Input
+                    placeholder="Link name"
+                    value={link.name}
+                    onChange={(e) => onLinkChange(index, 'name', e.target.value)}
+                    className="h-11"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="URL"
+                    value={link.url}
+                    onChange={(e) => onLinkChange(index, 'url', e.target.value)}
+                    className="h-11"
+                  />
+                  {links.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => onRemoveLink(index)}
+                      className="flex-shrink-0"
+                    >
+                      <XCircle className="h-5 w-5 text-muted-foreground hover:text-destructive" />
+                    </Button>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 

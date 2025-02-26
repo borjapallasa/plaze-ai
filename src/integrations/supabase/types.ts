@@ -268,6 +268,7 @@ export type Database = {
           id: number
           intro: string | null
           last_activity: string | null
+          links: Json | null
           member_count: number | null
           monthly_recurring_revenue: number | null
           name: string | null
@@ -301,6 +302,7 @@ export type Database = {
           id?: number
           intro?: string | null
           last_activity?: string | null
+          links?: Json | null
           member_count?: number | null
           monthly_recurring_revenue?: number | null
           name?: string | null
@@ -334,6 +336,7 @@ export type Database = {
           id?: number
           intro?: string | null
           last_activity?: string | null
+          links?: Json | null
           member_count?: number | null
           monthly_recurring_revenue?: number | null
           name?: string | null

@@ -10,6 +10,11 @@ import { CommunityHeader } from "@/components/community/CommunityHeader";
 import { CommunityBasicInfo } from "@/components/community/CommunityBasicInfo";
 import { CommunityStats } from "@/components/community/CommunityStats";
 
+interface Link {
+  name: string;
+  url: string;
+}
+
 export default function EditCommunity() {
   const { id } = useParams();
   const { toast } = useToast();
@@ -22,6 +27,7 @@ export default function EditCommunity() {
   const [paymentLink, setPaymentLink] = useState("");
   const [webhook, setWebhook] = useState("");
   const [hasCopied, setHasCopied] = useState(false);
+  const [links, setLinks] = useState<Link[]>([{ name: "", url: "" }]);
 
   const { data: community, isLoading } = useQuery({
     queryKey: ['community', id],
@@ -42,33 +48,10 @@ export default function EditCommunity() {
         setPricePeriod(data.price_period || "monthly");
         setPaymentLink(data.payment_link || "");
         setWebhook(data.webhook || "");
+        setLinks(data.links || [{ name: "", url: "" }]);
       }
 
       return data;
-    },
-    enabled: !!id
-  });
-
-  const { data: communityImages = [] } = useQuery({
-    queryKey: ['communityImages', id],
-    queryFn: async () => {
-      if (!id) return [];
-
-      const { data: images, error } = await supabase
-        .from('community_images')
-        .select('*')
-        .eq('community_uuid', id)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      return images.map(img => ({
-        id: img.id,
-        url: supabase.storage.from('community_images').getPublicUrl(img.storage_path).data.publicUrl,
-        storage_path: img.storage_path,
-        is_primary: img.is_primary,
-        file_name: img.file_name
-      }));
     },
     enabled: !!id
   });
@@ -88,7 +71,8 @@ export default function EditCommunity() {
           price: parseFloat(price) || 0,
           price_period: pricePeriod,
           webhook: webhook,
-          thumbnail: primaryImage?.url || null
+          thumbnail: primaryImage?.url || null,
+          links: links.filter(link => link.name && link.url) // Only save non-empty links
         })
         .eq('community_uuid', id);
 
@@ -133,6 +117,20 @@ export default function EditCommunity() {
     }
   };
 
+  const handleAddLink = () => {
+    setLinks([...links, { name: "", url: "" }]);
+  };
+
+  const handleLinkChange = (index: number, field: keyof Link, value: string) => {
+    const newLinks = [...links];
+    newLinks[index][field] = value;
+    setLinks(newLinks);
+  };
+
+  const handleRemoveLink = (index: number) => {
+    setLinks(links.filter((_, i) => i !== index));
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
@@ -167,6 +165,10 @@ export default function EditCommunity() {
               setWebhook={setWebhook}
               communityUuid={id || ''}
               communityImages={communityImages}
+              links={links}
+              onLinkChange={handleLinkChange}
+              onAddLink={handleAddLink}
+              onRemoveLink={handleRemoveLink}
             />
           </div>
 
