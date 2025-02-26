@@ -658,7 +658,7 @@ export default function SellerPage() {
                         <div className="mt-6 flex flex-col gap-2">
                           <Button className="w-full bg-black hover:bg-black/90 text-white">
                             <MessageCircle className="h-4 w-4 mr-2" />
-                            View Discussion
+                            Open Community
                           </Button>
                           <Button variant="outline" className="w-full">
                             Manage Community
