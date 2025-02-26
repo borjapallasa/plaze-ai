@@ -57,6 +57,7 @@ export default function Community() {
   const { id } = useParams();
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [isThreadOpen, setIsThreadOpen] = useState(false);
+  const [selectedThread, setSelectedThread] = useState<any>(null);
   const { user } = useAuth();
   const { images } = useCommunityImages(id);
 
@@ -232,6 +233,11 @@ export default function Community() {
     },
   ];
 
+  const handleThreadClick = (thread: any) => {
+    setSelectedThread(thread);
+    setIsThreadOpen(true);
+  };
+
   return (
     <>
       <MainHeader />
@@ -399,7 +405,7 @@ export default function Community() {
                   <Card 
                     key={thread.thread_uuid}
                     className="group hover:bg-accent transition-colors cursor-pointer"
-                    onClick={() => setIsThreadOpen(true)}
+                    onClick={() => handleThreadClick(thread)}
                   >
                     <CardContent className="p-6 space-y-4">
                       <div className="flex items-start gap-4">
@@ -507,7 +513,11 @@ export default function Community() {
 
         <ThreadDialog 
           isOpen={isThreadOpen}
-          onClose={() => setIsThreadOpen(false)}
+          onClose={() => {
+            setIsThreadOpen(false);
+            setSelectedThread(null);
+          }}
+          thread={selectedThread}
         />
       </div>
     </>
