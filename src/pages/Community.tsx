@@ -274,11 +274,9 @@ export default function Community() {
                   </div>
                 </div>
 
-                {isOwner ? (
-                  <Link to={`/edit-community/${community?.community_uuid}`}>
-                    <Button className="w-full">Manage Community</Button>
-                  </Link>
-                ) : null}
+                {!isOwner && (
+                  <Button className="w-full">Join Community</Button>
+                )}
               </div>
             </Card>
 
