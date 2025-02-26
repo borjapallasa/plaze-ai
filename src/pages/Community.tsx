@@ -3,17 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { 
-  MessageSquare, 
-  Users, 
-  BookOpen, 
-  Calendar, 
-  Link as LinkIcon, 
-  ThumbsUp, 
-  Search, 
-  ArrowRight,
-  ShoppingBag 
-} from "lucide-react";
+import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight } from "lucide-react";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/ProductCard";
@@ -293,22 +283,18 @@ export default function Community() {
 
                 <div className="grid grid-cols-4 gap-2 py-4 border-y">
                   <div className="text-center">
-                    <Users className="w-4 h-4 mx-auto mb-1 text-muted-foreground" />
                     <p className="text-xl font-bold">{community?.member_count || 0}</p>
                     <p className="text-xs text-muted-foreground">Members</p>
                   </div>
                   <div className="text-center">
-                    <BookOpen className="w-4 h-4 mx-auto mb-1 text-muted-foreground" />
                     <p className="text-xl font-bold">{community?.classroom_count || 0}</p>
                     <p className="text-xs text-muted-foreground">Classrooms</p>
                   </div>
                   <div className="text-center">
-                    <MessageSquare className="w-4 h-4 mx-auto mb-1 text-muted-foreground" />
                     <p className="text-xl font-bold">{community?.post_count || 0}</p>
                     <p className="text-xs text-muted-foreground">Posts</p>
                   </div>
                   <div className="text-center">
-                    <ShoppingBag className="w-4 h-4 mx-auto mb-1 text-muted-foreground" />
                     <p className="text-xl font-bold">{community?.product_count || 0}</p>
                     <p className="text-xs text-muted-foreground">Products</p>
                   </div>
