@@ -2,6 +2,7 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ProductEditor } from "@/components/product/ProductEditor";
 
 interface ProductDetailsFormProps {
   techStack: string;
@@ -30,10 +31,30 @@ export function ProductDetailsForm({
   difficultyLevel,
   setDifficultyLevel,
   demo,
-  setDemo
+  setDemo,
+  productName,
+  setProductName,
+  productDescription,
+  setProductDescription
 }: ProductDetailsFormProps) {
   return (
     <div className="space-y-4">
+      <div>
+        <Label htmlFor="product_name">Name</Label>
+        <Input 
+          id="product_name"
+          placeholder="Enter product name"
+          value={productName}
+          onChange={(e) => setProductName(e.target.value)}
+        />
+      </div>
+      <div>
+        <Label htmlFor="product_description">Description</Label>
+        <ProductEditor 
+          value={productDescription}
+          onChange={setProductDescription}
+        />
+      </div>
       <div>
         <Label htmlFor="tech_stack">Tech Stack</Label>
         <Input 
