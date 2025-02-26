@@ -10,10 +10,63 @@ import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { useState } from "react";
 import { ThreadDialog } from "@/components/ThreadDialog";
 import { MainHeader } from "@/components/MainHeader";
+import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Community() {
+  const { id } = useParams();
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [isThreadOpen, setIsThreadOpen] = useState(false);
+
+  const { data: community, isLoading } = useQuery({
+    queryKey: ['community', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('communities')
+        .select('*')
+        .eq('community_uuid', id)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    },
+    enabled: !!id
+  });
+
+  if (isLoading) {
+    return (
+      <>
+        <MainHeader />
+        <div className="container mx-auto px-4 py-8 mt-16">
+          <div className="animate-pulse space-y-4">
+            <div className="h-64 bg-muted rounded-lg"></div>
+            <div className="h-8 w-1/3 bg-muted rounded"></div>
+            <div className="h-4 w-2/3 bg-muted rounded"></div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (!community) {
+    return (
+      <>
+        <MainHeader />
+        <div className="container mx-auto px-4 py-8 mt-16">
+          <Card className="p-6">
+            <h1 className="text-xl font-semibold">Community not found</h1>
+            <p className="text-muted-foreground mt-2">
+              The community you're looking for doesn't exist or has been removed.
+            </p>
+          </Card>
+        </div>
+      </>
+    );
+  }
 
   const templates = [
     {
@@ -120,39 +173,22 @@ export default function Community() {
             <Card className="p-6 space-y-6">
               <div className="aspect-video bg-muted rounded-lg overflow-hidden relative">
                 <img 
-                  src="/lovable-uploads/890bbce9-6ca6-4a0e-958a-d7ba6f61bf73.png"
+                  src={community.thumbnail || "/lovable-uploads/890bbce9-6ca6-4a0e-958a-d7ba6f61bf73.png"}
                   alt="Community thumbnail"
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                  <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center cursor-pointer hover:bg-white transition-colors">
-                    <div className="w-6 h-6 border-8 border-transparent border-l-primary ml-1" style={{ transform: 'rotate(-45deg)' }} />
+                {community.intro && (
+                  <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                    <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center cursor-pointer hover:bg-white transition-colors">
+                      <div className="w-6 h-6 border-8 border-transparent border-l-primary ml-1" style={{ transform: 'rotate(-45deg)' }} />
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               <div className="space-y-4">
-                <p className="text-muted-foreground">
-                  Imagine a spot where we all get together to chat about making our businesses run smoother with some automation magic and no-code shortcuts. Here's what you'll get by joining:
-                </p>
-                <ul className="space-y-3">
-                  <li className="flex items-start gap-2">
-                    <span className="mt-1 w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />
-                    <span><strong>Win Back Your Weekdays</strong> - Spend time on what truly grows your business.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="mt-1 w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />
-                    <span><strong>Elevate Your Team's Game</strong> - Simple tools, incredible results.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="mt-1 w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />
-                    <span><strong>Economize Effortlessly</strong> - Invest in growth, not unnecessary expenses.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="mt-1 w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />
-                    <span><strong>Future-Proof Your Business</strong> - Adapt and thrive in the digital age.</span>
-                  </li>
-                </ul>
+                <h1 className="text-2xl font-bold">{community.name}</h1>
+                <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: community.description || '' }} />
               </div>
             </Card>
           </div>
@@ -163,35 +199,31 @@ export default function Community() {
                 <div className="flex items-center gap-3">
                   <Avatar className="h-12 w-12">
                     <AvatarImage src="https://github.com/shadcn.png" />
-                    <AvatarFallback>BP</AvatarFallback>
+                    <AvatarFallback>CM</AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="text-sm text-muted-foreground">This community is host by</p>
-                    <p className="font-semibold">Borja P.</p>
+                    <p className="text-sm text-muted-foreground">This community is hosted by</p>
+                    <p className="font-semibold">{community.name}</p>
                   </div>
                 </div>
                 
                 <div className="flex items-center gap-2">
                   <Users className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                  <span className="text-sm truncate">Optimal Path Automations has 198 members!</span>
+                  <span className="text-sm truncate">
+                    {community.name} has {community.member_count || 0} members!
+                  </span>
                 </div>
 
                 <div className="space-y-2">
-                  <a href="#" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                    <Link className="w-4 h-4" />
-                    <span className="font-medium">YouTube:</span> @BorjaPalleja
-                  </a>
-                  <a href="#" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                    <Link className="w-4 h-4" />
-                    <span className="font-medium">TikTok:</span> @borjapalleja
-                  </a>
-                  <a href="#" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                    <Link className="w-4 h-4" />
-                    <span className="font-medium">Calendly:</span> Book a call
-                  </a>
+                  {community.intro && (
+                    <a href={community.intro} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                      <Link className="w-4 h-4" />
+                      <span className="font-medium">Introduction Video</span>
+                    </a>
+                  )}
                 </div>
 
-                <Button className="w-full">Manage Community</Button>
+                <Button className="w-full">Join Community</Button>
               </div>
             </Card>
           </div>
