@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Card } from "@/components/ui/card";
 import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
@@ -36,6 +37,22 @@ export default function NewProduct() {
       createdAt: new Date().toISOString(),
     }
   ]);
+
+  // Effect to sync product name and price with first variant when there's only one variant
+  useEffect(() => {
+    if (variants.length === 1) {
+      const updatedVariant = {
+        ...variants[0],
+        name: productName || variants[0].name,
+        price: techStackPrice || variants[0].price,
+        comparePrice: variants[0].comparePrice
+      };
+      
+      if (JSON.stringify(updatedVariant) !== JSON.stringify(variants[0])) {
+        setVariants([updatedVariant]);
+      }
+    }
+  }, [productName, techStackPrice, variants]);
 
   const { handleSave, isSaving } = useCreateProduct();
 
