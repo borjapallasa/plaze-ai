@@ -282,7 +282,7 @@ export default function EditCommunity() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center gap-6">
                   <div>
                     <p className="text-sm text-muted-foreground">Products</p>
                     <p className="text-xl font-semibold">{formatNumber(community?.product_count)}</p>
@@ -291,21 +291,14 @@ export default function EditCommunity() {
                     <p className="text-sm text-muted-foreground">Classrooms</p>
                     <p className="text-xl font-semibold">{formatNumber(community?.classroom_count)}</p>
                   </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-muted-foreground">Posts</p>
                     <p className="text-xl font-semibold">{formatNumber(community?.post_count)}</p>
                   </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Paid Members</p>
-                    <p className="text-xl font-semibold">{formatNumber(community?.paid_member_count)}</p>
-                  </div>
                 </div>
 
                 <div className="pt-2 border-t">
-                  <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-3">
                     <div>
                       <p className="text-sm text-muted-foreground">Monthly Revenue</p>
                       <p className="text-xl font-semibold">
@@ -317,6 +310,10 @@ export default function EditCommunity() {
                       <p className="text-xl font-semibold">
                         {formatCurrency(community?.total_revenue)}
                       </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Paid Members</p>
+                      <p className="text-xl font-semibold">{formatNumber(community?.paid_member_count)}</p>
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Total Members</p>
