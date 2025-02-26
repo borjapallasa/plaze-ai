@@ -418,7 +418,7 @@ export default function SellerPage() {
                               variant={service.status === 'active' ? 'default' : 'secondary'}
                               className="capitalize whitespace-nowrap shrink-0"
                             >
-                              {service.status || 'draft'}
+                              {service.status}
                             </UIBadge>
                           </div>
 
@@ -428,8 +428,8 @@ export default function SellerPage() {
                               ${service.price?.toLocaleString() || '0'}
                             </span>
                             <span className="text-muted-foreground">•</span>
-                            <span className="text-muted-foreground">
-                              {service.type}
+                            <span className="text-muted-foreground capitalize">
+                              Service type: {service.type}
                             </span>
                           </div>
                         </div>

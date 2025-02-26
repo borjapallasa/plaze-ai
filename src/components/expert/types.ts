@@ -1,6 +1,9 @@
 
 import type { Json } from "@/integrations/supabase/types";
 
+export type ServiceStatus = 'active' | 'draft' | 'archived';
+export type ServiceType = 'one time' | 'monthly';
+
 export interface Expert {
   id: number;
   expert_uuid: string;
@@ -27,8 +30,8 @@ export interface Service {
   description: string;
   price: number;
   features: string[];
-  type: string;
-  status?: string;
+  type: ServiceType;
+  status: ServiceStatus;
   monthly_recurring_revenue: number;
   revenue_amount: number;
   active_subscriptions_count: number;
