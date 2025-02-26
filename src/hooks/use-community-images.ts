@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,7 +21,15 @@ export function useCommunityImages(communityUuid: string | undefined) {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data as CommunityImage[];
+
+      // Map the data to include the public URL
+      return (data || []).map(image => ({
+        ...image,
+        url: supabase.storage
+          .from('community_images')
+          .getPublicUrl(image.storage_path)
+          .data.publicUrl
+      })) as CommunityImage[];
     },
     enabled: !!communityUuid,
     staleTime: 1000 * 60 * 5,

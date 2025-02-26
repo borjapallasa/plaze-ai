@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import type { CommunityImage } from "@/types/community-images";
 
@@ -21,7 +22,9 @@ export async function fetchCommunityImages(communityUuid: string): Promise<Commu
       storage_path: image.storage_path,
       is_primary: image.is_primary,
       file_name: image.file_name,
-      alt_text: image.alt_text
+      alt_text: image.alt_text,
+      community_uuid: image.community_uuid,
+      created_at: image.created_at
     };
   }));
 }
