@@ -1,93 +1,41 @@
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import Home from "./pages/Home";
+import SignUp from "./pages/SignUp";
+import SignIn from "./pages/SignIn";
+import SellerServices from "./pages/SellerServices";
+import NewService from "./pages/NewService";
+import EditService from "./pages/EditService";
+import { useEffect, useState } from "react";
+import { supabase } from "./integrations/supabase/client";
+import { Auth } from "@supabase/auth-ui-react";
+import { ThemeSupa } from "@supabase/auth-ui-shared";
+import SellerProfile from "./pages/SellerProfile";
+import SellerEditProfile from "./pages/SellerEditProfile";
+import SellerCommunities from "./pages/SellerCommunities";
+import NewCommunity from "./pages/NewCommunity";
+import EditCommunity from "./pages/EditCommunity";
 
-import { Route, Routes } from "react-router-dom";
-import { Toaster } from "@/components/ui/sonner";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AuthProvider } from "./components/AuthProvider";
-import IndexPage from "./pages/index";
-import ProductPage from "./pages/Product";
-import SignInPage from "./pages/sign-in";
-import SignUpPage from "./pages/sign-up";
-import SignInCommunityPage from "./pages/sign-in-community";
-import SignUpCommunityPage from "./pages/sign-up-community";
-import ExpertsPage from "./pages/Experts";
-import ExpertPage from "./pages/Expert";
-import ProductsPage from "./pages/Products";
-import NewProductPage from "./pages/seller/NewProduct";
-import EditProductPage from "./pages/EditProduct";
-import EditServicePage from "./pages/EditService";
-import CommunitiesPage from "./pages/Communities";
-import CommunityPage from "./pages/Community";
-import ChatsPage from "./pages/Chats";
-import JobsPage from "./pages/Jobs";
-import JobPage from "./pages/Job";
-import BlogPage from "./pages/Blog";
-import CartPage from "./pages/Cart";
-import PersonalAreaPage from "./pages/PersonalArea";
-import AccountSettingsPage from "./pages/AccountSettings";
-import ManageSubscriptionsPage from "./pages/ManageSubscriptions";
-import MyCommunitiesPage from "./pages/MyCommunities";
-import TransactionsPage from "./pages/Transactions";
-import ThankYouPage from "./pages/ThankYou";
-import RecoverPasswordPage from "./pages/RecoverPassword";
-import AdminDashboardPage from "./pages/admin/AdminDashboard";
-import AdminUsersPage from "./pages/admin/AdminUsers";
-import AdminUserDetailsPage from "./pages/admin/AdminUserDetails";
-import AdminExpertsPage from "./pages/admin/AdminExperts";
-import AdminTransactionsPage from "./pages/admin/AdminTransactions";
-import AdminTransactionDetailsPage from "./pages/admin/AdminTransactionDetails";
-import DraftTemplatesPage from "./pages/admin/DraftTemplates";
-import AdminTemplateDetailsPage from "./pages/admin/AdminTemplateDetails";
-import AffiliatesPage from "./pages/Affiliates";
-import SellerPage from "./pages/seller/SellerPage";
-
-const queryClient = new QueryClient();
-
-function App() {
+export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <Routes>
-          <Route path="/" element={<IndexPage />} />
-          <Route path="/sign-in" element={<SignInPage />} />
-          <Route path="/sign-up" element={<SignUpPage />} />
-          <Route path="/sign-in-community" element={<SignInCommunityPage />} />
-          <Route path="/sign-up-community" element={<SignUpCommunityPage />} />
-          <Route path="/product/:id" element={<ProductPage />} />
-          <Route path="/experts" element={<ExpertsPage />} />
-          <Route path="/expert/:id" element={<ExpertPage />} />
-          <Route path="/products" element={<ProductsPage />} />
-          <Route path="/seller/products/new" element={<NewProductPage />} />
-          <Route path="/seller/:id" element={<SellerPage />} />
-          <Route path="/product/:id/edit" element={<EditProductPage />} />
-          <Route path="/service/:id/edit" element={<EditServicePage />} />
-          <Route path="/communities" element={<CommunitiesPage />} />
-          <Route path="/community/:id" element={<CommunityPage />} />
-          <Route path="/chats" element={<ChatsPage />} />
-          <Route path="/jobs" element={<JobsPage />} />
-          <Route path="/job/:id" element={<JobPage />} />
-          <Route path="/blog" element={<BlogPage />} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/account" element={<PersonalAreaPage />} />
-          <Route path="/account/settings" element={<AccountSettingsPage />} />
-          <Route path="/account/subscriptions" element={<ManageSubscriptionsPage />} />
-          <Route path="/account/communities" element={<MyCommunitiesPage />} />
-          <Route path="/account/transactions" element={<TransactionsPage />} />
-          <Route path="/thank-you" element={<ThankYouPage />} />
-          <Route path="/recover-password" element={<RecoverPasswordPage />} />
-          <Route path="/admin" element={<AdminDashboardPage />} />
-          <Route path="/admin/users" element={<AdminUsersPage />} />
-          <Route path="/admin/user/:id" element={<AdminUserDetailsPage />} />
-          <Route path="/admin/experts" element={<AdminExpertsPage />} />
-          <Route path="/admin/transactions" element={<AdminTransactionsPage />} />
-          <Route path="/admin/transaction/:id" element={<AdminTransactionDetailsPage />} />
-          <Route path="/admin/templates/draft" element={<DraftTemplatesPage />} />
-          <Route path="/admin/template/:id" element={<AdminTemplateDetailsPage />} />
-          <Route path="/affiliates" element={<AffiliatesPage />} />
-        </Routes>
-        <Toaster />
-      </AuthProvider>
-    </QueryClientProvider>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/seller/services" element={<SellerServices />} />
+        <Route path="/seller/services/new" element={<NewService />} />
+        <Route path="/service/:id/edit" element={<EditService />} />
+        <Route path="/seller/profile" element={<SellerProfile />} />
+        <Route path="/seller/profile/edit" element={<SellerEditProfile />} />
+        <Route path="/seller/communities" element={<SellerCommunities />} />
+        <Route path="/seller/communities/new" element={<NewCommunity />} />
+        <Route path="/community/:id/edit" element={<EditCommunity />} />
+      </Routes>
+    </Router>
   );
 }
-
-export default App;
