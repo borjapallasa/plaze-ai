@@ -219,21 +219,23 @@ export default function Community() {
           <div className="lg:col-span-8">
             <Card className="p-6 space-y-6">
               {images && images.length > 0 ? (
-                <ProductGallery 
-                  images={images.map(img => ({
-                    id: img.id,
-                    url: img.url,
-                    storage_path: img.storage_path,
-                    is_primary: img.is_primary,
-                    file_name: img.file_name,
-                    alt_text: img.alt_text || img.file_name
-                  } as ProductImage))}
-                  priority
-                />
+                <div className="aspect-video w-full overflow-hidden rounded-lg">
+                  <ProductGallery 
+                    images={images.map(img => ({
+                      id: img.id,
+                      url: img.url,
+                      storage_path: img.storage_path,
+                      is_primary: img.is_primary,
+                      file_name: img.file_name,
+                      alt_text: img.alt_text || img.file_name
+                    } as ProductImage))}
+                    priority
+                  />
+                </div>
               ) : (
                 <div className="aspect-video bg-muted rounded-lg overflow-hidden relative">
                   <img 
-                    src={community.thumbnail || "/lovable-uploads/890bbce9-6ca6-4a0e-958a-d7ba6f61bf73.png"}
+                    src={community?.thumbnail || "/lovable-uploads/890bbce9-6ca6-4a0e-958a-d7ba6f61bf73.png"}
                     alt="Community thumbnail"
                     className="w-full h-full object-cover"
                   />
@@ -241,8 +243,8 @@ export default function Community() {
               )}
 
               <div className="space-y-4">
-                <h1 className="text-2xl font-bold">{community.name}</h1>
-                <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: community.description || '' }} />
+                <h1 className="text-2xl font-bold">{community?.name}</h1>
+                <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: community?.description || '' }} />
               </div>
             </Card>
           </div>
