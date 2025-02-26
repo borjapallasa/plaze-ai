@@ -1,34 +1,28 @@
+
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { MainHeader } from "@/components/MainHeader";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ProductEditor } from "@/components/product/ProductEditor";
 import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
 import { ProductVariantsEditor } from "@/components/product/ProductVariants";
+import { ProductDetailsForm } from "@/components/product/ProductDetailsForm";
+import { ProductOrganization } from "@/components/product/ProductOrganization";
 import { Variant } from "@/components/product/types/variants";
-import type { ProductImage } from "@/types/product-images";
+import { ArrowLeft } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import { usePendingImages } from "@/hooks/use-pending-images";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowLeft } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
 
 type ProductStatus = 'draft' | 'active' | 'inactive';
-
-interface PendingImage {
-  file: File;
-  previewUrl: string;
-}
 
 export default function NewProduct() {
   const navigate = useNavigate();
@@ -46,7 +40,7 @@ export default function NewProduct() {
   const [useCases, setUseCases] = useState<string[]>([]);
   const [platform, setPlatform] = useState<string[]>([]);
   const [team, setTeam] = useState<string[]>([]);
-  const [pendingImages, setPendingImages] = useState<PendingImage[]>([]);
+  const { pendingImages, addPendingImage, uploadPendingImages } = usePendingImages();
   const [variants, setVariants] = useState<Variant[]>([
     {
       id: "1",
@@ -67,59 +61,6 @@ export default function NewProduct() {
       return user;
     }
   });
-
-  const handleImageSelect = async (file: File) => {
-    const previewUrl = URL.createObjectURL(file);
-    setPendingImages(prev => [...prev, { file, previewUrl }]);
-  };
-
-  const uploadProductImages = async (productUuid: string) => {
-    const uploadPromises = pendingImages.map(async (pendingImage, index) => {
-      const fileExt = pendingImage.file.name.split('.').pop();
-      const filePath = `${productUuid}/${crypto.randomUUID()}.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('product_images')
-        .upload(filePath, pendingImage.file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('product_images')
-        .getPublicUrl(filePath);
-
-      return {
-        product_uuid: productUuid,
-        storage_path: filePath,
-        file_name: pendingImage.file.name,
-        content_type: pendingImage.file.type,
-        size: pendingImage.file.size,
-        is_primary: index === 0, // First image is primary
-      };
-    });
-
-    const uploadedImages = await Promise.all(uploadPromises);
-    const { error: dbError } = await supabase
-      .from('product_images')
-      .insert(uploadedImages);
-
-    if (dbError) throw dbError;
-
-    // Update product thumbnail with the primary image
-    if (uploadedImages.length > 0) {
-      const primaryImage = uploadedImages[0];
-      const { data: { publicUrl } } = supabase.storage
-        .from('product_images')
-        .getPublicUrl(primaryImage.storage_path);
-
-      const { error: thumbnailError } = await supabase
-        .from('products')
-        .update({ thumbnail: publicUrl })
-        .eq('product_uuid', productUuid);
-
-      if (thumbnailError) throw thumbnailError;
-    }
-  };
 
   const handleStatusChange = (value: ProductStatus) => {
     setProductStatus(value);
@@ -153,7 +94,7 @@ export default function NewProduct() {
         {items.map((item) => (
           <span
             key={item}
-            className="inline-flex items-center gap-1.5 bg-secondary text-secondary-foreground px-2.5 py-0.5 rounded-md text-sm"
+            className="inline-flex items-center gap-1.5 bg-secondary text-secondary-foreground px-2.5 py-0.5 rounded-md text-sm relative isolate cursor-pointer group"
           >
             {item}
           </span>
@@ -175,7 +116,6 @@ export default function NewProduct() {
     try {
       setIsSaving(true);
 
-      // Create the product with the correct field names from the database schema
       const { data: product, error: productError } = await supabase
         .from('products')
         .insert({
@@ -199,7 +139,6 @@ export default function NewProduct() {
 
       if (productError) throw productError;
 
-      // If we have variants, create them
       if (variants.length > 0) {
         const variantsToInsert = variants.map(variant => ({
           name: variant.name,
@@ -219,10 +158,7 @@ export default function NewProduct() {
         if (variantsError) throw variantsError;
       }
 
-      // Upload images if there are any pending
-      if (pendingImages.length > 0) {
-        await uploadProductImages(product.product_uuid);
-      }
+      await uploadPendingImages(product.product_uuid);
 
       toast({
         title: "Success",
@@ -230,10 +166,6 @@ export default function NewProduct() {
         className: "bg-[#F2FCE2] border-green-100 text-green-800",
       });
 
-      // Clean up preview URLs
-      pendingImages.forEach(image => URL.revokeObjectURL(image.previewUrl));
-
-      // Navigate to the edit page of the newly created product
       navigate(`/seller/products/product/${product.product_uuid}`);
       
     } catch (error) {
@@ -290,88 +222,35 @@ export default function NewProduct() {
           <div className="space-y-3 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-6">
             <div className="lg:col-span-8">
               <div className="space-y-3 sm:space-y-6">
-                <Card className="p-3 sm:p-6">
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="name">Name</Label>
-                      <Input
-                        id="name"
-                        placeholder="Enter product name"
-                        value={productName}
-                        onChange={(e) => setProductName(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="description">Description</Label>
-                      <ProductEditor 
-                        value={productDescription}
-                        onChange={setProductDescription}
-                      />
-                    </div>
-                    <div className="pt-2">
-                      <ProductVariantsEditor 
-                        variants={variants}
-                        onVariantsChange={setVariants}
-                      />
-                    </div>
-                  </div>
-                </Card>
+                <ProductDetailsForm
+                  techStack={techStack}
+                  setTechStack={setTechStack}
+                  techStackPrice={techStackPrice}
+                  setTechStackPrice={setTechStackPrice}
+                  productIncludes={productIncludes}
+                  setProductIncludes={setProductIncludes}
+                  difficultyLevel={difficultyLevel}
+                  setDifficultyLevel={setDifficultyLevel}
+                  demo={demo}
+                  setDemo={setDemo}
+                  productName={productName}
+                  setProductName={setProductName}
+                  productDescription={productDescription}
+                  setProductDescription={setProductDescription}
+                />
 
                 <Card className="p-3 sm:p-6">
-                  <h2 className="text-lg font-medium mb-3 sm:mb-4">Product Details</h2>
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="tech_stack">Tech Stack</Label>
-                      <Input 
-                        id="tech_stack" 
-                        placeholder="Enter required tech stack"
-                        value={techStack}
-                        onChange={(e) => setTechStack(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="tech_stack_price">Tech Stack Pricing</Label>
-                      <Input 
-                        id="tech_stack_price" 
-                        placeholder="Enter tech stack pricing details"
-                        value={techStackPrice}
-                        onChange={(e) => setTechStackPrice(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="product_includes">What's Included</Label>
-                      <Input 
-                        id="product_includes" 
-                        placeholder="Enter what's included in the product"
-                        value={productIncludes}
-                        onChange={(e) => setProductIncludes(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="difficulty_level">Difficulty Level</Label>
-                      <Input 
-                        id="difficulty_level" 
-                        placeholder="Select difficulty level"
-                        value={difficultyLevel}
-                        onChange={(e) => setDifficultyLevel(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="demo">Demo Link</Label>
-                      <Input 
-                        id="demo" 
-                        placeholder="Enter demo URL" 
-                        type="url"
-                        value={demo}
-                        onChange={(e) => setDemo(e.target.value)}
-                      />
-                    </div>
+                  <div className="pt-2">
+                    <ProductVariantsEditor 
+                      variants={variants}
+                      onVariantsChange={setVariants}
+                    />
                   </div>
                 </Card>
 
                 <Card className="p-3 sm:p-6">
                   <h2 className="text-lg font-medium mb-3 sm:mb-4">Media</h2>
-                  <ProductMediaUpload productUuid="" onFileSelect={handleImageSelect} />
+                  <ProductMediaUpload productUuid="" onFileSelect={addPendingImage} />
                   {pendingImages.length > 0 && (
                     <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                       {pendingImages.map((image, index) => (
@@ -390,102 +269,17 @@ export default function NewProduct() {
             </div>
 
             <div className="lg:col-span-4 space-y-3 sm:space-y-6">
-              <Card className="p-3 sm:p-6">
-                <h2 className="text-lg font-medium mb-3 sm:mb-4">Product Organization</h2>
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="industries" className="text-sm mb-1.5">Industries</Label>
-                    <Select
-                      value=""
-                      onValueChange={handleIndustryChange}
-                    >
-                      <SelectTrigger className="h-auto min-h-[2.75rem] py-1.5 px-3">
-                        {renderSelectedTags(industries) || <SelectValue placeholder="Select industries" />}
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectItem value="Healthcare">Healthcare</SelectItem>
-                          <SelectItem value="Education">Education</SelectItem>
-                          <SelectItem value="Finance">Finance</SelectItem>
-                          <SelectItem value="Technology">Technology</SelectItem>
-                          <SelectItem value="Real Estate">Real Estate</SelectItem>
-                          <SelectItem value="Retail">Retail</SelectItem>
-                          <SelectItem value="Manufacturing">Manufacturing</SelectItem>
-                          <SelectItem value="Entertainment">Entertainment</SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="use_case" className="text-sm mb-1.5">Use Case</Label>
-                    <Select
-                      value=""
-                      onValueChange={handleUseCaseChange}
-                    >
-                      <SelectTrigger className="h-auto min-h-[2.75rem] py-1.5 px-3">
-                        {renderSelectedTags(useCases) || <SelectValue placeholder="Select use cases" />}
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectItem value="E-commerce">E-commerce</SelectItem>
-                          <SelectItem value="Blog">Blog</SelectItem>
-                          <SelectItem value="Portfolio">Portfolio</SelectItem>
-                          <SelectItem value="Dashboard">Dashboard</SelectItem>
-                          <SelectItem value="Social Network">Social Network</SelectItem>
-                          <SelectItem value="Analytics">Analytics</SelectItem>
-                          <SelectItem value="CMS">CMS</SelectItem>
-                          <SelectItem value="Authentication">Authentication</SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="platform" className="text-sm mb-1.5">Platform</Label>
-                    <Select
-                      value=""
-                      onValueChange={handlePlatformChange}
-                    >
-                      <SelectTrigger className="h-auto min-h-[2.75rem] py-1.5 px-3">
-                        {renderSelectedTags(platform) || <SelectValue placeholder="Select platforms" />}
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectItem value="Web">Web</SelectItem>
-                          <SelectItem value="Mobile">Mobile</SelectItem>
-                          <SelectItem value="Desktop">Desktop</SelectItem>
-                          <SelectItem value="iOS">iOS</SelectItem>
-                          <SelectItem value="Android">Android</SelectItem>
-                          <SelectItem value="Windows">Windows</SelectItem>
-                          <SelectItem value="macOS">macOS</SelectItem>
-                          <SelectItem value="Linux">Linux</SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="team" className="text-sm mb-1.5">Team</Label>
-                    <Select
-                      value=""
-                      onValueChange={handleTeamChange}
-                    >
-                      <SelectTrigger className="h-auto min-h-[2.75rem] py-1.5 px-3">
-                        {renderSelectedTags(team) || <SelectValue placeholder="Select team roles" />}
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectItem value="Frontend Developer">Frontend Developer</SelectItem>
-                          <SelectItem value="Backend Developer">Backend Developer</SelectItem>
-                          <SelectItem value="Full Stack Developer">Full Stack Developer</SelectItem>
-                          <SelectItem value="UI/UX Designer">UI/UX Designer</SelectItem>
-                          <SelectItem value="Product Manager">Product Manager</SelectItem>
-                          <SelectItem value="DevOps Engineer">DevOps Engineer</SelectItem>
-                          <SelectItem value="QA Engineer">QA Engineer</SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </Card>
+              <ProductOrganization
+                industries={industries}
+                useCases={useCases}
+                platform={platform}
+                team={team}
+                onIndustryChange={handleIndustryChange}
+                onUseCaseChange={handleUseCaseChange}
+                onPlatformChange={handlePlatformChange}
+                onTeamChange={handleTeamChange}
+                renderSelectedTags={renderSelectedTags}
+              />
             </div>
           </div>
         </div>
