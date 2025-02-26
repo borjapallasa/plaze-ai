@@ -1,8 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import type { ProductImage } from "@/hooks/use-product-images";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import useEmblaCarousel from "embla-carousel-react";
+import { cn } from "@/lib/utils";
 
 interface ProductGalleryProps {
   images: ProductImage[];
@@ -23,16 +22,6 @@ export function ProductGallery({ images, className, priority = false }: ProductG
     };
   };
 
-  const [emblaRef, emblaApi] = useEmblaCarousel({ align: "center" });
-
-  useEffect(() => {
-    if (emblaApi) {
-      emblaApi.on('select', () => {
-        setCurrentImageIndex(emblaApi.selectedScrollSnap());
-      });
-    }
-  }, [emblaApi]);
-
   const currentImage = images[currentImageIndex];
   const imageSizes = currentImage ? getImageSizes(currentImage.url) : null;
 
@@ -47,103 +36,58 @@ export function ProductGallery({ images, className, priority = false }: ProductG
   }
 
   return (
-    <div className={className}>
-      {/* Mobile Layout */}
-      <div className="lg:hidden">
-        <Carousel>
-          <div className="relative" ref={emblaRef}>
-            <CarouselContent>
-              {images.map((image, index) => {
-                const sizes = getImageSizes(image.url);
-                return (
-                  <CarouselItem key={index}>
-                    <div className="bg-card rounded-lg overflow-hidden aspect-square flex items-center justify-center">
-                      <img 
-                        src={sizes.medium}
-                        alt={image.alt_text || image.file_name}
-                        className={`max-w-full max-h-full object-contain transition-opacity duration-300 ${
-                          isLoading ? 'opacity-0' : 'opacity-100'
-                        }`}
-                        onLoad={() => setIsLoading(false)}
-                        loading={priority ? "eager" : "lazy"}
-                        fetchPriority={priority ? "high" : "auto"}
-                        decoding="async"
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                        srcSet={`
-                          ${sizes.small} 400w,
-                          ${sizes.medium} 800w,
-                          ${sizes.large} 1200w
-                        `}
-                      />
-                      {isLoading && (
-                        <div className="absolute inset-0 bg-muted animate-pulse" />
-                      )}
-                    </div>
-                  </CarouselItem>
-                );
-              })}
-            </CarouselContent>
-            {images.length > 1 && (
-              <>
-                <CarouselPrevious className="left-2" />
-                <CarouselNext className="right-2" />
-              </>
-            )}
-          </div>
-        </Carousel>
-      </div>
-
-      {/* Desktop Layout */}
-      <div className="hidden lg:flex gap-4">
-        {/* Thumbnails on the left */}
-        {images.length > 1 && (
-          <div className="flex flex-col gap-4 w-24">
-            {images.map((img, i) => {
-              const thumbSizes = getImageSizes(img.url);
-              return (
-                <div 
-                  key={i}
-                  className={`w-24 h-24 rounded-lg flex-shrink-0 cursor-pointer overflow-hidden bg-card flex items-center justify-center ${
-                    i === currentImageIndex ? 'ring-2 ring-primary' : 'hover:opacity-80'
-                  }`}
-                  onClick={() => setCurrentImageIndex(i)}
-                >
-                  <img 
-                    src={thumbSizes.thumbnail}
-                    alt={img.alt_text || img.file_name}
-                    className="max-w-full max-h-full object-contain"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Main image */}
-        <div className="flex-1 bg-card rounded-lg overflow-hidden aspect-square relative flex items-center justify-center">
-          <img 
-            src={imageSizes.large}
-            alt={currentImage.alt_text || currentImage.file_name}
-            className={`max-w-full max-h-full object-contain transition-opacity duration-300 ${
-              isLoading ? 'opacity-0' : 'opacity-100'
-            }`}
-            onLoad={() => setIsLoading(false)}
-            loading={priority ? "eager" : "lazy"}
-            fetchPriority={priority ? "high" : "auto"}
-            decoding="async"
-            sizes="(min-width: 1024px) 50vw, 100vw"
-            srcSet={`
-              ${imageSizes.medium} 800w,
-              ${imageSizes.large} 1200w
-            `}
-          />
-          {isLoading && (
-            <div className="absolute inset-0 bg-muted animate-pulse" />
+    <div className={cn("space-y-4", className)}>
+      {/* Main Image */}
+      <div className="relative aspect-video bg-gradient-to-br from-blue-500/10 to-blue-600/10 rounded-lg overflow-hidden">
+        <img 
+          src={imageSizes.large}
+          alt={currentImage.alt_text || currentImage.file_name}
+          className={cn(
+            "w-full h-full object-contain transition-opacity duration-300",
+            isLoading ? 'opacity-0' : 'opacity-100'
           )}
-        </div>
+          onLoad={() => setIsLoading(false)}
+          loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority ? "high" : "auto"}
+          decoding="async"
+          sizes="(min-width: 1024px) 50vw, 100vw"
+          srcSet={`
+            ${imageSizes.medium} 800w,
+            ${imageSizes.large} 1200w
+          `}
+        />
+        {isLoading && (
+          <div className="absolute inset-0 bg-muted animate-pulse" />
+        )}
       </div>
+
+      {/* Thumbnails */}
+      {images.length > 1 && (
+        <div className="grid grid-cols-4 gap-4">
+          {images.map((img, i) => {
+            const thumbSizes = getImageSizes(img.url);
+            return (
+              <button
+                key={i}
+                onClick={() => setCurrentImageIndex(i)}
+                className={cn(
+                  "relative aspect-video rounded-lg overflow-hidden bg-gradient-to-br from-blue-500/10 to-blue-600/10",
+                  "hover:ring-2 hover:ring-primary/50 transition-all duration-200",
+                  i === currentImageIndex && "ring-2 ring-primary"
+                )}
+              >
+                <img 
+                  src={thumbSizes.thumbnail}
+                  alt={img.alt_text || img.file_name}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
