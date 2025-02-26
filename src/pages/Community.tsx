@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight } from "lucide-react";
+import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight, FileText, User } from "lucide-react";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/ProductCard";
@@ -17,6 +17,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
 import { useAuth } from "@/lib/auth";
+import { cn } from "@/lib/utils";
 
 interface Link {
   name: string;
@@ -114,100 +115,27 @@ export default function Community() {
 
   const isOwner = user?.id === community?.expert?.user_uuid;
 
-  const templates = [
+  const stats = [
     {
-      title: "Automated Email Workflow",
-      price: "$49.99",
-      image: "/placeholder.svg",
-      seller: "Automation Pro",
-      description: "Streamline your email marketing with this automated workflow template.",
-      tags: ["email", "automation"],
-      category: "marketing"
+      label: "Products",
+      value: community?.product_count || 0,
+      icon: BookOpen
     },
     {
-      title: "CRM Integration Template",
-      price: "$79.99",
-      image: "/placeholder.svg",
-      seller: "CRM Expert",
-      description: "Connect your favorite CRM with other tools seamlessly.",
-      tags: ["crm", "integration"],
-      category: "business"
+      label: "Classrooms",
+      value: community?.classroom_count || 0,
+      icon: Users
     },
     {
-      title: "Social Media Manager",
-      price: "$39.99",
-      image: "/placeholder.svg",
-      seller: "Social Pro",
-      description: "Manage all your social media accounts from one place.",
-      tags: ["social", "management"],
-      category: "marketing"
+      label: "Posts",
+      value: community?.post_count || 0,
+      icon: FileText
     },
     {
-      title: "Project Tracker",
-      price: "$59.99",
-      image: "/placeholder.svg",
-      seller: "PM Tools",
-      description: "Keep track of your projects with this comprehensive template.",
-      tags: ["project", "management"],
-      category: "business"
-    },
-    {
-      title: "Lead Generation System",
-      price: "$89.99",
-      image: "/placeholder.svg",
-      seller: "Lead Gen Pro",
-      description: "Generate and nurture leads automatically.",
-      tags: ["leads", "automation"],
-      category: "sales"
-    },
-    {
-      title: "Customer Support Flow",
-      price: "$69.99",
-      image: "/placeholder.svg",
-      seller: "Support Expert",
-      description: "Streamline your customer support process.",
-      tags: ["support", "workflow"],
-      category: "service"
+      label: "Members",
+      value: community?.member_count || 0,
+      icon: User
     }
-  ];
-
-  const events = [
-    {
-      title: "Community Meetup",
-      date: new Date(2024, 3, 15), // April 15, 2024
-      type: "meetup",
-      description: "Monthly community gathering to discuss automation trends"
-    },
-    {
-      title: "Workshop: No-Code Automation",
-      date: new Date(2024, 3, 20), // April 20, 2024
-      type: "workshop",
-      description: "Learn how to build powerful automation without coding"
-    },
-    {
-      title: "Q&A Session",
-      date: new Date(2024, 3, 25), // April 25, 2024
-      type: "qa",
-      description: "Open Q&A session with automation experts"
-    }
-  ];
-
-  const classrooms = [
-    {
-      title: "How To Create Automated SEO Blogs With AI?",
-      description: "In this classroom you will learn how to create SEO blogs automatically with AI, using Make.com and Airtable.",
-      image: "/lovable-uploads/0f691532-4ffb-4ec9-82cb-3be9cc93d658.png"
-    },
-    {
-      title: "Fully Automated Affiliate Marketing Dashboard",
-      description: "Learn how to create an Affiliate Marketing Dashboard in Airtable, seamlessly integrating HubSpot and Google Analytics with Make.com.",
-      image: "/lovable-uploads/0f691532-4ffb-4ec9-82cb-3be9cc93d658.png"
-    },
-    {
-      title: "How To Obtain The Emails Of The Followers Of An Instagram Account",
-      description: "In this classroom we explain how you can obtain the emails of the followers of certain instagram user, using Make.com, RapidAPI and Airtable.",
-      image: "/lovable-uploads/0f691532-4ffb-4ec9-82cb-3be9cc93d658.png"
-    },
   ];
 
   return (
@@ -242,60 +170,79 @@ export default function Community() {
             </Card>
           </div>
 
-          <div className="lg:col-span-4 space-y-6">
-            <Card className="p-6">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-12 w-12 ring-1 ring-border">
-                    <AvatarImage src={community?.expert_thumbnail || "https://github.com/shadcn.png"} />
-                    <AvatarFallback>CM</AvatarFallback>
+          <div className="lg:col-span-4">
+            <Card className="overflow-hidden">
+              <div className="p-6 space-y-6">
+                <div className="text-center">
+                  <Avatar className="h-16 w-16 mx-auto ring-2 ring-primary/10">
+                    <AvatarImage 
+                      src={community?.expert_thumbnail || "https://github.com/shadcn.png"} 
+                      alt={community?.expert_name}
+                    />
+                    <AvatarFallback className="text-lg">
+                      {community?.expert_name?.split(' ').map(n => n[0]).join('')}
+                    </AvatarFallback>
                   </Avatar>
-                  <div>
+                  <div className="mt-3">
                     <p className="text-sm text-muted-foreground">Hosted by</p>
-                    <p className="font-semibold">{community?.expert_name}</p>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Products</p>
-                    <p className="font-semibold">{community?.product_count || 0}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Classrooms</p>
-                    <p className="font-semibold">{community?.classroom_count || 0}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Posts</p>
-                    <p className="font-semibold">{community?.post_count || 0}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Members</p>
-                    <p className="font-semibold">{community?.member_count || 0}</p>
+                    <h3 className="font-semibold text-lg">
+                      {community?.expert_name}
+                    </h3>
                   </div>
                 </div>
 
+                <div className="grid grid-cols-2 gap-4">
+                  {stats.map((stat, index) => {
+                    const Icon = stat.icon;
+                    return (
+                      <div 
+                        key={index}
+                        className="p-3 rounded-lg border bg-card/50 transition-colors hover:bg-accent"
+                      >
+                        <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                          <Icon className="w-4 h-4" />
+                          <span className="text-xs">{stat.label}</span>
+                        </div>
+                        <p className="font-semibold text-lg">
+                          {stat.value}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+
                 {!isOwner && (
-                  <Button className="w-full">Join Community</Button>
+                  <Button className="w-full font-medium" size="lg">
+                    Join Community
+                  </Button>
                 )}
 
                 {links.length > 0 && (
                   <>
                     <Separator className="my-4" />
                     <div className="space-y-3">
-                      <h3 className="font-semibold">Quick Links</h3>
-                      {links.map((link, index) => (
-                        <a 
-                          key={index}
-                          href={link.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                        >
-                          <LinkIcon className="w-4 h-4" />
-                          <span>{link.name}</span>
-                        </a>
-                      ))}
+                      <h3 className="font-semibold flex items-center gap-2 text-sm">
+                        <LinkIcon className="w-4 h-4 text-muted-foreground" />
+                        Quick Links
+                      </h3>
+                      <nav className="space-y-2">
+                        {links.map((link, index) => (
+                          <a 
+                            key={index}
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={cn(
+                              "flex items-center gap-2 p-2 rounded-md text-sm",
+                              "text-muted-foreground hover:text-foreground",
+                              "hover:bg-accent transition-colors"
+                            )}
+                          >
+                            <span>{link.name}</span>
+                            <ArrowRight className="w-3 h-3 ml-auto" />
+                          </a>
+                        ))}
+                      </nav>
                     </div>
                   </>
                 )}
