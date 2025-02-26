@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -40,11 +39,10 @@ export default function SellerPage() {
             name,
             description,
             price_from,
-            type,
-            use_case,
-            product_uuid,
+            variant_count,
             status,
-            created_at
+            created_at,
+            product_uuid
           )
         `)
         .eq('user_uuid', id)
@@ -175,7 +173,7 @@ export default function SellerPage() {
                     <tr>
                       <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Product</th>
                       <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Status</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Type</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Variants</th>
                       <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Price</th>
                       <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Created</th>
                     </tr>
@@ -209,7 +207,7 @@ export default function SellerPage() {
                           </UIBadge>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm capitalize">{product.type}</span>
+                          <span className="text-sm">{product.variant_count || 0}</span>
                         </td>
                         <td className="px-4 py-3">
                           <span className="text-sm">${product.price_from || '0.00'}</span>
