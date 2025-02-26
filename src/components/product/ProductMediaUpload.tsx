@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React from "react";
 import { ImageUploadArea } from "@/components/product/ImageUploadArea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";

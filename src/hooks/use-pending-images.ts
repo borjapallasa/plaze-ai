@@ -3,7 +3,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
-export interface PendingImage {
+interface PendingImage {
   file: File;
   previewUrl: string;
 }

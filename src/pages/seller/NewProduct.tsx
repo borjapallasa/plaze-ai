@@ -1,12 +1,16 @@
 
 import React, { useState, useEffect } from "react";
 import { MainHeader } from "@/components/MainHeader";
+import { Card } from "@/components/ui/card";
+import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
+import { ProductVariantsEditor } from "@/components/product/ProductVariants";
+import { ProductDetailsForm } from "@/components/product/ProductDetailsForm";
 import { ProductOrganization } from "@/components/product/ProductOrganization";
 import { Variant } from "@/components/product/types/variants";
 import { useCreateProduct, ProductStatus } from "@/hooks/use-create-product";
 import { usePendingImages } from "@/hooks/use-pending-images";
 import { ProductCreateHeader } from "@/components/product/ProductCreateHeader";
-import { NewProductForm } from "@/components/product/NewProductForm";
+import { ProductBasicDetailsForm } from "@/components/product/ProductBasicDetailsForm";
 
 export default function NewProduct() {
   const [productName, setProductName] = useState("");
@@ -35,6 +39,7 @@ export default function NewProduct() {
     }
   ]);
 
+  // Effect to sync product name and price with first variant when there's only one variant
   useEffect(() => {
     if (variants.length === 1) {
       const updatedVariant = {
@@ -131,26 +136,66 @@ export default function NewProduct() {
 
           <div className="space-y-3 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-6">
             <div className="lg:col-span-8">
-              <NewProductForm
-                productName={productName}
-                setProductName={setProductName}
-                productDescription={productDescription}
-                setProductDescription={setProductDescription}
-                techStack={techStack}
-                setTechStack={setTechStack}
-                techStackPrice={techStackPrice}
-                setTechStackPrice={setTechStackPrice}
-                productIncludes={productIncludes}
-                setProductIncludes={setProductIncludes}
-                difficultyLevel={difficultyLevel}
-                setDifficultyLevel={setDifficultyLevel}
-                demo={demo}
-                setDemo={setDemo}
-                variants={variants}
-                setVariants={setVariants}
-                pendingImages={pendingImages}
-                addPendingImage={addPendingImage}
-              />
+              <div className="space-y-3 sm:space-y-6">
+                {/* Product Details Form - Name and Description */}
+                <Card className="p-3 sm:p-6">
+                  <div className="space-y-3 sm:space-y-4">
+                    <ProductBasicDetailsForm
+                      productName={productName}
+                      setProductName={setProductName}
+                      productDescription={productDescription}
+                      setProductDescription={setProductDescription}
+                    />
+                  </div>
+                </Card>
+
+                {/* Media Section */}
+                <Card className="p-3 sm:p-6">
+                  <h2 className="text-lg font-medium mb-3 sm:mb-4">Media</h2>
+                  <ProductMediaUpload productUuid="" onFileSelect={addPendingImage} />
+                  {pendingImages.length > 0 && (
+                    <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                      {pendingImages.map((image, index) => (
+                        <div key={index} className="relative aspect-square rounded-lg border overflow-hidden">
+                          <img
+                            src={image.previewUrl}
+                            alt={`Preview ${index + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </Card>
+
+                {/* Technical Details Form */}
+                <Card className="p-3 sm:p-6">
+                  <div className="space-y-3 sm:space-y-4">
+                    <ProductDetailsForm
+                      techStack={techStack}
+                      setTechStack={setTechStack}
+                      techStackPrice={techStackPrice}
+                      setTechStackPrice={setTechStackPrice}
+                      productIncludes={productIncludes}
+                      setProductIncludes={setProductIncludes}
+                      difficultyLevel={difficultyLevel}
+                      setDifficultyLevel={setDifficultyLevel}
+                      demo={demo}
+                      setDemo={setDemo}
+                    />
+                  </div>
+                </Card>
+
+                {/* Variants Section */}
+                <Card className="p-3 sm:p-6">
+                  <div className="pt-2">
+                    <ProductVariantsEditor 
+                      variants={variants}
+                      onVariantsChange={setVariants}
+                    />
+                  </div>
+                </Card>
+              </div>
             </div>
 
             <div className="lg:col-span-4 space-y-3 sm:space-y-6">
