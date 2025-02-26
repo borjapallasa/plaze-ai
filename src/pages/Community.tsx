@@ -203,7 +203,7 @@ export default function Community() {
             <Card className="p-6">
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
-                  <Avatar className="h-12 w-12">
+                  <Avatar className="h-12 w-12 ring-1 ring-border">
                     <AvatarImage src={community.expert_thumbnail || "https://github.com/shadcn.png"} />
                     <AvatarFallback>CM</AvatarFallback>
                   </Avatar>
