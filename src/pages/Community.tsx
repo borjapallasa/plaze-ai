@@ -24,6 +24,48 @@ interface Link {
   url: string;
 }
 
+const classrooms = [
+  {
+    title: "Getting Started",
+    description: "Learn the basics of automation and workflow optimization"
+  },
+  {
+    title: "Advanced Techniques",
+    description: "Master advanced automation concepts and strategies"
+  },
+  {
+    title: "Best Practices",
+    description: "Discover industry best practices and optimization techniques"
+  }
+];
+
+const templates = [
+  {
+    title: "Automation Template",
+    description: "Complete automation workflow template",
+    price: 49,
+    image: "/lovable-uploads/890bbce9-6ca6-4a0e-958a-d7ba6f61bf73.png",
+    seller: "Borja P.",
+    tags: ["automation", "workflow"],
+    category: "Templates"
+  },
+  {
+    title: "Process Optimization",
+    description: "Streamline your business processes",
+    price: 29,
+    image: "/lovable-uploads/890bbce9-6ca6-4a0e-958a-d7ba6f61bf73.png",
+    seller: "Borja P.",
+    tags: ["process", "optimization"],
+    category: "Templates"
+  }
+];
+
+const events = [
+  new Date(2024, 3, 15),
+  new Date(2024, 3, 22),
+  new Date(2024, 4, 5)
+];
+
 function isValidLink(link: unknown): link is Link {
   if (typeof link !== 'object' || link === null) return false;
   const l = link as any;
