@@ -9,6 +9,9 @@ import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/ProductCard";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Separator } from "@/components/ui/separator";
+import { ThreadDialog } from "@/components/ThreadDialog";
+import { MainHeader } from "@/components/MainHeader";
+import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
@@ -16,7 +19,6 @@ import { useAuth } from "@/lib/auth";
 import { useCommunityImages } from "@/hooks/use-community-images";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import type { ProductImage } from "@/types/product-images";
-import { useParams, Link } from "react-router-dom";
 
 interface Link {
   name: string;
@@ -216,7 +218,7 @@ export default function Community() {
           <div className="lg:col-span-8">
             <Card className="p-6 space-y-6">
               {images && images.length > 0 ? (
-                <div className="w-full h-full">
+                <div>
                   <ProductGallery 
                     images={images.map(img => ({
                       id: img.id,
