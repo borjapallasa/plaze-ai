@@ -16,9 +16,22 @@ function isValidLink(link: unknown): link is Link {
 }
 
 function parseLinks(data: unknown): Link[] {
-  if (!Array.isArray(data)) return [{ name: "", url: "" }];
-  const validLinks = data.filter(isValidLink);
-  return validLinks.length > 0 ? validLinks : [{ name: "", url: "" }];
+  try {
+    if (typeof data === 'string') {
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed)) {
+        const validLinks = parsed.filter(isValidLink);
+        return validLinks.length > 0 ? validLinks : [{ name: "", url: "" }];
+      }
+    }
+    if (Array.isArray(data)) {
+      const validLinks = data.filter(isValidLink);
+      return validLinks.length > 0 ? validLinks : [{ name: "", url: "" }];
+    }
+  } catch (e) {
+    console.error('Error parsing links:', e);
+  }
+  return [{ name: "", url: "" }];
 }
 
 export function useCommunityForm(id: string | undefined) {
@@ -53,7 +66,10 @@ export function useCommunityForm(id: string | undefined) {
         setPricePeriod(data.price_period || "monthly");
         setPaymentLink(data.payment_link || "");
         setWebhook(data.webhook || "");
-        setLinks(parseLinks(data.links));
+        
+        // Parse and set the links from the database
+        const parsedLinks = parseLinks(data.links);
+        setLinks(parsedLinks);
       }
 
       return data;
