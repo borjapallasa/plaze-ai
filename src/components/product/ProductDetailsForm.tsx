@@ -14,10 +14,6 @@ interface ProductDetailsFormProps {
   setDifficultyLevel: (value: string) => void;
   demo: string;
   setDemo: (value: string) => void;
-  productName: string;
-  setProductName: (value: string) => void;
-  productDescription: string;
-  setProductDescription: (value: string) => void;
 }
 
 export function ProductDetailsForm({
