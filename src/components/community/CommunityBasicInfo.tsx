@@ -85,8 +85,8 @@ export function CommunityBasicInfo({
           />
         </div>
 
-        <div className="flex items-start gap-4">
-          <div className="flex-1">
+        <div className="grid grid-cols-2 gap-6">
+          <div>
             <Label htmlFor="price" className="text-base font-medium mb-2 block">
               Price
             </Label>
@@ -96,15 +96,15 @@ export function CommunityBasicInfo({
               placeholder="Enter community price"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
-              className="h-11 w-full max-w-[200px]"
+              className="h-11 w-full"
             />
           </div>
-          <div className="flex-1">
+          <div>
             <Label htmlFor="price-period" className="text-base font-medium mb-2 block">
               Billing Period
             </Label>
             <Select value={pricePeriod} onValueChange={setPricePeriod}>
-              <SelectTrigger id="price-period" className="w-[200px]">
+              <SelectTrigger id="price-period" className="h-11 w-full">
                 <SelectValue placeholder="Select billing period" />
               </SelectTrigger>
               <SelectContent>
