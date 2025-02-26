@@ -10,6 +10,7 @@ interface PendingImage {
 
 export function usePendingImages() {
   const [pendingImages, setPendingImages] = useState<PendingImage[]>([]);
+  const { toast } = useToast();
 
   const addPendingImage = (file: File) => {
     const previewUrl = URL.createObjectURL(file);
