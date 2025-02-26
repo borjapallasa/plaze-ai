@@ -38,21 +38,22 @@ export default function NewProduct() {
     }
   ]);
 
-  // Effect to sync product name and price with first variant when there's only one variant
+  // Modified effect to properly sync variants
   useEffect(() => {
     if (variants.length === 1) {
-      const updatedVariant = {
-        ...variants[0],
-        name: productName || variants[0].name,
-        price: techStackPrice || variants[0].price,
-        comparePrice: variants[0].comparePrice
-      };
-      
-      if (JSON.stringify(updatedVariant) !== JSON.stringify(variants[0])) {
-        setVariants([updatedVariant]);
+      const currentVariant = variants[0];
+      const newName = productName || currentVariant.name;
+      const newPrice = techStackPrice || currentVariant.price;
+
+      if (currentVariant.name !== newName || currentVariant.price !== newPrice) {
+        setVariants([{
+          ...currentVariant,
+          name: newName,
+          price: newPrice
+        }]);
       }
     }
-  }, [productName, techStackPrice, variants]);
+  }, [productName, techStackPrice]);
 
   const { handleSave, isSaving } = useCreateProduct();
 
