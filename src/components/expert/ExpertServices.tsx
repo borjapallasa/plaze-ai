@@ -89,7 +89,7 @@ const ServiceCard = ({
   return (
     <Card className="relative overflow-hidden">
       <div className="absolute inset-x-0 top-0 h-2 bg-blue-100" />
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-[2.5fr,1fr,1fr] gap-6">
         {/* Main Content */}
         <div className="p-6">
           <div className="space-y-4">
@@ -114,7 +114,7 @@ const ServiceCard = ({
           </div>
         </div>
 
-        {/* Features Column - Always Vertical */}
+        {/* Features Column */}
         <div className="p-6 border-t md:border-t-0 md:border-l border-border bg-muted/5">
           <div className="space-y-4">
             <h4 className="text-sm font-medium flex items-center gap-1.5">
