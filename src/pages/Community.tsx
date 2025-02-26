@@ -8,6 +8,7 @@ import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/ProductCard";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 import { ThreadDialog } from "@/components/ThreadDialog";
 import { MainHeader } from "@/components/MainHeader";
@@ -277,28 +278,29 @@ export default function Community() {
                 {!isOwner && (
                   <Button className="w-full">Join Community</Button>
                 )}
+
+                {links.length > 0 && (
+                  <>
+                    <Separator className="my-4" />
+                    <div className="space-y-3">
+                      <h3 className="font-semibold">Quick Links</h3>
+                      {links.map((link, index) => (
+                        <a 
+                          key={index}
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                          <LinkIcon className="w-4 h-4" />
+                          <span>{link.name}</span>
+                        </a>
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
             </Card>
-
-            {links.length > 0 && (
-              <Card className="p-6">
-                <h3 className="font-semibold mb-4">Quick Links</h3>
-                <div className="space-y-3">
-                  {links.map((link, index) => (
-                    <a 
-                      key={index}
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      <LinkIcon className="w-4 h-4" />
-                      <span>{link.name}</span>
-                    </a>
-                  ))}
-                </div>
-              </Card>
-            )}
           </div>
         </div>
 
