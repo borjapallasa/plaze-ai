@@ -241,19 +241,6 @@ export default function EditCommunity() {
                 </div>
 
                 <div>
-                  <Label htmlFor="payment-link" className="text-base font-medium mb-2 block">
-                    Payment Link
-                  </Label>
-                  <Input
-                    id="payment-link"
-                    value={paymentLink}
-                    readOnly
-                    disabled
-                    className="h-11 bg-muted"
-                  />
-                </div>
-
-                <div>
                   <Label className="text-base font-medium mb-2 block">
                     Images
                   </Label>
