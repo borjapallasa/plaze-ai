@@ -15,11 +15,17 @@ export function usePendingImages() {
   const addPendingImage = (file: File) => {
     console.log('usePendingImages: Adding pending image:', file.name);
     const previewUrl = URL.createObjectURL(file);
-    setPendingImages(prev => [...prev, { file, previewUrl }]);
-    console.log('usePendingImages: Current pending images count:', pendingImages.length + 1);
+    setPendingImages(prevImages => {
+      const newImages = [...prevImages, { file, previewUrl }];
+      console.log('usePendingImages: New pending images state:', newImages);
+      return newImages;
+    });
   };
 
   const uploadPendingImages = async (productUuid: string) => {
+    console.log('uploadPendingImages called with productUuid:', productUuid);
+    console.log('Current pending images:', pendingImages);
+
     if (!productUuid) {
       console.error('usePendingImages: No product UUID provided for image upload');
       return;
@@ -111,7 +117,7 @@ export function usePendingImages() {
         console.log('usePendingImages: Product thumbnail updated successfully');
       }
 
-      // Clean up preview URLs
+      // Clean up preview URLs and reset pending images
       pendingImages.forEach(image => URL.revokeObjectURL(image.previewUrl));
       setPendingImages([]);
 

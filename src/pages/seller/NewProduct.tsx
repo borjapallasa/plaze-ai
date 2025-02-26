@@ -26,6 +26,7 @@ export default function NewProduct() {
   const [platform, setPlatform] = useState<string[]>([]);
   const [team, setTeam] = useState<string[]>([]);
   const { pendingImages, addPendingImage } = usePendingImages();
+
   const [variants, setVariants] = useState<Variant[]>([
     {
       id: "1",
@@ -97,22 +98,27 @@ export default function NewProduct() {
     );
   };
 
-  const handleCreateProduct = () => {
-    handleSave({
-      name: productName,
-      description: productDescription,
-      techStack,
-      techStackPrice,
-      productIncludes,
-      difficultyLevel,
-      demo,
-      status: productStatus,
-      industries,
-      useCases,
-      platform,
-      team,
-      variants,
-    });
+  const handleCreateProduct = async () => {
+    try {
+      console.log('Starting product creation with pending images:', pendingImages.length);
+      await handleSave({
+        name: productName,
+        description: productDescription,
+        techStack,
+        techStackPrice,
+        productIncludes,
+        difficultyLevel,
+        demo,
+        status: productStatus,
+        industries,
+        useCases,
+        platform,
+        team,
+        variants,
+      });
+    } catch (error) {
+      console.error('Error creating product:', error);
+    }
   };
 
   return (
