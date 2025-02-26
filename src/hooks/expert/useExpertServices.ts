@@ -11,10 +11,24 @@ export function useExpertServices(expert_uuid: string | undefined) {
 
       const { data, error } = await supabase
         .from('services')
-        .select('*')
+        .select(`
+          service_uuid,
+          name,
+          description,
+          price,
+          features,
+          type,
+          monthly_recurring_revenue,
+          revenue_amount,
+          active_subscriptions_count,
+          created_at
+        `)
         .eq('expert_uuid', expert_uuid);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching services:', error);
+        throw error;
+      }
       
       return (data || []).map(service => ({
         ...service,
