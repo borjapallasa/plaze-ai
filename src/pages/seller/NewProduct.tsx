@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -61,6 +62,23 @@ export default function NewProduct() {
     }
   });
 
+  const { data: expertData } = useQuery({
+    queryKey: ['expertUuid', currentUser?.id],
+    queryFn: async () => {
+      if (!currentUser?.id) throw new Error('No user logged in');
+      
+      const { data, error } = await supabase
+        .from('experts')
+        .select('expert_uuid')
+        .eq('user_uuid', currentUser.id)
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!currentUser?.id
+  });
+
   const handleStatusChange = (value: ProductStatus) => {
     setProductStatus(value);
   };
@@ -112,6 +130,15 @@ export default function NewProduct() {
       return;
     }
 
+    if (!expertData?.expert_uuid) {
+      toast({
+        title: "Error",
+        description: "Expert profile not found",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       setIsSaving(true);
 
@@ -131,7 +158,7 @@ export default function NewProduct() {
           platform: platform,
           team: team,
           user_uuid: currentUser.id,
-          expert_uuid: currentUser.id,
+          expert_uuid: expertData.expert_uuid, // Using the expert_uuid from the experts table
         })
         .select()
         .single();
