@@ -206,7 +206,7 @@ export default function Community() {
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <Avatar className="h-12 w-12">
-                    <AvatarImage src="https://github.com/shadcn.png" />
+                    <AvatarImage src={community.expert_thumbnail || "https://github.com/shadcn.png"} />
                     <AvatarFallback>CM</AvatarFallback>
                   </Avatar>
                   <div>
@@ -215,11 +215,23 @@ export default function Community() {
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                  <span className="text-sm truncate">
-                    {community.name} has {community.member_count || 0} members!
-                  </span>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Products</p>
+                    <p className="font-semibold">{community.product_count || 0}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Classrooms</p>
+                    <p className="font-semibold">{community.classroom_count || 0}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Posts</p>
+                    <p className="font-semibold">{community.post_count || 0}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Members</p>
+                    <p className="font-semibold">{community.member_count || 0}</p>
+                  </div>
                 </div>
 
                 <div className="space-y-2">
