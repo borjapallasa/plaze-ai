@@ -172,6 +172,10 @@ export default function NewProduct() {
                 <Card className="p-3 sm:p-6">
                   <div className="space-y-3 sm:space-y-4">
                     <ProductDetailsForm
+                      productName={productName}
+                      setProductName={setProductName}
+                      productDescription={productDescription}
+                      setProductDescription={setProductDescription}
                       techStack={techStack}
                       setTechStack={setTechStack}
                       techStackPrice={techStackPrice}
