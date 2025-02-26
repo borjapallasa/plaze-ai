@@ -29,6 +29,7 @@ import AccountSettings from "./pages/AccountSettings";
 import Chats from "./pages/Chats";
 import ThankYou from "./pages/ThankYou";
 import EditProduct from "./pages/EditProduct";
+import NewProduct from "./pages/seller/NewProduct";
 import EditService from "./pages/EditService";
 import Cart from "./pages/Cart";
 import MyCommunities from "./pages/MyCommunities";
@@ -79,6 +80,7 @@ const App = () => (
             <Route path="/cart" element={<Cart />} />
             <Route path="/seller/:id" element={<SellerPage />} />
             <Route path="/seller/products/product/:id" element={<EditProduct />} />
+            <Route path="/seller/products/new" element={<NewProduct />} />
             <Route path="/seller/services/service/:id" element={<EditService />} />
             <Route path="/a/admin" element={<AdminDashboard />} />
             <Route path="/a/admin/transactions" element={<AdminTransactions />} />
