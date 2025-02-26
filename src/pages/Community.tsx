@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageSquare, Users, BookOpen, Calendar, Link, ThumbsUp, Search, ArrowRight } from "lucide-react";
+import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight } from "lucide-react";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/ProductCard";
@@ -14,6 +14,22 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
+
+interface Link {
+  name: string;
+  url: string;
+}
+
+function isValidLink(link: unknown): link is Link {
+  if (typeof link !== 'object' || link === null) return false;
+  const l = link as any;
+  return typeof l.name === 'string' && typeof l.url === 'string';
+}
+
+function parseLinks(data: unknown): Link[] {
+  if (!Array.isArray(data)) return [];
+  return data.filter(isValidLink);
+}
 
 export default function Community() {
   const { id } = useParams();
@@ -39,6 +55,7 @@ export default function Community() {
   });
 
   const videoEmbedUrl = getVideoEmbedUrl(community?.intro);
+  const links = parseLinks(community?.links);
 
   if (isLoading) {
     return (
@@ -199,7 +216,7 @@ export default function Community() {
             </Card>
           </div>
 
-          <div className="lg:col-span-4">
+          <div className="lg:col-span-4 space-y-6">
             <Card className="p-6">
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
@@ -232,18 +249,29 @@ export default function Community() {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  {community.intro && !videoEmbedUrl && (
-                    <a href={community.intro} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                      <Link className="w-4 h-4" />
-                      <span className="font-medium">Introduction Video</span>
-                    </a>
-                  )}
-                </div>
-
                 <Button className="w-full">Join Community</Button>
               </div>
             </Card>
+
+            {links.length > 0 && (
+              <Card className="p-6">
+                <h3 className="font-semibold mb-4">Quick Links</h3>
+                <div className="space-y-3">
+                  {links.map((link, index) => (
+                    <a 
+                      key={index}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      <LinkIcon className="w-4 h-4" />
+                      <span>{link.name}</span>
+                    </a>
+                  ))}
+                </div>
+              </Card>
+            )}
           </div>
         </div>
 
