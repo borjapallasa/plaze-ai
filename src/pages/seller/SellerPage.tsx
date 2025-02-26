@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -34,7 +35,7 @@ export default function SellerPage() {
         .select(`
           *,
           services(*),
-          products!products_seller_uuid_fkey(
+          products!products_expert_uuid_fkey(
             name,
             status,
             variant_count,
