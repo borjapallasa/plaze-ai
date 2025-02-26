@@ -313,6 +313,12 @@ export default function EditCommunity() {
                       </p>
                     </div>
                     <div>
+                      <p className="text-sm text-muted-foreground">Total Revenue</p>
+                      <p className="text-xl font-semibold">
+                        {formatCurrency(community?.total_revenue)}
+                      </p>
+                    </div>
+                    <div>
                       <p className="text-sm text-muted-foreground">Total Members</p>
                       <p className="text-xl font-semibold">{formatNumber(community?.member_count)}</p>
                     </div>

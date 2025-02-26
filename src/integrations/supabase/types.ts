@@ -277,6 +277,7 @@ export type Database = {
           slug: string | null
           thumbnail: string | null
           title: string | null
+          total_revenue: number | null
           type: Database["public"]["Enums"]["community_type"] | null
           user_uuid: string | null
           webhook: string | null
@@ -304,6 +305,7 @@ export type Database = {
           slug?: string | null
           thumbnail?: string | null
           title?: string | null
+          total_revenue?: number | null
           type?: Database["public"]["Enums"]["community_type"] | null
           user_uuid?: string | null
           webhook?: string | null
@@ -331,6 +333,7 @@ export type Database = {
           slug?: string | null
           thumbnail?: string | null
           title?: string | null
+          total_revenue?: number | null
           type?: Database["public"]["Enums"]["community_type"] | null
           user_uuid?: string | null
           webhook?: string | null
