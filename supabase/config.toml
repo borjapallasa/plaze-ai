@@ -1,6 +1,1 @@
-
-[[buckets]]
-name = "product_images"
-public = true
-file_size_limit = "10MB"
-allowed_mime_types = ["image/*"]
+project_id = "jbibqnxjagmgocqjtdim"

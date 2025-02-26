@@ -38,27 +38,21 @@ export default function NewProduct() {
     }
   ]);
 
-  // Sync product details with first variant
+  // Effect to sync product name and price with first variant when there's only one variant
   useEffect(() => {
     if (variants.length === 1) {
-      setVariants(prevVariants => {
-        const currentVariant = prevVariants[0];
-        const newName = productName;
-        const newPrice = techStackPrice;
-
-        // Only update if values have changed
-        if (currentVariant.name === newName && currentVariant.price === newPrice) {
-          return prevVariants;
-        }
-
-        return [{
-          ...currentVariant,
-          name: newName,
-          price: newPrice
-        }];
-      });
+      const updatedVariant = {
+        ...variants[0],
+        name: productName || variants[0].name,
+        price: techStackPrice || variants[0].price,
+        comparePrice: variants[0].comparePrice
+      };
+      
+      if (JSON.stringify(updatedVariant) !== JSON.stringify(variants[0])) {
+        setVariants([updatedVariant]);
+      }
     }
-  }, [productName, techStackPrice]);
+  }, [productName, techStackPrice, variants]);
 
   const { handleSave, isSaving } = useCreateProduct();
 
@@ -137,6 +131,7 @@ export default function NewProduct() {
           <div className="space-y-3 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-6">
             <div className="lg:col-span-8">
               <div className="space-y-3 sm:space-y-6">
+                {/* Product Details Form - Name and Description */}
                 <Card className="p-3 sm:p-6">
                   <div className="space-y-3 sm:space-y-4">
                     <ProductBasicDetailsForm
@@ -148,6 +143,7 @@ export default function NewProduct() {
                   </div>
                 </Card>
 
+                {/* Variants Section */}
                 <Card className="p-3 sm:p-6">
                   <div className="pt-2">
                     <ProductVariantsEditor 
@@ -157,6 +153,7 @@ export default function NewProduct() {
                   </div>
                 </Card>
 
+                {/* Technical Details Form */}
                 <Card className="p-3 sm:p-6">
                   <div className="space-y-3 sm:space-y-4">
                     <ProductDetailsForm
@@ -178,6 +175,7 @@ export default function NewProduct() {
                   </div>
                 </Card>
 
+                {/* Media Section */}
                 <Card className="p-3 sm:p-6">
                   <h2 className="text-lg font-medium mb-3 sm:mb-4">Media</h2>
                   <ProductMediaUpload productUuid="" onFileSelect={addPendingImage} />
