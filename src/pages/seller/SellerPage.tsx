@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -24,6 +25,15 @@ import {
 } from "lucide-react";
 import { Badge as UIBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+
+interface Service {
+  service_uuid: string;
+  name: string;
+  description: string;
+  price: number;
+  features: string[];
+  type: string;
+}
 
 export default function SellerPage() {
   const { id } = useParams();
@@ -87,7 +97,12 @@ export default function SellerPage() {
         .eq('expert_uuid', id);
 
       if (error) throw error;
-      return data || [];
+
+      // Transform the data to ensure features is an array of strings
+      return (data || []).map(service => ({
+        ...service,
+        features: Array.isArray(service.features) ? service.features : []
+      })) as Service[];
     },
     enabled: !!id
   });
@@ -302,7 +317,7 @@ export default function SellerPage() {
                         </UIBadge>
                       </div>
 
-                      {service.features && Array.isArray(service.features) && service.features.length > 0 && (
+                      {service.features && service.features.length > 0 && (
                         <div className="space-y-2">
                           <h4 className="text-sm font-medium flex items-center gap-1.5">
                             <Sparkles className="h-4 w-4 text-blue-500" />
