@@ -27,8 +27,14 @@ function isValidLink(link: unknown): link is Link {
 }
 
 function parseLinks(data: unknown): Link[] {
-  if (!Array.isArray(data)) return [];
-  return data.filter(isValidLink);
+  console.log('Raw links data:', data); // Debug log
+  if (!Array.isArray(data)) {
+    console.log('Links data is not an array, returning empty array'); // Debug log
+    return [];
+  }
+  const validLinks = data.filter(isValidLink);
+  console.log('Parsed valid links:', validLinks); // Debug log
+  return validLinks;
 }
 
 export default function Community() {
@@ -49,6 +55,10 @@ export default function Community() {
         throw error;
       }
 
+      // Debug log
+      console.log('Community data:', data);
+      console.log('Links from community:', data?.links);
+
       return data;
     },
     enabled: !!id
@@ -56,6 +66,9 @@ export default function Community() {
 
   const videoEmbedUrl = getVideoEmbedUrl(community?.intro);
   const links = parseLinks(community?.links);
+  
+  // Debug log
+  console.log('Processed links:', links);
 
   if (isLoading) {
     return (
