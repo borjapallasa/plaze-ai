@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +24,65 @@ interface Link {
   name: string;
   url: string;
 }
+
+interface Classroom {
+  title: string;
+  description: string;
+}
+
+interface Template {
+  title: string;
+  description: string;
+  price: number;
+  image: string;
+  seller: string;
+  tags: string[];
+  category: string;
+}
+
+// Mock data for tabs content
+const classrooms: Classroom[] = [
+  {
+    title: "Introduction to Community Building",
+    description: "Learn the fundamentals of building and growing your community"
+  },
+  {
+    title: "Engagement Strategies",
+    description: "Discover effective ways to keep your community engaged"
+  },
+  {
+    title: "Advanced Community Management",
+    description: "Master the art of managing a thriving community"
+  }
+];
+
+const templates: Template[] = [
+  {
+    title: "Community Starter Kit",
+    description: "Everything you need to start your community",
+    price: 49,
+    image: "/lovable-uploads/890bbce9-6ca6-4a0e-958a-d7ba6f61bf73.png",
+    seller: "Community Expert",
+    tags: ["community", "starter"],
+    category: "Templates"
+  },
+  {
+    title: "Engagement Toolkit",
+    description: "Tools and templates for community engagement",
+    price: 29,
+    image: "/lovable-uploads/890bbce9-6ca6-4a0e-958a-d7ba6f61bf73.png",
+    seller: "Community Expert",
+    tags: ["engagement", "tools"],
+    category: "Templates"
+  }
+];
+
+// Calendar events
+const events: Date[] = [
+  new Date(2024, 3, 15),
+  new Date(2024, 3, 22),
+  new Date(2024, 4, 5)
+];
 
 function isValidLink(link: unknown): link is Link {
   if (typeof link !== 'object' || link === null) return false;
