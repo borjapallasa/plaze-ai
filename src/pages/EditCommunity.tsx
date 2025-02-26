@@ -8,6 +8,7 @@ import { CommunityBasicInfo } from "@/components/community/CommunityBasicInfo";
 import { CommunityStats } from "@/components/community/CommunityStats";
 import { useCommunityImages } from "@/hooks/use-community-images";
 import { useCommunityForm } from "@/hooks/use-community-form";
+import { CommunityMediaUpload } from "@/components/community/CommunityMediaUpload";
 
 export default function EditCommunity() {
   const { id } = useParams();
@@ -57,26 +58,32 @@ export default function EditCommunity() {
 
         <div className="space-y-4 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-8">
-            <CommunityBasicInfo
-              communityName={communityName}
-              setCommunityName={setCommunityName}
-              communityIntro={communityIntro}
-              setCommunityIntro={setCommunityIntro}
-              communityDescription={communityDescription}
-              setCommunityDescription={setCommunityDescription}
-              price={price}
-              setPrice={setPrice}
-              pricePeriod={pricePeriod}
-              setPricePeriod={setPricePeriod}
-              webhook={webhook}
-              setWebhook={setWebhook}
-              communityUuid={id || ''}
-              communityImages={communityImages}
-              links={links}
-              onLinkChange={handleLinkChange}
-              onAddLink={handleAddLink}
-              onRemoveLink={handleRemoveLink}
-            />
+            <div className="space-y-6">
+              <CommunityMediaUpload
+                communityUuid={id || ''}
+                initialImages={communityImages}
+              />
+              <CommunityBasicInfo
+                communityName={communityName}
+                setCommunityName={setCommunityName}
+                communityIntro={communityIntro}
+                setCommunityIntro={setCommunityIntro}
+                communityDescription={communityDescription}
+                setCommunityDescription={setCommunityDescription}
+                price={price}
+                setPrice={setPrice}
+                pricePeriod={pricePeriod}
+                setPricePeriod={setPricePeriod}
+                webhook={webhook}
+                setWebhook={setWebhook}
+                communityUuid={id || ''}
+                communityImages={communityImages}
+                links={links}
+                onLinkChange={handleLinkChange}
+                onAddLink={handleAddLink}
+                onRemoveLink={handleRemoveLink}
+              />
+            </div>
           </div>
 
           <div className="lg:col-span-4">
