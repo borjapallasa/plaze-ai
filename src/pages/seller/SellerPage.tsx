@@ -26,7 +26,8 @@ import {
   ArrowUp,
   DollarSign,
   CalendarDays,
-  Users2
+  Users2,
+  Check
 } from "lucide-react";
 import { Badge as UIBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -399,63 +400,59 @@ export default function SellerPage() {
               {services.map((service) => (
                 <Card 
                   key={service.service_uuid} 
-                  className="overflow-hidden border bg-card shadow-sm transition-all hover:shadow-md"
+                  className="relative overflow-hidden"
                 >
-                  <div className="flex flex-col sm:flex-row">
-                    <div className="flex-1 p-6">
+                  <div className="absolute inset-x-0 top-0 h-2 bg-blue-100" />
+                  <div className="grid md:grid-cols-[2.5fr,1fr,1fr] gap-6">
+                    <div className="p-6">
                       <div className="space-y-4">
-                        <div className="flex items-start justify-between gap-4">
-                          <div>
-                            <h3 className="text-xl font-semibold tracking-tight text-foreground">
-                              {service.name}
-                            </h3>
-                            <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                              {service.description}
-                            </p>
+                        <div>
+                          <div className="flex items-center justify-between gap-4">
+                            <h3 className="text-xl font-semibold leading-tight">{service.name}</h3>
+                            <Badge variant="secondary" className="capitalize whitespace-nowrap shrink-0">
+                              {service.type}
+                            </Badge>
                           </div>
-                          <UIBadge variant="secondary" className="capitalize font-medium">
-                            {service.type}
-                          </UIBadge>
+                          <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                            {service.description}
+                          </p>
                         </div>
-
-                        {service.features && service.features.length > 0 && (
-                          <div className="space-y-3">
-                            <h4 className="text-sm font-medium flex items-center gap-1.5 text-foreground">
-                              <Sparkles className="h-4 w-4 text-blue-500" />
-                              Features
-                            </h4>
-                            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                              {service.features.map((feature, index) => (
-                                <li 
-                                  key={index} 
-                                  className="text-sm text-muted-foreground flex items-center gap-2"
-                                >
-                                  <ArrowRight className="h-3 w-3 text-blue-500" />
-                                  {feature}
-                                </li>
-                              ))}
-                            </ul>
+                        <div className="flex items-center gap-2">
+                          <div className="text-sm font-medium text-muted-foreground whitespace-nowrap">Starting at</div>
+                          <div className="text-2xl font-bold flex items-center gap-1 whitespace-nowrap">
+                            <DollarSign className="w-5 h-5" />
+                            {service.price?.toLocaleString() || '0'}
                           </div>
-                        )}
+                        </div>
                       </div>
                     </div>
 
-                    <div className="border-t sm:border-t-0 sm:border-l border-border/50 bg-muted/20">
-                      <div className="p-6 space-y-6">
-                        <div className="text-center sm:text-left">
-                          <div className="text-sm font-medium text-muted-foreground">Starting at</div>
-                          <div className="text-2xl font-bold text-foreground">
-                            ${service.price?.toLocaleString() || '0.00'}
-                          </div>
+                    <div className="p-6 border-t md:border-t-0 md:border-l border-border bg-muted/5">
+                      <div className="space-y-4">
+                        <h4 className="text-sm font-medium flex items-center gap-1.5">
+                          <Sparkles className="h-4 w-4 text-blue-500" />
+                          Features
+                        </h4>
+                        <div className="flex flex-col gap-2">
+                          {service.features?.map((feature, idx) => (
+                            <div key={idx} className="flex items-start gap-2">
+                              <Check className="w-4 h-4 mt-1 text-blue-500 flex-shrink-0" />
+                              <span className="text-sm text-muted-foreground">{feature}</span>
+                            </div>
+                          ))}
                         </div>
+                      </div>
+                    </div>
 
+                    <div className="p-6 border-t md:border-t-0 md:border-l border-border bg-muted/5">
+                      <div className="space-y-6">
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-1">
                             <div className="text-xs font-medium text-muted-foreground flex items-center gap-1">
                               <DollarSign className="w-3 h-3" />
                               MRR
                             </div>
-                            <div className="font-medium">
+                            <div className="font-medium whitespace-nowrap">
                               ${service.monthly_recurring_revenue?.toLocaleString() || '0'}/mo
                             </div>
                           </div>
@@ -464,7 +461,7 @@ export default function SellerPage() {
                               <DollarSign className="w-3 h-3" />
                               Revenue
                             </div>
-                            <div className="font-medium">
+                            <div className="font-medium whitespace-nowrap">
                               ${service.revenue_amount?.toLocaleString() || '0'}
                             </div>
                           </div>
@@ -482,15 +479,17 @@ export default function SellerPage() {
                               <CalendarDays className="w-3 h-3" />
                               Created
                             </div>
-                            <div className="font-medium">
-                              {format(new Date(service.created_at), 'MMM d, yyyy')}
+                            <div className="font-medium whitespace-nowrap">
+                              {service.created_at ? format(new Date(service.created_at), 'MMM d, yyyy') : '-'}
                             </div>
                           </div>
                         </div>
 
-                        <Button className="w-full bg-primary hover:bg-primary/90">
-                          View Details
-                        </Button>
+                        <div className="space-y-2">
+                          <Button className="w-full">
+                            View Details
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </div>
