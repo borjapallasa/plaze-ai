@@ -15,6 +15,7 @@ import ProductsPage from "./pages/Products";
 import NewProductPage from "./pages/seller/NewProduct";
 import EditProductPage from "./pages/EditProduct";
 import EditServicePage from "./pages/EditService";
+import EditCommunityPage from "./pages/EditCommunity";
 import CommunitiesPage from "./pages/Communities";
 import CommunityPage from "./pages/Community";
 import ChatsPage from "./pages/Chats";
@@ -60,6 +61,7 @@ function App() {
           <Route path="/seller/:id" element={<SellerPage />} />
           <Route path="/product/:id/edit" element={<EditProductPage />} />
           <Route path="/service/:id/edit" element={<EditServicePage />} />
+          <Route path="/community/:id/edit" element={<EditCommunityPage />} />
           <Route path="/communities" element={<CommunitiesPage />} />
           <Route path="/community/:id" element={<CommunityPage />} />
           <Route path="/chats" element={<ChatsPage />} />
