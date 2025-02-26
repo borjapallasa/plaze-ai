@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -40,7 +39,17 @@ export default function NewProduct() {
   const [useCases, setUseCases] = useState<string[]>([]);
   const [platform, setPlatform] = useState<string[]>([]);
   const [team, setTeam] = useState<string[]>([]);
-  const [variants, setVariants] = useState([]);
+  const [variants, setVariants] = useState([
+    {
+      id: "1",
+      name: "",
+      price: "",
+      comparePrice: "",
+      highlight: false,
+      tags: [],
+      createdAt: new Date().toISOString(),
+    }
+  ]);
 
   // Get current user to set as expert_uuid
   const { data: currentUser } = useQuery({
