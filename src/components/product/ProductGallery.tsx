@@ -37,7 +37,7 @@ export function ProductGallery({ images, className, priority = false }: ProductG
   return (
     <div className={className}>
       {/* Desktop Layout */}
-      <div className="hidden lg:block space-y-4">
+      <div className="hidden lg:block space-y-6">
         {/* Main image container */}
         <div className="w-full aspect-video bg-card rounded-lg overflow-hidden relative flex items-center justify-center">
           <img 
@@ -63,8 +63,8 @@ export function ProductGallery({ images, className, priority = false }: ProductG
 
         {/* Thumbnails in a scrollable container below */}
         {images.length > 1 && (
-          <div className="relative w-full">
-            <div className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory">
+          <div className="relative w-full px-1">
+            <div className="flex gap-4 overflow-x-auto py-1 px-1 snap-x snap-mandatory -mx-1">
               {images.map((img, i) => {
                 const thumbSizes = getImageSizes(img.url);
                 return (
