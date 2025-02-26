@@ -1,12 +1,11 @@
 
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import React from "react";
 import { Card } from "@/components/ui/card";
-import { ProductEditor } from "@/components/product/ProductEditor";
-import { Link as LinkIcon, PlusCircle, XCircle } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CommunityMediaUpload } from "@/components/community/CommunityMediaUpload";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Plus, X } from "lucide-react";
 
 interface Link {
   name: string;
@@ -15,27 +14,20 @@ interface Link {
 
 interface CommunityBasicInfoProps {
   communityName: string;
-  setCommunityName: (value: string) => void;
+  setCommunityName: (name: string) => void;
   communityIntro: string;
-  setCommunityIntro: (value: string) => void;
+  setCommunityIntro: (intro: string) => void;
   communityDescription: string;
-  setCommunityDescription: (value: string) => void;
+  setCommunityDescription: (description: string) => void;
   price: string;
-  setPrice: (value: string) => void;
-  pricePeriod: "monthly" | "yearly";
-  setPricePeriod: (value: "monthly" | "yearly") => void;
+  setPrice: (price: string) => void;
+  pricePeriod: string;
+  setPricePeriod: (period: string) => void;
   webhook: string;
-  setWebhook: (value: string) => void;
+  setWebhook: (webhook: string) => void;
   communityUuid: string;
-  communityImages: Array<{
-    id: number;
-    url: string;
-    storage_path: string;
-    is_primary: boolean;
-    file_name: string;
-  }>;
   links: Link[];
-  onLinkChange: (index: number, field: keyof Link, value: string) => void;
+  onLinkChange: (index: number, field: 'name' | 'url', value: string) => void;
   onAddLink: () => void;
   onRemoveLink: (index: number) => void;
 }
@@ -54,140 +46,98 @@ export function CommunityBasicInfo({
   webhook,
   setWebhook,
   communityUuid,
-  communityImages,
   links,
   onLinkChange,
   onAddLink,
   onRemoveLink,
 }: CommunityBasicInfoProps) {
   return (
-    <Card className="p-4 sm:p-6">
-      <div className="space-y-8">
-        <div>
-          <Label htmlFor="name" className="text-base font-medium mb-2 block">
-            Community Name
-          </Label>
+    <Card className="p-6">
+      <div className="space-y-6">
+        <div className="space-y-2">
+          <Label htmlFor="communityName">Community Name</Label>
           <Input
-            id="name"
-            placeholder="Enter your community name"
+            id="communityName"
             value={communityName}
             onChange={(e) => setCommunityName(e.target.value)}
-            className="h-11"
+            placeholder="Enter community name"
           />
         </div>
-        
-        <div>
-          <Label htmlFor="intro" className="text-base font-medium mb-2 flex items-center gap-2">
-            Introduction Link <LinkIcon className="h-4 w-4 text-muted-foreground" />
-          </Label>
+
+        <div className="space-y-2">
+          <Label htmlFor="communityIntro">Community Video URL</Label>
           <Input
-            id="intro"
-            placeholder="Enter introduction link"
+            id="communityIntro"
             value={communityIntro}
             onChange={(e) => setCommunityIntro(e.target.value)}
-            className="h-11"
+            placeholder="Enter video URL (YouTube or Vimeo)"
           />
         </div>
 
-        <div>
-          <Label htmlFor="description" className="text-base font-medium mb-2 block">
-            Description
-          </Label>
-          <ProductEditor 
+        <div className="space-y-2">
+          <Label htmlFor="communityDescription">Community Description</Label>
+          <Textarea
+            id="communityDescription"
             value={communityDescription}
-            onChange={setCommunityDescription}
+            onChange={(e) => setCommunityDescription(e.target.value)}
+            placeholder="Enter community description"
+            className="min-h-[150px]"
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
-          <div>
-            <Label htmlFor="price" className="text-base font-medium mb-2 block">
-              Price
-            </Label>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="price">Price</Label>
             <Input
               id="price"
-              type="number"
-              placeholder="Enter community price"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
-              className="h-11 w-full"
+              placeholder="Enter price"
+              type="number"
             />
           </div>
-          <div>
-            <Label htmlFor="price-period" className="text-base font-medium mb-2 block">
-              Billing Period
-            </Label>
-            <Select value={pricePeriod} onValueChange={setPricePeriod}>
-              <SelectTrigger id="price-period" className="h-11 w-full">
-                <SelectValue placeholder="Select billing period" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="monthly">Monthly</SelectItem>
-                <SelectItem value="yearly">Yearly</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="space-y-2">
+            <Label htmlFor="pricePeriod">Price Period</Label>
+            <Input
+              id="pricePeriod"
+              value={pricePeriod}
+              onChange={(e) => setPricePeriod(e.target.value)}
+              placeholder="e.g., monthly, yearly"
+            />
           </div>
         </div>
 
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <Label className="text-base font-medium">Links</Label>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={onAddLink}
-              className="flex items-center gap-2"
-            >
-              <PlusCircle className="h-4 w-4" />
-              Add Link
-            </Button>
-          </div>
-          <div className="space-y-4">
-            {links.map((link, index) => (
-              <div key={index} className="grid grid-cols-2 gap-4 items-start">
-                <div>
-                  <Input
-                    placeholder="Link name"
-                    value={link.name}
-                    onChange={(e) => onLinkChange(index, 'name', e.target.value)}
-                    className="h-11"
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="URL"
-                    value={link.url}
-                    onChange={(e) => onLinkChange(index, 'url', e.target.value)}
-                    className="h-11"
-                  />
-                  {links.length > 1 && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => onRemoveLink(index)}
-                      className="flex-shrink-0"
-                    >
-                      <XCircle className="h-5 w-5 text-muted-foreground hover:text-destructive" />
-                    </Button>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <Label className="text-base font-medium mb-2 block">
-            Images
-          </Label>
-          <div className="space-y-4">
-            <CommunityMediaUpload
-              communityUuid={communityUuid}
-              initialImages={communityImages}
-            />
-          </div>
+        <div className="space-y-4">
+          <Label>Links</Label>
+          {links.map((link, index) => (
+            <div key={index} className="grid grid-cols-[1fr_2fr_auto] gap-2">
+              <Input
+                value={link.name}
+                onChange={(e) => onLinkChange(index, 'name', e.target.value)}
+                placeholder="Link name"
+              />
+              <Input
+                value={link.url}
+                onChange={(e) => onLinkChange(index, 'url', e.target.value)}
+                placeholder="URL"
+              />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => onRemoveLink(index)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          ))}
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={onAddLink}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Link
+          </Button>
         </div>
       </div>
     </Card>

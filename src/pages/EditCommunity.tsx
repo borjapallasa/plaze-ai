@@ -77,7 +77,6 @@ export default function EditCommunity() {
                 webhook={webhook}
                 setWebhook={setWebhook}
                 communityUuid={id || ''}
-                communityImages={communityImages}
                 links={links}
                 onLinkChange={handleLinkChange}
                 onAddLink={handleAddLink}
