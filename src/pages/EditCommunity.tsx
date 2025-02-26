@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -26,7 +25,6 @@ export default function EditCommunity() {
   const [paymentLink, setPaymentLink] = useState("");
   const [webhook, setWebhook] = useState("");
 
-  // Query to fetch community details
   const { data: community, isLoading } = useQuery({
     queryKey: ['community', id],
     queryFn: async () => {
@@ -52,7 +50,6 @@ export default function EditCommunity() {
     enabled: !!id
   });
 
-  // Query to fetch community images
   const { data: communityImages = [] } = useQuery({
     queryKey: ['communityImages', id],
     queryFn: async () => {
@@ -112,6 +109,19 @@ export default function EditCommunity() {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const formatNumber = (num: number | null | undefined) => {
+    if (num === null || num === undefined) return '0';
+    return num.toLocaleString();
+  };
+
+  const formatCurrency = (amount: number | null | undefined) => {
+    if (amount === null || amount === undefined) return '$0';
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(amount);
   };
 
   if (isLoading) {
@@ -236,11 +246,44 @@ export default function EditCommunity() {
 
           <div className="lg:col-span-4">
             <Card className="p-4 sm:p-6 border border-border/40 bg-card/40">
-              <h2 className="text-lg font-semibold tracking-tight mb-4">Community Settings</h2>
+              <h2 className="text-lg font-semibold tracking-tight mb-4">Community Information</h2>
               <div className="space-y-4">
-                <p className="text-sm text-muted-foreground">
-                  Additional community configuration options will be available here soon.
-                </p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Products</p>
+                    <p className="text-xl font-semibold">{formatNumber(community?.product_count)}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Classrooms</p>
+                    <p className="text-xl font-semibold">{formatNumber(community?.classroom_count)}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Posts</p>
+                    <p className="text-xl font-semibold">{formatNumber(community?.post_count)}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Paid Members</p>
+                    <p className="text-xl font-semibold">{formatNumber(community?.paid_member_count)}</p>
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t">
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Monthly Revenue</p>
+                      <p className="text-xl font-semibold">
+                        {formatCurrency(community?.monthly_recurring_revenue)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Total Members</p>
+                      <p className="text-xl font-semibold">{formatNumber(community?.member_count)}</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </Card>
           </div>
