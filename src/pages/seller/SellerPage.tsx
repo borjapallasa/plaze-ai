@@ -23,10 +23,14 @@ import {
   ArrowRight,
   ArrowUpDown,
   ArrowDown,
-  ArrowUp
+  ArrowUp,
+  DollarSign,
+  CalendarDays,
+  Users2
 } from "lucide-react";
 import { Badge as UIBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
 
 interface Service {
   service_uuid: string;
@@ -35,6 +39,10 @@ interface Service {
   price: number;
   features: string[];
   type: string;
+  monthly_recurring_revenue: number;
+  revenue_amount: number;
+  active_subscriptions_count: number;
+  created_at: string;
 }
 
 type SortField = 'name' | 'status' | 'variant_count' | 'price_from' | 'created_at';
@@ -99,7 +107,11 @@ export default function SellerPage() {
           price,
           features,
           type,
-          service_uuid
+          service_uuid,
+          monthly_recurring_revenue,
+          revenue_amount,
+          active_subscriptions_count,
+          created_at
         `)
         .eq('expert_uuid', id);
 
@@ -385,43 +397,101 @@ export default function SellerPage() {
 
             <div className="grid grid-cols-1 gap-4">
               {services.map((service) => (
-                <Card key={service.service_uuid} className="p-6">
-                  <div className="flex flex-col sm:flex-row gap-6">
-                    <div className="flex-1 space-y-4">
-                      <div className="flex items-start justify-between gap-4">
-                        <div>
-                          <h3 className="text-lg font-semibold">{service.name}</h3>
-                          <p className="text-sm text-muted-foreground mt-1">{service.description}</p>
+                <Card 
+                  key={service.service_uuid} 
+                  className="overflow-hidden border bg-card shadow-sm transition-all hover:shadow-md"
+                >
+                  <div className="flex flex-col sm:flex-row">
+                    <div className="flex-1 p-6">
+                      <div className="space-y-4">
+                        <div className="flex items-start justify-between gap-4">
+                          <div>
+                            <h3 className="text-xl font-semibold tracking-tight text-foreground">
+                              {service.name}
+                            </h3>
+                            <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                              {service.description}
+                            </p>
+                          </div>
+                          <UIBadge variant="secondary" className="capitalize font-medium">
+                            {service.type}
+                          </UIBadge>
                         </div>
-                        <UIBadge variant="secondary" className="capitalize">
-                          {service.type}
-                        </UIBadge>
-                      </div>
 
-                      {service.features && service.features.length > 0 && (
-                        <div className="space-y-2">
-                          <h4 className="text-sm font-medium flex items-center gap-1.5">
-                            <Sparkles className="h-4 w-4 text-blue-500" />
-                            Features
-                          </h4>
-                          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            {service.features.map((feature, index) => (
-                              <li key={index} className="text-sm text-muted-foreground flex items-center gap-2">
-                                <ArrowRight className="h-3 w-3" />
-                                {feature}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
+                        {service.features && service.features.length > 0 && (
+                          <div className="space-y-3">
+                            <h4 className="text-sm font-medium flex items-center gap-1.5 text-foreground">
+                              <Sparkles className="h-4 w-4 text-blue-500" />
+                              Features
+                            </h4>
+                            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              {service.features.map((feature, index) => (
+                                <li 
+                                  key={index} 
+                                  className="text-sm text-muted-foreground flex items-center gap-2"
+                                >
+                                  <ArrowRight className="h-3 w-3 text-blue-500" />
+                                  {feature}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
                     </div>
 
-                    <div className="sm:border-l sm:pl-6 sm:w-48 flex sm:flex-col items-center sm:items-start justify-between gap-4">
-                      <div className="text-center sm:text-left">
-                        <div className="text-sm text-muted-foreground">Starting at</div>
-                        <div className="text-2xl font-bold">${service.price || '0.00'}</div>
+                    <div className="border-t sm:border-t-0 sm:border-l border-border/50 bg-muted/20">
+                      <div className="p-6 space-y-6">
+                        <div className="text-center sm:text-left">
+                          <div className="text-sm font-medium text-muted-foreground">Starting at</div>
+                          <div className="text-2xl font-bold text-foreground">
+                            ${service.price?.toLocaleString() || '0.00'}
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-1">
+                            <div className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                              <DollarSign className="w-3 h-3" />
+                              MRR
+                            </div>
+                            <div className="font-medium">
+                              ${service.monthly_recurring_revenue?.toLocaleString() || '0'}/mo
+                            </div>
+                          </div>
+                          <div className="space-y-1">
+                            <div className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                              <DollarSign className="w-3 h-3" />
+                              Revenue
+                            </div>
+                            <div className="font-medium">
+                              ${service.revenue_amount?.toLocaleString() || '0'}
+                            </div>
+                          </div>
+                          <div className="space-y-1">
+                            <div className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                              <Users2 className="w-3 h-3" />
+                              Active Subs
+                            </div>
+                            <div className="font-medium">
+                              {service.active_subscriptions_count || 0}
+                            </div>
+                          </div>
+                          <div className="space-y-1">
+                            <div className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                              <CalendarDays className="w-3 h-3" />
+                              Created
+                            </div>
+                            <div className="font-medium">
+                              {format(new Date(service.created_at), 'MMM d, yyyy')}
+                            </div>
+                          </div>
+                        </div>
+
+                        <Button className="w-full bg-primary hover:bg-primary/90">
+                          View Details
+                        </Button>
                       </div>
-                      <Button className="w-full sm:w-auto">View Details</Button>
                     </div>
                   </div>
                 </Card>
