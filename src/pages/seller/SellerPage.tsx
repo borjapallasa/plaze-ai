@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -186,7 +185,8 @@ export default function SellerPage() {
                 <table className="w-full">
                   <thead className="bg-muted/50">
                     <tr>
-                      <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Products</th>
+                      <th className="w-[88px]"></th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Name</th>
                       <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Status</th>
                       <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Variants</th>
                       <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Price</th>
@@ -196,21 +196,19 @@ export default function SellerPage() {
                   <tbody className="divide-y divide-border">
                     {products.map((product) => (
                       <tr key={product.product_uuid} className="hover:bg-muted/50 transition-colors">
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded bg-muted flex-shrink-0 overflow-hidden">
-                              {product.thumbnail && (
-                                <img 
-                                  src={product.thumbnail} 
-                                  alt={product.name}
-                                  className="w-full h-full object-cover"
-                                />
-                              )}
-                            </div>
-                            <div className="min-w-0">
-                              <h3 className="font-medium text-sm truncate">{product.name}</h3>
-                            </div>
+                        <td className="p-4">
+                          <div className="w-14 h-14 rounded bg-muted flex-shrink-0 overflow-hidden">
+                            {product.thumbnail && (
+                              <img 
+                                src={product.thumbnail} 
+                                alt={product.name}
+                                className="w-full h-full object-cover"
+                              />
+                            )}
                           </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <h3 className="font-medium text-sm">{product.name}</h3>
                         </td>
                         <td className="px-4 py-3">
                           <UIBadge 
@@ -235,7 +233,7 @@ export default function SellerPage() {
                     ))}
                     {products.length === 0 && (
                       <tr>
-                        <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
+                        <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
                           No products found
                         </td>
                       </tr>
