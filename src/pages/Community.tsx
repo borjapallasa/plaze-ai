@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -243,59 +244,63 @@ export default function Community() {
           </div>
 
           <div className="lg:col-span-4 space-y-6">
-            <Card className="p-6">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-12 w-12 ring-1 ring-border">
+            <Card className="overflow-hidden">
+              <div className="p-6 space-y-6">
+                <div className="flex items-center gap-4">
+                  <Avatar className="h-10 w-10 ring-2 ring-primary/10">
                     <AvatarImage src={community?.expert_thumbnail || "https://github.com/shadcn.png"} />
-                    <AvatarFallback>CM</AvatarFallback>
+                    <AvatarFallback>EX</AvatarFallback>
                   </Avatar>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Hosted by</p>
-                    <p className="font-semibold">{community?.expert_name}</p>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground">Hosted by</span>
+                    <span className="font-medium">{community?.expert_name}</span>
                   </div>
                 </div>
-                
-                <div className="grid grid-cols-2 gap-4">
+
+                <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
                   <div>
-                    <p className="text-sm text-muted-foreground">Products</p>
-                    <p className="font-semibold">{community?.product_count || 0}</p>
+                    <p className="text-sm font-medium text-muted-foreground">Products</p>
+                    <p className="text-2xl font-bold mt-1">{community?.product_count || 0}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Classrooms</p>
-                    <p className="font-semibold">{community?.classroom_count || 0}</p>
+                    <p className="text-sm font-medium text-muted-foreground">Classrooms</p>
+                    <p className="text-2xl font-bold mt-1">{community?.classroom_count || 0}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Posts</p>
-                    <p className="font-semibold">{community?.post_count || 0}</p>
+                    <p className="text-sm font-medium text-muted-foreground">Posts</p>
+                    <p className="text-2xl font-bold mt-1">{community?.post_count || 0}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Members</p>
-                    <p className="font-semibold">{community?.member_count || 0}</p>
+                    <p className="text-sm font-medium text-muted-foreground">Members</p>
+                    <p className="text-2xl font-bold mt-1">{community?.member_count || 0}</p>
                   </div>
                 </div>
 
                 {!isOwner && (
-                  <Button className="w-full">Join Community</Button>
+                  <Button className="w-full bg-primary hover:bg-primary/90 text-white">
+                    Join Community
+                  </Button>
                 )}
 
                 {links.length > 0 && (
                   <>
                     <Separator className="my-4" />
                     <div className="space-y-3">
-                      <h3 className="font-semibold">Quick Links</h3>
-                      {links.map((link, index) => (
-                        <a 
-                          key={index}
-                          href={link.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                        >
-                          <LinkIcon className="w-4 h-4" />
-                          <span>{link.name}</span>
-                        </a>
-                      ))}
+                      <h3 className="font-medium text-sm">Quick Links</h3>
+                      <div className="space-y-2">
+                        {links.map((link, index) => (
+                          <a 
+                            key={index}
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 p-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-md transition-colors"
+                          >
+                            <LinkIcon className="w-4 h-4" />
+                            <span>{link.name}</span>
+                          </a>
+                        ))}
+                      </div>
                     </div>
                   </>
                 )}
