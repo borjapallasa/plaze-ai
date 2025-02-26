@@ -14,6 +14,13 @@ import { ArrowLeft, Link as LinkIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Copy, Check } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function EditCommunity() {
   const { id } = useParams();
@@ -23,6 +30,7 @@ export default function EditCommunity() {
   const [communityDescription, setCommunityDescription] = useState("");
   const [communityIntro, setCommunityIntro] = useState("");
   const [price, setPrice] = useState("");
+  const [pricePeriod, setPricePeriod] = useState<"monthly" | "yearly">("monthly");
   const [paymentLink, setPaymentLink] = useState("");
   const [webhook, setWebhook] = useState("");
   const [hasCopied, setHasCopied] = useState(false);
@@ -43,6 +51,7 @@ export default function EditCommunity() {
         setCommunityDescription(data.description || "");
         setCommunityIntro(data.intro || "");
         setPrice(data.price?.toString() || "");
+        setPricePeriod(data.price_period || "monthly");
         setPaymentLink(data.payment_link || "");
         setWebhook(data.webhook || "");
       }
@@ -89,6 +98,7 @@ export default function EditCommunity() {
           description: communityDescription,
           intro: communityIntro,
           price: parseFloat(price) || 0,
+          price_period: pricePeriod,
           webhook: webhook,
           thumbnail: primaryImage?.url || null
         })
@@ -213,18 +223,34 @@ export default function EditCommunity() {
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="price" className="text-base font-medium mb-2 block">
-                    Price
-                  </Label>
-                  <Input
-                    id="price"
-                    type="number"
-                    placeholder="Enter community price"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    className="h-11 w-full max-w-[200px]"
-                  />
+                <div className="flex items-start gap-4">
+                  <div className="flex-1">
+                    <Label htmlFor="price" className="text-base font-medium mb-2 block">
+                      Price
+                    </Label>
+                    <Input
+                      id="price"
+                      type="number"
+                      placeholder="Enter community price"
+                      value={price}
+                      onChange={(e) => setPrice(e.target.value)}
+                      className="h-11 w-full max-w-[200px]"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Label htmlFor="price-period" className="text-base font-medium mb-2 block">
+                      Billing Period
+                    </Label>
+                    <Select value={pricePeriod} onValueChange={(value: "monthly" | "yearly") => setPricePeriod(value)}>
+                      <SelectTrigger id="price-period" className="w-[200px]">
+                        <SelectValue placeholder="Select billing period" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="monthly">Monthly</SelectItem>
+                        <SelectItem value="yearly">Yearly</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
                 <div>

@@ -273,6 +273,9 @@ export type Database = {
           payment_link: string | null
           post_count: number | null
           price: number | null
+          price_period:
+            | Database["public"]["Enums"]["community_price_period"]
+            | null
           product_count: number | null
           slug: string | null
           thumbnail: string | null
@@ -301,6 +304,9 @@ export type Database = {
           payment_link?: string | null
           post_count?: number | null
           price?: number | null
+          price_period?:
+            | Database["public"]["Enums"]["community_price_period"]
+            | null
           product_count?: number | null
           slug?: string | null
           thumbnail?: string | null
@@ -329,6 +335,9 @@ export type Database = {
           payment_link?: string | null
           post_count?: number | null
           price?: number | null
+          price_period?:
+            | Database["public"]["Enums"]["community_price_period"]
+            | null
           product_count?: number | null
           slug?: string | null
           thumbnail?: string | null
@@ -1971,6 +1980,7 @@ export type Database = {
         | "withdrawn"
         | "open conversation"
       classroom_status: "visible" | "not visible"
+      community_price_period: "monthly" | "yearly"
       community_price_status: "active" | "inactive"
       community_subscription_status: "active" | "inactive"
       community_type: "free" | "paid"
