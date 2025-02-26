@@ -185,19 +185,19 @@ export default function SellerPage() {
                 <table className="w-full">
                   <thead className="bg-muted/50">
                     <tr>
-                      <th className="w-[72px]"></th>
-                      <th className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground">Product</th>
-                      <th className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground">Status</th>
-                      <th className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground">Variants</th>
-                      <th className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground">Price</th>
-                      <th className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground">Created</th>
+                      <th className="w-[88px]"></th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Name</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Status</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Variants</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Price</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Created</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
                     {products.map((product) => (
                       <tr key={product.product_uuid} className="hover:bg-muted/50 transition-colors">
-                        <td className="p-3">
-                          <div className="w-12 h-12 rounded bg-muted flex-shrink-0 overflow-hidden">
+                        <td className="p-4">
+                          <div className="w-14 h-14 rounded bg-muted flex-shrink-0 overflow-hidden">
                             {product.thumbnail && (
                               <img 
                                 src={product.thumbnail} 
