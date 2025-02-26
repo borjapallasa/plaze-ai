@@ -359,6 +359,50 @@ export type Database = {
           },
         ]
       }
+      community_images: {
+        Row: {
+          community_uuid: string | null
+          content_type: string | null
+          created_at: string | null
+          file_name: string | null
+          id: number
+          is_primary: boolean | null
+          size: number | null
+          storage_path: string
+          updated_at: string | null
+        }
+        Insert: {
+          community_uuid?: string | null
+          content_type?: string | null
+          created_at?: string | null
+          file_name?: string | null
+          id?: never
+          is_primary?: boolean | null
+          size?: number | null
+          storage_path: string
+          updated_at?: string | null
+        }
+        Update: {
+          community_uuid?: string | null
+          content_type?: string | null
+          created_at?: string | null
+          file_name?: string | null
+          id?: never
+          is_primary?: boolean | null
+          size?: number | null
+          storage_path?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_images_community_uuid_fkey"
+            columns: ["community_uuid"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["community_uuid"]
+          },
+        ]
+      }
       community_messages: {
         Row: {
           community_message_uuid: string

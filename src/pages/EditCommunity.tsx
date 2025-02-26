@@ -1,7 +1,7 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { MainHeader } from "@/components/MainHeader";
@@ -18,6 +18,7 @@ import { Toaster } from "@/components/ui/toaster";
 export default function EditCommunity() {
   const { id } = useParams();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [isSaving, setIsSaving] = useState(false);
   const [communityName, setCommunityName] = useState("");
   const [communityDescription, setCommunityDescription] = useState("");
@@ -25,7 +26,6 @@ export default function EditCommunity() {
   const [price, setPrice] = useState("");
   const [paymentLink, setPaymentLink] = useState("");
   const [webhook, setWebhook] = useState("");
-  const [thumbnail, setThumbnail] = useState("");
 
   // Query to fetch community details
   const { data: community, isLoading } = useQuery({
@@ -46,7 +46,6 @@ export default function EditCommunity() {
         setPrice(data.price?.toString() || "");
         setPaymentLink(data.payment_link || "");
         setWebhook(data.webhook || "");
-        setThumbnail(data.thumbnail || "");
       }
 
       return data;
@@ -54,26 +53,37 @@ export default function EditCommunity() {
     enabled: !!id
   });
 
-  // Query to fetch current thumbnail for display in ProductMediaUpload
-  const { data: currentImages } = useQuery({
-    queryKey: ['communityImage', id],
+  // Query to fetch community images
+  const { data: communityImages = [] } = useQuery({
+    queryKey: ['communityImages', id],
     queryFn: async () => {
-      if (!thumbnail) return [];
-      return [{
-        id: 1,
-        url: thumbnail,
-        storage_path: thumbnail.split('/').pop() || '',
-        is_primary: true,
-        file_name: thumbnail.split('/').pop() || ''
-      }];
+      if (!id) return [];
+
+      const { data: images, error } = await supabase
+        .from('community_images')
+        .select('*')
+        .eq('community_uuid', id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      return images.map(img => ({
+        id: img.id,
+        url: supabase.storage.from('community_images').getPublicUrl(img.storage_path).data.publicUrl,
+        storage_path: img.storage_path,
+        is_primary: img.is_primary,
+        file_name: img.file_name
+      }));
     },
-    enabled: !!thumbnail
+    enabled: !!id
   });
 
   const handleSave = async () => {
     try {
       setIsSaving(true);
 
+      const primaryImage = communityImages.find(img => img.is_primary);
+      
       const { error } = await supabase
         .from('communities')
         .update({
@@ -82,7 +92,7 @@ export default function EditCommunity() {
           intro: communityIntro,
           price: parseFloat(price) || 0,
           webhook: webhook,
-          thumbnail: thumbnail
+          thumbnail: primaryImage?.url || null
         })
         .eq('community_uuid', id);
 
@@ -105,11 +115,12 @@ export default function EditCommunity() {
     }
   };
 
-  const handleThumbnailUpload = async (file: File) => {
+  const handleImageUpload = async (file: File) => {
     try {
       const fileExt = file.name.split('.').pop();
       const filePath = `${id}/${crypto.randomUUID()}.${fileExt}`;
 
+      // Upload file to storage
       const { error: uploadError } = await supabase.storage
         .from('community_images')
         .upload(filePath, file);
@@ -120,14 +131,32 @@ export default function EditCommunity() {
         .from('community_images')
         .getPublicUrl(filePath);
 
-      // Update the thumbnail URL in state and database
-      setThumbnail(publicUrl);
-      const { error: updateError } = await supabase
-        .from('communities')
-        .update({ thumbnail: publicUrl })
-        .eq('community_uuid', id);
+      // Create database record
+      const { error: dbError } = await supabase
+        .from('community_images')
+        .insert({
+          community_uuid: id,
+          storage_path: filePath,
+          file_name: file.name,
+          content_type: file.type,
+          size: file.size,
+          is_primary: communityImages.length === 0 // Make first image primary by default
+        });
 
-      if (updateError) throw updateError;
+      if (dbError) throw dbError;
+
+      // If this is the first image, update community thumbnail
+      if (communityImages.length === 0) {
+        const { error: updateError } = await supabase
+          .from('communities')
+          .update({ thumbnail: publicUrl })
+          .eq('community_uuid', id);
+
+        if (updateError) throw updateError;
+      }
+
+      // Invalidate queries to refresh the data
+      queryClient.invalidateQueries({ queryKey: ['communityImages', id] });
 
       toast({
         title: "Success",
@@ -135,10 +164,10 @@ export default function EditCommunity() {
         className: "bg-green-50 border-green-200",
       });
     } catch (error) {
-      console.error('Error uploading thumbnail:', error);
+      console.error('Error uploading image:', error);
       toast({
         title: "Error",
-        description: "Failed to upload thumbnail",
+        description: "Failed to upload image",
         variant: "destructive",
       });
     }
@@ -251,21 +280,13 @@ export default function EditCommunity() {
 
                 <div>
                   <Label className="text-base font-medium mb-2 block">
-                    Thumbnail
+                    Images
                   </Label>
                   <div className="space-y-4">
-                    {thumbnail && (
-                      <div className="w-full aspect-video rounded-lg overflow-hidden bg-muted">
-                        <img 
-                          src={thumbnail} 
-                          alt="Community thumbnail" 
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    )}
                     <ProductMediaUpload
                       productUuid={id || ''}
-                      onFileSelect={handleThumbnailUpload}
+                      onFileSelect={handleImageUpload}
+                      initialImages={communityImages}
                     />
                   </div>
                 </div>
