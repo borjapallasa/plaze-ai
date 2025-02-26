@@ -139,22 +139,22 @@ export default function Community() {
   const stats = [
     {
       label: "Products",
-      value: String(community?.product_count || 0),
+      value: String(community?.product_count ?? 0),
       icon: BookOpen,
     },
     {
       label: "Classrooms",
-      value: String(community?.classroom_count || 0),
+      value: String(community?.classroom_count ?? 0),
       icon: Users,
     },
     {
       label: "Posts",
-      value: String(community?.post_count || 0),
+      value: String(community?.post_count ?? 0),
       icon: MessageSquare,
     },
     {
       label: "Members",
-      value: String(community?.member_count || 0),
+      value: String(community?.member_count ?? 0),
       icon: Users,
     },
   ];
