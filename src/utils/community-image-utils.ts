@@ -1,6 +1,5 @@
-
 import { supabase } from "@/integrations/supabase/client";
-import type { CommunityImage } from "@/hooks/use-community-images";
+import type { CommunityImage } from "@/types/community-images";
 
 export async function uploadImageToStorage(file: File, communityUuid: string) {
   const fileExt = file.name.split('.').pop();
