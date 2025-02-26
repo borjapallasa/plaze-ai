@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -29,12 +30,20 @@ export default function SellerPage() {
   const { data: seller } = useQuery({
     queryKey: ['seller', id],
     queryFn: async () => {
+      // First get the expert_uuid for this user
+      const { data: userData } = await supabase
+        .from('users')
+        .select('*')
+        .eq('user_uuid', id)
+        .single();
+
+      // Then get the expert details and products
       const { data, error } = await supabase
         .from('users')
         .select(`
           *,
           services(*),
-          products(
+          products!products_expert_uuid_fkey(
             thumbnail,
             name,
             description,
