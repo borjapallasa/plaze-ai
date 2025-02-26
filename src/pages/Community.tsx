@@ -243,7 +243,7 @@ export default function Community() {
           </div>
 
           <div className="lg:col-span-4 space-y-6">
-            <Card className="overflow-hidden">
+            <Card className="overflow-hidden bg-white">
               <div className="p-6 space-y-6">
                 {videoEmbedUrl && (
                   <div className="aspect-video w-full bg-muted rounded-lg overflow-hidden">
@@ -257,6 +257,45 @@ export default function Community() {
                   </div>
                 )}
 
+                <div>
+                  <h2 className="text-2xl font-bold mb-2">{community?.name}</h2>
+                  <p className="text-muted-foreground text-sm mb-4">
+                    {community?.short_description || community?.description?.substring(0, 150)}
+                  </p>
+                </div>
+
+                {links.length > 0 && (
+                  <div className="space-y-2">
+                    {links.map((link, index) => (
+                      <a 
+                        key={index}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+                      >
+                        <LinkIcon className="w-4 h-4" />
+                        <span className="text-sm">{link.name}</span>
+                      </a>
+                    ))}
+                  </div>
+                )}
+
+                <div className="grid grid-cols-3 gap-4 py-4 border-y">
+                  <div className="text-center">
+                    <p className="text-2xl font-bold">{community?.member_count || 0}</p>
+                    <p className="text-sm text-muted-foreground">Members</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-bold">{community?.classroom_count || 0}</p>
+                    <p className="text-sm text-muted-foreground">Classrooms</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-bold">{community?.post_count || 0}</p>
+                    <p className="text-sm text-muted-foreground">Posts</p>
+                  </div>
+                </div>
+
                 <div className="flex items-center gap-3">
                   <Avatar className="h-8 w-8 ring-1 ring-primary/10">
                     <AvatarImage src={community?.expert_thumbnail || "https://github.com/shadcn.png"} />
@@ -268,52 +307,10 @@ export default function Community() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Members</p>
-                    <p className="text-2xl font-bold mt-1">{community?.member_count || 0}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Classrooms</p>
-                    <p className="text-2xl font-bold mt-1">{community?.classroom_count || 0}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Products</p>
-                    <p className="text-2xl font-bold mt-1">{community?.product_count || 0}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Posts</p>
-                    <p className="text-2xl font-bold mt-1">{community?.post_count || 0}</p>
-                  </div>
-                </div>
-
                 {!isOwner && (
                   <Button className="w-full bg-primary hover:bg-primary/90 text-white">
                     Join Community
                   </Button>
-                )}
-
-                {links.length > 0 && (
-                  <>
-                    <Separator className="my-4" />
-                    <div className="space-y-3">
-                      <h3 className="font-medium text-sm">Quick Links</h3>
-                      <div className="space-y-2">
-                        {links.map((link, index) => (
-                          <a 
-                            key={index}
-                            href={link.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2 p-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-md transition-colors"
-                          >
-                            <LinkIcon className="w-4 h-4" />
-                            <span>{link.name}</span>
-                          </a>
-                        ))}
-                      </div>
-                    </div>
-                  </>
                 )}
               </div>
             </Card>
