@@ -25,6 +25,8 @@ export interface ProductData {
   variants: Variant[];
 }
 
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 export function useCreateProduct() {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -103,10 +105,21 @@ export function useCreateProduct() {
 
       if (productError) throw productError;
 
-      // Upload images immediately after product creation
-      await uploadPendingImages(product.product_uuid);
+      // Add a small delay to ensure the transaction is complete
+      await delay(1000);
 
-      // Create variants after images are uploaded
+      console.log('Product created:', product.product_uuid);
+
+      // Upload images
+      try {
+        await uploadPendingImages(product.product_uuid);
+        console.log('Images uploaded successfully');
+      } catch (imageError) {
+        console.error('Error uploading images:', imageError);
+        // Continue with variant creation even if image upload fails
+      }
+
+      // Create variants
       if (productData.variants.length > 0) {
         const variantsToInsert = productData.variants.map(variant => ({
           name: variant.name,
@@ -132,6 +145,9 @@ export function useCreateProduct() {
         className: "bg-[#F2FCE2] border-green-100 text-green-800",
       });
 
+      // Add a small delay before navigation
+      await delay(500);
+      
       navigate(`/seller/products/product/${product.product_uuid}`);
       
     } catch (error) {
