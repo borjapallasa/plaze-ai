@@ -70,8 +70,7 @@ export function ProductMediaUpload({ productUuid, onFileSelect }: ProductMediaUp
           file_name: file.name,
           content_type: file.type,
           size: file.size,
-          is_primary: images.length === 0, // Make first image primary by default
-          url: publicUrl
+          is_primary: images.length === 0 // Make first image primary by default
         });
 
       if (dbError) {
@@ -80,6 +79,18 @@ export function ProductMediaUpload({ productUuid, onFileSelect }: ProductMediaUp
       }
 
       console.log('ProductMediaUpload: Database record created successfully');
+
+      // If this is the first image, set it as the product thumbnail
+      if (images.length === 0) {
+        const { error: thumbnailError } = await supabase
+          .from('products')
+          .update({ thumbnail: publicUrl })
+          .eq('product_uuid', productUuid);
+
+        if (thumbnailError) {
+          console.error('Error updating product thumbnail:', thumbnailError);
+        }
+      }
 
       // Invalidate product images query
       queryClient.invalidateQueries({
@@ -112,20 +123,29 @@ export function ProductMediaUpload({ productUuid, onFileSelect }: ProductMediaUp
         .eq('product_uuid', productUuid);
 
       // Set selected image as primary
-      const { data: updatedImage, error } = await supabase
+      const { error } = await supabase
         .from('product_images')
         .update({ is_primary: true })
-        .eq('id', imageId)
-        .select('url')
-        .single();
+        .eq('id', imageId);
 
       if (error) throw error;
 
-      // Update product thumbnail
-      if (updatedImage?.url) {
+      // Get the storage path of the new primary image
+      const { data: primaryImage } = await supabase
+        .from('product_images')
+        .select('storage_path')
+        .eq('id', imageId)
+        .single();
+
+      if (primaryImage) {
+        const { data: { publicUrl } } = supabase.storage
+          .from('product_images')
+          .getPublicUrl(primaryImage.storage_path);
+
+        // Update product thumbnail
         await supabase
           .from('products')
-          .update({ thumbnail: updatedImage.url })
+          .update({ thumbnail: publicUrl })
           .eq('product_uuid', productUuid);
       }
 
