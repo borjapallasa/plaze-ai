@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -246,6 +245,18 @@ export default function Community() {
           <div className="lg:col-span-4 space-y-6">
             <Card className="overflow-hidden">
               <div className="p-6 space-y-6">
+                {videoEmbedUrl && (
+                  <div className="aspect-video w-full bg-muted rounded-lg overflow-hidden">
+                    <iframe
+                      src={videoEmbedUrl}
+                      className="w-full h-full"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                )}
+
                 <div className="flex items-center gap-3">
                   <Avatar className="h-8 w-8 ring-1 ring-primary/10">
                     <AvatarImage src={community?.expert_thumbnail || "https://github.com/shadcn.png"} />
