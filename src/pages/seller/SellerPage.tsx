@@ -533,17 +533,32 @@ export default function SellerPage() {
               {communities?.map((community) => (
                 <Card 
                   key={community.community_uuid}
-                  className="overflow-hidden border bg-card shadow-sm hover:shadow-md transition-all duration-200"
+                  className="overflow-hidden border bg-card hover:bg-muted/5 shadow-sm hover:shadow-md transition-all duration-200"
                 >
                   <div className="grid lg:grid-cols-[2fr,1fr,1fr] divide-y lg:divide-y-0 lg:divide-x divide-border">
                     <div className="p-6 space-y-4">
-                      <div className="space-y-2">
+                      <div className="space-y-3">
                         <div className="flex items-start justify-between gap-4">
-                          <h3 className="text-2xl font-semibold tracking-tight text-foreground">
-                            {community.name}
-                          </h3>
+                          <div className="space-y-1">
+                            <h3 className="text-2xl font-semibold tracking-tight text-foreground">
+                              {community.name}
+                            </h3>
+                            <div className="flex items-center gap-2">
+                              <UIBadge 
+                                variant={community.price > 0 ? "default" : "secondary"}
+                                className="capitalize whitespace-nowrap"
+                              >
+                                {community.price > 0 ? 'Paid' : 'Free'}
+                              </UIBadge>
+                              {community.price > 0 && (
+                                <span className="text-sm font-medium text-muted-foreground">
+                                  ${community.price}/mo
+                                </span>
+                              )}
+                            </div>
+                          </div>
                           <UIBadge 
-                            variant="secondary"
+                            variant="outline"
                             className="capitalize whitespace-nowrap"
                           >
                             {community.type}
@@ -553,31 +568,42 @@ export default function SellerPage() {
                           {community.description || community.intro}
                         </p>
                       </div>
-
-                      <div className="pt-4 flex flex-wrap items-baseline gap-x-6">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-muted-foreground">Price</span>
-                          <span className="text-2xl font-semibold tracking-tight">
-                            ${community.price?.toLocaleString() || '0'}/mo
-                          </span>
-                        </div>
-                      </div>
                     </div>
 
                     <div className="p-6 bg-muted/5">
-                      <div className="space-y-4">
+                      <div className="h-full space-y-4">
                         <h4 className="text-sm font-medium flex items-center gap-1.5 text-foreground">
                           <Building2 className="h-4 w-4 text-blue-500" />
                           Community Stats
                         </h4>
-                        <div className="grid gap-4">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm text-muted-foreground">Total Members</span>
-                            <span className="font-medium">{community.member_count || 0}</span>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-1">
+                            <span className="text-xs font-medium text-muted-foreground">Total Members</span>
+                            <p className="font-medium">{community.member_count?.toLocaleString() || 0}</p>
                           </div>
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm text-muted-foreground">Paid Members</span>
-                            <span className="font-medium">{community.paid_member_count || 0}</span>
+                          <div className="space-y-1">
+                            <span className="text-xs font-medium text-muted-foreground">Paid Members</span>
+                            <p className="font-medium">{community.paid_member_count?.toLocaleString() || 0}</p>
+                          </div>
+                          <div className="space-y-1">
+                            <span className="text-xs font-medium text-muted-foreground">Products</span>
+                            <p className="font-medium">{community.product_count?.toLocaleString() || 0}</p>
+                          </div>
+                          <div className="space-y-1">
+                            <span className="text-xs font-medium text-muted-foreground">Classrooms</span>
+                            <p className="font-medium">{community.classroom_count?.toLocaleString() || 0}</p>
+                          </div>
+                          <div className="space-y-1">
+                            <span className="text-xs font-medium text-muted-foreground">Posts</span>
+                            <p className="font-medium">{community.post_count?.toLocaleString() || 0}</p>
+                          </div>
+                          <div className="space-y-1">
+                            <span className="text-xs font-medium text-muted-foreground">Payment Rate</span>
+                            <p className="font-medium">
+                              {community.member_count 
+                                ? Math.round((community.paid_member_count / community.member_count) * 100)
+                                : 0}%
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -591,11 +617,11 @@ export default function SellerPage() {
                               <DollarSign className="w-3 h-3" />
                               Monthly Recurring Revenue
                             </div>
-                            <div className="font-medium text-xl">
+                            <div className="font-medium text-xl text-green-600">
                               ${community.monthly_recurring_revenue?.toLocaleString() || '0'}
                             </div>
                           </div>
-                          <div className="space-y-2">
+                          <div className="pt-2 space-y-2">
                             <div className="text-xs font-medium text-muted-foreground flex items-center gap-1">
                               <CalendarDays className="w-3 h-3" />
                               Created
@@ -607,7 +633,7 @@ export default function SellerPage() {
                         </div>
                         
                         <div className="mt-6 flex flex-col gap-2">
-                          <Button className="w-full">
+                          <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
                             <MessageCircle className="h-4 w-4 mr-2" />
                             View Discussion
                           </Button>
