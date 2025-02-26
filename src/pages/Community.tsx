@@ -39,7 +39,12 @@ interface Template {
   category: string;
 }
 
-// Mock data for tabs content
+interface Stat {
+  label: string;
+  value: string;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
 const classrooms: Classroom[] = [
   {
     title: "Introduction to Community Building",
@@ -76,7 +81,6 @@ const templates: Template[] = [
   }
 ];
 
-// Calendar events
 const events: Date[] = [
   new Date(2024, 3, 15),
   new Date(2024, 3, 22),
@@ -136,25 +140,25 @@ export default function Community() {
   const links = parseLinks(community?.links);
   const isOwner = user?.id === community?.expert?.user_uuid;
 
-  const stats = [
+  const stats: Stat[] = [
     {
       label: "Products",
-      value: String(community?.product_count ?? 0),
+      value: `${community?.product_count ?? 0}`,
       icon: BookOpen,
     },
     {
       label: "Classrooms",
-      value: String(community?.classroom_count ?? 0),
+      value: `${community?.classroom_count ?? 0}`,
       icon: Users,
     },
     {
       label: "Posts",
-      value: String(community?.post_count ?? 0),
+      value: `${community?.post_count ?? 0}`,
       icon: MessageSquare,
     },
     {
       label: "Members",
-      value: String(community?.member_count ?? 0),
+      value: `${community?.member_count ?? 0}`,
       icon: Users,
     },
   ];
