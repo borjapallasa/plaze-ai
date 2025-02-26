@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,7 +20,10 @@ import {
   Plus,
   Search,
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  ArrowUpDown,
+  ArrowDown,
+  ArrowUp
 } from "lucide-react";
 import { Badge as UIBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -35,8 +37,13 @@ interface Service {
   type: string;
 }
 
+type SortField = 'name' | 'status' | 'variant_count' | 'price_from' | 'created_at';
+type SortDirection = 'asc' | 'desc';
+
 export default function SellerPage() {
   const { id } = useParams();
+  const [sortField, setSortField] = useState<SortField>('created_at');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
   const { data: seller } = useQuery({
     queryKey: ['seller', id],
@@ -98,7 +105,6 @@ export default function SellerPage() {
 
       if (error) throw error;
 
-      // Transform the data to ensure features is an array of strings
       return (data || []).map(service => ({
         ...service,
         features: Array.isArray(service.features) ? service.features : []
@@ -106,6 +112,41 @@ export default function SellerPage() {
     },
     enabled: !!id
   });
+
+  const sortedProducts = [...(products || [])].sort((a, b) => {
+    const direction = sortDirection === 'asc' ? 1 : -1;
+    
+    switch (sortField) {
+      case 'name':
+        return direction * (a.name || '').localeCompare(b.name || '');
+      case 'status':
+        return direction * (a.status || '').localeCompare(b.status || '');
+      case 'variant_count':
+        return direction * ((a.variant_count || 0) - (b.variant_count || 0));
+      case 'price_from':
+        return direction * ((a.price_from || 0) - (b.price_from || 0));
+      case 'created_at':
+        return direction * (new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+      default:
+        return 0;
+    }
+  });
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  const SortIcon = ({ field }: { field: SortField }) => {
+    if (sortField !== field) return <ArrowUpDown className="w-4 h-4 ml-1" />;
+    return sortDirection === 'asc' ? 
+      <ArrowUp className="w-4 h-4 ml-1" /> : 
+      <ArrowDown className="w-4 h-4 ml-1" />;
+  };
 
   const stats = [
     { icon: Star, label: "Rating", value: "4.9", color: "text-yellow-500" },
@@ -227,15 +268,55 @@ export default function SellerPage() {
                       <thead className="bg-muted/50">
                         <tr>
                           <th className="w-[72px] sticky left-0 bg-muted/50"></th>
-                          <th className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground">Product</th>
-                          <th className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground">Status</th>
-                          <th className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground">Variants</th>
-                          <th className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground">Price</th>
-                          <th className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground">Created</th>
+                          <th 
+                            className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
+                            onClick={() => handleSort('name')}
+                          >
+                            <span className="flex items-center">
+                              Product
+                              <SortIcon field="name" />
+                            </span>
+                          </th>
+                          <th 
+                            className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
+                            onClick={() => handleSort('status')}
+                          >
+                            <span className="flex items-center">
+                              Status
+                              <SortIcon field="status" />
+                            </span>
+                          </th>
+                          <th 
+                            className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
+                            onClick={() => handleSort('variant_count')}
+                          >
+                            <span className="flex items-center">
+                              Variants
+                              <SortIcon field="variant_count" />
+                            </span>
+                          </th>
+                          <th 
+                            className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
+                            onClick={() => handleSort('price_from')}
+                          >
+                            <span className="flex items-center">
+                              Price
+                              <SortIcon field="price_from" />
+                            </span>
+                          </th>
+                          <th 
+                            className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
+                            onClick={() => handleSort('created_at')}
+                          >
+                            <span className="flex items-center">
+                              Created
+                              <SortIcon field="created_at" />
+                            </span>
+                          </th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border">
-                        {products.map((product) => (
+                        {sortedProducts.map((product) => (
                           <tr key={product.product_uuid} className="hover:bg-muted/50 transition-colors">
                             <td className="p-3 sticky left-0 bg-background">
                               <div className="w-12 h-12 rounded bg-muted flex-shrink-0 overflow-hidden">
