@@ -147,8 +147,8 @@ export default function NewProduct() {
           .insert(
             variants.map(variant => ({
               name: variant.name,
-              price: parseFloat(variant.price),
-              compare_price: parseFloat(variant.comparePrice),
+              price: variant.price,
+              compare_price: variant.comparePrice,
               highlighted: variant.highlight,
               tags: variant.tags,
               product_uuid: product.product_uuid,
