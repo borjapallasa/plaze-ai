@@ -27,13 +27,26 @@ function isValidLink(link: unknown): link is Link {
 }
 
 function parseLinks(data: unknown): Link[] {
-  console.log('Raw links data:', data); // Debug log
+  console.log('Raw links data:', data);
+  
+  // If it's a string, try to parse it
+  if (typeof data === 'string') {
+    try {
+      data = JSON.parse(data);
+    } catch (e) {
+      console.error('Failed to parse links JSON string:', e);
+      return [];
+    }
+  }
+  
+  // Now check if it's an array
   if (!Array.isArray(data)) {
-    console.log('Links data is not an array, returning empty array'); // Debug log
+    console.log('Links data is not an array, returning empty array');
     return [];
   }
+  
   const validLinks = data.filter(isValidLink);
-  console.log('Parsed valid links:', validLinks); // Debug log
+  console.log('Parsed valid links:', validLinks);
   return validLinks;
 }
 
