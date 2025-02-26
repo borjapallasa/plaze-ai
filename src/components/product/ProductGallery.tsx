@@ -1,7 +1,5 @@
 
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import type { ProductImage } from "@/hooks/use-product-images";
 
 interface ProductGalleryProps {
@@ -29,18 +27,16 @@ export function ProductGallery({ images, className, priority = false }: ProductG
     }
   }, [images, currentImageIndex]);
 
-  const handlePrevious = () => {
-    setCurrentImageIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1));
-  };
+  // Sort images by is_primary (true first)
+  const sortedImages = [...images].sort((a, b) => {
+    if (a.is_primary === b.is_primary) return 0;
+    return a.is_primary ? -1 : 1;
+  });
 
-  const handleNext = () => {
-    setCurrentImageIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0));
-  };
-
-  const currentImage = images[currentImageIndex];
+  const currentImage = sortedImages[currentImageIndex];
   const imageSizes = currentImage ? getImageSizes(currentImage.url) : null;
 
-  if (!images.length || !imageSizes) {
+  if (!sortedImages.length || !imageSizes) {
     return null;
   }
 
@@ -72,10 +68,10 @@ export function ProductGallery({ images, className, priority = false }: ProductG
         </div>
 
         {/* Thumbnails in a scrollable container below */}
-        {images.length > 1 && (
+        {sortedImages.length > 1 && (
           <div className="relative w-full px-1">
             <div className="flex gap-4 overflow-x-auto py-1 px-1 snap-x snap-mandatory -mx-1">
-              {images.map((img, i) => {
+              {sortedImages.map((img, i) => {
                 const thumbSizes = getImageSizes(img.url);
                 return (
                   <button 
@@ -103,7 +99,7 @@ export function ProductGallery({ images, className, priority = false }: ProductG
       </div>
 
       {/* Mobile Layout */}
-      <div className="lg:hidden relative">
+      <div className="lg:hidden">
         <div className="aspect-video bg-card rounded-lg overflow-hidden relative flex items-center justify-center">
           <img 
             src={imageSizes.large}
@@ -126,40 +122,18 @@ export function ProductGallery({ images, className, priority = false }: ProductG
             <div className="absolute inset-0 bg-muted animate-pulse" />
           )}
         </div>
-
-        {images.length > 1 && (
-          <>
-            {/* Navigation Arrows */}
-            <Button
-              variant="secondary"
-              size="icon"
-              className="absolute left-2 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur-sm hover:bg-background/90"
-              onClick={handlePrevious}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="secondary"
-              size="icon"
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur-sm hover:bg-background/90"
-              onClick={handleNext}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-
-            {/* Dots indicator */}
-            <div className="flex justify-center gap-2 mt-4">
-              {images.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCurrentImageIndex(i)}
-                  className={`w-2 h-2 rounded-full transition-colors ${
-                    i === currentImageIndex ? 'bg-primary' : 'bg-primary/50'
-                  }`}
-                />
-              ))}
-            </div>
-          </>
+        {sortedImages.length > 1 && (
+          <div className="flex justify-center gap-2 mt-4">
+            {sortedImages.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentImageIndex(i)}
+                className={`w-2 h-2 rounded-full transition-colors ${
+                  i === currentImageIndex ? 'bg-primary' : 'bg-primary/50'
+                }`}
+              />
+            ))}
+          </div>
         )}
       </div>
     </div>
