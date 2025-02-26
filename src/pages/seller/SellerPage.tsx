@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -25,6 +26,21 @@ import { Button } from "@/components/ui/button";
 
 export default function SellerPage() {
   const { id } = useParams();
+
+  const { data: seller } = useQuery({
+    queryKey: ['seller', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('user_uuid', id)
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!id
+  });
 
   const { data: products = [] } = useQuery({
     queryKey: ['sellerProducts', id],
