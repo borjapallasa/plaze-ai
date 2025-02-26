@@ -10,6 +10,7 @@ import { Card } from "@/components/ui/card";
 import { ProductEditor } from "@/components/product/ProductEditor";
 import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
 import { ProductVariantsEditor } from "@/components/product/ProductVariants";
+import { Variant } from "@/components/product/types/variants";
 import {
   Select,
   SelectContent,
@@ -39,12 +40,12 @@ export default function NewProduct() {
   const [useCases, setUseCases] = useState<string[]>([]);
   const [platform, setPlatform] = useState<string[]>([]);
   const [team, setTeam] = useState<string[]>([]);
-  const [variants, setVariants] = useState([
+  const [variants, setVariants] = useState<Variant[]>([
     {
       id: "1",
       name: "",
-      price: "",
-      comparePrice: "",
+      price: "0",
+      comparePrice: "0",
       highlight: false,
       tags: [],
       createdAt: new Date().toISOString(),
@@ -145,9 +146,14 @@ export default function NewProduct() {
           .from('variants')
           .insert(
             variants.map(variant => ({
-              ...variant,
+              name: variant.name,
+              price: parseFloat(variant.price),
+              compare_price: parseFloat(variant.comparePrice),
+              highlighted: variant.highlight,
+              tags: variant.tags,
               product_uuid: product.product_uuid,
-              user_uuid: currentUser.id
+              user_uuid: currentUser.id,
+              created_at: variant.createdAt,
             }))
           );
 
