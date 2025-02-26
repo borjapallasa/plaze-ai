@@ -7,6 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { MainHeader } from "@/components/MainHeader";
 import { ServiceForm } from "@/components/service/ServiceForm";
 import { CategoryType, ServiceType } from "@/constants/service-categories";
+import { Toaster } from "@/components/ui/toaster";
 
 export default function EditService() {
   const { id } = useParams();
@@ -155,6 +156,7 @@ export default function EditService() {
         }}
         onSave={handleSave}
       />
+      <Toaster />
     </div>
   );
 }
