@@ -16,17 +16,24 @@ export function ProductMediaUpload({ productUuid, onFileSelect }: ProductMediaUp
   const queryClient = useQueryClient();
 
   const handleFileSelect = async (file: File) => {
+    console.log('ProductMediaUpload: handleFileSelect called with file:', file.name);
+    console.log('ProductMediaUpload: onFileSelect prop exists:', !!onFileSelect);
+    console.log('ProductMediaUpload: productUuid:', productUuid);
+
     if (onFileSelect) {
-      // For new products, just add to pending images
+      console.log('ProductMediaUpload: Using onFileSelect for new product');
       onFileSelect(file);
       return;
     }
 
     // For existing products, upload immediately
     try {
+      console.log('ProductMediaUpload: Starting immediate upload for existing product');
       setIsUploading(true);
       const fileExt = file.name.split('.').pop();
       const filePath = `${productUuid}/${crypto.randomUUID()}.${fileExt}`;
+
+      console.log('ProductMediaUpload: Uploading to path:', filePath);
 
       // Upload to storage
       const { error: uploadError } = await supabase.storage
@@ -34,6 +41,7 @@ export function ProductMediaUpload({ productUuid, onFileSelect }: ProductMediaUp
         .upload(filePath, file);
 
       if (uploadError) {
+        console.error('ProductMediaUpload: Storage upload error:', uploadError);
         throw uploadError;
       }
 
@@ -41,6 +49,8 @@ export function ProductMediaUpload({ productUuid, onFileSelect }: ProductMediaUp
       const { data: { publicUrl } } = supabase.storage
         .from('product_images')
         .getPublicUrl(filePath);
+
+      console.log('ProductMediaUpload: File uploaded, public URL:', publicUrl);
 
       // Create database record
       const { error: dbError } = await supabase
@@ -55,8 +65,11 @@ export function ProductMediaUpload({ productUuid, onFileSelect }: ProductMediaUp
         });
 
       if (dbError) {
+        console.error('ProductMediaUpload: Database insert error:', dbError);
         throw dbError;
       }
+
+      console.log('ProductMediaUpload: Database record created successfully');
 
       // Invalidate product images query using the correct object syntax
       queryClient.invalidateQueries({
@@ -69,7 +82,7 @@ export function ProductMediaUpload({ productUuid, onFileSelect }: ProductMediaUp
         className: "bg-[#F2FCE2] border-green-100 text-green-800",
       });
     } catch (error) {
-      console.error('Error uploading image:', error);
+      console.error('ProductMediaUpload: Error uploading image:', error);
       toast({
         title: "Error",
         description: "Failed to upload image",

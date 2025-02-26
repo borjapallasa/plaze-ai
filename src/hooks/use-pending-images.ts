@@ -13,20 +13,25 @@ export function usePendingImages() {
   const { toast } = useToast();
 
   const addPendingImage = (file: File) => {
+    console.log('usePendingImages: Adding pending image:', file.name);
     const previewUrl = URL.createObjectURL(file);
     setPendingImages(prev => [...prev, { file, previewUrl }]);
+    console.log('usePendingImages: Current pending images count:', pendingImages.length + 1);
   };
 
   const uploadPendingImages = async (productUuid: string) => {
     if (!productUuid) {
-      console.error('No product UUID provided for image upload');
+      console.error('usePendingImages: No product UUID provided for image upload');
       return;
     }
 
-    if (pendingImages.length === 0) return;
+    if (pendingImages.length === 0) {
+      console.log('usePendingImages: No pending images to upload');
+      return;
+    }
 
     try {
-      console.log('Starting upload for', pendingImages.length, 'images');
+      console.log('usePendingImages: Starting upload for', pendingImages.length, 'images');
       
       // First, upload all files to storage and collect their data
       const uploadResults = await Promise.all(
@@ -34,7 +39,7 @@ export function usePendingImages() {
           const fileExt = pendingImage.file.name.split('.').pop();
           const filePath = `${productUuid}/${crypto.randomUUID()}.${fileExt}`;
 
-          console.log('Uploading file:', filePath);
+          console.log('usePendingImages: Uploading file:', filePath);
 
           // Upload to storage
           const { data: uploadData, error: uploadError } = await supabase.storage
@@ -42,11 +47,11 @@ export function usePendingImages() {
             .upload(filePath, pendingImage.file);
 
           if (uploadError) {
-            console.error('Storage upload error:', uploadError);
+            console.error('usePendingImages: Storage upload error:', uploadError);
             throw uploadError;
           }
 
-          console.log('File uploaded successfully:', filePath);
+          console.log('usePendingImages: File uploaded successfully:', filePath);
 
           // Get public URL
           const { data: { publicUrl } } = supabase.storage
@@ -62,7 +67,7 @@ export function usePendingImages() {
         })
       );
 
-      console.log('All files uploaded to storage:', uploadResults);
+      console.log('usePendingImages: All files uploaded to storage:', uploadResults);
 
       // Prepare database records
       const imageRecords = uploadResults.map(({ filePath, file, isPrimary }) => ({
@@ -74,7 +79,7 @@ export function usePendingImages() {
         is_primary: isPrimary,
       }));
 
-      console.log('Inserting image records into database:', imageRecords);
+      console.log('usePendingImages: Inserting image records into database:', imageRecords);
 
       // Insert all image records in a single transaction
       const { data: insertedRecords, error: dbError } = await supabase
@@ -83,15 +88,15 @@ export function usePendingImages() {
         .select();
 
       if (dbError) {
-        console.error('Database insert error:', dbError);
+        console.error('usePendingImages: Database insert error:', dbError);
         throw dbError;
       }
 
-      console.log('Image records inserted successfully:', insertedRecords);
+      console.log('usePendingImages: Image records inserted successfully:', insertedRecords);
 
       // Update product thumbnail with first image's URL if available
       if (uploadResults.length > 0) {
-        console.log('Updating product thumbnail with:', uploadResults[0].publicUrl);
+        console.log('usePendingImages: Updating product thumbnail with:', uploadResults[0].publicUrl);
         
         const { error: thumbnailError } = await supabase
           .from('products')
@@ -99,11 +104,11 @@ export function usePendingImages() {
           .eq('product_uuid', productUuid);
 
         if (thumbnailError) {
-          console.error('Thumbnail update error:', thumbnailError);
+          console.error('usePendingImages: Thumbnail update error:', thumbnailError);
           throw thumbnailError;
         }
 
-        console.log('Product thumbnail updated successfully');
+        console.log('usePendingImages: Product thumbnail updated successfully');
       }
 
       // Clean up preview URLs
@@ -119,7 +124,7 @@ export function usePendingImages() {
       return uploadResults;
 
     } catch (error) {
-      console.error('Error in uploadPendingImages:', error);
+      console.error('usePendingImages: Error in uploadPendingImages:', error);
       toast({
         title: "Error",
         description: "Failed to upload images. Please try again.",
