@@ -63,10 +63,6 @@ export default function EditCommunity() {
         <div className="space-y-4 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-8">
             <div className="space-y-6">
-              <CommunityMediaUpload
-                communityUuid={id || ''}
-                initialImages={communityImages}
-              />
               <CommunityBasicInfo
                 communityName={communityName}
                 setCommunityName={setCommunityName}
@@ -86,6 +82,13 @@ export default function EditCommunity() {
                 onAddLink={handleAddLink}
                 onRemoveLink={handleRemoveLink}
               />
+              <div className="border rounded-lg p-6">
+                <h2 className="text-lg font-semibold mb-4">Community Media</h2>
+                <CommunityMediaUpload
+                  communityUuid={id || ''}
+                  initialImages={communityImages}
+                />
+              </div>
             </div>
           </div>
 
