@@ -283,15 +283,15 @@ export default function EditCommunity() {
                 </div>
 
                 <div className="grid grid-cols-3 gap-2">
-                  <div className="text-center">
+                  <div>
                     <p className="text-sm text-muted-foreground">Products</p>
                     <p className="text-xl font-semibold">{formatNumber(community?.product_count)}</p>
                   </div>
-                  <div className="text-center">
+                  <div>
                     <p className="text-sm text-muted-foreground">Classrooms</p>
                     <p className="text-xl font-semibold">{formatNumber(community?.classroom_count)}</p>
                   </div>
-                  <div className="text-center">
+                  <div>
                     <p className="text-sm text-muted-foreground">Posts</p>
                     <p className="text-xl font-semibold">{formatNumber(community?.post_count)}</p>
                   </div>
