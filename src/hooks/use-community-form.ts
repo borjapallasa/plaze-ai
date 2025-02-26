@@ -16,25 +16,8 @@ function isValidLink(link: unknown): link is Link {
 }
 
 function parseLinks(data: unknown): Link[] {
-  console.log('Raw links data:', data);
-  
-  if (typeof data === 'string') {
-    try {
-      data = JSON.parse(data);
-    } catch (e) {
-      console.error('Failed to parse links JSON string:', e);
-      return [{ name: "", url: "" }];
-    }
-  }
-  
-  if (!Array.isArray(data)) {
-    console.log('Links data is not an array, returning default');
-    return [{ name: "", url: "" }];
-  }
-  
+  if (!Array.isArray(data)) return [{ name: "", url: "" }];
   const validLinks = data.filter(isValidLink);
-  console.log('Parsed valid links:', validLinks);
-  
   return validLinks.length > 0 ? validLinks : [{ name: "", url: "" }];
 }
 
@@ -70,11 +53,7 @@ export function useCommunityForm(id: string | undefined) {
         setPricePeriod(data.price_period || "monthly");
         setPaymentLink(data.payment_link || "");
         setWebhook(data.webhook || "");
-        
-        // Parse and set links from the community data
-        console.log('Setting links from community data:', data.links);
-        const parsedLinks = parseLinks(data.links);
-        setLinks(parsedLinks);
+        setLinks(parseLinks(data.links));
       }
 
       return data;
