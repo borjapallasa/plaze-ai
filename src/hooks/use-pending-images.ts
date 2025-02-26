@@ -26,24 +26,27 @@ export function usePendingImages() {
     if (pendingImages.length === 0) return;
 
     try {
+      console.log('Starting upload for', pendingImages.length, 'images');
+      
       // First, upload all files to storage and collect their data
       const uploadResults = await Promise.all(
         pendingImages.map(async (pendingImage, index) => {
           const fileExt = pendingImage.file.name.split('.').pop();
           const filePath = `${productUuid}/${crypto.randomUUID()}.${fileExt}`;
 
+          console.log('Uploading file:', filePath);
+
           // Upload to storage
-          const { error: uploadError } = await supabase.storage
+          const { data: uploadData, error: uploadError } = await supabase.storage
             .from('product_images')
-            .upload(filePath, pendingImage.file, {
-              cacheControl: '3600',
-              upsert: false
-            });
+            .upload(filePath, pendingImage.file);
 
           if (uploadError) {
             console.error('Storage upload error:', uploadError);
             throw uploadError;
           }
+
+          console.log('File uploaded successfully:', filePath);
 
           // Get public URL
           const { data: { publicUrl } } = supabase.storage
@@ -59,6 +62,8 @@ export function usePendingImages() {
         })
       );
 
+      console.log('All files uploaded to storage:', uploadResults);
+
       // Prepare database records
       const imageRecords = uploadResults.map(({ filePath, file, isPrimary }) => ({
         product_uuid: productUuid,
@@ -69,18 +74,25 @@ export function usePendingImages() {
         is_primary: isPrimary,
       }));
 
+      console.log('Inserting image records into database:', imageRecords);
+
       // Insert all image records in a single transaction
-      const { error: dbError } = await supabase
+      const { data: insertedRecords, error: dbError } = await supabase
         .from('product_images')
-        .insert(imageRecords);
+        .insert(imageRecords)
+        .select();
 
       if (dbError) {
         console.error('Database insert error:', dbError);
         throw dbError;
       }
 
-      // Update product thumbnail with first image's URL
+      console.log('Image records inserted successfully:', insertedRecords);
+
+      // Update product thumbnail with first image's URL if available
       if (uploadResults.length > 0) {
+        console.log('Updating product thumbnail with:', uploadResults[0].publicUrl);
+        
         const { error: thumbnailError } = await supabase
           .from('products')
           .update({ thumbnail: uploadResults[0].publicUrl })
@@ -90,6 +102,8 @@ export function usePendingImages() {
           console.error('Thumbnail update error:', thumbnailError);
           throw thumbnailError;
         }
+
+        console.log('Product thumbnail updated successfully');
       }
 
       // Clean up preview URLs
@@ -98,9 +112,11 @@ export function usePendingImages() {
 
       toast({
         title: "Success",
-        description: "Images uploaded successfully",
+        description: `Successfully uploaded ${uploadResults.length} image${uploadResults.length === 1 ? '' : 's'}`,
         className: "bg-[#F2FCE2] border-green-100 text-green-800",
       });
+
+      return uploadResults;
 
     } catch (error) {
       console.error('Error in uploadPendingImages:', error);
