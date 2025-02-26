@@ -11,6 +11,7 @@ import { ProductEditor } from "@/components/product/ProductEditor";
 import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
 import { ProductVariantsEditor } from "@/components/product/ProductVariants";
 import { Variant } from "@/components/product/types/variants";
+import type { ProductImage } from "@/types/product-images";
 import {
   Select,
   SelectContent,
@@ -23,6 +24,11 @@ import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 type ProductStatus = 'draft' | 'active' | 'inactive';
+
+interface PendingImage {
+  file: File;
+  previewUrl: string;
+}
 
 export default function NewProduct() {
   const navigate = useNavigate();
@@ -40,6 +46,7 @@ export default function NewProduct() {
   const [useCases, setUseCases] = useState<string[]>([]);
   const [platform, setPlatform] = useState<string[]>([]);
   const [team, setTeam] = useState<string[]>([]);
+  const [pendingImages, setPendingImages] = useState<PendingImage[]>([]);
   const [variants, setVariants] = useState<Variant[]>([
     {
       id: "1",
@@ -60,6 +67,59 @@ export default function NewProduct() {
       return user;
     }
   });
+
+  const handleImageSelect = async (file: File) => {
+    const previewUrl = URL.createObjectURL(file);
+    setPendingImages(prev => [...prev, { file, previewUrl }]);
+  };
+
+  const uploadProductImages = async (productUuid: string) => {
+    const uploadPromises = pendingImages.map(async (pendingImage, index) => {
+      const fileExt = pendingImage.file.name.split('.').pop();
+      const filePath = `${productUuid}/${crypto.randomUUID()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('product_images')
+        .upload(filePath, pendingImage.file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('product_images')
+        .getPublicUrl(filePath);
+
+      return {
+        product_uuid: productUuid,
+        storage_path: filePath,
+        file_name: pendingImage.file.name,
+        content_type: pendingImage.file.type,
+        size: pendingImage.file.size,
+        is_primary: index === 0, // First image is primary
+      };
+    });
+
+    const uploadedImages = await Promise.all(uploadPromises);
+    const { error: dbError } = await supabase
+      .from('product_images')
+      .insert(uploadedImages);
+
+    if (dbError) throw dbError;
+
+    // Update product thumbnail with the primary image
+    if (uploadedImages.length > 0) {
+      const primaryImage = uploadedImages[0];
+      const { data: { publicUrl } } = supabase.storage
+        .from('product_images')
+        .getPublicUrl(primaryImage.storage_path);
+
+      const { error: thumbnailError } = await supabase
+        .from('products')
+        .update({ thumbnail: publicUrl })
+        .eq('product_uuid', productUuid);
+
+      if (thumbnailError) throw thumbnailError;
+    }
+  };
 
   const handleStatusChange = (value: ProductStatus) => {
     setProductStatus(value);
@@ -159,11 +219,19 @@ export default function NewProduct() {
         if (variantsError) throw variantsError;
       }
 
+      // Upload images if there are any pending
+      if (pendingImages.length > 0) {
+        await uploadProductImages(product.product_uuid);
+      }
+
       toast({
         title: "Success",
         description: "Product created successfully",
         className: "bg-[#F2FCE2] border-green-100 text-green-800",
       });
+
+      // Clean up preview URLs
+      pendingImages.forEach(image => URL.revokeObjectURL(image.previewUrl));
 
       // Navigate to the edit page of the newly created product
       navigate(`/seller/products/product/${product.product_uuid}`);
@@ -303,7 +371,20 @@ export default function NewProduct() {
 
                 <Card className="p-3 sm:p-6">
                   <h2 className="text-lg font-medium mb-3 sm:mb-4">Media</h2>
-                  <ProductMediaUpload productUuid={""} />
+                  <ProductMediaUpload productUuid="" onFileSelect={handleImageSelect} />
+                  {pendingImages.length > 0 && (
+                    <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                      {pendingImages.map((image, index) => (
+                        <div key={index} className="relative aspect-square rounded-lg border overflow-hidden">
+                          <img
+                            src={image.previewUrl}
+                            alt={`Preview ${index + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </Card>
               </div>
             </div>
