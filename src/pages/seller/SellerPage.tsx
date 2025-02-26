@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -192,8 +191,9 @@ export default function SellerPage() {
                     {products.map((product) => (
                       <tr key={product.product_uuid} className="hover:bg-muted/50 transition-colors">
                         <td className="px-4 py-3">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded bg-muted flex-shrink-0 overflow-hidden">
+                          <div className="flex flex-col gap-2">
+                            <h3 className="font-medium text-sm">{product.name}</h3>
+                            <div className="w-12 h-12 rounded bg-muted flex-shrink-0 overflow-hidden">
                               {product.thumbnail && (
                                 <img 
                                   src={product.thumbnail} 
@@ -201,9 +201,6 @@ export default function SellerPage() {
                                   className="w-full h-full object-cover"
                                 />
                               )}
-                            </div>
-                            <div>
-                              <h3 className="font-medium text-sm">{product.name}</h3>
                             </div>
                           </div>
                         </td>
