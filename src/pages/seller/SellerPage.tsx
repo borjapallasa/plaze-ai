@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -27,29 +26,24 @@ import { Button } from "@/components/ui/button";
 export default function SellerPage() {
   const { id } = useParams();
 
-  const { data: seller } = useQuery({
-    queryKey: ['seller', id],
+  const { data: products = [] } = useQuery({
+    queryKey: ['sellerProducts', id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('users')
+        .from('products')
         .select(`
-          *,
-          services(*),
-          products!products_expert_uuid_fkey(
-            name,
-            status,
-            variant_count,
-            price_from,
-            created_at,
-            thumbnail,
-            product_uuid
-          )
+          name,
+          status,
+          variant_count,
+          price_from,
+          created_at,
+          thumbnail,
+          product_uuid
         `)
-        .eq('user_uuid', id)
-        .single();
+        .eq('expert_uuid', id);
 
       if (error) throw error;
-      return data;
+      return data || [];
     },
     enabled: !!id
   });
@@ -179,7 +173,7 @@ export default function SellerPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
-                    {seller?.products?.map((product) => (
+                    {products.map((product) => (
                       <tr key={product.product_uuid} className="hover:bg-muted/50 transition-colors">
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
@@ -218,7 +212,7 @@ export default function SellerPage() {
                         </td>
                       </tr>
                     ))}
-                    {(!seller?.products || seller.products.length === 0) && (
+                    {products.length === 0 && (
                       <tr>
                         <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
                           No products found
