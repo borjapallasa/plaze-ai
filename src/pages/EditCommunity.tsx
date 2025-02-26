@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,6 +27,7 @@ export default function EditCommunity() {
   const [webhook, setWebhook] = useState("");
   const [thumbnail, setThumbnail] = useState("");
 
+  // Query to fetch community details
   const { data: community, isLoading } = useQuery({
     queryKey: ['community', id],
     queryFn: async () => {
@@ -51,6 +52,22 @@ export default function EditCommunity() {
       return data;
     },
     enabled: !!id
+  });
+
+  // Query to fetch current thumbnail for display in ProductMediaUpload
+  const { data: currentImages } = useQuery({
+    queryKey: ['communityImage', id],
+    queryFn: async () => {
+      if (!thumbnail) return [];
+      return [{
+        id: 1,
+        url: thumbnail,
+        storage_path: thumbnail.split('/').pop() || '',
+        is_primary: true,
+        file_name: thumbnail.split('/').pop() || ''
+      }];
+    },
+    enabled: !!thumbnail
   });
 
   const handleSave = async () => {
@@ -236,10 +253,21 @@ export default function EditCommunity() {
                   <Label className="text-base font-medium mb-2 block">
                     Thumbnail
                   </Label>
-                  <ProductMediaUpload
-                    productUuid={id || ''}
-                    onFileSelect={handleThumbnailUpload}
-                  />
+                  <div className="space-y-4">
+                    {thumbnail && (
+                      <div className="w-full aspect-video rounded-lg overflow-hidden bg-muted">
+                        <img 
+                          src={thumbnail} 
+                          alt="Community thumbnail" 
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                    <ProductMediaUpload
+                      productUuid={id || ''}
+                      onFileSelect={handleThumbnailUpload}
+                    />
+                  </div>
                 </div>
               </div>
             </Card>
