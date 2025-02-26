@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -19,6 +18,7 @@ export default function EditCommunity() {
   const { id } = useParams();
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [communityName, setCommunityName] = useState("");
   const [communityDescription, setCommunityDescription] = useState("");
   const [communityIntro, setCommunityIntro] = useState("");
@@ -90,6 +90,7 @@ export default function EditCommunity() {
 
   const handleThumbnailUpload = async (file: File) => {
     try {
+      setIsUploading(true);
       const fileExt = file.name.split('.').pop();
       const filePath = `${id}/${crypto.randomUUID()}.${fileExt}`;
 
@@ -112,6 +113,8 @@ export default function EditCommunity() {
         description: "Failed to upload thumbnail",
         variant: "destructive",
       });
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -225,9 +228,8 @@ export default function EditCommunity() {
                     Thumbnail
                   </Label>
                   <ImageUploadArea
-                    onImageSelected={handleThumbnailUpload}
-                    imageUrl={thumbnail}
-                    className="w-full aspect-video"
+                    onFileSelect={handleThumbnailUpload}
+                    isUploading={isUploading}
                   />
                 </div>
               </div>
