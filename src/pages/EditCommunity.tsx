@@ -9,6 +9,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { CommunityHeader } from "@/components/community/CommunityHeader";
 import { CommunityBasicInfo } from "@/components/community/CommunityBasicInfo";
 import { CommunityStats } from "@/components/community/CommunityStats";
+import { useCommunityImages } from "@/hooks/use-community-images";
 
 interface Link {
   name: string;
@@ -29,6 +30,9 @@ export default function EditCommunity() {
   const [hasCopied, setHasCopied] = useState(false);
   const [links, setLinks] = useState<Link[]>([{ name: "", url: "" }]);
 
+  // Use the community images hook
+  const { images: communityImages } = useCommunityImages(id);
+
   const { data: community, isLoading } = useQuery({
     queryKey: ['community', id],
     queryFn: async () => {
@@ -48,7 +52,9 @@ export default function EditCommunity() {
         setPricePeriod(data.price_period || "monthly");
         setPaymentLink(data.payment_link || "");
         setWebhook(data.webhook || "");
-        setLinks(data.links || [{ name: "", url: "" }]);
+        // Safely cast the links data
+        const fetchedLinks = data.links as Link[] || [{ name: "", url: "" }];
+        setLinks(Array.isArray(fetchedLinks) ? fetchedLinks : [{ name: "", url: "" }]);
       }
 
       return data;
@@ -72,7 +78,7 @@ export default function EditCommunity() {
           price_period: pricePeriod,
           webhook: webhook,
           thumbnail: primaryImage?.url || null,
-          links: links.filter(link => link.name && link.url) // Only save non-empty links
+          links: JSON.stringify(links.filter(link => link.name && link.url)) // Convert to JSON string for JSONB column
         })
         .eq('community_uuid', id);
 
