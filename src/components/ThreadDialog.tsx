@@ -23,22 +23,19 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const queryClient = useQueryClient();
 
-  // Query authenticated user details from profiles table
+  // Query authenticated user details
   const { data: userData } = useQuery({
     queryKey: ['user-details', user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
       
       const { data, error } = await supabase
-        .from('profiles')
+        .from('users')
         .select('first_name, last_name')
-        .eq('id', user.id)
+        .eq('user_uuid', user.id)
         .single();
 
-      if (error) {
-        console.error('Error fetching user profile:', error);
-        return null;
-      }
+      if (error) throw error;
       return data;
     },
     enabled: !!user?.id
@@ -75,8 +72,6 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
       const userName = userData ? 
         `${userData.first_name} ${userData.last_name}`.trim() : 
         'Anonymous';
-
-      console.log('Sending message with userName:', userName); // Debug log
 
       const { error } = await supabase
         .from('threads_messages')
