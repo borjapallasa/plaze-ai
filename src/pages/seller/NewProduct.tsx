@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Card } from "@/components/ui/card";
@@ -39,7 +38,6 @@ export default function NewProduct() {
     }
   ]);
 
-  // Effect to sync product name and price with first variant when there's only one variant
   useEffect(() => {
     if (variants.length === 1) {
       const updatedVariant = {
@@ -137,7 +135,6 @@ export default function NewProduct() {
           <div className="space-y-3 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-6">
             <div className="lg:col-span-8">
               <div className="space-y-3 sm:space-y-6">
-                {/* Basic Details and Variants */}
                 <Card className="p-3 sm:p-6">
                   <div className="space-y-4">
                     <ProductBasicDetailsForm
@@ -158,7 +155,6 @@ export default function NewProduct() {
                   </div>
                 </Card>
 
-                {/* Media Section */}
                 <Card className="p-3 sm:p-6">
                   <h2 className="text-lg font-medium mb-3 sm:mb-4">Media</h2>
                   <ProductMediaUpload productUuid="" onFileSelect={addPendingImage} />
@@ -177,14 +173,9 @@ export default function NewProduct() {
                   )}
                 </Card>
 
-                {/* Technical Details Form */}
                 <Card className="p-3 sm:p-6">
                   <div className="space-y-3 sm:space-y-4">
                     <ProductDetailsForm
-                      productName={productName}
-                      setProductName={setProductName}
-                      productDescription={productDescription}
-                      setProductDescription={setProductDescription}
                       techStack={techStack}
                       setTechStack={setTechStack}
                       techStackPrice={techStackPrice}

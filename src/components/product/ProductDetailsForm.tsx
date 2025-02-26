@@ -2,7 +2,6 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ProductEditor } from "@/components/product/ProductEditor";
 
 interface ProductDetailsFormProps {
   techStack: string;
@@ -15,10 +14,6 @@ interface ProductDetailsFormProps {
   setDifficultyLevel: (value: string) => void;
   demo: string;
   setDemo: (value: string) => void;
-  productName: string;
-  setProductName: (value: string) => void;
-  productDescription: string;
-  setProductDescription: (value: string) => void;
 }
 
 export function ProductDetailsForm({
@@ -31,30 +26,10 @@ export function ProductDetailsForm({
   difficultyLevel,
   setDifficultyLevel,
   demo,
-  setDemo,
-  productName,
-  setProductName,
-  productDescription,
-  setProductDescription
+  setDemo
 }: ProductDetailsFormProps) {
   return (
     <div className="space-y-4">
-      <div>
-        <Label htmlFor="product_name">Name</Label>
-        <Input 
-          id="product_name"
-          placeholder="Enter product name"
-          value={productName}
-          onChange={(e) => setProductName(e.target.value)}
-        />
-      </div>
-      <div>
-        <Label htmlFor="product_description">Description</Label>
-        <ProductEditor 
-          value={productDescription}
-          onChange={setProductDescription}
-        />
-      </div>
       <div>
         <Label htmlFor="tech_stack">Tech Stack</Label>
         <Input 
