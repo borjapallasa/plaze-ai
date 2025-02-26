@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -238,7 +238,9 @@ export default function EditCommunity() {
             <Card className="p-4 sm:p-6 border border-border/40 bg-card/40">
               <h2 className="text-lg font-semibold tracking-tight mb-4">Community Settings</h2>
               <div className="space-y-4">
-                {/* Add additional community settings here */}
+                <p className="text-sm text-muted-foreground">
+                  Additional community configuration options will be available here soon.
+                </p>
               </div>
             </Card>
           </div>
