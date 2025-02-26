@@ -416,10 +416,9 @@ export default function SellerPage() {
                             ${service.price?.toLocaleString() || '0'}
                           </span>
                         </div>
-                        <div className="flex items-center">
-                          <span className="text-sm text-muted-foreground px-2">•</span>
-                          <span className="text-sm text-muted-foreground">Type:</span>
-                          <span className="text-lg font-medium capitalize px-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-muted-foreground">Type</span>
+                          <span className="text-lg font-medium capitalize">
                             {service.type}
                           </span>
                         </div>
