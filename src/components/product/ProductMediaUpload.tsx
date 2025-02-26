@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -10,9 +11,10 @@ import { Download, Pencil, Trash } from "lucide-react";
 
 interface ProductMediaUploadProps {
   productUuid?: string;
+  onFileSelect?: (file: File) => void | Promise<void>;
 }
 
-export function ProductMediaUpload({ productUuid }: ProductMediaUploadProps) {
+export function ProductMediaUpload({ productUuid, onFileSelect }: ProductMediaUploadProps) {
   const { images, isUploading, uploadImage, updateImage, removeImage, reorderImages } = useProductImages(productUuid);
   const [previewImage, setPreviewImage] = useState<ProductImage | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -43,10 +45,18 @@ export function ProductMediaUpload({ productUuid }: ProductMediaUploadProps) {
     setIsEditing(true);
   };
 
+  const handleImageSelect = async (file: File) => {
+    if (onFileSelect) {
+      await onFileSelect(file);
+    } else if (productUuid) {
+      await uploadImage(file);
+    }
+  };
+
   return (
     <div className="space-y-4">
       <ImageUploadArea 
-        onFileSelect={uploadImage}
+        onFileSelect={handleImageSelect}
         isUploading={isUploading}
       />
 
