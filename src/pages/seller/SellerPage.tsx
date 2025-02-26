@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { MainHeader } from "@/components/MainHeader";
@@ -41,6 +41,7 @@ type SortDirection = 'asc' | 'desc';
 
 export default function SellerPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [sortField, setSortField] = useState<SortField>('created_at');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
@@ -52,6 +53,10 @@ export default function SellerPage() {
   const handleTabChange = (value: string) => {
     setActiveTab(value);
     window.location.hash = value;
+  };
+
+  const handleProductClick = (productId: string) => {
+    navigate(`/product/${productId}/edit`);
   };
 
   const { data: seller } = useQuery({
@@ -338,7 +343,11 @@ export default function SellerPage() {
                       </thead>
                       <tbody className="divide-y divide-border">
                         {sortedProducts.map((product) => (
-                          <tr key={product.product_uuid} className="hover:bg-muted/50 transition-colors">
+                          <tr 
+                            key={product.product_uuid} 
+                            className="hover:bg-muted/50 transition-colors cursor-pointer"
+                            onClick={() => handleProductClick(product.product_uuid)}
+                          >
                             <td className="p-3 sticky left-0 bg-background">
                               <div className="w-12 h-12 rounded bg-muted flex-shrink-0 overflow-hidden">
                                 {product.thumbnail && (
