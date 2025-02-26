@@ -1,26 +1,14 @@
+
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { MainHeader } from "@/components/MainHeader";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card } from "@/components/ui/card";
-import { ProductEditor } from "@/components/product/ProductEditor";
-import { CommunityMediaUpload } from "@/components/community/CommunityMediaUpload";
-import { ArrowLeft, Link as LinkIcon } from "lucide-react";
-import { Link } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
-import { Copy, Check } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { CommunityHeader } from "@/components/community/CommunityHeader";
+import { CommunityBasicInfo } from "@/components/community/CommunityBasicInfo";
+import { CommunityStats } from "@/components/community/CommunityStats";
 
 export default function EditCommunity() {
   const { id } = useParams();
@@ -145,19 +133,6 @@ export default function EditCommunity() {
     }
   };
 
-  const formatNumber = (num: number | null | undefined) => {
-    if (num === null || num === undefined) return '0';
-    return num.toLocaleString();
-  };
-
-  const formatCurrency = (amount: number | null | undefined) => {
-    if (amount === null || amount === undefined) return '$0';
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  };
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
@@ -173,182 +148,35 @@ export default function EditCommunity() {
       </div>
       
       <div className="container mx-auto px-4 pt-24 pb-8">
-        <div className="flex items-center justify-between mb-6">
-          <Link to="/communities" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Communities
-          </Link>
-          <Button onClick={handleSave} disabled={isSaving} className="min-w-[120px]">
-            {isSaving ? "Saving..." : "Save changes"}
-          </Button>
-        </div>
+        <CommunityHeader onSave={handleSave} isSaving={isSaving} />
 
         <div className="space-y-4 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-8">
-            <Card className="p-4 sm:p-6">
-              <div className="space-y-8">
-                <div>
-                  <Label htmlFor="name" className="text-base font-medium mb-2 block">
-                    Community Name
-                  </Label>
-                  <Input
-                    id="name"
-                    placeholder="Enter your community name"
-                    value={communityName}
-                    onChange={(e) => setCommunityName(e.target.value)}
-                    className="h-11"
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="intro" className="text-base font-medium mb-2 flex items-center gap-2">
-                    Introduction Link <LinkIcon className="h-4 w-4 text-muted-foreground" />
-                  </Label>
-                  <Input
-                    id="intro"
-                    placeholder="Enter introduction link"
-                    value={communityIntro}
-                    onChange={(e) => setCommunityIntro(e.target.value)}
-                    className="h-11"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="description" className="text-base font-medium mb-2 block">
-                    Description
-                  </Label>
-                  <ProductEditor 
-                    value={communityDescription}
-                    onChange={setCommunityDescription}
-                  />
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="flex-1">
-                    <Label htmlFor="price" className="text-base font-medium mb-2 block">
-                      Price
-                    </Label>
-                    <Input
-                      id="price"
-                      type="number"
-                      placeholder="Enter community price"
-                      value={price}
-                      onChange={(e) => setPrice(e.target.value)}
-                      className="h-11 w-full max-w-[200px]"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <Label htmlFor="price-period" className="text-base font-medium mb-2 block">
-                      Billing Period
-                    </Label>
-                    <Select value={pricePeriod} onValueChange={(value: "monthly" | "yearly") => setPricePeriod(value)}>
-                      <SelectTrigger id="price-period" className="w-[200px]">
-                        <SelectValue placeholder="Select billing period" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="monthly">Monthly</SelectItem>
-                        <SelectItem value="yearly">Yearly</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="webhook" className="text-base font-medium mb-2 block">
-                    Webhook URL
-                  </Label>
-                  <Input
-                    id="webhook"
-                    placeholder="Enter webhook URL"
-                    value={webhook}
-                    onChange={(e) => setWebhook(e.target.value)}
-                    className="h-11"
-                  />
-                </div>
-
-                <div>
-                  <Label className="text-base font-medium mb-2 block">
-                    Images
-                  </Label>
-                  <div className="space-y-4">
-                    <CommunityMediaUpload
-                      communityUuid={id || ''}
-                      initialImages={communityImages}
-                    />
-                  </div>
-                </div>
-              </div>
-            </Card>
+            <CommunityBasicInfo
+              communityName={communityName}
+              setCommunityName={setCommunityName}
+              communityIntro={communityIntro}
+              setCommunityIntro={setCommunityIntro}
+              communityDescription={communityDescription}
+              setCommunityDescription={setCommunityDescription}
+              price={price}
+              setPrice={setPrice}
+              pricePeriod={pricePeriod}
+              setPricePeriod={setPricePeriod}
+              webhook={webhook}
+              setWebhook={setWebhook}
+              communityUuid={id || ''}
+              communityImages={communityImages}
+            />
           </div>
 
           <div className="lg:col-span-4">
-            <Card className="p-4 sm:p-6 border border-border/40 bg-card/40">
-              <h2 className="text-lg font-semibold tracking-tight mb-4">Community Information</h2>
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm text-muted-foreground mb-2">Payment Link</p>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      value={paymentLink}
-                      readOnly
-                      className="h-9 text-sm font-medium bg-muted"
-                    />
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="shrink-0"
-                      onClick={handleCopyPaymentLink}
-                    >
-                      {hasCopied ? (
-                        <Check className="h-4 w-4 text-green-500" />
-                      ) : (
-                        <Copy className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-2">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Products</p>
-                    <p className="text-xl font-semibold">{formatNumber(community?.product_count)}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Classrooms</p>
-                    <p className="text-xl font-semibold">{formatNumber(community?.classroom_count)}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Posts</p>
-                    <p className="text-xl font-semibold">{formatNumber(community?.post_count)}</p>
-                  </div>
-                </div>
-
-                <div className="pt-2 border-t">
-                  <div className="grid grid-cols-2 gap-x-4 gap-y-3">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Monthly Revenue</p>
-                      <p className="text-xl font-semibold">
-                        {formatCurrency(community?.monthly_recurring_revenue)}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Total Revenue</p>
-                      <p className="text-xl font-semibold">
-                        {formatCurrency(community?.total_revenue)}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Paid Members</p>
-                      <p className="text-xl font-semibold">{formatNumber(community?.paid_member_count)}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Total Members</p>
-                      <p className="text-xl font-semibold">{formatNumber(community?.member_count)}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Card>
+            <CommunityStats
+              paymentLink={paymentLink}
+              onCopyPaymentLink={handleCopyPaymentLink}
+              hasCopied={hasCopied}
+              community={community}
+            />
           </div>
         </div>
       </div>
