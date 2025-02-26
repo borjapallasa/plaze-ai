@@ -41,8 +41,6 @@ export function CommunityBasicInfo({
   setPrice,
   pricePeriod,
   setPricePeriod,
-  webhook,
-  setWebhook,
   communityUuid,
   communityImages,
 }: CommunityBasicInfoProps) {
@@ -113,19 +111,6 @@ export function CommunityBasicInfo({
               </SelectContent>
             </Select>
           </div>
-        </div>
-
-        <div>
-          <Label htmlFor="webhook" className="text-base font-medium mb-2 block">
-            Webhook URL
-          </Label>
-          <Input
-            id="webhook"
-            placeholder="Enter webhook URL"
-            value={webhook}
-            onChange={(e) => setWebhook(e.target.value)}
-            className="h-11"
-          />
         </div>
 
         <div>

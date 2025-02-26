@@ -3,11 +3,15 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Copy, Check } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 
 interface CommunityStatsProps {
   paymentLink: string;
   onCopyPaymentLink: () => void;
   hasCopied: boolean;
+  webhook: string;
+  setWebhook: (value: string) => void;
   community: {
     product_count?: number | null;
     classroom_count?: number | null;
@@ -23,6 +27,8 @@ export function CommunityStats({
   paymentLink,
   onCopyPaymentLink,
   hasCopied,
+  webhook,
+  setWebhook,
   community,
 }: CommunityStatsProps) {
   const formatNumber = (num: number | null | undefined) => {
@@ -41,7 +47,7 @@ export function CommunityStats({
   return (
     <Card className="p-4 sm:p-6 border border-border/40 bg-card/40">
       <h2 className="text-lg font-semibold tracking-tight mb-4">Community Information</h2>
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div>
           <p className="text-sm text-muted-foreground mb-2">Payment Link</p>
           <div className="flex items-center gap-2">
@@ -101,6 +107,29 @@ export function CommunityStats({
             <div>
               <p className="text-sm text-muted-foreground">Total Members</p>
               <p className="text-xl font-semibold">{formatNumber(community?.member_count)}</p>
+            </div>
+          </div>
+        </div>
+
+        <Separator className="my-4" />
+
+        <div>
+          <h3 className="text-sm font-semibold mb-2">Advanced Settings</h3>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="webhook" className="text-sm font-medium mb-1 block">
+                Webhook URL
+              </Label>
+              <p className="text-sm text-muted-foreground mb-2">
+                We'll send notifications about new members to this webhook URL
+              </p>
+              <Input
+                id="webhook"
+                placeholder="Enter webhook URL"
+                value={webhook}
+                onChange={(e) => setWebhook(e.target.value)}
+                className="h-9"
+              />
             </div>
           </div>
         </div>

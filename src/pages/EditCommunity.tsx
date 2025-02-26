@@ -175,6 +175,8 @@ export default function EditCommunity() {
               paymentLink={paymentLink}
               onCopyPaymentLink={handleCopyPaymentLink}
               hasCopied={hasCopied}
+              webhook={webhook}
+              setWebhook={setWebhook}
               community={community}
             />
           </div>
