@@ -22,6 +22,8 @@ import {
 import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
+type ProductStatus = 'draft' | 'active' | 'inactive';
+
 export default function NewProduct() {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -33,7 +35,7 @@ export default function NewProduct() {
   const [productIncludes, setProductIncludes] = useState("");
   const [difficultyLevel, setDifficultyLevel] = useState("");
   const [demo, setDemo] = useState("");
-  const [productStatus, setProductStatus] = useState("draft");
+  const [productStatus, setProductStatus] = useState<ProductStatus>("draft");
   const [industries, setIndustries] = useState<string[]>([]);
   const [useCases, setUseCases] = useState<string[]>([]);
   const [platform, setPlatform] = useState<string[]>([]);
@@ -50,7 +52,7 @@ export default function NewProduct() {
     }
   });
 
-  const handleStatusChange = (value: string) => {
+  const handleStatusChange = (value: ProductStatus) => {
     setProductStatus(value);
   };
 
@@ -104,9 +106,11 @@ export default function NewProduct() {
     try {
       setIsSaving(true);
 
+      // Create the product with the correct field names from the database schema
       const { data: product, error: productError } = await supabase
         .from('products')
         .insert({
+          status: productStatus,
           name: productName,
           description: productDescription,
           tech_stack: techStack,
@@ -114,7 +118,6 @@ export default function NewProduct() {
           product_includes: productIncludes,
           difficulty_level: difficultyLevel,
           demo: demo,
-          status: productStatus,
           industries: industries,
           use_case: useCases,
           platform: platform,
