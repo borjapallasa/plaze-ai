@@ -26,6 +26,14 @@ interface Product {
   slug?: string;
 }
 
+interface ProductRelationship {
+  id: number;
+  product_uuid: string;
+  related_product_uuid: string;
+  display_order: number;
+  relationship_type: string;
+}
+
 interface RelatedProductsProps {
   productId: string;
   expertUuid: string;
@@ -46,10 +54,42 @@ export function RelatedProducts({
   const [open, setOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   
-  // Initialize selected products
+  // Fetch related product relationships from the new table
+  const { 
+    data: relationships = [], 
+    isLoading: isLoadingRelationships 
+  } = useQuery({
+    queryKey: ['productRelationships', productId],
+    queryFn: async () => {
+      if (!productId || productId === ":id") return [];
+      
+      const { data, error } = await supabase
+        .from('product_relationships')
+        .select('*')
+        .eq('product_uuid', productId);
+      
+      if (error) {
+        console.error("Error fetching product relationships:", error);
+        return [];
+      }
+      
+      return data as ProductRelationship[];
+    },
+    enabled: Boolean(productId) && productId !== ":id",
+  });
+
+  // Extract the selected IDs from the relationships
   useEffect(() => {
-    setSelectedIds(Array.isArray(relatedProducts) ? [...relatedProducts] : []);
-  }, [relatedProducts]);
+    if (relationships.length > 0) {
+      const relatedIds = relationships.map(rel => rel.related_product_uuid);
+      setSelectedIds(relatedIds);
+    } else if (Array.isArray(relatedProducts) && relatedProducts.length > 0) {
+      // Fallback to the passed relatedProducts for backward compatibility
+      setSelectedIds([...relatedProducts]);
+    } else {
+      setSelectedIds([]);
+    }
+  }, [relationships, relatedProducts]);
 
   // First, fetch all the expert's products (more efficient than multiple small queries)
   const { 
@@ -133,26 +173,120 @@ export function RelatedProducts({
   }, [selectedProducts, missingProducts]);
 
   // Toggle a product selection
-  const toggleProduct = (id: string) => {
-    const newSelection = selectedIds.includes(id)
-      ? selectedIds.filter(selectedId => selectedId !== id)
-      : [...selectedIds, id];
-    
-    setSelectedIds(newSelection);
-    onRelatedProductsChange(newSelection);
+  const toggleProduct = async (id: string) => {
+    try {
+      if (productId === ":id") {
+        // Just update the local state if we don't have a real product ID yet
+        const newSelection = selectedIds.includes(id)
+          ? selectedIds.filter(selectedId => selectedId !== id)
+          : [...selectedIds, id];
+        
+        setSelectedIds(newSelection);
+        onRelatedProductsChange(newSelection);
+        return;
+      }
+      
+      if (selectedIds.includes(id)) {
+        // Remove the relationship
+        const { error } = await supabase
+          .from('product_relationships')
+          .delete()
+          .eq('product_uuid', productId)
+          .eq('related_product_uuid', id);
+          
+        if (error) throw error;
+        
+        // Update local state
+        const newSelection = selectedIds.filter(selectedId => selectedId !== id);
+        setSelectedIds(newSelection);
+        onRelatedProductsChange(newSelection);
+        
+        // Update cache
+        queryClient.setQueryData(
+          ['productRelationships', productId],
+          (oldData: ProductRelationship[] = []) => 
+            oldData.filter(rel => rel.related_product_uuid !== id)
+        );
+      } else {
+        // Add the relationship
+        const { data, error } = await supabase
+          .from('product_relationships')
+          .insert({
+            product_uuid: productId,
+            related_product_uuid: id,
+            relationship_type: 'related',
+            display_order: selectedIds.length // Use the current count as order
+          })
+          .select();
+          
+        if (error) throw error;
+        
+        // Update local state
+        const newSelection = [...selectedIds, id];
+        setSelectedIds(newSelection);
+        onRelatedProductsChange(newSelection);
+        
+        // Update cache
+        queryClient.setQueryData(
+          ['productRelationships', productId],
+          (oldData: ProductRelationship[] = []) => [...(oldData || []), ...(data || [])]
+        );
+      }
+    } catch (error) {
+      console.error("Error toggling product relationship:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update related products",
+        variant: "destructive",
+      });
+    }
   };
 
   // Remove a product from selection
-  const removeProduct = (id: string) => {
-    const newSelection = selectedIds.filter(selectedId => selectedId !== id);
-    setSelectedIds(newSelection);
-    onRelatedProductsChange(newSelection);
-    
-    toast({
-      title: "Product removed",
-      description: "Related product has been removed",
-      duration: 3000,
-    });
+  const removeProduct = async (id: string) => {
+    try {
+      if (productId === ":id") {
+        // Just update the local state if we don't have a real product ID yet
+        const newSelection = selectedIds.filter(selectedId => selectedId !== id);
+        setSelectedIds(newSelection);
+        onRelatedProductsChange(newSelection);
+        return;
+      }
+      
+      // Remove the relationship
+      const { error } = await supabase
+        .from('product_relationships')
+        .delete()
+        .eq('product_uuid', productId)
+        .eq('related_product_uuid', id);
+        
+      if (error) throw error;
+      
+      // Update local state
+      const newSelection = selectedIds.filter(selectedId => selectedId !== id);
+      setSelectedIds(newSelection);
+      onRelatedProductsChange(newSelection);
+      
+      // Update cache
+      queryClient.setQueryData(
+        ['productRelationships', productId],
+        (oldData: ProductRelationship[] = []) => 
+          oldData.filter(rel => rel.related_product_uuid !== id)
+      );
+      
+      toast({
+        title: "Product removed",
+        description: "Related product has been removed",
+        duration: 3000,
+      });
+    } catch (error) {
+      console.error("Error removing product relationship:", error);
+      toast({
+        title: "Error",
+        description: "Failed to remove related product",
+        variant: "destructive",
+      });
+    }
   };
 
   // If product ID is a placeholder, show a disabled state
@@ -164,6 +298,18 @@ export function RelatedProducts({
           <p className="text-muted-foreground">
             Save product first to add related products
           </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading state
+  if (isLoadingRelationships || isLoadingProducts) {
+    return (
+      <div className={className}>
+        <h3 className="text-lg font-medium mb-2">Related Products</h3>
+        <div className="border border-dashed rounded-lg p-6 flex flex-col items-center justify-center bg-muted/30 text-center">
+          <p className="text-muted-foreground">Loading related products...</p>
         </div>
       </div>
     );

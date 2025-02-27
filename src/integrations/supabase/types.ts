@@ -1068,6 +1068,48 @@ export type Database = {
           },
         ]
       }
+      product_relationships: {
+        Row: {
+          created_at: string
+          display_order: number | null
+          id: number
+          product_uuid: string
+          related_product_uuid: string
+          relationship_type: string | null
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number | null
+          id?: number
+          product_uuid: string
+          related_product_uuid: string
+          relationship_type?: string | null
+        }
+        Update: {
+          created_at?: string
+          display_order?: number | null
+          id?: number
+          product_uuid?: string
+          related_product_uuid?: string
+          relationship_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_relationships_product_uuid_fkey"
+            columns: ["product_uuid"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["product_uuid"]
+          },
+          {
+            foreignKeyName: "product_relationships_related_product_uuid_fkey"
+            columns: ["related_product_uuid"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["product_uuid"]
+          },
+        ]
+      }
       products: {
         Row: {
           accept_terms: boolean | null

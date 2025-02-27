@@ -68,6 +68,28 @@ export default function Product() {
     enabled: !!id
   });
 
+  // Fetch related products using the new product_relationships table
+  const { data: relatedProductIds = [] } = useQuery({
+    queryKey: ['productRelationships', product?.product_uuid],
+    queryFn: async () => {
+      if (!product?.product_uuid) return [];
+      
+      const { data, error } = await supabase
+        .from('product_relationships')
+        .select('related_product_uuid')
+        .eq('product_uuid', product.product_uuid)
+        .order('display_order', { ascending: true });
+      
+      if (error) {
+        console.error("Error fetching product relationships:", error);
+        return [];
+      }
+      
+      return data.map(item => item.related_product_uuid);
+    },
+    enabled: !!product?.product_uuid
+  });
+
   const { data: variants = [], isLoading: isLoadingVariants } = useQuery({
     queryKey: ['variants', product?.product_uuid],
     queryFn: async () => {
@@ -187,7 +209,10 @@ export default function Product() {
   return (
     <div ref={variantsRef}>
       <ProductLayout
-        product={product}
+        product={{
+          ...product,
+          related_products: relatedProductIds // Pass the related product IDs to the layout
+        }}
         variants={variants}
         selectedVariant={selectedVariant}
         averageRating={averageRating}
