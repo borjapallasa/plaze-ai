@@ -110,15 +110,33 @@ export function RelatedProducts({
       return data || [];
     },
     enabled: missingProductIds.length > 0,
-    onSuccess: (data) => {
-      // Update the cache with the fetched missing products
-      if (data && data.length > 0) {
-        queryClient.setQueryData(['expertProducts', expertUuid], 
-          (oldData: Product[] = []) => [...oldData, ...data]
-        );
+    // Using onSuccess in the meta options as per latest React Query
+    meta: {
+      onSuccess: (data: Product[]) => {
+        // Update the cache with the fetched missing products
+        if (data && data.length > 0) {
+          queryClient.setQueryData(['expertProducts', expertUuid], 
+            (oldData: Product[] = []) => [...oldData, ...data]
+          );
+        }
       }
     }
   });
+
+  // Update cache manually since we can't use onSuccess directly
+  useEffect(() => {
+    if (missingProducts.length > 0) {
+      queryClient.setQueryData(['expertProducts', expertUuid], 
+        (oldData: Product[] = []) => {
+          if (!oldData) return [...missingProducts];
+          // Filter out duplicates
+          const existingIds = new Set(oldData.map(p => p.product_uuid));
+          const newProducts = missingProducts.filter(p => !existingIds.has(p.product_uuid));
+          return [...oldData, ...newProducts];
+        }
+      );
+    }
+  }, [missingProducts, queryClient, expertUuid]);
 
   // Combine all products for display
   const allDisplayProducts = useMemo(() => {
