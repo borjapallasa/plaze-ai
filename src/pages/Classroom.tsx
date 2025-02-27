@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { ChevronDown, ShoppingCart } from "lucide-react";
+import { ChevronDown, ShoppingCart, Check } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MainHeader } from "@/components/MainHeader";
@@ -12,11 +12,14 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
+import { Progress } from "@/components/ui/progress";
+import { toast } from "sonner";
 
 export default function Classroom() {
   const [isExpanded, setIsExpanded] = useState(true);
   const [selectedVariant, setSelectedVariant] = useState("basic");
   const [activeLesson, setActiveLesson] = useState<any>(null);
+  const [completedLessons, setCompletedLessons] = useState<string[]>([]);
   const isMobile = useIsMobile();
   const { id } = useParams();
   
@@ -77,6 +80,33 @@ export default function Classroom() {
     enabled: !!id
   });
 
+  // Load completed lessons from localStorage
+  useEffect(() => {
+    if (id) {
+      try {
+        const savedProgress = localStorage.getItem(`classroom-progress-${id}`);
+        if (savedProgress) {
+          setCompletedLessons(JSON.parse(savedProgress));
+          console.log("Loaded progress from localStorage:", JSON.parse(savedProgress));
+        }
+      } catch (error) {
+        console.error("Error loading progress from localStorage:", error);
+      }
+    }
+  }, [id]);
+
+  // Save completed lessons to localStorage whenever they change
+  useEffect(() => {
+    if (id && completedLessons.length > 0) {
+      try {
+        localStorage.setItem(`classroom-progress-${id}`, JSON.stringify(completedLessons));
+        console.log("Saved progress to localStorage:", completedLessons);
+      } catch (error) {
+        console.error("Error saving progress to localStorage:", error);
+      }
+    }
+  }, [completedLessons, id]);
+
   useEffect(() => {
     if (lessons && lessons.length > 0 && !activeLesson) {
       setActiveLesson(lessons[0]);
@@ -115,6 +145,28 @@ export default function Classroom() {
     // Add to cart logic here
   };
 
+  // Calculate progress percentage
+  const progressPercentage = lessons && lessons.length > 0
+    ? Math.round((completedLessons.length / lessons.length) * 100)
+    : 0;
+
+  // Toggle lesson completion status
+  const toggleLessonCompletion = (lessonUuid: string) => {
+    setCompletedLessons(prev => {
+      if (prev.includes(lessonUuid)) {
+        // Remove lesson from completed list
+        const newCompleted = prev.filter(id => id !== lessonUuid);
+        toast.info("Lesson marked as incomplete");
+        return newCompleted;
+      } else {
+        // Add lesson to completed list
+        const newCompleted = [...prev, lessonUuid];
+        toast.success("Lesson marked as complete!");
+        return newCompleted;
+      }
+    });
+  };
+
   const videoUrl = activeLesson?.video_url || classroom?.video_url;
   const videoEmbedUrl = videoUrl ? getVideoEmbedUrl(videoUrl) : null;
   
@@ -151,18 +203,40 @@ export default function Classroom() {
           ))
         ) : lessons && lessons.length > 0 ? (
           lessons.map((lesson) => (
-            <button
-              key={lesson.lesson_uuid}
-              className={cn(
-                "w-full text-left px-3 py-2 rounded-lg text-sm transition-colors",
-                activeLesson?.lesson_uuid === lesson.lesson_uuid
-                  ? "bg-primary text-primary-foreground" 
-                  : "hover:bg-muted"
-              )}
-              onClick={() => setActiveLesson(lesson)}
-            >
-              {lesson.name}
-            </button>
+            <div key={lesson.lesson_uuid} className="flex items-center gap-2">
+              <button
+                className={cn(
+                  "flex-1 text-left px-3 py-2 rounded-lg text-sm transition-colors",
+                  activeLesson?.lesson_uuid === lesson.lesson_uuid
+                    ? "bg-primary text-primary-foreground" 
+                    : "hover:bg-muted"
+                )}
+                onClick={() => setActiveLesson(lesson)}
+              >
+                {lesson.name}
+              </button>
+              <button
+                onClick={() => toggleLessonCompletion(lesson.lesson_uuid)}
+                className={cn(
+                  "p-1.5 rounded-md transition-colors",
+                  completedLessons.includes(lesson.lesson_uuid)
+                    ? "bg-primary/10 text-primary hover:bg-primary/20"
+                    : "text-muted-foreground hover:bg-muted"
+                )}
+                title={completedLessons.includes(lesson.lesson_uuid) 
+                  ? "Mark as incomplete" 
+                  : "Mark as complete"}
+              >
+                <Check 
+                  className={cn(
+                    "h-4 w-4 transition-all", 
+                    completedLessons.includes(lesson.lesson_uuid)
+                      ? "opacity-100"
+                      : "opacity-50"
+                  )} 
+                />
+              </button>
+            </div>
           ))
         ) : (
           <p className="text-sm text-muted-foreground p-2">No lessons available yet</p>
@@ -253,6 +327,14 @@ export default function Classroom() {
               <Card className="w-full">
                 <CardContent className="p-6 space-y-6">
                   <TitleWithCommunity />
+
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Course progress</span>
+                      <span>{progressPercentage}% complete</span>
+                    </div>
+                    <Progress value={progressPercentage} className="h-2" />
+                  </div>
                   
                   <div className="space-y-4">
                     {videoEmbedUrl ? (
@@ -318,10 +400,8 @@ export default function Classroom() {
                   <div className="space-y-6">
                     <div>
                       <h2 className="text-lg font-semibold mb-2 text-left leading-snug">{classroom.name}</h2>
-                      <div className="h-2 bg-muted rounded-full mb-2">
-                        <div className="h-full w-0 bg-primary rounded-full"></div>
-                      </div>
-                      <p className="text-sm text-muted-foreground">0% complete</p>
+                      <Progress value={progressPercentage} className="h-2 mb-2" />
+                      <p className="text-sm text-muted-foreground">{progressPercentage}% complete</p>
                     </div>
 
                     <LessonsList />
@@ -334,6 +414,14 @@ export default function Classroom() {
               <Card className="flex-1">
                 <CardContent className="p-6 space-y-6">
                   <TitleWithCommunity />
+                  
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Course progress</span>
+                      <span>{progressPercentage}% complete</span>
+                    </div>
+                    <Progress value={progressPercentage} className="h-2" />
+                  </div>
                   
                   <div className="space-y-4">
                     {videoEmbedUrl ? (
