@@ -664,6 +664,7 @@ export default function EditProduct() {
                       <PopoverTrigger asChild>
                         <Button
                           variant="outline"
+                          type="button"
                           className="w-full justify-start text-left font-normal"
                         >
                           <Plus className="mr-2 h-4 w-4" />
@@ -680,20 +681,33 @@ export default function EditProduct() {
                             {relatedProducts.map((product) => (
                               <CommandItem
                                 key={product.product_uuid}
-                                onSelect={() => handleRelatedProductToggle(product.product_uuid)}
+                                onSelect={(e) => {
+                                  e.preventDefault();
+                                  handleRelatedProductToggle(product.product_uuid);
+                                  return false;
+                                }}
                                 className="flex items-center cursor-pointer p-2"
                               >
                                 <div className="flex items-center gap-2 flex-1">
                                   <Checkbox 
                                     id={`product-${product.product_uuid}`}
                                     checked={selectedRelatedProducts.includes(product.product_uuid)}
-                                    onCheckedChange={() => handleRelatedProductToggle(product.product_uuid)}
+                                    onCheckedChange={() => {
+                                      handleRelatedProductToggle(product.product_uuid);
+                                    }}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                    }}
                                     className="mr-1"
                                   />
                                   <div className="flex-1 min-w-0">
                                     <label 
                                       htmlFor={`product-${product.product_uuid}`}
                                       className="text-sm font-medium cursor-pointer"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleRelatedProductToggle(product.product_uuid);
+                                      }}
                                     >
                                       {product.name}
                                     </label>
@@ -729,8 +743,12 @@ export default function EditProduct() {
                               <Button
                                 variant="ghost"
                                 size="sm"
+                                type="button"
                                 className="h-8 w-8 p-0 ml-2"
-                                onClick={() => handleRelatedProductToggle(product.product_uuid)}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  handleRelatedProductToggle(product.product_uuid);
+                                }}
                               >
                                 <X className="h-4 w-4" />
                               </Button>
