@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -228,17 +229,17 @@ export default function Classroom() {
 
   const TitleWithCommunity = () => (
     <h1 className="font-bold text-2xl md:text-3xl">
-      {community && (
-        <span className="text-[#1A1F2C] mr-2">
-          {community.name}
-        </span>
-      )}
-      {community && activeLesson && (
-        <span className="text-muted-foreground mx-1">/</span>
-      )}
-      <span className="text-muted-foreground">
-        {activeLesson?.name || classroom.name}
+      <span className="text-[#1A1F2C] mr-2">
+        {classroom.name}
       </span>
+      {activeLesson && (
+        <>
+          <span className="text-muted-foreground mx-1">/</span>
+          <span className="text-muted-foreground">
+            {activeLesson.name}
+          </span>
+        </>
+      )}
     </h1>
   );
 
