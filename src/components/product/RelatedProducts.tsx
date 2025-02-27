@@ -54,7 +54,13 @@ export function RelatedProducts({
   const [open, setOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   
-  // Fetch related product relationships from the new table
+  console.log("RelatedProducts component - received props:", {
+    productId, 
+    expertUuid, 
+    relatedProducts
+  });
+  
+  // Fetch related product relationships from the table
   const { 
     data: relationships = [], 
     isLoading: isLoadingRelationships 
@@ -62,6 +68,8 @@ export function RelatedProducts({
     queryKey: ['productRelationships', productId],
     queryFn: async () => {
       if (!productId || productId === ":id") return [];
+      
+      console.log("Fetching relationships for product:", productId);
       
       const { data, error } = await supabase
         .from('product_relationships')
@@ -73,6 +81,7 @@ export function RelatedProducts({
         return [];
       }
       
+      console.log("Found relationships:", data);
       return data as ProductRelationship[];
     },
     enabled: Boolean(productId) && productId !== ":id",
@@ -82,11 +91,14 @@ export function RelatedProducts({
   useEffect(() => {
     if (relationships.length > 0) {
       const relatedIds = relationships.map(rel => rel.related_product_uuid);
+      console.log("Setting selectedIds from relationships:", relatedIds);
       setSelectedIds(relatedIds);
     } else if (Array.isArray(relatedProducts) && relatedProducts.length > 0) {
       // Fallback to the passed relatedProducts for backward compatibility
+      console.log("Setting selectedIds from relatedProducts prop:", relatedProducts);
       setSelectedIds([...relatedProducts]);
     } else {
+      console.log("No relationships or relatedProducts found, clearing selectedIds");
       setSelectedIds([]);
     }
   }, [relationships, relatedProducts]);
@@ -100,6 +112,8 @@ export function RelatedProducts({
     queryFn: async () => {
       if (!expertUuid) return [];
       
+      console.log("Fetching products for expert:", expertUuid);
+      
       const { data, error } = await supabase
         .from('products')
         .select('product_uuid, name, price_from, slug')
@@ -110,6 +124,7 @@ export function RelatedProducts({
         return [];
       }
       
+      console.log("Found expert products:", data?.length || 0);
       return data || [];
     },
     enabled: Boolean(expertUuid),
@@ -118,17 +133,25 @@ export function RelatedProducts({
 
   // Filter out the current product from potential related products
   const availableProducts = useMemo(() => {
-    return expertProducts.filter(p => p.product_uuid !== productId);
+    const filtered = expertProducts.filter(p => p.product_uuid !== productId);
+    console.log("Available products for selection:", filtered.length);
+    return filtered;
   }, [expertProducts, productId]);
 
   // Get already selected products for display
   const selectedProducts = useMemo(() => {
-    return expertProducts.filter(p => selectedIds.includes(p.product_uuid));
+    const products = expertProducts.filter(p => selectedIds.includes(p.product_uuid));
+    console.log("Selected products for display:", products.length);
+    return products;
   }, [expertProducts, selectedIds]);
   
   // For products that are selected but not found in expertProducts (might happen during initial load)
   const missingProductIds = useMemo(() => {
-    return selectedIds.filter(id => !expertProducts.some(p => p.product_uuid === id));
+    const missing = selectedIds.filter(id => !expertProducts.some(p => p.product_uuid === id));
+    if (missing.length > 0) {
+      console.log("Missing product IDs (need to fetch):", missing);
+    }
+    return missing;
   }, [selectedIds, expertProducts]);
 
   // Fetch any missing product details if needed
@@ -136,6 +159,8 @@ export function RelatedProducts({
     queryKey: ['missingProducts', missingProductIds],
     queryFn: async () => {
       if (missingProductIds.length === 0) return [];
+      
+      console.log("Fetching missing products:", missingProductIds);
       
       const { data, error } = await supabase
         .from('products')
@@ -147,6 +172,7 @@ export function RelatedProducts({
         return [];
       }
       
+      console.log("Found missing products:", data?.length || 0);
       return data || [];
     },
     enabled: missingProductIds.length > 0
@@ -169,24 +195,30 @@ export function RelatedProducts({
 
   // Combine all products for display
   const allDisplayProducts = useMemo(() => {
-    return [...selectedProducts, ...missingProducts];
+    const combined = [...selectedProducts, ...missingProducts];
+    console.log("All display products:", combined.length);
+    return combined;
   }, [selectedProducts, missingProducts]);
 
   // Toggle a product selection
   const toggleProduct = async (id: string) => {
     try {
+      console.log("Toggling product:", id);
+      
       if (productId === ":id") {
         // Just update the local state if we don't have a real product ID yet
         const newSelection = selectedIds.includes(id)
           ? selectedIds.filter(selectedId => selectedId !== id)
           : [...selectedIds, id];
         
+        console.log("New selection (local only):", newSelection);
         setSelectedIds(newSelection);
         onRelatedProductsChange(newSelection);
         return;
       }
       
       if (selectedIds.includes(id)) {
+        console.log("Removing relationship for:", id);
         // Remove the relationship
         const { error } = await supabase
           .from('product_relationships')
@@ -208,6 +240,7 @@ export function RelatedProducts({
             oldData.filter(rel => rel.related_product_uuid !== id)
         );
       } else {
+        console.log("Adding relationship for:", id);
         // Add the relationship
         const { data, error } = await supabase
           .from('product_relationships')
@@ -245,9 +278,12 @@ export function RelatedProducts({
   // Remove a product from selection
   const removeProduct = async (id: string) => {
     try {
+      console.log("Removing product:", id);
+      
       if (productId === ":id") {
         // Just update the local state if we don't have a real product ID yet
         const newSelection = selectedIds.filter(selectedId => selectedId !== id);
+        console.log("New selection (local only):", newSelection);
         setSelectedIds(newSelection);
         onRelatedProductsChange(newSelection);
         return;
