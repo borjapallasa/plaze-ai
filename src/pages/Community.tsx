@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -91,6 +92,25 @@ export default function Community() {
         .eq('community_uuid', id)
         .eq('status', 'open')
         .order('last_message_at', { ascending: false });
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    },
+    enabled: !!id
+  });
+
+  const { data: classrooms, isLoading: isClassroomsLoading } = useQuery({
+    queryKey: ['community-classrooms', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('classrooms')
+        .select('*')
+        .eq('community_uuid', id)
+        .eq('status', 'visible')
+        .order('created_at', { ascending: false });
 
       if (error) {
         throw error;
@@ -213,24 +233,6 @@ export default function Community() {
       type: "qa",
       description: "Open Q&A session with automation experts"
     }
-  ];
-
-  const classrooms = [
-    {
-      title: "How To Create Automated SEO Blogs With AI?",
-      description: "In this classroom you will learn how to create SEO blogs automatically with AI, using Make.com and Airtable.",
-      image: "/lovable-uploads/0f691532-4ffb-4ec9-82cb-3be9cc93d658.png"
-    },
-    {
-      title: "Fully Automated Affiliate Marketing Dashboard",
-      description: "Learn how to create an Affiliate Marketing Dashboard in Airtable, seamlessly integrating HubSpot and Google Analytics with Make.com.",
-      image: "/lovable-uploads/0f691532-4ffb-4ec9-82cb-3be9cc93d658.png"
-    },
-    {
-      title: "How To Obtain The Emails Of The Followers Of An Instagram Account",
-      description: "In this classroom we explain how you can obtain the emails of the followers of certain instagram user, using Make.com, RapidAPI and Airtable.",
-      image: "/lovable-uploads/0f691532-4ffb-4ec9-82cb-3be9cc93d658.png"
-    },
   ];
 
   const handleThreadClick = (thread: any) => {
@@ -452,22 +454,47 @@ export default function Community() {
               <Input placeholder="Search classroom" className="pl-9" />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {classrooms.map((classroom, index) => (
-                <Card key={index} className="group relative flex flex-col hover:bg-accent transition-colors cursor-pointer overflow-hidden">
-                  <div className="aspect-[1.25] relative overflow-hidden bg-gradient-to-br from-blue-400 to-blue-600 rounded-t-lg">
-                    <div className="absolute inset-0 p-6 flex items-center justify-center">
-                      <h3 className="text-white text-2xl font-bold text-center leading-tight">Classroom</h3>
+              {isClassroomsLoading ? (
+                [...Array(3)].map((_, index) => (
+                  <Card key={index} className="group relative flex flex-col hover:bg-accent transition-colors overflow-hidden animate-pulse">
+                    <div className="aspect-[1.25] bg-muted rounded-t-lg"></div>
+                    <CardContent className="p-6 relative space-y-4">
+                      <div className="h-6 bg-muted rounded w-3/4"></div>
+                      <div className="h-4 bg-muted rounded w-full"></div>
+                      <div className="h-4 bg-muted rounded w-2/3"></div>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : classrooms && classrooms.length > 0 ? (
+                classrooms.map((classroom) => (
+                  <Card key={classroom.classroom_uuid} className="group relative flex flex-col hover:bg-accent transition-colors cursor-pointer overflow-hidden">
+                    <div className="aspect-[1.25] relative overflow-hidden bg-gradient-to-br from-blue-400 to-blue-600 rounded-t-lg">
+                      {classroom.thumbnail ? (
+                        <img 
+                          src={classroom.thumbnail} 
+                          alt={classroom.name} 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 p-6 flex items-center justify-center">
+                          <h3 className="text-white text-2xl font-bold text-center leading-tight">Classroom</h3>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                  <CardContent className="p-6 relative">
-                    <CardTitle className="text-lg font-semibold mb-2">{classroom.title}</CardTitle>
-                    <p className="text-muted-foreground text-sm mb-8">{classroom.description}</p>
-                    <div className="absolute right-6 bottom-6 opacity-0 transform translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200">
-                      <ArrowRight className="w-4 h-4 text-primary" />
-                    </div>
-                  </CardContent>
+                    <CardContent className="p-6 relative">
+                      <CardTitle className="text-lg font-semibold mb-2">{classroom.name}</CardTitle>
+                      <p className="text-muted-foreground text-sm mb-8">{classroom.description || classroom.summary}</p>
+                      <div className="absolute right-6 bottom-6 opacity-0 transform translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200">
+                        <ArrowRight className="w-4 h-4 text-primary" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <Card className="col-span-full p-6">
+                  <p className="text-center text-muted-foreground">No classrooms found in this community.</p>
                 </Card>
-              ))}
+              )}
             </div>
           </TabsContent>
 

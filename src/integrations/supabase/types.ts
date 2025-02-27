@@ -204,6 +204,7 @@ export type Database = {
           notify: boolean | null
           status: Database["public"]["Enums"]["classroom_status"] | null
           summary: string | null
+          thumbnail: string | null
           video_url: string | null
         }
         Insert: {
@@ -219,6 +220,7 @@ export type Database = {
           notify?: boolean | null
           status?: Database["public"]["Enums"]["classroom_status"] | null
           summary?: string | null
+          thumbnail?: string | null
           video_url?: string | null
         }
         Update: {
@@ -234,6 +236,7 @@ export type Database = {
           notify?: boolean | null
           status?: Database["public"]["Enums"]["classroom_status"] | null
           summary?: string | null
+          thumbnail?: string | null
           video_url?: string | null
         }
         Relationships: [
