@@ -210,22 +210,27 @@ export default function EditProduct() {
     enabled: !!id
   });
 
-  const { data: relatedProducts = [], isLoading: isLoadingRelatedProducts } = useQuery({
-    queryKey: ['relatedProducts', product?.expert_uuid, id],
+  const { data: relatedProducts = [], isLoading: isLoadingRelatedProducts } = useQuery<RelatedProduct[]>({
+    queryKey: ['relatedProducts', id],
     queryFn: async () => {
-      if (!product?.expert_uuid) return [];
+      if (!id) return [];
       
+      console.log('Fetching related products');
       const { data, error } = await supabase
         .from('products')
-        .select('*')
-        .eq('expert_uuid', product.expert_uuid)
+        .select('product_uuid, name, price_from')
         .neq('product_uuid', id)
-        .eq('status', 'active');
+        .order('name');
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching related products:', error);
+        throw error;
+      }
+
+      console.log('Found potential related products:', data?.length || 0);
       return data || [];
     },
-    enabled: !!product?.expert_uuid
+    enabled: !!id
   });
 
   const { data: variants = [], isLoading: isLoadingVariants, refetch: refetchVariants } = useQuery({
