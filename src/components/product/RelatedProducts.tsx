@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
   Command,
   CommandEmpty,
@@ -16,7 +17,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useToast } from "@/components/ui/use-toast";
-import { Check, Plus, X } from "lucide-react";
+import { Check, Plus, X, ChevronRight } from "lucide-react";
 
 interface Product {
   name: string;
@@ -111,101 +112,125 @@ export function RelatedProducts({
 
   return (
     <div className={className}>
-      <h3 className="text-sm font-medium mb-1.5">Related Products</h3>
-      
-      {/* Product selector */}
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            className="w-full justify-between"
-            type="button"
-          >
-            {selectedIds.length > 0
-              ? `${selectedIds.length} product${selectedIds.length !== 1 ? 's' : ''} selected` 
-              : "Select related products"}
-            <Plus className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-          </Button>
-        </PopoverTrigger>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-medium">Related Products</h3>
         
-        <PopoverContent className="w-full p-0" align="start">
-          <Command>
-            <CommandInput placeholder="Search products..." />
-            
-            <CommandEmpty>
-              {isLoading 
-                ? "Loading products..." 
-                : error 
-                  ? "Error loading products" 
-                  : "No products found"}
-            </CommandEmpty>
-            
-            <CommandGroup>
-              {potentialProducts.length > 0 ? (
-                potentialProducts.map((product) => (
-                  <CommandItem
-                    key={product.product_uuid}
-                    value={product.product_uuid}
-                    onSelect={() => toggleProduct(product.product_uuid)}
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <span>
-                        {product.name}
-                        <span className="ml-2 text-sm text-muted-foreground">
-                          ${product.price_from?.toFixed(2) || '0.00'}
+        {/* Product selector */}
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              role="combobox"
+              aria-expanded={open}
+              className="flex items-center gap-1"
+              type="button"
+            >
+              <Plus className="h-4 w-4" />
+              <span>{selectedIds.length > 0 ? "Add More" : "Add Products"}</span>
+            </Button>
+          </PopoverTrigger>
+          
+          <PopoverContent className="w-[300px] p-0" align="end">
+            <Command>
+              <CommandInput placeholder="Search products..." />
+              
+              <CommandEmpty>
+                {isLoading 
+                  ? "Loading products..." 
+                  : error 
+                    ? "Error loading products" 
+                    : "No products found"}
+              </CommandEmpty>
+              
+              <CommandGroup className="max-h-[300px] overflow-auto">
+                {potentialProducts.length > 0 ? (
+                  potentialProducts.map((product) => (
+                    <CommandItem
+                      key={product.product_uuid}
+                      value={product.product_uuid}
+                      onSelect={() => toggleProduct(product.product_uuid)}
+                    >
+                      <div className="flex items-center justify-between w-full">
+                        <span className="truncate">
+                          {product.name}
                         </span>
-                      </span>
-                      
-                      {selectedIds.includes(product.product_uuid) && (
-                        <Check className="h-4 w-4 text-primary ml-2" />
-                      )}
-                    </div>
+                        
+                        <div className="flex items-center">
+                          <span className="text-sm text-muted-foreground mr-2">
+                            ${product.price_from?.toFixed(2) || '0.00'}
+                          </span>
+                          
+                          {selectedIds.includes(product.product_uuid) ? (
+                            <Check className="h-4 w-4 text-primary" />
+                          ) : (
+                            <Plus className="h-4 w-4 text-muted-foreground" />
+                          )}
+                        </div>
+                      </div>
+                    </CommandItem>
+                  ))
+                ) : (
+                  <CommandItem value="no-products" disabled>
+                    {isLoading ? "Loading products..." : "No products available"}
                   </CommandItem>
-                ))
-              ) : (
-                <CommandItem value="no-products" disabled>
-                  {isLoading ? "Loading products..." : "No products available"}
-                </CommandItem>
-              )}
-            </CommandGroup>
-          </Command>
-        </PopoverContent>
-      </Popover>
+                )}
+              </CommandGroup>
+            </Command>
+          </PopoverContent>
+        </Popover>
+      </div>
       
-      {/* Selected products list */}
-      {selectedIds.length > 0 && (
-        <div className="mt-3 space-y-2">
+      {/* Selected products grid */}
+      {selectedIds.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {selectedIds.map(id => {
             const product = potentialProducts.find(p => p.product_uuid === id);
             
             return (
-              <div 
+              <Card 
                 key={id}
-                className="flex items-center justify-between px-3 py-2 text-sm bg-secondary/20 rounded-md"
+                className="overflow-hidden border bg-card transition-all hover:shadow-md"
               >
-                <div className="truncate">
-                  {product?.name || `Product ${id.slice(0, 8)}...`}
-                  {product && (
-                    <span className="ml-1 text-xs text-muted-foreground">
-                      ${product.price_from?.toFixed(2) || '0.00'}
-                    </span>
-                  )}
+                <div className="p-4 flex items-center justify-between">
+                  <div className="flex-1 mr-2">
+                    <div className="font-medium truncate">
+                      {product?.name || `Product ${id.slice(0, 8)}...`}
+                    </div>
+                    <div className="text-sm text-muted-foreground mt-1">
+                      ${product?.price_from?.toFixed(2) || '0.00'}
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 rounded-full hover:bg-destructive/10 hover:text-destructive"
+                      onClick={() => removeProduct(id)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                    
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 rounded-full hover:bg-primary/10 hover:text-primary"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
-                
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => removeProduct(id)}
-                  className="h-8 w-8 p-0"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
+              </Card>
             );
           })}
+        </div>
+      ) : (
+        <div className="border border-dashed rounded-lg p-6 flex flex-col items-center justify-center bg-muted/30 text-center">
+          <div className="text-muted-foreground mb-2">No related products selected</div>
+          <p className="text-sm text-muted-foreground max-w-md">
+            Add related products to help customers discover more of your offerings
+          </p>
         </div>
       )}
     </div>
