@@ -41,11 +41,11 @@ export function RelatedProducts({
 }: RelatedProductsProps) {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
-  const [selectedProductIds, setSelectedProductIds] = useState<string[]>(relatedProducts || []);
+  const [selectedProductIds, setSelectedProductIds] = useState<string[]>(Array.isArray(relatedProducts) ? relatedProducts : []);
 
   // When related products prop changes, update local state
   useEffect(() => {
-    setSelectedProductIds(relatedProducts || []);
+    setSelectedProductIds(Array.isArray(relatedProducts) ? relatedProducts : []);
   }, [relatedProducts]);
 
   // Fetch products with same expert_uuid
@@ -119,7 +119,7 @@ export function RelatedProducts({
               {error ? "Error loading products" : isLoading ? "Loading..." : "No products found"}
             </CommandEmpty>
             <CommandGroup className="max-h-60 overflow-auto">
-              {products.map((product) => (
+              {Array.isArray(products) && products.map((product) => (
                 <CommandItem
                   key={product.product_uuid}
                   value={product.product_uuid}
@@ -153,7 +153,7 @@ export function RelatedProducts({
       {selectedProductIds.length > 0 && (
         <div className="mt-3 space-y-2">
           {selectedProductIds.map(id => {
-            const product = products.find(p => p.product_uuid === id);
+            const product = Array.isArray(products) ? products.find(p => p.product_uuid === id) : undefined;
             return (
               <div 
                 key={id}
