@@ -556,10 +556,6 @@ export default function Classroom() {
                       />
                     )}
                   </div>
-
-                  <div className="space-y-3 w-full">
-                    <Button variant="outline" className="w-full">Edit Classroom Details</Button>
-                  </div>
                 </CardContent>
               </Card>
 
@@ -698,10 +694,6 @@ export default function Classroom() {
                         }} 
                       />
                     )}
-                  </div>
-
-                  <div className="flex gap-4">
-                    <Button variant="outline">Edit Classroom Details</Button>
                   </div>
                 </CardContent>
               </Card>
