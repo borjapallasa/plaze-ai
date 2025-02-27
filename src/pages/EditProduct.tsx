@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +16,7 @@ import { MainHeader } from "@/components/MainHeader";
 import { ProductEditor } from "@/components/product/ProductEditor";
 import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
 import { ProductVariantsEditor } from "@/components/product/ProductVariants";
+import { RelatedProducts } from "@/components/product/RelatedProducts";
 import { ArrowLeft, Plus, X, Check } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -73,6 +75,7 @@ export default function EditProduct() {
   const [team, setTeam] = useState<string[]>([]);
   const [localVariants, setLocalVariants] = useState<any[]>([]);
   const [deletedVariantIds, setDeletedVariantIds] = useState<string[]>([]);
+  const [relatedProducts, setRelatedProducts] = useState<string[]>([]);
 
   const handleStatusChange = (value: ProductStatus) => {
     setProductStatus(value);
@@ -96,6 +99,10 @@ export default function EditProduct() {
   const handleTeamChange = (value: string) => {
     if (!value) return;
     setTeam(prev => prev.includes(value) ? prev.filter(t => t !== value) : [...prev, value]);
+  };
+
+  const handleRelatedProductsChange = (productIds: string[]) => {
+    setRelatedProducts(productIds);
   };
 
   const renderSelectedTags = (items: string[]) => {
@@ -189,6 +196,7 @@ export default function EditProduct() {
       setUseCases(Array.isArray(product.use_case) ? product.use_case.map(String) : []);
       setPlatform(Array.isArray(product.platform) ? product.platform.map(String) : []);
       setTeam(Array.isArray(product.team) ? product.team.map(String) : []);
+      setRelatedProducts(Array.isArray(product.related_products) ? product.related_products : []);
     }
   }, [product]);
 
@@ -215,7 +223,8 @@ export default function EditProduct() {
           industries: industries,
           use_case: useCases,
           platform: platform,
-          team: team
+          team: team,
+          related_products: relatedProducts
         })
         .eq('product_uuid', id);
 
@@ -550,6 +559,14 @@ export default function EditProduct() {
                         </SelectGroup>
                       </SelectContent>
                     </Select>
+                  </div>
+                  <div>
+                    <RelatedProducts
+                      productId={id || ""}
+                      expertUuid={product?.expert_uuid || ""}
+                      relatedProducts={relatedProducts}
+                      onRelatedProductsChange={handleRelatedProductsChange}
+                    />
                   </div>
                 </div>
               </Card>
