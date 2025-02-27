@@ -69,12 +69,18 @@ export function RelatedProducts({
 
   // Fetch potential related products
   const { data: potentialProducts = [], isLoading, error } = useQuery({
-    queryKey: ['relatedProductOptions', expertUuid],
+    queryKey: ['relatedProductOptions', expertUuid, productId],
     queryFn: async () => {
       console.log("RelatedProducts - Fetching products for expert:", expertUuid);
       
       if (!expertUuid) {
         console.log("RelatedProducts - No expertUuid provided, returning empty array");
+        return [];
+      }
+      
+      // Skip if productId is a route parameter placeholder
+      if (productId === ":id") {
+        console.log("RelatedProducts - productId is a placeholder (:id), returning empty array");
         return [];
       }
       
@@ -98,7 +104,7 @@ export function RelatedProducts({
         return [];
       }
     },
-    enabled: !!expertUuid,
+    enabled: !!expertUuid && productId !== ":id",
   });
 
   // Log when potential products change
@@ -144,6 +150,23 @@ export function RelatedProducts({
 
   console.log("RelatedProducts - Before render, selectedIds:", selectedIds);
 
+  // If product ID is a placeholder, show a disabled state
+  if (productId === ":id") {
+    return (
+      <div className={className}>
+        <h3 className="text-sm font-medium mb-1.5">Related Products</h3>
+        <Button
+          variant="outline"
+          className="w-full justify-between opacity-70"
+          type="button"
+          disabled
+        >
+          Save product first to add related products
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className={className}>
       <h3 className="text-sm font-medium mb-1.5">Related Products</h3>
@@ -182,31 +205,33 @@ export function RelatedProducts({
             </CommandEmpty>
             
             <CommandGroup>
-              {Array.isArray(potentialProducts) ? potentialProducts.map((product: Product) => (
-                <CommandItem
-                  key={product.product_uuid}
-                  value={product.product_uuid}
-                  onSelect={() => {
-                    console.log("RelatedProducts - CommandItem selected:", product.product_uuid);
-                    toggleProduct(product.product_uuid);
-                  }}
-                >
-                  <div className="flex items-center justify-between w-full">
-                    <span>
-                      {product.name}
-                      <span className="ml-2 text-sm text-muted-foreground">
-                        ${product.price_from?.toFixed(2) || '0.00'}
+              {Array.isArray(potentialProducts) && potentialProducts.length > 0 ? (
+                potentialProducts.map((product: Product) => (
+                  <CommandItem
+                    key={product.product_uuid}
+                    value={product.product_uuid}
+                    onSelect={() => {
+                      console.log("RelatedProducts - CommandItem selected:", product.product_uuid);
+                      toggleProduct(product.product_uuid);
+                    }}
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <span>
+                        {product.name}
+                        <span className="ml-2 text-sm text-muted-foreground">
+                          ${product.price_from?.toFixed(2) || '0.00'}
+                        </span>
                       </span>
-                    </span>
-                    
-                    {selectedIds.includes(product.product_uuid) && (
-                      <Check className="h-4 w-4 text-primary ml-2" />
-                    )}
-                  </div>
-                </CommandItem>
-              )) : (
+                      
+                      {selectedIds.includes(product.product_uuid) && (
+                        <Check className="h-4 w-4 text-primary ml-2" />
+                      )}
+                    </div>
+                  </CommandItem>
+                ))
+              ) : (
                 <CommandItem value="no-products" disabled>
-                  No products data available
+                  {isLoading ? "Loading products..." : "No products available"}
                 </CommandItem>
               )}
             </CommandGroup>
