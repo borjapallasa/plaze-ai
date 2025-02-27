@@ -1,36 +1,61 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { ChevronDown, ShoppingCart } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MainHeader } from "@/components/MainHeader";
 import { VariantPicker } from "@/components/product/VariantPicker";
+import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { getVideoEmbedUrl } from "@/utils/videoEmbed";
 
 export default function Classroom() {
   const [isExpanded, setIsExpanded] = useState(true);
   const [selectedVariant, setSelectedVariant] = useState("basic");
   const isMobile = useIsMobile();
+  const { id } = useParams();
   
-  const lessons = [
-    {
-      title: "Week 5",
-      isActive: false,
+  const { data: classroom, isLoading: isClassroomLoading } = useQuery({
+    queryKey: ['classroom', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('classrooms')
+        .select('*')
+        .eq('classroom_uuid', id)
+        .single();
+
+      if (error) {
+        console.error("Error fetching classroom:", error);
+        throw error;
+      }
+
+      return data;
     },
-    {
-      title: "Week 4",
-      isActive: true,
+    enabled: !!id
+  });
+
+  const { data: lessons, isLoading: isLessonsLoading } = useQuery({
+    queryKey: ['classroom-lessons', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('lessons')
+        .select('*')
+        .eq('classroom_uuid', id)
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        console.error("Error fetching lessons:", error);
+        throw error;
+      }
+
+      return data;
     },
-    {
-      title: "Week 3",
-      isActive: false,
-    },
-    {
-      title: "Week 1",
-      isActive: false,
-    },
-  ];
+    enabled: !!id
+  });
 
   const variants = [
     { 
@@ -64,13 +89,15 @@ export default function Classroom() {
     // Add to cart logic here
   };
 
+  const videoEmbedUrl = classroom?.video_url ? getVideoEmbedUrl(classroom.video_url) : null;
+
   const LessonsList = () => (
     <div>
       <button 
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full flex items-center justify-between mb-2 hover:bg-muted/50 p-2 rounded-lg transition-colors"
       >
-        <h3 className="font-medium">New set</h3>
+        <h3 className="font-medium">{classroom?.name || "Lessons"}</h3>
         <ChevronDown 
           className={cn(
             "w-4 h-4 text-muted-foreground transition-transform duration-200",
@@ -82,19 +109,29 @@ export default function Classroom() {
         "space-y-1 overflow-hidden transition-all duration-200",
         isExpanded ? "max-h-[500px]" : "max-h-0"
       )}>
-        {lessons.map((lesson) => (
-          <button
-            key={lesson.title}
-            className={cn(
-              "w-full text-left px-3 py-2 rounded-lg text-sm transition-colors",
-              lesson.isActive 
-                ? "bg-primary text-primary-foreground" 
-                : "hover:bg-muted"
-            )}
-          >
-            {lesson.title}
-          </button>
-        ))}
+        {isLessonsLoading ? (
+          Array(4).fill(0).map((_, index) => (
+            <div key={index} className="animate-pulse">
+              <div className="w-full h-10 bg-muted rounded-lg my-1"></div>
+            </div>
+          ))
+        ) : lessons && lessons.length > 0 ? (
+          lessons.map((lesson) => (
+            <button
+              key={lesson.lesson_uuid}
+              className={cn(
+                "w-full text-left px-3 py-2 rounded-lg text-sm transition-colors",
+                false // You may add an isActive state for current lesson
+                  ? "bg-primary text-primary-foreground" 
+                  : "hover:bg-muted"
+              )}
+            >
+              {lesson.name}
+            </button>
+          ))
+        ) : (
+          <p className="text-sm text-muted-foreground p-2">No lessons available yet</p>
+        )}
       </div>
     </div>
   );
@@ -112,6 +149,47 @@ export default function Classroom() {
     </div>
   );
 
+  if (isClassroomLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="pt-16">
+          <MainHeader />
+          <div className="container mx-auto px-4 py-8 max-w-[1400px]">
+            <div className="animate-pulse space-y-6">
+              <div className="h-8 bg-muted rounded w-1/3"></div>
+              <div className="h-64 bg-muted rounded"></div>
+              <div className="h-4 bg-muted rounded w-full"></div>
+              <div className="h-4 bg-muted rounded w-2/3"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!classroom) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="pt-16">
+          <MainHeader />
+          <div className="container mx-auto px-4 py-8 max-w-[1400px]">
+            <Card>
+              <CardContent className="p-6">
+                <h1 className="text-xl font-bold">Classroom not found</h1>
+                <p className="text-muted-foreground mt-2">
+                  The classroom you are looking for does not exist or you don't have access to it.
+                </p>
+                <Button asChild className="mt-4">
+                  <Link to="/communities">Browse Communities</Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <div className="pt-16">
@@ -121,81 +199,49 @@ export default function Classroom() {
             <div className="space-y-6">
               <Card className="w-full">
                 <CardContent className="p-6 space-y-6">
-                  <h1 className="text-xl font-bold leading-tight">How To Create Automated SEO Blogs With AI?</h1>
+                  <h1 className="text-xl font-bold leading-tight">{classroom.name}</h1>
                   
                   <div className="space-y-4">
-                    <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
-                      <img 
-                        src="/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"
-                        alt="Course thumbnail"
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                        <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center cursor-pointer hover:bg-white transition-colors">
-                          <div className="w-6 h-6 border-8 border-transparent border-l-primary ml-1" style={{ transform: 'rotate(-45deg)' }} />
+                    {videoEmbedUrl ? (
+                      <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
+                        <iframe
+                          src={videoEmbedUrl}
+                          title={classroom.name}
+                          className="w-full h-full absolute inset-0"
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          allowFullScreen
+                        ></iframe>
+                      </div>
+                    ) : (
+                      <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
+                        <img 
+                          src={classroom.thumbnail || "/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"}
+                          alt="Course thumbnail"
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                          <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center cursor-pointer hover:bg-white transition-colors">
+                            <div className="w-6 h-6 border-8 border-transparent border-l-primary ml-1" style={{ transform: 'rotate(-45deg)' }} />
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    )}
 
-                    <div className="space-y-2">
-                      <p className="text-muted-foreground">All formulas & scripts →</p>
-                      <a 
-                        href="https://docs.google.com/document/d/1TYRkoPNAFhU-ryYDhzPLQi6zrP5kezlg6N5ukcCRP5Vk/edit?usp=sharing" 
-                        target="_blank"
-                        className="text-primary hover:underline block"
-                      >
-                        View Documentation
-                      </a>
-                    </div>
+                    {classroom.summary && (
+                      <div className="space-y-2">
+                        <p className="text-muted-foreground">Summary →</p>
+                        <p className="text-primary block">
+                          {classroom.summary}
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-6">
-                    <p>
-                      In this video, we are going to learn how to create an auto blogging no-code software using{" "}
-                      <span className="font-semibold">OpenAI, Airtable & Make</span> and publish them automatically to{" "}
-                      <span className="font-semibold">Shopify</span> and{" "}
-                      <span className="font-semibold">Wordpress</span>.
-                    </p>
-
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <h3 className="font-semibold">No-Code Approach</h3>
-                        <p className="text-muted-foreground">
-                          This no-code approach allows users to manage and generate blogs through an accessible Airtable interface. 
-                          By enabling the importation of existing web articles and the incorporation of new client details, 
-                          our solution ensures content accurately mirrors the intended tone and voice of different websites.
-                        </p>
-                      </div>
-
-                      <div className="space-y-2">
-                        <h3 className="font-semibold">Synergy Between Tools</h3>
-                        <p className="text-muted-foreground">
-                          The synergy between Airtable, Make, and OpenAI streamlines the content creation process. 
-                          This workflow automatically generates written content, enhancing the blogging experience 
-                          for both creators and their audience. Furthermore, our system brings visual appeal to each 
-                          blog post by including images from the Unsplash API.
-                        </p>
-                      </div>
-
-                      <div className="space-y-2">
-                        <h3 className="font-semibold">Automated Organization</h3>
-                        <p className="text-muted-foreground">
-                          The blogs are automatically organized to feature an index, FAQs, and conclusions and also 
-                          to include related images properly alt-texted. This structured format enhances the reader's 
-                          experience by making content easily navigable and informative.
-                        </p>
-                      </div>
-
-                      <div className="space-y-2">
-                        <h3 className="font-semibold">Target Audience</h3>
-                        <p className="text-muted-foreground">
-                          Designed for content creators, digital marketers, and business owners, our solution focuses 
-                          on ease of use. It aims to reduce the complexity of maintaining an updated and relevant blog, 
-                          freeing up users to concentrate on other critical aspects of their work. By automating content 
-                          creation, our system saves time and allows for the efficient management of a consistent online presence.
-                        </p>
-                      </div>
-                    </div>
+                    {classroom.description && (
+                      <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: classroom.description }} />
+                    )}
                   </div>
 
                   <div className="space-y-3 w-full">
@@ -215,7 +261,7 @@ export default function Classroom() {
                 <CardContent className="p-4">
                   <div className="space-y-6">
                     <div>
-                      <h2 className="text-lg font-semibold mb-2 text-left leading-snug">How To Create Automated SEO Blogs With AI</h2>
+                      <h2 className="text-lg font-semibold mb-2 text-left leading-snug">{classroom.name}</h2>
                       <div className="h-2 bg-muted rounded-full mb-2">
                         <div className="h-full w-0 bg-primary rounded-full"></div>
                       </div>
@@ -233,7 +279,7 @@ export default function Classroom() {
                 <CardContent className="p-4">
                   <div className="space-y-6">
                     <div>
-                      <h2 className="text-lg font-semibold mb-2 text-left leading-snug">How To Create Automated SEO Blogs With AI</h2>
+                      <h2 className="text-lg font-semibold mb-2 text-left leading-snug">{classroom.name}</h2>
                       <div className="h-2 bg-muted rounded-full mb-2">
                         <div className="h-full w-0 bg-primary rounded-full"></div>
                       </div>
@@ -249,81 +295,49 @@ export default function Classroom() {
 
               <Card className="flex-1">
                 <CardContent className="p-6 space-y-6">
-                  <h1 className="text-4xl font-bold">How To Create Automated SEO Blogs With AI?</h1>
+                  <h1 className="text-4xl font-bold">{classroom.name}</h1>
                   
                   <div className="space-y-4">
-                    <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
-                      <img 
-                        src="/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"
-                        alt="Course thumbnail"
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                        <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center cursor-pointer hover:bg-white transition-colors">
-                          <div className="w-6 h-6 border-8 border-transparent border-l-primary ml-1" style={{ transform: 'rotate(-45deg)' }} />
+                    {videoEmbedUrl ? (
+                      <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
+                        <iframe
+                          src={videoEmbedUrl}
+                          title={classroom.name}
+                          className="w-full h-full absolute inset-0"
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          allowFullScreen
+                        ></iframe>
+                      </div>
+                    ) : (
+                      <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
+                        <img 
+                          src={classroom.thumbnail || "/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"}
+                          alt="Course thumbnail"
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                          <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center cursor-pointer hover:bg-white transition-colors">
+                            <div className="w-6 h-6 border-8 border-transparent border-l-primary ml-1" style={{ transform: 'rotate(-45deg)' }} />
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    )}
 
-                    <div className="flex items-center gap-2">
-                      <span className="text-muted-foreground">All formulas & scripts →</span>
-                      <a 
-                        href="https://docs.google.com/document/d/1TYRkoPNAFhU-ryYDhzPLQi6zrP5kezlg6N5ukcCRP5Vk/edit?usp=sharing" 
-                        target="_blank"
-                        className="text-primary hover:underline"
-                      >
-                        View Documentation
-                      </a>
-                    </div>
+                    {classroom.summary && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground">Summary →</span>
+                        <span className="text-primary">
+                          {classroom.summary}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-6">
-                    <p>
-                      In this video, we are going to learn how to create an auto blogging no-code software using{" "}
-                      <span className="font-semibold">OpenAI, Airtable & Make</span> and publish them automatically to{" "}
-                      <span className="font-semibold">Shopify</span> and{" "}
-                      <span className="font-semibold">Wordpress</span>.
-                    </p>
-
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <h3 className="font-semibold">No-Code Approach</h3>
-                        <p className="text-muted-foreground">
-                          This no-code approach allows users to manage and generate blogs through an accessible Airtable interface. 
-                          By enabling the importation of existing web articles and the incorporation of new client details, 
-                          our solution ensures content accurately mirrors the intended tone and voice of different websites.
-                        </p>
-                      </div>
-
-                      <div className="space-y-2">
-                        <h3 className="font-semibold">Synergy Between Tools</h3>
-                        <p className="text-muted-foreground">
-                          The synergy between Airtable, Make, and OpenAI streamlines the content creation process. 
-                          This workflow automatically generates written content, enhancing the blogging experience 
-                          for both creators and their audience. Furthermore, our system brings visual appeal to each 
-                          blog post by including images from the Unsplash API.
-                        </p>
-                      </div>
-
-                      <div className="space-y-2">
-                        <h3 className="font-semibold">Automated Organization</h3>
-                        <p className="text-muted-foreground">
-                          The blogs are automatically organized to feature an index, FAQs, and conclusions and also 
-                          to include related images properly alt-texted. This structured format enhances the reader's 
-                          experience by making content easily navigable and informative.
-                        </p>
-                      </div>
-
-                      <div className="space-y-2">
-                        <h3 className="font-semibold">Target Audience</h3>
-                        <p className="text-muted-foreground">
-                          Designed for content creators, digital marketers, and business owners, our solution focuses 
-                          on ease of use. It aims to reduce the complexity of maintaining an updated and relevant blog, 
-                          freeing up users to concentrate on other critical aspects of their work. By automating content 
-                          creation, our system saves time and allows for the efficient management of a consistent online presence.
-                        </p>
-                      </div>
-                    </div>
+                    {classroom.description && (
+                      <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: classroom.description }} />
+                    )}
                   </div>
 
                   <div className="flex gap-4">

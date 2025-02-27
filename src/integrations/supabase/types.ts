@@ -886,6 +886,7 @@ export type Database = {
           classroom_uuid: string | null
           created_at: string
           description: string | null
+          expert_uuid: string | null
           id: number
           introduction: string | null
           lesson_uuid: string
@@ -898,6 +899,7 @@ export type Database = {
           classroom_uuid?: string | null
           created_at?: string
           description?: string | null
+          expert_uuid?: string | null
           id?: number
           introduction?: string | null
           lesson_uuid?: string
@@ -910,6 +912,7 @@ export type Database = {
           classroom_uuid?: string | null
           created_at?: string
           description?: string | null
+          expert_uuid?: string | null
           id?: number
           introduction?: string | null
           lesson_uuid?: string
@@ -925,6 +928,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "classrooms"
             referencedColumns: ["classroom_uuid"]
+          },
+          {
+            foreignKeyName: "lessons_expert_uuid_fkey"
+            columns: ["expert_uuid"]
+            isOneToOne: false
+            referencedRelation: "experts"
+            referencedColumns: ["expert_uuid"]
           },
           {
             foreignKeyName: "lessons_user_uuid_fkey"
