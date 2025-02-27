@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -467,28 +466,34 @@ export default function Community() {
                 ))
               ) : classrooms && classrooms.length > 0 ? (
                 classrooms.map((classroom) => (
-                  <Card key={classroom.classroom_uuid} className="group relative flex flex-col hover:bg-accent transition-colors cursor-pointer overflow-hidden">
-                    <div className="aspect-[1.25] relative overflow-hidden bg-gradient-to-br from-blue-400 to-blue-600 rounded-t-lg">
-                      {classroom.thumbnail ? (
-                        <img 
-                          src={classroom.thumbnail} 
-                          alt={classroom.name} 
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="absolute inset-0 p-6 flex items-center justify-center">
-                          <h3 className="text-white text-2xl font-bold text-center leading-tight">Classroom</h3>
-                        </div>
-                      )}
-                    </div>
-                    <CardContent className="p-6 relative">
-                      <CardTitle className="text-lg font-semibold mb-2">{classroom.name}</CardTitle>
-                      <p className="text-muted-foreground text-sm mb-8">{classroom.description || classroom.summary}</p>
-                      <div className="absolute right-6 bottom-6 opacity-0 transform translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200">
-                        <ArrowRight className="w-4 h-4 text-primary" />
+                  <Link 
+                    key={classroom.classroom_uuid}
+                    to={`/classroom/${classroom.classroom_uuid}`}
+                    className="block"
+                  >
+                    <Card className="group relative flex flex-col hover:bg-accent transition-colors cursor-pointer overflow-hidden h-full">
+                      <div className="aspect-[1.25] relative overflow-hidden bg-gradient-to-br from-blue-400 to-blue-600 rounded-t-lg">
+                        {classroom.thumbnail ? (
+                          <img 
+                            src={classroom.thumbnail} 
+                            alt={classroom.name} 
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="absolute inset-0 p-6 flex items-center justify-center">
+                            <h3 className="text-white text-2xl font-bold text-center leading-tight">Classroom</h3>
+                          </div>
+                        )}
                       </div>
-                    </CardContent>
-                  </Card>
+                      <CardContent className="p-6 relative flex flex-col flex-1">
+                        <CardTitle className="text-lg font-semibold mb-2">{classroom.name}</CardTitle>
+                        <p className="text-muted-foreground text-sm flex-1">{classroom.description || classroom.summary}</p>
+                        <div className="absolute right-6 bottom-6 opacity-0 transform translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200">
+                          <ArrowRight className="w-4 h-4 text-primary" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
                 ))
               ) : (
                 <Card className="col-span-full p-6">
