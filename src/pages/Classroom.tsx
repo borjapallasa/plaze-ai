@@ -177,57 +177,6 @@ export default function Classroom() {
     }
   }, [videoUrl, videoEmbedUrl]);
 
-  const LessonsList = () => (
-    <div>
-      {isLessonsLoading ? (
-        Array(4).fill(0).map((_, index) => (
-          <div key={index} className="animate-pulse">
-            <div className="w-full h-10 bg-muted rounded-lg my-1"></div>
-          </div>
-        ))
-      ) : lessons && lessons.length > 0 ? (
-        lessons.map((lesson) => (
-          <div key={lesson.lesson_uuid} className="flex items-center gap-2 my-2">
-            <button
-              className={cn(
-                "flex-1 text-left px-3 py-2 rounded-lg text-sm transition-colors",
-                activeLesson?.lesson_uuid === lesson.lesson_uuid
-                  ? "bg-primary text-primary-foreground" 
-                  : "hover:bg-muted"
-              )}
-              onClick={() => setActiveLesson(lesson)}
-            >
-              {lesson.name}
-            </button>
-            <button
-              onClick={() => toggleLessonCompletion(lesson.lesson_uuid)}
-              className={cn(
-                "p-1.5 rounded-md transition-colors",
-                completedLessons.includes(lesson.lesson_uuid)
-                  ? "bg-primary/10 text-primary hover:bg-primary/20"
-                  : "text-muted-foreground hover:bg-muted"
-              )}
-              title={completedLessons.includes(lesson.lesson_uuid) 
-                ? "Mark as incomplete" 
-                : "Mark as complete"}
-            >
-              <Check 
-                className={cn(
-                  "h-4 w-4 transition-all", 
-                  completedLessons.includes(lesson.lesson_uuid)
-                    ? "opacity-100"
-                    : "opacity-50"
-                )} 
-              />
-            </button>
-          </div>
-        ))
-      ) : (
-        <p className="text-sm text-muted-foreground p-2">No lessons available yet</p>
-      )}
-    </div>
-  );
-
   const ProductsSection = () => (
     <div className="pt-4 border-t">
       <h3 className="font-semibold mb-4">Products in this class</h3>
@@ -284,38 +233,6 @@ export default function Classroom() {
     );
   }
 
-  const ClassroomDropdown = () => (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button className="flex items-center justify-between w-full text-left text-lg font-semibold p-3 rounded-lg hover:bg-muted/50 transition-colors">
-          <span>{classroom.name}</span>
-          <ChevronDown className="ml-2 h-5 w-5 text-muted-foreground" />
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-full min-w-[200px] bg-background">
-        {lessons && lessons.length > 0 ? (
-          lessons.map((lesson) => (
-            <DropdownMenuItem
-              key={lesson.lesson_uuid}
-              className={cn(
-                "cursor-pointer flex items-center justify-between", 
-                activeLesson?.lesson_uuid === lesson.lesson_uuid && "bg-primary/10"
-              )}
-              onClick={() => setActiveLesson(lesson)}
-            >
-              <span>{lesson.name}</span>
-              {completedLessons.includes(lesson.lesson_uuid) && (
-                <Check className="h-4 w-4 ml-2 text-primary" />
-              )}
-            </DropdownMenuItem>
-          ))
-        ) : (
-          <DropdownMenuItem disabled>No lessons available</DropdownMenuItem>
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-
   return (
     <div className="min-h-screen bg-background">
       <div className="pt-16">
@@ -325,9 +242,55 @@ export default function Classroom() {
             <div className="space-y-6">
               <Card className="w-full">
                 <CardContent className="p-6 space-y-6">
-                  <h1 className="font-bold text-2xl">{classroom.name}</h1>
-                  
-                  <ClassroomDropdown />
+                  <div className="space-y-4">
+                    <div>
+                      <button 
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        className="w-full flex items-center justify-between text-left text-xl font-semibold py-2"
+                      >
+                        <span>{classroom.name}</span>
+                        <ChevronDown 
+                          className={cn(
+                            "h-5 w-5 text-muted-foreground transition-transform duration-200",
+                            isExpanded ? "transform rotate-180" : ""
+                          )} 
+                        />
+                      </button>
+                      
+                      <div className={cn(
+                        "space-y-2 overflow-hidden transition-all duration-200 pt-2",
+                        isExpanded ? "max-h-[500px]" : "max-h-0"
+                      )}>
+                        {isLessonsLoading ? (
+                          Array(2).fill(0).map((_, index) => (
+                            <div key={index} className="animate-pulse">
+                              <div className="w-full h-10 bg-muted rounded-lg my-1"></div>
+                            </div>
+                          ))
+                        ) : lessons && lessons.length > 0 ? (
+                          lessons.map((lesson) => (
+                            <div 
+                              key={lesson.lesson_uuid} 
+                              className={cn(
+                                "flex items-center justify-between p-3 rounded-lg",
+                                activeLesson?.lesson_uuid === lesson.lesson_uuid 
+                                  ? "bg-muted/50" 
+                                  : "hover:bg-muted/30"
+                              )}
+                              onClick={() => setActiveLesson(lesson)}
+                            >
+                              <span className="text-sm">{lesson.name}</span>
+                              {completedLessons.includes(lesson.lesson_uuid) && (
+                                <Check className="h-5 w-5 text-primary" />
+                              )}
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-sm text-muted-foreground p-2">No lessons available yet</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                   
                   <div className="space-y-4">
                     {videoEmbedUrl ? (
@@ -379,20 +342,78 @@ export default function Classroom() {
                   <ProductsSection />
                 </CardContent>
               </Card>
-
-              <Card className="w-full">
-                <CardContent className="p-4">
-                  <LessonsList />
-                </CardContent>
-              </Card>
             </div>
           ) : (
             <div className="flex gap-6">
               <Card className="w-80 flex-shrink-0 h-fit">
                 <CardContent className="p-4">
                   <div className="space-y-6">
-                    <ClassroomDropdown />
-                    <LessonsList />
+                    <div>
+                      <button 
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        className="w-full flex items-center justify-between text-left text-lg font-semibold mb-2"
+                      >
+                        <span>{classroom.name}</span>
+                        <ChevronDown 
+                          className={cn(
+                            "h-5 w-5 text-muted-foreground transition-transform duration-200",
+                            isExpanded ? "transform rotate-180" : ""
+                          )} 
+                        />
+                      </button>
+                      
+                      <div className={cn(
+                        "space-y-2 overflow-hidden transition-all duration-200",
+                        isExpanded ? "max-h-[500px]" : "max-h-0"
+                      )}>
+                        {isLessonsLoading ? (
+                          Array(2).fill(0).map((_, index) => (
+                            <div key={index} className="animate-pulse">
+                              <div className="w-full h-10 bg-muted rounded-lg my-1"></div>
+                            </div>
+                          ))
+                        ) : lessons && lessons.length > 0 ? (
+                          lessons.map((lesson) => (
+                            <div 
+                              key={lesson.lesson_uuid} 
+                              className={cn(
+                                "flex items-center justify-between p-3 rounded-lg cursor-pointer",
+                                activeLesson?.lesson_uuid === lesson.lesson_uuid 
+                                  ? "bg-muted" 
+                                  : "hover:bg-muted/30"
+                              )}
+                              onClick={() => setActiveLesson(lesson)}
+                            >
+                              <span className="text-sm">{lesson.name}</span>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleLessonCompletion(lesson.lesson_uuid);
+                                }}
+                                className={cn(
+                                  "p-1.5 rounded-md transition-colors",
+                                  completedLessons.includes(lesson.lesson_uuid)
+                                    ? "bg-primary/10 text-primary hover:bg-primary/20"
+                                    : "text-muted-foreground hover:bg-muted"
+                                )}
+                              >
+                                <Check 
+                                  className={cn(
+                                    "h-4 w-4 transition-all", 
+                                    completedLessons.includes(lesson.lesson_uuid)
+                                      ? "opacity-100"
+                                      : "opacity-50"
+                                  )} 
+                                />
+                              </button>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-sm text-muted-foreground p-2">No lessons available yet</p>
+                        )}
+                      </div>
+                    </div>
+
                     <ProductsSection />
                   </div>
                 </CardContent>
@@ -401,12 +422,7 @@ export default function Classroom() {
               <Card className="flex-1">
                 <CardContent className="p-6 space-y-6">
                   <h1 className="font-bold text-2xl flex items-center">
-                    {classroom.name}
-                    {activeLesson && (
-                      <span className="text-muted-foreground text-lg ml-4">
-                        / {activeLesson.name}
-                      </span>
-                    )}
+                    {activeLesson ? activeLesson.name : classroom.name}
                   </h1>
                   
                   <div className="space-y-4">
