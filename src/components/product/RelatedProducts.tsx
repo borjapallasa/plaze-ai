@@ -41,15 +41,17 @@ export function RelatedProducts({
 }: RelatedProductsProps) {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
-  // Make sure to handle the case where relatedProducts might be null or undefined
+  // Initialize with empty array, not depending on relatedProducts which might be null
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
   const [availableProducts, setAvailableProducts] = useState<Product[]>([]);
 
   // When related products prop changes, update local state
   useEffect(() => {
+    // Handle the case where relatedProducts is null, undefined, or not an array
     if (Array.isArray(relatedProducts)) {
       setSelectedProductIds([...relatedProducts]);
     } else {
+      // Ensure we always have an array, even if empty
       setSelectedProductIds([]);
     }
   }, [relatedProducts]);
@@ -80,8 +82,11 @@ export function RelatedProducts({
 
   // Update local state when query data changes
   useEffect(() => {
-    if (Array.isArray(data)) {
+    if (data && Array.isArray(data)) {
       setAvailableProducts([...data]);
+    } else {
+      // Ensure we always have an array, even if empty
+      setAvailableProducts([]);
     }
   }, [data]);
 
@@ -139,7 +144,7 @@ export function RelatedProducts({
               {error ? "Error loading products" : isLoading ? "Loading..." : "No products found"}
             </CommandEmpty>
             <CommandGroup>
-              {availableProducts.map((product) => (
+              {availableProducts && availableProducts.length > 0 ? availableProducts.map((product) => (
                 <CommandItem
                   key={product.product_uuid}
                   value={product.product_uuid}
@@ -157,17 +162,21 @@ export function RelatedProducts({
                     )}
                   </div>
                 </CommandItem>
-              ))}
+              )) : null}
             </CommandGroup>
           </Command>
         </PopoverContent>
       </Popover>
 
-      {/* Display selected products */}
-      {selectedProductIds.length > 0 && (
+      {/* Display selected products - only show if we have selections */}
+      {selectedProductIds && selectedProductIds.length > 0 && (
         <div className="mt-3 space-y-2">
           {selectedProductIds.map(id => {
-            const product = availableProducts.find(p => p.product_uuid === id);
+            // Find the corresponding product details if available
+            const product = availableProducts && availableProducts.length > 0 
+              ? availableProducts.find(p => p.product_uuid === id) 
+              : undefined;
+              
             return (
               <div 
                 key={id}
