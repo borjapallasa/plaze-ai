@@ -1,7 +1,7 @@
 
 import React, { useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Bold, Italic, Underline, Link as LinkIcon, List, Image, Video, MoreHorizontal, Code, Heading1, Heading2, AlignLeft, AlignCenter, AlignRight } from "lucide-react";
+import { Bold, Italic, Underline, Link as LinkIcon, List, MoreHorizontal, Heading1, Heading2, AlignLeft, AlignCenter, AlignRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ProductEditorProps {
@@ -26,17 +26,6 @@ export function ProductEditor({
       if (value) {
         editorRef.current.innerHTML = value;
       }
-      
-      // Ensure editor always has proper text direction
-      editorRef.current.setAttribute('dir', 'ltr');
-      
-      // Apply text-align left to all direct child elements
-      Array.from(editorRef.current.children).forEach(child => {
-        if (child instanceof HTMLElement) {
-          child.style.textAlign = 'left';
-          child.setAttribute('dir', 'ltr');
-        }
-      });
     }
   }, [value]);
 
@@ -69,14 +58,6 @@ export function ProductEditor({
 
   const saveContent = () => {
     if (editorRef.current && onChange) {
-      // Ensure all elements have proper direction before saving
-      Array.from(editorRef.current.children).forEach(child => {
-        if (child instanceof HTMLElement) {
-          child.style.textAlign = 'left';
-          child.setAttribute('dir', 'ltr');
-        }
-      });
-      
       onChange(editorRef.current.innerHTML);
     }
   };
@@ -91,7 +72,7 @@ export function ProductEditor({
   const isEmpty = !value || value === "<p></p>" || value === "<br>" || value === "";
   
   return (
-    <div className="rounded-md border" dir="ltr">
+    <div className="rounded-md border">
       <div className="flex flex-wrap items-center gap-1 border-b p-2 bg-muted/20">
         <div className="flex items-center gap-1 mr-2">
           <Button 
@@ -229,7 +210,7 @@ export function ProductEditor({
           <div
             ref={editorRef}
             className={cn(
-              "px-3 py-2 focus:outline-none w-full text-left",
+              "px-3 py-2 focus:outline-none w-full",
               isEmpty ? "text-muted-foreground" : ""
             )}
             contentEditable
@@ -237,12 +218,8 @@ export function ProductEditor({
             onBlur={saveContent}
             onPaste={handlePaste}
             style={{ 
-              minHeight,
-              direction: "ltr",
-              textAlign: "left",
-              unicodeBidi: "isolate"
+              minHeight
             }}
-            dir="ltr"
             dangerouslySetInnerHTML={{ __html: value || '' }}
           />
           {isEmpty && (
