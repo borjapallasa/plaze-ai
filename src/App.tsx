@@ -18,6 +18,7 @@ import EditServicePage from "./pages/EditService";
 import EditCommunityPage from "./pages/EditCommunity";
 import CommunitiesPage from "./pages/Communities";
 import CommunityPage from "./pages/Community";
+import ClassroomPage from "./pages/Classroom";
 import ChatsPage from "./pages/Chats";
 import JobsPage from "./pages/Jobs";
 import JobPage from "./pages/Job";
@@ -64,6 +65,7 @@ function App() {
           <Route path="/community/:id/edit" element={<EditCommunityPage />} />
           <Route path="/communities" element={<CommunitiesPage />} />
           <Route path="/community/:id" element={<CommunityPage />} />
+          <Route path="/classroom/:id" element={<ClassroomPage />} />
           <Route path="/chats" element={<ChatsPage />} />
           <Route path="/jobs" element={<JobsPage />} />
           <Route path="/job/:id" element={<JobPage />} />
