@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,6 +20,7 @@ import { Link, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
+import RelatedProducts from "@/components/RelatedProducts";
 
 type ProductStatus = 'draft' | 'active' | 'inactive';
 
@@ -552,6 +552,11 @@ export default function EditProduct() {
                       </SelectContent>
                     </Select>
                   </div>
+                  <RelatedProducts
+                    productId={id || ""}
+                    userUuid={product?.user_uuid || ""}
+                    className="mt-6"
+                  />
                 </div>
               </Card>
             </div>
