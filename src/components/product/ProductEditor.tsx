@@ -183,7 +183,7 @@ export function ProductEditor({
           <MoreHorizontal className="h-4 w-4" />
         </Button>
       </div>
-      <ScrollArea className="w-full" style={{ maxHeight }}>
+      <div style={{ height: maxHeight, overflow: 'auto' }}>
         <div className="relative">
           <div
             ref={editorRef}
@@ -204,7 +204,7 @@ export function ProductEditor({
             </div>
           )}
         </div>
-      </ScrollArea>
+      </div>
       <div className="flex items-center justify-end p-1 border-t bg-muted/10">
         <div className="text-xs text-muted-foreground">
           {isEmpty ? "0 characters" : `${(value || "").length} characters`}
