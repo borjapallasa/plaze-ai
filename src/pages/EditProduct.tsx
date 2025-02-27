@@ -20,6 +20,18 @@ import { Link, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 type ProductStatus = 'draft' | 'active' | 'inactive';
 
@@ -88,6 +100,12 @@ interface ProductData {
   change_reasons?: string;
   reviewed_by?: string;
   slug?: string;
+}
+
+interface RelatedProduct {
+  product_uuid: string;
+  name: string;
+  price_from?: number;
 }
 
 export default function EditProduct() {
@@ -635,43 +653,80 @@ export default function EditProduct() {
                 ) : relatedProducts.length === 0 ? (
                   <div className="text-sm text-muted-foreground">No related products found from this expert.</div>
                 ) : (
-                  <div className="space-y-3">
-                    {relatedProducts.map(relatedProduct => (
-                      <div 
-                        key={relatedProduct.product_uuid} 
-                        className={`p-3 border rounded-md flex items-start gap-3 cursor-pointer ${
-                          selectedRelatedProducts.includes(relatedProduct.product_uuid) 
-                            ? 'bg-secondary/20 border-secondary' 
-                            : 'hover:bg-muted/50'
-                        }`}
-                        onClick={() => handleRelatedProductToggle(relatedProduct.product_uuid)}
-                      >
-                        <div className="flex-shrink-0 mt-1">
-                          {selectedRelatedProducts.includes(relatedProduct.product_uuid) ? (
-                            <div className="h-5 w-5 rounded border border-primary flex items-center justify-center bg-primary">
-                              <Check className="h-3.5 w-3.5 text-primary-foreground" />
+                  <div className="space-y-4">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start text-left font-normal"
+                        >
+                          <Plus className="mr-2 h-4 w-4" />
+                          Add related products
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[300px] p-0" align="start">
+                        <Command>
+                          <CommandInput placeholder="Search products..." />
+                          <CommandEmpty>No products found.</CommandEmpty>
+                          <CommandGroup className="max-h-64 overflow-auto">
+                            {relatedProducts.map((product) => (
+                              <CommandItem
+                                key={product.product_uuid}
+                                onSelect={() => handleRelatedProductToggle(product.product_uuid)}
+                                className="cursor-pointer"
+                              >
+                                <div className="flex items-center space-x-2 flex-1">
+                                  <div className={`h-4 w-4 border rounded-sm flex items-center justify-center ${
+                                    selectedRelatedProducts.includes(product.product_uuid) 
+                                      ? 'bg-primary border-primary' 
+                                      : 'border-input'
+                                  }`}>
+                                    {selectedRelatedProducts.includes(product.product_uuid) && (
+                                      <Check className="h-3 w-3 text-primary-foreground" />
+                                    )}
+                                  </div>
+                                  <span>{product.name}</span>
+                                  <span className="ml-auto text-sm text-muted-foreground">
+                                    ${product.price_from?.toFixed(2) || '0.00'}
+                                  </span>
+                                </div>
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+
+                    {selectedRelatedProducts.length > 0 && (
+                      <div className="space-y-2">
+                        {selectedRelatedProducts.map(productId => {
+                          const product = relatedProducts.find(p => p.product_uuid === productId);
+                          if (!product) return null;
+                          
+                          return (
+                            <div 
+                              key={product.product_uuid}
+                              className="flex items-center justify-between p-2 border rounded-md bg-secondary/10"
+                            >
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium truncate">{product.name}</p>
+                                <p className="text-xs text-muted-foreground">
+                                  ${product.price_from?.toFixed(2) || '0.00'}
+                                </p>
+                              </div>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0 ml-2"
+                                onClick={() => handleRelatedProductToggle(product.product_uuid)}
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
                             </div>
-                          ) : (
-                            <div className="h-5 w-5 rounded border" />
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-medium text-sm mb-1 truncate">{relatedProduct.name}</h3>
-                          <p className="text-xs text-muted-foreground">
-                            {relatedProduct.price_from && `$${relatedProduct.price_from.toFixed(2)}`}
-                          </p>
-                        </div>
-                        {relatedProduct.thumbnail && (
-                          <div className="w-12 h-12 flex-shrink-0 rounded-md overflow-hidden">
-                            <img 
-                              src={relatedProduct.thumbnail} 
-                              alt={relatedProduct.name} 
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                        )}
+                          );
+                        })}
                       </div>
-                    ))}
+                    )}
                   </div>
                 )}
               </Card>
