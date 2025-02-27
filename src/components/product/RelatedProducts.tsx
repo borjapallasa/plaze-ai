@@ -59,7 +59,7 @@ export function RelatedProducts({
         .from('products')
         .select('product_uuid, name, price_from')
         .eq('expert_uuid', expertUuid)
-        .neq('product_uuid', productId); // Exclude current product
+        .neq('product_uuid', productId || ''); // Exclude current product
       
       if (error) {
         console.error("Error fetching related products:", error);
@@ -74,6 +74,8 @@ export function RelatedProducts({
 
   // Handle selection of a product
   const handleSelect = (productId: string) => {
+    if (!productId) return;
+    
     const isSelected = selectedProductIds.includes(productId);
     const newSelectedIds = isSelected
       ? selectedProductIds.filter(id => id !== productId)
@@ -85,6 +87,8 @@ export function RelatedProducts({
 
   // Handle removing a product from the selected list
   const handleRemove = (productId: string) => {
+    if (!productId) return;
+    
     const newSelectedIds = selectedProductIds.filter(id => id !== productId);
     setSelectedProductIds(newSelectedIds);
     onRelatedProductsChange(newSelectedIds);
@@ -119,7 +123,14 @@ export function RelatedProducts({
                 <CommandItem
                   key={product.product_uuid}
                   value={product.product_uuid}
-                  onSelect={() => handleSelect(product.product_uuid)}
+                  onSelect={(value) => {
+                    // Using a safer approach to handle selection
+                    try {
+                      handleSelect(value);
+                    } catch (e) {
+                      console.error("Error selecting product:", e);
+                    }
+                  }}
                   className="flex items-center justify-between"
                 >
                   <div>
