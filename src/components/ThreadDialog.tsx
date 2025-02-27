@@ -6,9 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { MessageSquare, Heart, Send, ThumbsUp, X, Star } from "lucide-react";
 import { useRef, useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
+import { useToast } from "@/components/ui/use-toast";
 
 interface ThreadDialogProps {
   isOpen: boolean;
@@ -19,6 +20,9 @@ interface ThreadDialogProps {
 export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
   const { user } = useAuth();
   const [message, setMessage] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   // Query thread messages
   const { data: messages, isLoading: isMessagesLoading } = useQuery({
@@ -54,11 +58,64 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
     }
   };
 
+  const handleSendMessage = async () => {
+    if (!message.trim() || !user || !thread) return;
+
+    setIsSending(true);
+    try {
+      const { data, error } = await supabase
+        .from('threads_messages')
+        .insert([
+          {
+            thread_uuid: thread.thread_uuid,
+            user_uuid: user.id,
+            message: message.trim(),
+            user_name: user.email // Using email as fallback, you might want to use a proper display name
+          }
+        ]);
+
+      if (error) throw error;
+
+      // Update the messages count in the thread
+      await supabase
+        .from('threads')
+        .update({ 
+          number_messages: (thread.number_messages || 0) + 1 
+        })
+        .eq('thread_uuid', thread.thread_uuid);
+
+      // Clear the message input
+      setMessage("");
+      
+      // Invalidate the query to refresh the messages
+      queryClient.invalidateQueries(['thread-messages', thread.thread_uuid]);
+
+      toast({
+        description: "Message sent successfully!",
+      });
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast({
+        variant: "destructive",
+        description: "Failed to send message. Please try again.",
+      });
+    } finally {
+      setIsSending(false);
+    }
+  };
+
   // Auto-resize textarea function
   const handleTextareaInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textarea = e.target;
     textarea.style.height = 'auto';
     textarea.style.height = `${textarea.scrollHeight}px`;
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
   };
 
   if (!thread) return null;
@@ -127,7 +184,7 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
             </p>
           </div>
 
-          {/* Replies Section */}
+          {/* Messages Section */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-xs text-[#6B7280] uppercase tracking-wider font-medium">
               <MessageSquare className="h-3 w-3" />
@@ -194,6 +251,7 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
                 <textarea
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
+                  onKeyPress={handleKeyPress}
                   placeholder="Write a reply..."
                   className="w-full min-h-[40px] max-h-[160px] rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-2 text-sm resize-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#9b87f5] placeholder:text-[#6B7280]"
                   rows={1}
@@ -203,6 +261,8 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
               <Button 
                 size="icon"
                 className="h-9 w-9 rounded-full shrink-0 bg-[#9b87f5] hover:bg-[#9b87f5]/90 text-white"
+                onClick={handleSendMessage}
+                disabled={isSending || !message.trim()}
               >
                 <Send className="h-4 w-4" />
               </Button>
