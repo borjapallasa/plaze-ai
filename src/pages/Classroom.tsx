@@ -12,11 +12,14 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
+import { Progress } from "@/components/ui/progress";
+import { toast } from "sonner";
 
 export default function Classroom() {
   const [isExpanded, setIsExpanded] = useState(true);
   const [selectedVariant, setSelectedVariant] = useState("basic");
   const [activeLesson, setActiveLesson] = useState<any>(null);
+  const [completedLessons, setCompletedLessons] = useState<string[]>([]);
   const isMobile = useIsMobile();
   const { id } = useParams();
   
@@ -77,6 +80,31 @@ export default function Classroom() {
     enabled: !!id
   });
 
+  // Mock function to fetch completed lessons - in a real app, this would come from the database
+  const { data: userProgress } = useQuery({
+    queryKey: ['user-lessons-progress', id],
+    queryFn: async () => {
+      // This is a mock implementation - in a real app, you would fetch this from the database
+      // For now, we'll return some random lessons as completed
+      if (!lessons || lessons.length === 0) return [];
+      
+      // Simulate some completed lessons (for demo purposes)
+      const mockCompletedLessons = lessons
+        .slice(0, Math.floor(Math.random() * lessons.length))
+        .map(lesson => lesson.lesson_uuid);
+      
+      return mockCompletedLessons;
+    },
+    enabled: !!lessons && lessons.length > 0
+  });
+
+  // Update completedLessons when userProgress changes
+  useEffect(() => {
+    if (userProgress) {
+      setCompletedLessons(userProgress);
+    }
+  }, [userProgress]);
+
   useEffect(() => {
     if (lessons && lessons.length > 0 && !activeLesson) {
       setActiveLesson(lessons[0]);
@@ -115,6 +143,28 @@ export default function Classroom() {
     // Add to cart logic here
   };
 
+  // Calculate progress percentage
+  const progressPercentage = lessons && lessons.length > 0
+    ? Math.round((completedLessons.length / lessons.length) * 100)
+    : 0;
+
+  // Toggle lesson completion status
+  const toggleLessonCompletion = (lessonUuid: string) => {
+    setCompletedLessons(prev => {
+      if (prev.includes(lessonUuid)) {
+        // If lesson is already completed, mark as incomplete
+        const newCompleted = prev.filter(id => id !== lessonUuid);
+        toast.info("Lesson marked as incomplete");
+        return newCompleted;
+      } else {
+        // If lesson is incomplete, mark as completed
+        const newCompleted = [...prev, lessonUuid];
+        toast.success("Lesson completed!");
+        return newCompleted;
+      }
+    });
+  };
+
   const videoUrl = activeLesson?.video_url || classroom?.video_url;
   const videoEmbedUrl = videoUrl ? getVideoEmbedUrl(videoUrl) : null;
   
@@ -151,18 +201,60 @@ export default function Classroom() {
           ))
         ) : lessons && lessons.length > 0 ? (
           lessons.map((lesson) => (
-            <button
-              key={lesson.lesson_uuid}
-              className={cn(
-                "w-full text-left px-3 py-2 rounded-lg text-sm transition-colors",
-                activeLesson?.lesson_uuid === lesson.lesson_uuid
-                  ? "bg-primary text-primary-foreground" 
-                  : "hover:bg-muted"
-              )}
-              onClick={() => setActiveLesson(lesson)}
-            >
-              {lesson.name}
-            </button>
+            <div key={lesson.lesson_uuid} className="flex items-center">
+              <button
+                className={cn(
+                  "w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center",
+                  activeLesson?.lesson_uuid === lesson.lesson_uuid
+                    ? "bg-primary text-primary-foreground" 
+                    : "hover:bg-muted"
+                )}
+                onClick={() => setActiveLesson(lesson)}
+              >
+                <span className="flex-1">{lesson.name}</span>
+                {completedLessons.includes(lesson.lesson_uuid) && (
+                  <span className="ml-2 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      className="h-3 w-3 text-white" 
+                      viewBox="0 0 20 20" 
+                      fill="currentColor"
+                    >
+                      <path 
+                        fillRule="evenodd" 
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" 
+                        clipRule="evenodd" 
+                      />
+                    </svg>
+                  </span>
+                )}
+              </button>
+              <button 
+                className="ml-2 p-1 hover:bg-muted rounded-md"
+                onClick={() => toggleLessonCompletion(lesson.lesson_uuid)}
+                title={completedLessons.includes(lesson.lesson_uuid) ? "Mark as incomplete" : "Mark as complete"}
+              >
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  className={cn(
+                    "h-4 w-4 transition-colors",
+                    completedLessons.includes(lesson.lesson_uuid) 
+                      ? "text-green-500" 
+                      : "text-gray-400"
+                  )}
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M5 13l4 4L19 7" 
+                  />
+                </svg>
+              </button>
+            </div>
           ))
         ) : (
           <p className="text-sm text-muted-foreground p-2">No lessons available yet</p>
@@ -253,6 +345,14 @@ export default function Classroom() {
               <Card className="w-full">
                 <CardContent className="p-6 space-y-6">
                   <TitleWithCommunity />
+
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Course progress</span>
+                      <span>{progressPercentage}% complete</span>
+                    </div>
+                    <Progress value={progressPercentage} className="h-2" />
+                  </div>
                   
                   <div className="space-y-4">
                     {videoEmbedUrl ? (
@@ -319,9 +419,12 @@ export default function Classroom() {
                     <div>
                       <h2 className="text-lg font-semibold mb-2 text-left leading-snug">{classroom.name}</h2>
                       <div className="h-2 bg-muted rounded-full mb-2">
-                        <div className="h-full w-0 bg-primary rounded-full"></div>
+                        <div 
+                          className="h-full bg-primary rounded-full transition-all duration-300" 
+                          style={{ width: `${progressPercentage}%` }}
+                        ></div>
                       </div>
-                      <p className="text-sm text-muted-foreground">0% complete</p>
+                      <p className="text-sm text-muted-foreground">{progressPercentage}% complete</p>
                     </div>
 
                     <LessonsList />
@@ -334,6 +437,14 @@ export default function Classroom() {
               <Card className="flex-1">
                 <CardContent className="p-6 space-y-6">
                   <TitleWithCommunity />
+                  
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Course progress</span>
+                      <span>{progressPercentage}% complete</span>
+                    </div>
+                    <Progress value={progressPercentage} className="h-2" />
+                  </div>
                   
                   <div className="space-y-4">
                     {videoEmbedUrl ? (
