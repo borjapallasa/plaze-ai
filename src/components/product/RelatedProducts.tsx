@@ -35,66 +35,45 @@ interface RelatedProductsProps {
 export function RelatedProducts({
   productId,
   expertUuid,
-  relatedProducts,
+  relatedProducts = null,
   onRelatedProductsChange,
   className,
 }: RelatedProductsProps) {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
-  
-  // Initialize with an empty array as fallback
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   
-  // Update selectedIds whenever relatedProducts changes
+  // Safely initialize from relatedProducts
   useEffect(() => {
-    // Ensure relatedProducts is an array
-    const productIds = Array.isArray(relatedProducts) ? [...relatedProducts] : [];
-    setSelectedIds(productIds);
+    setSelectedIds(Array.isArray(relatedProducts) ? [...relatedProducts] : []);
   }, [relatedProducts]);
-
-  // Determine if we should run the query
-  const shouldFetchProducts = 
-    typeof expertUuid === 'string' && 
-    expertUuid.length > 0 && 
-    typeof productId === 'string' && 
-    productId !== ':id';
 
   // Fetch potential related products
   const { 
-    data: rawProducts = [], 
+    data, 
     isLoading, 
     error 
   } = useQuery({
     queryKey: ['relatedProductOptions', expertUuid, productId],
     queryFn: async () => {
       try {
-        // Skip the query if missing required data
-        if (!expertUuid || productId === ':id') {
-          return [];
-        }
-        
         const { data, error } = await supabase
           .from('products')
           .select('product_uuid, name, price_from')
           .eq('expert_uuid', expertUuid)
           .neq('product_uuid', productId);
         
-        if (error) {
-          console.error("Error fetching related products:", error);
-          return [];
-        }
-        
+        if (error) throw error;
         return data || [];
       } catch (err) {
-        console.error("Exception in related products query:", err);
+        console.error("Error fetching related products:", err);
         return [];
       }
     },
-    enabled: shouldFetchProducts,
+    enabled: Boolean(expertUuid) && productId !== ':id',
   });
 
-  // Make sure we're always working with arrays
-  const potentialProducts: Product[] = Array.isArray(rawProducts) ? rawProducts : [];
+  const potentialProducts = data || [];
 
   // Update selected products
   const toggleProduct = (id: string) => {
