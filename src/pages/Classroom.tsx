@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -77,7 +76,6 @@ export default function Classroom() {
     enabled: !!id
   });
 
-  // Set the first lesson as active when lessons are loaded
   useEffect(() => {
     if (lessons && lessons.length > 0 && !activeLesson) {
       setActiveLesson(lessons[0]);
@@ -116,7 +114,6 @@ export default function Classroom() {
     // Add to cart logic here
   };
 
-  // Use the active lesson's video URL if available, otherwise fallback to classroom's video URL
   const videoUrl = activeLesson?.video_url || classroom?.video_url;
   const videoEmbedUrl = videoUrl ? getVideoEmbedUrl(videoUrl) : null;
   
@@ -229,7 +226,6 @@ export default function Classroom() {
     );
   }
 
-  // Title component with community name / lesson name
   const TitleWithCommunity = () => (
     <h1 className="font-bold text-2xl md:text-3xl">
       {community && (
@@ -283,15 +279,6 @@ export default function Classroom() {
                         </div>
                       </div>
                     )}
-
-                    {activeLesson?.introduction || classroom.summary ? (
-                      <div className="space-y-2">
-                        <p className="text-muted-foreground">Summary →</p>
-                        <p className="text-primary block">
-                          {activeLesson?.introduction || classroom.summary}
-                        </p>
-                      </div>
-                    ) : null}
                   </div>
 
                   <div className="space-y-6">
@@ -319,17 +306,7 @@ export default function Classroom() {
 
               <Card className="w-full">
                 <CardContent className="p-4">
-                  <div className="space-y-6">
-                    <div>
-                      <h2 className="text-lg font-semibold mb-2 text-left leading-snug">{classroom.name}</h2>
-                      <div className="h-2 bg-muted rounded-full mb-2">
-                        <div className="h-full w-0 bg-primary rounded-full"></div>
-                      </div>
-                      <p className="text-sm text-muted-foreground">0% complete</p>
-                    </div>
-
-                    <LessonsList />
-                  </div>
+                  <LessonsList />
                 </CardContent>
               </Card>
             </div>
@@ -383,15 +360,6 @@ export default function Classroom() {
                         </div>
                       </div>
                     )}
-
-                    {activeLesson?.introduction || classroom.summary ? (
-                      <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground">Summary →</span>
-                        <span className="text-primary">
-                          {activeLesson?.introduction || classroom.summary}
-                        </span>
-                      </div>
-                    ) : null}
                   </div>
 
                   <div className="space-y-6">
