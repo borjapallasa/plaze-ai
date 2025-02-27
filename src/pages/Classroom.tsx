@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { ChevronDown, PlusCircle } from "lucide-react";
+import { ChevronDown, PlusCircle, Pencil, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MainHeader } from "@/components/MainHeader";
@@ -18,7 +18,8 @@ import {
   DialogHeader, 
   DialogTitle, 
   DialogFooter,
-  DialogClose
+  DialogClose,
+  DialogDescription
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,7 +32,14 @@ export default function Classroom() {
   const [selectedVariant, setSelectedVariant] = useState("basic");
   const [activeLesson, setActiveLesson] = useState<any>(null);
   const [isAddLessonOpen, setIsAddLessonOpen] = useState(false);
+  const [isEditLessonOpen, setIsEditLessonOpen] = useState(false);
+  const [isDeleteLessonOpen, setIsDeleteLessonOpen] = useState(false);
   const [newLessonData, setNewLessonData] = useState({
+    name: '',
+    description: '',
+    video_url: ''
+  });
+  const [editLessonData, setEditLessonData] = useState({
     name: '',
     description: '',
     video_url: ''
@@ -138,6 +146,88 @@ export default function Classroom() {
     }
   });
 
+  const updateLessonMutation = useMutation({
+    mutationFn: async ({ lessonId, lessonData }: { lessonId: string, lessonData: any }) => {
+      const { data, error } = await supabase
+        .from('lessons')
+        .update(lessonData)
+        .eq('lesson_uuid', lessonId)
+        .select();
+
+      if (error) {
+        console.error("Error updating lesson:", error);
+        throw error;
+      }
+
+      return data;
+    },
+    onSuccess: (data) => {
+      setIsEditLessonOpen(false);
+      
+      // Update the active lesson if it's the one being edited
+      if (activeLesson && activeLesson.lesson_uuid === data[0]?.lesson_uuid) {
+        setActiveLesson(data[0]);
+      }
+      
+      // Refetch lessons
+      queryClient.invalidateQueries({ queryKey: ['classroom-lessons', id] });
+      toast({
+        title: "Success",
+        description: "Lesson updated successfully",
+      });
+    },
+    onError: (error) => {
+      console.error("Error updating lesson:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update lesson. Please try again.",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const deleteLessonMutation = useMutation({
+    mutationFn: async (lessonId: string) => {
+      const { error } = await supabase
+        .from('lessons')
+        .delete()
+        .eq('lesson_uuid', lessonId);
+
+      if (error) {
+        console.error("Error deleting lesson:", error);
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      setIsDeleteLessonOpen(false);
+      
+      // If the active lesson is the one being deleted, set active lesson to null
+      if (activeLesson && lessons && lessons.length > 1) {
+        const newActiveLesson = lessons.find(
+          lesson => lesson.lesson_uuid !== activeLesson.lesson_uuid
+        );
+        setActiveLesson(newActiveLesson || null);
+      } else {
+        setActiveLesson(null);
+      }
+      
+      // Refetch lessons
+      queryClient.invalidateQueries({ queryKey: ['classroom-lessons', id] });
+      toast({
+        title: "Success",
+        description: "Lesson deleted successfully",
+      });
+    },
+    onError: (error) => {
+      console.error("Error deleting lesson:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete lesson. Please try again.",
+        variant: "destructive"
+      });
+    }
+  });
+
   const handleAddLesson = async () => {
     if (!newLessonData.name.trim()) {
       toast({
@@ -164,6 +254,56 @@ export default function Classroom() {
     };
 
     addLessonMutation.mutate(newLesson);
+  };
+
+  const handleEditLesson = () => {
+    if (!editLessonData.name.trim()) {
+      toast({
+        title: "Error",
+        description: "Lesson name is required",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!activeLesson?.lesson_uuid) {
+      toast({
+        title: "Error",
+        description: "No lesson selected",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    updateLessonMutation.mutate({
+      lessonId: activeLesson.lesson_uuid,
+      lessonData: editLessonData
+    });
+  };
+
+  const handleDeleteLesson = () => {
+    if (!activeLesson?.lesson_uuid) {
+      toast({
+        title: "Error",
+        description: "No lesson selected",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    deleteLessonMutation.mutate(activeLesson.lesson_uuid);
+  };
+
+  const handleOpenEditLesson = () => {
+    if (!activeLesson) return;
+    
+    setEditLessonData({
+      name: activeLesson.name || '',
+      description: activeLesson.description || '',
+      video_url: activeLesson.video_url || ''
+    });
+    
+    setIsEditLessonOpen(true);
   };
 
   useEffect(() => {
@@ -341,15 +481,39 @@ export default function Classroom() {
                   </div>
                   
                   <div className="space-y-4">
-                    <h2 className="text-xl">
-                      <span className="font-bold text-black">{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-xl">
+                        <span className="font-bold text-black">{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
+                        {activeLesson && (
+                          <>
+                            <span className="mx-2 text-gray-400">/</span>
+                            <span className="text-gray-500">{activeLesson.name ? capitalizeFirstLetter(activeLesson.name) : ''}</span>
+                          </>
+                        )}
+                      </h2>
+                      
                       {activeLesson && (
-                        <>
-                          <span className="mx-2 text-gray-400">/</span>
-                          <span className="text-gray-500">{activeLesson.name ? capitalizeFirstLetter(activeLesson.name) : ''}</span>
-                        </>
+                        <div className="flex gap-2">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={handleOpenEditLesson}
+                          >
+                            <Pencil className="h-4 w-4 mr-1" />
+                            Edit
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => setIsDeleteLessonOpen(true)}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4 mr-1" />
+                            Delete
+                          </Button>
+                        </div>
                       )}
-                    </h2>
+                    </div>
                     
                     {videoEmbedUrl ? (
                       <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
@@ -466,15 +630,37 @@ export default function Classroom() {
 
               <Card className="flex-1">
                 <CardContent className="p-6 space-y-6">
-                  <h1 className="text-2xl flex flex-wrap items-center">
-                    <span className="font-bold text-black">{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
+                  <div className="flex items-center justify-between">
+                    <h1 className="text-2xl flex flex-wrap items-center">
+                      <span className="font-bold text-black">{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
+                      {activeLesson && (
+                        <>
+                          <span className="mx-2 text-gray-400">/</span>
+                          <span className="text-gray-500">{activeLesson.name ? capitalizeFirstLetter(activeLesson.name) : ''}</span>
+                        </>
+                      )}
+                    </h1>
+                    
                     {activeLesson && (
-                      <>
-                        <span className="mx-2 text-gray-400">/</span>
-                        <span className="text-gray-500">{activeLesson.name ? capitalizeFirstLetter(activeLesson.name) : ''}</span>
-                      </>
+                      <div className="flex gap-2">
+                        <Button 
+                          variant="outline"
+                          onClick={handleOpenEditLesson}
+                        >
+                          <Pencil className="h-4 w-4 mr-2" />
+                          Edit Lesson
+                        </Button>
+                        <Button 
+                          variant="outline"
+                          onClick={() => setIsDeleteLessonOpen(true)}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete Lesson
+                        </Button>
+                      </div>
                     )}
-                  </h1>
+                  </div>
                   
                   <div className="space-y-4">
                     {videoEmbedUrl ? (
@@ -567,6 +753,80 @@ export default function Classroom() {
                   disabled={addLessonMutation.isPending}
                 >
                   {addLessonMutation.isPending ? "Adding..." : "Add Lesson"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* Edit Lesson Dialog */}
+          <Dialog open={isEditLessonOpen} onOpenChange={setIsEditLessonOpen}>
+            <DialogContent className="sm:max-w-[500px]">
+              <DialogHeader>
+                <DialogTitle>Edit Lesson</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-name">Name</Label>
+                  <Input 
+                    id="edit-name" 
+                    placeholder="Enter lesson name"
+                    value={editLessonData.name}
+                    onChange={(e) => setEditLessonData({...editLessonData, name: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-description">Description</Label>
+                  <Textarea 
+                    id="edit-description" 
+                    placeholder="Enter lesson description"
+                    className="min-h-[100px]"
+                    value={editLessonData.description}
+                    onChange={(e) => setEditLessonData({...editLessonData, description: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-video_url">Video URL</Label>
+                  <Input 
+                    id="edit-video_url" 
+                    placeholder="Enter video URL"
+                    value={editLessonData.video_url}
+                    onChange={(e) => setEditLessonData({...editLessonData, video_url: e.target.value})}
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button 
+                  onClick={handleEditLesson}
+                  disabled={updateLessonMutation.isPending}
+                >
+                  {updateLessonMutation.isPending ? "Updating..." : "Update Lesson"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* Delete Lesson Confirmation Dialog */}
+          <Dialog open={isDeleteLessonOpen} onOpenChange={setIsDeleteLessonOpen}>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Delete Lesson</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this lesson? This action cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter className="gap-2 sm:gap-0">
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button 
+                  variant="destructive" 
+                  onClick={handleDeleteLesson}
+                  disabled={deleteLessonMutation.isPending}
+                >
+                  {deleteLessonMutation.isPending ? "Deleting..." : "Delete Lesson"}
                 </Button>
               </DialogFooter>
             </DialogContent>
