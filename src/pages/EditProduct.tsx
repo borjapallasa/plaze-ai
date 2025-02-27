@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -69,11 +68,26 @@ interface ProductData {
   use_case: string[];
   platform: string[];
   team: string[];
-  related_products?: string[];
+  related_products: string[];
   thumbnail?: string;
   product_uuid: string;
   expert_uuid?: string;
   price_from?: number;
+  created_at: string;
+  type?: string;
+  free_or_paid?: string;
+  user_uuid?: string;
+  affiliate_program?: boolean;
+  sales_count?: number;
+  sales_amount?: number;
+  fees_amount?: number;
+  affiliation_amount?: number;
+  accept_terms?: boolean;
+  variant_count?: number;
+  changes_neeeded?: string;
+  change_reasons?: string;
+  reviewed_by?: string;
+  slug?: string;
 }
 
 export default function EditProduct() {
