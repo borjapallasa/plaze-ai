@@ -21,7 +21,6 @@ import { Link, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
-import { ProductCard } from "@/components/ProductCard";
 
 type ProductStatus = 'draft' | 'active' | 'inactive';
 
@@ -56,6 +55,26 @@ const TEAM_ROLES = [
   "DevOps Engineer",
   "QA Engineer",
 ];
+
+interface ProductData {
+  name: string;
+  description: string;
+  tech_stack: string;
+  tech_stack_price: string;
+  product_includes: string;
+  difficulty_level: string;
+  demo: string;
+  status: ProductStatus;
+  industries: string[];
+  use_case: string[];
+  platform: string[];
+  team: string[];
+  related_products?: string[];
+  thumbnail?: string;
+  product_uuid: string;
+  expert_uuid?: string;
+  price_from?: number;
+}
 
 export default function EditProduct() {
   const { id } = useParams();
@@ -144,7 +163,7 @@ export default function EditProduct() {
     );
   };
 
-  const { data: product, isLoading: isLoadingProduct } = useQuery({
+  const { data: product, isLoading: isLoadingProduct } = useQuery<ProductData>({
     queryKey: ['product', id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -154,7 +173,7 @@ export default function EditProduct() {
         .single();
       
       if (error) throw error;
-      return data;
+      return data as ProductData;
     },
     enabled: !!id
   });
