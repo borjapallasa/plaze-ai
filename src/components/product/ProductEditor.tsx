@@ -28,9 +28,18 @@ export function ProductEditor({
     }
   }, []);
 
+  // Ensure the editor has focus before executing commands
   const execCommand = (command: string, value: string = '') => {
-    document.execCommand(command, false, value);
-    saveContent();
+    if (editorRef.current) {
+      // Focus the editor first
+      editorRef.current.focus();
+      
+      // Execute the command
+      document.execCommand(command, false, value);
+      
+      // Save content after command execution
+      saveContent();
+    }
   };
 
   const saveContent = () => {
@@ -92,7 +101,13 @@ export function ProductEditor({
             variant="ghost" 
             size="sm" 
             className="h-8 w-8 p-0" 
-            onClick={() => execCommand('formatBlock', '<h1>')}
+            onClick={() => {
+              if (editorRef.current) {
+                editorRef.current.focus();
+                document.execCommand('formatBlock', false, '<h1>');
+                saveContent();
+              }
+            }}
             title="Heading 1"
             type="button"
           >
@@ -102,7 +117,13 @@ export function ProductEditor({
             variant="ghost" 
             size="sm" 
             className="h-8 w-8 p-0" 
-            onClick={() => execCommand('formatBlock', '<h2>')}
+            onClick={() => {
+              if (editorRef.current) {
+                editorRef.current.focus();
+                document.execCommand('formatBlock', false, '<h2>');
+                saveContent();
+              }
+            }}
             title="Heading 2"
             type="button"
           >
@@ -118,8 +139,12 @@ export function ProductEditor({
             size="sm" 
             className="h-8 w-8 p-0" 
             onClick={() => {
-              const url = prompt('Enter URL');
-              if (url) execCommand('createLink', url);
+              if (editorRef.current) {
+                editorRef.current.focus();
+                const url = prompt('Enter URL');
+                if (url) document.execCommand('createLink', false, url);
+                saveContent();
+              }
             }}
             title="Insert Link"
             type="button"
@@ -130,7 +155,13 @@ export function ProductEditor({
             variant="ghost" 
             size="sm" 
             className="h-8 w-8 p-0" 
-            onClick={() => execCommand('insertUnorderedList')}
+            onClick={() => {
+              if (editorRef.current) {
+                editorRef.current.focus();
+                document.execCommand('insertUnorderedList', false);
+                saveContent();
+              }
+            }}
             title="Bullet List"
             type="button"
           >
@@ -145,7 +176,13 @@ export function ProductEditor({
             variant="ghost" 
             size="sm" 
             className="h-8 w-8 p-0" 
-            onClick={() => execCommand('justifyLeft')}
+            onClick={() => {
+              if (editorRef.current) {
+                editorRef.current.focus();
+                document.execCommand('justifyLeft', false);
+                saveContent();
+              }
+            }}
             title="Align Left"
             type="button"
           >
@@ -155,7 +192,13 @@ export function ProductEditor({
             variant="ghost" 
             size="sm" 
             className="h-8 w-8 p-0" 
-            onClick={() => execCommand('justifyCenter')}
+            onClick={() => {
+              if (editorRef.current) {
+                editorRef.current.focus();
+                document.execCommand('justifyCenter', false);
+                saveContent();
+              }
+            }}
             title="Align Center"
             type="button"
           >
@@ -165,7 +208,13 @@ export function ProductEditor({
             variant="ghost" 
             size="sm" 
             className="h-8 w-8 p-0" 
-            onClick={() => execCommand('justifyRight')}
+            onClick={() => {
+              if (editorRef.current) {
+                editorRef.current.focus();
+                document.execCommand('justifyRight', false);
+                saveContent();
+              }
+            }}
             title="Align Right"
             type="button"
           >
