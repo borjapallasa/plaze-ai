@@ -9,16 +9,35 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { MainHeader } from "@/components/MainHeader";
 import { VariantPicker } from "@/components/product/VariantPicker";
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogFooter,
+  DialogClose
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/hooks/use-toast";
 
 export default function Classroom() {
   const [isExpanded, setIsExpanded] = useState(true);
   const [selectedVariant, setSelectedVariant] = useState("basic");
   const [activeLesson, setActiveLesson] = useState<any>(null);
+  const [isAddLessonOpen, setIsAddLessonOpen] = useState(false);
+  const [newLessonData, setNewLessonData] = useState({
+    name: '',
+    description: '',
+    video_url: ''
+  });
   const isMobile = useIsMobile();
   const { id } = useParams();
+  const queryClient = useQueryClient();
   
   const { data: classroom, isLoading: isClassroomLoading } = useQuery({
     queryKey: ['classroom', id],
@@ -76,6 +95,65 @@ export default function Classroom() {
     },
     enabled: !!id
   });
+
+  const addLessonMutation = useMutation({
+    mutationFn: async (newLesson: any) => {
+      const { data, error } = await supabase
+        .from('lessons')
+        .insert([newLesson])
+        .select();
+
+      if (error) {
+        console.error("Error adding lesson:", error);
+        throw error;
+      }
+
+      return data;
+    },
+    onSuccess: () => {
+      // Reset form and close dialog
+      setNewLessonData({
+        name: '',
+        description: '',
+        video_url: ''
+      });
+      setIsAddLessonOpen(false);
+      
+      // Refetch lessons
+      queryClient.invalidateQueries({ queryKey: ['classroom-lessons', id] });
+      toast({
+        title: "Success",
+        description: "Lesson added successfully",
+      });
+    },
+    onError: (error) => {
+      console.error("Error adding lesson:", error);
+      toast({
+        title: "Error",
+        description: "Failed to add lesson. Please try again.",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const handleAddLesson = async () => {
+    if (!newLessonData.name.trim()) {
+      toast({
+        title: "Error",
+        description: "Lesson name is required",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const newLesson = {
+      ...newLessonData,
+      classroom_uuid: id,
+      user_uuid: classroom?.user_uuid || null
+    };
+
+    addLessonMutation.mutate(newLesson);
+  };
 
   useEffect(() => {
     if (lessons && lessons.length > 0 && !activeLesson) {
@@ -239,7 +317,11 @@ export default function Classroom() {
                           <p className="text-sm text-muted-foreground p-2">No lessons available yet</p>
                         )}
                         
-                        <Button variant="outline" className="w-full mt-2 bg-primary/5 border-dashed">
+                        <Button 
+                          variant="outline" 
+                          className="w-full mt-2 bg-primary/5 border-dashed"
+                          onClick={() => setIsAddLessonOpen(true)}
+                        >
                           <PlusCircle className="mr-2 h-4 w-4" />
                           Add New Lesson
                         </Button>
@@ -355,7 +437,11 @@ export default function Classroom() {
                           <p className="text-sm text-muted-foreground p-2">No lessons available yet</p>
                         )}
                         
-                        <Button variant="outline" className="w-full mt-3 bg-primary/5 border-dashed">
+                        <Button 
+                          variant="outline" 
+                          className="w-full mt-3 bg-primary/5 border-dashed"
+                          onClick={() => setIsAddLessonOpen(true)}
+                        >
                           <PlusCircle className="mr-2 h-4 w-4" />
                           Add New Lesson
                         </Button>
@@ -424,6 +510,56 @@ export default function Classroom() {
               </Card>
             </div>
           )}
+
+          {/* Add Lesson Dialog */}
+          <Dialog open={isAddLessonOpen} onOpenChange={setIsAddLessonOpen}>
+            <DialogContent className="sm:max-w-[500px]">
+              <DialogHeader>
+                <DialogTitle>Add New Lesson</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Name</Label>
+                  <Input 
+                    id="name" 
+                    placeholder="Enter lesson name"
+                    value={newLessonData.name}
+                    onChange={(e) => setNewLessonData({...newLessonData, name: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea 
+                    id="description" 
+                    placeholder="Enter lesson description"
+                    className="min-h-[100px]"
+                    value={newLessonData.description}
+                    onChange={(e) => setNewLessonData({...newLessonData, description: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="video_url">Video URL</Label>
+                  <Input 
+                    id="video_url" 
+                    placeholder="Enter video URL"
+                    value={newLessonData.video_url}
+                    onChange={(e) => setNewLessonData({...newLessonData, video_url: e.target.value})}
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button 
+                  onClick={handleAddLesson}
+                  disabled={addLessonMutation.isPending}
+                >
+                  {addLessonMutation.isPending ? "Adding..." : "Add Lesson"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </div>
