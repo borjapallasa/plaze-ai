@@ -32,6 +32,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type ProductStatus = 'draft' | 'active' | 'inactive';
 
@@ -215,7 +216,7 @@ export default function EditProduct() {
     queryFn: async () => {
       if (!id) return [];
       
-      console.log('Fetching related products');
+      console.log('Fetching related products for edit selection, excluding:', id);
       const { data, error } = await supabase
         .from('products')
         .select('product_uuid, name, price_from')
@@ -656,7 +657,7 @@ export default function EditProduct() {
                 {isLoadingRelatedProducts ? (
                   <div className="text-sm text-muted-foreground">Loading related products...</div>
                 ) : relatedProducts.length === 0 ? (
-                  <div className="text-sm text-muted-foreground">No related products found from this expert.</div>
+                  <div className="text-sm text-muted-foreground">No related products found to select from.</div>
                 ) : (
                   <div className="space-y-4">
                     <Popover>
@@ -666,7 +667,9 @@ export default function EditProduct() {
                           className="w-full justify-start text-left font-normal"
                         >
                           <Plus className="mr-2 h-4 w-4" />
-                          Add related products
+                          {selectedRelatedProducts.length > 0 
+                            ? `Selected ${selectedRelatedProducts.length} product${selectedRelatedProducts.length > 1 ? 's' : ''}`
+                            : 'Add related products'}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-[300px] p-0" align="start">
@@ -678,22 +681,26 @@ export default function EditProduct() {
                               <CommandItem
                                 key={product.product_uuid}
                                 onSelect={() => handleRelatedProductToggle(product.product_uuid)}
-                                className="cursor-pointer"
+                                className="flex items-center cursor-pointer p-2"
                               >
-                                <div className="flex items-center space-x-2 flex-1">
-                                  <div className={`h-4 w-4 border rounded-sm flex items-center justify-center ${
-                                    selectedRelatedProducts.includes(product.product_uuid) 
-                                      ? 'bg-primary border-primary' 
-                                      : 'border-input'
-                                  }`}>
-                                    {selectedRelatedProducts.includes(product.product_uuid) && (
-                                      <Check className="h-3 w-3 text-primary-foreground" />
-                                    )}
+                                <div className="flex items-center gap-2 flex-1">
+                                  <Checkbox 
+                                    id={`product-${product.product_uuid}`}
+                                    checked={selectedRelatedProducts.includes(product.product_uuid)}
+                                    onCheckedChange={() => handleRelatedProductToggle(product.product_uuid)}
+                                    className="mr-1"
+                                  />
+                                  <div className="flex-1 min-w-0">
+                                    <label 
+                                      htmlFor={`product-${product.product_uuid}`}
+                                      className="text-sm font-medium cursor-pointer"
+                                    >
+                                      {product.name}
+                                    </label>
+                                    <p className="text-xs text-muted-foreground">
+                                      ${product.price_from?.toFixed(2) || '0.00'}
+                                    </p>
                                   </div>
-                                  <span>{product.name}</span>
-                                  <span className="ml-auto text-sm text-muted-foreground">
-                                    ${product.price_from?.toFixed(2) || '0.00'}
-                                  </span>
                                 </div>
                               </CommandItem>
                             ))}
