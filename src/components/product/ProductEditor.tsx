@@ -22,10 +22,23 @@ export function ProductEditor({
   const editorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (editorRef.current && value) {
-      editorRef.current.innerHTML = value;
+    if (editorRef.current) {
+      if (value) {
+        editorRef.current.innerHTML = value;
+      }
+      
+      // Ensure editor always has proper text direction
+      editorRef.current.setAttribute('dir', 'ltr');
+      
+      // Apply text-align left to all direct child elements
+      Array.from(editorRef.current.children).forEach(child => {
+        if (child instanceof HTMLElement) {
+          child.style.textAlign = 'left';
+          child.setAttribute('dir', 'ltr');
+        }
+      });
     }
-  }, []);
+  }, [value]);
 
   // Ensure the editor has focus and selection is preserved
   const execCommand = (command: string, value: string = '') => {
@@ -56,6 +69,14 @@ export function ProductEditor({
 
   const saveContent = () => {
     if (editorRef.current && onChange) {
+      // Ensure all elements have proper direction before saving
+      Array.from(editorRef.current.children).forEach(child => {
+        if (child instanceof HTMLElement) {
+          child.style.textAlign = 'left';
+          child.setAttribute('dir', 'ltr');
+        }
+      });
+      
       onChange(editorRef.current.innerHTML);
     }
   };
@@ -216,7 +237,10 @@ export function ProductEditor({
             onBlur={saveContent}
             onPaste={handlePaste}
             style={{ 
-              minHeight
+              minHeight,
+              direction: "ltr",
+              textAlign: "left",
+              unicodeBidi: "isolate"
             }}
             dir="ltr"
             dangerouslySetInnerHTML={{ __html: value || '' }}
