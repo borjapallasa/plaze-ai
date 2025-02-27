@@ -70,7 +70,7 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
             thread_uuid: thread.thread_uuid,
             user_uuid: user.id,
             message: message.trim(),
-            user_name: user.email // Using email as fallback, you might want to use a proper display name
+            user_name: user.email
           }
         ]);
 
@@ -87,8 +87,10 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
       // Clear the message input
       setMessage("");
       
-      // Invalidate the query to refresh the messages
-      queryClient.invalidateQueries(['thread-messages', thread.thread_uuid]);
+      // Invalidate the query with proper type
+      queryClient.invalidateQueries({
+        queryKey: ['thread-messages', thread.thread_uuid]
+      });
 
       toast({
         description: "Message sent successfully!",
