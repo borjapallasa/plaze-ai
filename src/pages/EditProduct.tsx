@@ -678,44 +678,36 @@ export default function EditProduct() {
                           <CommandInput placeholder="Search products..." />
                           <CommandEmpty>No products found.</CommandEmpty>
                           <CommandGroup className="max-h-64 overflow-auto">
-                            {relatedProducts.map((product) => (
-                              <CommandItem
-                                key={product.product_uuid}
-                                onSelect={(currentValue) => {
-                                  handleRelatedProductToggle(product.product_uuid);
-                                }}
-                                className="flex items-center cursor-pointer p-2"
-                              >
-                                <div className="flex items-center gap-2 flex-1">
-                                  <Checkbox 
-                                    id={`product-${product.product_uuid}`}
-                                    checked={selectedRelatedProducts.includes(product.product_uuid)}
-                                    onCheckedChange={() => {
-                                      handleRelatedProductToggle(product.product_uuid);
-                                    }}
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                    }}
-                                    className="mr-1"
-                                  />
-                                  <div className="flex-1 min-w-0">
-                                    <label 
-                                      htmlFor={`product-${product.product_uuid}`}
-                                      className="text-sm font-medium cursor-pointer"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleRelatedProductToggle(product.product_uuid);
-                                      }}
-                                    >
-                                      {product.name}
-                                    </label>
-                                    <p className="text-xs text-muted-foreground">
-                                      ${product.price_from?.toFixed(2) || '0.00'}
-                                    </p>
+                            {relatedProducts.map((product) => {
+                              const isSelected = selectedRelatedProducts.includes(product.product_uuid);
+                              return (
+                                <CommandItem
+                                  key={product.product_uuid}
+                                  value={product.product_uuid}
+                                  onSelect={() => {}}
+                                  className="flex items-center cursor-pointer p-2"
+                                >
+                                  <div className="flex items-center gap-2 flex-1" onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleRelatedProductToggle(product.product_uuid);
+                                  }}>
+                                    <Checkbox 
+                                      id={`product-${product.product_uuid}`}
+                                      checked={isSelected}
+                                      className="mr-1"
+                                    />
+                                    <div className="flex-1 min-w-0">
+                                      <span className="text-sm font-medium cursor-pointer">
+                                        {product.name}
+                                      </span>
+                                      <p className="text-xs text-muted-foreground">
+                                        ${product.price_from?.toFixed(2) || '0.00'}
+                                      </p>
+                                    </div>
                                   </div>
-                                </div>
-                              </CommandItem>
-                            ))}
+                                </CommandItem>
+                              );
+                            })}
                           </CommandGroup>
                         </Command>
                       </PopoverContent>
