@@ -3,7 +3,6 @@ import React, { useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Bold, Italic, Underline, Link as LinkIcon, List, Image, Video, MoreHorizontal, Code, Heading1, Heading2, AlignLeft, AlignCenter, AlignRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ProductEditorProps {
   value?: string;
@@ -216,11 +215,9 @@ export function ProductEditor({
             onInput={saveContent}
             onBlur={saveContent}
             onPaste={handlePaste}
+            dir="ltr"
             style={{ 
-              minHeight,
-              transform: "none",
-              textOrientation: "mixed",
-              writingMode: "horizontal-tb"
+              minHeight
             }}
             dangerouslySetInnerHTML={{ __html: value || '' }}
           />
