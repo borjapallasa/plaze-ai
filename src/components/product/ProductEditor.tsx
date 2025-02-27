@@ -217,9 +217,7 @@ export function ProductEditor({
             onPaste={handlePaste}
             style={{ 
               minHeight,
-              direction: "ltr",
-              unicodeBidi: "normal",
-              textAlign: "left"
+              direction: "rtl" 
             }}
             dangerouslySetInnerHTML={{ __html: value || '' }}
           />
