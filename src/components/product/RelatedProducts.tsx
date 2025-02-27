@@ -58,7 +58,8 @@ export function RelatedProducts({
         .neq('product_uuid', productId);
       
       if (error) {
-        throw error;
+        console.error("Error fetching user products:", error);
+        return [];
       }
       
       return data || [];
@@ -80,7 +81,8 @@ export function RelatedProducts({
         .eq('product_uuid', productId);
       
       if (error) {
-        throw error;
+        console.error("Error fetching product relationships:", error);
+        return [];
       }
       
       return data || [];
@@ -91,13 +93,17 @@ export function RelatedProducts({
   // Update selected products based on relationships
   useEffect(() => {
     if (relationships.length > 0 && userProducts.length > 0) {
-      const relatedProductIds = relationships.map(rel => rel.related_product_uuid);
-      
-      const relatedProducts = userProducts.filter(product => 
-        relatedProductIds.includes(product.product_uuid)
-      );
-      
-      setSelectedProducts(relatedProducts);
+      try {
+        const relatedProductIds = relationships.map(rel => rel.related_product_uuid);
+        
+        const relatedProducts = userProducts.filter(product => 
+          relatedProductIds.includes(product.product_uuid)
+        );
+        
+        setSelectedProducts(relatedProducts);
+      } catch (error) {
+        console.error("Error setting initial selected products:", error);
+      }
     } else {
       setSelectedProducts([]);
     }
@@ -105,25 +111,36 @@ export function RelatedProducts({
 
   // Toggle product selection in local state
   const toggleProductSelection = (product: Product) => {
-    setSelectedProducts(prev => {
-      // Check if the product is already selected
-      const isAlreadySelected = prev.some(p => p.product_uuid === product.product_uuid);
+    try {
+      setSelectedProducts(prev => {
+        // Check if the product is already selected
+        const isAlreadySelected = prev.some(p => p.product_uuid === product.product_uuid);
+        
+        // If it's already selected, remove it
+        if (isAlreadySelected) {
+          return prev.filter(p => p.product_uuid !== product.product_uuid);
+        }
+        
+        // Otherwise, add it to the selected products
+        return [...prev, product];
+      });
       
-      // If it's already selected, remove it
-      if (isAlreadySelected) {
-        return prev.filter(p => p.product_uuid !== product.product_uuid);
-      }
-      
-      // Otherwise, add it to the selected products
-      return [...prev, product];
-    });
+      // Close the popover after selection to prevent immediate re-click issues
+      setOpen(false);
+    } catch (error) {
+      console.error("Error toggling product selection:", error);
+    }
   };
 
   // Remove a product from selection
   const removeSelectedProduct = (productId: string) => {
-    setSelectedProducts(prev => 
-      prev.filter(p => p.product_uuid !== productId)
-    );
+    try {
+      setSelectedProducts(prev => 
+        prev.filter(p => p.product_uuid !== productId)
+      );
+    } catch (error) {
+      console.error("Error removing selected product:", error);
+    }
   };
 
   // Save all relationships to the database
@@ -134,10 +151,14 @@ export function RelatedProducts({
     
     try {
       // First, delete all existing relationships
-      await supabase
+      const { error: deleteError } = await supabase
         .from('product_relationships')
         .delete()
         .eq('product_uuid', productId);
+      
+      if (deleteError) {
+        throw deleteError;
+      }
       
       // Then, insert all selected products as new relationships
       if (selectedProducts.length > 0) {
@@ -148,12 +169,12 @@ export function RelatedProducts({
           display_order: index
         }));
         
-        const { error } = await supabase
+        const { error: insertError } = await supabase
           .from('product_relationships')
           .insert(relationshipsToInsert);
         
-        if (error) {
-          throw error;
+        if (insertError) {
+          throw insertError;
         }
       }
       
@@ -166,6 +187,7 @@ export function RelatedProducts({
         duration: 3000,
       });
     } catch (error) {
+      console.error("Error saving relationships:", error);
       toast({
         title: "Error",
         description: "Failed to save related products",
@@ -214,6 +236,7 @@ export function RelatedProducts({
                         key={product.product_uuid}
                         value={product.name}
                         onSelect={() => {
+                          // Prevent default behavior that might cause issues
                           toggleProductSelection(product);
                         }}
                       >
