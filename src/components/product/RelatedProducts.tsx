@@ -39,53 +39,40 @@ export function RelatedProducts({
   onRelatedProductsChange,
   className,
 }: RelatedProductsProps) {
-  console.log("RelatedProducts - Component Rendering with props:", { 
-    productId, 
-    expertUuid, 
-    relatedProducts: relatedProducts ? `Array of ${relatedProducts.length} items` : 'null or undefined',
-    className 
-  });
-  
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
+  
+  // Initialize with an empty array as fallback
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   
-  // Initialize selected IDs from props
+  // Update selectedIds whenever relatedProducts changes
   useEffect(() => {
-    console.log("RelatedProducts - useEffect for relatedProducts:", {
-      relatedProducts,
-      isArray: Array.isArray(relatedProducts),
-      type: typeof relatedProducts
-    });
-    
-    if (relatedProducts && Array.isArray(relatedProducts)) {
-      console.log("RelatedProducts - Setting selectedIds from relatedProducts:", relatedProducts);
-      setSelectedIds([...relatedProducts]);
-    } else {
-      console.log("RelatedProducts - Setting selectedIds to empty array");
-      setSelectedIds([]);
-    }
+    // Ensure relatedProducts is an array
+    const productIds = Array.isArray(relatedProducts) ? [...relatedProducts] : [];
+    setSelectedIds(productIds);
   }, [relatedProducts]);
 
+  // Determine if we should run the query
+  const shouldFetchProducts = 
+    typeof expertUuid === 'string' && 
+    expertUuid.length > 0 && 
+    typeof productId === 'string' && 
+    productId !== ':id';
+
   // Fetch potential related products
-  const { data: potentialProducts = [], isLoading, error } = useQuery({
+  const { 
+    data: rawProducts = [], 
+    isLoading, 
+    error 
+  } = useQuery({
     queryKey: ['relatedProductOptions', expertUuid, productId],
     queryFn: async () => {
-      console.log("RelatedProducts - Fetching products for expert:", expertUuid);
-      
-      if (!expertUuid) {
-        console.log("RelatedProducts - No expertUuid provided, returning empty array");
-        return [];
-      }
-      
-      // Skip if productId is a route parameter placeholder
-      if (productId === ":id") {
-        console.log("RelatedProducts - productId is a placeholder (:id), returning empty array");
-        return [];
-      }
-      
       try {
-        console.log("RelatedProducts - Executing Supabase query");
+        // Skip the query if missing required data
+        if (!expertUuid || productId === ':id') {
+          return [];
+        }
+        
         const { data, error } = await supabase
           .from('products')
           .select('product_uuid, name, price_from')
@@ -93,62 +80,38 @@ export function RelatedProducts({
           .neq('product_uuid', productId);
         
         if (error) {
-          console.error("RelatedProducts - Error fetching related products:", error);
-          throw error;
+          console.error("Error fetching related products:", error);
+          return [];
         }
         
-        console.log(`RelatedProducts - Query successful, found ${data?.length || 0} products:`, data);
         return data || [];
       } catch (err) {
-        console.error("RelatedProducts - Exception in query:", err);
+        console.error("Exception in related products query:", err);
         return [];
       }
     },
-    enabled: !!expertUuid && productId !== ":id",
+    enabled: shouldFetchProducts,
   });
 
-  // Log when potential products change
-  useEffect(() => {
-    console.log("RelatedProducts - potentialProducts updated:", {
-      count: potentialProducts?.length || 0,
-      isArray: Array.isArray(potentialProducts),
-      isEmpty: !potentialProducts || potentialProducts.length === 0
-    });
-  }, [potentialProducts]);
+  // Make sure we're always working with arrays
+  const potentialProducts: Product[] = Array.isArray(rawProducts) ? rawProducts : [];
 
-  // Add or remove product from selection
+  // Update selected products
   const toggleProduct = (id: string) => {
-    console.log("RelatedProducts - toggleProduct called with id:", id);
-    console.log("RelatedProducts - Current selectedIds:", selectedIds);
+    const newSelection = selectedIds.includes(id)
+      ? selectedIds.filter(selectedId => selectedId !== id)
+      : [...selectedIds, id];
     
-    let newSelection: string[];
-    
-    if (selectedIds.includes(id)) {
-      console.log("RelatedProducts - Removing product from selection");
-      newSelection = selectedIds.filter(selectedId => selectedId !== id);
-    } else {
-      console.log("RelatedProducts - Adding product to selection");
-      newSelection = [...selectedIds, id];
-    }
-    
-    console.log("RelatedProducts - New selection:", newSelection);
     setSelectedIds(newSelection);
     onRelatedProductsChange(newSelection);
   };
 
   // Remove product from selection
   const removeProduct = (id: string) => {
-    console.log("RelatedProducts - removeProduct called with id:", id);
-    console.log("RelatedProducts - Current selectedIds:", selectedIds);
-    
     const newSelection = selectedIds.filter(selectedId => selectedId !== id);
-    console.log("RelatedProducts - New selection after removal:", newSelection);
-    
     setSelectedIds(newSelection);
     onRelatedProductsChange(newSelection);
   };
-
-  console.log("RelatedProducts - Before render, selectedIds:", selectedIds);
 
   // If product ID is a placeholder, show a disabled state
   if (productId === ":id") {
@@ -167,20 +130,12 @@ export function RelatedProducts({
     );
   }
 
-  // Ensure potentialProducts is always an array
-  const safeProducts = Array.isArray(potentialProducts) ? potentialProducts : [];
-  // Ensure selectedIds is always an array
-  const safeSelectedIds = Array.isArray(selectedIds) ? selectedIds : [];
-
   return (
     <div className={className}>
       <h3 className="text-sm font-medium mb-1.5">Related Products</h3>
       
       {/* Product selector */}
-      <Popover open={open} onOpenChange={(newOpen) => {
-        console.log("RelatedProducts - Popover state changing to:", newOpen);
-        setOpen(newOpen);
-      }}>
+      <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
@@ -188,10 +143,9 @@ export function RelatedProducts({
             aria-expanded={open}
             className="w-full justify-between"
             type="button"
-            onClick={() => console.log("RelatedProducts - PopoverTrigger clicked")}
           >
-            {safeSelectedIds.length 
-              ? `${safeSelectedIds.length} product${safeSelectedIds.length !== 1 ? 's' : ''} selected` 
+            {selectedIds.length > 0
+              ? `${selectedIds.length} product${selectedIds.length !== 1 ? 's' : ''} selected` 
               : "Select related products"}
             <Plus className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
@@ -210,15 +164,12 @@ export function RelatedProducts({
             </CommandEmpty>
             
             <CommandGroup>
-              {safeProducts.length > 0 ? (
-                safeProducts.map((product: Product) => (
+              {potentialProducts.length > 0 ? (
+                potentialProducts.map((product) => (
                   <CommandItem
                     key={product.product_uuid}
                     value={product.product_uuid}
-                    onSelect={() => {
-                      console.log("RelatedProducts - CommandItem selected:", product.product_uuid);
-                      toggleProduct(product.product_uuid);
-                    }}
+                    onSelect={() => toggleProduct(product.product_uuid)}
                   >
                     <div className="flex items-center justify-between w-full">
                       <span>
@@ -228,7 +179,7 @@ export function RelatedProducts({
                         </span>
                       </span>
                       
-                      {safeSelectedIds.includes(product.product_uuid) && (
+                      {selectedIds.includes(product.product_uuid) && (
                         <Check className="h-4 w-4 text-primary ml-2" />
                       )}
                     </div>
@@ -245,12 +196,10 @@ export function RelatedProducts({
       </Popover>
       
       {/* Selected products list */}
-      {safeSelectedIds.length > 0 && (
+      {selectedIds.length > 0 && (
         <div className="mt-3 space-y-2">
-          {safeSelectedIds.map(id => {
-            const product = safeProducts.find((p: Product) => p.product_uuid === id);
-            
-            console.log("RelatedProducts - Rendering selected product:", { id, foundProduct: !!product });
+          {selectedIds.map(id => {
+            const product = potentialProducts.find(p => p.product_uuid === id);
             
             return (
               <div 
