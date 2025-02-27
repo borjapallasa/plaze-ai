@@ -62,6 +62,13 @@ export function ProductLayout({
 
   const embedUrl = getVideoEmbedUrl(product.demo);
 
+  // For RelatedProducts component
+  const relatedProductIds = Array.isArray(product.related_products) ? product.related_products : [];
+  const handleRelatedProductsChange = (productIds: string[]) => {
+    // This is just a placeholder since ProductLayout is a display component
+    console.log("Related products changed:", productIds);
+  };
+
   const renderDemo = () => {
     if (!embedUrl) return null;
 
@@ -130,7 +137,13 @@ export function ProductLayout({
 
             <MoreFromSeller expert_uuid={product.expert_uuid} />
             
-            <RelatedProducts className="mb-24" />
+            <RelatedProducts 
+              className="mb-24" 
+              productId={product.product_uuid} 
+              expertUuid={product.expert_uuid}
+              relatedProducts={relatedProductIds}
+              onRelatedProductsChange={handleRelatedProductsChange}
+            />
           </div>
         </div>
 
@@ -154,7 +167,13 @@ export function ProductLayout({
               
               <MoreFromSeller expert_uuid={product.expert_uuid} />
               
-              <RelatedProducts className="mb-24" />
+              <RelatedProducts 
+                className="mb-24" 
+                productId={product.product_uuid} 
+                expertUuid={product.expert_uuid}
+                relatedProducts={relatedProductIds}
+                onRelatedProductsChange={handleRelatedProductsChange}
+              />
             </div>
           </div>
 
