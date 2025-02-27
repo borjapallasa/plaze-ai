@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { ProductEditor } from "@/components/product/ProductEditor";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/auth";
 
@@ -718,12 +718,11 @@ export default function Classroom() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="description">Description</Label>
-                  <Textarea 
-                    id="description" 
-                    placeholder="Enter lesson description"
-                    className="min-h-[100px]"
+                  <ProductEditor 
                     value={newLessonData.description}
-                    onChange={(e) => setNewLessonData({...newLessonData, description: e.target.value})}
+                    onChange={(value) => setNewLessonData({...newLessonData, description: value})}
+                    placeholder="Enter lesson description"
+                    minHeight="150px"
                   />
                 </div>
                 <div className="space-y-2">
@@ -768,12 +767,11 @@ export default function Classroom() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="edit-description">Description</Label>
-                  <Textarea 
-                    id="edit-description" 
-                    placeholder="Enter lesson description"
-                    className="min-h-[100px]"
+                  <ProductEditor 
                     value={editLessonData.description}
-                    onChange={(e) => setEditLessonData({...editLessonData, description: e.target.value})}
+                    onChange={(value) => setEditLessonData({...editLessonData, description: value})}
+                    placeholder="Enter lesson description"
+                    minHeight="150px"
                   />
                 </div>
                 <div className="space-y-2">
