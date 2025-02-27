@@ -10,7 +10,6 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useProductImages } from "@/hooks/use-product-images";
 import { ProductInfo } from "./ProductInfo";
 import { MoreFromSeller } from "./MoreFromSeller";
-import { RelatedProducts } from "./RelatedProducts";
 import { ProductReviews } from "./ProductReviews";
 import { VariantPicker } from "./VariantPicker";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
@@ -61,13 +60,6 @@ export function ProductLayout({
   usePreloadImage(mainImage);
 
   const embedUrl = getVideoEmbedUrl(product.demo);
-
-  // For RelatedProducts component
-  const relatedProductIds = Array.isArray(product.related_products) ? product.related_products : [];
-  const handleRelatedProductsChange = (productIds: string[]) => {
-    // This is just a placeholder since ProductLayout is a display component
-    console.log("Related products changed:", productIds);
-  };
 
   const renderDemo = () => {
     if (!embedUrl) return null;
@@ -136,14 +128,6 @@ export function ProductLayout({
             <ProductReviews reviews={reviews} />
 
             <MoreFromSeller expert_uuid={product.expert_uuid} />
-            
-            <RelatedProducts 
-              className="mb-24" 
-              productId={product.product_uuid} 
-              expertUuid={product.expert_uuid}
-              relatedProducts={relatedProductIds}
-              onRelatedProductsChange={handleRelatedProductsChange}
-            />
           </div>
         </div>
 
@@ -166,14 +150,6 @@ export function ProductLayout({
               <ProductReviews reviews={reviews} />
               
               <MoreFromSeller expert_uuid={product.expert_uuid} />
-              
-              <RelatedProducts 
-                className="mb-24" 
-                productId={product.product_uuid} 
-                expertUuid={product.expert_uuid}
-                relatedProducts={relatedProductIds}
-                onRelatedProductsChange={handleRelatedProductsChange}
-              />
             </div>
           </div>
 

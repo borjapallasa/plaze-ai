@@ -68,32 +68,6 @@ export default function Product() {
     enabled: !!id
   });
 
-  // Fetch related products using the new product_relationships table
-  const { data: relatedProductIds = [], isLoading: isLoadingRelations } = useQuery({
-    queryKey: ['productRelationships', product?.product_uuid],
-    queryFn: async () => {
-      if (!product?.product_uuid) return [];
-      
-      console.log("Fetching related products for:", product.product_uuid);
-      
-      const { data, error } = await supabase
-        .from('product_relationships')
-        .select('related_product_uuid')
-        .eq('product_uuid', product.product_uuid)
-        .order('display_order', { ascending: true });
-      
-      if (error) {
-        console.error("Error fetching product relationships:", error);
-        return [];
-      }
-      
-      const relationships = data.map(item => item.related_product_uuid);
-      console.log("Found related product relationships:", relationships);
-      return relationships;
-    },
-    enabled: !!product?.product_uuid
-  });
-
   const { data: variants = [], isLoading: isLoadingVariants } = useQuery({
     queryKey: ['variants', product?.product_uuid],
     queryFn: async () => {
@@ -198,7 +172,7 @@ export default function Product() {
     });
   };
 
-  if (isLoadingProduct || isLoadingVariants || isLoadingRelations) {
+  if (isLoadingProduct || isLoadingVariants) {
     return <ProductSkeleton />;
   }
 
@@ -210,20 +184,10 @@ export default function Product() {
     ? Number((reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length).toFixed(1))
     : 0;
 
-  // Log the data to help with debugging
-  console.log("Rendering product page with:", {
-    productId: product.product_uuid,
-    relatedProductIds: relatedProductIds,
-    variants: variants.length
-  });
-
   return (
     <div ref={variantsRef}>
       <ProductLayout
-        product={{
-          ...product,
-          related_products: relatedProductIds
-        }}
+        product={product}
         variants={variants}
         selectedVariant={selectedVariant}
         averageRating={averageRating}
