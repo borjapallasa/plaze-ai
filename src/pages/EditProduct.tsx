@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,6 +21,7 @@ import { Link, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
+import { ProductCard } from "@/components/ProductCard";
 
 type ProductStatus = 'draft' | 'active' | 'inactive';
 
@@ -73,6 +75,7 @@ export default function EditProduct() {
   const [team, setTeam] = useState<string[]>([]);
   const [localVariants, setLocalVariants] = useState<any[]>([]);
   const [deletedVariantIds, setDeletedVariantIds] = useState<string[]>([]);
+  const [selectedRelatedProducts, setSelectedRelatedProducts] = useState<string[]>([]);
 
   const handleStatusChange = (value: ProductStatus) => {
     setProductStatus(value);
@@ -96,6 +99,14 @@ export default function EditProduct() {
   const handleTeamChange = (value: string) => {
     if (!value) return;
     setTeam(prev => prev.includes(value) ? prev.filter(t => t !== value) : [...prev, value]);
+  };
+
+  const handleRelatedProductToggle = (productId: string) => {
+    setSelectedRelatedProducts(prev => 
+      prev.includes(productId) 
+        ? prev.filter(p => p !== productId) 
+        : [...prev, productId]
+    );
   };
 
   const renderSelectedTags = (items: string[]) => {
@@ -148,6 +159,24 @@ export default function EditProduct() {
     enabled: !!id
   });
 
+  const { data: relatedProducts = [], isLoading: isLoadingRelatedProducts } = useQuery({
+    queryKey: ['relatedProducts', product?.expert_uuid, id],
+    queryFn: async () => {
+      if (!product?.expert_uuid) return [];
+      
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('expert_uuid', product.expert_uuid)
+        .neq('product_uuid', id)
+        .eq('status', 'active');
+      
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!product?.expert_uuid
+  });
+
   const { data: variants = [], isLoading: isLoadingVariants, refetch: refetchVariants } = useQuery({
     queryKey: ['variants', id],
     queryFn: async () => {
@@ -189,6 +218,17 @@ export default function EditProduct() {
       setUseCases(Array.isArray(product.use_case) ? product.use_case.map(String) : []);
       setPlatform(Array.isArray(product.platform) ? product.platform.map(String) : []);
       setTeam(Array.isArray(product.team) ? product.team.map(String) : []);
+      
+      // Try to load related products if they exist
+      try {
+        const relatedProductIds = Array.isArray(product.related_products) 
+          ? product.related_products 
+          : [];
+        setSelectedRelatedProducts(relatedProductIds);
+      } catch (e) {
+        console.error("Error parsing related products:", e);
+        setSelectedRelatedProducts([]);
+      }
     }
   }, [product]);
 
@@ -215,7 +255,8 @@ export default function EditProduct() {
           industries: industries,
           use_case: useCases,
           platform: platform,
-          team: team
+          team: team,
+          related_products: selectedRelatedProducts
         })
         .eq('product_uuid', id);
 
@@ -552,6 +593,54 @@ export default function EditProduct() {
                     </Select>
                   </div>
                 </div>
+              </Card>
+
+              <Card className="p-3 sm:p-6">
+                <h2 className="text-lg font-medium mb-3 sm:mb-4">Related Products</h2>
+                {isLoadingRelatedProducts ? (
+                  <div className="text-sm text-muted-foreground">Loading related products...</div>
+                ) : relatedProducts.length === 0 ? (
+                  <div className="text-sm text-muted-foreground">No related products found from this expert.</div>
+                ) : (
+                  <div className="space-y-3">
+                    {relatedProducts.map(relatedProduct => (
+                      <div 
+                        key={relatedProduct.product_uuid} 
+                        className={`p-3 border rounded-md flex items-start gap-3 cursor-pointer ${
+                          selectedRelatedProducts.includes(relatedProduct.product_uuid) 
+                            ? 'bg-secondary/20 border-secondary' 
+                            : 'hover:bg-muted/50'
+                        }`}
+                        onClick={() => handleRelatedProductToggle(relatedProduct.product_uuid)}
+                      >
+                        <div className="flex-shrink-0 mt-1">
+                          {selectedRelatedProducts.includes(relatedProduct.product_uuid) ? (
+                            <div className="h-5 w-5 rounded border border-primary flex items-center justify-center bg-primary">
+                              <Check className="h-3.5 w-3.5 text-primary-foreground" />
+                            </div>
+                          ) : (
+                            <div className="h-5 w-5 rounded border" />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-medium text-sm mb-1 truncate">{relatedProduct.name}</h3>
+                          <p className="text-xs text-muted-foreground">
+                            {relatedProduct.price_from && `$${relatedProduct.price_from.toFixed(2)}`}
+                          </p>
+                        </div>
+                        {relatedProduct.thumbnail && (
+                          <div className="w-12 h-12 flex-shrink-0 rounded-md overflow-hidden">
+                            <img 
+                              src={relatedProduct.thumbnail} 
+                              alt={relatedProduct.name} 
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </Card>
             </div>
           </div>
