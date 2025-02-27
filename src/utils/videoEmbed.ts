@@ -7,21 +7,35 @@
 export const getVideoEmbedUrl = (url: string): string | null => {
   if (!url) return null;
   
+  try {
+    // Try to create a URL object to validate the URL
+    new URL(url);
+  } catch (e) {
+    // If URL is invalid, check if it might be just a video ID
+    if (/^[a-zA-Z0-9_-]{11}$/.test(url)) {
+      return `https://www.youtube.com/embed/${url}`;
+    }
+    return null;
+  }
+  
   // Extract video ID from YouTube URL
   let videoId = '';
   
   // Handle youtube.com/watch?v=
-  const watchPattern = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\?]*)/;
-  const watchMatch = url.match(watchPattern);
-  
-  if (watchMatch && watchMatch[1]) {
-    videoId = watchMatch[1];
-  } else if (url.includes('youtube.com/embed/')) {
-    // Already an embed URL
-    return url;
-  } else {
-    // Try to use the URL as is if it might be a valid video ID
-    videoId = url.trim();
+  if (url.includes('youtube.com/watch')) {
+    const urlObj = new URL(url);
+    videoId = urlObj.searchParams.get('v') || '';
+  } 
+  // Handle youtu.be/
+  else if (url.includes('youtu.be/')) {
+    const parts = url.split('youtu.be/');
+    if (parts.length > 1) {
+      videoId = parts[1].split('?')[0].split('&')[0];
+    }
+  } 
+  // Handle youtube.com/embed/
+  else if (url.includes('youtube.com/embed/')) {
+    return url; // Already an embed URL
   }
   
   // Return null if no valid video ID

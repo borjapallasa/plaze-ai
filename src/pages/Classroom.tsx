@@ -16,6 +16,7 @@ import { getVideoEmbedUrl } from "@/utils/videoEmbed";
 export default function Classroom() {
   const [isExpanded, setIsExpanded] = useState(true);
   const [selectedVariant, setSelectedVariant] = useState("basic");
+  const [activeLesson, setActiveLesson] = useState<any>(null);
   const isMobile = useIsMobile();
   const { id } = useParams();
   
@@ -76,6 +77,13 @@ export default function Classroom() {
     enabled: !!id
   });
 
+  // Set the first lesson as active when lessons are loaded
+  useEffect(() => {
+    if (lessons && lessons.length > 0 && !activeLesson) {
+      setActiveLesson(lessons[0]);
+    }
+  }, [lessons, activeLesson]);
+
   const variants = [
     { 
       id: "basic",
@@ -108,14 +116,16 @@ export default function Classroom() {
     // Add to cart logic here
   };
 
-  const videoEmbedUrl = classroom?.video_url ? getVideoEmbedUrl(classroom.video_url) : null;
+  // Use the active lesson's video URL if available, otherwise fallback to classroom's video URL
+  const videoUrl = activeLesson?.video_url || classroom?.video_url;
+  const videoEmbedUrl = videoUrl ? getVideoEmbedUrl(videoUrl) : null;
   
   useEffect(() => {
-    if (classroom?.video_url) {
-      console.log("Original video URL:", classroom.video_url);
+    if (videoUrl) {
+      console.log("Original video URL:", videoUrl);
       console.log("Embedded video URL:", videoEmbedUrl);
     }
-  }, [classroom, videoEmbedUrl]);
+  }, [videoUrl, videoEmbedUrl]);
 
   const LessonsList = () => (
     <div>
@@ -147,10 +157,11 @@ export default function Classroom() {
               key={lesson.lesson_uuid}
               className={cn(
                 "w-full text-left px-3 py-2 rounded-lg text-sm transition-colors",
-                false // You may add an isActive state for current lesson
+                activeLesson?.lesson_uuid === lesson.lesson_uuid
                   ? "bg-primary text-primary-foreground" 
                   : "hover:bg-muted"
               )}
+              onClick={() => setActiveLesson(lesson)}
             >
               {lesson.name}
             </button>
@@ -218,19 +229,19 @@ export default function Classroom() {
     );
   }
 
-  // Title component with community name / classroom name
+  // Title component with community name / lesson name
   const TitleWithCommunity = () => (
-    <h1 className="font-bold">
+    <h1 className="font-bold text-2xl md:text-3xl">
       {community && (
         <span className="text-[#1A1F2C] mr-2">
           {community.name}
         </span>
       )}
-      {community && classroom && (
+      {community && activeLesson && (
         <span className="text-muted-foreground mx-1">/</span>
       )}
-      <span className="text-primary">
-        {classroom.name}
+      <span className="text-muted-foreground">
+        {activeLesson?.name || classroom.name}
       </span>
     </h1>
   );
@@ -251,7 +262,7 @@ export default function Classroom() {
                       <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
                         <iframe
                           src={videoEmbedUrl}
-                          title={classroom.name}
+                          title={activeLesson?.name || classroom.name}
                           className="w-full h-full absolute inset-0"
                           frameBorder="0"
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -261,7 +272,7 @@ export default function Classroom() {
                     ) : (
                       <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
                         <img 
-                          src={classroom.thumbnail || "/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"}
+                          src={activeLesson?.thumbnail_url || classroom.thumbnail || "/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"}
                           alt="Course thumbnail"
                           className="w-full h-full object-cover"
                         />
@@ -273,19 +284,23 @@ export default function Classroom() {
                       </div>
                     )}
 
-                    {classroom.summary && (
+                    {activeLesson?.introduction || classroom.summary ? (
                       <div className="space-y-2">
                         <p className="text-muted-foreground">Summary →</p>
                         <p className="text-primary block">
-                          {classroom.summary}
+                          {activeLesson?.introduction || classroom.summary}
                         </p>
                       </div>
-                    )}
+                    ) : null}
                   </div>
 
                   <div className="space-y-6">
-                    {classroom.description && (
-                      <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: classroom.description }} />
+                    {(activeLesson?.description || classroom.description) && (
+                      <div className="prose prose-sm max-w-none" 
+                        dangerouslySetInnerHTML={{ 
+                          __html: activeLesson?.description || classroom.description 
+                        }} 
+                      />
                     )}
                   </div>
 
@@ -347,7 +362,7 @@ export default function Classroom() {
                       <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
                         <iframe
                           src={videoEmbedUrl}
-                          title={classroom.name}
+                          title={activeLesson?.name || classroom.name}
                           className="w-full h-full absolute inset-0"
                           frameBorder="0"
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -357,7 +372,7 @@ export default function Classroom() {
                     ) : (
                       <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
                         <img 
-                          src={classroom.thumbnail || "/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"}
+                          src={activeLesson?.thumbnail_url || classroom.thumbnail || "/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"}
                           alt="Course thumbnail"
                           className="w-full h-full object-cover"
                         />
@@ -369,19 +384,23 @@ export default function Classroom() {
                       </div>
                     )}
 
-                    {classroom.summary && (
+                    {activeLesson?.introduction || classroom.summary ? (
                       <div className="flex items-center gap-2">
                         <span className="text-muted-foreground">Summary →</span>
                         <span className="text-primary">
-                          {classroom.summary}
+                          {activeLesson?.introduction || classroom.summary}
                         </span>
                       </div>
-                    )}
+                    ) : null}
                   </div>
 
                   <div className="space-y-6">
-                    {classroom.description && (
-                      <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: classroom.description }} />
+                    {(activeLesson?.description || classroom.description) && (
+                      <div className="prose prose-sm max-w-none" 
+                        dangerouslySetInnerHTML={{ 
+                          __html: activeLesson?.description || classroom.description 
+                        }} 
+                      />
                     )}
                   </div>
 
