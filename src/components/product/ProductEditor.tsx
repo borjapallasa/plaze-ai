@@ -209,7 +209,7 @@ export function ProductEditor({
           <div
             ref={editorRef}
             className={cn(
-              "px-3 py-2 focus:outline-none w-full [&_*]:text-left",
+              "px-3 py-2 focus:outline-none w-full",
               isEmpty ? "text-muted-foreground" : ""
             )}
             contentEditable
@@ -218,8 +218,9 @@ export function ProductEditor({
             onPaste={handlePaste}
             style={{ 
               minHeight,
-              direction: 'ltr',
-              unicodeBidi: 'normal'
+              transform: "none",
+              textOrientation: "mixed",
+              writingMode: "horizontal-tb"
             }}
             dangerouslySetInnerHTML={{ __html: value || '' }}
           />
