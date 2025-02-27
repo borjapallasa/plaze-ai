@@ -167,6 +167,11 @@ export function RelatedProducts({
     );
   }
 
+  // Ensure potentialProducts is always an array
+  const safeProducts = Array.isArray(potentialProducts) ? potentialProducts : [];
+  // Ensure selectedIds is always an array
+  const safeSelectedIds = Array.isArray(selectedIds) ? selectedIds : [];
+
   return (
     <div className={className}>
       <h3 className="text-sm font-medium mb-1.5">Related Products</h3>
@@ -185,8 +190,8 @@ export function RelatedProducts({
             type="button"
             onClick={() => console.log("RelatedProducts - PopoverTrigger clicked")}
           >
-            {selectedIds.length 
-              ? `${selectedIds.length} product${selectedIds.length !== 1 ? 's' : ''} selected` 
+            {safeSelectedIds.length 
+              ? `${safeSelectedIds.length} product${safeSelectedIds.length !== 1 ? 's' : ''} selected` 
               : "Select related products"}
             <Plus className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
@@ -205,8 +210,8 @@ export function RelatedProducts({
             </CommandEmpty>
             
             <CommandGroup>
-              {Array.isArray(potentialProducts) && potentialProducts.length > 0 ? (
-                potentialProducts.map((product: Product) => (
+              {safeProducts.length > 0 ? (
+                safeProducts.map((product: Product) => (
                   <CommandItem
                     key={product.product_uuid}
                     value={product.product_uuid}
@@ -223,7 +228,7 @@ export function RelatedProducts({
                         </span>
                       </span>
                       
-                      {selectedIds.includes(product.product_uuid) && (
+                      {safeSelectedIds.includes(product.product_uuid) && (
                         <Check className="h-4 w-4 text-primary ml-2" />
                       )}
                     </div>
@@ -240,12 +245,10 @@ export function RelatedProducts({
       </Popover>
       
       {/* Selected products list */}
-      {selectedIds.length > 0 && (
+      {safeSelectedIds.length > 0 && (
         <div className="mt-3 space-y-2">
-          {selectedIds.map(id => {
-            const product = Array.isArray(potentialProducts) 
-              ? potentialProducts.find((p: Product) => p.product_uuid === id)
-              : undefined;
+          {safeSelectedIds.map(id => {
+            const product = safeProducts.find((p: Product) => p.product_uuid === id);
             
             console.log("RelatedProducts - Rendering selected product:", { id, foundProduct: !!product });
             
