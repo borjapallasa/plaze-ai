@@ -1074,27 +1074,24 @@ export type Database = {
           display_order: number | null
           id: number
           product_uuid: string
-          related_product_uuid: string | null
+          related_product_uuid: string
           relationship_type: string | null
-          relationship_uuid: string
         }
         Insert: {
           created_at?: string
           display_order?: number | null
           id?: number
           product_uuid: string
-          related_product_uuid?: string | null
+          related_product_uuid: string
           relationship_type?: string | null
-          relationship_uuid?: string
         }
         Update: {
           created_at?: string
           display_order?: number | null
           id?: number
           product_uuid?: string
-          related_product_uuid?: string | null
+          related_product_uuid?: string
           relationship_type?: string | null
-          relationship_uuid?: string
         }
         Relationships: [
           {

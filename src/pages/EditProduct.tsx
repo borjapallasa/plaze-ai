@@ -16,7 +16,6 @@ import { MainHeader } from "@/components/MainHeader";
 import { ProductEditor } from "@/components/product/ProductEditor";
 import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
 import { ProductVariantsEditor } from "@/components/product/ProductVariants";
-import { RelatedProducts } from "@/components/product/RelatedProducts";
 import { ArrowLeft, Plus, X, Check } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -553,11 +552,6 @@ export default function EditProduct() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <RelatedProducts
-                    productId={id || ""}
-                    userUuid={product?.user_uuid || ""}
-                    className="mt-6"
-                  />
                 </div>
               </Card>
             </div>
