@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -237,6 +238,10 @@ export default function Classroom() {
                   </div>
                   
                   <div className="space-y-4">
+                    <h2 className="font-bold text-xl">
+                      {classroom.name} / {activeLesson ? activeLesson.name : ''}
+                    </h2>
+                    
                     {videoEmbedUrl ? (
                       <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
                         <iframe
@@ -344,8 +349,14 @@ export default function Classroom() {
 
               <Card className="flex-1">
                 <CardContent className="p-6 space-y-6">
-                  <h1 className="font-bold text-2xl flex items-center">
-                    {activeLesson ? activeLesson.name : classroom.name}
+                  <h1 className="font-bold text-2xl flex flex-wrap items-center">
+                    {classroom.name}
+                    {activeLesson && (
+                      <>
+                        <span className="mx-2 text-muted-foreground">/</span>
+                        <span>{activeLesson.name}</span>
+                      </>
+                    )}
                   </h1>
                   
                   <div className="space-y-4">
