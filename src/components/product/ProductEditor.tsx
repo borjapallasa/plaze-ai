@@ -188,14 +188,18 @@ export function ProductEditor({
           <div
             ref={editorRef}
             className={cn(
-              "px-3 py-2 focus:outline-none w-full",
+              "px-3 py-2 focus:outline-none w-full [&_*]:text-left",
               isEmpty ? "text-muted-foreground" : ""
             )}
             contentEditable
             onInput={saveContent}
             onBlur={saveContent}
             onPaste={handlePaste}
-            style={{ minHeight }}
+            style={{ 
+              minHeight,
+              direction: 'ltr',
+              unicodeBidi: 'normal'
+            }}
             dangerouslySetInnerHTML={{ __html: value || '' }}
           />
           {isEmpty && (
