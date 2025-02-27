@@ -90,6 +90,13 @@ export default function Classroom() {
   };
 
   const videoEmbedUrl = classroom?.video_url ? getVideoEmbedUrl(classroom.video_url) : null;
+  
+  useEffect(() => {
+    if (classroom?.video_url) {
+      console.log("Original video URL:", classroom.video_url);
+      console.log("Embedded video URL:", videoEmbedUrl);
+    }
+  }, [classroom, videoEmbedUrl]);
 
   const LessonsList = () => (
     <div>
