@@ -42,6 +42,7 @@ export function RelatedProducts({
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>(Array.isArray(relatedProducts) ? relatedProducts : []);
+  const [availableProducts, setAvailableProducts] = useState<Product[]>([]);
 
   // When related products prop changes, update local state
   useEffect(() => {
@@ -49,7 +50,7 @@ export function RelatedProducts({
   }, [relatedProducts]);
 
   // Fetch products with same expert_uuid
-  const { data: products = [], isLoading, error } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['relatedProductOptions', expertUuid],
     queryFn: async () => {
       console.log('Fetching products for expert:', expertUuid);
@@ -71,6 +72,13 @@ export function RelatedProducts({
     },
     enabled: !!expertUuid,
   });
+
+  // Update local state when query data changes
+  useEffect(() => {
+    if (Array.isArray(data)) {
+      setAvailableProducts(data);
+    }
+  }, [data]);
 
   // Handle selection of a product
   const handleSelect = (productId: string) => {
@@ -119,18 +127,11 @@ export function RelatedProducts({
               {error ? "Error loading products" : isLoading ? "Loading..." : "No products found"}
             </CommandEmpty>
             <CommandGroup className="max-h-60 overflow-auto">
-              {Array.isArray(products) && products.map((product) => (
+              {availableProducts.map((product) => (
                 <CommandItem
                   key={product.product_uuid}
                   value={product.product_uuid}
-                  onSelect={(value) => {
-                    // Using a safer approach to handle selection
-                    try {
-                      handleSelect(value);
-                    } catch (e) {
-                      console.error("Error selecting product:", e);
-                    }
-                  }}
+                  onSelect={handleSelect}
                   className="flex items-center justify-between"
                 >
                   <div>
@@ -153,7 +154,7 @@ export function RelatedProducts({
       {selectedProductIds.length > 0 && (
         <div className="mt-3 space-y-2">
           {selectedProductIds.map(id => {
-            const product = Array.isArray(products) ? products.find(p => p.product_uuid === id) : undefined;
+            const product = availableProducts.find(p => p.product_uuid === id);
             return (
               <div 
                 key={id}
