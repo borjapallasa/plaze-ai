@@ -1,9 +1,8 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { ChevronDown, ShoppingCart, Check } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MainHeader } from "@/components/MainHeader";
@@ -12,19 +11,11 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
-import { toast } from "sonner";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 export default function Classroom() {
   const [isExpanded, setIsExpanded] = useState(true);
   const [selectedVariant, setSelectedVariant] = useState("basic");
   const [activeLesson, setActiveLesson] = useState<any>(null);
-  const [completedLessons, setCompletedLessons] = useState<string[]>([]);
   const isMobile = useIsMobile();
   const { id } = useParams();
   
@@ -85,33 +76,6 @@ export default function Classroom() {
     enabled: !!id
   });
 
-  // Load completed lessons from localStorage
-  useEffect(() => {
-    if (id) {
-      try {
-        const savedProgress = localStorage.getItem(`classroom-progress-${id}`);
-        if (savedProgress) {
-          setCompletedLessons(JSON.parse(savedProgress));
-          console.log("Loaded progress from localStorage:", JSON.parse(savedProgress));
-        }
-      } catch (error) {
-        console.error("Error loading progress from localStorage:", error);
-      }
-    }
-  }, [id]);
-
-  // Save completed lessons to localStorage whenever they change
-  useEffect(() => {
-    if (id && completedLessons.length > 0) {
-      try {
-        localStorage.setItem(`classroom-progress-${id}`, JSON.stringify(completedLessons));
-        console.log("Saved progress to localStorage:", completedLessons);
-      } catch (error) {
-        console.error("Error saving progress to localStorage:", error);
-      }
-    }
-  }, [completedLessons, id]);
-
   useEffect(() => {
     if (lessons && lessons.length > 0 && !activeLesson) {
       setActiveLesson(lessons[0]);
@@ -148,23 +112,6 @@ export default function Classroom() {
 
   const handleAddToCart = () => {
     // Add to cart logic here
-  };
-
-  // Toggle lesson completion status
-  const toggleLessonCompletion = (lessonUuid: string) => {
-    setCompletedLessons(prev => {
-      if (prev.includes(lessonUuid)) {
-        // Remove lesson from completed list
-        const newCompleted = prev.filter(id => id !== lessonUuid);
-        toast.info("Lesson marked as incomplete");
-        return newCompleted;
-      } else {
-        // Add lesson to completed list
-        const newCompleted = [...prev, lessonUuid];
-        toast.success("Lesson marked as complete!");
-        return newCompleted;
-      }
-    });
   };
 
   const videoUrl = activeLesson?.video_url || classroom?.video_url;
@@ -272,7 +219,7 @@ export default function Classroom() {
                             <div 
                               key={lesson.lesson_uuid} 
                               className={cn(
-                                "flex items-center justify-between p-3 rounded-lg",
+                                "p-3 rounded-lg cursor-pointer",
                                 activeLesson?.lesson_uuid === lesson.lesson_uuid 
                                   ? "bg-muted/50" 
                                   : "hover:bg-muted/30"
@@ -280,9 +227,6 @@ export default function Classroom() {
                               onClick={() => setActiveLesson(lesson)}
                             >
                               <span className="text-sm">{lesson.name}</span>
-                              {completedLessons.includes(lesson.lesson_uuid) && (
-                                <Check className="h-5 w-5 text-primary" />
-                              )}
                             </div>
                           ))
                         ) : (
@@ -377,7 +321,7 @@ export default function Classroom() {
                             <div 
                               key={lesson.lesson_uuid} 
                               className={cn(
-                                "flex items-center justify-between p-3 rounded-lg cursor-pointer",
+                                "p-3 rounded-lg cursor-pointer",
                                 activeLesson?.lesson_uuid === lesson.lesson_uuid 
                                   ? "bg-muted" 
                                   : "hover:bg-muted/30"
@@ -385,27 +329,6 @@ export default function Classroom() {
                               onClick={() => setActiveLesson(lesson)}
                             >
                               <span className="text-sm">{lesson.name}</span>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  toggleLessonCompletion(lesson.lesson_uuid);
-                                }}
-                                className={cn(
-                                  "p-1.5 rounded-md transition-colors",
-                                  completedLessons.includes(lesson.lesson_uuid)
-                                    ? "bg-primary/10 text-primary hover:bg-primary/20"
-                                    : "text-muted-foreground hover:bg-muted"
-                                )}
-                              >
-                                <Check 
-                                  className={cn(
-                                    "h-4 w-4 transition-all", 
-                                    completedLessons.includes(lesson.lesson_uuid)
-                                      ? "opacity-100"
-                                      : "opacity-50"
-                                  )} 
-                                />
-                              </button>
                             </div>
                           ))
                         ) : (
