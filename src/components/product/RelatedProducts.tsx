@@ -27,7 +27,7 @@ interface Product {
 interface RelatedProductsProps {
   productId: string;
   expertUuid: string;
-  relatedProducts: string[];
+  relatedProducts: string[] | null;
   onRelatedProductsChange: (productIds: string[]) => void;
   className?: string;
 }
@@ -41,12 +41,17 @@ export function RelatedProducts({
 }: RelatedProductsProps) {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
-  const [selectedProductIds, setSelectedProductIds] = useState<string[]>(Array.isArray(relatedProducts) ? relatedProducts : []);
+  // Make sure to handle the case where relatedProducts might be null or undefined
+  const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
   const [availableProducts, setAvailableProducts] = useState<Product[]>([]);
 
   // When related products prop changes, update local state
   useEffect(() => {
-    setSelectedProductIds(Array.isArray(relatedProducts) ? relatedProducts : []);
+    if (Array.isArray(relatedProducts)) {
+      setSelectedProductIds([...relatedProducts]);
+    } else {
+      setSelectedProductIds([]);
+    }
   }, [relatedProducts]);
 
   // Fetch products with same expert_uuid
@@ -76,7 +81,7 @@ export function RelatedProducts({
   // Update local state when query data changes
   useEffect(() => {
     if (Array.isArray(data)) {
-      setAvailableProducts(data);
+      setAvailableProducts([...data]);
     }
   }, [data]);
 
@@ -85,12 +90,19 @@ export function RelatedProducts({
     if (!productId) return;
     
     const isSelected = selectedProductIds.includes(productId);
-    const newSelectedIds = isSelected
-      ? selectedProductIds.filter(id => id !== productId)
-      : [...selectedProductIds, productId];
+    let newSelectedIds: string[];
+    
+    if (isSelected) {
+      newSelectedIds = selectedProductIds.filter(id => id !== productId);
+    } else {
+      newSelectedIds = [...selectedProductIds, productId];
+    }
     
     setSelectedProductIds(newSelectedIds);
     onRelatedProductsChange(newSelectedIds);
+    
+    // Close the popover after selection
+    setOpen(false);
   };
 
   // Handle removing a product from the selected list
@@ -120,29 +132,30 @@ export function RelatedProducts({
             <Plus className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full p-0">
+        <PopoverContent className="w-full p-0" align="start">
           <Command>
             <CommandInput placeholder="Search products..." />
             <CommandEmpty>
               {error ? "Error loading products" : isLoading ? "Loading..." : "No products found"}
             </CommandEmpty>
-            <CommandGroup className="max-h-60 overflow-auto">
+            <CommandGroup>
               {availableProducts.map((product) => (
                 <CommandItem
                   key={product.product_uuid}
                   value={product.product_uuid}
                   onSelect={handleSelect}
-                  className="flex items-center justify-between"
                 >
-                  <div>
-                    <span>{product.name}</span>
-                    <span className="ml-2 text-sm text-muted-foreground">
-                      ${product.price_from?.toFixed(2) || '0.00'}
-                    </span>
+                  <div className="flex items-center justify-between w-full">
+                    <div>
+                      <span>{product.name}</span>
+                      <span className="ml-2 text-sm text-muted-foreground">
+                        ${product.price_from?.toFixed(2) || '0.00'}
+                      </span>
+                    </div>
+                    {selectedProductIds.includes(product.product_uuid) && (
+                      <Check className="h-4 w-4 text-primary" />
+                    )}
                   </div>
-                  {selectedProductIds.includes(product.product_uuid) && (
-                    <Check className="h-4 w-4 text-primary" />
-                  )}
                 </CommandItem>
               ))}
             </CommandGroup>
