@@ -19,6 +19,9 @@ export default function Expert() {
   const { data: services, isLoading: isLoadingServices } = useExpertServices(expert?.expert_uuid);
   const { data: randomCommunity } = useExpertCommunity(expert?.expert_uuid);
 
+  console.log("Expert page - expert_uuid from params:", expert_uuid);
+  console.log("Expert page - expert data:", expert);
+
   if (isLoadingExpert || isLoadingServices) {
     return <ExpertLoadingState />;
   }

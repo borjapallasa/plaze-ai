@@ -56,7 +56,7 @@ function App() {
           <Route path="/sign-up-community" element={<SignUpCommunityPage />} />
           <Route path="/product/:id" element={<ProductPage />} />
           <Route path="/experts" element={<ExpertsPage />} />
-          <Route path="/expert/:id" element={<ExpertPage />} />
+          <Route path="/expert/:expert_uuid" element={<ExpertPage />} />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/seller/products/new" element={<NewProductPage />} />
           <Route path="/seller/:id" element={<SellerPage />} />
