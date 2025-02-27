@@ -12,7 +12,6 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
-import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 
 export default function Classroom() {
@@ -144,11 +143,6 @@ export default function Classroom() {
   const handleAddToCart = () => {
     // Add to cart logic here
   };
-
-  // Calculate progress percentage
-  const progressPercentage = lessons && lessons.length > 0
-    ? Math.round((completedLessons.length / lessons.length) * 100)
-    : 0;
 
   // Toggle lesson completion status
   const toggleLessonCompletion = (lessonUuid: string) => {
@@ -327,14 +321,6 @@ export default function Classroom() {
               <Card className="w-full">
                 <CardContent className="p-6 space-y-6">
                   <TitleWithCommunity />
-
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Course progress</span>
-                      <span>{progressPercentage}% complete</span>
-                    </div>
-                    <Progress value={progressPercentage} className="h-2" />
-                  </div>
                   
                   <div className="space-y-4">
                     {videoEmbedUrl ? (
@@ -400,8 +386,6 @@ export default function Classroom() {
                   <div className="space-y-6">
                     <div>
                       <h2 className="text-lg font-semibold mb-2 text-left leading-snug">{classroom.name}</h2>
-                      <Progress value={progressPercentage} className="h-2 mb-2" />
-                      <p className="text-sm text-muted-foreground">{progressPercentage}% complete</p>
                     </div>
 
                     <LessonsList />
@@ -414,14 +398,6 @@ export default function Classroom() {
               <Card className="flex-1">
                 <CardContent className="p-6 space-y-6">
                   <TitleWithCommunity />
-                  
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Course progress</span>
-                      <span>{progressPercentage}% complete</span>
-                    </div>
-                    <Progress value={progressPercentage} className="h-2" />
-                  </div>
                   
                   <div className="space-y-4">
                     {videoEmbedUrl ? (
