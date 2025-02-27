@@ -294,16 +294,28 @@ export default function Classroom() {
     deleteLessonMutation.mutate(activeLesson.lesson_uuid);
   };
 
-  const handleOpenEditLesson = () => {
-    if (!activeLesson) return;
+  const handleOpenEditLesson = (lesson: any, e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
     
     setEditLessonData({
-      name: activeLesson.name || '',
-      description: activeLesson.description || '',
-      video_url: activeLesson.video_url || ''
+      name: lesson.name || '',
+      description: lesson.description || '',
+      video_url: lesson.video_url || ''
     });
     
+    setActiveLesson(lesson);
     setIsEditLessonOpen(true);
+  };
+
+  const handleOpenDeleteDialog = (lesson: any, e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
+    
+    setActiveLesson(lesson);
+    setIsDeleteLessonOpen(true);
   };
 
   useEffect(() => {
@@ -454,7 +466,7 @@ export default function Classroom() {
                             <div 
                               key={lesson.lesson_uuid} 
                               className={cn(
-                                "p-3 rounded-lg cursor-pointer",
+                                "p-3 rounded-lg cursor-pointer group relative",
                                 activeLesson?.lesson_uuid === lesson.lesson_uuid 
                                   ? "bg-muted/50" 
                                   : "hover:bg-muted/30"
@@ -462,6 +474,23 @@ export default function Classroom() {
                               onClick={() => setActiveLesson(lesson)}
                             >
                               <span className="text-sm">{lesson.name ? capitalizeFirstLetter(lesson.name) : ''}</span>
+                              
+                              <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button 
+                                  onClick={(e) => handleOpenEditLesson(lesson, e)}
+                                  className="p-1 hover:bg-muted rounded-full"
+                                  aria-label="Edit lesson"
+                                >
+                                  <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
+                                </button>
+                                <button 
+                                  onClick={(e) => handleOpenDeleteDialog(lesson, e)}
+                                  className="p-1 hover:bg-muted rounded-full"
+                                  aria-label="Delete lesson"
+                                >
+                                  <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
+                                </button>
+                              </div>
                             </div>
                           ))
                         ) : (
@@ -481,39 +510,15 @@ export default function Classroom() {
                   </div>
                   
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h2 className="text-xl">
-                        <span className="font-bold text-black">{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
-                        {activeLesson && (
-                          <>
-                            <span className="mx-2 text-gray-400">/</span>
-                            <span className="text-gray-500">{activeLesson.name ? capitalizeFirstLetter(activeLesson.name) : ''}</span>
-                          </>
-                        )}
-                      </h2>
-                      
+                    <h2 className="text-xl">
+                      <span className="font-bold text-black">{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
                       {activeLesson && (
-                        <div className="flex gap-2">
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            onClick={handleOpenEditLesson}
-                          >
-                            <Pencil className="h-4 w-4 mr-1" />
-                            Edit
-                          </Button>
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => setIsDeleteLessonOpen(true)}
-                            className="text-destructive hover:text-destructive"
-                          >
-                            <Trash2 className="h-4 w-4 mr-1" />
-                            Delete
-                          </Button>
-                        </div>
+                        <>
+                          <span className="mx-2 text-gray-400">/</span>
+                          <span className="text-gray-500">{activeLesson.name ? capitalizeFirstLetter(activeLesson.name) : ''}</span>
+                        </>
                       )}
-                    </div>
+                    </h2>
                     
                     {videoEmbedUrl ? (
                       <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
@@ -598,7 +603,7 @@ export default function Classroom() {
                             <div 
                               key={lesson.lesson_uuid} 
                               className={cn(
-                                "p-3 rounded-lg cursor-pointer",
+                                "p-3 rounded-lg cursor-pointer group relative",
                                 activeLesson?.lesson_uuid === lesson.lesson_uuid 
                                   ? "bg-muted" 
                                   : "hover:bg-muted/30"
@@ -606,6 +611,23 @@ export default function Classroom() {
                               onClick={() => setActiveLesson(lesson)}
                             >
                               <span className="text-sm">{lesson.name ? capitalizeFirstLetter(lesson.name) : ''}</span>
+                              
+                              <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button 
+                                  onClick={(e) => handleOpenEditLesson(lesson, e)}
+                                  className="p-1 hover:bg-muted rounded-full"
+                                  aria-label="Edit lesson"
+                                >
+                                  <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
+                                </button>
+                                <button 
+                                  onClick={(e) => handleOpenDeleteDialog(lesson, e)}
+                                  className="p-1 hover:bg-muted rounded-full"
+                                  aria-label="Delete lesson"
+                                >
+                                  <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
+                                </button>
+                              </div>
                             </div>
                           ))
                         ) : (
@@ -630,37 +652,15 @@ export default function Classroom() {
 
               <Card className="flex-1">
                 <CardContent className="p-6 space-y-6">
-                  <div className="flex items-center justify-between">
-                    <h1 className="text-2xl flex flex-wrap items-center">
-                      <span className="font-bold text-black">{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
-                      {activeLesson && (
-                        <>
-                          <span className="mx-2 text-gray-400">/</span>
-                          <span className="text-gray-500">{activeLesson.name ? capitalizeFirstLetter(activeLesson.name) : ''}</span>
-                        </>
-                      )}
-                    </h1>
-                    
+                  <h1 className="text-2xl flex flex-wrap items-center">
+                    <span className="font-bold text-black">{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
                     {activeLesson && (
-                      <div className="flex gap-2">
-                        <Button 
-                          variant="outline"
-                          onClick={handleOpenEditLesson}
-                        >
-                          <Pencil className="h-4 w-4 mr-2" />
-                          Edit Lesson
-                        </Button>
-                        <Button 
-                          variant="outline"
-                          onClick={() => setIsDeleteLessonOpen(true)}
-                          className="text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Delete Lesson
-                        </Button>
-                      </div>
+                      <>
+                        <span className="mx-2 text-gray-400">/</span>
+                        <span className="text-gray-500">{activeLesson.name ? capitalizeFirstLetter(activeLesson.name) : ''}</span>
+                      </>
                     )}
-                  </div>
+                  </h1>
                   
                   <div className="space-y-4">
                     {videoEmbedUrl ? (
