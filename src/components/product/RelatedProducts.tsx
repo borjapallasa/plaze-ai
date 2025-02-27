@@ -41,142 +41,128 @@ export function RelatedProducts({
 }: RelatedProductsProps) {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
-  // Initialize with empty array, not depending on relatedProducts which might be null
-  const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
-  const [availableProducts, setAvailableProducts] = useState<Product[]>([]);
-
-  // When related products prop changes, update local state
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  
+  // Initialize selected IDs from props
   useEffect(() => {
-    // Handle the case where relatedProducts is null, undefined, or not an array
-    if (Array.isArray(relatedProducts)) {
-      setSelectedProductIds([...relatedProducts]);
+    if (relatedProducts && Array.isArray(relatedProducts)) {
+      setSelectedIds([...relatedProducts]);
     } else {
-      // Ensure we always have an array, even if empty
-      setSelectedProductIds([]);
+      setSelectedIds([]);
     }
   }, [relatedProducts]);
 
-  // Fetch products with same expert_uuid
-  const { data, isLoading, error } = useQuery({
+  // Fetch potential related products
+  const { data: potentialProducts = [], isLoading, error } = useQuery({
     queryKey: ['relatedProductOptions', expertUuid],
     queryFn: async () => {
-      console.log('Fetching products for expert:', expertUuid);
       if (!expertUuid) return [];
-
-      const { data, error } = await supabase
-        .from('products')
-        .select('product_uuid, name, price_from')
-        .eq('expert_uuid', expertUuid)
-        .neq('product_uuid', productId || ''); // Exclude current product
       
-      if (error) {
-        console.error("Error fetching related products:", error);
-        throw error;
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('product_uuid, name, price_from')
+          .eq('expert_uuid', expertUuid)
+          .neq('product_uuid', productId);
+        
+        if (error) throw error;
+        return data || [];
+      } catch (err) {
+        console.error("Error fetching related products:", err);
+        return [];
       }
-      
-      console.log(`Found ${data?.length || 0} potential related products`);
-      return data || [];
     },
     enabled: !!expertUuid,
   });
 
-  // Update local state when query data changes
-  useEffect(() => {
-    if (data && Array.isArray(data)) {
-      setAvailableProducts([...data]);
-    } else {
-      // Ensure we always have an array, even if empty
-      setAvailableProducts([]);
-    }
-  }, [data]);
-
-  // Handle selection of a product
-  const handleSelect = (productId: string) => {
-    if (!productId) return;
+  // Add or remove product from selection
+  const toggleProduct = (id: string) => {
+    let newSelection: string[];
     
-    const isSelected = selectedProductIds.includes(productId);
-    let newSelectedIds: string[];
-    
-    if (isSelected) {
-      newSelectedIds = selectedProductIds.filter(id => id !== productId);
+    if (selectedIds.includes(id)) {
+      newSelection = selectedIds.filter(selectedId => selectedId !== id);
     } else {
-      newSelectedIds = [...selectedProductIds, productId];
+      newSelection = [...selectedIds, id];
     }
     
-    setSelectedProductIds(newSelectedIds);
-    onRelatedProductsChange(newSelectedIds);
-    
-    // Close the popover after selection
-    setOpen(false);
+    setSelectedIds(newSelection);
+    onRelatedProductsChange(newSelection);
   };
 
-  // Handle removing a product from the selected list
-  const handleRemove = (productId: string) => {
-    if (!productId) return;
-    
-    const newSelectedIds = selectedProductIds.filter(id => id !== productId);
-    setSelectedProductIds(newSelectedIds);
-    onRelatedProductsChange(newSelectedIds);
+  // Remove product from selection
+  const removeProduct = (id: string) => {
+    const newSelection = selectedIds.filter(selectedId => selectedId !== id);
+    setSelectedIds(newSelection);
+    onRelatedProductsChange(newSelection);
   };
 
   return (
     <div className={className}>
       <h3 className="text-sm font-medium mb-1.5">Related Products</h3>
+      
+      {/* Product selector */}
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            type="button"
             className="w-full justify-between"
+            type="button"
           >
-            {selectedProductIds.length > 0 
-              ? `${selectedProductIds.length} product${selectedProductIds.length > 1 ? 's' : ''} selected`
+            {selectedIds.length 
+              ? `${selectedIds.length} product${selectedIds.length !== 1 ? 's' : ''} selected` 
               : "Select related products"}
             <Plus className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
+        
         <PopoverContent className="w-full p-0" align="start">
           <Command>
             <CommandInput placeholder="Search products..." />
+            
             <CommandEmpty>
-              {error ? "Error loading products" : isLoading ? "Loading..." : "No products found"}
+              {isLoading 
+                ? "Loading products..." 
+                : error 
+                  ? "Error loading products" 
+                  : "No products found"}
             </CommandEmpty>
+            
             <CommandGroup>
-              {availableProducts && availableProducts.length > 0 ? availableProducts.map((product) => (
+              {potentialProducts.map((product: Product) => (
                 <CommandItem
                   key={product.product_uuid}
                   value={product.product_uuid}
-                  onSelect={handleSelect}
+                  onSelect={() => toggleProduct(product.product_uuid)}
                 >
                   <div className="flex items-center justify-between w-full">
-                    <div>
-                      <span>{product.name}</span>
+                    <span>
+                      {product.name}
                       <span className="ml-2 text-sm text-muted-foreground">
                         ${product.price_from?.toFixed(2) || '0.00'}
                       </span>
-                    </div>
-                    {selectedProductIds.includes(product.product_uuid) && (
-                      <Check className="h-4 w-4 text-primary" />
+                    </span>
+                    
+                    {selectedIds.includes(product.product_uuid) && (
+                      <Check className="h-4 w-4 text-primary ml-2" />
                     )}
                   </div>
                 </CommandItem>
-              )) : null}
+              ))}
             </CommandGroup>
           </Command>
         </PopoverContent>
       </Popover>
-
-      {/* Display selected products - only show if we have selections */}
-      {selectedProductIds && selectedProductIds.length > 0 && (
+      
+      {/* Selected products list */}
+      {selectedIds.length > 0 && (
         <div className="mt-3 space-y-2">
-          {selectedProductIds.map(id => {
-            // Find the corresponding product details if available
-            const product = availableProducts && availableProducts.length > 0 
-              ? availableProducts.find(p => p.product_uuid === id) 
-              : undefined;
-              
+          {selectedIds.map(id => {
+            const product = potentialProducts.find(
+              (p: Product) => p.product_uuid === id
+            );
+            
             return (
               <div 
                 key={id}
@@ -190,11 +176,12 @@ export function RelatedProducts({
                     </span>
                   )}
                 </div>
+                
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  onClick={() => handleRemove(id)}
+                  onClick={() => removeProduct(id)}
                   className="h-8 w-8 p-0"
                 >
                   <X className="h-4 w-4" />
