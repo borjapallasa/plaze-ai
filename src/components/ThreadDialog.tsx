@@ -158,39 +158,32 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
 
         {/* Scrollable Content Area */}
         <div className="flex-1 overflow-y-auto p-6 space-y-8 bg-gray-50">
-          {/* Initial Post - Consolidated container */}
+          {/* Initial Post */}
           <div className="rounded-lg bg-white p-6 shadow-sm border border-gray-200 hover:border-black/20 transition-all">
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-3 mb-4">
               <Badge variant="outline" className="bg-white/80 border-gray-200 text-gray-500 uppercase text-[10px] tracking-wider font-medium">
                 <Star className="mr-1 h-3 w-3 text-black" />
                 Thread Starter
               </Badge>
             </div>
-            
-            <div className="flex items-start gap-4">
+            <div className="flex items-center gap-3 mb-4 pb-3 border-b border-gray-100">
               <Avatar className="h-10 w-10 ring-2 ring-white">
                 <AvatarImage src={thread.user?.avatar_url || "https://github.com/shadcn.png"} />
                 <AvatarFallback>{thread.user_name?.substring(0, 2).toUpperCase()}</AvatarFallback>
               </Avatar>
-              
-              <div className="flex-1">
-                <div className="flex justify-between items-center mb-1">
-                  <div>
-                    <p className="text-sm font-medium text-black">{thread.user_name}</p>
-                    <p className="text-xs text-gray-500">Author</p>
-                  </div>
-                  <time className="text-xs text-gray-500">
-                    {new Date(thread.created_at).toLocaleString()}
-                  </time>
+              <div className="flex-1 flex justify-between items-center">
+                <div>
+                  <p className="text-sm font-medium text-black">{thread.user_name}</p>
+                  <p className="text-xs text-gray-500">Author</p>
                 </div>
-                
-                <div className="mt-4">
-                  <p className="text-base leading-relaxed text-black whitespace-pre-wrap">
-                    {thread.initial_message}
-                  </p>
-                </div>
+                <time className="text-xs text-gray-500">
+                  {new Date(thread.created_at).toLocaleString()}
+                </time>
               </div>
             </div>
+            <p className="text-base leading-relaxed text-black whitespace-pre-wrap">
+              {thread.initial_message}
+            </p>
           </div>
 
           {/* Messages Section */}
