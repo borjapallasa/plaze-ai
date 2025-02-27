@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, PlusCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MainHeader } from "@/components/MainHeader";
@@ -238,6 +238,11 @@ export default function Classroom() {
                         ) : (
                           <p className="text-sm text-muted-foreground p-2">No lessons available yet</p>
                         )}
+                        
+                        <Button variant="outline" className="w-full mt-2 bg-primary/5 border-dashed">
+                          <PlusCircle className="mr-2 h-4 w-4" />
+                          Add New Lesson
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -292,7 +297,6 @@ export default function Classroom() {
 
                   <div className="space-y-3 w-full">
                     <Button variant="outline" className="w-full">Edit Classroom Details</Button>
-                    <Button className="w-full">Add New Lesson</Button>
                   </div>
                 </CardContent>
               </Card>
@@ -350,6 +354,11 @@ export default function Classroom() {
                         ) : (
                           <p className="text-sm text-muted-foreground p-2">No lessons available yet</p>
                         )}
+                        
+                        <Button variant="outline" className="w-full mt-3 bg-primary/5 border-dashed">
+                          <PlusCircle className="mr-2 h-4 w-4" />
+                          Add New Lesson
+                        </Button>
                       </div>
                     </div>
 
@@ -410,7 +419,6 @@ export default function Classroom() {
 
                   <div className="flex gap-4">
                     <Button variant="outline">Edit Classroom Details</Button>
-                    <Button>Add New Lesson</Button>
                   </div>
                 </CardContent>
               </Card>
