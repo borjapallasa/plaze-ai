@@ -70,7 +70,7 @@ export function ProductEditor({
   const isEmpty = !value || value === "<p></p>" || value === "<br>" || value === "";
   
   return (
-    <div className="rounded-md border" dir="ltr">
+    <div className="rounded-md border">
       <div className="flex flex-wrap items-center gap-1 border-b p-2 bg-muted/20">
         <div className="flex items-center gap-1 mr-2">
           <Button 
@@ -208,17 +208,18 @@ export function ProductEditor({
           <div
             ref={editorRef}
             className={cn(
-              "px-3 py-2 focus:outline-none w-full text-left",
+              "px-3 py-2 focus:outline-none w-full",
               isEmpty ? "text-muted-foreground" : ""
             )}
             contentEditable
             onInput={saveContent}
             onBlur={saveContent}
             onPaste={handlePaste}
-            dir="ltr"
             style={{ 
               minHeight,
-              direction: "ltr"
+              direction: "ltr",
+              unicodeBidi: "normal",
+              textAlign: "left"
             }}
             dangerouslySetInnerHTML={{ __html: value || '' }}
           />
