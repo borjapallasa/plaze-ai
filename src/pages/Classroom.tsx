@@ -239,7 +239,13 @@ export default function Classroom() {
                   
                   <div className="space-y-4">
                     <h2 className="font-bold text-xl">
-                      {classroom.name} / {activeLesson ? activeLesson.name : ''}
+                      <span className="text-black">{classroom.name}</span>
+                      {activeLesson && (
+                        <>
+                          <span className="mx-2 text-gray-400">/</span>
+                          <span className="text-gray-600">{activeLesson.name}</span>
+                        </>
+                      )}
                     </h2>
                     
                     {videoEmbedUrl ? (
@@ -350,11 +356,11 @@ export default function Classroom() {
               <Card className="flex-1">
                 <CardContent className="p-6 space-y-6">
                   <h1 className="font-bold text-2xl flex flex-wrap items-center">
-                    {classroom.name}
+                    <span className="text-black">{classroom.name}</span>
                     {activeLesson && (
                       <>
-                        <span className="mx-2 text-muted-foreground">/</span>
-                        <span>{activeLesson.name}</span>
+                        <span className="mx-2 text-gray-400">/</span>
+                        <span className="text-gray-600">{activeLesson.name}</span>
                       </>
                     )}
                   </h1>
