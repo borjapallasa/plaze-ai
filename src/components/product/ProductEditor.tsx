@@ -28,17 +28,30 @@ export function ProductEditor({
     }
   }, []);
 
-  // Ensure the editor has focus before executing commands
+  // Ensure the editor has focus and selection is preserved
   const execCommand = (command: string, value: string = '') => {
     if (editorRef.current) {
-      // Focus the editor first
+      // Store the current selection
+      const selection = window.getSelection();
+      const range = selection?.getRangeAt(0);
+      
+      // Focus the editor
       editorRef.current.focus();
+      
+      // Restore the selection if it exists
+      if (selection && range) {
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
       
       // Execute the command
       document.execCommand(command, false, value);
       
-      // Save content after command execution
+      // Save content
       saveContent();
+      
+      // Maintain focus
+      editorRef.current.focus();
     }
   };
 
@@ -49,7 +62,6 @@ export function ProductEditor({
   };
 
   const handlePaste = (e: React.ClipboardEvent) => {
-    // Prevent direct paste to keep clean HTML
     e.preventDefault();
     const text = e.clipboardData.getData('text/plain');
     document.execCommand('insertText', false, text);
@@ -101,13 +113,7 @@ export function ProductEditor({
             variant="ghost" 
             size="sm" 
             className="h-8 w-8 p-0" 
-            onClick={() => {
-              if (editorRef.current) {
-                editorRef.current.focus();
-                document.execCommand('formatBlock', false, '<h1>');
-                saveContent();
-              }
-            }}
+            onClick={() => execCommand('formatBlock', '<h1>')}
             title="Heading 1"
             type="button"
           >
@@ -117,13 +123,7 @@ export function ProductEditor({
             variant="ghost" 
             size="sm" 
             className="h-8 w-8 p-0" 
-            onClick={() => {
-              if (editorRef.current) {
-                editorRef.current.focus();
-                document.execCommand('formatBlock', false, '<h2>');
-                saveContent();
-              }
-            }}
+            onClick={() => execCommand('formatBlock', '<h2>')}
             title="Heading 2"
             type="button"
           >
@@ -139,12 +139,8 @@ export function ProductEditor({
             size="sm" 
             className="h-8 w-8 p-0" 
             onClick={() => {
-              if (editorRef.current) {
-                editorRef.current.focus();
-                const url = prompt('Enter URL');
-                if (url) document.execCommand('createLink', false, url);
-                saveContent();
-              }
+              const url = prompt('Enter URL');
+              if (url) execCommand('createLink', url);
             }}
             title="Insert Link"
             type="button"
@@ -155,13 +151,7 @@ export function ProductEditor({
             variant="ghost" 
             size="sm" 
             className="h-8 w-8 p-0" 
-            onClick={() => {
-              if (editorRef.current) {
-                editorRef.current.focus();
-                document.execCommand('insertUnorderedList', false);
-                saveContent();
-              }
-            }}
+            onClick={() => execCommand('insertUnorderedList')}
             title="Bullet List"
             type="button"
           >
@@ -176,13 +166,7 @@ export function ProductEditor({
             variant="ghost" 
             size="sm" 
             className="h-8 w-8 p-0" 
-            onClick={() => {
-              if (editorRef.current) {
-                editorRef.current.focus();
-                document.execCommand('justifyLeft', false);
-                saveContent();
-              }
-            }}
+            onClick={() => execCommand('justifyLeft')}
             title="Align Left"
             type="button"
           >
@@ -192,13 +176,7 @@ export function ProductEditor({
             variant="ghost" 
             size="sm" 
             className="h-8 w-8 p-0" 
-            onClick={() => {
-              if (editorRef.current) {
-                editorRef.current.focus();
-                document.execCommand('justifyCenter', false);
-                saveContent();
-              }
-            }}
+            onClick={() => execCommand('justifyCenter')}
             title="Align Center"
             type="button"
           >
@@ -208,13 +186,7 @@ export function ProductEditor({
             variant="ghost" 
             size="sm" 
             className="h-8 w-8 p-0" 
-            onClick={() => {
-              if (editorRef.current) {
-                editorRef.current.focus();
-                document.execCommand('justifyRight', false);
-                saveContent();
-              }
-            }}
+            onClick={() => execCommand('justifyRight')}
             title="Align Right"
             type="button"
           >
