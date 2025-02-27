@@ -20,19 +20,6 @@ import { Link, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Checkbox } from "@/components/ui/checkbox";
 
 type ProductStatus = 'draft' | 'active' | 'inactive';
 
@@ -68,47 +55,6 @@ const TEAM_ROLES = [
   "QA Engineer",
 ];
 
-interface ProductData {
-  name: string;
-  description: string;
-  tech_stack: string;
-  tech_stack_price: string;
-  product_includes: string;
-  difficulty_level: string;
-  demo: string;
-  status: ProductStatus;
-  industries: string[];
-  use_case: string[];
-  platform: string[];
-  team: string[];
-  related_products: string[];
-  thumbnail?: string;
-  product_uuid: string;
-  expert_uuid?: string;
-  price_from?: number;
-  created_at: string;
-  type?: string;
-  free_or_paid?: string;
-  user_uuid?: string;
-  affiliate_program?: boolean;
-  sales_count?: number;
-  sales_amount?: number;
-  fees_amount?: number;
-  affiliation_amount?: number;
-  accept_terms?: boolean;
-  variant_count?: number;
-  changes_neeeded?: string;
-  change_reasons?: string;
-  reviewed_by?: string;
-  slug?: string;
-}
-
-interface RelatedProduct {
-  product_uuid: string;
-  name: string;
-  price_from?: number;
-}
-
 export default function EditProduct() {
   const { id } = useParams();
   const { toast } = useToast();
@@ -127,7 +73,6 @@ export default function EditProduct() {
   const [team, setTeam] = useState<string[]>([]);
   const [localVariants, setLocalVariants] = useState<any[]>([]);
   const [deletedVariantIds, setDeletedVariantIds] = useState<string[]>([]);
-  const [selectedRelatedProducts, setSelectedRelatedProducts] = useState<string[]>([]);
 
   const handleStatusChange = (value: ProductStatus) => {
     setProductStatus(value);
@@ -151,14 +96,6 @@ export default function EditProduct() {
   const handleTeamChange = (value: string) => {
     if (!value) return;
     setTeam(prev => prev.includes(value) ? prev.filter(t => t !== value) : [...prev, value]);
-  };
-
-  const handleRelatedProductToggle = (productId: string) => {
-    setSelectedRelatedProducts(prev => 
-      prev.includes(productId) 
-        ? prev.filter(p => p !== productId) 
-        : [...prev, productId]
-    );
   };
 
   const renderSelectedTags = (items: string[]) => {
@@ -196,7 +133,7 @@ export default function EditProduct() {
     );
   };
 
-  const { data: product, isLoading: isLoadingProduct } = useQuery<ProductData>({
+  const { data: product, isLoading: isLoadingProduct } = useQuery({
     queryKey: ['product', id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -206,30 +143,7 @@ export default function EditProduct() {
         .single();
       
       if (error) throw error;
-      return data as ProductData;
-    },
-    enabled: !!id
-  });
-
-  const { data: relatedProducts = [], isLoading: isLoadingRelatedProducts } = useQuery<RelatedProduct[]>({
-    queryKey: ['relatedProducts', id],
-    queryFn: async () => {
-      if (!id) return [];
-      
-      console.log('Fetching related products for edit selection, excluding:', id);
-      const { data, error } = await supabase
-        .from('products')
-        .select('product_uuid, name, price_from')
-        .neq('product_uuid', id)
-        .order('name');
-      
-      if (error) {
-        console.error('Error fetching related products:', error);
-        throw error;
-      }
-
-      console.log('Found potential related products:', data?.length || 0);
-      return data || [];
+      return data;
     },
     enabled: !!id
   });
@@ -275,17 +189,6 @@ export default function EditProduct() {
       setUseCases(Array.isArray(product.use_case) ? product.use_case.map(String) : []);
       setPlatform(Array.isArray(product.platform) ? product.platform.map(String) : []);
       setTeam(Array.isArray(product.team) ? product.team.map(String) : []);
-      
-      // Try to load related products if they exist
-      try {
-        const relatedProductIds = Array.isArray(product.related_products) 
-          ? product.related_products 
-          : [];
-        setSelectedRelatedProducts(relatedProductIds);
-      } catch (e) {
-        console.error("Error parsing related products:", e);
-        setSelectedRelatedProducts([]);
-      }
     }
   }, [product]);
 
@@ -312,8 +215,7 @@ export default function EditProduct() {
           industries: industries,
           use_case: useCases,
           platform: platform,
-          team: team,
-          related_products: selectedRelatedProducts
+          team: team
         })
         .eq('product_uuid', id);
 
@@ -650,105 +552,6 @@ export default function EditProduct() {
                     </Select>
                   </div>
                 </div>
-              </Card>
-
-              <Card className="p-3 sm:p-6">
-                <h2 className="text-lg font-medium mb-3 sm:mb-4">Related Products</h2>
-                {isLoadingRelatedProducts ? (
-                  <div className="text-sm text-muted-foreground">Loading related products...</div>
-                ) : relatedProducts.length === 0 ? (
-                  <div className="text-sm text-muted-foreground">No related products found to select from.</div>
-                ) : (
-                  <div className="space-y-4">
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          type="button"
-                          className="w-full justify-start text-left font-normal"
-                        >
-                          <Plus className="mr-2 h-4 w-4" />
-                          {selectedRelatedProducts.length > 0 
-                            ? `Selected ${selectedRelatedProducts.length} product${selectedRelatedProducts.length > 1 ? 's' : ''}`
-                            : 'Add related products'}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-[300px] p-0" align="start">
-                        <Command>
-                          <CommandInput placeholder="Search products..." />
-                          <CommandEmpty>No products found.</CommandEmpty>
-                          <CommandGroup className="max-h-64 overflow-auto">
-                            {relatedProducts.map((product) => {
-                              const isSelected = selectedRelatedProducts.includes(product.product_uuid);
-                              return (
-                                <CommandItem
-                                  key={product.product_uuid}
-                                  value={product.product_uuid}
-                                  onSelect={() => {}}
-                                  className="flex items-center cursor-pointer p-2"
-                                >
-                                  <div className="flex items-center gap-2 flex-1" onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleRelatedProductToggle(product.product_uuid);
-                                  }}>
-                                    <Checkbox 
-                                      id={`product-${product.product_uuid}`}
-                                      checked={isSelected}
-                                      className="mr-1"
-                                    />
-                                    <div className="flex-1 min-w-0">
-                                      <span className="text-sm font-medium cursor-pointer">
-                                        {product.name}
-                                      </span>
-                                      <p className="text-xs text-muted-foreground">
-                                        ${product.price_from?.toFixed(2) || '0.00'}
-                                      </p>
-                                    </div>
-                                  </div>
-                                </CommandItem>
-                              );
-                            })}
-                          </CommandGroup>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
-
-                    {selectedRelatedProducts.length > 0 && (
-                      <div className="space-y-2">
-                        {selectedRelatedProducts.map(productId => {
-                          const product = relatedProducts.find(p => p.product_uuid === productId);
-                          if (!product) return null;
-                          
-                          return (
-                            <div 
-                              key={product.product_uuid}
-                              className="flex items-center justify-between p-2 border rounded-md bg-secondary/10"
-                            >
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium truncate">{product.name}</p>
-                                <p className="text-xs text-muted-foreground">
-                                  ${product.price_from?.toFixed(2) || '0.00'}
-                                </p>
-                              </div>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                type="button"
-                                className="h-8 w-8 p-0 ml-2"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  handleRelatedProductToggle(product.product_uuid);
-                                }}
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                )}
               </Card>
             </div>
           </div>

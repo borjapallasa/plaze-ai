@@ -1092,7 +1092,6 @@ export type Database = {
           product_includes: string | null
           product_uuid: string
           public_link: string | null
-          related_products: string[] | null
           reviewed_by: string | null
           sales_amount: number | null
           sales_count: number | null
@@ -1136,7 +1135,6 @@ export type Database = {
           product_includes?: string | null
           product_uuid?: string
           public_link?: string | null
-          related_products?: string[] | null
           reviewed_by?: string | null
           sales_amount?: number | null
           sales_count?: number | null
@@ -1180,7 +1178,6 @@ export type Database = {
           product_includes?: string | null
           product_uuid?: string
           public_link?: string | null
-          related_products?: string[] | null
           reviewed_by?: string | null
           sales_amount?: number | null
           sales_count?: number | null

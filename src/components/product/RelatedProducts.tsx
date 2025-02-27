@@ -18,24 +18,16 @@ interface Product {
 
 interface RelatedProductsProps {
   className?: string;
-  currentProductId?: string; // Added to exclude current product
 }
 
-const fetchRelatedProducts = async (currentProductId?: string) => {
-  console.log('Starting to fetch related products, excluding:', currentProductId);
+const fetchRelatedProducts = async () => {
+  console.log('Starting to fetch related products');
   
   try {
-    let query = supabase
+    const { data, error } = await supabase
       .from('products')
       .select('name, price_from, thumbnail, description, tech_stack, type, product_uuid, slug')
       .limit(12);
-    
-    // If we have a current product ID, exclude it from results
-    if (currentProductId) {
-      query = query.neq('product_uuid', currentProductId);
-    }
-
-    const { data, error } = await query;
 
     if (error) {
       console.error('Error fetching products:', error);
@@ -50,13 +42,12 @@ const fetchRelatedProducts = async (currentProductId?: string) => {
   }
 };
 
-export function RelatedProducts({ className, currentProductId }: RelatedProductsProps) {
+export function RelatedProducts({ className }: RelatedProductsProps) {
   const { id } = useParams<{ id: string }>();
-  const productIdToExclude = currentProductId || id;
 
   const { data: products = [], isLoading, error } = useQuery({
-    queryKey: ['relatedProducts', productIdToExclude],
-    queryFn: () => fetchRelatedProducts(productIdToExclude),
+    queryKey: ['relatedProducts'],
+    queryFn: fetchRelatedProducts,
     enabled: true
   });
 
