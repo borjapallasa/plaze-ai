@@ -109,21 +109,10 @@ export function RelatedProducts({
       
       return data || [];
     },
-    enabled: missingProductIds.length > 0,
-    // Using onSuccess in the meta options as per latest React Query
-    meta: {
-      onSuccess: (data: Product[]) => {
-        // Update the cache with the fetched missing products
-        if (data && data.length > 0) {
-          queryClient.setQueryData(['expertProducts', expertUuid], 
-            (oldData: Product[] = []) => [...oldData, ...data]
-          );
-        }
-      }
-    }
+    enabled: missingProductIds.length > 0
   });
 
-  // Update cache manually since we can't use onSuccess directly
+  // Update cache manually when missing products are fetched
   useEffect(() => {
     if (missingProducts.length > 0) {
       queryClient.setQueryData(['expertProducts', expertUuid], 
