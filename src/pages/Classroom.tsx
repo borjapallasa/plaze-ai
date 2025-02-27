@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -121,7 +120,6 @@ export default function Classroom() {
       return data;
     },
     onSuccess: () => {
-      // Reset form and close dialog
       setNewLessonData({
         name: '',
         description: '',
@@ -129,7 +127,6 @@ export default function Classroom() {
       });
       setIsAddLessonOpen(false);
       
-      // Refetch lessons
       queryClient.invalidateQueries({ queryKey: ['classroom-lessons', id] });
       toast({
         title: "Success",
@@ -164,12 +161,10 @@ export default function Classroom() {
     onSuccess: (data) => {
       setIsEditLessonOpen(false);
       
-      // Update the active lesson if it's the one being edited
       if (activeLesson && activeLesson.lesson_uuid === data[0]?.lesson_uuid) {
         setActiveLesson(data[0]);
       }
       
-      // Refetch lessons
       queryClient.invalidateQueries({ queryKey: ['classroom-lessons', id] });
       toast({
         title: "Success",
@@ -201,7 +196,6 @@ export default function Classroom() {
     onSuccess: () => {
       setIsDeleteLessonOpen(false);
       
-      // If the active lesson is the one being deleted, set active lesson to null
       if (activeLesson && lessons && lessons.length > 1) {
         const newActiveLesson = lessons.find(
           lesson => lesson.lesson_uuid !== activeLesson.lesson_uuid
@@ -211,7 +205,6 @@ export default function Classroom() {
         setActiveLesson(null);
       }
       
-      // Refetch lessons
       queryClient.invalidateQueries({ queryKey: ['classroom-lessons', id] });
       toast({
         title: "Success",
@@ -366,7 +359,6 @@ export default function Classroom() {
     }
   }, [videoUrl, videoEmbedUrl]);
 
-  // Helper function to capitalize first letter
   const capitalizeFirstLetter = (string: string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
@@ -723,6 +715,7 @@ export default function Classroom() {
                     onChange={(value) => setNewLessonData({...newLessonData, description: value})}
                     placeholder="Enter lesson description"
                     minHeight="150px"
+                    maxHeight="250px"
                   />
                 </div>
                 <div className="space-y-2">
@@ -772,6 +765,7 @@ export default function Classroom() {
                     onChange={(value) => setEditLessonData({...editLessonData, description: value})}
                     placeholder="Enter lesson description"
                     minHeight="150px"
+                    maxHeight="250px"
                   />
                 </div>
                 <div className="space-y-2">

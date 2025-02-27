@@ -3,15 +3,23 @@ import React, { useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Bold, Italic, Underline, Link as LinkIcon, List, Image, Video, MoreHorizontal, Code, Heading1, Heading2, AlignLeft, AlignCenter, AlignRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ProductEditorProps {
   value?: string;
   onChange?: (value: string) => void;
   placeholder?: string;
   minHeight?: string;
+  maxHeight?: string;
 }
 
-export function ProductEditor({ value, onChange, placeholder = "Write your product description...", minHeight = "200px" }: ProductEditorProps) {
+export function ProductEditor({ 
+  value, 
+  onChange, 
+  placeholder = "Write your product description...", 
+  minHeight = "150px",
+  maxHeight = "300px" 
+}: ProductEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -175,25 +183,32 @@ export function ProductEditor({ value, onChange, placeholder = "Write your produ
           <MoreHorizontal className="h-4 w-4" />
         </Button>
       </div>
-      <div className="relative">
-        <div
-          ref={editorRef}
-          className={cn(
-            "min-h-[200px] px-3 py-2 focus:outline-none",
-            isEmpty ? "text-muted-foreground" : ""
+      <ScrollArea className="relative" style={{ maxHeight }}>
+        <div className="relative">
+          <div
+            ref={editorRef}
+            className={cn(
+              "px-3 py-2 focus:outline-none w-full",
+              isEmpty ? "text-muted-foreground" : ""
+            )}
+            contentEditable
+            onInput={saveContent}
+            onBlur={saveContent}
+            onPaste={handlePaste}
+            style={{ minHeight }}
+            dangerouslySetInnerHTML={{ __html: value || '' }}
+          />
+          {isEmpty && (
+            <div className="absolute inset-0 pointer-events-none px-3 py-2 text-muted-foreground">
+              {placeholder}
+            </div>
           )}
-          contentEditable
-          onInput={saveContent}
-          onBlur={saveContent}
-          onPaste={handlePaste}
-          style={{ minHeight }}
-          dangerouslySetInnerHTML={{ __html: value || '' }}
-        />
-        {isEmpty && (
-          <div className="absolute inset-0 pointer-events-none px-3 py-2 text-muted-foreground">
-            {placeholder}
-          </div>
-        )}
+        </div>
+      </ScrollArea>
+      <div className="flex items-center justify-end p-1 border-t bg-muted/10">
+        <div className="text-xs text-muted-foreground">
+          {isEmpty ? "0 characters" : `${(value || "").length} characters`}
+        </div>
       </div>
     </div>
   );
