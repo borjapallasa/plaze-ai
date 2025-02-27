@@ -4,7 +4,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { MessageSquare, Heart, Send, ThumbsUp, X } from "lucide-react";
+import { MessageSquare, Heart, Send, ThumbsUp, X, Star } from "lucide-react";
 import { useRef, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -69,7 +69,7 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
         {/* Header Area */}
         <div className="flex items-start justify-between p-6 border-b bg-white">
           <div className="flex items-center gap-4">
-            <Avatar className="h-12 w-12 ring-2 ring-background shadow-sm">
+            <Avatar className="h-12 w-12 ring-2 ring-[#9b87f5]/20 shadow-sm">
               <AvatarImage src={thread.user?.avatar_url || "https://github.com/shadcn.png"} />
               <AvatarFallback>{thread.user_name?.substring(0, 2).toUpperCase()}</AvatarFallback>
             </Avatar>
@@ -98,33 +98,47 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
         </div>
 
         {/* Scrollable Content Area */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#F9FAFB]">
+        <div className="flex-1 overflow-y-auto p-6 space-y-8 bg-[#F9FAFB]">
           {/* Initial Post */}
-          <div className="rounded-lg bg-white p-6 shadow-sm border border-[#E5E7EB] hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-3 mb-4 pb-3 border-b border-[#E5E7EB]">
-              <Avatar className="h-8 w-8">
+          <div className="rounded-lg bg-[#F3F0FA] p-6 shadow-sm border border-[#9b87f5]/20 hover:border-[#9b87f5]/30 transition-all">
+            <div className="flex items-center gap-3 mb-4">
+              <Badge variant="outline" className="bg-white/80 border-[#9b87f5]/30 text-[#6B7280] uppercase text-[10px] tracking-wider font-medium">
+                <Star className="mr-1 h-3 w-3 text-[#9b87f5]" />
+                Thread Starter
+              </Badge>
+            </div>
+            <div className="flex items-center gap-3 mb-4 pb-3 border-b border-[#9b87f5]/10">
+              <Avatar className="h-10 w-10 ring-2 ring-white">
                 <AvatarImage src={thread.user?.avatar_url || "https://github.com/shadcn.png"} />
                 <AvatarFallback>{thread.user_name?.substring(0, 2).toUpperCase()}</AvatarFallback>
               </Avatar>
               <div className="flex-1 flex justify-between items-center">
-                <p className="text-sm font-medium text-[#1F2937]">{thread.user_name}</p>
+                <div>
+                  <p className="text-sm font-medium text-[#1F2937]">{thread.user_name}</p>
+                  <p className="text-xs text-[#6B7280]">Author</p>
+                </div>
                 <time className="text-xs text-[#6B7280]">
                   {new Date(thread.created_at).toLocaleString()}
                 </time>
               </div>
             </div>
-            <p className="text-sm leading-relaxed text-[#1F2937] whitespace-pre-wrap">
+            <p className="text-base leading-relaxed text-[#1F2937] whitespace-pre-wrap">
               {thread.initial_message}
             </p>
           </div>
 
-          {/* Messages Section */}
+          {/* Replies Section */}
           <div className="space-y-4">
+            <div className="flex items-center gap-2 text-xs text-[#6B7280] uppercase tracking-wider font-medium">
+              <MessageSquare className="h-3 w-3" />
+              <span>{messages?.length || 0} Replies</span>
+            </div>
+            
             {isMessagesLoading ? (
               <div className="space-y-4">
                 {[...Array(3)].map((_, i) => (
                   <div key={i} className="animate-pulse flex gap-4">
-                    <div className="w-10 h-10 bg-[#E5E7EB] rounded-full" />
+                    <div className="w-8 h-8 bg-[#E5E7EB] rounded-full" />
                     <div className="flex-1 space-y-2">
                       <div className="h-4 w-1/4 bg-[#E5E7EB] rounded" />
                       <div className="h-4 w-3/4 bg-[#E5E7EB] rounded" />
@@ -136,7 +150,7 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
               messages.map((message) => (
                 <Card 
                   key={message.thread_message_uuid} 
-                  className="p-4 bg-white border border-[#E5E7EB] transition-all hover:bg-[#F3F4F6] hover:border-[#9b87f5]/20"
+                  className="p-4 bg-white border border-[#E5E7EB] transition-all hover:bg-[#F3F4F6] hover:border-[#9b87f5]/10"
                 >
                   <div className="flex gap-4">
                     <Avatar className="h-8 w-8">
@@ -162,7 +176,7 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
             ) : (
               <div className="text-center py-8">
                 <MessageSquare className="h-8 w-8 mx-auto mb-3 text-[#9b87f5]/30" />
-                <p className="text-sm text-[#6B7280]">No messages yet</p>
+                <p className="text-sm text-[#6B7280]">No replies yet</p>
               </div>
             )}
           </div>
@@ -180,7 +194,7 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
                 <textarea
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Write a comment..."
+                  placeholder="Write a reply..."
                   className="w-full min-h-[40px] max-h-[160px] rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-2 text-sm resize-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#9b87f5] placeholder:text-[#6B7280]"
                   rows={1}
                   onInput={handleTextareaInput}
