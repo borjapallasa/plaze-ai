@@ -216,8 +216,7 @@ export function ProductEditor({
             onBlur={saveContent}
             onPaste={handlePaste}
             style={{ 
-              minHeight,
-              direction: "rtl" 
+              minHeight
             }}
             dangerouslySetInnerHTML={{ __html: value || '' }}
           />
