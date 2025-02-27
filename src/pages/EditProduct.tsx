@@ -681,10 +681,8 @@ export default function EditProduct() {
                             {relatedProducts.map((product) => (
                               <CommandItem
                                 key={product.product_uuid}
-                                onSelect={(e) => {
-                                  e.preventDefault();
+                                onSelect={(currentValue) => {
                                   handleRelatedProductToggle(product.product_uuid);
-                                  return false;
                                 }}
                                 className="flex items-center cursor-pointer p-2"
                               >
