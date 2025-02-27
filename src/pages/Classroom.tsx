@@ -24,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/lib/auth";
 
 export default function Classroom() {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -38,6 +39,7 @@ export default function Classroom() {
   const isMobile = useIsMobile();
   const { id } = useParams();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
   
   const { data: classroom, isLoading: isClassroomLoading } = useQuery({
     queryKey: ['classroom', id],
@@ -146,10 +148,19 @@ export default function Classroom() {
       return;
     }
 
+    if (!user?.id) {
+      toast({
+        title: "Error",
+        description: "You need to be logged in to add a lesson",
+        variant: "destructive"
+      });
+      return;
+    }
+
     const newLesson = {
       ...newLessonData,
       classroom_uuid: id,
-      user_uuid: classroom?.user_uuid || null
+      user_uuid: user.id
     };
 
     addLessonMutation.mutate(newLesson);
