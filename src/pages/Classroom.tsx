@@ -38,6 +38,25 @@ export default function Classroom() {
     enabled: !!id
   });
 
+  const { data: community, isLoading: isCommunityLoading } = useQuery({
+    queryKey: ['classroom-community', classroom?.community_uuid],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('communities')
+        .select('name')
+        .eq('community_uuid', classroom?.community_uuid)
+        .single();
+
+      if (error) {
+        console.error("Error fetching community:", error);
+        return null;
+      }
+
+      return data;
+    },
+    enabled: !!classroom?.community_uuid
+  });
+
   const { data: lessons, isLoading: isLessonsLoading } = useQuery({
     queryKey: ['classroom-lessons', id],
     queryFn: async () => {
@@ -156,7 +175,9 @@ export default function Classroom() {
     </div>
   );
 
-  if (isClassroomLoading) {
+  const isLoading = isClassroomLoading || (classroom?.community_uuid && isCommunityLoading);
+
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
         <div className="pt-16">
@@ -197,6 +218,23 @@ export default function Classroom() {
     );
   }
 
+  // Title component with community name / classroom name
+  const TitleWithCommunity = () => (
+    <h1 className="font-bold">
+      {community && (
+        <span className="text-[#1A1F2C] mr-2">
+          {community.name}
+        </span>
+      )}
+      {community && classroom && (
+        <span className="text-muted-foreground mx-1">/</span>
+      )}
+      <span className="text-primary">
+        {classroom.name}
+      </span>
+    </h1>
+  );
+
   return (
     <div className="min-h-screen bg-background">
       <div className="pt-16">
@@ -206,7 +244,7 @@ export default function Classroom() {
             <div className="space-y-6">
               <Card className="w-full">
                 <CardContent className="p-6 space-y-6">
-                  <h1 className="text-xl font-bold leading-tight">{classroom.name}</h1>
+                  <TitleWithCommunity />
                   
                   <div className="space-y-4">
                     {videoEmbedUrl ? (
@@ -302,7 +340,7 @@ export default function Classroom() {
 
               <Card className="flex-1">
                 <CardContent className="p-6 space-y-6">
-                  <h1 className="text-4xl font-bold">{classroom.name}</h1>
+                  <TitleWithCommunity />
                   
                   <div className="space-y-4">
                     {videoEmbedUrl ? (
