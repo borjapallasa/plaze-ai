@@ -125,6 +125,11 @@ export default function Classroom() {
     }
   }, [videoUrl, videoEmbedUrl]);
 
+  // Helper function to capitalize first letter
+  const capitalizeFirstLetter = (string: string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
   const ProductsSection = () => (
     <div className="pt-4 border-t">
       <h3 className="font-semibold mb-4">Products in this class</h3>
@@ -196,7 +201,7 @@ export default function Classroom() {
                         onClick={() => setIsExpanded(!isExpanded)}
                         className="w-full flex items-center justify-between text-left text-xl font-semibold py-2"
                       >
-                        <span>{classroom.name}</span>
+                        <span>{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
                         <ChevronDown 
                           className={cn(
                             "h-5 w-5 text-muted-foreground transition-transform duration-200",
@@ -227,7 +232,7 @@ export default function Classroom() {
                               )}
                               onClick={() => setActiveLesson(lesson)}
                             >
-                              <span className="text-sm">{lesson.name}</span>
+                              <span className="text-sm">{lesson.name ? capitalizeFirstLetter(lesson.name) : ''}</span>
                             </div>
                           ))
                         ) : (
@@ -238,12 +243,12 @@ export default function Classroom() {
                   </div>
                   
                   <div className="space-y-4">
-                    <h2 className="font-bold text-xl">
-                      <span className="text-black">{classroom.name}</span>
+                    <h2 className="text-xl">
+                      <span className="font-bold text-black">{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
                       {activeLesson && (
                         <>
                           <span className="mx-2 text-gray-400">/</span>
-                          <span className="text-gray-600">{activeLesson.name}</span>
+                          <span className="text-gray-500">{activeLesson.name ? capitalizeFirstLetter(activeLesson.name) : ''}</span>
                         </>
                       )}
                     </h2>
@@ -252,7 +257,7 @@ export default function Classroom() {
                       <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
                         <iframe
                           src={videoEmbedUrl}
-                          title={activeLesson?.name || classroom.name}
+                          title={activeLesson?.name || classroom?.name}
                           className="w-full h-full absolute inset-0"
                           frameBorder="0"
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -262,7 +267,7 @@ export default function Classroom() {
                     ) : (
                       <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
                         <img 
-                          src={activeLesson?.thumbnail_url || classroom.thumbnail || "/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"}
+                          src={activeLesson?.thumbnail_url || classroom?.thumbnail || "/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"}
                           alt="Course thumbnail"
                           className="w-full h-full object-cover"
                         />
@@ -276,10 +281,10 @@ export default function Classroom() {
                   </div>
 
                   <div className="space-y-6">
-                    {(activeLesson?.description || classroom.description) && (
+                    {(activeLesson?.description || classroom?.description) && (
                       <div className="prose prose-sm max-w-none" 
                         dangerouslySetInnerHTML={{ 
-                          __html: activeLesson?.description || classroom.description 
+                          __html: activeLesson?.description || classroom?.description 
                         }} 
                       />
                     )}
@@ -308,7 +313,7 @@ export default function Classroom() {
                         onClick={() => setIsExpanded(!isExpanded)}
                         className="w-full flex items-center justify-between text-left text-lg font-semibold mb-2"
                       >
-                        <span>{classroom.name}</span>
+                        <span>{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
                         <ChevronDown 
                           className={cn(
                             "h-5 w-5 text-muted-foreground transition-transform duration-200",
@@ -339,7 +344,7 @@ export default function Classroom() {
                               )}
                               onClick={() => setActiveLesson(lesson)}
                             >
-                              <span className="text-sm">{lesson.name}</span>
+                              <span className="text-sm">{lesson.name ? capitalizeFirstLetter(lesson.name) : ''}</span>
                             </div>
                           ))
                         ) : (
@@ -355,12 +360,12 @@ export default function Classroom() {
 
               <Card className="flex-1">
                 <CardContent className="p-6 space-y-6">
-                  <h1 className="font-bold text-2xl flex flex-wrap items-center">
-                    <span className="text-black">{classroom.name}</span>
+                  <h1 className="text-2xl flex flex-wrap items-center">
+                    <span className="font-bold text-black">{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
                     {activeLesson && (
                       <>
                         <span className="mx-2 text-gray-400">/</span>
-                        <span className="text-gray-600">{activeLesson.name}</span>
+                        <span className="text-gray-500">{activeLesson.name ? capitalizeFirstLetter(activeLesson.name) : ''}</span>
                       </>
                     )}
                   </h1>
@@ -370,7 +375,7 @@ export default function Classroom() {
                       <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
                         <iframe
                           src={videoEmbedUrl}
-                          title={activeLesson?.name || classroom.name}
+                          title={activeLesson?.name || classroom?.name}
                           className="w-full h-full absolute inset-0"
                           frameBorder="0"
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -380,7 +385,7 @@ export default function Classroom() {
                     ) : (
                       <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
                         <img 
-                          src={activeLesson?.thumbnail_url || classroom.thumbnail || "/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"}
+                          src={activeLesson?.thumbnail_url || classroom?.thumbnail || "/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"}
                           alt="Course thumbnail"
                           className="w-full h-full object-cover"
                         />
@@ -394,10 +399,10 @@ export default function Classroom() {
                   </div>
 
                   <div className="space-y-6">
-                    {(activeLesson?.description || classroom.description) && (
+                    {(activeLesson?.description || classroom?.description) && (
                       <div className="prose prose-sm max-w-none" 
                         dangerouslySetInnerHTML={{ 
-                          __html: activeLesson?.description || classroom.description 
+                          __html: activeLesson?.description || classroom?.description 
                         }} 
                       />
                     )}
