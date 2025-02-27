@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -6,11 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ProductLayout } from "@/components/product/ProductLayout";
 import { ProductSkeleton } from "@/components/product/ProductSkeleton";
 import { ProductNotFound } from "@/components/product/ProductNotFound";
-import { MoreFromSeller } from "@/components/product/MoreFromSeller";
-import { RelatedProducts } from "@/components/product/RelatedProducts";
 import { StickyATC } from "@/components/product/StickyATC";
-import { ProductInfo } from "@/components/product/ProductInfo";
-import { Card } from "@/components/ui/card";
 
 const getPlaceholderImage = () => "https://images.unsplash.com/photo-1649972904349-6e44c42644a7";
 
@@ -19,25 +16,49 @@ export default function Product() {
   const [showStickyATC, setShowStickyATC] = useState(false);
   const variantsRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  const { id, slug } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
+
+  console.log("Product page - id from params:", id);
 
   const { data: product, isLoading: isLoadingProduct, error: productError } = useQuery({
     queryKey: ['product', id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      console.log("Fetching product with ID:", id);
+
+      if (!id) {
+        console.error("No product ID provided");
+        return null;
+      }
+
+      // Try to fetch by product_uuid first
+      let { data, error } = await supabase
         .from('products')
         .select('*')
         .eq('product_uuid', id)
         .maybeSingle();
       
-      if (error) throw error;
-      
-      if (!data) return null;
-
-      if (data && (!slug || slug !== data.slug)) {
-        navigate(`/product/${data.slug}/${data.product_uuid}`, { replace: true });
+      // If no data found and no error, try with slug
+      if (!data && !error) {
+        console.log("No product found by UUID, trying with slug...");
+        ({ data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('slug', id)
+          .maybeSingle());
       }
+      
+      if (error) {
+        console.error("Error fetching product:", error);
+        throw error;
+      }
+      
+      if (!data) {
+        console.log("No product found");
+        return null;
+      }
+      
+      console.log("Product data found:", data);
       
       return {
         ...data,
@@ -47,16 +68,27 @@ export default function Product() {
     enabled: !!id
   });
 
-  const { data: variants = [] } = useQuery({
-    queryKey: ['variants', id],
+  const { data: variants = [], isLoading: isLoadingVariants } = useQuery({
+    queryKey: ['variants', product?.product_uuid],
     queryFn: async () => {
+      console.log("Fetching variants for product:", product?.product_uuid);
+
+      if (!product?.product_uuid) {
+        return [];
+      }
+
       const { data, error } = await supabase
         .from('variants')
         .select('*')
-        .eq('product_uuid', id)
+        .eq('product_uuid', product.product_uuid)
         .order('price', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching variants:", error);
+        throw error;
+      }
+
+      console.log("Variants found:", data.length);
 
       return data.map((variant, index) => ({
         id: variant.variant_uuid,
@@ -64,26 +96,37 @@ export default function Product() {
         price: variant.price || 99.99,
         comparePrice: variant.compare_price || 149.99,
         label: "Package",
-        highlight: index === 1,
+        highlight: variant.highlighted || index === 1,
         features: Array.isArray(variant.tags) 
           ? variant.tags.map(tag => String(tag))
           : ["Core Features", "Basic Support"]
       }));
     },
-    enabled: !!id
+    enabled: !!product?.product_uuid
   });
 
   const { data: reviews = [] } = useQuery({
-    queryKey: ['reviews', id],
+    queryKey: ['reviews', product?.product_uuid],
     queryFn: async () => {
+      console.log("Fetching reviews for product:", product?.product_uuid);
+
+      if (!product?.product_uuid) {
+        return [];
+      }
+
       const { data, error } = await supabase
         .from('reviews')
         .select('*')
-        .eq('product_uuid', id)
+        .eq('product_uuid', product.product_uuid)
         .eq('status', 'published')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching reviews:", error);
+        throw error;
+      }
+
+      console.log("Reviews found:", data.length);
 
       return data.map(review => ({
         id: review.review_uuid,
@@ -99,34 +142,7 @@ export default function Product() {
         type: review.transaction_type?.toLowerCase() || 'product'
       }));
     },
-    enabled: !!id
-  });
-
-  const { data: relatedProducts = [] } = useQuery({
-    queryKey: ['relatedProducts', product?.use_case],
-    queryFn: async () => {
-      if (!product?.use_case) return [];
-      
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .eq('use_case', product.use_case)
-        .neq('product_uuid', id)
-        .limit(12);
-
-      if (error) throw error;
-
-      return data.map(product => ({
-        title: product.name,
-        price: product.tech_stack_price || "$99.99",
-        image: getPlaceholderImage(),
-        seller: "Design Master",
-        description: product.description || "No description provided",
-        tags: product.tech_stack ? product.tech_stack.split(',').slice(0, 2) : [],
-        category: product.type || "design"
-      }));
-    },
-    enabled: !!product?.use_case
+    enabled: !!product?.product_uuid
   });
 
   useEffect(() => {
@@ -156,7 +172,7 @@ export default function Product() {
     });
   };
 
-  if (isLoadingProduct) {
+  if (isLoadingProduct || isLoadingVariants) {
     return <ProductSkeleton />;
   }
 
