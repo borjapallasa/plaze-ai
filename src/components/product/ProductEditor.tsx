@@ -183,7 +183,7 @@ export function ProductEditor({
           <MoreHorizontal className="h-4 w-4" />
         </Button>
       </div>
-      <ScrollArea className="relative" style={{ maxHeight }}>
+      <ScrollArea className="w-full" style={{ maxHeight }}>
         <div className="relative">
           <div
             ref={editorRef}
