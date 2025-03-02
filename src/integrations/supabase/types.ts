@@ -732,6 +732,7 @@ export type Database = {
           completed_projects: number | null
           created_at: string
           description: string | null
+          email: string | null
           expert_uuid: string
           id: number
           info: string | null
@@ -748,6 +749,7 @@ export type Database = {
           completed_projects?: number | null
           created_at?: string
           description?: string | null
+          email?: string | null
           expert_uuid?: string
           id?: number
           info?: string | null
@@ -764,6 +766,7 @@ export type Database = {
           completed_projects?: number | null
           created_at?: string
           description?: string | null
+          email?: string | null
           expert_uuid?: string
           id?: number
           info?: string | null

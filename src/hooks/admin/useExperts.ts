@@ -41,7 +41,8 @@ export function useExperts() {
         status: expert.status || "active", // Default status
         activeTemplates: Math.floor(Math.random() * 5), // Placeholder for now
         totalTemplates: Math.floor(Math.random() * 10) + 5, // Placeholder for now
-        email: `${expert.slug || 'user'}@example.com` // Placeholder email
+        // Use the actual email from the expert data instead of generating a placeholder
+        email: expert.email || `${expert.slug || 'user'}@example.com` // Fallback if email is not present
       })) as Expert[];
       
       console.log('Transformed experts:', transformedData);
