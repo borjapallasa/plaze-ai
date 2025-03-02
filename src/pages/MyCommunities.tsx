@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
@@ -43,16 +42,14 @@ export default function MyCommunities() {
           return;
         }
         
-        // Ensure communities_joined is an array
-        let communitiesJoined = [];
-        if (userData?.communities_joined) {
-          communitiesJoined = Array.isArray(userData.communities_joined) 
-            ? userData.communities_joined 
-            : [];
-        }
+        // Ensure communities_joined is always a string array
+        const communitiesJoined: string[] = userData?.communities_joined && 
+          Array.isArray(userData.communities_joined) ? 
+          userData.communities_joined.map(id => String(id)) : 
+          [];
         
         // If user has no communities, show empty state
-        if (!communitiesJoined.length) {
+        if (communitiesJoined.length === 0) {
           setCommunities([]);
           setLoading(false);
           return;

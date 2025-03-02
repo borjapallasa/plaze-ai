@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
@@ -63,12 +62,11 @@ const Communities = () => {
             .single();
             
           if (!userError && userData) {
-            // Ensure communities_joined is an array
-            const communitiesJoined = userData.communities_joined 
-              ? (Array.isArray(userData.communities_joined) 
-                  ? userData.communities_joined 
-                  : [])
-              : [];
+            // Ensure communities_joined is always a string array
+            const communitiesJoined: string[] = userData?.communities_joined && 
+              Array.isArray(userData.communities_joined) ? 
+              userData.communities_joined.map(id => String(id)) : 
+              [];
             
             setUserCommunities(communitiesJoined);
           }
@@ -114,12 +112,11 @@ const Communities = () => {
         return;
       }
       
-      // Ensure communities_joined is an array before updating
-      const currentCommunities = userData.communities_joined 
-        ? (Array.isArray(userData.communities_joined) 
-            ? userData.communities_joined 
-            : [])
-        : [];
+      // Ensure communities_joined is always a string array
+      const currentCommunities: string[] = userData?.communities_joined && 
+        Array.isArray(userData.communities_joined) ?
+        userData.communities_joined.map(id => String(id)) :
+        [];
       
       // Update the communities_joined array
       const newCommunitiesJoined = [...currentCommunities, communityUuid];

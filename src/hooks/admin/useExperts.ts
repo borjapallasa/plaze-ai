@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -38,10 +37,9 @@ export function useExperts() {
               ? expert.areas
               : []
         ) : [],
-        status: expert.status || "active", // Default status if it doesn't exist in the database
+        status: "active", // Default status since it's missing in the original data
         activeTemplates: Math.floor(Math.random() * 5), // Placeholder for now
         totalTemplates: Math.floor(Math.random() * 10) + 5, // Placeholder for now
-        // Use the actual email from the expert data
         email: expert.email || `${expert.slug || 'user'}@example.com` // Fallback if email is not present
       })) as Expert[];
       
