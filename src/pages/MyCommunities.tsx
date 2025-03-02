@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
@@ -10,6 +9,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { Json } from "@/integrations/supabase/types";
 
 export default function MyCommunities() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -51,9 +51,11 @@ export default function MyCommunities() {
             // Standard UUID regex for validation
             const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
             
-            // Filter out any non-UUID values
-            communitiesJoined = userData.communities_joined
-              .filter(id => id && typeof id === 'string')
+            // Filter out any non-UUID values, with proper type checking
+            communitiesJoined = (userData.communities_joined as any[])
+              .filter(id => id !== null && id !== undefined)
+              .map(id => String(id))
+              .filter(id => typeof id === 'string')
               .filter(id => uuidRegex.test(id.trim()));
           }
           

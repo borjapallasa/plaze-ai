@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { Json } from "@/integrations/supabase/types";
 
 const categories = [
   { id: "trending", label: "Trending", icon: TrendingUp, dark: true },
@@ -71,8 +72,10 @@ const Communities = () => {
                 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
                 
                 // Filter out any non-UUID values and ensure they are strings
-                communitiesJoined = userData.communities_joined
-                  .filter(id => id && typeof id === 'string')
+                communitiesJoined = (userData.communities_joined as any[])
+                  .filter(id => id !== null && id !== undefined)
+                  .map(id => String(id))
+                  .filter(id => typeof id === 'string')
                   .filter(id => uuidRegex.test(id.trim()));
               }
               
@@ -137,8 +140,10 @@ const Communities = () => {
       if (userData?.communities_joined) {
         if (Array.isArray(userData.communities_joined)) {
           // Filter out any invalid UUIDs
-          currentCommunities = userData.communities_joined
-            .filter(id => id && typeof id === 'string')
+          currentCommunities = (userData.communities_joined as any[])
+            .filter(id => id !== null && id !== undefined)
+            .map(id => String(id))
+            .filter(id => typeof id === 'string')
             .filter(id => uuidRegex.test(id.trim()));
         }
       }
