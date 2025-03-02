@@ -474,6 +474,7 @@ export type Database = {
       community_subscriptions: {
         Row: {
           cancelled_at: string | null
+          commnity_name: string | null
           community_price_uuid: string | null
           community_subscription_uuid: string
           community_uuid: string | null
@@ -485,6 +486,9 @@ export type Database = {
             | null
           stripe_id: string | null
           total_amount: number | null
+          type:
+            | Database["public"]["Enums"]["commnunity_subscription_type"]
+            | null
           user_uuid: string | null
           utm_campaign: string | null
           utm_content: string | null
@@ -495,6 +499,7 @@ export type Database = {
         }
         Insert: {
           cancelled_at?: string | null
+          commnity_name?: string | null
           community_price_uuid?: string | null
           community_subscription_uuid?: string
           community_uuid?: string | null
@@ -506,6 +511,9 @@ export type Database = {
             | null
           stripe_id?: string | null
           total_amount?: number | null
+          type?:
+            | Database["public"]["Enums"]["commnunity_subscription_type"]
+            | null
           user_uuid?: string | null
           utm_campaign?: string | null
           utm_content?: string | null
@@ -516,6 +524,7 @@ export type Database = {
         }
         Update: {
           cancelled_at?: string | null
+          commnity_name?: string | null
           community_price_uuid?: string | null
           community_subscription_uuid?: string
           community_uuid?: string | null
@@ -527,6 +536,9 @@ export type Database = {
             | null
           stripe_id?: string | null
           total_amount?: number | null
+          type?:
+            | Database["public"]["Enums"]["commnunity_subscription_type"]
+            | null
           user_uuid?: string | null
           utm_campaign?: string | null
           utm_content?: string | null
@@ -1857,6 +1869,7 @@ export type Database = {
           affiliate_since: string | null
           available_amount: number | null
           average_review: number | null
+          communities_joined: Json | null
           created_at: string
           email: string
           fees_amount: number | null
@@ -1902,6 +1915,7 @@ export type Database = {
           affiliate_since?: string | null
           available_amount?: number | null
           average_review?: number | null
+          communities_joined?: Json | null
           created_at?: string
           email: string
           fees_amount?: number | null
@@ -1947,6 +1961,7 @@ export type Database = {
           affiliate_since?: string | null
           available_amount?: number | null
           average_review?: number | null
+          communities_joined?: Json | null
           created_at?: string
           email?: string
           fees_amount?: number | null
@@ -2056,6 +2071,7 @@ export type Database = {
         | "withdrawn"
         | "open conversation"
       classroom_status: "visible" | "not visible"
+      commnunity_subscription_type: "free" | "paid"
       community_billing_period: "monthly" | "yearly"
       community_price_status: "active" | "inactive"
       community_subscription_status: "active" | "inactive"

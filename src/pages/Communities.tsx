@@ -1,16 +1,19 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { 
   PenLine, Coins, Flame, Heart, Music, 
   Brain, MonitorSmartphone, Activity, Target, Users,
-  ArrowRight, TrendingUp, Sparkle, Trophy, ThumbsUp, Star, Tags
+  ArrowRight, TrendingUp, Sparkle, Trophy, ThumbsUp, Star, Tags, Loader2
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const categories = [
   { id: "trending", label: "Trending", icon: TrendingUp, dark: true },
@@ -21,69 +24,131 @@ const categories = [
   { id: "affiliate-offers", label: "Affiliate Offers", icon: Tags, dark: true }
 ];
 
-const communities = [
-  {
-    id: 1,
-    name: "Brotherhood Of Scent",
-    description: "#1 Fragrance Community 🏆 Our mission is to help YOU leverage the power of scent to become the man you know yourself to be.",
-    members: "5.3k",
-    pricing: "Free",
-    image: "https://images.unsplash.com/photo-1517022812141-23620dba5c23",
-    category: "hobbies"
-  },
-  {
-    id: 2,
-    name: "Calligraphy Skool",
-    description: "Modern calligraphy made easy! ✍️",
-    members: "1.1k",
-    pricing: "$9/month",
-    image: "https://images.unsplash.com/photo-1582562124811-c09040d0a901",
-    category: "hobbies"
-  },
-  {
-    id: 3,
-    name: "The Lady Change",
-    description: "THE #1 community for menopausal (peri & post) women to come together, lose weight, get healthier and regain their confidence.",
-    members: "1.3k",
-    pricing: "$49/month",
-    image: "https://images.unsplash.com/photo-1498936178812-4b2e558d2937",
-    category: "health"
-  },
-  {
-    id: 4,
-    name: "School of Mentors",
-    description: "🌎 💰 Join The #1 Community In The World For Entrepreneurs And Get Mentored Every Week By The Millionaires And Billionaires Who've Done It.",
-    members: "3.6k",
-    pricing: "$39/month",
-    image: "https://images.unsplash.com/photo-1501286353178-1ec881214838",
-    category: "money"
-  },
-  {
-    id: 5,
-    name: "That Pickleball School",
-    description: "Join a community of obsessed pickleball players, learn the strategies pros rely on & get personalized help so you play confidently.",
-    members: "690",
-    pricing: "$39/month",
-    image: "https://images.unsplash.com/photo-1469041797191-50ace28483c3",
-    category: "sports"
-  },
-  {
-    id: 6,
-    name: "Adonis Gang",
-    description: "Join the #1 masculine self-improvement community... Level up in all areas of your life and finally leave Jeffery behind.",
-    members: "176.4k",
-    pricing: "Free",
-    image: "https://images.unsplash.com/photo-1517022812141-23620dba5c23",
-    category: "self-improvement"
-  }
-];
-
 const Communities = () => {
-  const [selectedCategory, setSelectedCategory] = React.useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [communities, setCommunities] = useState([]);
+  const [userCommunities, setUserCommunities] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        
+        // Get current user
+        const { data: { user } } = await supabase.auth.getUser();
+        setUser(user);
+        
+        // Fetch communities
+        const { data: communitiesData, error } = await supabase
+          .from('communities')
+          .select('*');
+          
+        if (error) {
+          console.error("Error fetching communities:", error);
+          toast.error("Failed to load communities");
+          return;
+        }
+        
+        setCommunities(communitiesData || []);
+        
+        // If user is logged in, get their joined communities
+        if (user) {
+          const { data: userData, error: userError } = await supabase
+            .from('users')
+            .select('communities_joined')
+            .eq('user_uuid', user.id)
+            .single();
+            
+          if (!userError && userData) {
+            setUserCommunities(userData.communities_joined || []);
+          }
+        }
+      } catch (error) {
+        console.error("Error in fetchData:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const filteredCommunities = communities.filter(community => 
     selectedCategory === "all" || community.category === selectedCategory
   );
+
+  const handleJoinCommunity = async (communityUuid) => {
+    try {
+      if (!user) {
+        toast.error("Please log in to join communities");
+        // You might want to redirect to login
+        return;
+      }
+      
+      // Check if already joined
+      if (userCommunities.includes(communityUuid)) {
+        toast.info("You're already a member of this community");
+        return;
+      }
+      
+      // Get current communities_joined array
+      const { data: userData, error: fetchError } = await supabase
+        .from('users')
+        .select('communities_joined')
+        .eq('user_uuid', user.id)
+        .single();
+        
+      if (fetchError) {
+        console.error("Error fetching user data:", fetchError);
+        toast.error("Failed to join community");
+        return;
+      }
+      
+      // Update the communities_joined array
+      const newCommunitiesJoined = [...(userData.communities_joined || []), communityUuid];
+      
+      // Save back to database
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({ communities_joined: newCommunitiesJoined })
+        .eq('user_uuid', user.id);
+        
+      if (updateError) {
+        console.error("Error updating user data:", updateError);
+        toast.error("Failed to join community");
+        return;
+      }
+      
+      // Update local state
+      setUserCommunities(newCommunitiesJoined);
+      toast.success("Successfully joined community!");
+      
+    } catch (error) {
+      console.error("Error joining community:", error);
+      toast.error("An unexpected error occurred");
+    }
+  };
+
+  const handleViewCommunity = (community) => {
+    navigate(`/community/${community.slug || community.community_uuid}`);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="pt-16">
+          <MainHeader />
+          <div className="container mx-auto flex justify-center items-center pt-20">
+            <Loader2 className="h-10 w-10 animate-spin text-primary mr-2" />
+            <span>Loading communities...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -152,9 +217,27 @@ const Communities = () => {
                     <Badge variant="outline">{community.pricing}</Badge>
                   </div>
 
-                  {/* Arrow */}
-                  <div className="absolute bottom-4 right-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <ArrowRight className="h-5 w-5 text-primary" />
+                  {/* Actions */}
+                  <div className="flex justify-between items-center">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleViewCommunity(community)}
+                    >
+                      View details
+                    </Button>
+                    
+                    <Button 
+                      variant={userCommunities.includes(community.community_uuid) ? "outline" : "default"}
+                      size="sm"
+                      onClick={() => userCommunities.includes(community.community_uuid) 
+                        ? handleViewCommunity(community) 
+                        : handleJoinCommunity(community.community_uuid)
+                      }
+                      className="ml-2"
+                    >
+                      {userCommunities.includes(community.community_uuid) ? "Open" : "Join"}
+                    </Button>
                   </div>
                 </div>
               </Card>
