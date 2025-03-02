@@ -38,10 +38,10 @@ export function useExperts() {
               ? expert.areas
               : []
         ) : [],
-        status: expert.status || "active", // Default status
+        status: expert.status || "active", // Default status if it doesn't exist in the database
         activeTemplates: Math.floor(Math.random() * 5), // Placeholder for now
         totalTemplates: Math.floor(Math.random() * 10) + 5, // Placeholder for now
-        // Use the actual email from the expert data instead of generating a placeholder
+        // Use the actual email from the expert data
         email: expert.email || `${expert.slug || 'user'}@example.com` // Fallback if email is not present
       })) as Expert[];
       

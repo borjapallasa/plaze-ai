@@ -27,7 +27,7 @@ const categories = [
 const Communities = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [communities, setCommunities] = useState([]);
-  const [userCommunities, setUserCommunities] = useState([]);
+  const [userCommunities, setUserCommunities] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
@@ -63,7 +63,14 @@ const Communities = () => {
             .single();
             
           if (!userError && userData) {
-            setUserCommunities(userData.communities_joined || []);
+            // Ensure communities_joined is an array
+            const communitiesJoined = userData.communities_joined 
+              ? (Array.isArray(userData.communities_joined) 
+                  ? userData.communities_joined 
+                  : [])
+              : [];
+            
+            setUserCommunities(communitiesJoined);
           }
         }
       } catch (error) {
@@ -107,8 +114,15 @@ const Communities = () => {
         return;
       }
       
+      // Ensure communities_joined is an array before updating
+      const currentCommunities = userData.communities_joined 
+        ? (Array.isArray(userData.communities_joined) 
+            ? userData.communities_joined 
+            : [])
+        : [];
+      
       // Update the communities_joined array
-      const newCommunitiesJoined = [...(userData.communities_joined || []), communityUuid];
+      const newCommunitiesJoined = [...currentCommunities, communityUuid];
       
       // Save back to database
       const { error: updateError } = await supabase

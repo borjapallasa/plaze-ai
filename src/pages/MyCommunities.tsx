@@ -43,8 +43,16 @@ export default function MyCommunities() {
           return;
         }
         
+        // Ensure communities_joined is an array
+        let communitiesJoined = [];
+        if (userData?.communities_joined) {
+          communitiesJoined = Array.isArray(userData.communities_joined) 
+            ? userData.communities_joined 
+            : [];
+        }
+        
         // If user has no communities, show empty state
-        if (!userData?.communities_joined || userData.communities_joined.length === 0) {
+        if (!communitiesJoined.length) {
           setCommunities([]);
           setLoading(false);
           return;
@@ -54,7 +62,7 @@ export default function MyCommunities() {
         const { data: communitiesData, error: communitiesError } = await supabase
           .from('communities')
           .select('*')
-          .in('community_uuid', userData.communities_joined);
+          .in('community_uuid', communitiesJoined);
           
         if (communitiesError) {
           console.error("Error fetching communities:", communitiesError);
