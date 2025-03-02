@@ -46,17 +46,18 @@ export default function MyCommunities() {
         // Ensure communities_joined is always a valid string array with complete UUIDs
         let communitiesJoined: string[] = [];
         
-        if (userData?.communities_joined && Array.isArray(userData.communities_joined)) {
-          // Filter out any invalid UUIDs (must be 36 characters with hyphens)
-          communitiesJoined = userData.communities_joined
-            .map(id => String(id))
-            .filter(id => {
-              // Standard UUID format is 36 characters with 4 hyphens
-              const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-              return uuidRegex.test(id);
-            });
+        if (userData?.communities_joined) {
+          if (Array.isArray(userData.communities_joined)) {
+            // Standard UUID regex for validation
+            const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+            
+            // Filter out any non-UUID values
+            communitiesJoined = userData.communities_joined
+              .filter(id => id && typeof id === 'string')
+              .filter(id => uuidRegex.test(id.trim()));
+          }
           
-          console.log("Valid community UUIDs:", communitiesJoined);
+          console.log("Validated community UUIDs:", communitiesJoined);
         }
         
         // If user has no communities, show empty state

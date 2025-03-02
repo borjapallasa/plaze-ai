@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
@@ -63,20 +62,21 @@ const Communities = () => {
             .single();
             
           if (!userError && userData) {
-            // Ensure communities_joined is always a valid string array with complete UUIDs
+            // Ensure communities_joined is a valid array of UUIDs
             let communitiesJoined: string[] = [];
             
-            if (userData?.communities_joined && Array.isArray(userData.communities_joined)) {
-              // Filter out any invalid UUIDs (must be 36 characters with hyphens)
-              communitiesJoined = userData.communities_joined
-                .map(id => String(id))
-                .filter(id => {
-                  // Standard UUID format is 36 characters with 4 hyphens
-                  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-                  return uuidRegex.test(id);
-                });
+            if (userData?.communities_joined) {
+              if (Array.isArray(userData.communities_joined)) {
+                // Standard UUID regex for validation
+                const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+                
+                // Filter out any non-UUID values and ensure they are strings
+                communitiesJoined = userData.communities_joined
+                  .filter(id => id && typeof id === 'string')
+                  .filter(id => uuidRegex.test(id.trim()));
+              }
               
-              console.log("Valid community UUIDs:", communitiesJoined);
+              console.log("Validated community UUIDs:", communitiesJoined);
             }
             
             setUserCommunities(communitiesJoined);
@@ -106,7 +106,7 @@ const Communities = () => {
       
       // Validate the UUID format
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-      if (!uuidRegex.test(communityUuid)) {
+      if (!communityUuid || typeof communityUuid !== 'string' || !uuidRegex.test(communityUuid.trim())) {
         console.error("Invalid community UUID format:", communityUuid);
         toast.error("Invalid community identifier");
         return;
@@ -134,11 +134,13 @@ const Communities = () => {
       // Ensure communities_joined is always a valid array of UUIDs
       let currentCommunities: string[] = [];
       
-      if (userData?.communities_joined && Array.isArray(userData.communities_joined)) {
-        // Filter out any invalid UUIDs
-        currentCommunities = userData.communities_joined
-          .map(id => String(id))
-          .filter(id => uuidRegex.test(id));
+      if (userData?.communities_joined) {
+        if (Array.isArray(userData.communities_joined)) {
+          // Filter out any invalid UUIDs
+          currentCommunities = userData.communities_joined
+            .filter(id => id && typeof id === 'string')
+            .filter(id => uuidRegex.test(id.trim()));
+        }
       }
       
       // Update the communities_joined array if the community UUID isn't already in it
