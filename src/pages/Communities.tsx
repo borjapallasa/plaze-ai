@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
@@ -234,7 +235,7 @@ const Communities = () => {
                 {/* Community Image */}
                 <div className="relative aspect-[2/1] overflow-hidden">
                   <img
-                    src={community.image}
+                    src={community.thumbnail || "/lovable-uploads/890bbce9-6ca6-4a0e-958a-d7ba6f61bf73.png"}
                     alt={community.name}
                     className="w-full h-full object-cover"
                   />
