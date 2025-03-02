@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
@@ -62,11 +63,21 @@ const Communities = () => {
             .single();
             
           if (!userError && userData) {
-            // Ensure communities_joined is always a string array
-            const communitiesJoined: string[] = userData?.communities_joined && 
-              Array.isArray(userData.communities_joined) ? 
-              userData.communities_joined.map(id => String(id)) : 
-              [];
+            // Ensure communities_joined is always a valid string array with complete UUIDs
+            let communitiesJoined: string[] = [];
+            
+            if (userData?.communities_joined && Array.isArray(userData.communities_joined)) {
+              // Filter out any invalid UUIDs (must be 36 characters with hyphens)
+              communitiesJoined = userData.communities_joined
+                .map(id => String(id))
+                .filter(id => {
+                  // Standard UUID format is 36 characters with 4 hyphens
+                  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+                  return uuidRegex.test(id);
+                });
+              
+              console.log("Valid community UUIDs:", communitiesJoined);
+            }
             
             setUserCommunities(communitiesJoined);
           }
@@ -93,6 +104,14 @@ const Communities = () => {
         return;
       }
       
+      // Validate the UUID format
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (!uuidRegex.test(communityUuid)) {
+        console.error("Invalid community UUID format:", communityUuid);
+        toast.error("Invalid community identifier");
+        return;
+      }
+      
       // Check if already joined
       if (userCommunities.includes(communityUuid)) {
         toast.info("You're already a member of this community");
@@ -112,30 +131,38 @@ const Communities = () => {
         return;
       }
       
-      // Ensure communities_joined is always a string array
-      const currentCommunities: string[] = userData?.communities_joined && 
-        Array.isArray(userData.communities_joined) ?
-        userData.communities_joined.map(id => String(id)) :
-        [];
+      // Ensure communities_joined is always a valid array of UUIDs
+      let currentCommunities: string[] = [];
       
-      // Update the communities_joined array
-      const newCommunitiesJoined = [...currentCommunities, communityUuid];
-      
-      // Save back to database
-      const { error: updateError } = await supabase
-        .from('users')
-        .update({ communities_joined: newCommunitiesJoined })
-        .eq('user_uuid', user.id);
-        
-      if (updateError) {
-        console.error("Error updating user data:", updateError);
-        toast.error("Failed to join community");
-        return;
+      if (userData?.communities_joined && Array.isArray(userData.communities_joined)) {
+        // Filter out any invalid UUIDs
+        currentCommunities = userData.communities_joined
+          .map(id => String(id))
+          .filter(id => uuidRegex.test(id));
       }
       
-      // Update local state
-      setUserCommunities(newCommunitiesJoined);
-      toast.success("Successfully joined community!");
+      // Update the communities_joined array if the community UUID isn't already in it
+      if (!currentCommunities.includes(communityUuid)) {
+        const newCommunitiesJoined = [...currentCommunities, communityUuid];
+        
+        // Save back to database
+        const { error: updateError } = await supabase
+          .from('users')
+          .update({ communities_joined: newCommunitiesJoined })
+          .eq('user_uuid', user.id);
+          
+        if (updateError) {
+          console.error("Error updating user data:", updateError);
+          toast.error("Failed to join community");
+          return;
+        }
+        
+        // Update local state
+        setUserCommunities(newCommunitiesJoined);
+        toast.success("Successfully joined community!");
+      } else {
+        toast.info("You're already a member of this community");
+      }
       
     } catch (error) {
       console.error("Error joining community:", error);

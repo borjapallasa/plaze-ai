@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
@@ -42,11 +43,21 @@ export default function MyCommunities() {
           return;
         }
         
-        // Ensure communities_joined is always a string array
-        const communitiesJoined: string[] = userData?.communities_joined && 
-          Array.isArray(userData.communities_joined) ? 
-          userData.communities_joined.map(id => String(id)) : 
-          [];
+        // Ensure communities_joined is always a valid string array with complete UUIDs
+        let communitiesJoined: string[] = [];
+        
+        if (userData?.communities_joined && Array.isArray(userData.communities_joined)) {
+          // Filter out any invalid UUIDs (must be 36 characters with hyphens)
+          communitiesJoined = userData.communities_joined
+            .map(id => String(id))
+            .filter(id => {
+              // Standard UUID format is 36 characters with 4 hyphens
+              const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+              return uuidRegex.test(id);
+            });
+          
+          console.log("Valid community UUIDs:", communitiesJoined);
+        }
         
         // If user has no communities, show empty state
         if (communitiesJoined.length === 0) {
