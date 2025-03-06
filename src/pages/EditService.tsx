@@ -7,6 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { MainHeader } from "@/components/MainHeader";
 import { ServiceForm } from "@/components/service/ServiceForm";
 import { CategoryType, ServiceType } from "@/constants/service-categories";
+import type { ServiceStatus } from "@/components/expert/types";
 import { Toaster } from "@/components/ui/toaster";
 
 export default function EditService() {
@@ -20,6 +21,7 @@ export default function EditService() {
   const [serviceType, setServiceType] = useState<ServiceType>("one time");
   const [category, setCategory] = useState<CategoryType | "">("");
   const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
+  const [status, setStatus] = useState<ServiceStatus>("draft");
 
   const { data: service, isLoading } = useQuery({
     queryKey: ['service', id],
@@ -41,6 +43,7 @@ export default function EditService() {
         setFeatures(featuresArray);
         setPrice(data.price?.toString() || "");
         setServiceType(data.type || "one time");
+        setStatus(data.status || "draft");
         
         const mainCategory = data.main_category ? String(data.main_category) : "";
         setCategory(mainCategory as CategoryType);
@@ -71,7 +74,8 @@ export default function EditService() {
           price: parseFloat(price) || 0,
           type: serviceType,
           main_category: category,
-          subcategory: selectedSubcategories
+          subcategory: selectedSubcategories,
+          status: status
         })
         .eq('service_uuid', id);
 
@@ -135,6 +139,7 @@ export default function EditService() {
         serviceType={serviceType}
         category={category}
         selectedSubcategories={selectedSubcategories}
+        status={status}
         isSaving={isSaving}
         onServiceNameChange={setServiceName}
         onServiceDescriptionChange={setServiceDescription}
@@ -154,6 +159,7 @@ export default function EditService() {
         onRemoveSubcategory={(value: string) => {
           setSelectedSubcategories(selectedSubcategories.filter(s => s !== value));
         }}
+        onStatusChange={setStatus}
         onSave={handleSave}
       />
       <Toaster />

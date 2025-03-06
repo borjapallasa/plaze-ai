@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MainHeader } from "@/components/MainHeader";
@@ -18,6 +19,7 @@ export default function NewServicePage() {
   const [features, setFeatures] = useState<string[]>([""]);
   const [category, setCategory] = useState<CategoryType | "">("");
   const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
+  const [status, setStatus] = useState<ServiceStatus>("draft");
 
   const handleAddFeature = () => {
     setFeatures([...features, ""]);
@@ -67,7 +69,7 @@ export default function NewServicePage() {
         subcategory: selectedSubcategories.length > 0 
           ? selectedSubcategories.map(sub => ({ value: sub })) 
           : null,
-        status: "draft" as ServiceStatus
+        status: status as ServiceStatus
       };
 
       const result = await createService(serviceData);
@@ -95,6 +97,7 @@ export default function NewServicePage() {
         features={features}
         category={category}
         selectedSubcategories={selectedSubcategories}
+        status={status}
         isSaving={isCreating}
         onServiceNameChange={setServiceName}
         onServiceDescriptionChange={setServiceDescription}
@@ -106,6 +109,7 @@ export default function NewServicePage() {
         onCategoryChange={handleCategoryChange}
         onSubcategoriesChange={handleSubcategoriesChange}
         onRemoveSubcategory={handleRemoveSubcategory}
+        onStatusChange={setStatus}
         onSave={handleSave}
       />
     </div>

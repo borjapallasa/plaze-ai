@@ -9,6 +9,7 @@ import { ServiceFeatures } from "@/components/service/ServiceFeatures";
 import { ServiceCategories } from "@/components/service/ServiceCategories";
 import type { ServiceType } from "@/constants/service-categories";
 import type { CategoryType } from "@/constants/service-categories";
+import type { ServiceStatus } from "@/components/expert/types";
 
 interface ServiceFormProps {
   serviceName: string;
@@ -19,6 +20,7 @@ interface ServiceFormProps {
   category: CategoryType | "";
   selectedSubcategories: string[];
   isSaving?: boolean;
+  status: ServiceStatus;
   onServiceNameChange: (value: string) => void;
   onServiceDescriptionChange: (value: string) => void;
   onPriceChange: (value: string) => void;
@@ -29,6 +31,7 @@ interface ServiceFormProps {
   onCategoryChange: (value: CategoryType | "") => void;
   onSubcategoriesChange: (value: string) => void;
   onRemoveSubcategory: (value: string) => void;
+  onStatusChange: (value: ServiceStatus) => void;
   onSave: () => void;
 }
 
@@ -41,6 +44,7 @@ export function ServiceForm({
   category,
   selectedSubcategories,
   isSaving = false,
+  status,
   onServiceNameChange,
   onServiceDescriptionChange,
   onPriceChange,
@@ -51,10 +55,36 @@ export function ServiceForm({
   onCategoryChange,
   onSubcategoriesChange,
   onRemoveSubcategory,
+  onStatusChange,
   onSave,
 }: ServiceFormProps) {
   return (
-    <div className="container mx-auto px-4 pt-24 pb-8">
+    <div className="container mx-auto px-4 pb-8">
+      {/* Header with status dropdown and save button */}
+      <div className="sticky top-24 z-30 bg-background py-4 mb-6 border-b">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <h1 className="text-2xl font-semibold">{serviceName || "New Service"}</h1>
+          <div className="flex items-center gap-4 self-end sm:self-auto">
+            <Select value={status} onValueChange={onStatusChange}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="draft">Draft</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="archived">Archived</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button
+              onClick={onSave}
+              disabled={isSaving || !serviceName.trim()}
+            >
+              {isSaving ? "Saving..." : "Save Service"}
+            </Button>
+          </div>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main content - Left side (2/3 width on large screens) */}
         <div className="lg:col-span-2 space-y-6">
@@ -138,16 +168,6 @@ export function ServiceForm({
               onSubcategoriesChange={onSubcategoriesChange}
               onRemoveSubcategory={onRemoveSubcategory}
             />
-          </div>
-
-          <div className="flex justify-end">
-            <Button
-              onClick={onSave}
-              disabled={isSaving || !serviceName.trim()}
-              className="w-full"
-            >
-              {isSaving ? "Saving..." : "Save Service"}
-            </Button>
           </div>
         </div>
       </div>
