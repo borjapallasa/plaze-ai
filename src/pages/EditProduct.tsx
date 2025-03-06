@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,16 +11,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { MainHeader } from "@/components/MainHeader";
 import { ProductEditor } from "@/components/product/ProductEditor";
 import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
 import { ProductVariantsEditor } from "@/components/product/ProductVariants";
 import { RelatedProducts } from "@/components/product/RelatedProducts";
-import { ArrowLeft, Plus, X, Check } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
+import { ArrowLeft, Plus, X, Check, Trash2, AlertTriangle } from "lucide-react";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/components/ui/toast";
 
 type ProductStatus = 'draft' | 'active' | 'inactive';
 
@@ -60,7 +69,10 @@ const TEAM_ROLES = [
 export default function EditProduct() {
   const { id } = useParams();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [techStack, setTechStack] = useState("");
@@ -309,6 +321,48 @@ export default function EditProduct() {
     setLocalVariants(updatedVariants);
   };
 
+  const handleDeleteProduct = async () => {
+    if (!id) return;
+    
+    try {
+      setIsDeleting(true);
+      
+      const { error: variantsError } = await supabase
+        .from('variants')
+        .delete()
+        .eq('product_uuid', id);
+      
+      if (variantsError) throw variantsError;
+      
+      const { error: productError } = await supabase
+        .from('products')
+        .delete()
+        .eq('product_uuid', id);
+      
+      if (productError) throw productError;
+
+      toast({
+        title: "Product deleted",
+        description: "Your product has been permanently deleted",
+        className: "bg-red-50 border-red-200 text-red-800",
+        duration: 3000,
+      });
+      
+      navigate('/seller/products');
+      
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete product",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteDialog(false);
+    }
+  };
+
   if (isLoadingProduct || isLoadingVariants) {
     return (
       <div className="min-h-screen bg-background">
@@ -554,12 +608,61 @@ export default function EditProduct() {
                     </Select>
                   </div>
                   
-                  {/* Add the RelatedProducts component here */}
                   <RelatedProducts
                     productId={id || ""}
                     userUuid={product?.user_uuid || ""}
                     className="mt-6 pt-4 border-t"
                   />
+
+                  <div className="mt-6 pt-4 border-t">
+                    <h3 className="text-base font-medium mb-2">Danger Zone</h3>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Permanent actions that cannot be undone
+                    </p>
+                    
+                    <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+                      <DialogTrigger asChild>
+                        <Button 
+                          variant="destructive" 
+                          className="w-full"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete Product
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle className="flex items-center gap-2">
+                            <AlertTriangle className="h-5 w-5 text-destructive" />
+                            Delete Product
+                          </DialogTitle>
+                          <DialogDescription>
+                            This action is irreversible. This will permanently delete the product
+                            "{productName}" and all of its associated data.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="py-3">
+                          <p className="text-sm font-medium text-destructive">
+                            Are you sure you want to delete this product?
+                          </p>
+                        </div>
+                        <DialogFooter className="gap-2">
+                          <DialogClose asChild>
+                            <Button variant="outline">
+                              Cancel
+                            </Button>
+                          </DialogClose>
+                          <Button 
+                            variant="destructive" 
+                            onClick={handleDeleteProduct}
+                            disabled={isDeleting}
+                          >
+                            {isDeleting ? "Deleting..." : "Yes, delete product"}
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
                 </div>
               </Card>
             </div>
