@@ -1,112 +1,113 @@
 
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { MainHeader } from "@/components/MainHeader";
-import { Card } from "@/components/ui/card";
 import { ServiceForm } from "@/components/service/ServiceForm";
-import { ServiceFeatures } from "@/components/service/ServiceFeatures";
-import { ServiceCategories } from "@/components/service/ServiceCategories";
-import { CategoryType } from "@/constants/service-categories";
-import type { ServiceType } from "@/components/expert/types";
 import { useCreateService } from "@/hooks/use-create-service";
+import { toast } from "sonner";
+import type { ServiceType, CategoryType } from "@/constants/service-categories";
 
 export default function NewServicePage() {
+  const navigate = useNavigate();
+  const { createService, isCreating } = useCreateService();
+
   const [serviceName, setServiceName] = useState("");
   const [serviceDescription, setServiceDescription] = useState("");
-  const [features, setFeatures] = useState<string[]>([""]);
   const [price, setPrice] = useState("");
   const [serviceType, setServiceType] = useState<ServiceType>("one time");
+  const [features, setFeatures] = useState<string[]>([""]);
   const [category, setCategory] = useState<CategoryType | "">("");
   const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
-
-  const { handleSave, isSaving } = useCreateService();
 
   const handleAddFeature = () => {
     setFeatures([...features, ""]);
   };
 
   const handleRemoveFeature = (index: number) => {
-    setFeatures(features.filter((_, i) => i !== index));
+    const updatedFeatures = [...features];
+    updatedFeatures.splice(index, 1);
+    setFeatures(updatedFeatures);
   };
 
   const handleFeatureChange = (index: number, value: string) => {
-    const newFeatures = [...features];
-    newFeatures[index] = value;
-    setFeatures(newFeatures);
+    const updatedFeatures = [...features];
+    updatedFeatures[index] = value;
+    setFeatures(updatedFeatures);
   };
 
-  const handleCreateService = async () => {
+  const handleCategoryChange = (value: CategoryType | "") => {
+    setCategory(value);
+    setSelectedSubcategories([]);
+  };
+
+  const handleSubcategoriesChange = (value: string) => {
+    if (!selectedSubcategories.includes(value)) {
+      setSelectedSubcategories([...selectedSubcategories, value]);
+    }
+  };
+
+  const handleRemoveSubcategory = (value: string) => {
+    setSelectedSubcategories(selectedSubcategories.filter(item => item !== value));
+  };
+
+  const handleSave = async () => {
+    if (!serviceName.trim()) {
+      toast.error("Service name is required");
+      return;
+    }
+
     try {
-      await handleSave({
+      const serviceData = {
         name: serviceName,
         description: serviceDescription,
-        features,
-        price: Number(price),
+        price: parseFloat(price) || 0,
         type: serviceType,
+        features,
         main_category: category ? { value: category } : null,
-        subcategory: selectedSubcategories.map(sub => ({ value: sub })),
+        subcategory: selectedSubcategories.length > 0 
+          ? selectedSubcategories.map(sub => ({ value: sub })) 
+          : null,
         status: "draft"
-      });
+      };
+
+      const result = await createService(serviceData);
+      if (result?.service_uuid) {
+        toast.success("Service created successfully");
+        navigate(`/service/${result.service_uuid}/edit`);
+      }
     } catch (error) {
-      console.error('Error creating service:', error);
+      console.error("Error creating service:", error);
+      toast.error("Failed to create service");
     }
   };
 
   return (
     <div className="min-h-screen bg-background">
-      <MainHeader />
-      <div className="container mx-auto px-4 pt-24 pb-8">
-        <div className="space-y-6">
-          <Card className="p-6">
-            <ServiceForm
-              serviceName={serviceName}
-              serviceDescription={serviceDescription}
-              price={price}
-              serviceType={serviceType}
-              onServiceNameChange={setServiceName}
-              onServiceDescriptionChange={setServiceDescription}
-              onPriceChange={setPrice}
-              onServiceTypeChange={setServiceType}
-            />
-          </Card>
-
-          <Card className="p-6">
-            <ServiceFeatures
-              features={features}
-              onAddFeature={handleAddFeature}
-              onRemoveFeature={handleRemoveFeature}
-              onFeatureChange={handleFeatureChange}
-            />
-          </Card>
-
-          <Card className="p-6">
-            <ServiceCategories
-              category={category}
-              selectedSubcategories={selectedSubcategories}
-              onCategoryChange={setCategory}
-              onSubcategoriesChange={(value) => {
-                if (!selectedSubcategories.includes(value)) {
-                  setSelectedSubcategories([...selectedSubcategories, value]);
-                }
-              }}
-              onRemoveSubcategory={(value) => {
-                setSelectedSubcategories(selectedSubcategories.filter(
-                  (sub) => sub !== value
-                ));
-              }}
-            />
-          </Card>
-
-          <div className="flex justify-end">
-            <button
-              onClick={handleCreateService}
-              disabled={isSaving || !serviceName.trim()}
-              className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 disabled:opacity-50"
-            >
-              {isSaving ? "Creating..." : "Create Service"}
-            </button>
-          </div>
-        </div>
+      <div className="fixed top-0 left-0 right-0 z-50 bg-background">
+        <MainHeader />
       </div>
+
+      <ServiceForm
+        serviceName={serviceName}
+        serviceDescription={serviceDescription}
+        price={price}
+        serviceType={serviceType}
+        features={features}
+        category={category}
+        selectedSubcategories={selectedSubcategories}
+        isSaving={isCreating}
+        onServiceNameChange={setServiceName}
+        onServiceDescriptionChange={setServiceDescription}
+        onPriceChange={setPrice}
+        onServiceTypeChange={setServiceType}
+        onAddFeature={handleAddFeature}
+        onRemoveFeature={handleRemoveFeature}
+        onFeatureChange={handleFeatureChange}
+        onCategoryChange={handleCategoryChange}
+        onSubcategoriesChange={handleSubcategoriesChange}
+        onRemoveSubcategory={handleRemoveSubcategory}
+        onSave={handleSave}
+      />
     </div>
   );
 }
