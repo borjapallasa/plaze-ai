@@ -23,6 +23,7 @@ interface ServiceFormProps {
   selectedSubcategories: string[];
   isSaving?: boolean;
   status: ServiceStatus;
+  dangerZone?: React.ReactNode; // Add this new prop
   onServiceNameChange: (value: string) => void;
   onServiceDescriptionChange: (value: string) => void;
   onPriceChange: (value: string) => void;
@@ -47,6 +48,7 @@ export function ServiceForm({
   selectedSubcategories,
   isSaving = false,
   status,
+  dangerZone, // Destructure the new prop
   onServiceNameChange,
   onServiceDescriptionChange,
   onPriceChange,
@@ -184,6 +186,13 @@ export function ServiceForm({
               onRemoveSubcategory={onRemoveSubcategory}
             />
           </div>
+          
+          {/* Render the Danger Zone below the categories section */}
+          {dangerZone && (
+            <div className="mt-4">
+              {dangerZone}
+            </div>
+          )}
         </div>
       </div>
     </div>

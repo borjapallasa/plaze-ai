@@ -235,18 +235,17 @@ export default function EditService() {
           }}
           onStatusChange={setStatus}
           onSave={handleSave}
+          dangerZone={
+            <DangerZone 
+              serviceName={serviceName}
+              isDeleting={isDeleting}
+              showDeleteDialog={showDeleteDialog}
+              sellerUuid={service?.expert_uuid || ""}
+              setShowDeleteDialog={setShowDeleteDialog}
+              onDeleteService={handleDeleteService}
+            />
+          }
         />
-        
-        <div className="mt-6 max-w-md mx-auto">
-          <DangerZone 
-            serviceName={serviceName}
-            isDeleting={isDeleting}
-            showDeleteDialog={showDeleteDialog}
-            sellerUuid={service?.expert_uuid || ""}
-            setShowDeleteDialog={setShowDeleteDialog}
-            onDeleteService={handleDeleteService}
-          />
-        </div>
       </div>
     </div>
   );
