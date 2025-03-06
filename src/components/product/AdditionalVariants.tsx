@@ -1,9 +1,10 @@
+
 import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Variant } from "./types/variants";
-import { Package, ChevronDown, ChevronUp } from "lucide-react";
+import { Package, ShoppingCart } from "lucide-react";
 import { 
   Select,
   SelectContent,
@@ -11,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 interface AdditionalVariantsProps {
   variants: Variant[];
@@ -45,52 +47,68 @@ export function AdditionalVariants({
     return null;
   }
 
-  const handleCheckboxChange = (productName: string, checked: boolean) => {
-    const selectedVariantId = selectedVariants[productName] || 
-      (productGroups[productName]?.[0]?.id || '');
-    
-    if (selectedVariantId) {
-      const newSelected = checked 
-        ? [...selectedAdditional, selectedVariantId]
-        : selectedAdditional.filter(id => id !== selectedVariantId);
-      
-      setSelectedAdditional(newSelected);
-      
-      if (onAdditionalSelect) {
-        onAdditionalSelect(selectedVariantId, checked);
-      }
-    }
-  };
-
   const handleVariantChange = (productName: string, variantId: string) => {
-    // If the product was already selected (checkbox checked)
+    // Check if the product has a selected variant
     const isProductSelected = selectedAdditional.some(id => 
       productGroups[productName].some(v => v.id === id)
     );
     
-    // Remove any previously selected variant for this product
-    const filtered = selectedAdditional.filter(id => 
-      !productGroups[productName].some(v => v.id === id)
-    );
+    // If not selected, add it to selected items
+    if (!isProductSelected) {
+      const newSelected = [...selectedAdditional, variantId];
+      setSelectedAdditional(newSelected);
+      
+      if (onAdditionalSelect) {
+        onAdditionalSelect(variantId, true);
+      }
+    } else {
+      // If already selected but changing variant
+      // Remove the old variant and add the new one
+      const oldVariantId = selectedVariants[productName] || 
+        productGroups[productName].find(v => selectedAdditional.includes(v.id))?.id;
+      
+      const filtered = selectedAdditional.filter(id => id !== oldVariantId);
+      const newSelected = [...filtered, variantId];
+      
+      setSelectedAdditional(newSelected);
+      
+      if (onAdditionalSelect && oldVariantId) {
+        // Deselect old variant
+        onAdditionalSelect(oldVariantId, false);
+        // Select new variant
+        onAdditionalSelect(variantId, true);
+      }
+    }
     
-    // Add the newly selected variant if the product was checked
-    const newSelected = isProductSelected ? [...filtered, variantId] : filtered;
-    
+    // Update the selected variant for this product
     setSelectedVariants(prev => ({
       ...prev,
       [productName]: variantId
     }));
+  };
+
+  const handleAddToCart = (productName: string) => {
+    const variantId = selectedVariants[productName] || productGroups[productName][0].id;
     
-    setSelectedAdditional(newSelected);
+    // Toggle selection
+    const isSelected = selectedAdditional.includes(variantId);
     
-    if (isProductSelected && onAdditionalSelect) {
-      // First deselect old variant if there was one
-      const oldVariantId = selectedVariants[productName];
-      if (oldVariantId) {
-        onAdditionalSelect(oldVariantId, false);
+    if (isSelected) {
+      // Remove from selected
+      const newSelected = selectedAdditional.filter(id => id !== variantId);
+      setSelectedAdditional(newSelected);
+      
+      if (onAdditionalSelect) {
+        onAdditionalSelect(variantId, false);
       }
-      // Then select the new variant
-      onAdditionalSelect(variantId, true);
+    } else {
+      // Add to selected
+      const newSelected = [...selectedAdditional, variantId];
+      setSelectedAdditional(newSelected);
+      
+      if (onAdditionalSelect) {
+        onAdditionalSelect(variantId, true);
+      }
     }
   };
 
@@ -115,55 +133,57 @@ export function AdditionalVariants({
 
   return (
     <Card className={`p-4 border border-dashed ${className}`}>
-      <h3 className="text-sm font-medium mb-3">Often purchased together:</h3>
-      <div className="space-y-3">
+      <h3 className="text-lg font-medium mb-4">Frequently Purchased Together</h3>
+      <div className="space-y-5">
         {Object.entries(productGroups).map(([productName, productVariants]) => {
           const isSelected = isProductSelected(productName);
           const selectedVariantId = selectedVariants[productName] || productVariants[0].id;
+          const selectedVariant = productVariants.find(v => v.id === selectedVariantId);
           
           return (
-            <div key={productName} className="flex flex-col gap-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <Checkbox 
-                    id={`addon-${productName}`} 
-                    checked={isSelected}
-                    onCheckedChange={(checked) => 
-                      handleCheckboxChange(productName, checked === true)
-                    }
-                  />
-                  <Label 
-                    htmlFor={`addon-${productName}`} 
-                    className="text-sm cursor-pointer font-medium"
-                  >
-                    {productName}
-                  </Label>
+            <div key={productName} className="border rounded-md p-3 hover:border-primary/50 transition-colors">
+              <div className="flex flex-col gap-3">
+                {/* Product name and price */}
+                <div className="flex items-center justify-between">
+                  <h4 className="font-medium text-base">{productName}</h4>
+                  <div className="text-sm font-semibold">
+                    ${formatPrice(getSelectedVariantPrice(productName))}
+                  </div>
                 </div>
-                <div className="text-sm font-semibold">
-                  ${formatPrice(getSelectedVariantPrice(productName))}
-                </div>
-              </div>
-              
-              {productVariants.length > 1 && (
-                <div className="ml-7">
+                
+                {/* Variant selection dropdown */}
+                <div className="mb-2">
+                  <label className="text-xs text-muted-foreground mb-1 block">
+                    Select Option:
+                  </label>
                   <Select
                     value={selectedVariantId}
                     onValueChange={(value) => handleVariantChange(productName, value)}
-                    disabled={!isSelected}
                   >
-                    <SelectTrigger className="w-full h-8 text-xs bg-background">
+                    <SelectTrigger className="w-full h-9 text-sm">
                       <SelectValue placeholder="Select variant" />
                     </SelectTrigger>
                     <SelectContent>
                       {productVariants.map((variant) => (
-                        <SelectItem key={variant.id} value={variant.id} className="text-xs">
-                          {variant.label || 'Standard'} - ${formatPrice(variant.price)}
+                        <SelectItem key={variant.id} value={variant.id} className="text-sm">
+                          {variant.label || productName} - ${formatPrice(variant.price)}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
-              )}
+                
+                {/* Add/Remove button */}
+                <Button 
+                  variant={isSelected ? "default" : "outline"}
+                  size="sm"
+                  className="w-full"
+                  onClick={() => handleAddToCart(productName)}
+                >
+                  <ShoppingCart className="h-4 w-4 mr-2" />
+                  {isSelected ? "Remove" : "Add to Cart"}
+                </Button>
+              </div>
             </div>
           );
         })}
