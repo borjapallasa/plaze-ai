@@ -1,4 +1,3 @@
-
 import React from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { ProductGallery } from "./ProductGallery";
@@ -22,6 +21,7 @@ interface ProductLayoutProps {
   averageRating: number;
   onVariantChange: (variantId: string) => void;
   onAddToCart: () => void;
+  onAdditionalVariantToggle?: (variantId: string, selected: boolean) => void;
   reviews: any[];
 }
 

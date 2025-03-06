@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { Package } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface AdditionalVariantsProps {
   variants: Variant[];
@@ -105,67 +106,74 @@ export function AdditionalVariants({
   };
 
   return (
-    <Card className={cn("p-3 bg-background border border-border shadow-sm", className)}>
-      <div className="flex items-center gap-2 mb-2">
-        <Package className="h-4 w-4 text-primary" />
-        <p className="text-sm font-medium">Bundle & Save</p>
-      </div>
-      <div className="space-y-2">
-        {Object.entries(productGroups).map(([productName, productVariants]) => {
-          const selectedVariantId = selectedVariants[productName] || productVariants[0].id;
-          const selectedVariant = productVariants.find(v => v.id === selectedVariantId);
-          const isSelected = selectedAdditional.includes(selectedVariantId);
-          
-          // Initialize selected variant if not set
-          if (!selectedVariants[productName]) {
-            setTimeout(() => {
-              setSelectedVariants(prev => ({
-                ...prev,
-                [productName]: productVariants[0].id
-              }));
-            }, 0);
-          }
-          
-          return (
-            <div key={productName} className="flex items-center gap-2 py-1.5 px-2 rounded hover:bg-accent/5 transition-colors">
-              <Checkbox 
-                id={`product-${productName}`}
-                checked={isSelected}
-                onCheckedChange={(checked) => handleCheckboxChange(productName, checked === true)}
-                className="h-4 w-4"
-              />
-              
-              <div className="flex items-center justify-between min-w-0 flex-1">
-                <label 
-                  htmlFor={`product-${productName}`}
-                  className="text-sm cursor-pointer flex-1 truncate flex items-center"
-                >
-                  <span className="font-medium">{productName}</span>
-                  <span className="mx-1 text-muted-foreground">-</span>
-                  <span className="text-sm">${formatPrice(selectedVariant?.price || 0)}</span>
-                </label>
+    <div className={cn("relative mt-6", className)}>
+      {/* Tag-style label positioned on top of the card */}
+      <Badge 
+        variant="outline" 
+        className="absolute -top-2.5 left-4 z-10 bg-background px-2 py-0.5 text-xs font-medium flex items-center gap-1.5 border-muted-foreground/20"
+      >
+        <Package className="h-3 w-3 text-primary" />
+        Bundle & Save
+      </Badge>
+      
+      <Card className="pt-4 pb-2 px-4 bg-background border border-border shadow-sm">
+        <div className="space-y-1">
+          {Object.entries(productGroups).map(([productName, productVariants]) => {
+            const selectedVariantId = selectedVariants[productName] || productVariants[0].id;
+            const selectedVariant = productVariants.find(v => v.id === selectedVariantId);
+            const isSelected = selectedAdditional.includes(selectedVariantId);
+            
+            // Initialize selected variant if not set
+            if (!selectedVariants[productName]) {
+              setTimeout(() => {
+                setSelectedVariants(prev => ({
+                  ...prev,
+                  [productName]: productVariants[0].id
+                }));
+              }, 0);
+            }
+            
+            return (
+              <div key={productName} className="flex items-center gap-2 py-1.5 px-1 rounded hover:bg-accent/5 transition-colors">
+                <Checkbox 
+                  id={`product-${productName}`}
+                  checked={isSelected}
+                  onCheckedChange={(checked) => handleCheckboxChange(productName, checked === true)}
+                  className="h-4 w-4"
+                />
+                
+                <div className="flex items-center justify-between min-w-0 flex-1 gap-2">
+                  <label 
+                    htmlFor={`product-${productName}`}
+                    className="text-sm cursor-pointer truncate flex items-center gap-1.5"
+                  >
+                    <span className="font-medium">{productName}</span>
+                    <span className="mx-0.5">-</span>
+                    <span className="font-medium">${formatPrice(selectedVariant?.price || 0)}</span>
+                  </label>
+                  
+                  <Select
+                    value={selectedVariantId}
+                    onValueChange={(value) => handleVariantChange(productName, value)}
+                    disabled={!isSelected}
+                  >
+                    <SelectTrigger className="w-[80px] h-7 text-xs border-muted">
+                      <SelectValue placeholder="Options" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {productVariants.map((variant) => (
+                        <SelectItem key={variant.id} value={variant.id} className="text-xs">
+                          {variant.label || "Option"} - ${formatPrice(variant.price)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              
-              <Select
-                value={selectedVariantId}
-                onValueChange={(value) => handleVariantChange(productName, value)}
-                disabled={!isSelected}
-              >
-                <SelectTrigger className="w-[90px] h-7 text-xs border-muted">
-                  <SelectValue placeholder="Options" />
-                </SelectTrigger>
-                <SelectContent>
-                  {productVariants.map((variant) => (
-                    <SelectItem key={variant.id} value={variant.id} className="text-xs">
-                      {variant.label || "Option"} - ${formatPrice(variant.price)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          );
-        })}
-      </div>
-    </Card>
+            );
+          })}
+        </div>
+      </Card>
+    </div>
   );
 }
