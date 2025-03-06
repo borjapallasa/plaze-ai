@@ -24,31 +24,74 @@ export default function EditService() {
   const { data: service, isLoading } = useQuery({
     queryKey: ['service', id],
     queryFn: async () => {
+      console.log("Fetching service with ID:", id);
+      
       const { data, error } = await supabase
         .from('services')
         .select('*')
         .eq('service_uuid', id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching service:", error);
+        throw error;
+      }
+      
+      console.log("Service data:", data);
       
       if (data) {
         setServiceName(data.name || "");
         setServiceDescription(data.description || "");
-        const featuresArray = Array.isArray(data.features) 
-          ? (data.features as Array<string | number>).map(feature => String(feature)) 
-          : [""];
-        setFeatures(featuresArray);
-        setPrice(data.price?.toString() || "");
-        setServiceType(data.type || "one time");
-        setStatus(data.status || "draft");
         
-        const mainCategory = data.main_category ? String(data.main_category) : "";
+        // Handle features array properly
+        let featuresArray: string[] = [""];
+        if (data.features) {
+          try {
+            if (Array.isArray(data.features)) {
+              featuresArray = data.features.map(f => String(f));
+            } else if (typeof data.features === 'string') {
+              featuresArray = JSON.parse(data.features);
+            }
+            if (featuresArray.length === 0) featuresArray = [""];
+          } catch (e) {
+            console.error("Error parsing features:", e);
+          }
+        }
+        setFeatures(featuresArray);
+        
+        setPrice(data.price?.toString() || "");
+        setServiceType((data.type as ServiceType) || "one time");
+        setStatus((data.status as ServiceStatus) || "draft");
+        
+        // Handle main category
+        let mainCategory = "";
+        if (data.main_category) {
+          if (typeof data.main_category === 'object' && data.main_category !== null) {
+            mainCategory = (data.main_category as any).value || "";
+          } else {
+            mainCategory = String(data.main_category);
+          }
+        }
         setCategory(mainCategory as CategoryType);
         
-        const subcategories = Array.isArray(data.subcategory) 
-          ? data.subcategory.map(sub => String(sub))
-          : [];
+        // Handle subcategories
+        let subcategories: string[] = [];
+        if (data.subcategory) {
+          try {
+            if (Array.isArray(data.subcategory)) {
+              subcategories = data.subcategory.map(sub => {
+                if (typeof sub === 'object' && sub !== null) {
+                  return (sub as any).value || "";
+                }
+                return String(sub);
+              }).filter(Boolean);
+            } else if (typeof data.subcategory === 'string') {
+              subcategories = JSON.parse(data.subcategory);
+            }
+          } catch (e) {
+            console.error("Error parsing subcategories:", e);
+          }
+        }
         setSelectedSubcategories(subcategories);
       }
 
@@ -58,6 +101,11 @@ export default function EditService() {
   });
 
   const handleSave = async () => {
+    if (!serviceName.trim()) {
+      toast.error("Service name is required");
+      return;
+    }
+    
     try {
       setIsSaving(true);
       
@@ -111,7 +159,17 @@ export default function EditService() {
     return (
       <div className="min-h-screen bg-background">
         <MainHeader />
-        <div className="mt-24 p-6">Loading...</div>
+        <div className="w-full max-w-[1400px] mx-auto px-4 py-8 mt-16">
+          <div className="animate-pulse flex space-x-4">
+            <div className="flex-1 space-y-6 py-1">
+              <div className="h-6 bg-gray-200 rounded w-3/4"></div>
+              <div className="space-y-3">
+                <div className="h-40 bg-gray-200 rounded"></div>
+                <div className="h-10 bg-gray-200 rounded w-5/6"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -119,7 +177,6 @@ export default function EditService() {
   return (
     <div className="min-h-screen bg-background">
       <MainHeader />
-      
       <ServiceForm 
         serviceName={serviceName}
         serviceDescription={serviceDescription}
@@ -139,9 +196,7 @@ export default function EditService() {
         onServiceTypeChange={setServiceType}
         onCategoryChange={setCategory}
         onSubcategoriesChange={(value: string) => {
-          if (selectedSubcategories.includes(value)) {
-            setSelectedSubcategories(selectedSubcategories.filter(v => v !== value));
-          } else {
+          if (!selectedSubcategories.includes(value)) {
             setSelectedSubcategories([...selectedSubcategories, value]);
           }
         }}

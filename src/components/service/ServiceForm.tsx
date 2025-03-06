@@ -70,7 +70,7 @@ export function ServiceForm({
             </Button>
           </Link>
           <div className="w-full">
-            <h1 className="text-lg sm:text-xl md:text-2xl font-semibold break-words pr-2">New Service</h1>
+            <h1 className="text-lg sm:text-xl md:text-2xl font-semibold break-words pr-2">Edit Service</h1>
             <div className="flex items-center justify-between mt-2">
               <p className="text-sm text-muted-foreground">Service details and configuration</p>
               <div className="flex items-center gap-4">
@@ -88,7 +88,7 @@ export function ServiceForm({
                   onClick={onSave}
                   disabled={isSaving || !serviceName.trim()}
                 >
-                  {isSaving ? "Creating..." : "Create Service"}
+                  {isSaving ? "Saving..." : "Save Changes"}
                 </Button>
               </div>
             </div>
@@ -174,7 +174,7 @@ export function ServiceForm({
         </div>
 
         {/* Right column - Categories */}
-        <div className="lg:col-span-4">
+        <div className="lg:col-span-4 self-start">
           <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-3 sm:p-6">
             <ServiceCategories
               category={category}
