@@ -1,7 +1,8 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Variant } from "./types/variants";
+import { Checkbox } from "@/components/ui/checkbox";
 import { 
   Select,
   SelectContent,
@@ -9,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 interface AdditionalVariantsProps {
   variants: Variant[];
@@ -43,25 +45,39 @@ export function AdditionalVariants({
     return null;
   }
 
-  const handleVariantChange = (productName: string, variantId: string) => {
-    // Automatically select the variant when it changes
-    const oldVariantId = selectedVariants[productName] || 
-      productGroups[productName].find(v => selectedAdditional.includes(v.id))?.id;
+  const handleCheckboxChange = (productName: string, checked: boolean) => {
+    const variants = productGroups[productName];
+    const variantId = selectedVariants[productName] || variants[0].id;
     
-    if (oldVariantId && oldVariantId !== variantId) {
-      // Deselect old variant
+    if (checked) {
+      // Select this variant
+      if (!selectedAdditional.includes(variantId)) {
+        setSelectedAdditional(prev => [...prev, variantId]);
+        
+        if (onAdditionalSelect) {
+          onAdditionalSelect(variantId, true);
+        }
+      }
+    } else {
+      // Deselect this variant
+      if (selectedAdditional.includes(variantId)) {
+        setSelectedAdditional(prev => prev.filter(id => id !== variantId));
+        
+        if (onAdditionalSelect) {
+          onAdditionalSelect(variantId, false);
+        }
+      }
+    }
+  };
+
+  const handleVariantChange = (productName: string, variantId: string) => {
+    // Deselect old variant if it was selected
+    const oldVariantId = selectedVariants[productName];
+    if (oldVariantId && selectedAdditional.includes(oldVariantId)) {
       if (onAdditionalSelect) {
         onAdditionalSelect(oldVariantId, false);
       }
-    }
-    
-    // Always select the new variant
-    if (!selectedAdditional.includes(variantId)) {
-      setSelectedAdditional(prev => [...prev.filter(id => id !== oldVariantId), variantId]);
-      
-      if (onAdditionalSelect) {
-        onAdditionalSelect(variantId, true);
-      }
+      setSelectedAdditional(prev => prev.filter(id => id !== oldVariantId));
     }
     
     // Update the selected variant for this product
@@ -69,6 +85,15 @@ export function AdditionalVariants({
       ...prev,
       [productName]: variantId
     }));
+    
+    // If the product is checked, also select the new variant
+    if (oldVariantId && selectedAdditional.includes(oldVariantId)) {
+      setSelectedAdditional(prev => [...prev, variantId]);
+      
+      if (onAdditionalSelect) {
+        onAdditionalSelect(variantId, true);
+      }
+    }
   };
 
   const formatPrice = (price: string | number) => {
@@ -79,53 +104,64 @@ export function AdditionalVariants({
   };
 
   return (
-    <Card className={`p-4 border border-dashed ${className}`}>
-      <h3 className="text-lg font-medium mb-4">Frequently Purchased Together</h3>
-      <div className="space-y-5">
+    <Card className={cn("p-3 border border-dashed", className)}>
+      <h3 className="text-lg font-medium mb-3">Frequently Purchased Together</h3>
+      <div className="space-y-2">
         {Object.entries(productGroups).map(([productName, productVariants]) => {
           const selectedVariantId = selectedVariants[productName] || productVariants[0].id;
           const selectedVariant = productVariants.find(v => v.id === selectedVariantId);
+          const isSelected = selectedAdditional.includes(selectedVariantId);
           
-          // Select the first variant by default when component mounts
+          // Initialize selected variant if not set
           if (!selectedVariants[productName]) {
             setTimeout(() => {
-              handleVariantChange(productName, productVariants[0].id);
+              setSelectedVariants(prev => ({
+                ...prev,
+                [productName]: productVariants[0].id
+              }));
             }, 0);
           }
           
           return (
-            <div key={productName} className="border rounded-md p-3 hover:border-primary/50 transition-colors">
-              <div className="flex flex-col gap-3">
-                {/* Product name and price */}
-                <div className="flex items-center justify-between">
-                  <h4 className="font-medium text-base">{productName}</h4>
-                  <div className="text-sm font-semibold">
-                    ${formatPrice(selectedVariant?.price || 0)}
-                  </div>
-                </div>
-                
-                {/* Variant selection dropdown */}
-                <div>
-                  <label className="text-xs text-muted-foreground mb-1 block">
-                    Select Option:
-                  </label>
-                  <Select
-                    value={selectedVariantId}
-                    onValueChange={(value) => handleVariantChange(productName, value)}
-                  >
-                    <SelectTrigger className="w-full h-9 text-sm">
-                      <SelectValue placeholder="Select variant" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {productVariants.map((variant) => (
-                        <SelectItem key={variant.id} value={variant.id} className="text-sm">
-                          {variant.label || productName} - ${formatPrice(variant.price)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+            <div key={productName} className="flex items-center gap-2 p-2 rounded-md hover:bg-accent/10">
+              {/* Checkbox for selection */}
+              <Checkbox 
+                id={`product-${productName}`}
+                checked={isSelected}
+                onCheckedChange={(checked) => handleCheckboxChange(productName, checked === true)}
+                className="h-4 w-4"
+              />
+              
+              {/* Product name and price */}
+              <div className="flex-1 flex items-center justify-between min-w-0">
+                <label 
+                  htmlFor={`product-${productName}`}
+                  className="font-medium text-sm cursor-pointer flex-1 truncate"
+                >
+                  {productName}
+                </label>
+                <span className="text-sm font-semibold whitespace-nowrap ml-2">
+                  ${formatPrice(selectedVariant?.price || 0)}
+                </span>
               </div>
+              
+              {/* Variant selection dropdown */}
+              <Select
+                value={selectedVariantId}
+                onValueChange={(value) => handleVariantChange(productName, value)}
+                disabled={!isSelected}
+              >
+                <SelectTrigger className="w-[120px] h-8 text-xs">
+                  <SelectValue placeholder="Select variant" />
+                </SelectTrigger>
+                <SelectContent>
+                  {productVariants.map((variant) => (
+                    <SelectItem key={variant.id} value={variant.id} className="text-xs">
+                      {variant.label || "Option"} - ${formatPrice(variant.price)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           );
         })}
