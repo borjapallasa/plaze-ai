@@ -111,9 +111,11 @@ export default function SignInCommunity() {
           </div>
 
           <div className="space-y-6">
-            <p className="text-sm">
-              {community.intro || "Welcome back to your community. Sign in to continue your journey."}
-            </p>
+            <Card className="p-6">
+              <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                {community.description || "Welcome back to your community. Sign in to continue your journey."}
+              </p>
+            </Card>
 
             <ul className="space-y-4 text-sm">
               <li className="flex gap-3">
