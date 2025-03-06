@@ -2,7 +2,12 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface CommunityInfoPanelProps {
-  community: any;
+  community: {
+    name: string;
+    expert_name?: string;
+    thumbnail?: string;
+    description?: string;
+  };
 }
 
 export function CommunityInfoPanel({ community }: CommunityInfoPanelProps) {
@@ -15,7 +20,7 @@ export function CommunityInfoPanel({ community }: CommunityInfoPanelProps) {
         </h1>
         <div className="flex items-start gap-4">
           <Avatar className="h-16 w-16 rounded-lg border">
-            <AvatarImage src={community.thumbnail || "https://images.unsplash.com/photo-1517022812141-23620dba5c23"} alt={`${community.name} thumbnail`} />
+            <AvatarImage src={community.thumbnail} alt={`${community.name} thumbnail`} />
             <AvatarFallback>{community.name?.substring(0, 3)?.toUpperCase() || "COM"}</AvatarFallback>
           </Avatar>
           <div>
