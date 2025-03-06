@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MainHeader } from "@/components/MainHeader";
@@ -6,6 +5,7 @@ import { ServiceForm } from "@/components/service/ServiceForm";
 import { useCreateService } from "@/hooks/use-create-service";
 import { toast } from "sonner";
 import type { ServiceType, CategoryType } from "@/constants/service-categories";
+import type { ServiceStatus } from "@/components/expert/types";
 
 export default function NewServicePage() {
   const navigate = useNavigate();
@@ -67,7 +67,7 @@ export default function NewServicePage() {
         subcategory: selectedSubcategories.length > 0 
           ? selectedSubcategories.map(sub => ({ value: sub })) 
           : null,
-        status: "draft"
+        status: "draft" as ServiceStatus
       };
 
       const result = await createService(serviceData);
