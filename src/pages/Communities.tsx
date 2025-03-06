@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
@@ -14,7 +13,6 @@ import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Json } from "@/integrations/supabase/types";
 
 const categories = [
   { id: "trending", label: "Trending", icon: TrendingUp, dark: true },
@@ -103,8 +101,7 @@ const Communities = () => {
   const handleJoinCommunity = async (communityUuid) => {
     try {
       if (!user) {
-        toast.error("Please log in to join communities");
-        // You might want to redirect to login
+        navigate(`/sign-in/community/${communityUuid}`);
         return;
       }
       

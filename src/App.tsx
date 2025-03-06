@@ -52,7 +52,8 @@ function App() {
           <Route path="/" element={<IndexPage />} />
           <Route path="/sign-in" element={<SignInPage />} />
           <Route path="/sign-up" element={<SignUpPage />} />
-          <Route path="/sign-in-community" element={<SignInCommunityPage />} />
+          {/* Updated nested route structure for community sign-in */}
+          <Route path="/sign-in/community/:id" element={<SignInCommunityPage />} />
           <Route path="/sign-up-community" element={<SignUpCommunityPage />} />
           <Route path="/product/:id" element={<ProductPage />} />
           <Route path="/experts" element={<ExpertsPage />} />

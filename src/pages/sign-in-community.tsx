@@ -1,22 +1,91 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Mail, Lock, Eye, EyeOff } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export default function SignInCommunity() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [community, setCommunity] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchCommunity = async () => {
+      try {
+        setLoading(true);
+        
+        if (!id) {
+          toast.error("Community ID is missing");
+          return;
+        }
+
+        const { data, error } = await supabase
+          .from('communities')
+          .select('*')
+          .eq('community_uuid', id)
+          .single();
+
+        if (error) {
+          console.error("Error fetching community:", error);
+          toast.error("Failed to load community information");
+          return;
+        }
+
+        if (!data) {
+          toast.error("Community not found");
+          navigate("/communities");
+          return;
+        }
+
+        setCommunity(data);
+      } catch (error) {
+        console.error("Error fetching community:", error);
+        toast.error("An unexpected error occurred");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCommunity();
+  }, [id, navigate]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle sign in logic here
     console.log("Sign in attempt with:", { email, password });
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-6 py-12 bg-muted/40">
+        <div className="flex flex-col items-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="mt-2 text-muted-foreground">Loading community...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!community) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-6 py-12 bg-muted/40">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-2">Community Not Found</h2>
+          <p className="text-muted-foreground mb-4">The community you're looking for doesn't exist or has been removed.</p>
+          <Button onClick={() => navigate("/communities")}>Browse Communities</Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center px-6 py-12 bg-muted/40">
@@ -25,24 +94,25 @@ export default function SignInCommunity() {
           <div className="space-y-4">
             <h1 className="text-3xl font-bold tracking-tight">
               Welcome back to{" "}
-              <span className="text-primary">our community!</span>
+              <span className="text-primary">{community.name || "our community"}!</span>
             </h1>
             <div className="flex items-start gap-4">
               <Avatar className="h-16 w-16 rounded-lg border">
-                <AvatarImage src="https://images.unsplash.com/photo-1517022812141-23620dba5c23" alt="Community thumbnail" />
-                <AvatarFallback>OPA</AvatarFallback>
+                <AvatarImage src={community.thumbnail || "https://images.unsplash.com/photo-1517022812141-23620dba5c23"} alt={`${community.name} thumbnail`} />
+                <AvatarFallback>{community.name?.substring(0, 3)?.toUpperCase() || "COM"}</AvatarFallback>
               </Avatar>
               <div>
-                <h2 className="text-xl font-semibold">Optimal Path Automations</h2>
-                <p className="text-sm text-muted-foreground">This community is host by Borja P.</p>
+                <h2 className="text-xl font-semibold">{community.name}</h2>
+                <p className="text-sm text-muted-foreground">
+                  This community is hosted by {community.expert_name || "an expert host"}.
+                </p>
               </div>
             </div>
           </div>
 
           <div className="space-y-6">
             <p className="text-sm">
-              Welcome back to your community of business automation enthusiasts.
-              Sign in to continue your journey towards operational excellence.
+              {community.intro || "Welcome back to your community. Sign in to continue your journey."}
             </p>
 
             <ul className="space-y-4 text-sm">

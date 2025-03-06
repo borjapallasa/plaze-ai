@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,6 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Json } from "@/integrations/supabase/types";
 
 export default function MyCommunities() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -100,6 +100,10 @@ export default function MyCommunities() {
 
   const handleOpenCommunity = (community) => {
     navigate(`/community/${community.slug || community.community_uuid}`);
+  };
+
+  const handleJoinCommunity = (communityUuid) => {
+    navigate(`/sign-in/community/${communityUuid}`);
   };
 
   return (
