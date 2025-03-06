@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { X } from "lucide-react";
@@ -304,7 +303,7 @@ export default function EditProduct() {
     setLocalVariants(updatedVariants);
   };
 
-  const handleDeleteProduct = async () => {
+  const handleDeleteProduct = async (redirectUrl: string) => {
     if (!id) return;
     
     try {
@@ -331,7 +330,7 @@ export default function EditProduct() {
         duration: 3000,
       });
       
-      navigate('/seller/products');
+      navigate(redirectUrl);
       
     } catch (error) {
       console.error('Error deleting product:', error);
@@ -423,6 +422,7 @@ export default function EditProduct() {
                     productName={productName}
                     isDeleting={isDeleting}
                     showDeleteDialog={showDeleteDialog}
+                    sellerUuid={product?.user_uuid || ""}
                     setShowDeleteDialog={setShowDeleteDialog}
                     onDeleteProduct={handleDeleteProduct}
                   />

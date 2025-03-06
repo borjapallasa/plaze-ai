@@ -17,14 +17,16 @@ interface DangerZoneProps {
   productName: string;
   isDeleting: boolean;
   showDeleteDialog: boolean;
+  sellerUuid: string;
   setShowDeleteDialog: (show: boolean) => void;
-  onDeleteProduct: () => void;
+  onDeleteProduct: (redirectUrl: string) => void;
 }
 
 export function DangerZone({
   productName,
   isDeleting,
   showDeleteDialog,
+  sellerUuid,
   setShowDeleteDialog,
   onDeleteProduct
 }: DangerZoneProps) {
@@ -69,7 +71,7 @@ export function DangerZone({
             </DialogClose>
             <Button 
               variant="destructive" 
-              onClick={onDeleteProduct}
+              onClick={() => onDeleteProduct(`/seller/${sellerUuid}`)}
               disabled={isDeleting}
             >
               {isDeleting ? "Deleting..." : "Yes, delete product"}
