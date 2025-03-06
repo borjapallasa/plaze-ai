@@ -60,7 +60,7 @@ export default function SellerPage() {
   };
 
   const handleOpenCommunity = (communityId: string) => {
-    navigate(`/community/${communityId}`);
+    navigate(`/community/${communityId}/edit`);
   };
 
   const handleServiceClick = (serviceId: string) => {
@@ -575,6 +575,7 @@ export default function SellerPage() {
                 <Card 
                   key={community.community_uuid}
                   className="overflow-hidden border bg-card hover:bg-muted/5 shadow-sm hover:shadow-md transition-all duration-200"
+                  onClick={() => handleOpenCommunity(community.community_uuid)}
                 >
                   <div className="grid lg:grid-cols-[2fr,1fr,1fr] divide-y lg:divide-y-0 lg:divide-x divide-border">
                     <div className="p-6 space-y-4">
