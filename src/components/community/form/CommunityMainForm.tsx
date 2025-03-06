@@ -73,21 +73,21 @@ export function CommunityMainForm({
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="type" className="text-base font-medium mb-2 block">Community Type</Label>
-            <Select value={communityType} onValueChange={onCommunityTypeChange}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select community type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="free">Free</SelectItem>
-                <SelectItem value="paid">Paid</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+        <div>
+          <Label htmlFor="type" className="text-base font-medium mb-2 block">Community Type</Label>
+          <Select value={communityType} onValueChange={onCommunityTypeChange}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select community type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="free">Free</SelectItem>
+              <SelectItem value="paid">Paid</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-          {communityType === "paid" && (
+        {communityType === "paid" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="price" className="text-base font-medium mb-2 block">Price</Label>
               <Input
@@ -98,21 +98,19 @@ export function CommunityMainForm({
                 placeholder="Enter price"
               />
             </div>
-          )}
-        </div>
 
-        {communityType === "paid" && (
-          <div>
-            <Label htmlFor="billingPeriod" className="text-base font-medium mb-2 block">Billing Period</Label>
-            <Select value={billingPeriod} onValueChange={onBillingPeriodChange}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select billing period" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="monthly">Monthly</SelectItem>
-                <SelectItem value="yearly">Yearly</SelectItem>
-              </SelectContent>
-            </Select>
+            <div>
+              <Label htmlFor="billingPeriod" className="text-base font-medium mb-2 block">Billing Period</Label>
+              <Select value={billingPeriod} onValueChange={onBillingPeriodChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select billing period" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="monthly">Monthly</SelectItem>
+                  <SelectItem value="yearly">Yearly</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         )}
       </CardContent>
