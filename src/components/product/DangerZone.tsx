@@ -71,7 +71,7 @@ export function DangerZone({
             </DialogClose>
             <Button 
               variant="destructive" 
-              onClick={() => onDeleteProduct(`/expert/${sellerUuid}`)}
+              onClick={() => onDeleteProduct(`/seller/${sellerUuid}`)}
               disabled={isDeleting}
             >
               {isDeleting ? "Deleting..." : "Yes, delete product"}
