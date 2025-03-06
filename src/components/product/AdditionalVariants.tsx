@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -107,6 +106,13 @@ export function AdditionalVariants({
     return variant ? variant.price : 0;
   };
 
+  const formatPrice = (price: string | number) => {
+    if (typeof price === 'number') {
+      return price.toFixed(2);
+    }
+    return price;
+  };
+
   return (
     <Card className={`p-4 border border-dashed ${className}`}>
       <h3 className="text-sm font-medium mb-3">Often purchased together:</h3>
@@ -134,9 +140,7 @@ export function AdditionalVariants({
                   </Label>
                 </div>
                 <div className="text-sm font-semibold">
-                  ${typeof getSelectedVariantPrice(productName) === 'number' 
-                    ? getSelectedVariantPrice(productName).toFixed(2) 
-                    : getSelectedVariantPrice(productName)}
+                  ${formatPrice(getSelectedVariantPrice(productName))}
                 </div>
               </div>
               
@@ -153,9 +157,7 @@ export function AdditionalVariants({
                     <SelectContent>
                       {productVariants.map((variant) => (
                         <SelectItem key={variant.id} value={variant.id} className="text-xs">
-                          {variant.label || 'Standard'} - ${typeof variant.price === 'number' 
-                            ? variant.price.toFixed(2) 
-                            : variant.price}
+                          {variant.label || 'Standard'} - ${formatPrice(variant.price)}
                         </SelectItem>
                       ))}
                     </SelectContent>
