@@ -1,13 +1,19 @@
 
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Mail, Lock, User, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, User, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { CommunityInfoPanel } from "@/components/community/signin/CommunityInfoPanel";
+import { LoadingState } from "@/components/community/signin/LoadingState";
 
-export default function SignUpCommunity() {
+export default function SignUpCommunityPage() {
+  const { id } = useParams<{ id: string }>();
+  const [isLoading, setIsLoading] = useState(true);
+  const [community, setCommunity] = useState<any>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -15,40 +21,47 @@ export default function SignUpCommunity() {
   const [showPassword, setShowPassword] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
 
+  // Simulate loading the community data
+  useState(() => {
+    setTimeout(() => {
+      setCommunity({
+        name: "Optimal Path Automations",
+        expert_name: "Borja P.",
+        thumbnail: "https://images.unsplash.com/photo-1517022812141-23620dba5c23",
+        description: "Imagine a spot where we all get together to chat about making our businesses run smoother with some automation magic and no-code shortcuts."
+      });
+      setIsLoading(false);
+    }, 1000);
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle sign up logic here
-    console.log("Sign up attempt with:", { email, password, firstName, lastName });
+    console.log("Sign up attempt with:", { email, password, firstName, lastName, communityId: id });
   };
+
+  if (isLoading) {
+    return <LoadingState />;
+  }
+
+  if (!community) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-6 py-12 bg-muted/40">
+        <div className="text-center">
+          <h1 className="text-xl font-semibold">Community not found</h1>
+          <p className="text-muted-foreground mt-2">The community you're looking for doesn't exist or you don't have access.</p>
+          <Link to="/">
+            <Button className="mt-4">Back to Home</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center px-6 py-12 bg-muted/40">
       <div className="w-full max-w-6xl grid md:grid-cols-2 gap-12 items-start">
-        <div className="space-y-8">
-          <div className="space-y-4">
-            <h1 className="text-3xl font-bold tracking-tight">
-              You've been invited to{" "}
-              <span className="text-primary">join this community!</span>
-            </h1>
-            <div className="flex items-start gap-4">
-              <Avatar className="h-16 w-16 rounded-lg border">
-                <AvatarImage src="https://images.unsplash.com/photo-1517022812141-23620dba5c23" alt="Community thumbnail" />
-                <AvatarFallback>OPA</AvatarFallback>
-              </Avatar>
-              <div>
-                <h2 className="text-xl font-semibold">Optimal Path Automations</h2>
-                <p className="text-sm text-muted-foreground">This community is host by Borja P.</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <p className="text-sm text-muted-foreground p-6 rounded-lg bg-muted/40 leading-relaxed whitespace-pre-wrap">
-              Imagine a spot where we all get together to chat about making our businesses run
-              smoother with some automation magic and no-code shortcuts.
-            </p>
-          </div>
-        </div>
+        <CommunityInfoPanel community={community} />
 
         <div className="w-full p-8 rounded-lg bg-card text-card-foreground shadow-sm">
           <div className="space-y-8">
@@ -143,13 +156,14 @@ export default function SignUpCommunity() {
               <Button
                 type="submit"
                 className="w-full"
+                disabled={!agreeToTerms}
               >
                 Sign Up
               </Button>
 
               <div className="text-center text-sm">
                 <span className="text-muted-foreground">Already have an account? </span>
-                <Link to="/sign-in" className="text-primary hover:underline">
+                <Link to={`/sign-in/community/${id}`} className="text-primary hover:underline">
                   Sign In
                 </Link>
               </div>

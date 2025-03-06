@@ -1,4 +1,3 @@
-
 import { Route, Routes } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -52,9 +51,8 @@ function App() {
           <Route path="/" element={<IndexPage />} />
           <Route path="/sign-in" element={<SignInPage />} />
           <Route path="/sign-up" element={<SignUpPage />} />
-          {/* Updated nested route structure for community sign-in */}
           <Route path="/sign-in/community/:id" element={<SignInCommunityPage />} />
-          <Route path="/sign-up-community" element={<SignUpCommunityPage />} />
+          <Route path="/sign-up/community/:id" element={<SignUpCommunityPage />} />
           <Route path="/product/:id" element={<ProductPage />} />
           <Route path="/experts" element={<ExpertsPage />} />
           <Route path="/expert/:expert_uuid" element={<ExpertPage />} />
