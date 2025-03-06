@@ -25,16 +25,10 @@ export const ExpertServices = ({ services }: ExpertServicesProps) => {
       <h2 className="text-2xl font-bold mb-6">Services</h2>
       
       {/* Desktop View */}
-      <div className="hidden md:block">
-        <Card>
-          <CardContent className="p-6 space-y-6">
-            <div className="grid grid-cols-1 gap-6">
-              {sortedServices.map((service, index) => (
-                <ServiceCard key={index} {...service} />
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+      <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {sortedServices.map((service, index) => (
+          <ServiceCard key={index} {...service} />
+        ))}
       </div>
 
       {/* Mobile View with Carousel */}
@@ -87,105 +81,58 @@ const ServiceCard = ({
   created_at?: string;
 }) => {
   return (
-    <Card className="relative overflow-hidden">
-      <div className="absolute inset-x-0 top-0 h-2 bg-blue-100" />
-      <div className="grid md:grid-cols-[2.5fr,1fr,1fr] gap-6">
-        {/* Main Content */}
-        <div className="p-6">
-          <div className="space-y-4">
-            <div>
-              <div className="flex items-center justify-between gap-4">
-                <h3 className="text-xl font-semibold leading-tight">{name}</h3>
-                <Badge variant="secondary" className="capitalize whitespace-nowrap shrink-0">
-                  {type}
-                </Badge>
-              </div>
-              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                {description}
-              </p>
+    <Card className="h-full flex flex-col">
+      <div className="p-6 flex flex-col flex-grow">
+        {/* Service Header */}
+        <div className="mb-4 pb-4 border-b">
+          <div className="flex items-start justify-between gap-4 mb-2">
+            <h3 className="text-lg font-semibold leading-tight">{name}</h3>
+            <Badge variant="secondary" className="capitalize whitespace-nowrap shrink-0">
+              {type}
+            </Badge>
+          </div>
+          <div className="flex items-center gap-2 mb-4">
+            <div className="text-sm font-medium text-muted-foreground">Starting at</div>
+            <div className="text-xl font-bold flex items-center gap-1">
+              <DollarSign className="w-4 h-4" />
+              {price?.toLocaleString() || '0'}
             </div>
-            <div className="flex items-center gap-2">
-              <div className="text-sm font-medium text-muted-foreground whitespace-nowrap">Starting at</div>
-              <div className="text-2xl font-bold flex items-center gap-1 whitespace-nowrap">
-                <DollarSign className="w-5 h-5" />
-                {price?.toLocaleString() || '0'}
+          </div>
+          <p className="text-sm text-muted-foreground line-clamp-3">
+            {description}
+          </p>
+        </div>
+
+        {/* Features */}
+        <div className="mb-4 flex-grow">
+          <h4 className="text-sm font-medium flex items-center gap-1.5 mb-3">
+            <Sparkles className="h-4 w-4 text-blue-500" />
+            Features
+          </h4>
+          <div className="space-y-2">
+            {features?.slice(0, 3).map((feature, idx) => (
+              <div key={idx} className="flex items-start gap-2">
+                <Check className="w-4 h-4 mt-1 text-blue-500 flex-shrink-0" />
+                <span className="text-sm text-muted-foreground">{feature}</span>
               </div>
-            </div>
+            ))}
+            {features && features.length > 3 && (
+              <div className="text-sm text-muted-foreground pt-1">
+                +{features.length - 3} more features
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Features Column */}
-        <div className="p-6 border-t md:border-t-0 md:border-l border-border bg-muted/5">
-          <div className="space-y-4">
-            <h4 className="text-sm font-medium flex items-center gap-1.5">
-              <Sparkles className="h-4 w-4 text-blue-500" />
-              Features
-            </h4>
-            <div className="flex flex-col gap-2">
-              {features?.map((feature, idx) => (
-                <div key={idx} className="flex items-start gap-2">
-                  <Check className="w-4 h-4 mt-1 text-blue-500 flex-shrink-0" />
-                  <span className="text-sm text-muted-foreground">{feature}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Metrics & Actions */}
-        <div className="p-6 border-t md:border-t-0 md:border-l border-border bg-muted/5">
-          <div className="space-y-6">
-            {/* Stats Grid */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <div className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-                  <DollarSign className="w-3 h-3" />
-                  MRR
-                </div>
-                <div className="font-medium whitespace-nowrap">
-                  ${monthly_recurring_revenue?.toLocaleString() || '0'}/mo
-                </div>
-              </div>
-              <div className="space-y-1">
-                <div className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-                  <DollarSign className="w-3 h-3" />
-                  Revenue
-                </div>
-                <div className="font-medium whitespace-nowrap">
-                  ${revenue_amount?.toLocaleString() || '0'}
-                </div>
-              </div>
-              <div className="space-y-1">
-                <div className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-                  <Users2 className="w-3 h-3" />
-                  Active Subs
-                </div>
-                <div className="font-medium">
-                  {active_subscriptions_count || 0}
-                </div>
-              </div>
-              <div className="space-y-1">
-                <div className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-                  <CalendarDays className="w-3 h-3" />
-                  Created
-                </div>
-                <div className="font-medium whitespace-nowrap">
-                  {created_at ? format(new Date(created_at), 'MMM d, yyyy') : '-'}
-                </div>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="space-y-2">
-              <Button className="w-full">
-                <Handshake className="w-4 h-4 mr-2" />
-                Hire Expert
-              </Button>
-              <Button variant="outline" className="w-full">
-                Contact Expert
-              </Button>
-            </div>
-          </div>
+        {/* Action Buttons */}
+        <div className="space-y-2 mt-auto">
+          <Button className="w-full">
+            <Handshake className="w-4 h-4 mr-2" />
+            Hire Expert
+          </Button>
+          <Button variant="outline" className="w-full">
+            Contact Expert
+          </Button>
         </div>
       </div>
     </Card>
