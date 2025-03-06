@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
 import { Mail, Lock, User, Eye, EyeOff } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -44,30 +43,14 @@ export default function SignUpCommunity() {
           </div>
 
           <div className="space-y-6">
-            <p className="text-sm">
+            <p className="text-sm text-muted-foreground p-6 rounded-lg bg-muted/40 leading-relaxed whitespace-pre-wrap">
               Imagine a spot where we all get together to chat about making our businesses run
-              smoother with some automation magic and no-code shortcuts.{" "}
-              <span className="font-medium">Here's what you'll get by joining:</span>
+              smoother with some automation magic and no-code shortcuts.
             </p>
-
-            <ul className="space-y-4 text-sm">
-              <li className="flex gap-3">
-                <span className="font-semibold">Win Back Your Weekdays</span> - Spend time on what truly grows your business.
-              </li>
-              <li className="flex gap-3">
-                <span className="font-semibold">Elevate Your Team's Game</span> - Simple tools, incredible results.
-              </li>
-              <li className="flex gap-3">
-                <span className="font-semibold">Economize Effortlessly</span> - Invest in growth, not unnecessary expenses.
-              </li>
-              <li className="flex gap-3">
-                <span className="font-semibold">Future-Proof Your Business</span> - Adapt and thrive in the digital age.
-              </li>
-            </ul>
           </div>
         </div>
 
-        <Card className="w-full p-8">
+        <div className="w-full p-8 rounded-lg bg-card text-card-foreground shadow-sm">
           <div className="space-y-8">
             <img
               src="/placeholder.svg"
@@ -172,7 +155,7 @@ export default function SignUpCommunity() {
               </div>
             </form>
           </div>
-        </Card>
+        </div>
       </div>
     </div>
   );
