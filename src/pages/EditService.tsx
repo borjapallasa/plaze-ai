@@ -1,17 +1,20 @@
-
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { MainHeader } from "@/components/MainHeader";
 import { ServiceForm } from "@/components/service/ServiceForm";
+import { DangerZone } from "@/components/service/DangerZone";
 import { CategoryType, ServiceType } from "@/constants/service-categories";
 import type { ServiceStatus } from "@/components/expert/types";
 
 export default function EditService() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [serviceName, setServiceName] = useState("");
   const [serviceDescription, setServiceDescription] = useState("");
   const [features, setFeatures] = useState<string[]>([""]);
@@ -155,6 +158,32 @@ export default function EditService() {
     setFeatures(newFeatures);
   };
 
+  const handleDeleteService = async (redirectUrl: string) => {
+    if (!id) return;
+    
+    try {
+      setIsDeleting(true);
+      
+      const { error } = await supabase
+        .from('services')
+        .delete()
+        .eq('service_uuid', id);
+      
+      if (error) throw error;
+
+      toast.success("Your service has been permanently deleted");
+      
+      navigate(redirectUrl);
+      
+    } catch (error) {
+      console.error('Error deleting service:', error);
+      toast.error("Failed to delete service");
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteDialog(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
@@ -177,35 +206,48 @@ export default function EditService() {
   return (
     <div className="min-h-screen bg-background">
       <MainHeader />
-      <ServiceForm 
-        serviceName={serviceName}
-        serviceDescription={serviceDescription}
-        features={features}
-        price={price}
-        serviceType={serviceType}
-        category={category}
-        selectedSubcategories={selectedSubcategories}
-        status={status}
-        isSaving={isSaving}
-        onServiceNameChange={setServiceName}
-        onServiceDescriptionChange={setServiceDescription}
-        onAddFeature={handleAddFeature}
-        onRemoveFeature={handleRemoveFeature}
-        onFeatureChange={handleFeatureChange}
-        onPriceChange={setPrice}
-        onServiceTypeChange={setServiceType}
-        onCategoryChange={setCategory}
-        onSubcategoriesChange={(value: string) => {
-          if (!selectedSubcategories.includes(value)) {
-            setSelectedSubcategories([...selectedSubcategories, value]);
-          }
-        }}
-        onRemoveSubcategory={(value: string) => {
-          setSelectedSubcategories(selectedSubcategories.filter(s => s !== value));
-        }}
-        onStatusChange={setStatus}
-        onSave={handleSave}
-      />
+      <div className="w-full max-w-[1400px] mx-auto px-4 py-8 mt-16">
+        <ServiceForm 
+          serviceName={serviceName}
+          serviceDescription={serviceDescription}
+          features={features}
+          price={price}
+          serviceType={serviceType}
+          category={category}
+          selectedSubcategories={selectedSubcategories}
+          status={status}
+          isSaving={isSaving}
+          onServiceNameChange={setServiceName}
+          onServiceDescriptionChange={setServiceDescription}
+          onAddFeature={handleAddFeature}
+          onRemoveFeature={handleRemoveFeature}
+          onFeatureChange={handleFeatureChange}
+          onPriceChange={setPrice}
+          onServiceTypeChange={setServiceType}
+          onCategoryChange={setCategory}
+          onSubcategoriesChange={(value: string) => {
+            if (!selectedSubcategories.includes(value)) {
+              setSelectedSubcategories([...selectedSubcategories, value]);
+            }
+          }}
+          onRemoveSubcategory={(value: string) => {
+            setSelectedSubcategories(selectedSubcategories.filter(s => s !== value));
+          }}
+          onStatusChange={setStatus}
+          onSave={handleSave}
+        />
+        
+        <div className="mt-6 max-w-md mx-auto">
+          <DangerZone 
+            serviceName={serviceName}
+            isDeleting={isDeleting}
+            showDeleteDialog={showDeleteDialog}
+            sellerUuid={service?.expert_uuid || ""}
+            setShowDeleteDialog={setShowDeleteDialog}
+            onDeleteService={handleDeleteService}
+          />
+        </div>
+      </div>
     </div>
   );
 }
