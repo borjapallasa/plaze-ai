@@ -55,32 +55,37 @@ export function ServiceForm({
 }: ServiceFormProps) {
   return (
     <div className="container mx-auto px-4 pt-24 pb-8">
-      <div className="space-y-6">
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="space-y-6">
-            <div>
-              <Label htmlFor="name" className="text-base font-medium mb-2 block">
-                Service Name
-              </Label>
-              <Input
-                id="name"
-                value={serviceName}
-                onChange={(e) => onServiceNameChange(e.target.value)}
-                placeholder="Enter your service name"
-                className="h-11"
-              />
-            </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main content - Left side (2/3 width on large screens) */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="space-y-6">
+              <div>
+                <Label htmlFor="name" className="text-base font-medium mb-2 block">
+                  Service Name
+                </Label>
+                <Input
+                  id="name"
+                  value={serviceName}
+                  onChange={(e) => onServiceNameChange(e.target.value)}
+                  placeholder="Enter your service name"
+                  className="h-11"
+                />
+              </div>
 
-            <div>
-              <Label htmlFor="description" className="text-base font-medium mb-2 block">
-                Description
-              </Label>
-              <ProductEditor
-                value={serviceDescription}
-                onChange={onServiceDescriptionChange}
-              />
+              <div>
+                <Label htmlFor="description" className="text-base font-medium mb-2 block">
+                  Description
+                </Label>
+                <ProductEditor
+                  value={serviceDescription}
+                  onChange={onServiceDescriptionChange}
+                />
+              </div>
             </div>
+          </div>
 
+          <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <Label htmlFor="price" className="text-base font-medium mb-2 block">
@@ -112,35 +117,38 @@ export function ServiceForm({
               </div>
             </div>
           </div>
+
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <ServiceFeatures
+              features={features}
+              onAddFeature={onAddFeature}
+              onRemoveFeature={onRemoveFeature}
+              onFeatureChange={onFeatureChange}
+            />
+          </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <ServiceFeatures
-            features={features}
-            onAddFeature={onAddFeature}
-            onRemoveFeature={onRemoveFeature}
-            onFeatureChange={onFeatureChange}
-          />
-        </div>
+        {/* Sidebar - Right side (1/3 width on large screens) */}
+        <div className="space-y-6">
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <ServiceCategories
+              category={category}
+              selectedSubcategories={selectedSubcategories}
+              onCategoryChange={onCategoryChange}
+              onSubcategoriesChange={onSubcategoriesChange}
+              onRemoveSubcategory={onRemoveSubcategory}
+            />
+          </div>
 
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <ServiceCategories
-            category={category}
-            selectedSubcategories={selectedSubcategories}
-            onCategoryChange={onCategoryChange}
-            onSubcategoriesChange={onSubcategoriesChange}
-            onRemoveSubcategory={onRemoveSubcategory}
-          />
-        </div>
-
-        <div className="flex justify-end">
-          <Button
-            onClick={onSave}
-            disabled={isSaving || !serviceName.trim()}
-            className="px-6"
-          >
-            {isSaving ? "Saving..." : "Save Service"}
-          </Button>
+          <div className="flex justify-end">
+            <Button
+              onClick={onSave}
+              disabled={isSaving || !serviceName.trim()}
+              className="w-full"
+            >
+              {isSaving ? "Saving..." : "Save Service"}
+            </Button>
+          </div>
         </div>
       </div>
     </div>
