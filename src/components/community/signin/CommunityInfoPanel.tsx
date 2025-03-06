@@ -1,5 +1,4 @@
 
-import { Card } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface CommunityInfoPanelProps {
@@ -29,11 +28,11 @@ export function CommunityInfoPanel({ community }: CommunityInfoPanelProps) {
       </div>
 
       <div className="space-y-6">
-        <Card className="p-6 border-0 shadow-sm">
+        <div className="p-6 rounded-lg bg-muted/40">
           <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
             {community.description || "Welcome back to your community. Sign in to continue your journey."}
           </p>
-        </Card>
+        </div>
       </div>
     </div>
   );
