@@ -1,16 +1,12 @@
 
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
 
 interface CommunityInfoPanelProps {
   community: any;
 }
 
 export function CommunityInfoPanel({ community }: CommunityInfoPanelProps) {
-  const navigate = useNavigate();
-  
   return (
     <div className="space-y-8">
       <div className="space-y-4">
@@ -33,26 +29,11 @@ export function CommunityInfoPanel({ community }: CommunityInfoPanelProps) {
       </div>
 
       <div className="space-y-6">
-        <Card className="p-6">
+        <Card className="p-6 border-0 shadow-sm">
           <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
             {community.description || "Welcome back to your community. Sign in to continue your journey."}
           </p>
         </Card>
-
-        <ul className="space-y-4 text-sm">
-          <li className="flex gap-3">
-            <span className="font-semibold">Connect with Peers</span> - Share insights and learn from others' experiences.
-          </li>
-          <li className="flex gap-3">
-            <span className="font-semibold">Access Resources</span> - Get the latest tools and strategies.
-          </li>
-          <li className="flex gap-3">
-            <span className="font-semibold">Stay Updated</span> - Never miss important community updates.
-          </li>
-          <li className="flex gap-3">
-            <span className="font-semibold">Get Support</span> - Direct access to our community of experts.
-          </li>
-        </ul>
       </div>
     </div>
   );
