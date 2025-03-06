@@ -752,6 +752,7 @@ export type Database = {
           name: string | null
           response_rate: number | null
           slug: string | null
+          thumbnail: string | null
           title: string | null
           user_uuid: string | null
         }
@@ -769,6 +770,7 @@ export type Database = {
           name?: string | null
           response_rate?: number | null
           slug?: string | null
+          thumbnail?: string | null
           title?: string | null
           user_uuid?: string | null
         }
@@ -786,6 +788,7 @@ export type Database = {
           name?: string | null
           response_rate?: number | null
           slug?: string | null
+          thumbnail?: string | null
           title?: string | null
           user_uuid?: string | null
         }

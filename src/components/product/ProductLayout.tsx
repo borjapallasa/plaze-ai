@@ -78,10 +78,25 @@ export function ProductLayout({
     );
   };
 
+  // Common full-width sections content that will be used in both mobile and desktop layouts
+  const fullWidthSections = (
+    <>
+      {renderDemo()}
+      <ProductInfo 
+        techStack={product.tech_stack}
+        productIncludes={product.product_includes}
+        difficultyLevel={product.difficulty_level}
+      />
+      <ProductReviews reviews={reviews} />
+      <MoreFromSeller expert_uuid={product.expert_uuid} />
+    </>
+  );
+
   return (
     <div className="min-h-screen">
       <MainHeader />
       <main className="container mx-auto px-4 pt-24">
+        {/* Mobile Layout */}
         <div className="lg:hidden">
           <ProductGallery 
             images={images}
@@ -117,23 +132,15 @@ export function ProductLayout({
               </p>
             </Card>
 
-            {renderDemo()}
-
-            <ProductInfo 
-              techStack={product.tech_stack}
-              productIncludes={product.product_includes}
-              difficultyLevel={product.difficulty_level}
-            />
-
-            <ProductReviews reviews={reviews} />
-
-            <MoreFromSeller expert_uuid={product.expert_uuid} />
+            {/* Mobile full-width sections */}
+            {fullWidthSections}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Desktop Layout - Product details in grid */}
+        <div className="hidden lg:grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            <div className="hidden lg:block space-y-8">
+            <div className="space-y-8">
               <ProductGallery 
                 images={images}
                 className="mb-8" 
@@ -144,16 +151,10 @@ export function ProductLayout({
                   {product.description}
                 </p>
               </Card>
-
-              {renderDemo()}
-
-              <ProductReviews reviews={reviews} />
-              
-              <MoreFromSeller expert_uuid={product.expert_uuid} />
             </div>
           </div>
 
-          <div className="hidden lg:block lg:space-y-6">
+          <div className="lg:space-y-6">
             <ProductHeader 
               title={product.name}
               seller="Design Master"
@@ -175,12 +176,12 @@ export function ProductLayout({
               <MessageCircle className="h-4 w-4" />
               Contact Seller
             </Button>
-            <ProductInfo 
-              techStack={product.tech_stack}
-              productIncludes={product.product_includes}
-              difficultyLevel={product.difficulty_level}
-            />
           </div>
+        </div>
+
+        {/* Desktop full-width sections */}
+        <div className="hidden lg:block mt-12 space-y-8">
+          {fullWidthSections}
         </div>
       </main>
     </div>
