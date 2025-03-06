@@ -415,9 +415,11 @@ export default function SellerPage() {
                   className="pl-9"
                 />
               </div>
-              <Button className="sm:w-auto">
-                <Plus className="h-4 w-4 mr-2" />
-                Add service
+              <Button asChild className="sm:w-auto">
+                <Link to="/seller/services/new">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add service
+                </Link>
               </Button>
             </div>
 

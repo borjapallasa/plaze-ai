@@ -1281,21 +1281,111 @@ export type Database = {
           },
         ]
       }
-      products_transactions: {
+      products_transaction_items: {
         Row: {
           created_at: string
           id: number
-          product_transaction_uuid: string
+          price: number | null
+          product_transaction_item_uuid: string
+          product_uuid: string | null
+          quantity: number | null
+          status: Database["public"]["Enums"]["transaction_item_status"] | null
+          tax: number | null
+          total_price: number | null
+          updated_at: string | null
+          variant_uuid: string | null
         }
         Insert: {
           created_at?: string
           id?: number
-          product_transaction_uuid?: string
+          price?: number | null
+          product_transaction_item_uuid?: string
+          product_uuid?: string | null
+          quantity?: number | null
+          status?: Database["public"]["Enums"]["transaction_item_status"] | null
+          tax?: number | null
+          total_price?: number | null
+          updated_at?: string | null
+          variant_uuid?: string | null
         }
         Update: {
           created_at?: string
           id?: number
+          price?: number | null
+          product_transaction_item_uuid?: string
+          product_uuid?: string | null
+          quantity?: number | null
+          status?: Database["public"]["Enums"]["transaction_item_status"] | null
+          tax?: number | null
+          total_price?: number | null
+          updated_at?: string | null
+          variant_uuid?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_transaction_items_product_uuid_fkey"
+            columns: ["product_uuid"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["product_uuid"]
+          },
+          {
+            foreignKeyName: "products_transaction_items_variant_uuid_fkey"
+            columns: ["variant_uuid"]
+            isOneToOne: false
+            referencedRelation: "variants"
+            referencedColumns: ["variant_uuid"]
+          },
+        ]
+      }
+      products_transactions: {
+        Row: {
+          created_at: string
+          id: number
+          item_count: number | null
+          payment_provider:
+            | Database["public"]["Enums"]["payment_provider"]
+            | null
+          payment_reference_id: string | null
+          product_transaction_uuid: string
+          status:
+            | Database["public"]["Enums"]["product_transaction_status"]
+            | null
+          total_amount: number | null
+          type: Database["public"]["Enums"]["product_transaction_type"] | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          item_count?: number | null
+          payment_provider?:
+            | Database["public"]["Enums"]["payment_provider"]
+            | null
+          payment_reference_id?: string | null
           product_transaction_uuid?: string
+          status?:
+            | Database["public"]["Enums"]["product_transaction_status"]
+            | null
+          total_amount?: number | null
+          type?: Database["public"]["Enums"]["product_transaction_type"] | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          item_count?: number | null
+          payment_provider?:
+            | Database["public"]["Enums"]["payment_provider"]
+            | null
+          payment_reference_id?: string | null
+          product_transaction_uuid?: string
+          status?:
+            | Database["public"]["Enums"]["product_transaction_status"]
+            | null
+          total_amount?: number | null
+          type?: Database["public"]["Enums"]["product_transaction_type"] | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -2089,9 +2179,18 @@ export type Database = {
         | "completed"
         | "pending payment"
         | "disputed"
+      payment_provider: "stripe"
       payout_status: "requested" | "paid out"
       product_free_or_paid: "free" | "paid"
       product_status: "active" | "draft" | "inactive"
+      product_transaction_status:
+        | "pending"
+        | "processing"
+        | "paid"
+        | "failed"
+        | "refunded"
+        | "chargeback"
+      product_transaction_type: "guest" | "user"
       product_type: "template" | "guide or manual"
       review_status: "published" | "not published"
       review_type: "product" | "service" | "job" | "community"
@@ -2117,6 +2216,18 @@ export type Database = {
         | "problem with a purchase"
         | "join as seller"
         | "product question"
+      transaction_item_status:
+        | "pending"
+        | "processing"
+        | "completed"
+        | "failed"
+        | "cancelled"
+        | "expired"
+        | "refunded"
+        | "partially refunded"
+        | "chargeback"
+        | "access revoked"
+        | "failed fulfillment"
       transaction_type:
         | "product"
         | "job"
