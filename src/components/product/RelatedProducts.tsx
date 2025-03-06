@@ -109,40 +109,6 @@ export function RelatedProducts({
     }
   }, [relationships, userProducts]);
 
-  // Toggle product selection in local state
-  const toggleProductSelection = (product: Product) => {
-    try {
-      setSelectedProducts(prev => {
-        // Check if the product is already selected
-        const isAlreadySelected = prev.some(p => p.product_uuid === product.product_uuid);
-        
-        // If it's already selected, remove it
-        if (isAlreadySelected) {
-          return prev.filter(p => p.product_uuid !== product.product_uuid);
-        }
-        
-        // Otherwise, add it to the selected products
-        return [...prev, product];
-      });
-      
-      // Close the popover after selection to prevent immediate re-click issues
-      setOpen(false);
-    } catch (error) {
-      console.error("Error toggling product selection:", error);
-    }
-  };
-
-  // Remove a product from selection
-  const removeSelectedProduct = (productId: string) => {
-    try {
-      setSelectedProducts(prev => 
-        prev.filter(p => p.product_uuid !== productId)
-      );
-    } catch (error) {
-      console.error("Error removing selected product:", error);
-    }
-  };
-
   // Save all relationships to the database
   const saveRelationships = async () => {
     if (!productId) return;
@@ -198,6 +164,48 @@ export function RelatedProducts({
     }
   };
 
+  // Toggle product selection in local state and save changes
+  const toggleProductSelection = async (product: Product) => {
+    try {
+      // Update local state
+      setSelectedProducts(prev => {
+        const isAlreadySelected = prev.some(p => p.product_uuid === product.product_uuid);
+        
+        // If it's already selected, remove it
+        if (isAlreadySelected) {
+          return prev.filter(p => p.product_uuid !== product.product_uuid);
+        }
+        
+        // Otherwise, add it to the selected products
+        return [...prev, product];
+      });
+      
+      // Close the popover after selection
+      setOpen(false);
+      
+      // Save changes automatically
+      await saveRelationships();
+      
+    } catch (error) {
+      console.error("Error toggling product selection:", error);
+    }
+  };
+
+  // Remove a product from selection and save changes
+  const removeSelectedProduct = async (productId: string) => {
+    try {
+      setSelectedProducts(prev => 
+        prev.filter(p => p.product_uuid !== productId)
+      );
+      
+      // Save changes automatically
+      await saveRelationships();
+      
+    } catch (error) {
+      console.error("Error removing selected product:", error);
+    }
+  };
+
   if (isLoadingProducts || isLoadingRelationships) {
     return (
       <div className={className}>
@@ -214,61 +222,49 @@ export function RelatedProducts({
       <div className="flex items-center justify-between">
         <Label className="text-base font-medium">Related Products</Label>
         
-        <div className="flex gap-2">
-          <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-1.5">
-                <Plus className="h-3.5 w-3.5" />
-                <span>Add Product</span>
-                <ChevronsUpDown className="h-3.5 w-3.5 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-[300px] p-0" align="end">
-              <Command>
-                <CommandInput placeholder="Search products..." />
-                <CommandEmpty>No products found</CommandEmpty>
-                <CommandGroup className="max-h-64 overflow-auto">
-                  {userProducts.map((product) => {
-                    const isSelected = selectedProducts.some(p => p.product_uuid === product.product_uuid);
-                    
-                    return (
-                      <CommandItem
-                        key={product.product_uuid}
-                        value={product.name}
-                        onSelect={() => {
-                          // Prevent default behavior that might cause issues
-                          toggleProductSelection(product);
-                        }}
-                      >
-                        <div className="flex items-center justify-between w-full">
-                          <span className="truncate">{product.name}</span>
-                          <span className="text-xs text-muted-foreground">
-                            ${product.price_from?.toFixed(2) || '0.00'}
-                          </span>
-                        </div>
-                        <Check
-                          className={cn(
-                            "ml-2 h-4 w-4",
-                            isSelected ? "opacity-100" : "opacity-0"
-                          )}
-                        />
-                      </CommandItem>
-                    );
-                  })}
-                </CommandGroup>
-              </Command>
-            </PopoverContent>
-          </Popover>
-          
-          <Button 
-            variant="default" 
-            size="sm" 
-            onClick={saveRelationships}
-            disabled={isSaving}
-          >
-            {isSaving ? "Saving..." : "Save Changes"}
-          </Button>
-        </div>
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <Button variant="outline" size="sm" className="gap-1.5">
+              <Plus className="h-3.5 w-3.5" />
+              <span>Add Product</span>
+              <ChevronsUpDown className="h-3.5 w-3.5 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[300px] p-0" align="end">
+            <Command>
+              <CommandInput placeholder="Search products..." />
+              <CommandEmpty>No products found</CommandEmpty>
+              <CommandGroup className="max-h-64 overflow-auto">
+                {userProducts.map((product) => {
+                  const isSelected = selectedProducts.some(p => p.product_uuid === product.product_uuid);
+                  
+                  return (
+                    <CommandItem
+                      key={product.product_uuid}
+                      value={product.name}
+                      onSelect={() => {
+                        toggleProductSelection(product);
+                      }}
+                    >
+                      <div className="flex items-center justify-between w-full">
+                        <span className="truncate">{product.name}</span>
+                        <span className="text-xs text-muted-foreground">
+                          ${product.price_from?.toFixed(2) || '0.00'}
+                        </span>
+                      </div>
+                      <Check
+                        className={cn(
+                          "ml-2 h-4 w-4",
+                          isSelected ? "opacity-100" : "opacity-0"
+                        )}
+                      />
+                    </CommandItem>
+                  );
+                })}
+              </CommandGroup>
+            </Command>
+          </PopoverContent>
+        </Popover>
       </div>
 
       {selectedProducts.length > 0 ? (
