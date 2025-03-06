@@ -10,6 +10,7 @@ import { ServiceCategories } from "@/components/service/ServiceCategories";
 import type { ServiceType } from "@/constants/service-categories";
 import type { CategoryType } from "@/constants/service-categories";
 import type { ServiceStatus } from "@/components/expert/types";
+import { Plus } from "lucide-react";
 
 interface ServiceFormProps {
   serviceName: string;
@@ -59,12 +60,12 @@ export function ServiceForm({
   onSave,
 }: ServiceFormProps) {
   return (
-    <div className="container mx-auto px-4 pb-8">
+    <div className="container max-w-[1200px] mx-auto px-4 pb-8 pt-14">
       {/* Header with status dropdown and save button */}
-      <div className="sticky top-24 z-30 bg-background py-4 mb-6 border-b">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <h1 className="text-2xl font-semibold">{serviceName || "New Service"}</h1>
-          <div className="flex items-center gap-4 self-end sm:self-auto">
+      <div className="fixed top-[72px] left-0 right-0 z-30 bg-white border-b border-gray-200 py-4">
+        <div className="container max-w-[1200px] mx-auto px-4 flex justify-between items-center">
+          <h1 className="text-2xl font-semibold">{serviceName ? serviceName : "New Service"}</h1>
+          <div className="flex items-center gap-4">
             <Select value={status} onValueChange={onStatusChange}>
               <SelectTrigger className="w-[140px]">
                 <SelectValue placeholder="Status" />
@@ -78,6 +79,8 @@ export function ServiceForm({
             <Button
               onClick={onSave}
               disabled={isSaving || !serviceName.trim()}
+              variant="default"
+              className="bg-gray-500 hover:bg-gray-600"
             >
               {isSaving ? "Saving..." : "Save Service"}
             </Button>
@@ -85,37 +88,34 @@ export function ServiceForm({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12">
         {/* Main content - Left side (2/3 width on large screens) */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <div className="space-y-6">
-              <div>
-                <Label htmlFor="name" className="text-base font-medium mb-2 block">
-                  Service Name
-                </Label>
-                <Input
-                  id="name"
-                  value={serviceName}
-                  onChange={(e) => onServiceNameChange(e.target.value)}
-                  placeholder="Enter your service name"
-                  className="h-11"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="description" className="text-base font-medium mb-2 block">
-                  Description
-                </Label>
-                <ProductEditor
-                  value={serviceDescription}
-                  onChange={onServiceDescriptionChange}
-                />
-              </div>
+        <div className="lg:col-span-2 space-y-8">
+          <div className="space-y-8">
+            <div>
+              <Label htmlFor="name" className="text-base font-medium mb-2 block">
+                Service Name
+              </Label>
+              <Input
+                id="name"
+                value={serviceName}
+                onChange={(e) => onServiceNameChange(e.target.value)}
+                placeholder="Enter your service name"
+                className="h-11"
+              />
             </div>
-          </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6">
+            <div>
+              <Label htmlFor="description" className="text-base font-medium mb-2 block">
+                Description
+              </Label>
+              <ProductEditor
+                value={serviceDescription}
+                onChange={onServiceDescriptionChange}
+                placeholder="Write your product description..."
+              />
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <Label htmlFor="price" className="text-base font-medium mb-2 block">
@@ -146,21 +146,34 @@ export function ServiceForm({
                 </Select>
               </div>
             </div>
-          </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <ServiceFeatures
-              features={features}
-              onAddFeature={onAddFeature}
-              onRemoveFeature={onRemoveFeature}
-              onFeatureChange={onFeatureChange}
-            />
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <Label className="text-base font-medium">Features</Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="h-9 px-4"
+                  onClick={onAddFeature}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Feature
+                </Button>
+              </div>
+              <ServiceFeatures
+                features={features}
+                onAddFeature={onAddFeature}
+                onRemoveFeature={onRemoveFeature}
+                onFeatureChange={onFeatureChange}
+              />
+            </div>
           </div>
         </div>
 
         {/* Sidebar - Right side (1/3 width on large screens) */}
         <div className="space-y-6">
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="rounded-lg border border-gray-200 p-6">
             <ServiceCategories
               category={category}
               selectedSubcategories={selectedSubcategories}

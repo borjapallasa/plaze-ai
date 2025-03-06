@@ -59,12 +59,14 @@ export default function NewServicePage() {
     }
 
     try {
+      const cleanedFeatures = features.filter(feature => feature.trim() !== "");
+      
       const serviceData = {
         name: serviceName,
         description: serviceDescription,
         price: parseFloat(price) || 0,
         type: serviceType,
-        features,
+        features: cleanedFeatures,
         main_category: category ? { value: category } : null,
         subcategory: selectedSubcategories.length > 0 
           ? selectedSubcategories.map(sub => ({ value: sub })) 
@@ -85,9 +87,7 @@ export default function NewServicePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="fixed top-0 left-0 right-0 z-50 bg-background">
-        <MainHeader />
-      </div>
+      <MainHeader />
 
       <ServiceForm
         serviceName={serviceName}

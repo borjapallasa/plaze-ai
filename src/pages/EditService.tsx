@@ -3,16 +3,14 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { MainHeader } from "@/components/MainHeader";
 import { ServiceForm } from "@/components/service/ServiceForm";
 import { CategoryType, ServiceType } from "@/constants/service-categories";
 import type { ServiceStatus } from "@/components/expert/types";
-import { Toaster } from "@/components/ui/toaster";
 
 export default function EditService() {
   const { id } = useParams();
-  const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
   const [serviceName, setServiceName] = useState("");
   const [serviceDescription, setServiceDescription] = useState("");
@@ -81,18 +79,10 @@ export default function EditService() {
 
       if (error) throw error;
 
-      toast({
-        title: "Changes saved",
-        description: "Your service has been updated successfully",
-        className: "bg-green-50 border-green-200",
-      });
+      toast.success("Your service has been updated successfully");
     } catch (error) {
       console.error('Error updating service:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update service",
-        variant: "destructive",
-      });
+      toast.error("Failed to update service");
     } finally {
       setIsSaving(false);
     }
@@ -120,16 +110,15 @@ export default function EditService() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
-        <div className="mt-16 p-6">Loading...</div>
+        <MainHeader />
+        <div className="mt-24 p-6">Loading...</div>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="fixed top-0 left-0 right-0 z-50 bg-background">
-        <MainHeader />
-      </div>
+      <MainHeader />
       
       <ServiceForm 
         serviceName={serviceName}
@@ -162,7 +151,6 @@ export default function EditService() {
         onStatusChange={setStatus}
         onSave={handleSave}
       />
-      <Toaster />
     </div>
   );
 }

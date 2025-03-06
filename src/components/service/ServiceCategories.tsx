@@ -25,7 +25,7 @@ export function ServiceCategories({
   const availableSubcategories = category ? SUBCATEGORIES[category] : [];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <div>
         <Label htmlFor="category" className="text-sm font-medium mb-1.5 block">
           Category
@@ -54,6 +54,7 @@ export function ServiceCategories({
         <Select 
           value=""
           onValueChange={onSubcategoriesChange}
+          disabled={!category}
         >
           <SelectTrigger className="h-11">
             <SelectValue placeholder="Select subcategories" />
@@ -66,7 +67,7 @@ export function ServiceCategories({
                 className="relative py-2.5"
               >
                 <div className="flex items-center justify-between w-full">
-                  <span className="text-base">{subcat.label}</span>
+                  <span>{subcat.label}</span>
                   {selectedSubcategories.includes(subcat.value) && (
                     <span className="text-primary">✓</span>
                   )}
