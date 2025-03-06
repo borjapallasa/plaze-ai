@@ -13,6 +13,7 @@ import { ProductMediaSection } from "@/components/product/ProductMediaSection";
 import { ProductOrganization } from "@/components/product/ProductOrganization";
 import { RelatedProducts } from "@/components/product/RelatedProducts";
 import { DangerZone } from "@/components/product/DangerZone";
+import { useExpertQuery } from "@/hooks/expert/useExpertQuery";
 
 type ProductStatus = 'draft' | 'active' | 'inactive';
 
@@ -143,6 +144,8 @@ export default function EditProduct() {
     },
     enabled: !!id
   });
+
+  const { data: expertData } = useExpertQuery(product?.user_uuid);
 
   const { data: variants = [], isLoading: isLoadingVariants, refetch: refetchVariants } = useQuery({
     queryKey: ['variants', id],
@@ -422,7 +425,7 @@ export default function EditProduct() {
                     productName={productName}
                     isDeleting={isDeleting}
                     showDeleteDialog={showDeleteDialog}
-                    sellerUuid={product?.user_uuid || ""}
+                    sellerUuid={expertData?.expert_uuid || product?.user_uuid || ""}
                     setShowDeleteDialog={setShowDeleteDialog}
                     onDeleteProduct={handleDeleteProduct}
                   />
