@@ -147,7 +147,7 @@ export function ServiceForm({
         </div>
 
         {/* Right column - Categories and Save button */}
-        <div>
+        <div className="self-start">
           <div className="rounded-lg border border-gray-200 p-6">
             <div className="mb-6 flex justify-between items-center">
               <Select value={status} onValueChange={onStatusChange}>
