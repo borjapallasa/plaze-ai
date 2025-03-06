@@ -54,8 +54,8 @@ export function CommunityForm({
     <div className="w-full max-w-[1400px] mx-auto px-2 xs:px-3 sm:px-6 lg:px-8 py-3 sm:py-6 mt-16">
       <CommunityFormHeader
         communityName={communityName}
-        communityType={communityType}
-        onCommunityTypeChange={onCommunityTypeChange}
+        visibility={visibility}
+        onVisibilityChange={onVisibilityChange}
         onSave={onSave}
         isSaving={isSaving}
       />
@@ -76,6 +76,7 @@ export function CommunityForm({
               onCommunityIntroChange={onCommunityIntroChange}
               onCommunityDescriptionChange={onCommunityDescriptionChange}
               onPriceChange={onPriceChange}
+              onCommunityTypeChange={onCommunityTypeChange}
               onBillingPeriodChange={onBillingPeriodChange}
               onVisibilityChange={onVisibilityChange}
             />

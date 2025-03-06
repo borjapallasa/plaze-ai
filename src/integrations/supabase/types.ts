@@ -2176,7 +2176,7 @@ export type Database = {
       community_price_status: "active" | "inactive"
       community_subscription_status: "active" | "inactive"
       community_type: "free" | "paid"
-      community_visibility: "draft" | "hidden" | "public"
+      community_visibility: "draft" | "private" | "public"
       conversation_source: "template" | "job request" | "information request"
       conversation_status: "open" | "closed" | "need attention"
       job_status:

@@ -4,20 +4,20 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft } from "lucide-react";
-import type { CommunityType } from "@/hooks/use-create-community";
+import type { CommunityVisibility } from "@/hooks/use-create-community";
 
 interface CommunityFormHeaderProps {
   communityName: string;
-  communityType: CommunityType;
-  onCommunityTypeChange: (value: CommunityType) => void;
+  visibility: CommunityVisibility;
+  onVisibilityChange: (value: CommunityVisibility) => void;
   onSave: () => void;
   isSaving: boolean;
 }
 
 export function CommunityFormHeader({
   communityName,
-  communityType,
-  onCommunityTypeChange,
+  visibility,
+  onVisibilityChange,
   onSave,
   isSaving
 }: CommunityFormHeaderProps) {
@@ -34,13 +34,14 @@ export function CommunityFormHeader({
           <div className="flex items-center justify-between mt-2">
             <p className="text-sm text-muted-foreground">Enter the details for your new community</p>
             <div className="flex items-center gap-4">
-              <Select value={communityType} onValueChange={onCommunityTypeChange}>
+              <Select value={visibility} onValueChange={onVisibilityChange}>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select type" />
+                  <SelectValue placeholder="Visibility" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="free">Free</SelectItem>
-                  <SelectItem value="paid">Paid</SelectItem>
+                  <SelectItem value="public">Public</SelectItem>
+                  <SelectItem value="private">Private</SelectItem>
+                  <SelectItem value="draft">Draft</SelectItem>
                 </SelectContent>
               </Select>
               <Button 

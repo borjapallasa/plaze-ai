@@ -6,7 +6,7 @@ import type { Json } from "@/integrations/supabase/types";
 
 export type BillingPeriod = "monthly" | "yearly";
 export type CommunityType = "free" | "paid";
-export type CommunityVisibility = "public" | "private" | "unlisted";
+export type CommunityVisibility = "public" | "private" | "draft";
 
 interface CommunityData {
   name: string;

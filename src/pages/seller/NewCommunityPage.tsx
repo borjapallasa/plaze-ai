@@ -18,7 +18,7 @@ export default function NewCommunityPage() {
   const [price, setPrice] = useState("");
   const [communityType, setCommunityType] = useState<CommunityType>("free");
   const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>("monthly");
-  const [visibility, setVisibility] = useState<CommunityVisibility>("public");
+  const [visibility, setVisibility] = useState<CommunityVisibility>("draft");
   const [links, setLinks] = useState<{ platform: string; url: string }[]>([{ platform: "", url: "" }]);
 
   const handleLinkChange = (index: number, field: "platform" | "url", value: string) => {
