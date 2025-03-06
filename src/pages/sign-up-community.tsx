@@ -1,19 +1,28 @@
-
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Mail, Lock, User, Eye, EyeOff, Loader2 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Mail, Lock, User, Eye, EyeOff } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { CommunityInfoPanel } from "@/components/community/signin/CommunityInfoPanel";
 import { LoadingState } from "@/components/community/signin/LoadingState";
+import { NotFoundState } from "@/components/community/signin/NotFoundState";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
+
+async function fetchCommunity(communityId: string) {
+  const { data, error } = await supabase
+    .from('communities')
+    .select('*')
+    .eq('community_uuid', communityId)
+    .single();
+
+  if (error) throw error;
+  return data;
+}
 
 export default function SignUpCommunityPage() {
   const { id } = useParams<{ id: string }>();
-  const [isLoading, setIsLoading] = useState(true);
-  const [community, setCommunity] = useState<any>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -21,22 +30,14 @@ export default function SignUpCommunityPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
 
-  // Simulate loading the community data
-  useState(() => {
-    setTimeout(() => {
-      setCommunity({
-        name: "Optimal Path Automations",
-        expert_name: "Borja P.",
-        thumbnail: "https://images.unsplash.com/photo-1517022812141-23620dba5c23",
-        description: "Imagine a spot where we all get together to chat about making our businesses run smoother with some automation magic and no-code shortcuts."
-      });
-      setIsLoading(false);
-    }, 1000);
+  const { data: community, isLoading, error } = useQuery({
+    queryKey: ['community', id],
+    queryFn: () => fetchCommunity(id!),
+    enabled: !!id
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle sign up logic here
     console.log("Sign up attempt with:", { email, password, firstName, lastName, communityId: id });
   };
 
@@ -44,18 +45,8 @@ export default function SignUpCommunityPage() {
     return <LoadingState />;
   }
 
-  if (!community) {
-    return (
-      <div className="min-h-screen flex items-center justify-center px-6 py-12 bg-muted/40">
-        <div className="text-center">
-          <h1 className="text-xl font-semibold">Community not found</h1>
-          <p className="text-muted-foreground mt-2">The community you're looking for doesn't exist or you don't have access.</p>
-          <Link to="/">
-            <Button className="mt-4">Back to Home</Button>
-          </Link>
-        </div>
-      </div>
-    );
+  if (error || !community) {
+    return <NotFoundState />;
   }
 
   return (
