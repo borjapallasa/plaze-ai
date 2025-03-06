@@ -30,7 +30,7 @@ export const ExpertCard = ({ expert }: ExpertCardProps) => {
   return (
     <Card 
       className="p-6 cursor-pointer transition-colors hover:bg-accent"
-      onClick={() => navigate(`/expert/${expert.slug || expert.id}/${expert.id}`)}
+      onClick={() => navigate(`/expert/${expert.expert_uuid}`)}
     >
       <div className="flex flex-col space-y-6">
         {/* Header Section */}
