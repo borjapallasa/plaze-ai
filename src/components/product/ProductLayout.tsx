@@ -1,3 +1,4 @@
+
 import React from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { ProductGallery } from "./ProductGallery";
@@ -51,6 +52,7 @@ export function ProductLayout({
   averageRating,
   onVariantChange,
   onAddToCart,
+  onAdditionalVariantToggle,
   reviews
 }: ProductLayoutProps) {
   const isMobile = useIsMobile();
@@ -80,6 +82,9 @@ export function ProductLayout({
 
   const handleAdditionalVariantSelect = (variantId: string, selected: boolean) => {
     console.log(`Additional variant ${variantId} ${selected ? 'selected' : 'unselected'}`);
+    if (onAdditionalVariantToggle) {
+      onAdditionalVariantToggle(variantId, selected);
+    }
   };
 
   const fullWidthSections = (
