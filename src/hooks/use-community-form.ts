@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 import type { CommunityType } from "@/hooks/use-create-community";
 
 interface Link {
@@ -37,7 +38,10 @@ function parseLinks(data: unknown): Link[] {
 
 export function useCommunityForm(id: string | undefined) {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [communityName, setCommunityName] = useState("");
   const [communityDescription, setCommunityDescription] = useState("");
   const [communityIntro, setCommunityIntro] = useState("");
@@ -120,6 +124,36 @@ export function useCommunityForm(id: string | undefined) {
     }
   };
 
+  const handleDeleteCommunity = async (redirectUrl: string) => {
+    if (!id) return;
+    
+    try {
+      setIsDeleting(true);
+      
+      const { error } = await supabase
+        .from('communities')
+        .delete()
+        .eq('community_uuid', id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Community deleted",
+        description: "Your community has been permanently deleted",
+      });
+      
+      navigate(redirectUrl);
+    } catch (error) {
+      console.error('Error deleting community:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete community",
+        variant: "destructive",
+      });
+      setIsDeleting(false);
+    }
+  };
+
   const handleCopyPaymentLink = async () => {
     if (!paymentLink) return;
     
@@ -177,7 +211,11 @@ export function useCommunityForm(id: string | undefined) {
     community,
     isLoading,
     isSaving,
+    isDeleting,
+    showDeleteDialog,
+    setShowDeleteDialog,
     handleSave,
+    handleDeleteCommunity,
     handleCopyPaymentLink,
     handleAddLink,
     handleLinkChange,

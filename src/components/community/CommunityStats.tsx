@@ -1,9 +1,11 @@
 
+import React from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Copy, Check } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import { CommunityDangerZone } from "./CommunityDangerZone";
 
 interface CommunityStatsProps {
   paymentLink: string;
@@ -19,7 +21,12 @@ interface CommunityStatsProps {
     total_revenue?: number | null;
     paid_member_count?: number | null;
     member_count?: number | null;
+    expert_uuid?: string | null;
   };
+  showDeleteDialog: boolean;
+  setShowDeleteDialog: (show: boolean) => void;
+  isDeleting: boolean;
+  onDeleteCommunity: (redirectUrl: string) => void;
 }
 
 export function CommunityStats({
@@ -29,6 +36,10 @@ export function CommunityStats({
   webhook,
   setWebhook,
   community,
+  showDeleteDialog,
+  setShowDeleteDialog,
+  isDeleting,
+  onDeleteCommunity
 }: CommunityStatsProps) {
   const formatNumber = (num: number | null | undefined) => {
     if (num === null || num === undefined) return '0';
@@ -130,6 +141,16 @@ export function CommunityStats({
             className="h-9"
           />
         </div>
+        
+        {/* Danger Zone component */}
+        <CommunityDangerZone
+          communityName={community?.name || ""}
+          isDeleting={isDeleting}
+          showDeleteDialog={showDeleteDialog}
+          sellerUuid={community?.expert_uuid || ""}
+          setShowDeleteDialog={setShowDeleteDialog}
+          onDeleteCommunity={onDeleteCommunity}
+        />
       </Card>
     </div>
   );

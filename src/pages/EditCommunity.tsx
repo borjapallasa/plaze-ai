@@ -34,7 +34,11 @@ export default function EditCommunity() {
     community,
     isLoading,
     isSaving,
+    isDeleting,
+    showDeleteDialog,
+    setShowDeleteDialog,
     handleSave,
+    handleDeleteCommunity,
     handleCopyPaymentLink,
     handleAddLink,
     handleLinkChange,
@@ -98,6 +102,10 @@ export default function EditCommunity() {
               webhook={webhook}
               setWebhook={setWebhook}
               community={community}
+              showDeleteDialog={showDeleteDialog}
+              setShowDeleteDialog={setShowDeleteDialog}
+              isDeleting={isDeleting}
+              onDeleteCommunity={handleDeleteCommunity}
             />
           </div>
         </div>
