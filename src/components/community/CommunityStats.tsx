@@ -27,6 +27,7 @@ interface CommunityStatsProps {
   setShowDeleteDialog: (show: boolean) => void;
   isDeleting: boolean;
   onDeleteCommunity: (redirectUrl: string) => void;
+  communityName: string; // Add communityName as a separate prop
 }
 
 export function CommunityStats({
@@ -39,7 +40,8 @@ export function CommunityStats({
   showDeleteDialog,
   setShowDeleteDialog,
   isDeleting,
-  onDeleteCommunity
+  onDeleteCommunity,
+  communityName // Use the new prop
 }: CommunityStatsProps) {
   const formatNumber = (num: number | null | undefined) => {
     if (num === null || num === undefined) return '0';
@@ -144,7 +146,7 @@ export function CommunityStats({
         
         {/* Danger Zone component */}
         <CommunityDangerZone
-          communityName={community?.name || ""}
+          communityName={communityName} // Use the communityName prop instead of community.name
           isDeleting={isDeleting}
           showDeleteDialog={showDeleteDialog}
           sellerUuid={community?.expert_uuid || ""}
