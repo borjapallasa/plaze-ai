@@ -1,36 +1,19 @@
+
 import React, { useState, useEffect } from "react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogClose,
-} from "@/components/ui/dialog";
-import { MainHeader } from "@/components/MainHeader";
-import { ProductEditor } from "@/components/product/ProductEditor";
-import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
-import { ProductVariantsEditor } from "@/components/product/ProductVariants";
-import { RelatedProducts } from "@/components/product/RelatedProducts";
-import { ArrowLeft, Plus, X, Check, Trash2, AlertTriangle } from "lucide-react";
+import { X } from "lucide-react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
+import { MainHeader } from "@/components/MainHeader";
+import { ProductHeaderSection } from "@/components/product/ProductHeaderSection";
+import { ProductMainInfoPanel } from "@/components/product/ProductMainInfoPanel";
+import { ProductTechnicalDetails } from "@/components/product/ProductTechnicalDetails";
+import { ProductMediaSection } from "@/components/product/ProductMediaSection";
+import { ProductOrganization } from "@/components/product/ProductOrganization";
+import { RelatedProducts } from "@/components/product/RelatedProducts";
+import { DangerZone } from "@/components/product/DangerZone";
 
 type ProductStatus = 'draft' | 'active' | 'inactive';
 
@@ -377,137 +360,40 @@ export default function EditProduct() {
       <MainHeader />
       <div className="mt-16">
         <div className="w-full max-w-[1400px] mx-auto px-2 xs:px-3 sm:px-6 lg:px-8 py-3 sm:py-6">
-          <div className="mb-6">
-            <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
-              <Link to="/seller/products">
-                <Button variant="ghost" size="icon" className="rounded-full flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 mt-1">
-                  <ArrowLeft className="h-4 w-4" />
-                </Button>
-              </Link>
-              <div className="w-full">
-                <h1 className="text-lg sm:text-xl md:text-2xl font-semibold break-words pr-2">Edit Product</h1>
-                <div className="flex items-center justify-between mt-2">
-                  <p className="text-sm text-muted-foreground">Product details and configuration</p>
-                  <div className="flex items-center gap-4">
-                    <Select value={productStatus} onValueChange={handleStatusChange}>
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="draft">Draft</SelectItem>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="inactive">Inactive</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Button 
-                      onClick={handleSave}
-                      disabled={isSaving}
-                    >
-                      {isSaving ? "Saving..." : "Save changes"}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <ProductHeaderSection 
+            productStatus={productStatus}
+            onStatusChange={handleStatusChange}
+            onSave={handleSave}
+            isSaving={isSaving}
+          />
 
           <div className="space-y-3 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-6">
             <div className="lg:col-span-8">
               <div className="space-y-3 sm:space-y-6">
-                <Card className="p-3 sm:p-6">
-                  <div className="space-y-3 sm:space-y-4">
-                    <div>
-                      <Label htmlFor="name">Name</Label>
-                      <Input
-                        id="name"
-                        placeholder="Enter product name"
-                        value={productName}
-                        onChange={(e) => setProductName(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="description">Description</Label>
-                      <ProductEditor 
-                        value={productDescription}
-                        onChange={setProductDescription}
-                      />
-                    </div>
-                    <div className="pt-2">
-                      <div className="flex items-center justify-between mb-4">
-                        <Label>Variants</Label>
-                        <Button 
-                          onClick={handleAddVariant} 
-                          variant="outline" 
-                          size="sm"
-                        >
-                          <Plus className="h-4 w-4 mr-2" />
-                          Add variant
-                        </Button>
-                      </div>
-                      <ProductVariantsEditor
-                        variants={localVariants}
-                        onVariantsChange={handleVariantsChange}
-                      />
-                    </div>
-                  </div>
-                </Card>
+                <ProductMainInfoPanel 
+                  productName={productName}
+                  setProductName={setProductName}
+                  productDescription={productDescription}
+                  setProductDescription={setProductDescription}
+                  localVariants={localVariants}
+                  onAddVariant={handleAddVariant}
+                  onVariantsChange={handleVariantsChange}
+                />
 
-                <Card className="p-3 sm:p-6">
-                  <h2 className="text-lg font-medium mb-3 sm:mb-4">Product Details</h2>
-                  <div className="space-y-3 sm:space-y-4">
-                    <div>
-                      <Label htmlFor="tech_stack">Tech Stack</Label>
-                      <Input 
-                        id="tech_stack" 
-                        placeholder="Enter required tech stack"
-                        value={techStack}
-                        onChange={(e) => setTechStack(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="tech_stack_price">Tech Stack Pricing</Label>
-                      <Input 
-                        id="tech_stack_price" 
-                        placeholder="Enter tech stack pricing details"
-                        value={techStackPrice}
-                        onChange={(e) => setTechStackPrice(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="product_includes">What's Included</Label>
-                      <Input 
-                        id="product_includes" 
-                        placeholder="Enter what's included in the product"
-                        value={productIncludes}
-                        onChange={(e) => setProductIncludes(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="difficulty_level">Difficulty Level</Label>
-                      <Input 
-                        id="difficulty_level" 
-                        placeholder="Select difficulty level"
-                        value={difficultyLevel}
-                        onChange={(e) => setDifficultyLevel(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="demo">Demo Link</Label>
-                      <Input 
-                        id="demo" 
-                        placeholder="Enter demo URL" 
-                        type="url"
-                        value={demo}
-                        onChange={(e) => setDemo(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                </Card>
+                <ProductTechnicalDetails 
+                  techStack={techStack}
+                  setTechStack={setTechStack}
+                  techStackPrice={techStackPrice}
+                  setTechStackPrice={setTechStackPrice}
+                  productIncludes={productIncludes}
+                  setProductIncludes={setProductIncludes}
+                  difficultyLevel={difficultyLevel}
+                  setDifficultyLevel={setDifficultyLevel}
+                  demo={demo}
+                  setDemo={setDemo}
+                />
 
-                <Card className="p-3 sm:p-6">
-                  <h2 className="text-lg font-medium mb-3 sm:mb-4">Media</h2>
-                  <ProductMediaUpload productUuid={id} />
-                </Card>
+                <ProductMediaSection productUuid={id} />
               </div>
             </div>
 
@@ -515,98 +401,17 @@ export default function EditProduct() {
               <Card className="p-3 sm:p-6">
                 <h2 className="text-lg font-medium mb-3 sm:mb-4">Product Organization</h2>
                 <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="industries" className="text-sm mb-1.5">Industries</Label>
-                    <Select
-                      value=""
-                      onValueChange={handleIndustryChange}
-                    >
-                      <SelectTrigger className="h-auto min-h-[2.75rem] py-1.5 px-3">
-                        {renderSelectedTags(industries) || <SelectValue placeholder="Select industries" />}
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectItem value="Healthcare">Healthcare</SelectItem>
-                          <SelectItem value="Education">Education</SelectItem>
-                          <SelectItem value="Finance">Finance</SelectItem>
-                          <SelectItem value="Technology">Technology</SelectItem>
-                          <SelectItem value="Real Estate">Real Estate</SelectItem>
-                          <SelectItem value="Retail">Retail</SelectItem>
-                          <SelectItem value="Manufacturing">Manufacturing</SelectItem>
-                          <SelectItem value="Entertainment">Entertainment</SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="use_case" className="text-sm mb-1.5">Use Case</Label>
-                    <Select
-                      value=""
-                      onValueChange={handleUseCaseChange}
-                    >
-                      <SelectTrigger className="h-auto min-h-[2.75rem] py-1.5 px-3">
-                        {renderSelectedTags(useCases) || <SelectValue placeholder="Select use cases" />}
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {USE_CASES.map((useCase) => (
-                            <SelectItem 
-                              key={useCase} 
-                              value={useCase}
-                            >
-                              {useCase}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="platform" className="text-sm mb-1.5">Platform</Label>
-                    <Select
-                      value=""
-                      onValueChange={handlePlatformChange}
-                    >
-                      <SelectTrigger className="h-auto min-h-[2.75rem] py-1.5 px-3">
-                        {renderSelectedTags(platform) || <SelectValue placeholder="Select platforms" />}
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {PLATFORMS.map((p) => (
-                            <SelectItem 
-                              key={p} 
-                              value={p}
-                            >
-                              {p}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="team" className="text-sm mb-1.5">Team</Label>
-                    <Select
-                      value=""
-                      onValueChange={handleTeamChange}
-                    >
-                      <SelectTrigger className="h-auto min-h-[2.75rem] py-1.5 px-3">
-                        {renderSelectedTags(team) || <SelectValue placeholder="Select team roles" />}
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {TEAM_ROLES.map((role) => (
-                            <SelectItem 
-                              key={role} 
-                              value={role}
-                            >
-                              {role}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <ProductOrganization
+                    industries={industries}
+                    useCases={useCases}
+                    platform={platform}
+                    team={team}
+                    onIndustryChange={handleIndustryChange}
+                    onUseCaseChange={handleUseCaseChange}
+                    onPlatformChange={handlePlatformChange}
+                    onTeamChange={handleTeamChange}
+                    renderSelectedTags={renderSelectedTags}
+                  />
                   
                   <RelatedProducts
                     productId={id || ""}
@@ -614,55 +419,13 @@ export default function EditProduct() {
                     className="mt-6 pt-4 border-t"
                   />
 
-                  <div className="mt-6 pt-4 border-t">
-                    <h3 className="text-base font-medium mb-2">Danger Zone</h3>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Permanent actions that cannot be undone
-                    </p>
-                    
-                    <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-                      <DialogTrigger asChild>
-                        <Button 
-                          variant="destructive" 
-                          className="w-full"
-                        >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Delete Product
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle className="flex items-center gap-2">
-                            <AlertTriangle className="h-5 w-5 text-destructive" />
-                            Delete Product
-                          </DialogTitle>
-                          <DialogDescription>
-                            This action is irreversible. This will permanently delete the product
-                            "{productName}" and all of its associated data.
-                          </DialogDescription>
-                        </DialogHeader>
-                        <div className="py-3">
-                          <p className="text-sm font-medium text-destructive">
-                            Are you sure you want to delete this product?
-                          </p>
-                        </div>
-                        <DialogFooter className="gap-2">
-                          <DialogClose asChild>
-                            <Button variant="outline">
-                              Cancel
-                            </Button>
-                          </DialogClose>
-                          <Button 
-                            variant="destructive" 
-                            onClick={handleDeleteProduct}
-                            disabled={isDeleting}
-                          >
-                            {isDeleting ? "Deleting..." : "Yes, delete product"}
-                          </Button>
-                        </DialogFooter>
-                      </DialogContent>
-                    </Dialog>
-                  </div>
+                  <DangerZone 
+                    productName={productName}
+                    isDeleting={isDeleting}
+                    showDeleteDialog={showDeleteDialog}
+                    setShowDeleteDialog={setShowDeleteDialog}
+                    onDeleteProduct={handleDeleteProduct}
+                  />
                 </div>
               </Card>
             </div>
