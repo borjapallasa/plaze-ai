@@ -32,13 +32,9 @@ export function CommunityInfoPanel({ community }: CommunityInfoPanelProps) {
         </div>
       </div>
 
-      <div className="space-y-6">
-        <div className="p-6 rounded-lg bg-muted/40">
-          <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
-            {community.description || "Welcome back to your community. Sign in to continue your journey."}
-          </p>
-        </div>
-      </div>
+      <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+        {community.description || "Welcome back to your community. Sign in to continue your journey."}
+      </p>
     </div>
   );
 }
