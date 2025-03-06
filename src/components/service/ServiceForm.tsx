@@ -60,127 +60,121 @@ export function ServiceForm({
   onSave,
 }: ServiceFormProps) {
   return (
-    <div className="min-h-screen bg-background pb-8">
-      {/* Fixed header */}
-      <div className="fixed top-[72px] left-0 right-0 z-30 bg-white border-b border-gray-200 py-4">
-        <div className="container max-w-[1200px] mx-auto px-4 flex justify-between items-center">
-          <h1 className="text-2xl font-semibold">{serviceName ? serviceName : "New Service"}</h1>
-          <div className="flex items-center gap-4">
-            <Select value={status} onValueChange={onStatusChange}>
-              <SelectTrigger className="w-[140px]">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="draft">Draft</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="archived">Archived</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button
-              onClick={onSave}
-              disabled={isSaving || !serviceName.trim()}
-              className="bg-primary hover:bg-primary/90"
-            >
-              {isSaving ? "Creating..." : "Create Service"}
-            </Button>
-          </div>
+    <div className="container max-w-[1200px] mx-auto px-4 py-8">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-semibold">New Service</h1>
+        <div className="flex items-center gap-4">
+          <Select value={status} onValueChange={onStatusChange}>
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="draft">Draft</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="archived">Archived</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button
+            onClick={onSave}
+            disabled={isSaving || !serviceName.trim()}
+            className="bg-primary hover:bg-primary/90"
+          >
+            {isSaving ? "Creating..." : "Create Service"}
+          </Button>
         </div>
       </div>
 
-      {/* Main content */}
-      <div className="container max-w-[1200px] mx-auto px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-28">
-          {/* Left column - Main form content */}
-          <div className="lg:col-span-2 space-y-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left column - Main form content */}
+        <div className="lg:col-span-2 space-y-8">
+          <div>
+            <Label htmlFor="name" className="text-base font-medium mb-2 block">
+              Service Name
+            </Label>
+            <Input
+              id="name"
+              value={serviceName}
+              onChange={(e) => onServiceNameChange(e.target.value)}
+              placeholder="Enter your service name"
+              className="h-11"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="description" className="text-base font-medium mb-2 block">
+              Description
+            </Label>
+            <ProductEditor
+              value={serviceDescription}
+              onChange={onServiceDescriptionChange}
+              placeholder="Write your service description..."
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <Label htmlFor="name" className="text-base font-medium mb-2 block">
-                Service Name
+              <Label htmlFor="price" className="text-base font-medium mb-2 block">
+                Price
               </Label>
               <Input
-                id="name"
-                value={serviceName}
-                onChange={(e) => onServiceNameChange(e.target.value)}
-                placeholder="Enter your service name"
+                id="price"
+                type="number"
+                value={price}
+                onChange={(e) => onPriceChange(e.target.value)}
+                placeholder="Enter service price"
                 className="h-11"
               />
             </div>
 
             <div>
-              <Label htmlFor="description" className="text-base font-medium mb-2 block">
-                Description
+              <Label htmlFor="type" className="text-base font-medium mb-2 block">
+                Service Type
               </Label>
-              <ProductEditor
-                value={serviceDescription}
-                onChange={onServiceDescriptionChange}
-                placeholder="Write your service description..."
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <Label htmlFor="price" className="text-base font-medium mb-2 block">
-                  Price
-                </Label>
-                <Input
-                  id="price"
-                  type="number"
-                  value={price}
-                  onChange={(e) => onPriceChange(e.target.value)}
-                  placeholder="Enter service price"
-                  className="h-11"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="type" className="text-base font-medium mb-2 block">
-                  Service Type
-                </Label>
-                <Select value={serviceType} onValueChange={onServiceTypeChange}>
-                  <SelectTrigger className="h-11">
-                    <SelectValue placeholder="Select service type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="one time">One Time</SelectItem>
-                    <SelectItem value="monthly">Monthly</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <Label className="text-base font-medium">Features</Label>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="h-9 px-4"
-                  onClick={onAddFeature}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Feature
-                </Button>
-              </div>
-              <ServiceFeatures
-                features={features}
-                onAddFeature={onAddFeature}
-                onRemoveFeature={onRemoveFeature}
-                onFeatureChange={onFeatureChange}
-              />
+              <Select value={serviceType} onValueChange={onServiceTypeChange}>
+                <SelectTrigger className="h-11">
+                  <SelectValue placeholder="Select service type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="one time">One Time</SelectItem>
+                  <SelectItem value="monthly">Monthly</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
-          {/* Right column - Categories */}
           <div>
-            <div className="rounded-lg border border-gray-200 p-6 sticky top-36">
-              <ServiceCategories
-                category={category}
-                selectedSubcategories={selectedSubcategories}
-                onCategoryChange={onCategoryChange}
-                onSubcategoriesChange={onSubcategoriesChange}
-                onRemoveSubcategory={onRemoveSubcategory}
-              />
+            <div className="flex items-center justify-between mb-2">
+              <Label className="text-base font-medium">Features</Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-9 px-4"
+                onClick={onAddFeature}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Feature
+              </Button>
             </div>
+            <ServiceFeatures
+              features={features}
+              onAddFeature={onAddFeature}
+              onRemoveFeature={onRemoveFeature}
+              onFeatureChange={onFeatureChange}
+            />
+          </div>
+        </div>
+
+        {/* Right column - Categories */}
+        <div>
+          <div className="rounded-lg border border-gray-200 p-6">
+            <ServiceCategories
+              category={category}
+              selectedSubcategories={selectedSubcategories}
+              onCategoryChange={onCategoryChange}
+              onSubcategoriesChange={onSubcategoriesChange}
+              onRemoveSubcategory={onRemoveSubcategory}
+            />
           </div>
         </div>
       </div>
