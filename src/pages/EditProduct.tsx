@@ -145,7 +145,7 @@ export default function EditProduct() {
     enabled: !!id
   });
 
-  const { data: expertData } = useExpertQuery(product?.user_uuid);
+  const { data: expertData } = useExpertQuery(product?.expert_uuid);
 
   const { data: variants = [], isLoading: isLoadingVariants, refetch: refetchVariants } = useQuery({
     queryKey: ['variants', id],
@@ -425,7 +425,7 @@ export default function EditProduct() {
                     productName={productName}
                     isDeleting={isDeleting}
                     showDeleteDialog={showDeleteDialog}
-                    sellerUuid={expertData?.expert_uuid || ""}
+                    sellerUuid={product?.expert_uuid || ""}
                     setShowDeleteDialog={setShowDeleteDialog}
                     onDeleteProduct={handleDeleteProduct}
                   />
