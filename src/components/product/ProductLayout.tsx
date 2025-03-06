@@ -1,4 +1,3 @@
-
 import React from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { ProductGallery } from "./ProductGallery";
@@ -12,6 +11,7 @@ import { ProductInfo } from "./ProductInfo";
 import { MoreFromSeller } from "./MoreFromSeller";
 import { ProductReviews } from "./ProductReviews";
 import { VariantPicker } from "./VariantPicker";
+import { AdditionalVariants } from "./AdditionalVariants";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
 
 interface ProductLayoutProps {
@@ -78,7 +78,10 @@ export function ProductLayout({
     );
   };
 
-  // Common full-width sections content that will be used in both mobile and desktop layouts
+  const handleAdditionalVariantSelect = (variantId: string, selected: boolean) => {
+    console.log(`Additional variant ${variantId} ${selected ? 'selected' : 'unselected'}`);
+  };
+
   const fullWidthSections = (
     <>
       {renderDemo()}
@@ -91,7 +94,6 @@ export function ProductLayout({
     <div className="min-h-screen">
       <MainHeader />
       <main className="container mx-auto px-4 pt-24">
-        {/* Mobile Layout */}
         <div className="lg:hidden">
           <ProductGallery 
             images={images}
@@ -113,12 +115,19 @@ export function ProductLayout({
           />
           <Button 
             variant="outline" 
-            className="w-full flex items-center justify-center gap-2 mb-7"
+            className="w-full flex items-center justify-center gap-2 mb-4"
             onClick={() => console.log("Contact seller clicked")}
           >
             <MessageCircle className="h-4 w-4" />
             Contact Seller
           </Button>
+          
+          <AdditionalVariants
+            variants={variants}
+            selectedMainVariant={selectedVariant}
+            onAdditionalSelect={handleAdditionalVariantSelect}
+            className="mb-7"
+          />
 
           <div className="space-y-8">
             <Card className="p-6">
@@ -133,12 +142,10 @@ export function ProductLayout({
               difficultyLevel={product.difficulty_level}
             />
 
-            {/* Mobile full-width sections */}
             {fullWidthSections}
           </div>
         </div>
 
-        {/* Desktop Layout - Product details in grid */}
         <div className="hidden lg:grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             <div className="space-y-8">
@@ -171,12 +178,20 @@ export function ProductLayout({
             />
             <Button 
               variant="outline" 
-              className="w-full flex items-center justify-center gap-2 mb-6"
+              className="w-full flex items-center justify-center gap-2 mb-4"
               onClick={() => console.log("Contact seller clicked")}
             >
               <MessageCircle className="h-4 w-4" />
               Contact Seller
             </Button>
+            
+            <AdditionalVariants
+              variants={variants}
+              selectedMainVariant={selectedVariant}
+              onAdditionalSelect={handleAdditionalVariantSelect}
+              className="mb-6"
+            />
+            
             <ProductInfo 
               techStack={product.tech_stack}
               productIncludes={product.product_includes}
@@ -185,7 +200,6 @@ export function ProductLayout({
           </div>
         </div>
 
-        {/* Desktop full-width sections */}
         <div className="hidden lg:block mt-12 space-y-8">
           {fullWidthSections}
         </div>

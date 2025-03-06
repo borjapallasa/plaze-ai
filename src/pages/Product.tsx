@@ -13,6 +13,7 @@ const getPlaceholderImage = () => "https://images.unsplash.com/photo-16499729043
 
 export default function Product() {
   const [selectedVariant, setSelectedVariant] = useState<string | undefined>();
+  const [additionalVariants, setAdditionalVariants] = useState<string[]>([]);
   const [showStickyATC, setShowStickyATC] = useState(false);
   const variantsRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -166,10 +167,23 @@ export default function Product() {
   }, []);
 
   const handleAddToCart = () => {
+    const mainVariant = variants.find(v => v.id === selectedVariant);
+    const additionalItems = variants.filter(v => additionalVariants.includes(v.id));
+    
+    console.log("Adding to cart:", mainVariant, "with additional items:", additionalItems);
+    
     toast({
       title: "Added to cart",
-      description: "Your item has been added to the cart.",
+      description: `Your item${additionalItems.length > 0 ? ' and add-ons have' : ' has'} been added to the cart.`,
     });
+  };
+  
+  const handleAdditionalVariantToggle = (variantId: string, selected: boolean) => {
+    setAdditionalVariants(prev => 
+      selected 
+        ? [...prev, variantId]
+        : prev.filter(id => id !== variantId)
+    );
   };
 
   if (isLoadingProduct || isLoadingVariants) {
@@ -193,6 +207,7 @@ export default function Product() {
         averageRating={averageRating}
         onVariantChange={setSelectedVariant}
         onAddToCart={handleAddToCart}
+        onAdditionalVariantToggle={handleAdditionalVariantToggle}
         reviews={reviews}
       />
       <StickyATC 

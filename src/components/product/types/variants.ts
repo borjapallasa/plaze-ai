@@ -9,7 +9,7 @@ export interface Variant {
   label?: string;
   features?: string[];
   hidden?: boolean;
-  createdAt?: string; // Adding a new field to force a change
+  createdAt?: string;
 }
 
 export interface ProductVariantsEditorProps {
@@ -24,4 +24,15 @@ export interface VariantPickerProps {
   onVariantChange?: (variantId: string) => void;
   onAddToCart?: () => void;
   className?: string;
+}
+
+export interface ProductLayoutProps {
+  product: any;
+  variants: any[];
+  selectedVariant?: string;
+  averageRating: number;
+  onVariantChange: (variantId: string) => void;
+  onAddToCart: () => void;
+  onAdditionalVariantToggle?: (variantId: string, selected: boolean) => void;
+  reviews: any[];
 }
