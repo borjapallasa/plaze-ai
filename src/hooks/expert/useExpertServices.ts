@@ -24,7 +24,8 @@ export function useExpertServices(expert_uuid: string | undefined) {
           active_subscriptions_count,
           created_at
         `)
-        .eq('expert_uuid', expert_uuid);
+        .eq('expert_uuid', expert_uuid)
+        .eq('status', 'active'); // Only fetch active services
 
       if (error) {
         console.error('Error fetching services:', error);

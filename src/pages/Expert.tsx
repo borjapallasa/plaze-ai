@@ -21,6 +21,7 @@ export default function Expert() {
 
   console.log("Expert page - expert_uuid from params:", expert_uuid);
   console.log("Expert page - expert data:", expert);
+  console.log("Expert page - services (only active):", services);
 
   if (isLoadingExpert || isLoadingServices) {
     return <ExpertLoadingState />;
