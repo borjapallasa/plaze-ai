@@ -14,6 +14,7 @@ import ExpertPage from "./pages/Expert";
 import ProductsPage from "./pages/Products";
 import NewProductPage from "./pages/seller/NewProduct";
 import NewServicePage from "./pages/seller/NewServicePage";
+import NewCommunityPage from "./pages/seller/NewCommunityPage";
 import EditProductPage from "./pages/EditProduct";
 import EditServicePage from "./pages/EditService";
 import EditCommunityPage from "./pages/EditCommunity";
@@ -61,6 +62,7 @@ function App() {
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/seller/products/new" element={<NewProductPage />} />
           <Route path="/seller/services/new" element={<NewServicePage />} />
+          <Route path="/seller/communities/new" element={<NewCommunityPage />} />
           <Route path="/seller/:id" element={<SellerPage />} />
           <Route path="/product/:id/edit" element={<EditProductPage />} />
           <Route path="/service/:id/edit" element={<EditServicePage />} />
