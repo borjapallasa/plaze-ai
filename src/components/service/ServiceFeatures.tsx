@@ -2,7 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 
 interface ServiceFeaturesProps {
   features: string[];
@@ -40,6 +40,17 @@ export function ServiceFeatures({
           )}
         </div>
       ))}
+      
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        className="h-9 px-4 mt-2"
+        onClick={onAddFeature}
+      >
+        <Plus className="h-4 w-4 mr-2" />
+        Add Feature
+      </Button>
     </div>
   );
 }

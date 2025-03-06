@@ -88,7 +88,6 @@ export default function NewServicePage() {
   return (
     <div className="min-h-screen bg-background">
       <MainHeader />
-
       <ServiceForm
         serviceName={serviceName}
         serviceDescription={serviceDescription}
