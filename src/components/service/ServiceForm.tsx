@@ -60,8 +60,8 @@ export function ServiceForm({
   onSave,
 }: ServiceFormProps) {
   return (
-    <div className="container max-w-[1200px] mx-auto px-4 pb-8 pt-14">
-      {/* Header with status dropdown and save button */}
+    <div className="min-h-screen bg-background pb-8">
+      {/* Fixed header */}
       <div className="fixed top-[72px] left-0 right-0 z-30 bg-white border-b border-gray-200 py-4">
         <div className="container max-w-[1200px] mx-auto px-4 flex justify-between items-center">
           <h1 className="text-2xl font-semibold">{serviceName ? serviceName : "New Service"}</h1>
@@ -79,19 +79,19 @@ export function ServiceForm({
             <Button
               onClick={onSave}
               disabled={isSaving || !serviceName.trim()}
-              variant="default"
-              className="bg-gray-500 hover:bg-gray-600"
+              className="bg-primary hover:bg-primary/90"
             >
-              {isSaving ? "Saving..." : "Save Service"}
+              {isSaving ? "Creating..." : "Create Service"}
             </Button>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12">
-        {/* Main content - Left side (2/3 width on large screens) */}
-        <div className="lg:col-span-2 space-y-8">
-          <div className="space-y-8">
+      {/* Main content */}
+      <div className="container max-w-[1200px] mx-auto px-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-28">
+          {/* Left column - Main form content */}
+          <div className="lg:col-span-2 space-y-8">
             <div>
               <Label htmlFor="name" className="text-base font-medium mb-2 block">
                 Service Name
@@ -112,7 +112,7 @@ export function ServiceForm({
               <ProductEditor
                 value={serviceDescription}
                 onChange={onServiceDescriptionChange}
-                placeholder="Write your product description..."
+                placeholder="Write your service description..."
               />
             </div>
 
@@ -169,18 +169,18 @@ export function ServiceForm({
               />
             </div>
           </div>
-        </div>
 
-        {/* Sidebar - Right side (1/3 width on large screens) */}
-        <div className="space-y-6">
-          <div className="rounded-lg border border-gray-200 p-6">
-            <ServiceCategories
-              category={category}
-              selectedSubcategories={selectedSubcategories}
-              onCategoryChange={onCategoryChange}
-              onSubcategoriesChange={onSubcategoriesChange}
-              onRemoveSubcategory={onRemoveSubcategory}
-            />
+          {/* Right column - Categories */}
+          <div>
+            <div className="rounded-lg border border-gray-200 p-6 sticky top-36">
+              <ServiceCategories
+                category={category}
+                selectedSubcategories={selectedSubcategories}
+                onCategoryChange={onCategoryChange}
+                onSubcategoriesChange={onSubcategoriesChange}
+                onRemoveSubcategory={onRemoveSubcategory}
+              />
+            </div>
           </div>
         </div>
       </div>
