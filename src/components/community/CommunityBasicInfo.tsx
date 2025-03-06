@@ -1,33 +1,30 @@
 
 import React from "react";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Plus, X } from "lucide-react";
-
-interface Link {
-  name: string;
-  url: string;
-}
+import { ProductEditor } from "@/components/product/ProductEditor";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { PlusCircle, Trash2 } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 
 interface CommunityBasicInfoProps {
   communityName: string;
-  setCommunityName: (name: string) => void;
+  setCommunityName: (value: string) => void;
   communityIntro: string;
-  setCommunityIntro: (intro: string) => void;
+  setCommunityIntro: (value: string) => void;
   communityDescription: string;
-  setCommunityDescription: (description: string) => void;
+  setCommunityDescription: (value: string) => void;
   price: string;
-  setPrice: (price: string) => void;
-  pricePeriod: string;
-  setPricePeriod: (period: string) => void;
+  setPrice: (value: string) => void;
+  pricePeriod: "monthly" | "yearly";
+  setPricePeriod: (value: "monthly" | "yearly") => void;
   webhook: string;
-  setWebhook: (webhook: string) => void;
+  setWebhook: (value: string) => void;
   communityUuid: string;
-  links: Link[];
-  onLinkChange: (index: number, field: 'name' | 'url', value: string) => void;
+  links: { name: string; url: string }[];
+  onLinkChange: (index: number, field: keyof { name: string; url: string }, value: string) => void;
   onAddLink: () => void;
   onRemoveLink: (index: number) => void;
 }
@@ -52,94 +49,133 @@ export function CommunityBasicInfo({
   onRemoveLink,
 }: CommunityBasicInfoProps) {
   return (
-    <Card className="p-6">
-      <div className="space-y-6">
-        <div className="space-y-2">
-          <Label htmlFor="communityName">Community Name</Label>
+    <Card>
+      <CardContent className="p-6 space-y-6">
+        <div>
+          <Label htmlFor="name" className="text-base font-medium mb-2 block">
+            Community Name
+          </Label>
           <Input
-            id="communityName"
+            id="name"
             value={communityName}
             onChange={(e) => setCommunityName(e.target.value)}
-            placeholder="Enter community name"
+            placeholder="Enter your community name"
+            className="h-11"
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="communityIntro">Community Video URL</Label>
+        <div>
+          <Label htmlFor="intro" className="text-base font-medium mb-2 block">
+            Video Introduction
+          </Label>
           <Input
-            id="communityIntro"
+            id="intro"
             value={communityIntro}
             onChange={(e) => setCommunityIntro(e.target.value)}
-            placeholder="Enter video URL (YouTube or Vimeo)"
+            placeholder="Enter YouTube or Vimeo video URL"
+            className="h-11"
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="communityDescription">Community Description</Label>
-          <Textarea
-            id="communityDescription"
+        <div>
+          <Label htmlFor="description" className="text-base font-medium mb-2 block">
+            Community Description
+          </Label>
+          <ProductEditor
             value={communityDescription}
-            onChange={(e) => setCommunityDescription(e.target.value)}
-            placeholder="Enter community description"
-            className="min-h-[150px]"
+            onChange={setCommunityDescription}
+            placeholder="Describe your community..."
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="price">Price</Label>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <Label htmlFor="price" className="text-base font-medium mb-2 block">
+              Price
+            </Label>
             <Input
               id="price"
+              type="text"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
-              placeholder="Enter price"
-              type="number"
+              placeholder="Enter community price"
+              className="h-11"
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="pricePeriod">Price Period</Label>
-            <Input
-              id="pricePeriod"
-              value={pricePeriod}
-              onChange={(e) => setPricePeriod(e.target.value)}
-              placeholder="e.g., monthly, yearly"
-            />
+
+          <div>
+            <Label htmlFor="pricePeriod" className="text-base font-medium mb-2 block">
+              Billing Period
+            </Label>
+            <Select value={pricePeriod} onValueChange={setPricePeriod as (value: string) => void}>
+              <SelectTrigger className="h-11">
+                <SelectValue placeholder="Select billing period" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="monthly">Monthly</SelectItem>
+                <SelectItem value="yearly">Yearly</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
-        <div className="space-y-4">
-          <Label>Links</Label>
-          {links.map((link, index) => (
-            <div key={index} className="grid grid-cols-[1fr_2fr_auto] gap-2">
-              <Input
-                value={link.name}
-                onChange={(e) => onLinkChange(index, 'name', e.target.value)}
-                placeholder="Link name"
-              />
-              <Input
-                value={link.url}
-                onChange={(e) => onLinkChange(index, 'url', e.target.value)}
-                placeholder="URL"
-              />
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => onRemoveLink(index)}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-          ))}
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={onAddLink}
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add Link
-          </Button>
+        <div>
+          <Label htmlFor="webhook" className="text-base font-medium mb-2 block">
+            Webhook URL
+          </Label>
+          <Input
+            id="webhook"
+            value={webhook}
+            onChange={(e) => setWebhook(e.target.value)}
+            placeholder="Enter webhook URL"
+            className="h-11"
+          />
         </div>
-      </div>
+
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <Label className="text-base font-medium">Social Links</Label>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onAddLink}
+              className="h-8"
+            >
+              <PlusCircle className="h-4 w-4 mr-1" />
+              Add Link
+            </Button>
+          </div>
+
+          <div className="space-y-3">
+            {links.map((link, index) => (
+              <div key={index} className="flex gap-3">
+                <Input
+                  placeholder="Platform (e.g. Twitter)"
+                  value={link.name}
+                  onChange={(e) => onLinkChange(index, "name", e.target.value)}
+                  className="h-11"
+                />
+                <Input
+                  placeholder="URL"
+                  value={link.url}
+                  onChange={(e) => onLinkChange(index, "url", e.target.value)}
+                  className="h-11"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => onRemoveLink(index)}
+                  className="h-11 w-11 flex-shrink-0"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </CardContent>
     </Card>
   );
 }

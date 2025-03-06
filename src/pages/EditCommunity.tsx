@@ -47,10 +47,6 @@ export default function EditCommunity() {
     );
   }
 
-  const handlePricePeriodChange = (period: string) => {
-    setPricePeriod(period as "monthly" | "yearly");
-  };
-
   return (
     <div className="min-h-screen bg-background">
       <div className="fixed top-0 left-0 right-0 z-50 bg-background">
@@ -73,7 +69,7 @@ export default function EditCommunity() {
                 price={price}
                 setPrice={setPrice}
                 pricePeriod={pricePeriod}
-                setPricePeriod={handlePricePeriodChange}
+                setPricePeriod={setPricePeriod}
                 webhook={webhook}
                 setWebhook={setWebhook}
                 communityUuid={id || ''}
