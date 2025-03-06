@@ -40,8 +40,8 @@ export function AdditionalVariants({
   };
 
   return (
-    <Card className={`p-4 ${className}`}>
-      <h3 className="text-sm font-medium mb-3">Add to your purchase:</h3>
+    <Card className={`p-4 border border-dashed ${className}`}>
+      <h3 className="text-sm font-medium mb-3">Often purchase together:</h3>
       <div className="space-y-3">
         {additionalVariants.map((variant) => (
           <div key={variant.id} className="flex items-center justify-between">
