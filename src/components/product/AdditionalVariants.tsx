@@ -11,6 +11,7 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { Package } from "lucide-react";
 
 interface AdditionalVariantsProps {
   variants: Variant[];
@@ -104,9 +105,12 @@ export function AdditionalVariants({
   };
 
   return (
-    <Card className={cn("p-4 bg-background border border-border shadow-sm", className)}>
-      <h3 className="text-base font-semibold mb-3">Frequently Purchased Together</h3>
-      <div className="space-y-2.5">
+    <Card className={cn("p-3 bg-background border border-border shadow-sm", className)}>
+      <div className="flex items-center gap-2 mb-2">
+        <Package className="h-4 w-4 text-primary" />
+        <p className="text-sm font-medium">Bundle & Save</p>
+      </div>
+      <div className="space-y-2">
         {Object.entries(productGroups).map(([productName, productVariants]) => {
           const selectedVariantId = selectedVariants[productName] || productVariants[0].id;
           const selectedVariant = productVariants.find(v => v.id === selectedVariantId);
@@ -123,8 +127,7 @@ export function AdditionalVariants({
           }
           
           return (
-            <div key={productName} className="flex items-center gap-3 p-1.5 rounded hover:bg-accent/5 transition-colors">
-              {/* Checkbox for selection */}
+            <div key={productName} className="flex items-center gap-2 py-1.5 px-2 rounded hover:bg-accent/5 transition-colors">
               <Checkbox 
                 id={`product-${productName}`}
                 checked={isSelected}
@@ -132,26 +135,23 @@ export function AdditionalVariants({
                 className="h-4 w-4"
               />
               
-              {/* Product name and price */}
-              <div className="flex-1 flex items-center justify-between min-w-0">
+              <div className="flex items-center justify-between min-w-0 flex-1">
                 <label 
                   htmlFor={`product-${productName}`}
-                  className="font-medium text-sm cursor-pointer flex-1 truncate"
+                  className="text-sm cursor-pointer flex-1 truncate flex items-center"
                 >
-                  {productName}
-                  <span className="ml-2 text-sm font-semibold text-muted-foreground">
-                    ${formatPrice(selectedVariant?.price || 0)}
-                  </span>
+                  <span className="font-medium">{productName}</span>
+                  <span className="mx-1 text-muted-foreground">-</span>
+                  <span className="text-sm">${formatPrice(selectedVariant?.price || 0)}</span>
                 </label>
               </div>
               
-              {/* Variant selection dropdown */}
               <Select
                 value={selectedVariantId}
                 onValueChange={(value) => handleVariantChange(productName, value)}
                 disabled={!isSelected}
               >
-                <SelectTrigger className="w-[100px] h-8 text-xs">
+                <SelectTrigger className="w-[90px] h-7 text-xs border-muted">
                   <SelectValue placeholder="Options" />
                 </SelectTrigger>
                 <SelectContent>
