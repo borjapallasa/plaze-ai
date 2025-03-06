@@ -3,7 +3,7 @@ import React from "react";
 import { CommunityFormHeader } from "@/components/community/form/CommunityFormHeader";
 import { CommunityMainForm } from "@/components/community/form/CommunityMainForm";
 import { CommunitySocialLinks } from "@/components/community/form/CommunitySocialLinks";
-import type { BillingPeriod, CommunityType } from "@/hooks/use-create-community";
+import type { BillingPeriod, CommunityType, CommunityVisibility } from "@/hooks/use-create-community";
 
 interface CommunityFormProps {
   communityName: string;
@@ -12,6 +12,7 @@ interface CommunityFormProps {
   price: string;
   communityType: CommunityType;
   billingPeriod: BillingPeriod;
+  visibility: CommunityVisibility;
   links: { platform: string; url: string }[];
   isSaving?: boolean;
   onCommunityNameChange: (value: string) => void;
@@ -20,6 +21,7 @@ interface CommunityFormProps {
   onPriceChange: (value: string) => void;
   onCommunityTypeChange: (value: CommunityType) => void;
   onBillingPeriodChange: (value: BillingPeriod) => void;
+  onVisibilityChange: (value: CommunityVisibility) => void;
   onLinkChange: (index: number, field: "platform" | "url", value: string) => void;
   onAddLink: () => void;
   onRemoveLink: (index: number) => void;
@@ -33,6 +35,7 @@ export function CommunityForm({
   price,
   communityType,
   billingPeriod,
+  visibility,
   links,
   isSaving = false,
   onCommunityNameChange,
@@ -41,6 +44,7 @@ export function CommunityForm({
   onPriceChange,
   onCommunityTypeChange,
   onBillingPeriodChange,
+  onVisibilityChange,
   onLinkChange,
   onAddLink,
   onRemoveLink,
@@ -67,11 +71,13 @@ export function CommunityForm({
               price={price}
               communityType={communityType}
               billingPeriod={billingPeriod}
+              visibility={visibility}
               onCommunityNameChange={onCommunityNameChange}
               onCommunityIntroChange={onCommunityIntroChange}
               onCommunityDescriptionChange={onCommunityDescriptionChange}
               onPriceChange={onPriceChange}
               onBillingPeriodChange={onBillingPeriodChange}
+              onVisibilityChange={onVisibilityChange}
             />
           </div>
         </div>

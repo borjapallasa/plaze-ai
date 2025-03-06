@@ -289,6 +289,7 @@ export type Database = {
           total_revenue: number | null
           type: Database["public"]["Enums"]["community_type"] | null
           user_uuid: string | null
+          visibility: Database["public"]["Enums"]["community_visibility"] | null
           webhook: string | null
         }
         Insert: {
@@ -323,6 +324,9 @@ export type Database = {
           total_revenue?: number | null
           type?: Database["public"]["Enums"]["community_type"] | null
           user_uuid?: string | null
+          visibility?:
+            | Database["public"]["Enums"]["community_visibility"]
+            | null
           webhook?: string | null
         }
         Update: {
@@ -357,6 +361,9 @@ export type Database = {
           total_revenue?: number | null
           type?: Database["public"]["Enums"]["community_type"] | null
           user_uuid?: string | null
+          visibility?:
+            | Database["public"]["Enums"]["community_visibility"]
+            | null
           webhook?: string | null
         }
         Relationships: [
@@ -2169,6 +2176,7 @@ export type Database = {
       community_price_status: "active" | "inactive"
       community_subscription_status: "active" | "inactive"
       community_type: "free" | "paid"
+      community_visibility: "draft" | "hidden" | "public"
       conversation_source: "template" | "job request" | "information request"
       conversation_status: "open" | "closed" | "need attention"
       job_status:

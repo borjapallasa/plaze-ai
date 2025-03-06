@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { ProductEditor } from "@/components/product/ProductEditor";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import type { BillingPeriod, CommunityType } from "@/hooks/use-create-community";
+import type { BillingPeriod, CommunityType, CommunityVisibility } from "@/hooks/use-create-community";
 
 interface CommunityMainFormProps {
   communityName: string;
@@ -13,11 +13,13 @@ interface CommunityMainFormProps {
   price: string;
   communityType: CommunityType;
   billingPeriod: BillingPeriod;
+  visibility: CommunityVisibility;
   onCommunityNameChange: (value: string) => void;
   onCommunityIntroChange: (value: string) => void;
   onCommunityDescriptionChange: (value: string) => void;
   onPriceChange: (value: string) => void;
   onBillingPeriodChange: (value: BillingPeriod) => void;
+  onVisibilityChange: (value: CommunityVisibility) => void;
 }
 
 export function CommunityMainForm({
@@ -27,11 +29,13 @@ export function CommunityMainForm({
   price,
   communityType,
   billingPeriod,
+  visibility,
   onCommunityNameChange,
   onCommunityIntroChange,
   onCommunityDescriptionChange,
   onPriceChange,
-  onBillingPeriodChange
+  onBillingPeriodChange,
+  onVisibilityChange
 }: CommunityMainFormProps) {
   const isPaid = communityType === "paid";
 
@@ -62,6 +66,39 @@ export function CommunityMainForm({
             placeholder="Enter YouTube or Vimeo video URL"
             className="h-11"
           />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <Label htmlFor="communityType" className="text-base font-medium mb-2 block">
+              Community Type
+            </Label>
+            <Select value={communityType} disabled>
+              <SelectTrigger className="h-11">
+                <SelectValue placeholder="Select community type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="free">Free</SelectItem>
+                <SelectItem value="paid">Paid</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label htmlFor="visibility" className="text-base font-medium mb-2 block">
+              Visibility
+            </Label>
+            <Select value={visibility} onValueChange={onVisibilityChange}>
+              <SelectTrigger className="h-11">
+                <SelectValue placeholder="Select visibility" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="public">Public</SelectItem>
+                <SelectItem value="private">Private</SelectItem>
+                <SelectItem value="unlisted">Unlisted</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <div>

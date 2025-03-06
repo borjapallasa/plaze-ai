@@ -5,7 +5,7 @@ import { MainHeader } from "@/components/MainHeader";
 import { CommunityForm } from "@/components/community/CommunityForm";
 import { useCreateCommunity } from "@/hooks/use-create-community";
 import { toast } from "sonner";
-import type { CommunityType, BillingPeriod } from "@/hooks/use-create-community";
+import type { CommunityType, BillingPeriod, CommunityVisibility } from "@/hooks/use-create-community";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
 
 export default function NewCommunityPage() {
@@ -18,6 +18,7 @@ export default function NewCommunityPage() {
   const [price, setPrice] = useState("");
   const [communityType, setCommunityType] = useState<CommunityType>("free");
   const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>("monthly");
+  const [visibility, setVisibility] = useState<CommunityVisibility>("public");
   const [links, setLinks] = useState<{ platform: string; url: string }[]>([{ platform: "", url: "" }]);
 
   const handleLinkChange = (index: number, field: "platform" | "url", value: string) => {
@@ -57,6 +58,7 @@ export default function NewCommunityPage() {
         price: parseFloat(price) || 0,
         type: communityType,
         billing_period: billingPeriod,
+        visibility: visibility,
         links: validLinks
       };
 
@@ -81,6 +83,7 @@ export default function NewCommunityPage() {
         price={price}
         communityType={communityType}
         billingPeriod={billingPeriod}
+        visibility={visibility}
         links={links}
         isSaving={isCreating}
         onCommunityNameChange={setCommunityName}
@@ -89,6 +92,7 @@ export default function NewCommunityPage() {
         onPriceChange={setPrice}
         onCommunityTypeChange={setCommunityType}
         onBillingPeriodChange={setBillingPeriod}
+        onVisibilityChange={setVisibility}
         onLinkChange={handleLinkChange}
         onAddLink={handleAddLink}
         onRemoveLink={handleRemoveLink}
