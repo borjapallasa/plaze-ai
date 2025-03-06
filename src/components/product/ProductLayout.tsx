@@ -1,4 +1,3 @@
-
 import React from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { ProductGallery } from "./ProductGallery";
@@ -78,10 +77,8 @@ export function ProductLayout({
     );
   };
 
-  // Common full-width sections content that will be used in both mobile and desktop layouts
   const fullWidthSections = (
     <>
-      {renderDemo()}
       <ProductReviews reviews={reviews} />
       <MoreFromSeller expert_uuid={product.expert_uuid} />
     </>
@@ -91,7 +88,6 @@ export function ProductLayout({
     <div className="min-h-screen">
       <MainHeader />
       <main className="container mx-auto px-4 pt-24">
-        {/* Mobile Layout */}
         <div className="lg:hidden">
           <ProductGallery 
             images={images}
@@ -133,12 +129,10 @@ export function ProductLayout({
               difficultyLevel={product.difficulty_level}
             />
 
-            {/* Mobile full-width sections */}
             {fullWidthSections}
           </div>
         </div>
 
-        {/* Desktop Layout - Product details in grid */}
         <div className="hidden lg:grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             <div className="space-y-8">
@@ -185,7 +179,6 @@ export function ProductLayout({
           </div>
         </div>
 
-        {/* Desktop full-width sections */}
         <div className="hidden lg:block mt-12 space-y-8">
           {fullWidthSections}
         </div>
