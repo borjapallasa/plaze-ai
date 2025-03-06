@@ -63,7 +63,7 @@ export default function NewCommunityPage() {
       const result = await createCommunity(communityData);
       if (result?.community_uuid) {
         toast.success("Community created successfully");
-        navigate(`/community/${result.community_uuid}/edit`);
+        navigate("/seller/communities/new");
       }
     } catch (error) {
       console.error("Error creating community:", error);
