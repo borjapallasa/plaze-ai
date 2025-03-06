@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Variant } from "./types/variants";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -104,9 +104,9 @@ export function AdditionalVariants({
   };
 
   return (
-    <Card className={cn("p-3 border border-dashed", className)}>
-      <h3 className="text-lg font-medium mb-3">Frequently Purchased Together</h3>
-      <div className="space-y-2">
+    <Card className={cn("p-4 bg-background border border-border shadow-sm", className)}>
+      <h3 className="text-base font-semibold mb-3">Frequently Purchased Together</h3>
+      <div className="space-y-2.5">
         {Object.entries(productGroups).map(([productName, productVariants]) => {
           const selectedVariantId = selectedVariants[productName] || productVariants[0].id;
           const selectedVariant = productVariants.find(v => v.id === selectedVariantId);
@@ -123,7 +123,7 @@ export function AdditionalVariants({
           }
           
           return (
-            <div key={productName} className="flex items-center gap-2 p-2 rounded-md hover:bg-accent/10">
+            <div key={productName} className="flex items-center gap-3 p-1.5 rounded hover:bg-accent/5 transition-colors">
               {/* Checkbox for selection */}
               <Checkbox 
                 id={`product-${productName}`}
@@ -139,10 +139,10 @@ export function AdditionalVariants({
                   className="font-medium text-sm cursor-pointer flex-1 truncate"
                 >
                   {productName}
+                  <span className="ml-2 text-sm font-semibold text-muted-foreground">
+                    ${formatPrice(selectedVariant?.price || 0)}
+                  </span>
                 </label>
-                <span className="text-sm font-semibold whitespace-nowrap ml-2">
-                  ${formatPrice(selectedVariant?.price || 0)}
-                </span>
               </div>
               
               {/* Variant selection dropdown */}
@@ -151,8 +151,8 @@ export function AdditionalVariants({
                 onValueChange={(value) => handleVariantChange(productName, value)}
                 disabled={!isSelected}
               >
-                <SelectTrigger className="w-[120px] h-8 text-xs">
-                  <SelectValue placeholder="Select variant" />
+                <SelectTrigger className="w-[100px] h-8 text-xs">
+                  <SelectValue placeholder="Options" />
                 </SelectTrigger>
                 <SelectContent>
                   {productVariants.map((variant) => (
