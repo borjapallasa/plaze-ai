@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -23,7 +22,7 @@ interface ServiceFormProps {
   selectedSubcategories: string[];
   isSaving?: boolean;
   status: ServiceStatus;
-  dangerZone?: React.ReactNode; // Add this new prop
+  dangerZone?: React.ReactNode;
   onServiceNameChange: (value: string) => void;
   onServiceDescriptionChange: (value: string) => void;
   onPriceChange: (value: string) => void;
@@ -48,7 +47,7 @@ export function ServiceForm({
   selectedSubcategories,
   isSaving = false,
   status,
-  dangerZone, // Destructure the new prop
+  dangerZone,
   onServiceNameChange,
   onServiceDescriptionChange,
   onPriceChange,
@@ -99,7 +98,6 @@ export function ServiceForm({
       </div>
 
       <div className="space-y-3 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-6">
-        {/* Left column - Main form content */}
         <div className="lg:col-span-8">
           <div className="space-y-3 sm:space-y-6">
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-3 sm:p-6">
@@ -175,7 +173,6 @@ export function ServiceForm({
           </div>
         </div>
 
-        {/* Right column - Categories */}
         <div className="lg:col-span-4 self-start">
           <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-3 sm:p-6">
             <ServiceCategories
@@ -185,14 +182,9 @@ export function ServiceForm({
               onSubcategoriesChange={onSubcategoriesChange}
               onRemoveSubcategory={onRemoveSubcategory}
             />
+            
+            {dangerZone}
           </div>
-          
-          {/* Render the Danger Zone below the categories section */}
-          {dangerZone && (
-            <div className="mt-4">
-              {dangerZone}
-            </div>
-          )}
         </div>
       </div>
     </div>

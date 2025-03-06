@@ -2,6 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Trash2, AlertTriangle } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
   DialogContent,
@@ -31,7 +32,8 @@ export function DangerZone({
   onDeleteService
 }: DangerZoneProps) {
   return (
-    <div className="mt-6 pt-4 border-t">
+    <div>
+      <Separator className="my-5" />
       <h3 className="text-base font-medium mb-2">Danger Zone</h3>
       <p className="text-sm text-muted-foreground mb-3">
         Permanent actions that cannot be undone
