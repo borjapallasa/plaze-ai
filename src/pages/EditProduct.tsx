@@ -425,7 +425,7 @@ export default function EditProduct() {
                     productName={productName}
                     isDeleting={isDeleting}
                     showDeleteDialog={showDeleteDialog}
-                    sellerUuid={expertData?.expert_uuid || product?.user_uuid || ""}
+                    sellerUuid={expertData?.expert_uuid || ""}
                     setShowDeleteDialog={setShowDeleteDialog}
                     onDeleteProduct={handleDeleteProduct}
                   />

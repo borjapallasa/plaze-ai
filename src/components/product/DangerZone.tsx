@@ -17,7 +17,7 @@ interface DangerZoneProps {
   productName: string;
   isDeleting: boolean;
   showDeleteDialog: boolean;
-  sellerUuid: string;
+  sellerUuid: string; // This should be the expert_uuid
   setShowDeleteDialog: (show: boolean) => void;
   onDeleteProduct: (redirectUrl: string) => void;
 }
