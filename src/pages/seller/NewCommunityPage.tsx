@@ -6,6 +6,7 @@ import { CommunityForm } from "@/components/community/CommunityForm";
 import { useCreateCommunity } from "@/hooks/use-create-community";
 import { toast } from "sonner";
 import type { CommunityType, BillingPeriod } from "@/hooks/use-create-community";
+import { getVideoEmbedUrl } from "@/utils/videoEmbed";
 
 export default function NewCommunityPage() {
   const navigate = useNavigate();
@@ -46,9 +47,12 @@ export default function NewCommunityPage() {
     try {
       const validLinks = links.filter(link => link.platform.trim() && link.url.trim());
       
+      // Process the video URL to ensure it's in the correct format
+      const videoUrl = getVideoEmbedUrl(communityIntro) || communityIntro;
+      
       const communityData = {
         name: communityName,
-        intro: communityIntro,
+        intro: videoUrl,
         description: communityDescription,
         price: parseFloat(price) || 0,
         type: communityType,

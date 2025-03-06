@@ -108,13 +108,13 @@ export function CommunityForm({
 
                 <div>
                   <Label htmlFor="intro" className="text-base font-medium mb-2 block">
-                    Short Introduction
+                    Video Introduction
                   </Label>
                   <Input
                     id="intro"
                     value={communityIntro}
                     onChange={(e) => onCommunityIntroChange(e.target.value)}
-                    placeholder="A brief introduction to your community"
+                    placeholder="Enter YouTube or Vimeo video URL"
                     className="h-11"
                   />
                 </div>
