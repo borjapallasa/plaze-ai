@@ -82,11 +82,6 @@ export function ProductLayout({
   const fullWidthSections = (
     <>
       {renderDemo()}
-      <ProductInfo 
-        techStack={product.tech_stack}
-        productIncludes={product.product_includes}
-        difficultyLevel={product.difficulty_level}
-      />
       <ProductReviews reviews={reviews} />
       <MoreFromSeller expert_uuid={product.expert_uuid} />
     </>
@@ -132,6 +127,12 @@ export function ProductLayout({
               </p>
             </Card>
 
+            <ProductInfo 
+              techStack={product.tech_stack}
+              productIncludes={product.product_includes}
+              difficultyLevel={product.difficulty_level}
+            />
+
             {/* Mobile full-width sections */}
             {fullWidthSections}
           </div>
@@ -176,6 +177,11 @@ export function ProductLayout({
               <MessageCircle className="h-4 w-4" />
               Contact Seller
             </Button>
+            <ProductInfo 
+              techStack={product.tech_stack}
+              productIncludes={product.product_includes}
+              difficultyLevel={product.difficulty_level}
+            />
           </div>
         </div>
 
