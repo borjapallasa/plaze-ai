@@ -12,6 +12,8 @@ import { ProductsTab } from "./components/ProductsTab";
 import { ServicesTab } from "./components/ServicesTab";
 import { CommunitiesTab } from "./components/CommunitiesTab";
 import { ApplicationsTab } from "./components/ApplicationsTab";
+import type { Json } from "@/integrations/supabase/types";
+import type { Service } from "@/components/expert/types";
 
 export default function SellerPage() {
   const { id } = useParams();
@@ -68,7 +70,7 @@ export default function SellerPage() {
     enabled: !!id
   });
 
-  const { data: services = [] } = useQuery({
+  const { data: servicesRaw = [] } = useQuery({
     queryKey: ['sellerServices', id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -90,13 +92,20 @@ export default function SellerPage() {
 
       if (error) throw error;
 
-      return (data || []).map(service => ({
-        ...service,
-        features: Array.isArray(service.features) ? service.features : []
-      }));
+      return data || [];
     },
     enabled: !!id
   });
+
+  // Transform the services data to ensure features is a string array
+  const services: Service[] = servicesRaw.map(service => ({
+    ...service,
+    features: Array.isArray(service.features) 
+      ? service.features.map(feature => 
+          typeof feature === 'string' ? feature : String(feature)
+        ) 
+      : []
+  }));
 
   const { data: communities } = useExpertCommunities(id);
 
