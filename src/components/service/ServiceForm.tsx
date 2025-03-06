@@ -60,28 +60,9 @@ export function ServiceForm({
   onSave,
 }: ServiceFormProps) {
   return (
-    <div className="container max-w-[1200px] mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
+    <div className="container max-w-[1200px] mx-auto px-4 py-8 mt-24">
+      <div className="mb-8">
         <h1 className="text-2xl font-semibold">New Service</h1>
-        <div className="flex items-center gap-4">
-          <Select value={status} onValueChange={onStatusChange}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="draft">Draft</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="archived">Archived</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button
-            onClick={onSave}
-            disabled={isSaving || !serviceName.trim()}
-            className="bg-primary hover:bg-primary/90"
-          >
-            {isSaving ? "Creating..." : "Create Service"}
-          </Button>
-        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -165,9 +146,29 @@ export function ServiceForm({
           </div>
         </div>
 
-        {/* Right column - Categories */}
+        {/* Right column - Categories and Save button */}
         <div>
           <div className="rounded-lg border border-gray-200 p-6">
+            <div className="mb-6 flex justify-between items-center">
+              <Select value={status} onValueChange={onStatusChange}>
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="draft">Draft</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="archived">Archived</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button
+                onClick={onSave}
+                disabled={isSaving || !serviceName.trim()}
+                className="bg-primary hover:bg-primary/90"
+              >
+                {isSaving ? "Creating..." : "Create Service"}
+              </Button>
+            </div>
+
             <ServiceCategories
               category={category}
               selectedSubcategories={selectedSubcategories}
