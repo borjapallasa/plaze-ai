@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import type { CommunityType } from "@/hooks/use-create-community";
 
 interface Link {
   name: string;
@@ -42,6 +43,7 @@ export function useCommunityForm(id: string | undefined) {
   const [communityIntro, setCommunityIntro] = useState("");
   const [price, setPrice] = useState("");
   const [pricePeriod, setPricePeriod] = useState<"monthly" | "yearly">("monthly");
+  const [communityType, setCommunityType] = useState<CommunityType>("free");
   const [paymentLink, setPaymentLink] = useState("");
   const [webhook, setWebhook] = useState("");
   const [hasCopied, setHasCopied] = useState(false);
@@ -64,6 +66,7 @@ export function useCommunityForm(id: string | undefined) {
         setCommunityIntro(data.intro || "");
         setPrice(data.price?.toString() || "");
         setPricePeriod(data.billing_period || "monthly");
+        setCommunityType(data.type || "free");
         setPaymentLink(data.payment_link || "");
         setWebhook(data.webhook || "");
         
@@ -90,6 +93,7 @@ export function useCommunityForm(id: string | undefined) {
           name: communityName,
           description: communityDescription,
           intro: communityIntro,
+          type: communityType,
           price: parseFloat(price) || 0,
           billing_period: pricePeriod,
           webhook: webhook,
@@ -163,6 +167,8 @@ export function useCommunityForm(id: string | undefined) {
     setPrice,
     pricePeriod,
     setPricePeriod,
+    communityType,
+    setCommunityType,
     paymentLink,
     webhook,
     setWebhook,

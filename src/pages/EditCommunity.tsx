@@ -24,6 +24,8 @@ export default function EditCommunity() {
     setPrice,
     pricePeriod,
     setPricePeriod,
+    communityType,
+    setCommunityType,
     paymentLink,
     webhook,
     setWebhook,
@@ -70,8 +72,8 @@ export default function EditCommunity() {
                 setPrice={setPrice}
                 pricePeriod={pricePeriod}
                 setPricePeriod={setPricePeriod}
-                webhook={webhook}
-                setWebhook={setWebhook}
+                communityType={communityType}
+                setCommunityType={setCommunityType}
                 communityUuid={id || ''}
                 links={links}
                 onLinkChange={handleLinkChange}

@@ -8,6 +8,7 @@ import { ProductEditor } from "@/components/product/ProductEditor";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PlusCircle, Trash2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import type { CommunityType } from "@/hooks/use-create-community";
 
 interface CommunityBasicInfoProps {
   communityName: string;
@@ -20,8 +21,8 @@ interface CommunityBasicInfoProps {
   setPrice: (value: string) => void;
   pricePeriod: "monthly" | "yearly";
   setPricePeriod: (value: "monthly" | "yearly") => void;
-  webhook: string;
-  setWebhook: (value: string) => void;
+  communityType: CommunityType;
+  setCommunityType: (value: CommunityType) => void;
   communityUuid: string;
   links: { name: string; url: string }[];
   onLinkChange: (index: number, field: keyof { name: string; url: string }, value: string) => void;
@@ -40,8 +41,8 @@ export function CommunityBasicInfo({
   setPrice,
   pricePeriod,
   setPricePeriod,
-  webhook,
-  setWebhook,
+  communityType,
+  setCommunityType,
   communityUuid,
   links,
   onLinkChange,
@@ -88,49 +89,53 @@ export function CommunityBasicInfo({
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <Label htmlFor="price" className="text-base font-medium mb-2 block">
-              Price
-            </Label>
-            <Input
-              id="price"
-              type="text"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              placeholder="Enter community price"
-              className="h-11"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="pricePeriod" className="text-base font-medium mb-2 block">
-              Billing Period
-            </Label>
-            <Select value={pricePeriod} onValueChange={setPricePeriod as (value: string) => void}>
-              <SelectTrigger className="h-11">
-                <SelectValue placeholder="Select billing period" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="monthly">Monthly</SelectItem>
-                <SelectItem value="yearly">Yearly</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
         <div>
-          <Label htmlFor="webhook" className="text-base font-medium mb-2 block">
-            Webhook URL
+          <Label htmlFor="type" className="text-base font-medium mb-2 block">
+            Community Type
           </Label>
-          <Input
-            id="webhook"
-            value={webhook}
-            onChange={(e) => setWebhook(e.target.value)}
-            placeholder="Enter webhook URL"
-            className="h-11"
-          />
+          <Select value={communityType} onValueChange={setCommunityType as (value: string) => void}>
+            <SelectTrigger className="h-11">
+              <SelectValue placeholder="Select community type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="free">Free</SelectItem>
+              <SelectItem value="paid">Paid</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
+
+        {communityType === "paid" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <Label htmlFor="price" className="text-base font-medium mb-2 block">
+                Price
+              </Label>
+              <Input
+                id="price"
+                type="text"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                placeholder="Enter community price"
+                className="h-11"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="pricePeriod" className="text-base font-medium mb-2 block">
+                Billing Period
+              </Label>
+              <Select value={pricePeriod} onValueChange={setPricePeriod as (value: string) => void}>
+                <SelectTrigger className="h-11">
+                  <SelectValue placeholder="Select billing period" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="monthly">Monthly</SelectItem>
+                  <SelectItem value="yearly">Yearly</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        )}
 
         <div>
           <div className="flex items-center justify-between mb-4">
