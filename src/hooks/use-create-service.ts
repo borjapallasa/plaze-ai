@@ -2,16 +2,18 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
+import type { Json } from "@/integrations/supabase/types";
+import type { ServiceStatus, ServiceType } from "@/components/expert/types";
 
 interface ServiceData {
   name: string;
   description: string;
   price: number;
-  type: "one time" | "monthly";
+  type: ServiceType;
   features: string[];
   main_category: { value: string } | null;
   subcategory: { value: string }[] | null;
-  status: string;
+  status: ServiceStatus;
 }
 
 export const useCreateService = () => {
@@ -48,10 +50,10 @@ export const useCreateService = () => {
           description: serviceData.description,
           price: serviceData.price,
           type: serviceData.type,
-          features: serviceData.features,
-          main_category: serviceData.main_category,
-          subcategory: serviceData.subcategory,
-          status: serviceData.status
+          features: serviceData.features as unknown as Json,
+          main_category: serviceData.main_category as unknown as Json,
+          subcategory: serviceData.subcategory as unknown as Json,
+          status: serviceData.status as "active" | "draft" | "archived"
         })
         .select()
         .single();
