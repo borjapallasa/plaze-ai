@@ -40,7 +40,9 @@ function ProductHeader({ title, seller, rating, onContactSeller, className = "" 
       <h1 className="text-2xl font-semibold mb-2">{title}</h1>
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-3">
         <div className="flex items-center gap-2">
-          <span className="text-muted-foreground hover:underline hover:text-muted-foreground/80 cursor-pointer transition-colors">
+          <span 
+            className="text-muted-foreground hover:underline hover:text-muted-foreground/80 cursor-pointer transition-colors"
+          >
             {seller}
           </span>
           <button 
@@ -49,7 +51,7 @@ function ProductHeader({ title, seller, rating, onContactSeller, className = "" 
             aria-label="Message seller"
             title="Message seller"
           >
-            <MessageCircle className="h-3.5 w-3.5 text-primary" />
+            <MessageCircle className="h-3.5 w-3.5 text-muted-foreground" />
           </button>
           <span className="text-muted-foreground">•</span>
           <span className="text-muted-foreground">{rating.toFixed(1)} Rating</span>
