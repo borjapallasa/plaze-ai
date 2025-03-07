@@ -1,3 +1,4 @@
+
 import React from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { ProductGallery } from "./ProductGallery";
@@ -39,19 +40,20 @@ function ProductHeader({ title, seller, rating, onContactSeller, className = "" 
       <h1 className="text-2xl font-semibold mb-2">{title}</h1>
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-3">
         <div className="flex items-center gap-2">
-          <span className="text-muted-foreground">{seller}</span>
+          <span className="text-muted-foreground hover:underline hover:text-muted-foreground/80 cursor-pointer transition-colors">
+            {seller}
+          </span>
+          <button 
+            onClick={onContactSeller}
+            className="inline-flex items-center justify-center p-1 rounded-full hover:bg-muted/30 transition-colors"
+            aria-label="Message seller"
+            title="Message seller"
+          >
+            <MessageCircle className="h-3.5 w-3.5 text-primary" />
+          </button>
           <span className="text-muted-foreground">•</span>
           <span className="text-muted-foreground">{rating.toFixed(1)} Rating</span>
         </div>
-        <Button 
-          variant="outline" 
-          size="sm"
-          className="w-auto sm:ml-1 flex items-center justify-start gap-1.5 text-xs md:text-sm font-medium bg-[#F3F3F3] border-[#DDD] text-gray-700 hover:bg-[#E0E0E0] transition-colors py-2 px-4 rounded-md"
-          onClick={onContactSeller}
-        >
-          <MessageCircle className="h-3.5 w-3.5" />
-          Message {seller}
-        </Button>
       </div>
     </div>
   );
