@@ -1,4 +1,3 @@
-
 import React from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { ProductGallery } from "./ProductGallery";
@@ -39,7 +38,7 @@ function ProductHeader({ title, seller, rating, onContactSeller, className = "" 
     <div className={className}>
       <h1 className="text-2xl font-semibold mb-2">{title}</h1>
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-3">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <span 
             className="text-muted-foreground hover:underline hover:text-muted-foreground/80 cursor-pointer transition-colors"
           >
@@ -47,13 +46,13 @@ function ProductHeader({ title, seller, rating, onContactSeller, className = "" 
           </span>
           <button 
             onClick={onContactSeller}
-            className="inline-flex items-center justify-center p-1 rounded-full hover:bg-muted/30 transition-colors"
+            className="inline-flex items-center justify-center p-1 rounded-full hover:bg-muted/50 transition-colors"
             aria-label="Message seller"
             title="Message seller"
           >
             <MessageCircle className="h-3.5 w-3.5 text-muted-foreground" />
           </button>
-          <span className="text-muted-foreground">•</span>
+          <span className="text-muted-foreground mx-0.5">•</span>
           <span className="text-muted-foreground">{rating.toFixed(1)} Rating</span>
         </div>
       </div>
@@ -118,11 +117,11 @@ export function ProductLayout({
   return (
     <div className="min-h-screen">
       <MainHeader />
-      <main className="container mx-auto px-4 pt-24">
+      <main className="container mx-auto px-4 pt-20">
         <div className="lg:hidden">
           <ProductGallery 
             images={images}
-            className="mb-6" 
+            className="mb-5" 
             priority={true}
           />
           <ProductHeader 
@@ -130,24 +129,24 @@ export function ProductLayout({
             seller="Design Master"
             rating={averageRating}
             onContactSeller={handleContactSeller}
-            className="mb-4"
+            className="mb-3"
           />
           <VariantPicker
             variants={variants}
             selectedVariant={selectedVariant}
             onVariantChange={onVariantChange}
             onAddToCart={onAddToCart}
-            className="mb-5"
+            className="mb-4"
           />
           
           <AdditionalVariants
             variants={variants}
             selectedMainVariant={selectedVariant}
             onAdditionalSelect={handleAdditionalVariantSelect}
-            className="mb-7"
+            className="mb-6"
           />
 
-          <div className="space-y-8">
+          <div className="space-y-7">
             <Card className="p-6">
               <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
                 {product.description}
@@ -166,10 +165,10 @@ export function ProductLayout({
 
         <div className="hidden lg:grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            <div className="space-y-8">
+            <div className="space-y-7">
               <ProductGallery 
                 images={images}
-                className="mb-8" 
+                className="mb-6" 
                 priority={!isMobile}
               />
               <Card className="p-6">
@@ -180,27 +179,27 @@ export function ProductLayout({
             </div>
           </div>
 
-          <div className="lg:space-y-6">
+          <div className="lg:space-y-5">
             <ProductHeader 
               title={product.name}
               seller="Design Master"
               rating={averageRating}
               onContactSeller={handleContactSeller}
-              className="mb-4"
+              className="mb-3"
             />
             <VariantPicker
               variants={variants}
               selectedVariant={selectedVariant}
               onVariantChange={onVariantChange}
               onAddToCart={onAddToCart}
-              className="mb-5"
+              className="mb-4"
             />
             
             <AdditionalVariants
               variants={variants}
               selectedMainVariant={selectedVariant}
               onAdditionalSelect={handleAdditionalVariantSelect}
-              className="mb-6"
+              className="mb-5"
             />
             
             <ProductInfo 
@@ -211,7 +210,7 @@ export function ProductLayout({
           </div>
         </div>
 
-        <div className="hidden lg:block mt-12 space-y-8">
+        <div className="hidden lg:block mt-10 space-y-7">
           {fullWidthSections}
         </div>
       </main>

@@ -56,11 +56,11 @@ export function StickyATC({
   const currentVariant = variants.find(v => v.id === selectedVariant);
 
   return (
-    <div className={`fixed bottom-0 left-0 right-0 bg-background border-t shadow-lg p-4 z-50 ${isExiting ? 'animate-slide-down' : 'animate-slide-up'}`}>
-      <div className="container mx-auto flex items-center justify-between gap-4">
-        <div className="flex-1 flex items-center gap-4">
+    <div className={`fixed bottom-0 left-0 right-0 bg-background border-t shadow-lg py-3 px-4 z-50 ${isExiting ? 'animate-slide-down' : 'animate-slide-up'}`}>
+      <div className="container mx-auto flex items-center justify-between gap-5">
+        <div className="flex-1 flex items-center gap-5">
           <Select value={selectedVariant} onValueChange={onVariantChange}>
-            <SelectTrigger className="w-[200px]">
+            <SelectTrigger className="w-[220px]">
               <SelectValue placeholder="Select package" />
             </SelectTrigger>
             <SelectContent>
@@ -77,7 +77,7 @@ export function StickyATC({
           </div>
         </div>
         
-        <Button onClick={onAddToCart} className="flex-none">
+        <Button onClick={onAddToCart} className="flex-none" size="lg">
           <ShoppingCart className="w-4 h-4 mr-2" />
           Add to Cart
         </Button>
