@@ -117,11 +117,11 @@ export function ProductLayout({
             selectedVariant={selectedVariant}
             onVariantChange={onVariantChange}
             onAddToCart={onAddToCart}
-            className="mb-3"
+            className="mb-2"
           />
           <Button 
             variant="outline" 
-            className="w-auto px-4 mx-auto flex items-center justify-center gap-2 mb-6 mt-2 text-sm font-normal bg-background border-gray-300 text-gray-700 hover:bg-gray-50 rounded-full"
+            className="w-auto px-4 mb-4 ml-0 flex items-center justify-start gap-2 text-sm font-normal bg-background border-gray-300 text-gray-700 hover:bg-gray-50 rounded-md"
             onClick={() => console.log("Contact seller clicked")}
           >
             <MessageCircle className="h-4 w-4" />
@@ -180,11 +180,11 @@ export function ProductLayout({
               selectedVariant={selectedVariant}
               onVariantChange={onVariantChange}
               onAddToCart={onAddToCart}
-              className="mb-1"
+              className="mb-2"
             />
             <Button 
               variant="outline" 
-              className="w-auto px-4 mx-auto flex items-center justify-center gap-2 mb-6 mt-2 text-sm font-normal bg-background border-gray-300 text-gray-700 hover:bg-gray-50 rounded-full"
+              className="w-auto px-4 mb-4 ml-0 flex items-center justify-start gap-2 text-sm font-normal bg-background border-gray-300 text-gray-700 hover:bg-gray-50 rounded-md"
               onClick={() => console.log("Contact seller clicked")}
             >
               <MessageCircle className="h-4 w-4" />

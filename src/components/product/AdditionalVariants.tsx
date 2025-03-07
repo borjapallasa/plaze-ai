@@ -106,17 +106,17 @@ export function AdditionalVariants({
   };
 
   return (
-    <div className={cn("relative mt-6", className)}>
+    <div className={cn("relative mt-5", className)}>
       {/* Tag-style label positioned on top of the card */}
       <Badge 
         variant="outline" 
-        className="absolute -top-2.5 left-4 z-10 bg-background px-2 py-0.5 text-xs font-medium flex items-center gap-1.5 border-muted-foreground/20"
+        className="absolute -top-2 left-3 z-10 bg-background px-2 py-0.5 text-xs font-medium flex items-center gap-1.5 border-muted-foreground/20"
       >
         <Package className="h-3 w-3 text-primary" />
         Bundle & Save
       </Badge>
       
-      <Card className="pt-4 pb-2 px-4 bg-gray-50/80 border border-gray-200 shadow-sm">
+      <Card className="pt-3 pb-2 px-3 bg-gray-50/50 border border-gray-200/80 shadow-sm">
         <div className="space-y-1">
           {Object.entries(productGroups).map(([productName, productVariants]) => {
             const selectedVariantId = selectedVariants[productName] || productVariants[0].id;
@@ -134,7 +134,7 @@ export function AdditionalVariants({
             }
             
             return (
-              <div key={productName} className="flex items-center gap-2 py-1.5 px-1 rounded hover:bg-white/80 transition-colors">
+              <div key={productName} className="flex items-center gap-2 py-1.5 px-1 rounded hover:bg-white/90 transition-colors">
                 <Checkbox 
                   id={`product-${productName}`}
                   checked={isSelected}
@@ -157,7 +157,7 @@ export function AdditionalVariants({
                     onValueChange={(value) => handleVariantChange(productName, value)}
                     disabled={!isSelected}
                   >
-                    <SelectTrigger className="w-[110px] h-7 text-xs border-muted">
+                    <SelectTrigger className="w-[120px] h-7 text-xs border-muted">
                       <SelectValue placeholder="Options" />
                     </SelectTrigger>
                     <SelectContent className="min-w-[180px]">
