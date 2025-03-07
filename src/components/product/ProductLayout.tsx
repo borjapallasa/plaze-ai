@@ -31,16 +31,28 @@ interface ProductHeaderProps {
   seller: string;
   rating: number;
   className?: string;
+  onContactSeller: () => void;
 }
 
-function ProductHeader({ title, seller, rating, className = "" }: ProductHeaderProps) {
+function ProductHeader({ title, seller, rating, onContactSeller, className = "" }: ProductHeaderProps) {
   return (
     <div className={className}>
       <h1 className="text-2xl font-semibold mb-2">{title}</h1>
-      <div className="flex items-center gap-2">
-        <span className="text-muted-foreground">{seller}</span>
-        <span className="text-muted-foreground">•</span>
-        <span className="text-muted-foreground">{rating.toFixed(1)} Rating</span>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-3">
+        <div className="flex items-center gap-2">
+          <span className="text-muted-foreground">{seller}</span>
+          <span className="text-muted-foreground">•</span>
+          <span className="text-muted-foreground">{rating.toFixed(1)} Rating</span>
+        </div>
+        <Button 
+          variant="outline" 
+          size="sm"
+          className="w-auto sm:ml-1 flex items-center justify-start gap-1.5 text-xs font-normal bg-background border-gray-300 text-gray-700 hover:bg-gray-50 rounded-md"
+          onClick={onContactSeller}
+        >
+          <MessageCircle className="h-3.5 w-3.5" />
+          Message {seller}
+        </Button>
       </div>
     </div>
   );
@@ -81,6 +93,10 @@ export function ProductLayout({
     );
   };
 
+  const handleContactSeller = () => {
+    console.log("Contact seller clicked");
+  };
+
   const handleAdditionalVariantSelect = (variantId: string, selected: boolean) => {
     console.log(`Additional variant ${variantId} ${selected ? 'selected' : 'unselected'}`);
     if (onAdditionalVariantToggle) {
@@ -110,23 +126,16 @@ export function ProductLayout({
             title={product.name}
             seller="Design Master"
             rating={averageRating}
-            className="mb-6"
+            onContactSeller={handleContactSeller}
+            className="mb-4"
           />
           <VariantPicker
             variants={variants}
             selectedVariant={selectedVariant}
             onVariantChange={onVariantChange}
             onAddToCart={onAddToCart}
-            className="mb-2"
+            className="mb-5"
           />
-          <Button 
-            variant="outline" 
-            className="w-auto px-4 mb-4 ml-0 flex items-center justify-start gap-2 text-sm font-normal bg-background border-gray-300 text-gray-700 hover:bg-gray-50 rounded-md"
-            onClick={() => console.log("Contact seller clicked")}
-          >
-            <MessageCircle className="h-4 w-4" />
-            Need help? Message seller
-          </Button>
           
           <AdditionalVariants
             variants={variants}
@@ -173,23 +182,16 @@ export function ProductLayout({
               title={product.name}
               seller="Design Master"
               rating={averageRating}
-              className="mb-6"
+              onContactSeller={handleContactSeller}
+              className="mb-4"
             />
             <VariantPicker
               variants={variants}
               selectedVariant={selectedVariant}
               onVariantChange={onVariantChange}
               onAddToCart={onAddToCart}
-              className="mb-2"
+              className="mb-5"
             />
-            <Button 
-              variant="outline" 
-              className="w-auto px-4 mb-4 ml-0 flex items-center justify-start gap-2 text-sm font-normal bg-background border-gray-300 text-gray-700 hover:bg-gray-50 rounded-md"
-              onClick={() => console.log("Contact seller clicked")}
-            >
-              <MessageCircle className="h-4 w-4" />
-              Need help? Message seller
-            </Button>
             
             <AdditionalVariants
               variants={variants}

@@ -106,7 +106,7 @@ export function AdditionalVariants({
   };
 
   return (
-    <div className={cn("relative mt-5", className)}>
+    <div className={cn("relative mt-4", className)}>
       {/* Tag-style label positioned on top of the card */}
       <Badge 
         variant="outline" 
@@ -116,7 +116,7 @@ export function AdditionalVariants({
         Bundle & Save
       </Badge>
       
-      <Card className="pt-3 pb-2 px-3 bg-gray-50/50 border border-gray-200/80 shadow-sm">
+      <Card className="pt-3 pb-2 px-3 bg-gray-50/30 border border-gray-200/60 shadow-sm rounded-xl">
         <div className="space-y-1">
           {Object.entries(productGroups).map(([productName, productVariants]) => {
             const selectedVariantId = selectedVariants[productName] || productVariants[0].id;
@@ -157,10 +157,10 @@ export function AdditionalVariants({
                     onValueChange={(value) => handleVariantChange(productName, value)}
                     disabled={!isSelected}
                   >
-                    <SelectTrigger className="w-[120px] h-7 text-xs border-muted">
+                    <SelectTrigger className="w-[130px] h-7 text-xs border-muted">
                       <SelectValue placeholder="Options" />
                     </SelectTrigger>
-                    <SelectContent className="min-w-[180px]">
+                    <SelectContent className="min-w-[200px]">
                       {productVariants.map((variant) => (
                         <SelectItem key={variant.id} value={variant.id} className="text-xs">
                           {variant.label || "Option"} - ${formatPrice(variant.price)}
