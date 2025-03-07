@@ -1,4 +1,3 @@
-
 import React from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { ProductGallery } from "./ProductGallery";
@@ -47,7 +46,7 @@ function ProductHeader({ title, seller, rating, onContactSeller, className = "" 
         <Button 
           variant="outline" 
           size="sm"
-          className="w-auto sm:ml-1 flex items-center justify-start gap-1.5 text-xs font-normal bg-background border-gray-300 text-gray-700 hover:bg-gray-50 rounded-md"
+          className="w-auto sm:ml-1 flex items-center justify-start gap-1.5 text-xs md:text-sm font-medium bg-[#F3F3F3] border-[#DDD] text-gray-700 hover:bg-[#E0E0E0] transition-colors py-2 px-4 rounded-md"
           onClick={onContactSeller}
         >
           <MessageCircle className="h-3.5 w-3.5" />
