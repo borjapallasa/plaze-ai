@@ -1,3 +1,4 @@
+
 import React from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { ProductGallery } from "./ProductGallery";
@@ -37,10 +38,10 @@ function ProductHeader({ title, seller, rating, onContactSeller, className = "" 
   return (
     <div className={className}>
       <h1 className="text-2xl font-semibold mb-2">{title}</h1>
-      <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-3">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
         <div className="flex items-center gap-1.5">
           <span 
-            className="text-muted-foreground hover:underline hover:text-muted-foreground/80 cursor-pointer transition-colors"
+            className="text-muted-foreground hover:underline cursor-pointer transition-colors"
           >
             {seller}
           </span>
@@ -50,7 +51,7 @@ function ProductHeader({ title, seller, rating, onContactSeller, className = "" 
             aria-label="Message seller"
             title="Message seller"
           >
-            <MessageCircle className="h-3.5 w-3.5 text-muted-foreground" />
+            <MessageCircle className="h-4 w-4 text-muted-foreground" />
           </button>
           <span className="text-muted-foreground mx-0.5">•</span>
           <span className="text-muted-foreground">{rating.toFixed(1)} Rating</span>
@@ -117,11 +118,11 @@ export function ProductLayout({
   return (
     <div className="min-h-screen">
       <MainHeader />
-      <main className="container mx-auto px-4 pt-20">
+      <main className="container mx-auto px-4 pt-16">
         <div className="lg:hidden">
           <ProductGallery 
             images={images}
-            className="mb-5" 
+            className="mb-4" 
             priority={true}
           />
           <ProductHeader 
@@ -136,17 +137,17 @@ export function ProductLayout({
             selectedVariant={selectedVariant}
             onVariantChange={onVariantChange}
             onAddToCart={onAddToCart}
-            className="mb-4"
+            className="mb-3"
           />
           
           <AdditionalVariants
             variants={variants}
             selectedMainVariant={selectedVariant}
             onAdditionalSelect={handleAdditionalVariantSelect}
-            className="mb-6"
+            className="mb-5"
           />
 
-          <div className="space-y-7">
+          <div className="space-y-6">
             <Card className="p-6">
               <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
                 {product.description}
@@ -163,12 +164,12 @@ export function ProductLayout({
           </div>
         </div>
 
-        <div className="hidden lg:grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="hidden lg:grid grid-cols-1 lg:grid-cols-3 gap-7">
           <div className="lg:col-span-2">
-            <div className="space-y-7">
+            <div className="space-y-6">
               <ProductGallery 
                 images={images}
-                className="mb-6" 
+                className="mb-5" 
                 priority={!isMobile}
               />
               <Card className="p-6">
@@ -179,27 +180,27 @@ export function ProductLayout({
             </div>
           </div>
 
-          <div className="lg:space-y-5">
+          <div className="lg:space-y-4">
             <ProductHeader 
               title={product.name}
               seller="Design Master"
               rating={averageRating}
               onContactSeller={handleContactSeller}
-              className="mb-3"
+              className="mb-2"
             />
             <VariantPicker
               variants={variants}
               selectedVariant={selectedVariant}
               onVariantChange={onVariantChange}
               onAddToCart={onAddToCart}
-              className="mb-4"
+              className="mb-3"
             />
             
             <AdditionalVariants
               variants={variants}
               selectedMainVariant={selectedVariant}
               onAdditionalSelect={handleAdditionalVariantSelect}
-              className="mb-5"
+              className="mb-4"
             />
             
             <ProductInfo 
@@ -210,7 +211,7 @@ export function ProductLayout({
           </div>
         </div>
 
-        <div className="hidden lg:block mt-10 space-y-7">
+        <div className="hidden lg:block mt-8 space-y-6">
           {fullWidthSections}
         </div>
       </main>

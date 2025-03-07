@@ -109,14 +109,14 @@ export function AdditionalVariants({
     <div className={cn("relative", className)}>
       <Badge 
         variant="outline" 
-        className="absolute -top-2.5 left-4 z-10 bg-background px-2.5 py-0.5 text-xs font-medium flex items-center gap-1.5 border-muted-foreground/20"
+        className="absolute -top-2 left-4 z-10 bg-background px-2 py-0.5 text-xs font-medium flex items-center gap-1.5 border-muted-foreground/20"
       >
         <Package className="h-3 w-3 text-primary" />
         Bundle & Save
       </Badge>
       
-      <Card className="pt-4 pb-2.5 px-4 bg-gray-50/70 border border-gray-200/70 shadow-sm rounded-xl">
-        <div className="space-y-1.5">
+      <Card className="pt-4 pb-2.5 px-4 bg-gray-50 border border-gray-200/70 shadow-sm rounded-xl">
+        <div className="space-y-1">
           {Object.entries(productGroups).map(([productName, productVariants]) => {
             const selectedVariantId = selectedVariants[productName] || productVariants[0].id;
             const selectedVariant = productVariants.find(v => v.id === selectedVariantId);
@@ -133,13 +133,15 @@ export function AdditionalVariants({
             }
             
             return (
-              <div key={productName} className="flex items-center gap-3 py-2 px-1.5 rounded hover:bg-white/90 transition-colors">
-                <Checkbox 
-                  id={`product-${productName}`}
-                  checked={isSelected}
-                  onCheckedChange={(checked) => handleCheckboxChange(productName, checked === true)}
-                  className="h-4 w-4 mt-0.5"
-                />
+              <div key={productName} className="flex items-center gap-3 py-2 px-2 rounded hover:bg-white transition-colors">
+                <div className="flex items-start pt-0.5">
+                  <Checkbox 
+                    id={`product-${productName}`}
+                    checked={isSelected}
+                    onCheckedChange={(checked) => handleCheckboxChange(productName, checked === true)}
+                    className="h-4 w-4"
+                  />
+                </div>
                 
                 <div className="flex items-center justify-between min-w-0 flex-1 gap-3">
                   <label 
@@ -156,10 +158,10 @@ export function AdditionalVariants({
                     onValueChange={(value) => handleVariantChange(productName, value)}
                     disabled={!isSelected}
                   >
-                    <SelectTrigger className="w-[150px] h-8 text-xs border-muted">
+                    <SelectTrigger className="w-[180px] h-8 text-xs border-muted">
                       <SelectValue placeholder="Options" />
                     </SelectTrigger>
-                    <SelectContent className="min-w-[200px]">
+                    <SelectContent className="min-w-[220px]">
                       {productVariants.map((variant) => (
                         <SelectItem key={variant.id} value={variant.id} className="text-xs">
                           {variant.label || "Option"} - ${formatPrice(variant.price)}

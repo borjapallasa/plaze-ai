@@ -57,8 +57,8 @@ export function StickyATC({
 
   return (
     <div className={`fixed bottom-0 left-0 right-0 bg-background border-t shadow-lg py-3 px-4 z-50 ${isExiting ? 'animate-slide-down' : 'animate-slide-up'}`}>
-      <div className="container mx-auto flex items-center justify-between gap-5">
-        <div className="flex-1 flex items-center gap-5">
+      <div className="container mx-auto flex items-center justify-between gap-4">
+        <div className="flex-1 flex items-center gap-4">
           <Select value={selectedVariant} onValueChange={onVariantChange}>
             <SelectTrigger className="w-[220px]">
               <SelectValue placeholder="Select package" />

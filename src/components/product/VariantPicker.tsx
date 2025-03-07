@@ -28,9 +28,9 @@ export function VariantPicker({
   className = ""
 }: VariantPickerProps) {
   return (
-    <div className={`space-y-3 ${className}`}>
+    <div className={`space-y-2.5 ${className}`}>
       <h2 className="text-lg font-semibold">Choose your package</h2>
-      <div className="grid gap-5">
+      <div className="grid gap-3.5">
         {variants.map((variant, index) => {
           const badge = getBadgeLabel(index, variant);
           const isSelected = selectedVariant === variant.id;
@@ -40,24 +40,24 @@ export function VariantPicker({
               key={variant.id}
               className={`p-4 cursor-pointer relative overflow-visible transition-all duration-200 ease-in-out ${
                 isSelected
-                  ? "ring-2 ring-black shadow-md scale-[1.02]"
-                  : "hover:ring-1 hover:ring-black/50 hover:scale-[1.01] shadow-sm"
+                  ? "ring-2 ring-black shadow-md scale-[1.01]"
+                  : "hover:ring-1 hover:ring-black/50 hover:shadow-sm"
               } ${variant.highlight && !isSelected ? "ring-1 ring-black/10" : ""}`}
               onClick={() => onVariantChange?.(variant.id)}
             >
               {badge && (
-                <div className={`absolute -top-2.5 left-5 ${
+                <div className={`absolute -top-2 left-4 ${
                   variant.highlight 
                     ? "bg-black text-white" 
                     : "bg-white text-black border border-gray-200"
-                } px-2.5 py-0.5 rounded-full text-xs font-medium shadow-sm`}>
+                } px-2 py-0.5 rounded-full text-xs font-medium shadow-sm`}>
                   {badge}
                 </div>
               )}
               
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
+                  <div className="flex items-center gap-2">
                     <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors duration-200 ${
                       isSelected ? "border-black" : "border-gray-300"
                     }`}>
@@ -67,7 +67,7 @@ export function VariantPicker({
                     </div>
                     <h3 className="text-base font-medium">{variant.name}</h3>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
                     <div className="text-lg font-bold">${variant.price}</div>
                     {variant.comparePrice && (
                       <div className="text-xs text-gray-500 line-through">
@@ -77,7 +77,7 @@ export function VariantPicker({
                   </div>
                 </div>
 
-                <div className="flex flex-row gap-2 flex-wrap pt-1">
+                <div className="flex flex-row gap-1.5 flex-wrap pt-1">
                   {variant.features && variant.features.map((feature, index) => (
                     <span
                       key={index}
@@ -94,7 +94,7 @@ export function VariantPicker({
         })}
       </div>
       {onAddToCart && (
-        <div className="space-y-3 pt-3">
+        <div className="pt-2">
           <Button
             className="w-full"
             size="lg"
