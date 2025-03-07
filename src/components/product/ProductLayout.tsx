@@ -121,11 +121,11 @@ export function ProductLayout({
           />
           <Button 
             variant="outline" 
-            className="w-full flex items-center justify-center gap-2 mb-4 bg-background border-gray-300 text-gray-700 hover:bg-gray-50"
+            className="w-auto px-4 mx-auto flex items-center justify-center gap-2 mb-6 mt-2 text-sm font-normal bg-background border-gray-300 text-gray-700 hover:bg-gray-50 rounded-full"
             onClick={() => console.log("Contact seller clicked")}
           >
             <MessageCircle className="h-4 w-4" />
-            Contact Seller
+            Need help? Message seller
           </Button>
           
           <AdditionalVariants
@@ -184,11 +184,11 @@ export function ProductLayout({
             />
             <Button 
               variant="outline" 
-              className="w-full flex items-center justify-center gap-2 mb-4 bg-background border-gray-300 text-gray-700 hover:bg-gray-50"
+              className="w-auto px-4 mx-auto flex items-center justify-center gap-2 mb-6 mt-2 text-sm font-normal bg-background border-gray-300 text-gray-700 hover:bg-gray-50 rounded-full"
               onClick={() => console.log("Contact seller clicked")}
             >
               <MessageCircle className="h-4 w-4" />
-              Contact Seller
+              Need help? Message seller
             </Button>
             
             <AdditionalVariants

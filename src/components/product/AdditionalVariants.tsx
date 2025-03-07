@@ -116,7 +116,7 @@ export function AdditionalVariants({
         Bundle & Save
       </Badge>
       
-      <Card className="pt-4 pb-2 px-4 bg-background border border-border shadow-sm">
+      <Card className="pt-4 pb-2 px-4 bg-gray-50/80 border border-gray-200 shadow-sm">
         <div className="space-y-1">
           {Object.entries(productGroups).map(([productName, productVariants]) => {
             const selectedVariantId = selectedVariants[productName] || productVariants[0].id;
@@ -134,7 +134,7 @@ export function AdditionalVariants({
             }
             
             return (
-              <div key={productName} className="flex items-center gap-2 py-1.5 px-1 rounded hover:bg-accent/5 transition-colors">
+              <div key={productName} className="flex items-center gap-2 py-1.5 px-1 rounded hover:bg-white/80 transition-colors">
                 <Checkbox 
                   id={`product-${productName}`}
                   checked={isSelected}
