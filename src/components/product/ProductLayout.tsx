@@ -1,3 +1,4 @@
+
 import React from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { ProductGallery } from "./ProductGallery";
@@ -120,7 +121,7 @@ export function ProductLayout({
           />
           <Button 
             variant="outline" 
-            className="w-full flex items-center justify-center gap-2 mb-4"
+            className="w-full flex items-center justify-center gap-2 mb-4 bg-background border-gray-300 text-gray-700 hover:bg-gray-50"
             onClick={() => console.log("Contact seller clicked")}
           >
             <MessageCircle className="h-4 w-4" />
@@ -183,7 +184,7 @@ export function ProductLayout({
             />
             <Button 
               variant="outline" 
-              className="w-full flex items-center justify-center gap-2 mb-4"
+              className="w-full flex items-center justify-center gap-2 mb-4 bg-background border-gray-300 text-gray-700 hover:bg-gray-50"
               onClick={() => console.log("Contact seller clicked")}
             >
               <MessageCircle className="h-4 w-4" />

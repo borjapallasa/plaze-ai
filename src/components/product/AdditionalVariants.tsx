@@ -157,10 +157,10 @@ export function AdditionalVariants({
                     onValueChange={(value) => handleVariantChange(productName, value)}
                     disabled={!isSelected}
                   >
-                    <SelectTrigger className="w-[80px] h-7 text-xs border-muted">
+                    <SelectTrigger className="w-[110px] h-7 text-xs border-muted">
                       <SelectValue placeholder="Options" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="min-w-[180px]">
                       {productVariants.map((variant) => (
                         <SelectItem key={variant.id} value={variant.id} className="text-xs">
                           {variant.label || "Option"} - ${formatPrice(variant.price)}
