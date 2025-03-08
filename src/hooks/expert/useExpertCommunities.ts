@@ -6,8 +6,8 @@ export function useExpertCommunities(expert_uuid: string | undefined) {
   return useQuery({
     queryKey: ['expert-communities', expert_uuid],
     queryFn: async () => {
-      if (!expert_uuid) {
-        console.log('No expert_uuid provided for fetching communities');
+      if (!expert_uuid || expert_uuid === ':id') {
+        console.log('No valid expert_uuid provided for fetching communities');
         return [];
       }
 
@@ -42,6 +42,6 @@ export function useExpertCommunities(expert_uuid: string | undefined) {
       console.log('Fetched communities:', data?.length || 0);
       return data || [];
     },
-    enabled: !!expert_uuid
+    enabled: !!expert_uuid && expert_uuid !== ':id'
   });
 }

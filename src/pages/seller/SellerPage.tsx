@@ -28,25 +28,42 @@ export default function SellerPage() {
     window.location.hash = value;
   };
 
+  // Safely handle the id parameter - don't use it directly in queries if it's ":id"
+  const validId = id && id !== ':id' ? id : null;
+
   const { data: seller } = useQuery({
-    queryKey: ['seller', id],
+    queryKey: ['seller', validId],
     queryFn: async () => {
+      if (!validId) {
+        console.log('No valid user_uuid provided');
+        return null;
+      }
+
       const { data, error } = await supabase
         .from('users')
         .select('*')
-        .eq('user_uuid', id)
+        .eq('user_uuid', validId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching seller:', error);
+        return null;
+      }
+      
       return data;
     },
-    enabled: !!id
+    enabled: !!validId
   });
 
   // First query to get the expert data by user_uuid
   const { data: expertData } = useQuery({
-    queryKey: ['expert', id],
+    queryKey: ['expert', validId],
     queryFn: async () => {
+      if (!validId) {
+        console.log('No valid user_uuid provided for expert query');
+        return null;
+      }
+      
       // Try to fetch by user_uuid
       const { data, error } = await supabase
         .from('experts')
@@ -63,7 +80,7 @@ export default function SellerPage() {
           areas,
           thumbnail
         `)
-        .eq('user_uuid', id)
+        .eq('user_uuid', validId)
         .maybeSingle();
 
       if (error) {
@@ -85,7 +102,7 @@ export default function SellerPage() {
         status: "active" as const
       } as Expert;
     },
-    enabled: !!id
+    enabled: !!validId
   });
 
   // Query to fetch products using expert_uuid from the expert data
