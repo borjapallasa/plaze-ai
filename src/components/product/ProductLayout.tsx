@@ -2,8 +2,6 @@
 import React from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { ProductGallery } from "./ProductGallery";
-import { Button } from "@/components/ui/button";
-import { MessageCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { usePreloadImage } from "@/hooks/use-preload-image";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -14,6 +12,9 @@ import { ProductReviews } from "./ProductReviews";
 import { VariantPicker } from "./VariantPicker";
 import { AdditionalVariants } from "./AdditionalVariants";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
+import { ProductHeader } from "./ProductHeader";
+import { ProductDemo } from "./ProductDemo";
+import { ProductDescription } from "./ProductDescription";
 
 interface ProductLayoutProps {
   product: any;
@@ -24,41 +25,6 @@ interface ProductLayoutProps {
   onAddToCart: () => void;
   onAdditionalVariantToggle?: (variantId: string, selected: boolean) => void;
   reviews: any[];
-}
-
-interface ProductHeaderProps {
-  title: string;
-  seller: string;
-  rating: number;
-  className?: string;
-  onContactSeller: () => void;
-}
-
-function ProductHeader({ title, seller, rating, onContactSeller, className = "" }: ProductHeaderProps) {
-  return (
-    <div className={className}>
-      <h1 className="text-2xl font-semibold mb-2">{title}</h1>
-      <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
-        <div className="flex items-center gap-1.5">
-          <span 
-            className="text-muted-foreground hover:underline cursor-pointer transition-colors"
-          >
-            {seller}
-          </span>
-          <button 
-            onClick={onContactSeller}
-            className="inline-flex items-center justify-center p-1 rounded-full hover:bg-muted/50 transition-colors"
-            aria-label="Message seller"
-            title="Message seller"
-          >
-            <MessageCircle className="h-4 w-4 text-muted-foreground" />
-          </button>
-          <span className="text-muted-foreground mx-0.5">•</span>
-          <span className="text-muted-foreground">{rating.toFixed(1)} Rating</span>
-        </div>
-      </div>
-    </div>
-  );
 }
 
 export function ProductLayout({
@@ -79,23 +45,6 @@ export function ProductLayout({
 
   const embedUrl = getVideoEmbedUrl(product.demo);
 
-  const renderDemo = () => {
-    if (!embedUrl) return null;
-
-    return (
-      <Card className="p-6">
-        <div className="relative w-full aspect-video rounded-lg overflow-hidden">
-          <iframe
-            src={embedUrl}
-            className="absolute inset-0 w-full h-full"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
-        </div>
-      </Card>
-    );
-  };
-
   const handleContactSeller = () => {
     console.log("Contact seller clicked");
   };
@@ -109,7 +58,7 @@ export function ProductLayout({
 
   const fullWidthSections = (
     <>
-      {renderDemo()}
+      <ProductDemo embedUrl={embedUrl} />
       <ProductReviews reviews={reviews} />
       <MoreFromSeller expert_uuid={product.expert_uuid} />
     </>
@@ -148,11 +97,7 @@ export function ProductLayout({
           />
 
           <div className="space-y-6">
-            <Card className="p-6">
-              <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
-                {product.description}
-              </p>
-            </Card>
+            <ProductDescription description={product.description} />
 
             <ProductInfo 
               techStack={product.tech_stack}
@@ -172,11 +117,7 @@ export function ProductLayout({
                 className="mb-5" 
                 priority={!isMobile}
               />
-              <Card className="p-6">
-                <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
-                  {product.description}
-                </p>
-              </Card>
+              <ProductDescription description={product.description} />
             </div>
           </div>
 
