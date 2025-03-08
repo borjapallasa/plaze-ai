@@ -14,6 +14,7 @@ import { CommunitiesTab } from "./components/CommunitiesTab";
 import { ApplicationsTab } from "./components/ApplicationsTab";
 import type { Json } from "@/integrations/supabase/types";
 import type { Service } from "@/components/expert/types";
+import type { Expert } from "@/types/expert";
 
 export default function SellerPage() {
   const { id } = useParams();
@@ -42,10 +43,45 @@ export default function SellerPage() {
     enabled: !!id
   });
 
+  const { data: expertData } = useQuery({
+    queryKey: ['expert', id],
+    queryFn: async () => {
+      // Try to fetch by user_uuid
+      const { data, error } = await supabase
+        .from('experts')
+        .select(`
+          expert_uuid,
+          name,
+          title,
+          email,
+          description,
+          location,
+          completed_projects,
+          client_satisfaction,
+          response_rate,
+          areas,
+          status,
+          slug,
+          thumbnail
+        `)
+        .eq('user_uuid', id)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data as Expert | null;
+    },
+    enabled: !!id
+  });
+
   const { data: products = [] } = useQuery({
     queryKey: ['sellerProducts', id],
     queryFn: async () => {
       console.log('Fetching products for seller:', id);
+      // If we have an expert record, use expert_uuid instead of user_uuid
+      const expertUuid = expertData?.expert_uuid;
+      const userIdField = expertUuid ? 'expert_uuid' : 'expert_uuid';
+      const userId = expertUuid || id;
+
       const { data, error } = await supabase
         .from('products')
         .select(`
@@ -57,7 +93,7 @@ export default function SellerPage() {
           thumbnail,
           product_uuid
         `)
-        .eq('expert_uuid', id);
+        .eq(userIdField, userId);
 
       if (error) {
         console.error('Error fetching seller products:', error);
@@ -73,6 +109,11 @@ export default function SellerPage() {
   const { data: servicesRaw = [] } = useQuery({
     queryKey: ['sellerServices', id],
     queryFn: async () => {
+      // If we have an expert record, use expert_uuid instead of user_uuid
+      const expertUuid = expertData?.expert_uuid;
+      const userIdField = expertUuid ? 'expert_uuid' : 'expert_uuid';
+      const userId = expertUuid || id;
+
       const { data, error } = await supabase
         .from('services')
         .select(`
@@ -88,7 +129,7 @@ export default function SellerPage() {
           active_subscriptions_count,
           created_at
         `)
-        .eq('expert_uuid', id);
+        .eq(userIdField, userId);
 
       if (error) throw error;
 
@@ -107,7 +148,7 @@ export default function SellerPage() {
       : []
   }));
 
-  const { data: communities } = useExpertCommunities(id);
+  const { data: communities } = useExpertCommunities(expertData?.expert_uuid || id);
 
   return (
     <div className="min-h-screen bg-background">
@@ -116,7 +157,7 @@ export default function SellerPage() {
       </div>
 
       <main className="container mx-auto px-4 pt-24 pb-8">
-        <SellerHeader seller={seller} productsCount={products.length} />
+        <SellerHeader seller={seller} expert={expertData} productsCount={products.length} />
 
         <Tabs 
           defaultValue={activeTab} 
