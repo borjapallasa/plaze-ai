@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -42,6 +43,7 @@ export default function SellerPage() {
     enabled: !!id
   });
 
+  // First query to get the expert data by user_uuid
   const { data: expertData } = useQuery({
     queryKey: ['expert', id],
     queryFn: async () => {
@@ -75,7 +77,7 @@ export default function SellerPage() {
         return null;
       }
       
-      // Return the expert data with default status
+      // Return the expert data with default values for required properties
       return {
         ...data,
         id: 0, // Provide default values for required properties
@@ -86,15 +88,17 @@ export default function SellerPage() {
     enabled: !!id
   });
 
+  // Query to fetch products using expert_uuid from the expert data
   const { data: products = [] } = useQuery({
-    queryKey: ['sellerProducts', id],
+    queryKey: ['sellerProducts', expertData?.expert_uuid],
     queryFn: async () => {
-      console.log('Fetching products for seller:', id);
-      // If we have an expert record, use expert_uuid instead of user_uuid
-      const expertUuid = expertData?.expert_uuid;
-      const userIdField = expertUuid ? 'expert_uuid' : 'expert_uuid';
-      const userId = expertUuid || id;
-
+      if (!expertData?.expert_uuid) {
+        console.log('No expert_uuid available to fetch products');
+        return [];
+      }
+      
+      console.log('Fetching products for expert_uuid:', expertData.expert_uuid);
+      
       const { data, error } = await supabase
         .from('products')
         .select(`
@@ -106,27 +110,30 @@ export default function SellerPage() {
           thumbnail,
           product_uuid
         `)
-        .eq(userIdField, userId);
+        .eq('expert_uuid', expertData.expert_uuid);
 
       if (error) {
-        console.error('Error fetching seller products:', error);
+        console.error('Error fetching products:', error);
         throw error;
       }
 
       console.log('Fetched products:', data);
       return data || [];
     },
-    enabled: !!id && !!expertData
+    enabled: !!expertData?.expert_uuid
   });
 
+  // Query to fetch services using expert_uuid from the expert data
   const { data: servicesRaw = [] } = useQuery({
-    queryKey: ['sellerServices', id],
+    queryKey: ['sellerServices', expertData?.expert_uuid],
     queryFn: async () => {
-      // If we have an expert record, use expert_uuid instead of user_uuid
-      const expertUuid = expertData?.expert_uuid;
-      const userIdField = expertUuid ? 'expert_uuid' : 'expert_uuid';
-      const userId = expertUuid || id;
-
+      if (!expertData?.expert_uuid) {
+        console.log('No expert_uuid available to fetch services');
+        return [];
+      }
+      
+      console.log('Fetching services for expert_uuid:', expertData.expert_uuid);
+      
       const { data, error } = await supabase
         .from('services')
         .select(`
@@ -142,13 +149,13 @@ export default function SellerPage() {
           active_subscriptions_count,
           created_at
         `)
-        .eq(userIdField, userId);
+        .eq('expert_uuid', expertData.expert_uuid);
 
       if (error) throw error;
 
       return data || [];
     },
-    enabled: !!id
+    enabled: !!expertData?.expert_uuid
   });
 
   // Transform the services data to ensure features is a string array
@@ -161,7 +168,8 @@ export default function SellerPage() {
       : []
   }));
 
-  const { data: communities } = useExpertCommunities(expertData?.expert_uuid || id);
+  // Use expert_uuid to fetch communities
+  const { data: communities } = useExpertCommunities(expertData?.expert_uuid);
 
   return (
     <div className="min-h-screen bg-background">
