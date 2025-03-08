@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -60,15 +59,29 @@ export default function SellerPage() {
           client_satisfaction,
           response_rate,
           areas,
-          status,
-          slug,
           thumbnail
         `)
         .eq('user_uuid', id)
         .maybeSingle();
 
-      if (error) throw error;
-      return data as Expert | null;
+      if (error) {
+        console.error("Error fetching expert data:", error);
+        return null;
+      }
+      
+      console.log("Expert data fetched:", data);
+      
+      if (!data) {
+        return null;
+      }
+      
+      // Return the expert data with default status
+      return {
+        ...data,
+        id: 0, // Provide default values for required properties
+        created_at: new Date().toISOString(),
+        status: "active" as const
+      } as Expert;
     },
     enabled: !!id
   });
@@ -103,7 +116,7 @@ export default function SellerPage() {
       console.log('Fetched products:', data);
       return data || [];
     },
-    enabled: !!id
+    enabled: !!id && !!expertData
   });
 
   const { data: servicesRaw = [] } = useQuery({

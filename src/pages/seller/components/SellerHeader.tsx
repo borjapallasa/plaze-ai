@@ -24,6 +24,8 @@ export function SellerHeader({ seller, expert, productsCount }: SellerHeaderProp
   const displayTitle = expert?.title || "Expert in UI/UX Design & Development";
   const displayDescription = expert?.description || 
     "Passionate designer and developer with over 8 years of experience creating beautiful, functional digital experiences. Specializing in user interface design, web applications, and design systems that scale.";
+  
+  // Use the thumbnail property from expert if available, otherwise use a default
   const avatarUrl = expert?.thumbnail || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e";
 
   return (

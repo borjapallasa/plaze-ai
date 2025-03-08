@@ -17,4 +17,5 @@ export interface Expert {
   user_uuid?: string;
   activeTemplates?: number;
   totalTemplates?: number;
+  thumbnail?: string;
 }
