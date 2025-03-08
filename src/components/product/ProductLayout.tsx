@@ -48,7 +48,7 @@ export function ProductLayout({
   return (
     <div className="min-h-screen">
       <MainHeader />
-      <main className="container mx-auto px-4 pt-16">
+      <main className="container mx-auto px-4 pt-28 md:pt-32">
         <MobileProductLayout 
           product={product}
           images={images}
