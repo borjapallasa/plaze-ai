@@ -88,29 +88,31 @@ export default function NewServicePage() {
   return (
     <div className="min-h-screen bg-background">
       <MainHeader />
-      <ServiceForm
-        serviceName={serviceName}
-        serviceDescription={serviceDescription}
-        price={price}
-        serviceType={serviceType}
-        features={features}
-        category={category}
-        selectedSubcategories={selectedSubcategories}
-        status={status}
-        isSaving={isCreating}
-        onServiceNameChange={setServiceName}
-        onServiceDescriptionChange={setServiceDescription}
-        onPriceChange={setPrice}
-        onServiceTypeChange={setServiceType}
-        onAddFeature={handleAddFeature}
-        onRemoveFeature={handleRemoveFeature}
-        onFeatureChange={handleFeatureChange}
-        onCategoryChange={handleCategoryChange}
-        onSubcategoriesChange={handleSubcategoriesChange}
-        onRemoveSubcategory={handleRemoveSubcategory}
-        onStatusChange={setStatus}
-        onSave={handleSave}
-      />
+      <div className="w-full max-w-[1400px] mx-auto px-4 py-4 mt-8">
+        <ServiceForm
+          serviceName={serviceName}
+          serviceDescription={serviceDescription}
+          price={price}
+          serviceType={serviceType}
+          features={features}
+          category={category}
+          selectedSubcategories={selectedSubcategories}
+          status={status}
+          isSaving={isCreating}
+          onServiceNameChange={setServiceName}
+          onServiceDescriptionChange={setServiceDescription}
+          onPriceChange={setPrice}
+          onServiceTypeChange={setServiceType}
+          onAddFeature={handleAddFeature}
+          onRemoveFeature={handleRemoveFeature}
+          onFeatureChange={handleFeatureChange}
+          onCategoryChange={handleCategoryChange}
+          onSubcategoriesChange={handleSubcategoriesChange}
+          onRemoveSubcategory={handleRemoveSubcategory}
+          onStatusChange={setStatus}
+          onSave={handleSave}
+        />
+      </div>
     </div>
   );
 }

@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -62,8 +63,8 @@ export function ServiceForm({
   onSave,
 }: ServiceFormProps) {
   return (
-    <div className="w-full max-w-[1400px] mx-auto px-2 xs:px-3 sm:px-6 lg:px-8 py-3 sm:py-6 mt-16">
-      <div className="mb-6">
+    <div className="w-full max-w-[1400px] mx-auto px-2 xs:px-3 sm:px-6 lg:px-8 py-2 sm:py-4">
+      <div className="mb-4">
         <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
           <Link to="/seller/services">
             <Button variant="ghost" size="icon" className="rounded-full flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 mt-1">

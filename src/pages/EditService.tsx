@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -188,7 +189,7 @@ export default function EditService() {
     return (
       <div className="min-h-screen bg-background">
         <MainHeader />
-        <div className="w-full max-w-[1400px] mx-auto px-4 py-8 mt-16">
+        <div className="w-full max-w-[1400px] mx-auto px-4 py-8 mt-8">
           <div className="animate-pulse flex space-x-4">
             <div className="flex-1 space-y-6 py-1">
               <div className="h-6 bg-gray-200 rounded w-3/4"></div>
@@ -206,7 +207,7 @@ export default function EditService() {
   return (
     <div className="min-h-screen bg-background">
       <MainHeader />
-      <div className="w-full max-w-[1400px] mx-auto px-4 py-8 mt-16">
+      <div className="w-full max-w-[1400px] mx-auto px-4 py-4 mt-8">
         <ServiceForm 
           serviceName={serviceName}
           serviceDescription={serviceDescription}
