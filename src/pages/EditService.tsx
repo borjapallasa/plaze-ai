@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -120,27 +119,31 @@ export default function EditService() {
       
       const cleanedFeatures = features.filter(feature => feature.trim() !== "");
       
-      // Format the data properly for Supabase
+      // Prepare data with proper JSON structure for Supabase
       const serviceData = {
         name: serviceName,
         description: serviceDescription,
         features: cleanedFeatures,
         price: parseFloat(price) || 0,
         type: serviceType,
+        // Format the category and subcategory as specific objects for Supabase
         main_category: category ? { value: category } : null,
         subcategory: selectedSubcategories.length > 0 
           ? selectedSubcategories.map(sub => ({ value: sub })) 
-          : null,
+          : [],
         status: status
       };
 
       console.log("Updating service with ID:", id);
-      console.log("Updating service with data:", serviceData);
+      console.log("Updating service with data:", JSON.stringify(serviceData));
       
+      // Use upsert instead of update to ensure record is created if it doesn't exist
       const { data, error } = await supabase
         .from('services')
-        .update(serviceData)
-        .eq('service_uuid', id)
+        .upsert({
+          service_uuid: id, // Include the primary key for upsert
+          ...serviceData
+        })
         .select();
 
       if (error) {
@@ -151,6 +154,12 @@ export default function EditService() {
 
       console.log("Update response:", data);
       toast.success("Your service has been updated successfully");
+      
+      // Refresh the page data to confirm changes were saved
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+      
     } catch (error) {
       console.error('Error updating service:', error);
       toast.error("Failed to update service");

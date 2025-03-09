@@ -28,7 +28,7 @@ export const useCreateService = () => {
     setIsCreating(true);
     
     try {
-      console.log("Creating service with data:", serviceData);
+      console.log("Creating service with data:", JSON.stringify(serviceData));
       
       const { data: expertData, error: expertError } = await supabase
         .from("experts")
@@ -43,7 +43,11 @@ export const useCreateService = () => {
 
       const expertUuid = expertData?.expert_uuid;
       
-      // Make sure all fields have proper formatting for Supabase
+      if (!expertUuid) {
+        throw new Error("Expert profile not found");
+      }
+      
+      // Ensure proper structure for Supabase
       const servicePayload = {
         user_uuid: user.id,
         expert_uuid: expertUuid,
@@ -51,13 +55,13 @@ export const useCreateService = () => {
         description: serviceData.description,
         price: serviceData.price,
         type: serviceData.type,
-        features: serviceData.features as unknown as Json,
-        main_category: serviceData.main_category as unknown as Json,
-        subcategory: serviceData.subcategory as unknown as Json,
-        status: serviceData.status as "active" | "draft" | "archived"
+        features: serviceData.features,
+        main_category: serviceData.main_category,
+        subcategory: serviceData.subcategory,
+        status: serviceData.status
       };
       
-      console.log("Service payload for Supabase:", servicePayload);
+      console.log("Service payload for Supabase:", JSON.stringify(servicePayload));
 
       const { data, error } = await supabase
         .from("services")
