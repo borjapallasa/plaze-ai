@@ -46,19 +46,30 @@ export default function SellerPage() {
     window.location.hash = value;
   };
 
-  // First, fetch the expert data to get the expert_uuid
+  // First, fetch the expert data using expert_uuid or user_uuid
   const { data: seller, isLoading: sellerLoading, error: sellerError } = useQuery({
     queryKey: ['expert', id],
     queryFn: async () => {
       if (!id) throw new Error("No expert ID provided");
       
-      console.log('Fetching expert with user_uuid:', id);
+      console.log('Fetching expert with ID:', id);
       
-      const { data, error } = await supabase
+      // Try finding by expert_uuid first
+      let { data, error } = await supabase
         .from('experts')
         .select('*')
-        .eq('user_uuid', id)
+        .eq('expert_uuid', id)
         .maybeSingle();
+        
+      if (!data && !error) {
+        console.log('No expert found with expert_uuid, trying user_uuid:', id);
+        // If not found by expert_uuid, try with user_uuid
+        ({ data, error } = await supabase
+          .from('experts')
+          .select('*')
+          .eq('user_uuid', id)
+          .maybeSingle());
+      }
 
       if (error) {
         console.error('Error fetching expert:', error);
@@ -67,11 +78,11 @@ export default function SellerPage() {
       
       if (!data) {
         toast.error("Expert profile not found");
-        console.log("No expert found with user_uuid:", id);
+        console.log("No expert found with ID:", id);
         return null;
       }
       
-      console.log('Expert data:', data);
+      console.log('Expert data found:', data);
       return data as Expert;
     },
     enabled: !!id
@@ -189,6 +200,11 @@ export default function SellerPage() {
             <p className="text-muted-foreground">
               We couldn't find the seller profile you're looking for. Please check the URL and try again.
             </p>
+            {sellerError ? (
+              <div className="mt-4 p-4 bg-muted/50 rounded text-left text-sm text-muted-foreground overflow-auto">
+                <pre>Error: {sellerError.message}</pre>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
