@@ -27,7 +27,7 @@ export function SellerHeader({ seller, productsCount }: SellerHeaderProps) {
           <div className="relative flex-shrink-0">
             <Avatar className="h-32 w-32 sm:h-40 sm:w-40 rounded-full ring-4 ring-background shadow-xl border-2 border-primary/10">
               <AvatarImage 
-                src={seller.thumbnail || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e"}
+                src={seller.user_uuid ? `https://api.dicebear.com/7.x/avataaars/svg?seed=${seller.user_uuid}` : "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e"}
                 className="object-cover"
               />
               <AvatarFallback className="text-3xl">{seller.name?.[0] || 'S'}</AvatarFallback>
