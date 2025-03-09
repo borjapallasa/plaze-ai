@@ -114,6 +114,12 @@ export function CommunitiesTab({ communities, isLoading }: CommunitiesTabProps) 
                     <Badge variant={community.status === 'active' ? 'default' : 'secondary'}>
                       {community.status === 'active' ? 'Active' : 'Draft'}
                     </Badge>
+                    <div className="flex items-center gap-1.5 ml-2">
+                      <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground">
+                        Last activity: {community.last_activity ? new Date(community.last_activity).toLocaleDateString() : 'No activity'}
+                      </span>
+                    </div>
                   </div>
                   
                   <div className="flex items-center gap-3 flex-wrap">
@@ -124,12 +130,6 @@ export function CommunitiesTab({ communities, isLoading }: CommunitiesTabProps) 
                     <Badge variant="secondary" className="text-xs px-2 py-0.5">
                       {community.type === 'paid' ? `$${community.price}/month` : 'Free Access'}
                     </Badge>
-                    <div className="flex items-center gap-1.5">
-                      <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">
-                        Last activity: {community.last_activity ? new Date(community.last_activity).toLocaleDateString() : 'No activity'}
-                      </span>
-                    </div>
                   </div>
                 </div>
                 
