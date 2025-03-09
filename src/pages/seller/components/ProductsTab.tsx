@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge as UIBadge } from "@/components/ui/badge";
-import { Plus, Search, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { Plus, Search, ArrowUpDown, ArrowUp, ArrowDown, Loader2 } from "lucide-react";
 
 type SortField = 'name' | 'status' | 'variant_count' | 'price_from' | 'created_at';
 type SortDirection = 'asc' | 'desc';
@@ -23,9 +23,10 @@ interface Product {
 
 interface ProductsTabProps {
   products: Product[];
+  isLoading?: boolean;
 }
 
-export function ProductsTab({ products }: ProductsTabProps) {
+export function ProductsTab({ products, isLoading = false }: ProductsTabProps) {
   const navigate = useNavigate();
   const [sortField, setSortField] = useState<SortField>('created_at');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
@@ -88,114 +89,121 @@ export function ProductsTab({ products }: ProductsTabProps) {
       </div>
 
       <Card className="p-6">
-        <ScrollArea className="w-full relative" type="always">
-          <div className="w-[calc(100vw-4rem)] sm:w-full min-w-[800px]">
-            <div className="rounded-lg border border-border">
-              <table className="w-full">
-                <thead className="bg-muted/50">
-                  <tr>
-                    <th className="w-[72px] sticky left-0 bg-muted/50"></th>
-                    <th 
-                      className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
-                      onClick={() => handleSort('name')}
-                    >
-                      <span className="flex items-center">
-                        Product
-                        <SortIcon field="name" />
-                      </span>
-                    </th>
-                    <th 
-                      className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
-                      onClick={() => handleSort('status')}
-                    >
-                      <span className="flex items-center">
-                        Status
-                        <SortIcon field="status" />
-                      </span>
-                    </th>
-                    <th 
-                      className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
-                      onClick={() => handleSort('variant_count')}
-                    >
-                      <span className="flex items-center">
-                        Variants
-                        <SortIcon field="variant_count" />
-                      </span>
-                    </th>
-                    <th 
-                      className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
-                      onClick={() => handleSort('price_from')}
-                    >
-                      <span className="flex items-center">
-                        Price
-                        <SortIcon field="price_from" />
-                      </span>
-                    </th>
-                    <th 
-                      className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
-                      onClick={() => handleSort('created_at')}
-                    >
-                      <span className="flex items-center">
-                        Created
-                        <SortIcon field="created_at" />
-                      </span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {sortedProducts.map((product) => (
-                    <tr 
-                      key={product.product_uuid} 
-                      className="hover:bg-muted/50 transition-colors cursor-pointer"
-                      onClick={() => handleProductClick(product.product_uuid)}
-                    >
-                      <td className="p-3 sticky left-0 bg-background">
-                        <div className="w-12 h-12 rounded bg-muted flex-shrink-0 overflow-hidden">
-                          {product.thumbnail && (
-                            <img 
-                              src={product.thumbnail} 
-                              alt={product.name}
-                              className="w-full h-full object-cover"
-                            />
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <h3 className="font-medium text-sm">{product.name}</h3>
-                      </td>
-                      <td className="px-4 py-3">
-                        <UIBadge 
-                          variant={product.status === 'active' ? 'default' : 'secondary'}
-                          className="capitalize"
-                        >
-                          {product.status || 'Draft'}
-                        </UIBadge>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className="text-sm">{product.variant_count || 0}</span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className="text-sm">${product.price_from || '0.00'}</span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className="text-sm text-muted-foreground">
-                          {new Date(product.created_at).toLocaleDateString()}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                  {products.length === 0 && (
-                    <tr>
-                      <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
-                        No products found
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+        {isLoading ? (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin text-primary/70" />
+            <span className="ml-3 text-muted-foreground">Loading products...</span>
           </div>
-        </ScrollArea>
+        ) : (
+          <ScrollArea className="w-full relative" type="always">
+            <div className="w-[calc(100vw-4rem)] sm:w-full min-w-[800px]">
+              <div className="rounded-lg border border-border">
+                <table className="w-full">
+                  <thead className="bg-muted/50">
+                    <tr>
+                      <th className="w-[72px] sticky left-0 bg-muted/50"></th>
+                      <th 
+                        className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
+                        onClick={() => handleSort('name')}
+                      >
+                        <span className="flex items-center">
+                          Product
+                          <SortIcon field="name" />
+                        </span>
+                      </th>
+                      <th 
+                        className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
+                        onClick={() => handleSort('status')}
+                      >
+                        <span className="flex items-center">
+                          Status
+                          <SortIcon field="status" />
+                        </span>
+                      </th>
+                      <th 
+                        className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
+                        onClick={() => handleSort('variant_count')}
+                      >
+                        <span className="flex items-center">
+                          Variants
+                          <SortIcon field="variant_count" />
+                        </span>
+                      </th>
+                      <th 
+                        className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
+                        onClick={() => handleSort('price_from')}
+                      >
+                        <span className="flex items-center">
+                          Price
+                          <SortIcon field="price_from" />
+                        </span>
+                      </th>
+                      <th 
+                        className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
+                        onClick={() => handleSort('created_at')}
+                      >
+                        <span className="flex items-center">
+                          Created
+                          <SortIcon field="created_at" />
+                        </span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {sortedProducts.map((product) => (
+                      <tr 
+                        key={product.product_uuid} 
+                        className="hover:bg-muted/50 transition-colors cursor-pointer"
+                        onClick={() => handleProductClick(product.product_uuid)}
+                      >
+                        <td className="p-3 sticky left-0 bg-background">
+                          <div className="w-12 h-12 rounded bg-muted flex-shrink-0 overflow-hidden">
+                            {product.thumbnail && (
+                              <img 
+                                src={product.thumbnail} 
+                                alt={product.name}
+                                className="w-full h-full object-cover"
+                              />
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <h3 className="font-medium text-sm">{product.name}</h3>
+                        </td>
+                        <td className="px-4 py-3">
+                          <UIBadge 
+                            variant={product.status === 'active' ? 'default' : 'secondary'}
+                            className="capitalize"
+                          >
+                            {product.status || 'Draft'}
+                          </UIBadge>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className="text-sm">{product.variant_count || 0}</span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className="text-sm">${product.price_from || '0.00'}</span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className="text-sm text-muted-foreground">
+                            {new Date(product.created_at).toLocaleDateString()}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                    {products.length === 0 && (
+                      <tr>
+                        <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
+                          No products found
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </ScrollArea>
+        )}
       </Card>
     </div>
   );

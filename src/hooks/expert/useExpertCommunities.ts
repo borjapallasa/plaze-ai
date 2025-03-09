@@ -8,6 +8,7 @@ export function useExpertCommunities(expert_uuid: string | undefined) {
     queryFn: async () => {
       if (!expert_uuid) return [];
 
+      console.log('Fetching communities for expert_uuid:', expert_uuid);
       const { data, error } = await supabase
         .from('communities')
         .select(`
@@ -34,6 +35,7 @@ export function useExpertCommunities(expert_uuid: string | undefined) {
         throw error;
       }
       
+      console.log('Fetched communities:', data);
       return data || [];
     },
     enabled: !!expert_uuid
