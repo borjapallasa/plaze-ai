@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import type { Json } from "@/integrations/supabase/types";
 import type { ServiceStatus, ServiceType } from "@/components/expert/types";
 
 interface ServiceData {

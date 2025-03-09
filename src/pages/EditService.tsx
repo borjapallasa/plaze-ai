@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -7,11 +8,13 @@ import { MainHeader } from "@/components/MainHeader";
 import { ServiceForm } from "@/components/service/ServiceForm";
 import { DangerZone } from "@/components/service/DangerZone";
 import { CategoryType, ServiceType } from "@/constants/service-categories";
+import { useAuth } from "@/lib/auth";
 import type { ServiceStatus } from "@/components/expert/types";
 
 export default function EditService() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -23,6 +26,7 @@ export default function EditService() {
   const [category, setCategory] = useState<CategoryType | "">("");
   const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
   const [status, setStatus] = useState<ServiceStatus>("draft");
+  const [expertUuid, setExpertUuid] = useState<string | null>(null);
 
   const { data: service, isLoading } = useQuery({
     queryKey: ['service', id],
@@ -65,6 +69,7 @@ export default function EditService() {
         setPrice(data.price?.toString() || "");
         setServiceType((data.type as ServiceType) || "one time");
         setStatus((data.status as ServiceStatus) || "draft");
+        setExpertUuid(data.expert_uuid || null);
         
         // Handle main category
         let mainCategory = "";
@@ -103,30 +108,60 @@ export default function EditService() {
     enabled: !!id
   });
 
+  // First, check if we have a valid user
   const handleSave = async () => {
-    if (!serviceName.trim()) {
-      toast.error("Service name is required");
+    if (!user) {
+      toast.error("You must be logged in to save a service");
       return;
     }
-    
+
     if (!id) {
       toast.error("Service ID is missing");
+      return;
+    }
+
+    if (!serviceName.trim()) {
+      toast.error("Service name is required");
       return;
     }
     
     try {
       setIsSaving(true);
       
+      // Verify that we have an expert profile
+      if (!expertUuid) {
+        const { data: expertData, error: expertError } = await supabase
+          .from("experts")
+          .select("expert_uuid")
+          .eq("user_uuid", user.id)
+          .single();
+
+        if (expertError) {
+          console.error("Error fetching expert:", expertError);
+          toast.error("Could not verify your expert profile");
+          return;
+        }
+
+        if (!expertData?.expert_uuid) {
+          toast.error("Expert profile not found");
+          return;
+        }
+        
+        setExpertUuid(expertData.expert_uuid);
+      }
+      
       const cleanedFeatures = features.filter(feature => feature.trim() !== "");
       
       // Prepare data with proper JSON structure for Supabase
       const serviceData = {
+        service_uuid: id, // Include the primary key
+        user_uuid: user.id, // Ensure user_uuid is included for RLS policies
+        expert_uuid: expertUuid,
         name: serviceName,
         description: serviceDescription,
         features: cleanedFeatures,
         price: parseFloat(price) || 0,
         type: serviceType,
-        // Format the category and subcategory as specific objects for Supabase
         main_category: category ? { value: category } : null,
         subcategory: selectedSubcategories.length > 0 
           ? selectedSubcategories.map(sub => ({ value: sub })) 
@@ -137,13 +172,10 @@ export default function EditService() {
       console.log("Updating service with ID:", id);
       console.log("Updating service with data:", JSON.stringify(serviceData));
       
-      // Use upsert instead of update to ensure record is created if it doesn't exist
+      // Use upsert with all required fields
       const { data, error } = await supabase
         .from('services')
-        .upsert({
-          service_uuid: id, // Include the primary key for upsert
-          ...serviceData
-        })
+        .upsert(serviceData)
         .select();
 
       if (error) {
