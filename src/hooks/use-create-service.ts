@@ -28,6 +28,8 @@ export const useCreateService = () => {
     setIsCreating(true);
     
     try {
+      console.log("Creating service with data:", serviceData);
+      
       const { data: expertData, error: expertError } = await supabase
         .from("experts")
         .select("expert_uuid")
@@ -40,21 +42,26 @@ export const useCreateService = () => {
       }
 
       const expertUuid = expertData?.expert_uuid;
+      
+      // Make sure all fields have proper formatting for Supabase
+      const servicePayload = {
+        user_uuid: user.id,
+        expert_uuid: expertUuid,
+        name: serviceData.name,
+        description: serviceData.description,
+        price: serviceData.price,
+        type: serviceData.type,
+        features: serviceData.features as unknown as Json,
+        main_category: serviceData.main_category as unknown as Json,
+        subcategory: serviceData.subcategory as unknown as Json,
+        status: serviceData.status as "active" | "draft" | "archived"
+      };
+      
+      console.log("Service payload for Supabase:", servicePayload);
 
       const { data, error } = await supabase
         .from("services")
-        .insert({
-          user_uuid: user.id,
-          expert_uuid: expertUuid,
-          name: serviceData.name,
-          description: serviceData.description,
-          price: serviceData.price,
-          type: serviceData.type,
-          features: serviceData.features as unknown as Json,
-          main_category: serviceData.main_category as unknown as Json,
-          subcategory: serviceData.subcategory as unknown as Json,
-          status: serviceData.status as "active" | "draft" | "archived"
-        })
+        .insert(servicePayload)
         .select()
         .single();
 
@@ -62,7 +69,8 @@ export const useCreateService = () => {
         console.error("Error creating service:", error);
         throw error;
       }
-
+      
+      console.log("Service created successfully:", data);
       return data;
     } catch (error) {
       console.error("Service creation failed:", error);

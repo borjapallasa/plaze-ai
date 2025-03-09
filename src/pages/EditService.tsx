@@ -110,6 +110,11 @@ export default function EditService() {
       return;
     }
     
+    if (!id) {
+      toast.error("Service ID is missing");
+      return;
+    }
+    
     try {
       setIsSaving(true);
       
@@ -129,18 +134,22 @@ export default function EditService() {
         status: status
       };
 
+      console.log("Updating service with ID:", id);
       console.log("Updating service with data:", serviceData);
       
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('services')
         .update(serviceData)
-        .eq('service_uuid', id);
+        .eq('service_uuid', id)
+        .select();
 
       if (error) {
         console.error('Error updating service:', error);
-        throw error;
+        toast.error("Failed to update service: " + error.message);
+        return;
       }
 
+      console.log("Update response:", data);
       toast.success("Your service has been updated successfully");
     } catch (error) {
       console.error('Error updating service:', error);
