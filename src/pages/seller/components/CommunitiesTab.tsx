@@ -1,184 +1,113 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
-import { formatDistanceToNow } from "date-fns";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  Plus, 
-  Search, 
-  DollarSign, 
-  Users, 
-  Package, 
-  GraduationCap,
-  MessageSquare,
-  Clock,
-  Loader2
-} from "lucide-react";
+import { Users, Clock } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Community {
   community_uuid: string;
   name: string;
-  intro?: string;
-  description?: string;
-  type?: string;
-  price?: number;
-  member_count?: number;
-  paid_member_count?: number;
-  monthly_recurring_revenue?: number;
-  thumbnail?: string;
-  created_at: string;
-  product_count?: number;
-  classroom_count?: number;
-  post_count?: number;
-  last_activity?: string;
+  description: string;
+  member_count: number;
+  thumbnail: string;
+  last_activity: string;
+  status: string;
 }
 
 interface CommunitiesTabProps {
   communities: Community[];
-  isLoading?: boolean;
+  isLoading: boolean;
 }
 
-export function CommunitiesTab({ communities, isLoading = false }: CommunitiesTabProps) {
+export function CommunitiesTab({ communities, isLoading }: CommunitiesTabProps) {
   if (isLoading) {
     return (
-      <div className="space-y-6 mt-6">
-        <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 sm:items-center">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input 
-              placeholder="Search communities..." 
-              className="pl-9"
-              disabled
-            />
-          </div>
-          <Button asChild className="sm:w-auto">
-            <Link to="/seller/communities/new">
-              <Plus className="h-4 w-4 mr-2" />
-              Create community
-            </Link>
-          </Button>
-        </div>
-        
-        <Card className="p-8 flex flex-col items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary/70 mb-2" />
-          <p className="text-muted-foreground">Loading communities...</p>
-        </Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Card key={i} className="overflow-hidden border border-border/40">
+            <div className="aspect-video bg-muted/50">
+              <Skeleton className="h-full w-full" />
+            </div>
+            <CardHeader className="pb-2">
+              <Skeleton className="h-6 w-3/4 mb-2" />
+              <Skeleton className="h-4 w-full" />
+            </CardHeader>
+            <CardContent>
+              <div className="flex justify-between">
+                <Skeleton className="h-5 w-1/4" />
+                <Skeleton className="h-5 w-1/4" />
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     );
   }
 
+  if (!communities.length) {
+    return (
+      <Card className="border-dashed border-2 border-muted-foreground/20 bg-muted/5">
+        <CardContent className="flex flex-col items-center justify-center py-10">
+          <Users className="h-10 w-10 text-muted-foreground mb-4" />
+          <h3 className="text-lg font-semibold mb-1">No Communities</h3>
+          <p className="text-muted-foreground text-center max-w-md">
+            This seller hasn't created any communities yet.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
-    <div className="space-y-6 mt-6">
-      <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 sm:items-center">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input 
-            placeholder="Search communities..." 
-            className="pl-9"
-          />
-        </div>
-        <Button asChild className="sm:w-auto">
-          <Link to="/seller/communities/new">
-            <Plus className="h-4 w-4 mr-2" />
-            Create community
-          </Link>
-        </Button>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {communities.length > 0 ? (
-          communities.map((community) => (
-            <Card key={community.community_uuid} className="overflow-hidden flex flex-col h-full">
-              <div className="relative h-40 bg-muted">
-                {community.thumbnail ? (
-                  <img 
-                    src={community.thumbnail} 
-                    alt={community.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="flex items-center justify-center h-full bg-muted">
-                    <Users className="h-12 w-12 text-muted-foreground/50" />
-                  </div>
-                )}
-                
-                {community.type && (
-                  <Badge className="absolute top-3 right-3 capitalize">
-                    {community.type}
-                  </Badge>
-                )}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {communities.map((community) => (
+        <Card 
+          key={community.community_uuid} 
+          className="overflow-hidden border border-border/40 hover:border-border/80 transition-colors"
+        >
+          <div className="aspect-video bg-muted/50 relative overflow-hidden">
+            {community.thumbnail ? (
+              <img 
+                src={community.thumbnail} 
+                alt={community.name} 
+                className="w-full h-full object-cover transition-all hover:scale-105"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/5 to-primary/20">
+                <Users className="h-12 w-12 text-primary/40" />
               </div>
-              
-              <div className="p-5 flex-grow flex flex-col">
-                <h3 className="text-xl font-semibold mb-2 line-clamp-1">{community.name}</h3>
-                {community.intro && (
-                  <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-                    {community.intro}
-                  </p>
-                )}
-
-                <div className="grid grid-cols-2 gap-3 my-4">
-                  <div className="flex items-center gap-2">
-                    <Users className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">{community.member_count || 0} members</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <DollarSign className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">${community.monthly_recurring_revenue || 0}/mo</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Package className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">{community.product_count || 0} products</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <GraduationCap className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">{community.classroom_count || 0} classes</span>
-                  </div>
-                </div>
-
-                <div className="mt-auto">
-                  <Separator className="my-3" />
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <div className="flex items-center gap-1.5">
-                      <MessageSquare className="h-3.5 w-3.5" />
-                      <span>{community.post_count || 0} posts</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <Clock className="h-3.5 w-3.5" />
-                      <span>
-                        {community.last_activity 
-                          ? `Active ${formatDistanceToNow(new Date(community.last_activity), { addSuffix: true })}` 
-                          : 'No recent activity'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-4 bg-muted/30 border-t">
-                <Link 
-                  to={`/community/${community.community_uuid}/edit`}
-                  className="w-full inline-flex items-center justify-center"
-                >
-                  <Button variant="default" className="w-full">
-                    Manage Community
-                  </Button>
-                </Link>
-              </div>
-            </Card>
-          ))
-        ) : (
-          <div className="col-span-full">
-            <Card className="p-8 text-center text-muted-foreground">
-              No communities found
-            </Card>
+            )}
+            <div className="absolute top-2 right-2">
+              <Badge variant={community.status === 'active' ? 'default' : 'secondary'}>
+                {community.status === 'active' ? 'Active' : 'Draft'}
+              </Badge>
+            </div>
           </div>
-        )}
-      </div>
+          
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg font-semibold line-clamp-1">
+              {community.name}
+            </CardTitle>
+            <p className="text-muted-foreground text-sm line-clamp-2">
+              {community.description || "A community for sharing knowledge and connecting with others."}
+            </p>
+          </CardHeader>
+          
+          <CardContent>
+            <div className="flex justify-between text-sm">
+              <div className="flex items-center gap-1 text-muted-foreground">
+                <Users className="h-4 w-4" />
+                <span>{community.member_count || 0} members</span>
+              </div>
+              <div className="flex items-center gap-1 text-muted-foreground">
+                <Clock className="h-4 w-4" />
+                <span>{community.last_activity ? new Date(community.last_activity).toLocaleDateString() : 'No activity'}</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 }
