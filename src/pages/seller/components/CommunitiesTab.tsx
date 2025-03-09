@@ -43,7 +43,7 @@ export function CommunitiesTab({ communities, isLoading }: CommunitiesTabProps) 
 
   // Function to handle clicking on the card
   const handleCardClick = (communityId: string) => {
-    navigate(`/edit-community/${communityId}`);
+    navigate(`/community/${communityId}/edit`);
   };
 
   // Function to handle clicking on the View Community button
