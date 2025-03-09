@@ -74,6 +74,8 @@ export default function NewServicePage() {
         status: status as ServiceStatus
       };
 
+      console.log("Creating service with data:", serviceData);
+      
       const result = await createService(serviceData);
       if (result?.service_uuid) {
         toast.success("Service created successfully");

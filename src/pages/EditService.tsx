@@ -114,22 +114,32 @@ export default function EditService() {
       setIsSaving(true);
       
       const cleanedFeatures = features.filter(feature => feature.trim() !== "");
+      
+      // Format the data properly for Supabase
+      const serviceData = {
+        name: serviceName,
+        description: serviceDescription,
+        features: cleanedFeatures,
+        price: parseFloat(price) || 0,
+        type: serviceType,
+        main_category: category ? { value: category } : null,
+        subcategory: selectedSubcategories.length > 0 
+          ? selectedSubcategories.map(sub => ({ value: sub })) 
+          : null,
+        status: status
+      };
 
+      console.log("Updating service with data:", serviceData);
+      
       const { error } = await supabase
         .from('services')
-        .update({
-          name: serviceName,
-          description: serviceDescription,
-          features: cleanedFeatures,
-          price: parseFloat(price) || 0,
-          type: serviceType,
-          main_category: category,
-          subcategory: selectedSubcategories,
-          status: status
-        })
+        .update(serviceData)
         .eq('service_uuid', id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error updating service:', error);
+        throw error;
+      }
 
       toast.success("Your service has been updated successfully");
     } catch (error) {
