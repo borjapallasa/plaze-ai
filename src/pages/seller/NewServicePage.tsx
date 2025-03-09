@@ -88,7 +88,7 @@ export default function NewServicePage() {
   return (
     <div className="min-h-screen bg-background">
       <MainHeader />
-      <div className="w-full max-w-[1400px] mx-auto px-4 py-4 mt-10">
+      <div className="w-full max-w-[1400px] mx-auto px-4 py-4 mt-12">
         <ServiceForm
           serviceName={serviceName}
           serviceDescription={serviceDescription}
