@@ -3,9 +3,10 @@ import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge as UIBadge } from "@/components/ui/badge";
 import { Badge, Star, ShoppingBag, Users } from "lucide-react";
+import type { Expert } from "@/types/expert";
 
 interface SellerHeaderProps {
-  seller: any;
+  seller: Expert;
   productsCount: number;
 }
 
@@ -14,7 +15,7 @@ export function SellerHeader({ seller, productsCount }: SellerHeaderProps) {
     { icon: Star, label: "Rating", value: "4.9", color: "text-yellow-500" },
     { icon: ShoppingBag, label: "Products", value: productsCount.toString(), color: "text-blue-500" },
     { icon: Users, label: "Clients", value: "250+", color: "text-green-500" },
-    { icon: Badge, label: "Member Since", value: "2022", color: "text-purple-500" },
+    { icon: Badge, label: "Member Since", value: new Date(seller.created_at || '').getFullYear().toString(), color: "text-purple-500" },
   ];
 
   return (
@@ -26,10 +27,10 @@ export function SellerHeader({ seller, productsCount }: SellerHeaderProps) {
           <div className="relative flex-shrink-0">
             <Avatar className="h-32 w-32 sm:h-40 sm:w-40 rounded-full ring-4 ring-background shadow-xl border-2 border-primary/10">
               <AvatarImage 
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e"
+                src={seller.thumbnail || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e"}
                 className="object-cover"
               />
-              <AvatarFallback className="text-3xl">JP</AvatarFallback>
+              <AvatarFallback className="text-3xl">{seller.name?.[0] || 'S'}</AvatarFallback>
             </Avatar>
             <div className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full shadow-lg">
               Pro Seller
@@ -40,7 +41,7 @@ export function SellerHeader({ seller, productsCount }: SellerHeaderProps) {
             <div className="space-y-3">
               <div className="flex flex-wrap items-center gap-3">
                 <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                  {seller?.first_name || "John Professional"}
+                  {seller?.name || "Expert"}
                 </h1>
                 <UIBadge variant="secondary" className="font-semibold px-3 py-1">
                   <Badge className="w-4 h-4 mr-1" />
@@ -48,14 +49,12 @@ export function SellerHeader({ seller, productsCount }: SellerHeaderProps) {
                 </UIBadge>
               </div>
               <p className="text-xl text-muted-foreground font-medium">
-                Expert in UI/UX Design & Development
+                {seller?.title || "Expert in UI/UX Design & Development"}
               </p>
             </div>
 
             <p className="text-base text-muted-foreground leading-relaxed max-w-3xl">
-              Passionate designer and developer with over 8 years of experience creating beautiful, 
-              functional digital experiences. Specializing in user interface design, web applications, 
-              and design systems that scale.
+              {seller?.description || "Passionate designer and developer with over 8 years of experience creating beautiful, functional digital experiences. Specializing in user interface design, web applications, and design systems that scale."}
             </p>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
