@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge as UIBadge } from "@/components/ui/badge";
 import { Badge, Star, ShoppingBag, Users } from "lucide-react";
 import type { Expert } from "@/types/expert";
-import { EditExpertDetailsDialog } from "./EditExpertDetailsDialog";
+import { EditExpertDetailsDialog } from "./expert-dialog/EditExpertDetailsDialog";
 import { useAuth } from "@/lib/auth";
 
 interface SellerHeaderProps {
