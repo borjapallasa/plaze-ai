@@ -57,7 +57,7 @@ export default function SellerPage() {
   const handleSellerUpdate = (updatedSeller: Expert) => {
     console.log("Updating seller in SellerPage:", updatedSeller);
     setSellerData(updatedSeller);
-    // Also refetch to ensure data consistency
+    // Also refetch to ensure data consistency with the database
     refetchSeller();
     toast.success("Expert profile updated successfully");
   };

@@ -40,10 +40,12 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
         .update({
           name: formData.name,
           title: formData.title,
-          description: formData.description
+          description: formData.description,
+          updated_at: new Date().toISOString() // Add updated_at timestamp
         })
         .eq('expert_uuid', expert.expert_uuid)
-        .maybeSingle();
+        .select() // Select the updated row to get the full updated record
+        .maybeSingle(); // Use maybeSingle instead of single to avoid errors
 
       if (error) {
         console.error('Error updating expert:', error);
@@ -51,15 +53,13 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
         return;
       }
 
-      // Create updated expert object
+      // Create updated expert object with latest data from the database
       const updatedExpert: Expert = {
         ...expert,
-        name: formData.name,
-        title: formData.title,
-        description: formData.description
+        ...data
       };
 
-      // Call onUpdate callback
+      // Call onUpdate callback with the updated expert data
       onUpdate(updatedExpert);
       
       toast.success("Profile updated successfully");

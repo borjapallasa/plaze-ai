@@ -79,6 +79,9 @@ export function useSellerData(id: string | undefined) {
         return null;
       }
     },
-    enabled: !!id && id !== ':id'
+    enabled: !!id && id !== ':id',
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    refetchOnWindowFocus: true, // Refetch when the window is focused
+    refetchOnMount: true // Refetch when the component mounts
   });
 }
