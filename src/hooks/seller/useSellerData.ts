@@ -8,7 +8,10 @@ export function useSellerData(id: string | undefined) {
   return useQuery({
     queryKey: ['expert', id],
     queryFn: async () => {
-      if (!id) throw new Error("No expert ID provided");
+      if (!id || id === ':id') {
+        console.log('No valid expert ID provided:', id);
+        return null;
+      }
       
       console.log('Fetching expert with ID:', id);
       
@@ -43,6 +46,6 @@ export function useSellerData(id: string | undefined) {
       console.log('Expert data found:', data);
       return data as Expert;
     },
-    enabled: !!id
+    enabled: !!id && id !== ':id'
   });
 }

@@ -11,6 +11,7 @@ import { useSellerData } from "@/hooks/seller/useSellerData";
 import { useSellerProducts } from "@/hooks/seller/useSellerProducts";
 import { useSellerServices } from "@/hooks/seller/useSellerServices";
 import type { Expert } from "@/types/expert";
+import { toast } from "sonner";
 
 export default function SellerPage() {
   const { id } = useParams();
@@ -47,6 +48,7 @@ export default function SellerPage() {
   // Handle seller update
   const handleSellerUpdate = (updatedSeller: Expert) => {
     setSellerData(updatedSeller);
+    toast.success("Expert profile updated successfully");
   };
 
   // Show loading state

@@ -70,6 +70,16 @@ export function EditExpertDetailsDialog({ expert, onUpdate }: EditExpertDetailsD
     const filePath = `expert_images/${fileName}`;
 
     try {
+      // Check if storage bucket exists, if not create it
+      const { data: buckets } = await supabase.storage.listBuckets();
+      const bucketExists = buckets?.some(bucket => bucket.name === 'product_images');
+      
+      if (!bucketExists) {
+        console.error('Storage bucket "product_images" does not exist.');
+        toast.error('Storage bucket not configured.');
+        return null;
+      }
+      
       const { error: uploadError } = await supabase.storage
         .from('product_images')
         .upload(filePath, file);
@@ -144,7 +154,6 @@ export function EditExpertDetailsDialog({ expert, onUpdate }: EditExpertDetailsD
         throw error;
       }
 
-      toast.success("Expert details updated successfully");
       onUpdate(data as Expert);
       setIsOpen(false);
     } catch (error) {
