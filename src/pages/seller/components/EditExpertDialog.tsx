@@ -9,6 +9,7 @@ import { Pencil } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { Expert } from "@/types/expert";
+import type { Json } from "@/integrations/supabase/types";
 
 interface EditExpertDialogProps {
   expert: Expert;
@@ -27,6 +28,31 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  // Helper function to convert Json array to string array
+  const convertJsonArrayToStringArray = (jsonArray: Json | null): string[] => {
+    if (!jsonArray) return [];
+    
+    // If it's already an array, map each item to a string
+    if (Array.isArray(jsonArray)) {
+      return jsonArray.map(item => String(item));
+    }
+    
+    // If it's a string (possibly JSON), try to parse it
+    if (typeof jsonArray === 'string') {
+      try {
+        const parsed = JSON.parse(jsonArray);
+        if (Array.isArray(parsed)) {
+          return parsed.map(item => String(item));
+        }
+      } catch (e) {
+        console.error('Error parsing JSON string:', e);
+      }
+    }
+    
+    // Fallback to empty array
+    return [];
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,7 +81,7 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
       const updatedExpert: Expert = {
         ...expert, // Keep existing expert data
         ...data,   // Spread new data while maintaining existing types
-        areas: Array.isArray(data.areas) ? data.areas : [], // Ensure areas is an array
+        areas: convertJsonArrayToStringArray(data.areas), // Convert areas to string array
         name: formData.name,
         title: formData.title,
         description: formData.description
