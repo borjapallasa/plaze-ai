@@ -1,11 +1,12 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, Clock, MessageSquare, GraduationCap, Package2, Globe, Plus } from "lucide-react";
+import { Users, Clock, MessageSquare, GraduationCap, Package2, Globe, Plus, Search } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { Input } from "@/components/ui/input";
 
 interface Community {
   community_uuid: string;
@@ -40,6 +41,7 @@ const formatNumber = (num: number = 0): string => {
 
 export function CommunitiesTab({ communities, isLoading }: CommunitiesTabProps) {
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Function to handle clicking on the card
   const handleCardClick = (communityId: string) => {
@@ -56,6 +58,12 @@ export function CommunitiesTab({ communities, isLoading }: CommunitiesTabProps) 
   const handleAddCommunity = () => {
     navigate("/seller/communities/new");
   };
+
+  // Filter communities based on search query
+  const filteredCommunities = communities.filter(community => 
+    community.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (community.description && community.description.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
 
   if (isLoading) {
     return (
@@ -89,30 +97,54 @@ export function CommunitiesTab({ communities, isLoading }: CommunitiesTabProps) 
 
   return (
     <div className="space-y-6">
-      {/* Add Community Button */}
-      <div className="flex justify-end mb-2">
-        <Button onClick={handleAddCommunity} className="gap-2">
+      {/* Search and Add Community Section */}
+      <div className="flex flex-col sm:flex-row gap-4 justify-between items-center mb-2">
+        <div className="relative w-full sm:w-72">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search communities"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+        <Button onClick={handleAddCommunity} className="gap-2 whitespace-nowrap w-full sm:w-auto">
           <Plus className="h-4 w-4" />
           Add Community
         </Button>
       </div>
       
-      {!communities.length ? (
+      {!filteredCommunities.length ? (
         <Card className="border-dashed border-2 border-muted-foreground/20 bg-muted/5">
           <CardContent className="flex flex-col items-center justify-center py-10">
             <Users className="h-10 w-10 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-1">No Communities</h3>
+            <h3 className="text-lg font-semibold mb-1">
+              {searchQuery ? "No Communities Found" : "No Communities"}
+            </h3>
             <p className="text-muted-foreground text-center max-w-md">
-              This seller hasn't created any communities yet.
+              {searchQuery 
+                ? "Try a different search term or clear the search."
+                : "This seller hasn't created any communities yet."}
             </p>
-            <Button onClick={handleAddCommunity} className="mt-4 gap-2">
-              <Plus className="h-4 w-4" />
-              Create First Community
-            </Button>
+            {!searchQuery && (
+              <Button onClick={handleAddCommunity} className="mt-4 gap-2">
+                <Plus className="h-4 w-4" />
+                Create First Community
+              </Button>
+            )}
+            {searchQuery && (
+              <Button 
+                variant="outline" 
+                onClick={() => setSearchQuery("")} 
+                className="mt-4"
+              >
+                Clear Search
+              </Button>
+            )}
           </CardContent>
         </Card>
       ) : (
-        communities.map((community) => (
+        filteredCommunities.map((community) => (
           <Card 
             key={community.community_uuid} 
             className="w-full border border-border/40 hover:border-border/80 transition-colors cursor-pointer"
