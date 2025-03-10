@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { MainHeader } from "@/components/MainHeader";
 import { useExpertCommunities } from "@/hooks/expert/useExpertCommunities";
@@ -25,6 +25,13 @@ export default function SellerPage() {
     refetch: refetchSeller
   } = useSellerData(id);
 
+  // Update the local state when seller data changes
+  useEffect(() => {
+    if (seller) {
+      setSellerData(seller);
+    }
+  }, [seller]);
+
   // Use the local state if available, otherwise use the fetched data
   const currentSeller = sellerData || seller;
 
@@ -48,6 +55,7 @@ export default function SellerPage() {
 
   // Handle seller update
   const handleSellerUpdate = (updatedSeller: Expert) => {
+    console.log("Updating seller in SellerPage:", updatedSeller);
     setSellerData(updatedSeller);
     // Also refetch to ensure data consistency
     refetchSeller();

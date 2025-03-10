@@ -45,7 +45,7 @@ export function useSellerData(id: string | undefined) {
         
         console.log('Expert data found:', data);
         
-        // Ensure areas is properly parsed as an array
+        // Ensure areas is properly parsed as an array of strings
         let parsedAreas: string[] = [];
         if (data.areas) {
           try {
@@ -53,13 +53,13 @@ export function useSellerData(id: string | undefined) {
             if (typeof data.areas === 'string') {
               parsedAreas = JSON.parse(data.areas);
             }
-            // If it's already an array, use it directly
+            // If it's already an array, convert all elements to strings
             else if (Array.isArray(data.areas)) {
-              parsedAreas = data.areas;
+              parsedAreas = data.areas.map(area => String(area));
             }
-            // If it's an object from JSON, convert to array if possible
+            // If it's an object from JSON, convert to array of strings
             else if (typeof data.areas === 'object') {
-              parsedAreas = Object.values(data.areas).filter(val => typeof val === 'string');
+              parsedAreas = Object.values(data.areas).map(val => String(val));
             }
           } catch (e) {
             console.error('Error parsing areas:', e);

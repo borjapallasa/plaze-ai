@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Pen } from "lucide-react";
 import {
@@ -12,11 +12,10 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { ExpertForm } from "./ExpertForm";
-import { useExpertImageUpload } from "./useExpertImageUpload";
 import type { EditExpertDetailsDialogProps, ExpertFormData } from "./types";
 
 export function EditExpertDetailsDialog({ expert, onUpdate }: EditExpertDetailsDialogProps) {
-  // Ensure initial areas is always an array
+  // Ensure initial areas is always an array of strings
   const initialAreas = Array.isArray(expert.areas) ? expert.areas : [];
   
   const [formData, setFormData] = useState<ExpertFormData>({
@@ -32,25 +31,33 @@ export function EditExpertDetailsDialog({ expert, onUpdate }: EditExpertDetailsD
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [updateError, setUpdateError] = useState<string | null>(null);
-  
-  const { 
-    imageFile, 
-    previewUrl, 
-    handleImageChange, 
-    uploadImage, 
-    setInitialPreview 
-  } = useExpertImageUpload();
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   
   // Set initial preview when dialog opens
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen) {
-      setInitialPreview(expert.thumbnail || null);
+      setPreviewUrl(expert.thumbnail || null);
     }
   }, [isOpen, expert.thumbnail]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setImageFile(file);
+      
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   // Function to handle toggling expertise areas
@@ -71,6 +78,43 @@ export function EditExpertDetailsDialog({ expert, onUpdate }: EditExpertDetailsD
     });
   };
 
+  // Upload image file to Supabase Storage
+  const uploadImage = async (file: File, expertUuid: string): Promise<string | null> => {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${expertUuid}-${Date.now()}.${fileExt}`;
+      const filePath = `expert_images/${fileName}`;
+
+      console.log("Uploading image:", filePath);
+      
+      // Upload the file to Supabase storage
+      const { error: uploadError, data } = await supabase.storage
+        .from('product_images')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        console.error('Error uploading image:', uploadError);
+        toast.error('Failed to upload image');
+        return null;
+      }
+
+      console.log("Image uploaded successfully, getting public URL");
+      
+      // Get the public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('product_images')
+        .getPublicUrl(filePath);
+
+      console.log("Public URL:", publicUrl);
+      
+      return publicUrl;
+    } catch (error) {
+      console.error('Error in image upload process:', error);
+      toast.error('Image upload process failed');
+      return null;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -89,8 +133,8 @@ export function EditExpertDetailsDialog({ expert, onUpdate }: EditExpertDetailsD
         }
       }
 
-      // Ensure areas is an array before sending to Supabase
-      const areas = Array.isArray(formData.areas) ? formData.areas : [];
+      // Ensure areas is an array of strings before sending to Supabase
+      const areas = Array.isArray(formData.areas) ? formData.areas.map(area => String(area)) : [];
       
       // Prepare the update data
       const updateData = {
@@ -112,7 +156,7 @@ export function EditExpertDetailsDialog({ expert, onUpdate }: EditExpertDetailsD
         .update(updateData)
         .eq("expert_uuid", expert.expert_uuid)
         .select()
-        .maybeSingle();
+        .single();
 
       if (error) {
         console.error("Error updating expert details:", error);
@@ -121,27 +165,21 @@ export function EditExpertDetailsDialog({ expert, onUpdate }: EditExpertDetailsD
         throw error;
       }
 
-      if (!data) {
-        console.error("No data returned after update");
-        setUpdateError("Failed to update expert details: No data returned");
-        toast.error("Failed to update expert details: No data returned");
-        throw new Error("No data returned after update");
-      }
-
+      console.log("Update successful, received data:", data);
+      
       // Create a properly typed expert object to pass to onUpdate
       const updatedExpert = {
         ...expert,
         ...data,
-        // Ensure areas is an array
+        // Ensure areas is an array of strings
         areas: Array.isArray(data.areas) 
-          ? data.areas 
+          ? data.areas.map(area => String(area))
           : typeof data.areas === 'string'
-            ? JSON.parse(data.areas)
+            ? JSON.parse(data.areas).map((area: unknown) => String(area))
             : [],
         thumbnail: thumbnailUrl // Ensure this is the most up-to-date thumbnail
       };
 
-      console.log("Update successful, received data:", updatedExpert);
       toast.success("Expert details updated successfully");
       onUpdate(updatedExpert);
       setIsOpen(false);
