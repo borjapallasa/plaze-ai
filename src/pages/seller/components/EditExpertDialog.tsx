@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -59,7 +60,30 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
     setIsLoading(true);
 
     try {
-      // Using maybeSingle() instead of single() to handle cases where no rows are returned
+      console.log("Updating expert with UUID:", expert.expert_uuid);
+      
+      // First, check if the expert exists
+      const { data: existingExpert, error: checkError } = await supabase
+        .from('experts')
+        .select('expert_uuid')
+        .eq('expert_uuid', expert.expert_uuid)
+        .maybeSingle();
+      
+      if (checkError) {
+        console.error('Error checking expert existence:', checkError);
+        toast.error(`Failed to verify expert: ${checkError.message}`);
+        setIsLoading(false);
+        return;
+      }
+      
+      if (!existingExpert) {
+        console.error('No expert found with UUID:', expert.expert_uuid);
+        toast.error("No expert found with the provided ID");
+        setIsLoading(false);
+        return;
+      }
+      
+      // Now perform the update
       const { data, error } = await supabase
         .from('experts')
         .update({
@@ -78,7 +102,7 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
       }
 
       if (!data) {
-        toast.error("No expert found with the provided ID");
+        toast.error("Failed to retrieve updated expert data");
         return;
       }
 
