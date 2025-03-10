@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -60,6 +59,7 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
     setIsLoading(true);
 
     try {
+      // Using maybeSingle() instead of single() to handle cases where no rows are returned
       const { data, error } = await supabase
         .from('experts')
         .update({
@@ -69,11 +69,16 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
         })
         .eq('expert_uuid', expert.expert_uuid)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error('Error updating expert:', error);
         toast.error(`Failed to update profile: ${error.message}`);
+        return;
+      }
+
+      if (!data) {
+        toast.error("No expert found with the provided ID");
         return;
       }
 
