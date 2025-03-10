@@ -4,19 +4,35 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge as UIBadge } from "@/components/ui/badge";
 import { Badge, Star, ShoppingBag, Users } from "lucide-react";
 import type { Expert } from "@/types/expert";
+import { EditExpertDetailsDialog } from "./EditExpertDetailsDialog";
+import { useAuth } from "@/lib/auth";
 
 interface SellerHeaderProps {
   seller: Expert;
   productsCount: number;
+  onSellerUpdate?: (updatedSeller: Expert) => void;
 }
 
-export function SellerHeader({ seller, productsCount }: SellerHeaderProps) {
+export function SellerHeader({ seller, productsCount, onSellerUpdate }: SellerHeaderProps) {
+  const { user } = useAuth();
+  const isCurrentUserExpert = user?.id === seller.user_uuid;
+  
   const stats = [
     { icon: Star, label: "Rating", value: "4.9", color: "text-yellow-500" },
     { icon: ShoppingBag, label: "Products", value: productsCount.toString(), color: "text-blue-500" },
     { icon: Users, label: "Clients", value: "250+", color: "text-green-500" },
     { icon: Badge, label: "Member Since", value: new Date(seller.created_at || '').getFullYear().toString(), color: "text-purple-500" },
   ];
+
+  const handleExpertUpdate = (updatedExpert: Expert) => {
+    if (onSellerUpdate) {
+      onSellerUpdate(updatedExpert);
+    }
+  };
+
+  const avatarUrl = seller.thumbnail || 
+    (seller.user_uuid ? `https://api.dicebear.com/7.x/avataaars/svg?seed=${seller.user_uuid}` : 
+    "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e");
 
   return (
     <div className="relative mb-8 overflow-hidden">
@@ -27,7 +43,7 @@ export function SellerHeader({ seller, productsCount }: SellerHeaderProps) {
           <div className="relative flex-shrink-0">
             <Avatar className="h-32 w-32 sm:h-40 sm:w-40 rounded-full ring-4 ring-background shadow-xl border-2 border-primary/10">
               <AvatarImage 
-                src={seller.user_uuid ? `https://api.dicebear.com/7.x/avataaars/svg?seed=${seller.user_uuid}` : "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e"}
+                src={avatarUrl}
                 className="object-cover"
               />
               <AvatarFallback className="text-3xl">{seller.name?.[0] || 'S'}</AvatarFallback>
@@ -47,6 +63,10 @@ export function SellerHeader({ seller, productsCount }: SellerHeaderProps) {
                   <Badge className="w-4 h-4 mr-1" />
                   Verified Expert
                 </UIBadge>
+                
+                {isCurrentUserExpert && (
+                  <EditExpertDetailsDialog expert={seller} onUpdate={handleExpertUpdate} />
+                )}
               </div>
               <p className="text-xl text-muted-foreground font-medium">
                 {seller?.title || "Expert in UI/UX Design & Development"}

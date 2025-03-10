@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { MainHeader } from "@/components/MainHeader";
 import { useExpertCommunities } from "@/hooks/expert/useExpertCommunities";
@@ -10,9 +10,11 @@ import { SellerTabs } from "./components/SellerTabs";
 import { useSellerData } from "@/hooks/seller/useSellerData";
 import { useSellerProducts } from "@/hooks/seller/useSellerProducts";
 import { useSellerServices } from "@/hooks/seller/useSellerServices";
+import type { Expert } from "@/types/expert";
 
 export default function SellerPage() {
   const { id } = useParams();
+  const [sellerData, setSellerData] = useState<Expert | null>(null);
   
   // Fetch seller data
   const { 
@@ -21,23 +23,31 @@ export default function SellerPage() {
     error: sellerError 
   } = useSellerData(id);
 
+  // Use the local state if available, otherwise use the fetched data
+  const currentSeller = sellerData || seller;
+
   // Fetch products data
   const { 
     data: products = [], 
     isLoading: productsLoading 
-  } = useSellerProducts(seller?.expert_uuid);
+  } = useSellerProducts(currentSeller?.expert_uuid);
 
   // Fetch services data
   const { 
     services = [], 
     isLoading: servicesLoading 
-  } = useSellerServices(seller?.expert_uuid);
+  } = useSellerServices(currentSeller?.expert_uuid);
 
   // Fetch communities data
   const { 
     data: communities = [], 
     isLoading: communitiesLoading 
-  } = useExpertCommunities(seller?.expert_uuid);
+  } = useExpertCommunities(currentSeller?.expert_uuid);
+
+  // Handle seller update
+  const handleSellerUpdate = (updatedSeller: Expert) => {
+    setSellerData(updatedSeller);
+  };
 
   // Show loading state
   if (sellerLoading) {
@@ -45,7 +55,7 @@ export default function SellerPage() {
   }
 
   // Error state handling
-  if (sellerError || !seller) {
+  if (sellerError || !currentSeller) {
     return <SellerErrorState error={sellerError as Error} />;
   }
 
@@ -56,7 +66,11 @@ export default function SellerPage() {
       </div>
 
       <main className="container mx-auto px-4 pt-24 pb-8">
-        <SellerHeader seller={seller} productsCount={products?.length || 0} />
+        <SellerHeader 
+          seller={currentSeller} 
+          productsCount={products?.length || 0}
+          onSellerUpdate={handleSellerUpdate}
+        />
 
         <SellerTabs
           products={products}
