@@ -34,7 +34,6 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
     setIsLoading(true);
 
     try {
-      // Update expert in database
       const { data, error } = await supabase
         .from('experts')
         .update({
@@ -43,8 +42,8 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
           description: formData.description
         })
         .eq('expert_uuid', expert.expert_uuid)
-        .select() // Select the updated row to get the full updated record
-        .maybeSingle(); // Use maybeSingle instead of single to avoid errors
+        .select('*')
+        .maybeSingle();
 
       if (error) {
         console.error('Error updating expert:', error);
@@ -52,8 +51,12 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
         return;
       }
 
-      // Create updated expert object with proper typing
-      // We need to ensure the areas field is properly handled
+      if (!data) {
+        toast.error("Failed to retrieve updated expert data");
+        return;
+      }
+
+      // Create updated expert object maintaining the existing fields
       const updatedExpert: Expert = {
         ...expert,
         name: formData.name,
@@ -61,9 +64,7 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
         description: formData.description
       };
 
-      // Call onUpdate callback with the updated expert data
       onUpdate(updatedExpert);
-      
       toast.success("Profile updated successfully");
       setOpen(false);
     } catch (error) {
