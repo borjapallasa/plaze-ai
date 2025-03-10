@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -34,7 +33,6 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
     setIsLoading(true);
 
     try {
-      // Fix: Use the correct query format to avoid 406 error
       const { data, error } = await supabase
         .from('experts')
         .update({
@@ -43,7 +41,8 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
           description: formData.description
         })
         .eq('expert_uuid', expert.expert_uuid)
-        .select();
+        .select()
+        .single();
 
       if (error) {
         console.error('Error updating expert:', error);
@@ -51,14 +50,9 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
         return;
       }
 
-      if (!data || data.length === 0) {
-        toast.error("Failed to retrieve updated expert data");
-        return;
-      }
-
-      // Create updated expert object maintaining the existing fields
       const updatedExpert: Expert = {
         ...expert,
+        ...data,
         name: formData.name,
         title: formData.title,
         description: formData.description
