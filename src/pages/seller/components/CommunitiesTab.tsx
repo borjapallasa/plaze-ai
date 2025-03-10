@@ -98,17 +98,17 @@ export function CommunitiesTab({ communities, isLoading }: CommunitiesTabProps) 
   return (
     <div className="space-y-6">
       {/* Search and Add Community Section */}
-      <div className="flex flex-col sm:flex-row gap-4 justify-between items-center mb-2">
-        <div className="relative w-full sm:w-72">
+      <div className="flex gap-4 items-center mb-2">
+        <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search communities"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
+            className="pl-9 w-full"
           />
         </div>
-        <Button onClick={handleAddCommunity} className="gap-2 whitespace-nowrap w-full sm:w-auto">
+        <Button onClick={handleAddCommunity} className="gap-2 whitespace-nowrap">
           <Plus className="h-4 w-4" />
           Add Community
         </Button>
