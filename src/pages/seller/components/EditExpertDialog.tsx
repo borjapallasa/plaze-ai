@@ -34,6 +34,7 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
     setIsLoading(true);
 
     try {
+      // Fix: Use the correct query format to avoid 406 error
       const { data, error } = await supabase
         .from('experts')
         .update({
@@ -42,8 +43,7 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
           description: formData.description
         })
         .eq('expert_uuid', expert.expert_uuid)
-        .select('*')
-        .maybeSingle();
+        .select();
 
       if (error) {
         console.error('Error updating expert:', error);
@@ -51,7 +51,7 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
         return;
       }
 
-      if (!data) {
+      if (!data || data.length === 0) {
         toast.error("Failed to retrieve updated expert data");
         return;
       }
