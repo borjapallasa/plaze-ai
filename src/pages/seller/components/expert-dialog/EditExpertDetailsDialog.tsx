@@ -150,13 +150,13 @@ export function EditExpertDetailsDialog({ expert, onUpdate }: EditExpertDetailsD
       console.log("Updating expert with data:", updateData);
       console.log("Expert UUID:", expert.expert_uuid);
 
-      // Update the expert in Supabase
+      // Update the expert in Supabase - Using maybeSingle() instead of single()
       const { data, error } = await supabase
         .from("experts")
         .update(updateData)
         .eq("expert_uuid", expert.expert_uuid)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error("Error updating expert details:", error);
@@ -166,6 +166,13 @@ export function EditExpertDetailsDialog({ expert, onUpdate }: EditExpertDetailsD
       }
 
       console.log("Update successful, received data:", data);
+      
+      // Make sure we have data before continuing
+      if (!data) {
+        setUpdateError("No expert record found to update");
+        toast.error("No expert record found to update");
+        throw new Error("No expert record found to update");
+      }
       
       // Create a properly typed expert object to pass to onUpdate
       const updatedExpert = {
