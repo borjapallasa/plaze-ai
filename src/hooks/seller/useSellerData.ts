@@ -54,6 +54,7 @@ export function useSellerData(id: string | undefined) {
             }
             // If it's not an array after parsing, make it an empty array
             if (!Array.isArray(data.areas)) {
+              console.log('Areas is not an array after parsing, setting to empty array:', data.areas);
               data.areas = [];
             }
           } catch (e) {

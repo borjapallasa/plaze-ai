@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Pen, Upload, Check } from "lucide-react";
+import { Pen } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -47,26 +47,30 @@ const allExpertiseAreas = [
 ];
 
 export function EditExpertDetailsDialog({ expert, onUpdate }: EditExpertDetailsDialogProps) {
+  // Ensure initial areas is always an array
+  const initialAreas = Array.isArray(expert.areas) ? expert.areas : [];
+  
   const [formData, setFormData] = useState({
     name: expert.name || "",
     title: expert.title || "",
     description: expert.description || "",
     location: expert.location || "",
     info: expert.info || "",
-    areas: expert.areas || [],
+    areas: initialAreas,
     thumbnail: expert.thumbnail || "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(expert.thumbnail || null);
+  const [updateError, setUpdateError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // New function to handle toggling expertise areas
+  // Function to handle toggling expertise areas
   const toggleArea = (areaValue: string) => {
     setFormData(prev => {
       const areas = [...prev.areas];
@@ -147,8 +151,8 @@ export function EditExpertDetailsDialog({ expert, onUpdate }: EditExpertDetailsD
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    console.log("Submitting form data:", formData);
-
+    setUpdateError(null);
+    
     try {
       let thumbnailUrl = formData.thumbnail;
 
@@ -162,6 +166,9 @@ export function EditExpertDetailsDialog({ expert, onUpdate }: EditExpertDetailsD
         }
       }
 
+      // Ensure areas is an array before sending to Supabase
+      const areas = Array.isArray(formData.areas) ? formData.areas : [];
+      
       // Prepare the update data
       const updateData = {
         name: formData.name,
@@ -169,14 +176,14 @@ export function EditExpertDetailsDialog({ expert, onUpdate }: EditExpertDetailsD
         description: formData.description,
         location: formData.location,
         info: formData.info,
-        areas: formData.areas,
+        areas: areas,
         thumbnail: thumbnailUrl,
       };
       
       console.log("Updating expert with data:", updateData);
       console.log("Expert UUID:", expert.expert_uuid);
 
-      // Change from .single() to .maybeSingle() to handle the case where no rows are returned
+      // Update the expert in Supabase
       const { data, error } = await supabase
         .from("experts")
         .update(updateData)
@@ -186,14 +193,35 @@ export function EditExpertDetailsDialog({ expert, onUpdate }: EditExpertDetailsD
 
       if (error) {
         console.error("Error updating expert details:", error);
-        toast.error("Failed to update expert details: " + error.message);
+        setUpdateError(`Failed to update expert details: ${error.message}`);
+        toast.error(`Failed to update expert details: ${error.message}`);
         throw error;
       }
 
       if (!data) {
         console.error("No data returned after update");
+        setUpdateError("Failed to update expert details: No data returned");
         toast.error("Failed to update expert details: No data returned");
         throw new Error("No data returned after update");
+      }
+
+      // Ensure areas is an array in the returned data
+      if (data.areas) {
+        try {
+          // If areas is a string, try to parse it as JSON
+          if (typeof data.areas === 'string') {
+            data.areas = JSON.parse(data.areas);
+          }
+          // If it's not an array after parsing, make it an empty array
+          if (!Array.isArray(data.areas)) {
+            data.areas = [];
+          }
+        } catch (e) {
+          console.error('Error parsing areas in returned data:', e);
+          data.areas = [];
+        }
+      } else {
+        data.areas = [];
       }
 
       console.log("Update successful, received data:", data);
@@ -202,7 +230,10 @@ export function EditExpertDetailsDialog({ expert, onUpdate }: EditExpertDetailsD
       setIsOpen(false);
     } catch (error) {
       console.error("Error updating expert details:", error);
-      toast.error("Failed to update expert details");
+      if (!updateError) {
+        setUpdateError("Failed to update expert details");
+        toast.error("Failed to update expert details");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -230,6 +261,12 @@ export function EditExpertDetailsDialog({ expert, onUpdate }: EditExpertDetailsD
           <DialogTitle>Edit Expert Details</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
+          {updateError && (
+            <div className="bg-destructive/15 text-destructive p-3 rounded-md text-sm">
+              {updateError}
+            </div>
+          )}
+          
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
