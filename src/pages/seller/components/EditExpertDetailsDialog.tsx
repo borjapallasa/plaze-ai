@@ -113,37 +113,50 @@ export function EditExpertDetailsDialog({ expert, onUpdate }: EditExpertDetailsD
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    console.log("Submitting form data:", formData);
 
     try {
       let thumbnailUrl = formData.thumbnail;
 
       // Upload image if selected
       if (imageFile) {
+        console.log("Uploading image file:", imageFile.name);
         const uploadedUrl = await uploadImage(imageFile, expert.expert_uuid);
         if (uploadedUrl) {
           thumbnailUrl = uploadedUrl;
+          console.log("Image uploaded successfully:", thumbnailUrl);
         }
       }
 
+      // Prepare the update data
+      const updateData = {
+        name: formData.name,
+        title: formData.title,
+        description: formData.description,
+        location: formData.location,
+        info: formData.info,
+        areas: formData.areas,
+        thumbnail: thumbnailUrl,
+      };
+      
+      console.log("Updating expert with data:", updateData);
+      console.log("Expert UUID:", expert.expert_uuid);
+
       const { data, error } = await supabase
         .from("experts")
-        .update({
-          name: formData.name,
-          title: formData.title,
-          description: formData.description,
-          location: formData.location,
-          info: formData.info,
-          areas: formData.areas,
-          thumbnail: thumbnailUrl,
-        })
+        .update(updateData)
         .eq("expert_uuid", expert.expert_uuid)
         .select()
         .single();
 
       if (error) {
+        console.error("Error updating expert details:", error);
+        toast.error("Failed to update expert details: " + error.message);
         throw error;
       }
 
+      console.log("Update successful, received data:", data);
+      toast.success("Expert details updated successfully");
       onUpdate(data as Expert);
       setIsOpen(false);
     } catch (error) {
