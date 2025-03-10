@@ -744,6 +744,53 @@ export type Database = {
         }
         Relationships: []
       }
+      expert_images: {
+        Row: {
+          alt_text: string | null
+          content_type: string | null
+          created_at: string
+          expert_uuid: string
+          file_name: string | null
+          id: number
+          is_primary: boolean | null
+          size: number | null
+          storage_path: string
+          updated_at: string | null
+        }
+        Insert: {
+          alt_text?: string | null
+          content_type?: string | null
+          created_at?: string
+          expert_uuid: string
+          file_name?: string | null
+          id?: number
+          is_primary?: boolean | null
+          size?: number | null
+          storage_path: string
+          updated_at?: string | null
+        }
+        Update: {
+          alt_text?: string | null
+          content_type?: string | null
+          created_at?: string
+          expert_uuid?: string
+          file_name?: string | null
+          id?: number
+          is_primary?: boolean | null
+          size?: number | null
+          storage_path?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expert_images_expert_uuid_fkey"
+            columns: ["expert_uuid"]
+            isOneToOne: false
+            referencedRelation: "experts"
+            referencedColumns: ["expert_uuid"]
+          },
+        ]
+      }
       experts: {
         Row: {
           areas: Json | null
