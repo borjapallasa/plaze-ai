@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Pen, Upload } from "lucide-react";
+import { Pen, Upload, Check } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -17,11 +17,34 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import type { Expert } from "@/types/expert";
+import { CATEGORIES, SUBCATEGORIES } from "@/constants/service-categories";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+  DropdownMenuGroup,
+} from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
 
 interface EditExpertDetailsDialogProps {
   expert: Expert;
   onUpdate: (updatedExpert: Expert) => void;
 }
+
+// Flatten all subcategories into a single array for easier selection
+const allExpertiseAreas = [
+  ...CATEGORIES.map(cat => ({ value: cat.value, label: cat.label, group: "General Categories" })),
+  ...Object.entries(SUBCATEGORIES).flatMap(([category, subcats]) => 
+    subcats.map(subcat => ({ 
+      value: subcat.value, 
+      label: subcat.label, 
+      group: CATEGORIES.find(c => c.value === category)?.label || category 
+    }))
+  )
+];
 
 export function EditExpertDetailsDialog({ expert, onUpdate }: EditExpertDetailsDialogProps) {
   const [formData, setFormData] = useState({
@@ -43,11 +66,22 @@ export function EditExpertDetailsDialog({ expert, onUpdate }: EditExpertDetailsD
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAreasChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const areasString = e.target.value;
-    // Split by commas and trim whitespace
-    const areasArray = areasString.split(",").map(area => area.trim()).filter(Boolean);
-    setFormData((prev) => ({ ...prev, areas: areasArray }));
+  // New function to handle toggling expertise areas
+  const toggleArea = (areaValue: string) => {
+    setFormData(prev => {
+      const areas = [...prev.areas];
+      const index = areas.indexOf(areaValue);
+      
+      if (index !== -1) {
+        // Remove if already selected
+        areas.splice(index, 1);
+      } else {
+        // Add if not already selected
+        areas.push(areaValue);
+      }
+      
+      return { ...prev, areas };
+    });
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -174,6 +208,15 @@ export function EditExpertDetailsDialog({ expert, onUpdate }: EditExpertDetailsD
     }
   };
 
+  // Group expertise areas by category for better organization in the dropdown
+  const groupedAreas = allExpertiseAreas.reduce((acc, area) => {
+    if (!acc[area.group]) {
+      acc[area.group] = [];
+    }
+    acc[area.group].push(area);
+    return acc;
+  }, {} as Record<string, typeof allExpertiseAreas>);
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -234,14 +277,69 @@ export function EditExpertDetailsDialog({ expert, onUpdate }: EditExpertDetailsD
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="areas">Expertise Areas</Label>
-              <Input
-                id="areas"
-                name="areas"
-                value={formData.areas.join(", ")}
-                onChange={handleAreasChange}
-                placeholder="e.g. Design, Development, Marketing (comma separated)"
-              />
+              <Label>Expertise Areas</Label>
+              <div className="relative">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-between"
+                    >
+                      Select Areas of Expertise
+                      <span className="ml-1 rounded-full bg-primary/10 px-1.5 py-0.5 text-xs font-medium">
+                        {formData.areas.length}
+                      </span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-[220px] max-h-[300px] overflow-y-auto">
+                    {Object.entries(groupedAreas).map(([group, areas]) => (
+                      <React.Fragment key={group}>
+                        <DropdownMenuLabel>{group}</DropdownMenuLabel>
+                        <DropdownMenuGroup>
+                          {areas.map((area) => (
+                            <DropdownMenuCheckboxItem
+                              key={area.value}
+                              checked={formData.areas.includes(area.value)}
+                              onCheckedChange={() => toggleArea(area.value)}
+                            >
+                              {area.label}
+                            </DropdownMenuCheckboxItem>
+                          ))}
+                        </DropdownMenuGroup>
+                        <DropdownMenuSeparator />
+                      </React.Fragment>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+              
+              {/* Display selected areas as badges */}
+              {formData.areas.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {formData.areas.map(area => {
+                    const areaInfo = allExpertiseAreas.find(a => a.value === area);
+                    return (
+                      <Badge 
+                        key={area} 
+                        variant="secondary"
+                        className="flex items-center gap-1"
+                      >
+                        {areaInfo?.label || area}
+                        <button 
+                          type="button" 
+                          onClick={() => toggleArea(area)}
+                          className="ml-1 rounded-full hover:bg-primary/20 p-0.5"
+                        >
+                          <span className="sr-only">Remove</span>
+                          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 3L3 9M3 3L9 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </button>
+                      </Badge>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
           
