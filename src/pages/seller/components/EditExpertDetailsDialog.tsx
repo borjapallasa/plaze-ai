@@ -142,17 +142,24 @@ export function EditExpertDetailsDialog({ expert, onUpdate }: EditExpertDetailsD
       console.log("Updating expert with data:", updateData);
       console.log("Expert UUID:", expert.expert_uuid);
 
+      // Change from .single() to .maybeSingle() to handle the case where no rows are returned
       const { data, error } = await supabase
         .from("experts")
         .update(updateData)
         .eq("expert_uuid", expert.expert_uuid)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error("Error updating expert details:", error);
         toast.error("Failed to update expert details: " + error.message);
         throw error;
+      }
+
+      if (!data) {
+        console.error("No data returned after update");
+        toast.error("Failed to update expert details: No data returned");
+        throw new Error("No data returned after update");
       }
 
       console.log("Update successful, received data:", data);
