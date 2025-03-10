@@ -808,6 +808,7 @@ export type Database = {
           slug: string | null
           thumbnail: string | null
           title: string | null
+          updated_at: string | null
           user_uuid: string | null
         }
         Insert: {
@@ -826,6 +827,7 @@ export type Database = {
           slug?: string | null
           thumbnail?: string | null
           title?: string | null
+          updated_at?: string | null
           user_uuid?: string | null
         }
         Update: {
@@ -844,6 +846,7 @@ export type Database = {
           slug?: string | null
           thumbnail?: string | null
           title?: string | null
+          updated_at?: string | null
           user_uuid?: string | null
         }
         Relationships: [

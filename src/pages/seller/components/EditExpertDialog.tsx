@@ -40,8 +40,7 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
         .update({
           name: formData.name,
           title: formData.title,
-          description: formData.description,
-          updated_at: new Date().toISOString() // Add updated_at timestamp
+          description: formData.description
         })
         .eq('expert_uuid', expert.expert_uuid)
         .select() // Select the updated row to get the full updated record
@@ -53,10 +52,13 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
         return;
       }
 
-      // Create updated expert object with latest data from the database
+      // Create updated expert object with proper typing
+      // We need to ensure the areas field is properly handled
       const updatedExpert: Expert = {
         ...expert,
-        ...data
+        name: formData.name,
+        title: formData.title,
+        description: formData.description
       };
 
       // Call onUpdate callback with the updated expert data
