@@ -1,9 +1,11 @@
+
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge as UIBadge } from "@/components/ui/badge";
 import { Badge, Star, ShoppingBag, Users } from "lucide-react";
 import type { Expert } from "@/types/expert";
 import { useAuth } from "@/lib/auth";
+import { EditExpertDialog } from "./EditExpertDialog";
 
 interface SellerHeaderProps {
   seller: Expert;
@@ -11,7 +13,7 @@ interface SellerHeaderProps {
   onSellerUpdate?: (updatedSeller: Expert) => void;
 }
 
-export function SellerHeader({ seller, productsCount }: SellerHeaderProps) {
+export function SellerHeader({ seller, productsCount, onSellerUpdate }: SellerHeaderProps) {
   const { user } = useAuth();
   const isCurrentUserExpert = user?.id === seller.user_uuid;
   
@@ -21,6 +23,12 @@ export function SellerHeader({ seller, productsCount }: SellerHeaderProps) {
     { icon: Users, label: "Clients", value: "250+", color: "text-green-500" },
     { icon: Badge, label: "Member Since", value: new Date(seller.created_at || '').getFullYear().toString(), color: "text-purple-500" },
   ];
+
+  const handleExpertUpdate = (updatedExpert: Expert) => {
+    if (onSellerUpdate) {
+      onSellerUpdate(updatedExpert);
+    }
+  };
 
   const avatarUrl = seller.thumbnail || 
     (seller.user_uuid ? `https://api.dicebear.com/7.x/avataaars/svg?seed=${seller.user_uuid}` : 
@@ -55,6 +63,10 @@ export function SellerHeader({ seller, productsCount }: SellerHeaderProps) {
                   <Badge className="w-4 h-4 mr-1" />
                   Verified Expert
                 </UIBadge>
+                
+                {isCurrentUserExpert && (
+                  <EditExpertDialog expert={seller} onUpdate={handleExpertUpdate} />
+                )}
               </div>
               <p className="text-xl text-muted-foreground font-medium">
                 {seller?.title || "Expert in UI/UX Design & Development"}
