@@ -10,6 +10,10 @@ import { lazy, Suspense } from "react";
 const SecondaryContent = lazy(() => import("./header/SecondaryContent"));
 
 export const ExpertHeader = ({ expert }: ExpertComponentProps) => {
+  // Use the expert's thumbnail if available, otherwise fallback to placeholder
+  const avatarSrc = expert.thumbnail || 
+    `https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80`;
+
   return (
     <Card className="mt-8 mb-6">
       <CardContent className="p-6">
@@ -31,11 +35,11 @@ export const ExpertHeader = ({ expert }: ExpertComponentProps) => {
               <div className="absolute inset-0 bg-muted rounded-full" /> {/* Avatar placeholder */}
               <Avatar className="h-20 w-20">
                 <AvatarImage 
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                  src={avatarSrc}
                   loading="lazy"
                   decoding="async"
                 />
-                <AvatarFallback>JD</AvatarFallback>
+                <AvatarFallback>{expert.name?.[0] || 'E'}</AvatarFallback>
               </Avatar>
             </div>
             <div className="flex-1">

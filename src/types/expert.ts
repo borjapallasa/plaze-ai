@@ -12,7 +12,7 @@ export interface Expert {
   client_satisfaction?: number;
   response_rate?: number;
   created_at: string;
-  areas?: string[];
+  areas: string[];
   status?: "active" | "inactive" | "pending";
   user_uuid?: string;
   activeTemplates?: number;

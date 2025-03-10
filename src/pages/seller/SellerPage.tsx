@@ -21,7 +21,8 @@ export default function SellerPage() {
   const { 
     data: seller, 
     isLoading: sellerLoading, 
-    error: sellerError 
+    error: sellerError,
+    refetch: refetchSeller
   } = useSellerData(id);
 
   // Use the local state if available, otherwise use the fetched data
@@ -48,6 +49,8 @@ export default function SellerPage() {
   // Handle seller update
   const handleSellerUpdate = (updatedSeller: Expert) => {
     setSellerData(updatedSeller);
+    // Also refetch to ensure data consistency
+    refetchSeller();
     toast.success("Expert profile updated successfully");
   };
 

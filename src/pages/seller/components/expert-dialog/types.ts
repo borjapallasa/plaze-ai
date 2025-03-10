@@ -21,4 +21,3 @@ export interface ExpertiseAreaInfo {
   label: string;
   group: string;
 }
-

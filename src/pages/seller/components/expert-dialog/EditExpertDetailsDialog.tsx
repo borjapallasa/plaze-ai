@@ -128,28 +128,22 @@ export function EditExpertDetailsDialog({ expert, onUpdate }: EditExpertDetailsD
         throw new Error("No data returned after update");
       }
 
-      // Ensure areas is an array in the returned data
-      if (data.areas) {
-        try {
-          // If areas is a string, try to parse it as JSON
-          if (typeof data.areas === 'string') {
-            data.areas = JSON.parse(data.areas);
-          }
-          // If it's not an array after parsing, make it an empty array
-          if (!Array.isArray(data.areas)) {
-            data.areas = [];
-          }
-        } catch (e) {
-          console.error('Error parsing areas in returned data:', e);
-          data.areas = [];
-        }
-      } else {
-        data.areas = [];
-      }
+      // Create a properly typed expert object to pass to onUpdate
+      const updatedExpert = {
+        ...expert,
+        ...data,
+        // Ensure areas is an array
+        areas: Array.isArray(data.areas) 
+          ? data.areas 
+          : typeof data.areas === 'string'
+            ? JSON.parse(data.areas)
+            : [],
+        thumbnail: thumbnailUrl // Ensure this is the most up-to-date thumbnail
+      };
 
-      console.log("Update successful, received data:", data);
+      console.log("Update successful, received data:", updatedExpert);
       toast.success("Expert details updated successfully");
-      onUpdate(data);
+      onUpdate(updatedExpert);
       setIsOpen(false);
     } catch (error) {
       console.error("Error updating expert details:", error);

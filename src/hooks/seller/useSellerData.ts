@@ -46,26 +46,33 @@ export function useSellerData(id: string | undefined) {
         console.log('Expert data found:', data);
         
         // Ensure areas is properly parsed as an array
+        let parsedAreas: string[] = [];
         if (data.areas) {
           try {
             // If areas is a string, try to parse it as JSON
             if (typeof data.areas === 'string') {
-              data.areas = JSON.parse(data.areas);
+              parsedAreas = JSON.parse(data.areas);
             }
-            // If it's not an array after parsing, make it an empty array
-            if (!Array.isArray(data.areas)) {
-              console.log('Areas is not an array after parsing, setting to empty array:', data.areas);
-              data.areas = [];
+            // If it's already an array, use it directly
+            else if (Array.isArray(data.areas)) {
+              parsedAreas = data.areas;
+            }
+            // If it's an object from JSON, convert to array if possible
+            else if (typeof data.areas === 'object') {
+              parsedAreas = Object.values(data.areas).filter(val => typeof val === 'string');
             }
           } catch (e) {
             console.error('Error parsing areas:', e);
-            data.areas = [];
           }
-        } else {
-          data.areas = [];
         }
         
-        return data as Expert;
+        // Create a properly typed expert object
+        const expertData: Expert = {
+          ...data,
+          areas: parsedAreas,
+        };
+        
+        return expertData;
       } catch (error) {
         console.error('Error in useSellerData:', error);
         toast.error("Error loading expert data");

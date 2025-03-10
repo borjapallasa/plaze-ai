@@ -15,9 +15,10 @@ export interface Expert {
   completed_projects?: number;
   client_satisfaction?: number;
   response_rate?: number;
-  areas?: string[];
+  areas: string[];
   info?: string;
   created_at?: string;
+  thumbnail?: string;
 }
 
 export interface ExpertComponentProps {
