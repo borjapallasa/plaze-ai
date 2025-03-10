@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -50,9 +51,11 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
         return;
       }
 
+      // Ensure we maintain the correct types by creating a properly typed Expert object
       const updatedExpert: Expert = {
-        ...expert,
-        ...data,
+        ...expert, // Keep existing expert data
+        ...data,   // Spread new data while maintaining existing types
+        areas: Array.isArray(data.areas) ? data.areas : [], // Ensure areas is an array
         name: formData.name,
         title: formData.title,
         description: formData.description
