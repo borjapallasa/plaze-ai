@@ -64,15 +64,15 @@ export function useCart() {
       }
 
       // First, get the transaction
-      const transactionQuery = supabase
+      let transactionQuery = supabase
         .from('products_transactions')
         .select('product_transaction_uuid, item_count, total_amount')
         .eq('status', 'pending');
       
       if (userId) {
-        transactionQuery.eq('user_uuid', userId);
+        transactionQuery = transactionQuery.eq('user_uuid', userId);
       } else if (sessionId) {
-        transactionQuery.eq('guest_session_id', sessionId);
+        transactionQuery = transactionQuery.eq('guest_session_id', sessionId);
       }
 
       const { data: transactionData, error: transactionError } = await transactionQuery.maybeSingle();
@@ -90,13 +90,7 @@ export function useCart() {
       // Then, get the items for this transaction
       const { data: itemsData, error: itemsError } = await supabase
         .from('products_transaction_items')
-        .select(`
-          product_uuid,
-          variant_uuid,
-          price,
-          quantity,
-          total_price
-        `)
+        .select('product_uuid, variant_uuid, price, quantity, total_price')
         .eq('product_transaction_uuid', transactionData.product_transaction_uuid);
       
       if (itemsError) {
