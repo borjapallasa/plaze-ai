@@ -64,15 +64,18 @@ export function useCart() {
       }
 
       // First, get the transaction
-      let transactionQuery = supabase
+      const query = supabase
         .from('products_transactions')
         .select('product_transaction_uuid, item_count, total_amount')
         .eq('status', 'pending');
       
+      let transactionQuery;
       if (userId) {
-        transactionQuery = transactionQuery.eq('user_uuid', userId);
+        transactionQuery = query.eq('user_uuid', userId);
       } else if (sessionId) {
-        transactionQuery = transactionQuery.eq('guest_session_id', sessionId);
+        transactionQuery = query.eq('guest_session_id', sessionId);
+      } else {
+        transactionQuery = query;
       }
 
       const { data: transactionData, error: transactionError } = await transactionQuery.maybeSingle();
