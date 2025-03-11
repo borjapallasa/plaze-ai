@@ -123,6 +123,20 @@ export function NavigationButtons({
           userId = authData.user.id;
           isNewUser = true;
           console.log("Created new user:", userId);
+          
+          // Sign in immediately to get a valid session
+          const { data: sessionData, error: sessionError } = await supabase.auth.signInWithPassword({
+            email: formData.contactEmail,
+            password: tempPassword,
+          });
+          
+          if (sessionError) {
+            throw new Error(`Failed to sign in after account creation: ${sessionError.message}`);
+          }
+          
+          if (!sessionData.session) {
+            throw new Error("No valid session after sign in");
+          }
         }
         
         // Check if expert profile exists
@@ -145,23 +159,17 @@ export function NavigationButtons({
         if (!expertExists) {
           console.log("Creating new expert profile for user:", userId);
           
-          // Authenticate with the user's credentials to create resources
-          if (isNewUser) {
-            const { data: sessionData, error: sessionError } = await supabase.auth.signInWithPassword({
-              email: formData.contactEmail,
-              password: tempPassword,
-            });
-            
-            if (sessionError) {
-              throw new Error(`Failed to authenticate: ${sessionError.message}`);
-            }
-            
-            if (!sessionData.session) {
-              throw new Error("No session after authentication");
-            }
+          // Use admin API or obtain a valid Supabase token first
+          // We need to make this API call to a server endpoint that uses service_role token
+          // But for now, let's see if we have a valid session
+          
+          const { data: session } = await supabase.auth.getSession();
+          if (!session.session) {
+            throw new Error("No active session to create expert profile");
           }
           
-          // Create the expert record with proper authentication
+          // Now attempt to create the expert with the user's session
+          // Note: This will only work if RLS is configured to allow this
           const { data: expertData, error: expertError } = await supabase
             .from('experts')
             .insert({
@@ -176,7 +184,12 @@ export function NavigationButtons({
 
           if (expertError) {
             console.error("Expert creation error:", expertError);
-            throw new Error(`Failed to create expert profile: ${expertError.message}`);
+            
+            // If we got an RLS error, we can try a different approach
+            // This is where you might want to redirect to a server endpoint
+            // that uses a service_role token to create the expert
+            
+            throw new Error(`Error creating expert profile. Please contact support: ${expertError.message}`);
           }
 
           if (!expertData) {
@@ -188,16 +201,6 @@ export function NavigationButtons({
         }
 
         // Create the appropriate resource based on selection
-        // We need to ensure we're authenticated before creating these resources
-        const { data: session } = await supabase.auth.getSession();
-        if (!session.session) {
-          // Try to sign in again if no session is found
-          await supabase.auth.signInWithPassword({
-            email: formData.contactEmail,
-            password: tempPassword,
-          });
-        }
-
         if (selectedOption === "services") {
           const serviceTypeValue = formData.serviceType === "one time" ? "one time" : "monthly";
           
