@@ -14,7 +14,7 @@ interface NavigationButtonsProps {
     name: string;
     description: string;
     servicePrice: string;
-    serviceType: ServiceType; // Fixed: Changed from optional to required with correct type
+    serviceType: ServiceType;
     category: string;
     type: string;
     price: string;
