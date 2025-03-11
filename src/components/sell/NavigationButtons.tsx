@@ -14,6 +14,7 @@ interface NavigationButtonsProps {
     type: string;
     price: string;
     productPrice: string;
+    thumbnail: string;
   };
   onNext: () => void;
   onBack: () => void;

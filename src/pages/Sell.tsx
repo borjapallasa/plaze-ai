@@ -7,6 +7,7 @@ import { ChooseTypeStep } from "@/components/sell/ChooseTypeStep";
 import { BasicInfoStep } from "@/components/sell/BasicInfoStep";
 import { ConfirmationStep } from "@/components/sell/ConfirmationStep";
 import { NavigationButtons } from "@/components/sell/NavigationButtons";
+import { toast } from "sonner";
 
 const SellPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -60,6 +61,11 @@ const SellPage = () => {
           }
         });
       } else if (selectedOption === "community") {
+        if (!formData.thumbnail && selectedOption === "community") {
+          toast.error("Please upload a thumbnail image for your community");
+          return;
+        }
+        
         navigate("/seller/communities/new", {
           state: {
             name: formData.name,
@@ -123,6 +129,7 @@ const SellPage = () => {
   };
 
   const handleFileSelect = (file: File) => {
+    console.log("File selected:", file.name);
     const fileUrl = URL.createObjectURL(file);
     setFormData(prev => ({ ...prev, thumbnail: fileUrl }));
   };

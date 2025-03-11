@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -364,7 +363,7 @@ function CommunityFields({
         <div className="mt-1">
           <CommunityMediaUpload 
             communityUuid="temp" 
-            onFileSelect={handleFileSelect} 
+            onFileSelect={handleFileSelect}
           />
         </div>
       </div>
