@@ -1,6 +1,6 @@
 
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { MainHeader } from "@/components/MainHeader";
 import { ServiceForm } from "@/components/service/ServiceForm";
 import { useCreateService } from "@/hooks/use-create-service";
@@ -8,17 +8,32 @@ import { toast } from "sonner";
 import type { ServiceType, CategoryType } from "@/constants/service-categories";
 import type { ServiceStatus } from "@/components/expert/types";
 
+interface LocationState {
+  name?: string;
+  description?: string;
+  price?: string;
+  type?: ServiceType;
+  category?: { value: string } | null;
+  subcategory?: { value: string }[] | null;
+}
+
 export default function NewServicePage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { createService, isCreating } = useCreateService();
+  const locationState = location.state as LocationState | undefined;
 
-  const [serviceName, setServiceName] = useState("");
-  const [serviceDescription, setServiceDescription] = useState("");
-  const [price, setPrice] = useState("");
-  const [serviceType, setServiceType] = useState<ServiceType>("one time");
+  const [serviceName, setServiceName] = useState(locationState?.name || "");
+  const [serviceDescription, setServiceDescription] = useState(locationState?.description || "");
+  const [price, setPrice] = useState(locationState?.price || "");
+  const [serviceType, setServiceType] = useState<ServiceType>(locationState?.type || "one time");
   const [features, setFeatures] = useState<string[]>([""]);
-  const [category, setCategory] = useState<CategoryType | "">("");
-  const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
+  const [category, setCategory] = useState<CategoryType | "">(
+    locationState?.category ? locationState.category.value as CategoryType : ""
+  );
+  const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>(
+    locationState?.subcategory ? locationState.subcategory.map(sub => sub.value) : []
+  );
   const [status, setStatus] = useState<ServiceStatus>("draft");
 
   const handleAddFeature = () => {

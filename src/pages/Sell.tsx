@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
@@ -13,6 +12,12 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { ServiceCategories } from "@/components/service/ServiceCategories";
+import { CATEGORIES, CategoryType, SERVICE_TYPES, ServiceType } from "@/constants/service-categories";
 
 const SellPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -21,7 +26,11 @@ const SellPage = () => {
     sellType: "",
     name: "",
     description: "",
-    contactEmail: ""
+    contactEmail: "",
+    servicePrice: "",
+    serviceType: "one time" as ServiceType,
+    category: "" as CategoryType | "",
+    selectedSubcategories: [] as string[]
   });
   const navigate = useNavigate();
 
@@ -34,7 +43,18 @@ const SellPage = () => {
     if (currentStep === 3) {
       // Final step - navigate based on selection
       if (selectedOption === "services") {
-        navigate("/seller/services/new");
+        navigate("/seller/services/new", { 
+          state: { 
+            name: formData.name,
+            description: formData.description,
+            price: formData.servicePrice,
+            type: formData.serviceType,
+            category: formData.category ? { value: formData.category } : null,
+            subcategory: formData.selectedSubcategories.length > 0 
+              ? formData.selectedSubcategories.map(sub => ({ value: sub })) 
+              : null
+          } 
+        });
       } else if (selectedOption === "products") {
         navigate("/seller/products/new");
       } else if (selectedOption === "community") {
@@ -57,6 +77,34 @@ const SellPage = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleCategoryChange = (value: CategoryType) => {
+    setFormData(prev => ({ 
+      ...prev, 
+      category: value,
+      selectedSubcategories: []
+    }));
+  };
+
+  const handleSubcategoriesChange = (value: string) => {
+    if (!formData.selectedSubcategories.includes(value)) {
+      setFormData(prev => ({
+        ...prev,
+        selectedSubcategories: [...prev.selectedSubcategories, value]
+      }));
+    }
+  };
+
+  const handleRemoveSubcategory = (value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      selectedSubcategories: prev.selectedSubcategories.filter(item => item !== value)
+    }));
+  };
+
+  const handleServiceTypeChange = (value: ServiceType) => {
+    setFormData(prev => ({ ...prev, serviceType: value }));
   };
 
   return (
@@ -244,20 +292,70 @@ const SellPage = () => {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <label htmlFor="contactEmail" className="block text-sm font-medium text-gray-700">
-                    Contact Email
-                  </label>
-                  <input
-                    type="email"
-                    id="contactEmail"
-                    name="contactEmail"
-                    value={formData.contactEmail}
-                    onChange={handleInputChange}
-                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-                    placeholder="your@email.com"
-                  />
-                </div>
+                {selectedOption === "services" && (
+                  <>
+                    <div className="space-y-2">
+                      <Label htmlFor="servicePrice" className="block text-sm font-medium text-gray-700">
+                        Price
+                      </Label>
+                      <Input
+                        type="number"
+                        id="servicePrice"
+                        name="servicePrice"
+                        value={formData.servicePrice}
+                        onChange={handleInputChange}
+                        className="w-full"
+                        placeholder="0.00"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="serviceType" className="block text-sm font-medium text-gray-700">
+                        Service Type
+                      </Label>
+                      <Select 
+                        value={formData.serviceType} 
+                        onValueChange={handleServiceTypeChange}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {SERVICE_TYPES.map((type) => (
+                            <SelectItem key={type.value} value={type.value}>
+                              {type.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <ServiceCategories
+                      category={formData.category}
+                      selectedSubcategories={formData.selectedSubcategories}
+                      onCategoryChange={handleCategoryChange}
+                      onSubcategoriesChange={handleSubcategoriesChange}
+                      onRemoveSubcategory={handleRemoveSubcategory}
+                    />
+                  </>
+                )}
+
+                {selectedOption !== "services" && (
+                  <div className="space-y-2">
+                    <label htmlFor="contactEmail" className="block text-sm font-medium text-gray-700">
+                      Contact Email
+                    </label>
+                    <input
+                      type="email"
+                      id="contactEmail"
+                      name="contactEmail"
+                      value={formData.contactEmail}
+                      onChange={handleInputChange}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                      placeholder="your@email.com"
+                    />
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -296,10 +394,44 @@ const SellPage = () => {
                   <p className="text-gray-700">{formData.description || "Not specified"}</p>
                 </div>
 
-                <div>
-                  <h3 className="font-medium text-gray-900">Contact Email</h3>
-                  <p className="text-gray-700">{formData.contactEmail || "Not specified"}</p>
-                </div>
+                {selectedOption === "services" ? (
+                  <>
+                    <div>
+                      <h3 className="font-medium text-gray-900">Price</h3>
+                      <p className="text-gray-700">${formData.servicePrice || "0.00"}</p>
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-gray-900">Service Type</h3>
+                      <p className="text-gray-700">{SERVICE_TYPES.find(t => t.value === formData.serviceType)?.label || "One Time"}</p>
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-gray-900">Category</h3>
+                      <p className="text-gray-700">
+                        {formData.category ? CATEGORIES.find(c => c.value === formData.category)?.label : "Not specified"}
+                      </p>
+                    </div>
+                    {formData.selectedSubcategories.length > 0 && (
+                      <div>
+                        <h3 className="font-medium text-gray-900">Subcategories</h3>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {formData.selectedSubcategories.map(sub => (
+                            <span key={sub} className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs">
+                              {formData.category && 
+                                CATEGORIES.find(c => c.value === formData.category) &&
+                                CATEGORIES.find(c => c.value === formData.category)?.value &&
+                                SUBCATEGORIES[formData.category as CategoryType].find(s => s.value === sub)?.label}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div>
+                    <h3 className="font-medium text-gray-900">Contact Email</h3>
+                    <p className="text-gray-700">{formData.contactEmail || "Not specified"}</p>
+                  </div>
+                )}
               </Card>
 
               <p className="text-sm text-gray-600 text-center">
@@ -321,7 +453,14 @@ const SellPage = () => {
             onClick={handleNext} 
             disabled={
               (currentStep === 1 && !selectedOption) ||
-              (currentStep === 2 && (!formData.name || !formData.description || !formData.contactEmail))
+              (currentStep === 2 && (
+                !formData.name || 
+                !formData.description || 
+                (selectedOption === "services" 
+                  ? !formData.servicePrice || !formData.category 
+                  : !formData.contactEmail
+                )
+              ))
             }
           >
             {currentStep === 3 ? "Continue" : "Next"}
