@@ -63,22 +63,27 @@ export function useCart() {
         return;
       }
 
-      // First, get the transaction
-      const query = supabase
+      // Build a base query without chaining
+      const baseQuery = supabase
         .from('products_transactions')
         .select('product_transaction_uuid, item_count, total_amount')
         .eq('status', 'pending');
       
-      let transactionQuery;
+      // Execute different queries based on conditions
+      let transactionData;
+      let transactionError;
+      
       if (userId) {
-        transactionQuery = query.eq('user_uuid', userId);
+        const response = await baseQuery.eq('user_uuid', userId).maybeSingle();
+        transactionData = response.data;
+        transactionError = response.error;
       } else if (sessionId) {
-        transactionQuery = query.eq('guest_session_id', sessionId);
+        const response = await baseQuery.eq('guest_session_id', sessionId).maybeSingle();
+        transactionData = response.data;
+        transactionError = response.error;
       } else {
-        transactionQuery = query;
+        return;
       }
-
-      const { data: transactionData, error: transactionError } = await transactionQuery.maybeSingle();
       
       if (transactionError) {
         console.error('Error fetching cart transaction:', transactionError);
@@ -171,13 +176,13 @@ export function useCart() {
       const userId = session?.user?.id;
       
       // Find the variant details
-      const { data: variantData, error: variantError } = await supabase
+      const variantResponse = await supabase
         .from('variants')
         .select('*')
         .eq('variant_uuid', selectedVariant)
         .single();
       
-      if (variantError || !variantData) {
+      if (variantResponse.error || !variantResponse.data) {
         toast({
           title: "Error",
           description: "Could not find the selected variant",
@@ -187,12 +192,14 @@ export function useCart() {
         return;
       }
       
+      const variantData = variantResponse.data;
+      
       // Check for existing transaction
       let transactionId = cart?.transaction_uuid;
       
       if (!transactionId) {
         // Create a new transaction
-        const { data: newTransaction, error: transactionError } = await supabase
+        const newTransactionResponse = await supabase
           .from('products_transactions')
           .insert({
             user_uuid: userId,
@@ -205,7 +212,7 @@ export function useCart() {
           .select('product_transaction_uuid')
           .single();
         
-        if (transactionError || !newTransaction) {
+        if (newTransactionResponse.error || !newTransactionResponse.data) {
           toast({
             title: "Error",
             description: "Could not create shopping cart",
@@ -215,7 +222,7 @@ export function useCart() {
           return;
         }
         
-        transactionId = newTransaction.product_transaction_uuid;
+        transactionId = newTransactionResponse.data.product_transaction_uuid;
       }
       
       // Check if this item is already in the cart
@@ -228,7 +235,7 @@ export function useCart() {
       
       if (existingItem) {
         // Update the quantity of existing item
-        const { error: updateError } = await supabase
+        const updateResponse = await supabase
           .from('products_transaction_items')
           .update({
             quantity: existingItem.quantity + 1,
@@ -238,7 +245,7 @@ export function useCart() {
           .eq('variant_uuid', selectedVariant)
           .eq('product_transaction_uuid', transactionId);
         
-        if (updateError) {
+        if (updateResponse.error) {
           toast({
             title: "Error",
             description: "Could not update item quantity",
@@ -249,7 +256,7 @@ export function useCart() {
         }
       } else {
         // Add new item to cart
-        const { error: itemError } = await supabase
+        const itemResponse = await supabase
           .from('products_transaction_items')
           .insert({
             product_transaction_uuid: transactionId,
@@ -260,7 +267,7 @@ export function useCart() {
             total_price: variantData.price
           });
         
-        if (itemError) {
+        if (itemResponse.error) {
           toast({
             title: "Error",
             description: "Could not add item to cart",
@@ -275,7 +282,7 @@ export function useCart() {
       const newTotalAmount = (cart?.total_amount || 0) + variantData.price;
       const newItemCount = (cart?.item_count || 0) + 1;
       
-      const { error: updateTransactionError } = await supabase
+      const updateTransactionResponse = await supabase
         .from('products_transactions')
         .update({
           item_count: newItemCount,
@@ -283,7 +290,7 @@ export function useCart() {
         })
         .eq('product_transaction_uuid', transactionId);
       
-      if (updateTransactionError) {
+      if (updateTransactionResponse.error) {
         toast({
           title: "Error",
           description: "Could not update cart totals",
