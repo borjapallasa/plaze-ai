@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
@@ -18,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ServiceCategories } from "@/components/service/ServiceCategories";
 import { CATEGORIES, SUBCATEGORIES, CategoryType, SERVICE_TYPES, ServiceType } from "@/constants/service-categories";
+import { CommunityMediaUpload } from "@/components/community/CommunityMediaUpload";
 
 const SellPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -34,7 +36,8 @@ const SellPage = () => {
     intro: "",
     type: "free",
     price: "",
-    thumbnail: ""
+    thumbnail: "",
+    videoUrl: "" // Added for community video introduction
   });
   const navigate = useNavigate();
 
@@ -69,7 +72,8 @@ const SellPage = () => {
             intro: formData.intro,
             type: formData.type,
             price: formData.type === "paid" ? formData.price : "0",
-            thumbnail: formData.thumbnail
+            thumbnail: formData.thumbnail,
+            videoUrl: formData.videoUrl // Added for video URL
           }
         });
       }
@@ -118,6 +122,17 @@ const SellPage = () => {
 
   const handleServiceTypeChange = (value: ServiceType) => {
     setFormData(prev => ({ ...prev, serviceType: value }));
+  };
+
+  const handleCommunityTypeChange = (value: string) => {
+    setFormData(prev => ({ ...prev, type: value }));
+  };
+
+  const handleFileSelect = (file: File) => {
+    // This would be handled by the actual upload in a production environment
+    // Here we're just storing the file in state to show it in the preview
+    const fileUrl = URL.createObjectURL(file);
+    setFormData(prev => ({ ...prev, thumbnail: fileUrl }));
   };
 
   return (
@@ -275,7 +290,7 @@ const SellPage = () => {
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="name" className="font-medium text-gray-700">
-                    Name
+                    Name <span className="text-red-500">*</span>
                   </Label>
                   <Input
                     type="text"
@@ -287,12 +302,13 @@ const SellPage = () => {
                     placeholder={`Your ${selectedOption === "services" ? "service" : 
                                   selectedOption === "products" ? "product" : 
                                   "community"} name`}
+                    required
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="description" className="font-medium text-gray-700">
-                    Brief Description
+                    Brief Description <span className="text-red-500">*</span>
                   </Label>
                   <Textarea
                     id="description"
@@ -302,6 +318,7 @@ const SellPage = () => {
                     rows={3}
                     className="w-full"
                     placeholder="Describe what you're offering"
+                    required
                   />
                 </div>
 
@@ -309,7 +326,7 @@ const SellPage = () => {
                   <>
                     <div className="space-y-2">
                       <Label htmlFor="servicePrice" className="font-medium text-gray-700">
-                        Price
+                        Price <span className="text-red-500">*</span>
                       </Label>
                       <Input
                         type="number"
@@ -319,12 +336,13 @@ const SellPage = () => {
                         onChange={handleInputChange}
                         className="w-full"
                         placeholder="0.00"
+                        required
                       />
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="serviceType" className="font-medium text-gray-700">
-                        Service Type
+                        Service Type <span className="text-red-500">*</span>
                       </Label>
                       <Select 
                         value={formData.serviceType} 
@@ -345,7 +363,7 @@ const SellPage = () => {
 
                     <div className="space-y-2">
                       <Label htmlFor="category" className="font-medium text-gray-700">
-                        Category
+                        Category <span className="text-red-500">*</span>
                       </Label>
                       <Select 
                         value={formData.category} 
@@ -421,10 +439,104 @@ const SellPage = () => {
                   </>
                 )}
 
-                {selectedOption !== "services" && (
+                {selectedOption === "community" && (
+                  <>
+                    <div className="space-y-2">
+                      <Label htmlFor="type" className="font-medium text-gray-700">
+                        Type <span className="text-red-500">*</span>
+                      </Label>
+                      <Select 
+                        value={formData.type} 
+                        onValueChange={handleCommunityTypeChange}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="free">Free</SelectItem>
+                          <SelectItem value="paid">Paid</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    {formData.type === "paid" && (
+                      <div className="space-y-2">
+                        <Label htmlFor="price" className="font-medium text-gray-700">
+                          Price <span className="text-red-500">*</span>
+                        </Label>
+                        <Input
+                          type="number"
+                          id="price"
+                          name="price"
+                          value={formData.price}
+                          onChange={handleInputChange}
+                          className="w-full"
+                          placeholder="0.00"
+                          required={formData.type === "paid"}
+                        />
+                      </div>
+                    )}
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="intro" className="font-medium text-gray-700">
+                        Brief Introduction
+                      </Label>
+                      <Textarea
+                        id="intro"
+                        name="intro"
+                        value={formData.intro}
+                        onChange={handleInputChange}
+                        rows={2}
+                        className="w-full"
+                        placeholder="Introduce your community"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="videoUrl" className="font-medium text-gray-700">
+                        Video Introduction URL
+                      </Label>
+                      <Input
+                        type="url"
+                        id="videoUrl"
+                        name="videoUrl"
+                        value={formData.videoUrl}
+                        onChange={handleInputChange}
+                        className="w-full"
+                        placeholder="https://www.youtube.com/watch?v=..."
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label className="font-medium text-gray-700">
+                        Thumbnail
+                      </Label>
+                      <div className="mt-1">
+                        <CommunityMediaUpload 
+                          communityUuid="temp" 
+                          onFileSelect={handleFileSelect}
+                        />
+                      </div>
+                      {formData.thumbnail && (
+                        <div className="mt-2">
+                          <p className="text-sm text-gray-500">Preview:</p>
+                          <div className="mt-1 aspect-video w-full max-w-xs overflow-hidden rounded-lg border border-gray-200">
+                            <img 
+                              src={formData.thumbnail} 
+                              alt="Thumbnail preview" 
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+
+                {selectedOption !== "services" && selectedOption !== "community" && (
                   <div className="space-y-2">
                     <Label htmlFor="contactEmail" className="font-medium text-gray-700">
-                      Contact Email
+                      Contact Email <span className="text-red-500">*</span>
                     </Label>
                     <Input
                       type="email"
@@ -434,6 +546,7 @@ const SellPage = () => {
                       onChange={handleInputChange}
                       className="w-full"
                       placeholder="your@email.com"
+                      required
                     />
                   </div>
                 )}
@@ -506,6 +619,41 @@ const SellPage = () => {
                       </div>
                     )}
                   </>
+                ) : selectedOption === "community" ? (
+                  <>
+                    <div>
+                      <h3 className="font-medium text-gray-900">Type</h3>
+                      <p className="text-gray-700">{formData.type === "free" ? "Free" : "Paid"}</p>
+                    </div>
+                    {formData.type === "paid" && (
+                      <div>
+                        <h3 className="font-medium text-gray-900">Price</h3>
+                        <p className="text-gray-700">${formData.price || "0.00"}</p>
+                      </div>
+                    )}
+                    <div>
+                      <h3 className="font-medium text-gray-900">Introduction</h3>
+                      <p className="text-gray-700">{formData.intro || "Not specified"}</p>
+                    </div>
+                    {formData.videoUrl && (
+                      <div>
+                        <h3 className="font-medium text-gray-900">Video URL</h3>
+                        <p className="text-gray-700">{formData.videoUrl}</p>
+                      </div>
+                    )}
+                    {formData.thumbnail && (
+                      <div>
+                        <h3 className="font-medium text-gray-900">Thumbnail</h3>
+                        <div className="mt-1 aspect-video w-full max-w-xs overflow-hidden rounded-lg border border-gray-200">
+                          <img 
+                            src={formData.thumbnail} 
+                            alt="Thumbnail preview" 
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <div>
                     <h3 className="font-medium text-gray-900">Contact Email</h3>
@@ -540,7 +688,9 @@ const SellPage = () => {
                 !formData.description || 
                 (selectedOption === "services" 
                   ? !formData.servicePrice || !formData.category 
-                  : !formData.contactEmail
+                  : selectedOption === "community"
+                    ? (formData.type === "paid" && !formData.price)
+                    : !formData.contactEmail
                 )
               ))
             }
@@ -555,4 +705,3 @@ const SellPage = () => {
 };
 
 export default SellPage;
-

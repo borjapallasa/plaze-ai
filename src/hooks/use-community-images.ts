@@ -1,181 +1,185 @@
 
 import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import type { CommunityImage } from "@/types/community-images";
-import { useToast } from "@/components/ui/use-toast";
 
-export function useCommunityImages(communityUuid: string | undefined) {
+export function useCommunityImages(communityUuid: string) {
+  const [images, setImages] = useState<CommunityImage[]>([]);
   const [isUploading, setIsUploading] = useState(false);
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(true);
 
-  const { data: images = [], isLoading } = useQuery({
-    queryKey: ['communityImages', communityUuid],
-    queryFn: async () => {
-      if (!communityUuid) return [];
-      
-      const { data, error } = await supabase
-        .from('community_images')
-        .select('*')
-        .eq('community_uuid', communityUuid)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      // Map the data to include the public URL for each image
-      return (data || []).map(image => ({
-        ...image,
-        url: supabase.storage
-          .from('community_images')
-          .getPublicUrl(image.storage_path)
-          .data.publicUrl
-      })) as CommunityImage[];
-    },
-    enabled: !!communityUuid,
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 10,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false
+  // Fetch images when communityUuid changes
+  useState(() => {
+    if (communityUuid) {
+      fetchImages();
+    } else {
+      setImages([]);
+      setIsLoading(false);
+    }
   });
 
+  const fetchImages = async () => {
+    try {
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from("community_images")
+        .select("*")
+        .eq("community_uuid", communityUuid)
+        .order("is_primary", { ascending: false });
+
+      if (error) throw error;
+      setImages(data || []);
+    } catch (error) {
+      console.error("Error fetching community images:", error);
+      toast.error("Failed to load community images");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const uploadImage = async (file: File) => {
-    if (!communityUuid) return;
-    
+    if (!communityUuid) {
+      toast.error("No community UUID provided");
+      return null;
+    }
+
     try {
       setIsUploading(true);
       
+      // Generate a unique file path
       const fileExt = file.name.split('.').pop();
       const filePath = `${communityUuid}/${Date.now()}.${fileExt}`;
-
+      
+      // Upload file to storage
       const { error: uploadError } = await supabase.storage
-        .from('community_images')
+        .from('community-images')
         .upload(filePath, file);
 
       if (uploadError) throw uploadError;
+      
+      // Get public URL
+      const { data: publicURLData } = supabase.storage
+        .from('community-images')
+        .getPublicUrl(filePath);
+        
+      if (!publicURLData.publicUrl) throw new Error("Failed to get public URL");
 
-      const { data: insertData, error: dbError } = await supabase
-        .from('community_images')
+      // Create database entry
+      const { data, error: dbError } = await supabase
+        .from("community_images")
         .insert({
           community_uuid: communityUuid,
           storage_path: filePath,
           file_name: file.name,
           content_type: file.type,
           size: file.size,
-          is_primary: images.length === 0 // Make first image primary
+          is_primary: images.length === 0 // First image is primary
         })
         .select()
         .single();
 
       if (dbError) throw dbError;
 
-      queryClient.invalidateQueries({ queryKey: ['communityImages', communityUuid] });
-      
-      toast({
-        title: "Success",
-        description: "Image uploaded successfully",
+      // Update local state
+      setImages(prev => {
+        // If this is the first image, make it primary
+        if (prev.length === 0) {
+          return [{ ...data, url: publicURLData.publicUrl }];
+        }
+        return [...prev, { ...data, url: publicURLData.publicUrl }];
       });
+
+      toast.success("Image uploaded successfully");
+      return { ...data, url: publicURLData.publicUrl };
     } catch (error) {
-      console.error('Error uploading image:', error);
-      toast({
-        title: "Error",
-        description: "Failed to upload image",
-        variant: "destructive",
-      });
+      console.error("Error uploading community image:", error);
+      toast.error("Failed to upload image");
+      return null;
     } finally {
       setIsUploading(false);
     }
   };
 
-  const updateImage = async (imageId: number, updates: { file_name: string; alt_text: string }) => {
+  const updateImage = async (id: number, updates: { file_name: string; alt_text: string }) => {
     try {
       const { error } = await supabase
-        .from('community_images')
+        .from("community_images")
         .update(updates)
-        .eq('id', imageId);
+        .eq("id", id);
 
       if (error) throw error;
 
-      queryClient.invalidateQueries({ queryKey: ['communityImages', communityUuid] });
-      
-      toast({
-        title: "Success",
-        description: "Image details updated successfully",
-      });
+      // Update local state
+      setImages(prev => 
+        prev.map(img => 
+          img.id === id ? { ...img, ...updates } : img
+        )
+      );
+
+      toast.success("Image details updated");
     } catch (error) {
-      console.error('Error updating image:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update image details",
-        variant: "destructive",
-      });
+      console.error("Error updating image details:", error);
+      toast.error("Failed to update image details");
+      throw error;
     }
   };
 
-  const removeImage = async (imageId: number, storagePath: string) => {
+  const removeImage = async (id: number, storagePath: string) => {
     try {
-      // First remove from storage
+      // Delete from storage
       const { error: storageError } = await supabase.storage
-        .from('community_images')
+        .from('community-images')
         .remove([storagePath]);
 
       if (storageError) throw storageError;
 
-      // Then remove from database
+      // Delete from database
       const { error: dbError } = await supabase
-        .from('community_images')
+        .from("community_images")
         .delete()
-        .eq('id', imageId);
+        .eq("id", id);
 
       if (dbError) throw dbError;
 
-      queryClient.invalidateQueries({ queryKey: ['communityImages', communityUuid] });
-      
-      toast({
-        title: "Success",
-        description: "Image removed successfully",
-      });
+      // Update local state
+      setImages(prev => prev.filter(img => img.id !== id));
+
+      toast.success("Image removed successfully");
     } catch (error) {
-      console.error('Error removing image:', error);
-      toast({
-        title: "Error",
-        description: "Failed to remove image",
-        variant: "destructive",
-      });
+      console.error("Error removing community image:", error);
+      toast.error("Failed to remove image");
     }
   };
 
-  const reorderImages = async (imageId: number, currentPrimaryId: number) => {
+  const reorderImages = async (primaryId: number, currentPrimaryId: number) => {
     try {
-      // Remove primary status from current primary image
+      // Update the current primary image to not be primary
       if (currentPrimaryId) {
         await supabase
-          .from('community_images')
+          .from("community_images")
           .update({ is_primary: false })
-          .eq('id', currentPrimaryId);
+          .eq("id", currentPrimaryId);
       }
 
-      // Set new primary image
+      // Set the new primary image
       const { error } = await supabase
-        .from('community_images')
+        .from("community_images")
         .update({ is_primary: true })
-        .eq('id', imageId);
+        .eq("id", primaryId);
 
       if (error) throw error;
 
-      queryClient.invalidateQueries({ queryKey: ['communityImages', communityUuid] });
-      
-      toast({
-        title: "Success",
-        description: "Primary image updated successfully",
-      });
+      // Update local state
+      setImages(prev => prev.map(img => ({
+        ...img,
+        is_primary: img.id === primaryId
+      })));
+
+      toast.success("Primary image updated");
     } catch (error) {
-      console.error('Error reordering images:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update primary image",
-        variant: "destructive",
-      });
+      console.error("Error reordering community images:", error);
+      toast.error("Failed to update primary image");
     }
   };
 
@@ -186,6 +190,7 @@ export function useCommunityImages(communityUuid: string | undefined) {
     uploadImage,
     updateImage,
     removeImage,
-    reorderImages
+    reorderImages,
+    fetchImages
   };
 }
