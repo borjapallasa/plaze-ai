@@ -78,19 +78,26 @@ export function BasicInfoStep({
   if (selectedOption === "services") {
     return (
       <ServiceForm
-        name={formData.name}
-        description={formData.description}
+        serviceName={formData.name}
+        serviceDescription={formData.description}
         price={formData.servicePrice}
-        type={formData.serviceType}
+        serviceType={formData.serviceType}
+        features={[""]}
         category={formData.category}
         selectedSubcategories={formData.selectedSubcategories}
-        onNameChange={(value) => onChange("name", value)}
-        onDescriptionChange={(value) => onChange("description", value)}
+        status="draft"
+        onServiceNameChange={(value) => onChange("name", value)}
+        onServiceDescriptionChange={(value) => onChange("description", value)}
         onPriceChange={(value) => onChange("servicePrice", value)}
-        onTypeChange={(value) => onChange("serviceType", value)}
+        onServiceTypeChange={(value) => onChange("serviceType", value)}
         onCategoryChange={onCategoryChange}
         onSubcategoriesChange={onSubcategoriesChange}
         onRemoveSubcategory={onRemoveSubcategory}
+        onAddFeature={() => {}}
+        onRemoveFeature={() => {}}
+        onFeatureChange={() => {}}
+        onStatusChange={() => {}}
+        onSave={() => {}}
       />
     );
   }

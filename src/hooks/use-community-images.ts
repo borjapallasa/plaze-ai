@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { CommunityImage } from "@/types/community-images";
@@ -10,14 +10,14 @@ export function useCommunityImages(communityUuid: string) {
   const [isLoading, setIsLoading] = useState(true);
 
   // Fetch images when communityUuid changes
-  useState(() => {
+  useEffect(() => {
     if (communityUuid) {
       fetchImages();
     } else {
       setImages([]);
       setIsLoading(false);
     }
-  });
+  }, [communityUuid]);
 
   const fetchImages = async () => {
     try {
@@ -29,7 +29,20 @@ export function useCommunityImages(communityUuid: string) {
         .order("is_primary", { ascending: false });
 
       if (error) throw error;
-      setImages(data || []);
+      
+      // Add public URL to each image before setting state
+      const imagesWithUrls = data?.map(image => {
+        const { publicUrl } = supabase.storage
+          .from('community-images')
+          .getPublicUrl(image.storage_path);
+          
+        return {
+          ...image,
+          url: publicUrl
+        };
+      }) || [];
+      
+      setImages(imagesWithUrls);
     } catch (error) {
       console.error("Error fetching community images:", error);
       toast.error("Failed to load community images");
