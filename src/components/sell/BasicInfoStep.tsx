@@ -2,7 +2,7 @@
 import React from "react";
 import { ServiceForm } from "@/components/service/ServiceForm";
 import { ProductForm } from "./ProductForm";
-import { CommunityForm } from "@/components/community/CommunityForm";
+import { CommunityForm } from "./CommunityForm";
 import { CategoryType } from "@/constants/service-categories";
 
 interface BasicInfoStepProps {
@@ -80,15 +80,17 @@ export const BasicInfoStep = ({
         )}
 
         {selectedOption === "community" && (
-          <CommunityForm 
-            communityData={{
-              name: formData.name,
-              description: formData.description,
-              communityType: formData.communityType,
-              communityPrice: formData.communityPrice,
-              thumbnail: formData.thumbnail
-            }}
-            onChange={onInputChange}
+          <CommunityForm
+            name={formData.name || ""}
+            description={formData.description || ""}
+            communityType={formData.communityType || "free"}
+            communityPrice={formData.communityPrice || ""}
+            thumbnail={formData.thumbnail || ""}
+            onNameChange={(value) => onInputChange("name", value)}
+            onDescriptionChange={(value) => onInputChange("description", value)}
+            onCommunityTypeChange={(value) => onInputChange("communityType", value)}
+            onCommunityPriceChange={(value) => onInputChange("communityPrice", value)}
+            onThumbnailChange={(value) => onInputChange("thumbnail", value)}
           />
         )}
       </div>

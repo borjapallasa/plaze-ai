@@ -6,17 +6,30 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 
 interface CommunityFormProps {
-  communityData: {
-    name: string;
-    description: string;
-    communityType: "free" | "paid";
-    communityPrice: string;
-    thumbnail: string;
-  };
-  onChange: (name: string, value: any) => void;
+  name: string;
+  description: string;
+  communityType: "free" | "paid";
+  communityPrice: string;
+  thumbnail: string;
+  onNameChange: (value: string) => void;
+  onDescriptionChange: (value: string) => void;
+  onCommunityTypeChange: (value: "free" | "paid") => void;
+  onCommunityPriceChange: (value: string) => void;
+  onThumbnailChange: (value: string) => void;
 }
 
-export const CommunityForm = ({ communityData, onChange }: CommunityFormProps) => {
+export const CommunityForm = ({
+  name,
+  description,
+  communityType,
+  communityPrice,
+  thumbnail,
+  onNameChange,
+  onDescriptionChange,
+  onCommunityTypeChange,
+  onCommunityPriceChange,
+  onThumbnailChange
+}: CommunityFormProps) => {
   return (
     <>
       <div className="space-y-2">
@@ -27,8 +40,8 @@ export const CommunityForm = ({ communityData, onChange }: CommunityFormProps) =
           type="text"
           id="name"
           name="name"
-          value={communityData.name}
-          onChange={(e) => onChange("name", e.target.value)}
+          value={name}
+          onChange={(e) => onNameChange(e.target.value)}
           className="w-full p-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
           placeholder="Your community name"
         />
@@ -41,8 +54,8 @@ export const CommunityForm = ({ communityData, onChange }: CommunityFormProps) =
         <Textarea
           id="description"
           name="description"
-          value={communityData.description}
-          onChange={(e) => onChange("description", e.target.value)}
+          value={description}
+          onChange={(e) => onDescriptionChange(e.target.value)}
           rows={3}
           className="w-full p-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
           placeholder="Describe what your community is about"
@@ -54,8 +67,8 @@ export const CommunityForm = ({ communityData, onChange }: CommunityFormProps) =
           Community Type
         </Label>
         <Select 
-          value={communityData.communityType} 
-          onValueChange={(value: "free" | "paid") => onChange("communityType", value)}
+          value={communityType} 
+          onValueChange={(value: "free" | "paid") => onCommunityTypeChange(value)}
         >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select community type" />
@@ -67,7 +80,7 @@ export const CommunityForm = ({ communityData, onChange }: CommunityFormProps) =
         </Select>
       </div>
 
-      {communityData.communityType === "paid" && (
+      {communityType === "paid" && (
         <div className="space-y-2">
           <Label htmlFor="communityPrice" className="block text-sm font-medium text-gray-700">
             Price
@@ -76,8 +89,8 @@ export const CommunityForm = ({ communityData, onChange }: CommunityFormProps) =
             type="number"
             id="communityPrice"
             name="communityPrice"
-            value={communityData.communityPrice}
-            onChange={(e) => onChange("communityPrice", e.target.value)}
+            value={communityPrice}
+            onChange={(e) => onCommunityPriceChange(e.target.value)}
             className="w-full"
             placeholder="0.00"
           />
@@ -92,8 +105,8 @@ export const CommunityForm = ({ communityData, onChange }: CommunityFormProps) =
           type="text"
           id="thumbnail"
           name="thumbnail"
-          value={communityData.thumbnail}
-          onChange={(e) => onChange("thumbnail", e.target.value)}
+          value={thumbnail}
+          onChange={(e) => onThumbnailChange(e.target.value)}
           className="w-full"
           placeholder="https://example.com/image.jpg"
         />
