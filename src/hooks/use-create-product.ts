@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -126,6 +125,7 @@ export function useCreateProduct() {
           product_uuid: product.product_uuid,
           user_uuid: currentUser.id,
           created_at: variant.createdAt,
+          files_link: variant.filesLink,
         }));
 
         const { error: variantsError } = await supabase
