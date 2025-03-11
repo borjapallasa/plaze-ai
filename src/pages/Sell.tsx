@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ServiceType, CategoryType } from "@/constants/service-categories";
 import { SellLayout } from "@/components/sell/SellLayout";
@@ -8,6 +8,8 @@ import { BasicInfoStep } from "@/components/sell/BasicInfoStep";
 import { ConfirmationStep } from "@/components/sell/ConfirmationStep";
 import { NavigationButtons } from "@/components/sell/NavigationButtons";
 import { toast } from "sonner";
+import { useAuth } from "@/lib/auth";
+import { supabase } from "@/integrations/supabase/client";
 
 const SellPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -30,6 +32,14 @@ const SellPage = () => {
     filesLink: ""
   });
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  // If user is already logged in, pre-fill the email
+  useEffect(() => {
+    if (user?.email) {
+      setFormData(prev => ({ ...prev, contactEmail: user.email }));
+    }
+  }, [user]);
 
   const handleOptionSelect = (option: string) => {
     setSelectedOption(option);
@@ -38,6 +48,7 @@ const SellPage = () => {
 
   const handleNext = () => {
     if (currentStep === 3) {
+      // The authentication is now handled in NavigationButtons
       if (selectedOption === "services") {
         navigate("/seller/services/new", { 
           state: { 
@@ -164,6 +175,7 @@ const SellPage = () => {
           <ConfirmationStep 
             selectedOption={selectedOption}
             formData={formData}
+            handleInputChange={handleInputChange}
           />
         )}
 

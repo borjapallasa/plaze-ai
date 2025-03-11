@@ -1,6 +1,8 @@
 
 import React from "react";
 import { CATEGORIES } from "@/constants/service-categories";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface ConfirmationStepProps {
   selectedOption: string | null;
@@ -14,10 +16,16 @@ interface ConfirmationStepProps {
     price: string;
     productPrice: string;
     filesLink: string;
+    contactEmail: string;
   };
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
 
-export function ConfirmationStep({ selectedOption, formData }: ConfirmationStepProps) {
+export function ConfirmationStep({ 
+  selectedOption, 
+  formData,
+  handleInputChange 
+}: ConfirmationStepProps) {
   return (
     <div className="space-y-6">
       <div className="text-center space-y-2">
@@ -98,6 +106,25 @@ export function ConfirmationStep({ selectedOption, formData }: ConfirmationStepP
             )}
           </div>
         </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="contactEmail" className="font-medium text-gray-700">
+          Email Address <span className="text-red-500">*</span>
+        </Label>
+        <Input
+          id="contactEmail"
+          name="contactEmail"
+          type="email"
+          value={formData.contactEmail}
+          onChange={handleInputChange}
+          placeholder="your@email.com"
+          required
+          className="w-full"
+        />
+        <p className="text-sm text-gray-500">
+          We'll use this to set up your account and send you a magic link for future logins.
+        </p>
       </div>
     </div>
   );
