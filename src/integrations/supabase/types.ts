@@ -2154,6 +2154,7 @@ export type Database = {
         Row: {
           compare_price: number | null
           created_at: string
+          files_link: string | null
           highlighted: boolean | null
           id: number
           name: string | null
@@ -2166,6 +2167,7 @@ export type Database = {
         Insert: {
           compare_price?: number | null
           created_at?: string
+          files_link?: string | null
           highlighted?: boolean | null
           id?: number
           name?: string | null
@@ -2178,6 +2180,7 @@ export type Database = {
         Update: {
           compare_price?: number | null
           created_at?: string
+          files_link?: string | null
           highlighted?: boolean | null
           id?: number
           name?: string | null

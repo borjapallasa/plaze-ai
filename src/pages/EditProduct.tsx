@@ -240,7 +240,8 @@ export default function EditProduct() {
               price: parseFloat(variant.price),
               compare_price: parseFloat(variant.comparePrice),
               highlighted: variant.highlight,
-              tags: Array.isArray(variant.tags) ? variant.tags : []
+              tags: Array.isArray(variant.tags) ? variant.tags : [],
+              files_link: variant.filesLink
             });
           
           if (insertError) throw insertError;
@@ -252,7 +253,8 @@ export default function EditProduct() {
               price: parseFloat(variant.price),
               compare_price: parseFloat(variant.comparePrice),
               highlighted: variant.highlight,
-              tags: Array.isArray(variant.tags) ? variant.tags : []
+              tags: Array.isArray(variant.tags) ? variant.tags : [],
+              files_link: variant.filesLink
             })
             .eq('variant_uuid', variant.id);
           

@@ -79,6 +79,17 @@ export function VariantCard({
           </div>
         </div>
 
+        <div>
+          <Label htmlFor={`files-link-${variant.id}`}>Files link</Label>
+          <Input
+            id={`files-link-${variant.id}`}
+            placeholder="Enter files link URL"
+            value={variant.filesLink || ""}
+            onChange={(e) => onUpdate(variant.id, "filesLink", e.target.value)}
+            className="w-full"
+          />
+        </div>
+
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
           <div className="flex items-center space-x-2">
             <Checkbox

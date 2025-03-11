@@ -10,6 +10,7 @@ export interface Variant {
   features?: string[];
   hidden?: boolean;
   createdAt?: string;
+  filesLink?: string;
 }
 
 export interface ProductVariantsEditorProps {
