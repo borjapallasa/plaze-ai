@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Card } from "@/components/ui/card";
@@ -11,18 +10,14 @@ import { useCreateProduct, ProductStatus } from "@/hooks/use-create-product";
 import { usePendingImages } from "@/hooks/use-pending-images";
 import { ProductCreateHeader } from "@/components/product/ProductCreateHeader";
 import { ProductBasicDetailsForm } from "@/components/product/ProductBasicDetailsForm";
-import { useLocation } from "react-router-dom";
 
 export default function NewProduct() {
-  const location = useLocation();
-  const initialData = location.state || {};
-  
-  const [productName, setProductName] = useState(initialData.name || "");
-  const [productDescription, setProductDescription] = useState(initialData.description || "");
-  const [techStack, setTechStack] = useState(initialData.techStack || "");
-  const [techStackPrice, setTechStackPrice] = useState(initialData.price || "");
+  const [productName, setProductName] = useState("");
+  const [productDescription, setProductDescription] = useState("");
+  const [techStack, setTechStack] = useState("");
+  const [techStackPrice, setTechStackPrice] = useState("");
   const [productIncludes, setProductIncludes] = useState("");
-  const [difficultyLevel, setDifficultyLevel] = useState(initialData.difficultyLevel || "");
+  const [difficultyLevel, setDifficultyLevel] = useState("");
   const [demo, setDemo] = useState("");
   const [productStatus, setProductStatus] = useState<ProductStatus>("draft");
   const [industries, setIndustries] = useState<string[]>([]);
@@ -31,12 +26,11 @@ export default function NewProduct() {
   const [team, setTeam] = useState<string[]>([]);
   const { pendingImages, addPendingImage, uploadPendingImages } = usePendingImages();
 
-  // Initialize with one variant with data from the form if available
   const [variants, setVariants] = useState<Variant[]>([
     {
       id: "1",
-      name: initialData.name || "",
-      price: initialData.price || "0",
+      name: "",
+      price: "0",
       comparePrice: "0",
       highlight: false,
       tags: [],
@@ -58,17 +52,6 @@ export default function NewProduct() {
       }
     }
   }, [productName, techStackPrice, variants]);
-
-  // If there's a thumbnail URL from the form, add it as a pending image
-  useEffect(() => {
-    if (initialData.thumbnail && pendingImages.length === 0) {
-      // Here we would typically handle the thumbnail URL
-      // For a complete implementation, we might need to either:
-      // 1. Fetch the image from the URL and add it to pending images
-      // 2. Or store the URL to be used directly
-      console.log("Thumbnail URL available:", initialData.thumbnail);
-    }
-  }, [initialData.thumbnail, pendingImages.length]);
 
   const { handleSave, isSaving } = useCreateProduct();
 
