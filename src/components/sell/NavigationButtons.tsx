@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
@@ -71,10 +70,8 @@ export function NavigationButtons({
       setIsCreating(true);
       
       try {
-        // Generate a random password for immediate login
         const tempPassword = Math.random().toString(36).slice(-12);
         
-        // Step 1: Check if user exists first
         const { data: existingUser } = await supabase
           .from('users')
           .select('user_uuid')
@@ -87,7 +84,6 @@ export function NavigationButtons({
           console.log("User already exists, using existing user", existingUser);
           userId = existingUser.user_uuid;
           
-          // Sign in with the existing user
           const { error: signInError } = await supabase.auth.signInWithOtp({
             email: formData.contactEmail,
             options: {
@@ -100,7 +96,6 @@ export function NavigationButtons({
             throw new Error(`Failed to sign in: ${signInError.message}`);
           }
         } else {
-          // Create new user
           const { data: authData, error: signUpError } = await supabase.auth.signUp({
             email: formData.contactEmail,
             password: tempPassword,
@@ -122,7 +117,6 @@ export function NavigationButtons({
           
           userId = authData.user.id;
           
-          // Sign in with the created user to get a valid session for RLS
           const { error: signInError } = await supabase.auth.signInWithPassword({
             email: formData.contactEmail,
             password: tempPassword,
@@ -134,7 +128,6 @@ export function NavigationButtons({
           }
         }
         
-        // Step 2: Try to get existing expert profile
         const { data: existingExpert } = await supabase
           .from('experts')
           .select('expert_uuid')
@@ -147,19 +140,15 @@ export function NavigationButtons({
           console.log("Expert profile already exists", existingExpert);
           expertId = existingExpert.expert_uuid;
         } else {
-          // Create expert record with public access
-          // Using upsert to handle potential race conditions
           const { data: expertData, error: expertError } = await supabase
             .from('experts')
-            .upsert({
+            .insert({
               user_uuid: userId,
               email: formData.contactEmail,
               name: formData.name,
               description: formData.description
-            }, {
-              onConflict: 'user_uuid'
             })
-            .select()
+            .select('expert_uuid')
             .single();
 
           if (expertError) {
@@ -174,9 +163,7 @@ export function NavigationButtons({
           expertId = expertData.expert_uuid;
         }
 
-        // Step 3: Create the specific type of record based on selection
         if (selectedOption === "services") {
-          // Ensure serviceType is one of the allowed enum values
           const serviceTypeValue = formData.serviceType === "one time" ? "one time" : "monthly";
           
           const { error: serviceError } = await supabase
@@ -213,7 +200,6 @@ export function NavigationButtons({
             throw new Error(`Failed to create product: ${productError.message}`);
           }
         } else if (selectedOption === "community") {
-          // Explicitly cast the community type to the correct enum value
           const communityType = formData.type === "paid" ? "paid" : "free";
           
           const { error: communityError } = await supabase
@@ -235,7 +221,6 @@ export function NavigationButtons({
           }
         }
 
-        // Send magic link for future logins
         await supabase.auth.signInWithOtp({
           email: formData.contactEmail,
           options: {
