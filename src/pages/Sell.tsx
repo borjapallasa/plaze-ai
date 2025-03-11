@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
@@ -106,6 +107,10 @@ const SellPage = () => {
   const handleServiceTypeChange = (value: ServiceType) => {
     setFormData(prev => ({ ...prev, serviceType: value }));
   };
+
+  console.log("Current Step:", currentStep);
+  console.log("Selected Option:", selectedOption);
+  console.log("Form Data:", formData);
 
   return (
     <div className="min-h-screen flex flex-col">
