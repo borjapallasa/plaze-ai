@@ -32,17 +32,32 @@ export function CommunityMediaUpload({
     updateImage,
     removeImage,
     reorderImages
-  } = useCommunityImages(communityUuid);
+  } = useCommunityImages(communityUuid, initialImages);
 
   const handleFileSelect = async (file: File) => {
+    console.log("File selected in CommunityMediaUpload:", file.name);
+    
     if (onFileSelect) {
+      console.log("Calling parent onFileSelect handler");
       onFileSelect(file);
+      // For temp mode, we won't actually upload to Supabase, just pass the file up
+      if (communityUuid === 'temp') {
+        const objectUrl = URL.createObjectURL(file);
+        setTempImage({ url: objectUrl, storage_path: 'temp' });
+      }
       return;
     }
     
-    const result = await uploadImage(file);
-    if (result && communityUuid === 'temp') {
-      setTempImage(result as {url: string, storage_path: string});
+    try {
+      console.log("Uploading image to Supabase");
+      const result = await uploadImage(file);
+      console.log("Upload result:", result);
+      
+      if (result && communityUuid === 'temp') {
+        setTempImage(result as {url: string, storage_path: string});
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
     }
   };
 

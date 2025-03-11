@@ -129,8 +129,9 @@ const SellPage = () => {
   };
 
   const handleFileSelect = (file: File) => {
-    console.log("File selected:", file.name);
+    console.log("File selected in SellPage:", file.name);
     const fileUrl = URL.createObjectURL(file);
+    console.log("Created object URL:", fileUrl);
     setFormData(prev => ({ ...prev, thumbnail: fileUrl }));
   };
 

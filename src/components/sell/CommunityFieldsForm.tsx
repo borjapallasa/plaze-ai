@@ -10,6 +10,7 @@ interface CommunityFieldsFormProps {
     intro: string;
     type: string;
     price: string;
+    thumbnail: string;
   };
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   handleCommunityTypeChange: (value: string) => void;
@@ -96,9 +97,21 @@ export function CommunityFieldsForm({
         <div className="mt-1">
           <CommunityMediaUpload 
             communityUuid="temp" 
-            onFileSelect={handleFileSelect}
+            onFileSelect={(file) => {
+              console.log("File selected in CommunityFieldsForm:", file.name);
+              handleFileSelect(file);
+            }}
           />
         </div>
+        {formData.thumbnail && (
+          <div className="mt-2">
+            <img 
+              src={formData.thumbnail} 
+              alt="Thumbnail preview" 
+              className="h-24 w-24 object-cover rounded-md border"
+            />
+          </div>
+        )}
       </div>
     </>
   );

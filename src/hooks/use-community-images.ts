@@ -10,8 +10,17 @@ import {
   setPrimaryImage
 } from "@/services/community-images-service";
 
-export function useCommunityImages(communityUuid: string) {
-  const [images, setImages] = useState<CommunityImage[]>([]);
+export function useCommunityImages(
+  communityUuid: string, 
+  initialImages: Array<{
+    id: number;
+    url: string;
+    storage_path: string;
+    is_primary: boolean;
+    file_name: string;
+  }> = []
+) {
+  const [images, setImages] = useState<CommunityImage[]>(initialImages as CommunityImage[]);
   const [isUploading, setIsUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -20,31 +29,41 @@ export function useCommunityImages(communityUuid: string) {
     if (communityUuid && communityUuid !== 'temp') {
       loadImages();
     } else {
-      setImages([]);
+      // For 'temp' mode, we'll use the initialImages if available or an empty array
+      setImages(initialImages as CommunityImage[]);
       setIsLoading(false);
     }
   }, [communityUuid]);
 
   const loadImages = async () => {
     if (!communityUuid || communityUuid === 'temp') {
-      setImages([]);
+      setImages(initialImages as CommunityImage[]);
       setIsLoading(false);
       return;
     }
     
     setIsLoading(true);
-    const fetchedImages = await fetchCommunityImages(communityUuid);
-    setImages(fetchedImages);
-    setIsLoading(false);
+    try {
+      const fetchedImages = await fetchCommunityImages(communityUuid);
+      setImages(fetchedImages);
+    } catch (error) {
+      console.error("Error loading community images:", error);
+      toast.error("Failed to load community images");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const uploadImage = async (file: File) => {
     setIsUploading(true);
+    console.log("Uploading image for community:", communityUuid);
     
     try {
       const result = await uploadCommunityImage(file, communityUuid);
       
       if (result) {
+        console.log("Upload successful:", result);
+        
         if (communityUuid === 'temp') {
           return result;
         }
@@ -62,34 +81,53 @@ export function useCommunityImages(communityUuid: string) {
         return newImage;
       }
       return null;
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast.error("Failed to upload image");
+      return null;
     } finally {
       setIsUploading(false);
     }
   };
 
   const updateImage = async (id: number, updates: { file_name: string; alt_text: string }) => {
-    await updateCommunityImage(id, updates);
-    // Update local state
-    setImages(prev => 
-      prev.map(img => 
-        img.id === id ? { ...img, ...updates } : img
-      )
-    );
+    try {
+      await updateCommunityImage(id, updates);
+      // Update local state
+      setImages(prev => 
+        prev.map(img => 
+          img.id === id ? { ...img, ...updates } : img
+        )
+      );
+    } catch (error) {
+      console.error("Error updating image:", error);
+      toast.error("Failed to update image details");
+    }
   };
 
   const removeImage = async (id: number, storagePath: string) => {
-    await removeCommunityImage(id, storagePath);
-    // Update local state
-    setImages(prev => prev.filter(img => img.id !== id));
+    try {
+      await removeCommunityImage(id, storagePath);
+      // Update local state
+      setImages(prev => prev.filter(img => img.id !== id));
+    } catch (error) {
+      console.error("Error removing image:", error);
+      toast.error("Failed to remove image");
+    }
   };
 
   const reorderImages = async (primaryId: number, currentPrimaryId: number) => {
-    await setPrimaryImage(primaryId, currentPrimaryId);
-    // Update local state
-    setImages(prev => prev.map(img => ({
-      ...img,
-      is_primary: img.id === primaryId
-    })));
+    try {
+      await setPrimaryImage(primaryId, currentPrimaryId);
+      // Update local state
+      setImages(prev => prev.map(img => ({
+        ...img,
+        is_primary: img.id === primaryId
+      })));
+    } catch (error) {
+      console.error("Error setting primary image:", error);
+      toast.error("Failed to update primary image");
+    }
   };
 
   return {
