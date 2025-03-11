@@ -142,6 +142,10 @@ export default function NewProduct() {
                       setProductName={setProductName}
                       productDescription={productDescription}
                       setProductDescription={setProductDescription}
+                      productPrice={techStackPrice}
+                      setProductPrice={setTechStackPrice}
+                      filesLink=""
+                      setFilesLink={() => {}}
                     />
                     <div className="pt-2">
                       <div className="flex items-center justify-between mb-4">

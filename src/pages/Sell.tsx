@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
@@ -525,7 +524,10 @@ const SellPage = () => {
                             Thumbnail Image
                           </Label>
                           <div className="mt-1">
-                            <CommunityMediaUpload onFileSelect={handleFileSelect} />
+                            <CommunityMediaUpload 
+                              communityUuid="temp" 
+                              onFileSelect={handleFileSelect} 
+                            />
                           </div>
                         </div>
                       </>
