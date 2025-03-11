@@ -44,7 +44,7 @@ export function useCommunityImages(communityUuid: string) {
           
         return {
           ...image,
-          url: urlData.publicUrl
+          url: urlData?.publicUrl // Add optional chaining here
         };
       }) || [];
       

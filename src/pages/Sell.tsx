@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
@@ -441,5 +442,213 @@ const SellPage = () => {
                                         className="h-4 w-4 rounded-full bg-gray-200 hover:bg-gray-300 inline-flex items-center justify-center text-gray-600"
                                       >
                                         ×
+                                      </button>
+                                    </span>
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </>
+                    )}
 
+                    {selectedOption === "community" && (
+                      <>
+                        <div className="space-y-2">
+                          <Label htmlFor="intro" className="font-medium text-gray-700">
+                            Introduction
+                          </Label>
+                          <Textarea
+                            id="intro"
+                            name="intro"
+                            value={formData.intro}
+                            onChange={handleInputChange}
+                            rows={4}
+                            className="w-full"
+                            placeholder="Introduce your community to potential members"
+                          />
+                        </div>
 
+                        <div className="space-y-2">
+                          <Label className="font-medium text-gray-700">
+                            Community Type
+                          </Label>
+                          <div className="flex gap-4">
+                            <div className="flex items-center">
+                              <input
+                                type="radio"
+                                id="type-free"
+                                name="type"
+                                value="free"
+                                checked={formData.type === "free"}
+                                onChange={() => handleCommunityTypeChange("free")}
+                                className="mr-2"
+                              />
+                              <Label htmlFor="type-free">Free</Label>
+                            </div>
+                            <div className="flex items-center">
+                              <input
+                                type="radio"
+                                id="type-paid"
+                                name="type"
+                                value="paid"
+                                checked={formData.type === "paid"}
+                                onChange={() => handleCommunityTypeChange("paid")}
+                                className="mr-2"
+                              />
+                              <Label htmlFor="type-paid">Paid</Label>
+                            </div>
+                          </div>
+                        </div>
+
+                        {formData.type === "paid" && (
+                          <div className="space-y-2">
+                            <Label htmlFor="price" className="font-medium text-gray-700">
+                              Price <span className="text-red-500">*</span>
+                            </Label>
+                            <Input
+                              type="number"
+                              id="price"
+                              name="price"
+                              value={formData.price}
+                              onChange={handleInputChange}
+                              className="w-full"
+                              placeholder="0.00"
+                              required
+                            />
+                          </div>
+                        )}
+
+                        <div className="space-y-2">
+                          <Label className="font-medium text-gray-700">
+                            Thumbnail Image
+                          </Label>
+                          <div className="mt-1">
+                            <CommunityMediaUpload onFileSelect={handleFileSelect} />
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+
+          {currentStep === 3 && (
+            <div className="space-y-6">
+              <div className="text-center space-y-2">
+                <h1 className="text-2xl md:text-3xl font-semibold text-gray-900">
+                  Review Your Information
+                </h1>
+                <p className="text-gray-600">
+                  Please review your information before proceeding
+                </p>
+              </div>
+
+              <div className="bg-gray-50 p-6 rounded-lg space-y-4">
+                <div>
+                  <h3 className="font-medium text-lg mb-2">Basic Information</h3>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-gray-700">Type:</span>
+                      <span className="font-medium">
+                        {selectedOption?.charAt(0).toUpperCase() + selectedOption?.slice(1)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-700">Name:</span>
+                      <span className="font-medium">{formData.name}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-700">Description:</span>
+                      <span className="font-medium">{formData.description}</span>
+                    </div>
+                    
+                    {selectedOption === "products" && (
+                      <>
+                        <div className="flex justify-between">
+                          <span className="text-gray-700">Price:</span>
+                          <span className="font-medium">${formData.productPrice}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-700">Files Link:</span>
+                          <span className="font-medium">{formData.filesLink}</span>
+                        </div>
+                      </>
+                    )}
+                    
+                    {selectedOption === "services" && (
+                      <>
+                        <div className="flex justify-between">
+                          <span className="text-gray-700">Price:</span>
+                          <span className="font-medium">${formData.servicePrice}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-700">Service Type:</span>
+                          <span className="font-medium">{formData.serviceType}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-700">Category:</span>
+                          <span className="font-medium">
+                            {CATEGORIES.find(c => c.value === formData.category)?.label}
+                          </span>
+                        </div>
+                      </>
+                    )}
+                    
+                    {selectedOption === "community" && (
+                      <>
+                        <div className="flex justify-between">
+                          <span className="text-gray-700">Type:</span>
+                          <span className="font-medium">
+                            {formData.type.charAt(0).toUpperCase() + formData.type.slice(1)}
+                          </span>
+                        </div>
+                        {formData.type === "paid" && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-700">Price:</span>
+                            <span className="font-medium">${formData.price}</span>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="flex justify-between pt-6">
+            <Button
+              onClick={handleBack}
+              variant="outline"
+              className="flex items-center gap-1"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back
+            </Button>
+            
+            <Button
+              onClick={handleNext}
+              disabled={
+                (currentStep === 1 && !selectedOption) ||
+                (currentStep === 2 && 
+                  ((selectedOption === "products" && (!formData.name || !formData.description || !formData.productPrice)) ||
+                   (selectedOption === "services" && (!formData.name || !formData.description || !formData.servicePrice || !formData.category)) ||
+                   (selectedOption === "community" && (!formData.name || !formData.description || (formData.type === "paid" && !formData.price)))))
+              }
+              className="flex items-center gap-1"
+            >
+              {currentStep === 3 ? "Submit" : "Next"}
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default SellPage;
