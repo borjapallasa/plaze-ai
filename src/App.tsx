@@ -43,6 +43,7 @@ import DraftTemplatesPage from "./pages/admin/DraftTemplates";
 import AdminTemplateDetailsPage from "./pages/admin/AdminTemplateDetails";
 import AffiliatesPage from "./pages/Affiliates";
 import SellerPage from "./pages/seller/SellerPage";
+import SellPage from "./pages/Sell";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +61,7 @@ function App() {
           <Route path="/experts" element={<ExpertsPage />} />
           <Route path="/expert/:expert_uuid" element={<ExpertPage />} />
           <Route path="/products" element={<ProductsPage />} />
+          <Route path="/sell" element={<SellPage />} />
           <Route path="/seller/products/new" element={<NewProductPage />} />
           <Route path="/seller/services/new" element={<NewServicePage />} />
           <Route path="/seller/communities/new" element={<NewCommunityPage />} />
