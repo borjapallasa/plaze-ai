@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
@@ -159,17 +158,12 @@ export function NavigationButtons({
         if (!expertExists) {
           console.log("Creating new expert profile for user:", userId);
           
-          // Use admin API or obtain a valid Supabase token first
-          // We need to make this API call to a server endpoint that uses service_role token
-          // But for now, let's see if we have a valid session
-          
           const { data: session } = await supabase.auth.getSession();
           if (!session.session) {
             throw new Error("No active session to create expert profile");
           }
           
           // Now attempt to create the expert with the user's session
-          // Note: This will only work if RLS is configured to allow this
           const { data: expertData, error: expertError } = await supabase
             .from('experts')
             .insert({
@@ -184,11 +178,6 @@ export function NavigationButtons({
 
           if (expertError) {
             console.error("Expert creation error:", expertError);
-            
-            // If we got an RLS error, we can try a different approach
-            // This is where you might want to redirect to a server endpoint
-            // that uses a service_role token to create the expert
-            
             throw new Error(`Error creating expert profile. Please contact support: ${expertError.message}`);
           }
 
