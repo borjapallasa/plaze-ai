@@ -33,12 +33,23 @@ export function useCommunityImages(communityUuid: string) {
     }
     
     setIsLoading(true);
-    const fetchedImages = await fetchCommunityImages(communityUuid);
-    setImages(fetchedImages);
-    setIsLoading(false);
+    try {
+      const fetchedImages = await fetchCommunityImages(communityUuid);
+      setImages(fetchedImages);
+    } catch (error) {
+      console.error("Error loading community images:", error);
+      toast.error("Failed to load community images");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const uploadImage = async (file: File) => {
+    if (!file) {
+      toast.error("No file provided");
+      return null;
+    }
+    
     setIsUploading(true);
     
     try {
@@ -59,8 +70,13 @@ export function useCommunityImages(communityUuid: string) {
         }
         
         setImages(prev => [...prev, newImage]);
+        toast.success("Image uploaded successfully");
         return newImage;
       }
+      return null;
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast.error("Failed to upload image");
       return null;
     } finally {
       setIsUploading(false);
@@ -68,28 +84,46 @@ export function useCommunityImages(communityUuid: string) {
   };
 
   const updateImage = async (id: number, updates: { file_name: string; alt_text: string }) => {
-    await updateCommunityImage(id, updates);
-    // Update local state
-    setImages(prev => 
-      prev.map(img => 
-        img.id === id ? { ...img, ...updates } : img
-      )
-    );
+    try {
+      await updateCommunityImage(id, updates);
+      // Update local state
+      setImages(prev => 
+        prev.map(img => 
+          img.id === id ? { ...img, ...updates } : img
+        )
+      );
+      toast.success("Image details updated");
+    } catch (error) {
+      console.error("Error updating image details:", error);
+      toast.error("Failed to update image details");
+    }
   };
 
   const removeImage = async (id: number, storagePath: string) => {
-    await removeCommunityImage(id, storagePath);
-    // Update local state
-    setImages(prev => prev.filter(img => img.id !== id));
+    try {
+      await removeCommunityImage(id, storagePath);
+      // Update local state
+      setImages(prev => prev.filter(img => img.id !== id));
+      toast.success("Image removed successfully");
+    } catch (error) {
+      console.error("Error removing image:", error);
+      toast.error("Failed to remove image");
+    }
   };
 
   const reorderImages = async (primaryId: number, currentPrimaryId: number) => {
-    await setPrimaryImage(primaryId, currentPrimaryId);
-    // Update local state
-    setImages(prev => prev.map(img => ({
-      ...img,
-      is_primary: img.id === primaryId
-    })));
+    try {
+      await setPrimaryImage(primaryId, currentPrimaryId);
+      // Update local state
+      setImages(prev => prev.map(img => ({
+        ...img,
+        is_primary: img.id === primaryId
+      })));
+      toast.success("Primary image updated");
+    } catch (error) {
+      console.error("Error setting primary image:", error);
+      toast.error("Failed to update primary image");
+    }
   };
 
   return {
@@ -100,6 +134,6 @@ export function useCommunityImages(communityUuid: string) {
     updateImage,
     removeImage,
     reorderImages,
-    fetchImages: loadImages
+    refreshImages: loadImages
   };
 }

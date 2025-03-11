@@ -35,8 +35,7 @@ export const fetchCommunityImages = async (communityUuid: string): Promise<Commu
     return imagesWithUrls;
   } catch (error) {
     console.error("Error fetching community images:", error);
-    toast.error("Failed to load community images");
-    return [];
+    throw error;
   }
 };
 
@@ -46,9 +45,9 @@ export const fetchCommunityImages = async (communityUuid: string): Promise<Commu
 export const uploadCommunityImage = async (
   file: File,
   communityUuid: string
-): Promise<{ url: string; storage_path: string } | null> => {
+): Promise<{ id: number; url: string; storage_path: string } | null> => {
   if (!communityUuid) {
-    toast.error("No community UUID provided");
+    console.error("No community UUID provided");
     return null;
   }
 
@@ -73,7 +72,7 @@ export const uploadCommunityImage = async (
 
     // For temporary community, just return the URL without creating a database entry
     if (communityUuid === 'temp') {
-      return { url: publicURLData.publicUrl, storage_path: filePath };
+      return { id: 0, url: publicURLData.publicUrl, storage_path: filePath };
     }
 
     // Create database entry for real communities
@@ -92,12 +91,10 @@ export const uploadCommunityImage = async (
 
     if (dbError) throw dbError;
 
-    toast.success("Image uploaded successfully");
     return { ...data, url: publicURLData.publicUrl };
   } catch (error) {
     console.error("Error uploading community image:", error);
-    toast.error("Failed to upload image");
-    return null;
+    throw error;
   }
 };
 
@@ -115,10 +112,8 @@ export const updateCommunityImage = async (
       .eq("id", id);
 
     if (error) throw error;
-    toast.success("Image details updated");
   } catch (error) {
     console.error("Error updating image details:", error);
-    toast.error("Failed to update image details");
     throw error;
   }
 };
@@ -145,11 +140,9 @@ export const removeCommunityImage = async (
       .eq("id", id);
 
     if (dbError) throw dbError;
-
-    toast.success("Image removed successfully");
   } catch (error) {
     console.error("Error removing community image:", error);
-    toast.error("Failed to remove image");
+    throw error;
   }
 };
 
@@ -176,10 +169,8 @@ export const setPrimaryImage = async (
       .eq("id", primaryId);
 
     if (error) throw error;
-
-    toast.success("Primary image updated");
   } catch (error) {
     console.error("Error reordering community images:", error);
-    toast.error("Failed to update primary image");
+    throw error;
   }
 };

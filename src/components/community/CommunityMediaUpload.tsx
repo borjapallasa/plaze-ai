@@ -1,9 +1,10 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ImageUploadArea } from "@/components/product/ImageUploadArea";
 import { ImageDetailsDialog } from "@/components/community/ImageDetailsDialog";
 import { CommunityImageCard } from "@/components/community/CommunityImageCard";
 import { useCommunityImages } from "@/hooks/use-community-images";
+import { toast } from "sonner";
 
 interface CommunityMediaUploadProps {
   communityUuid: string;
@@ -23,7 +24,7 @@ export function CommunityMediaUpload({
   initialImages = []
 }: CommunityMediaUploadProps) {
   const [selectedImage, setSelectedImage] = useState<null | any>(null);
-  const [tempImage, setTempImage] = useState<{url: string, storage_path: string} | null>(null);
+  const [tempImage, setTempImage] = useState<{url: string, storage_path: string, id: number} | null>(null);
   
   const {
     images,
@@ -35,14 +36,26 @@ export function CommunityMediaUpload({
   } = useCommunityImages(communityUuid);
 
   const handleFileSelect = async (file: File) => {
+    console.log("CommunityMediaUpload: File selected:", file.name);
+    
     if (onFileSelect) {
+      console.log("CommunityMediaUpload: Using onFileSelect callback");
       onFileSelect(file);
       return;
     }
     
-    const result = await uploadImage(file);
-    if (result && communityUuid === 'temp') {
-      setTempImage(result as {url: string, storage_path: string});
+    console.log("CommunityMediaUpload: Uploading image directly");
+    try {
+      const result = await uploadImage(file);
+      console.log("CommunityMediaUpload: Upload result:", result);
+      
+      if (result && communityUuid === 'temp') {
+        console.log("CommunityMediaUpload: Setting temp image for preview");
+        setTempImage(result as {url: string, storage_path: string, id: number});
+      }
+    } catch (error) {
+      console.error("Error in handleFileSelect:", error);
+      toast.error("Failed to upload image");
     }
   };
 
@@ -50,6 +63,8 @@ export function CommunityMediaUpload({
   const displayImages = communityUuid === 'temp' && tempImage 
     ? [{ id: 0, url: tempImage.url, storage_path: tempImage.storage_path, is_primary: true, file_name: 'Temporary image' }] 
     : images;
+
+  console.log("CommunityMediaUpload: displayImages:", displayImages);
 
   return (
     <div className="space-y-4">
