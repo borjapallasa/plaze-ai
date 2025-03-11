@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { CreationLoadingState } from "./CreationLoadingState";
+import { ServiceType } from "@/constants/service-categories";
 
 interface NavigationButtonsProps {
   currentStep: number;
@@ -13,7 +14,7 @@ interface NavigationButtonsProps {
     name: string;
     description: string;
     servicePrice: string;
-    serviceType?: string; // Add this missing property
+    serviceType: ServiceType; // Fixed: Changed from optional to required with correct type
     category: string;
     type: string;
     price: string;
@@ -105,6 +106,9 @@ export function NavigationButtons({
 
         // Step 4: Create the specific type of record
         if (selectedOption === "services") {
+          // Ensure serviceType is one of the allowed enum values
+          const serviceTypeValue = formData.serviceType === "one time" ? "one time" : "monthly";
+          
           const { error: serviceError } = await supabase
             .from('services')
             .insert({
@@ -113,7 +117,7 @@ export function NavigationButtons({
               name: formData.name,
               description: formData.description,
               price: parseFloat(formData.servicePrice),
-              type: formData.serviceType || "one time", // Add fallback if serviceType is undefined
+              type: serviceTypeValue, // Using properly typed value
               main_category: { value: formData.category },
               status: 'draft'
             });
@@ -133,7 +137,7 @@ export function NavigationButtons({
 
           if (productError) throw productError;
         } else if (selectedOption === "community") {
-          // Fix the type issue by explicitly casting the type to "free" or "paid"
+          // Explicitly cast the community type to the correct enum value
           const communityType = formData.type === "paid" ? "paid" : "free";
           
           const { error: communityError } = await supabase
@@ -144,7 +148,7 @@ export function NavigationButtons({
               name: formData.name,
               description: formData.description,
               intro: formData.description,
-              type: communityType, // Use correctly typed variable
+              type: communityType as "free" | "paid", // Explicit type assertion
               price: formData.type === 'paid' ? parseFloat(formData.price) : 0,
               visibility: 'draft'
             });
