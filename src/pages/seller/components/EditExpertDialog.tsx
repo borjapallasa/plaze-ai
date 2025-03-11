@@ -62,7 +62,7 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
     try {
       console.log("Updating expert with UUID:", expert.expert_uuid);
       
-      // Perform the update operation
+      // Perform the update operation in Supabase
       const { error } = await supabase
         .from('experts')
         .update({
@@ -83,12 +83,13 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
       console.log("Expert updated successfully");
       
       // Create an updated expert object by merging the original expert with the form data
+      // We don't include updated_at in the object we pass to onUpdate since it's not part of the Expert type
       const updatedExpert: Expert = {
         ...expert,
         name: formData.name,
         title: formData.title,
-        description: formData.description,
-        updated_at: new Date().toISOString()
+        description: formData.description
+        // Don't include updated_at here as it's not part of the Expert type
       };
 
       // Call the onUpdate callback to update the parent component
