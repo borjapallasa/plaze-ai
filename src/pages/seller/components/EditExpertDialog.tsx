@@ -84,33 +84,26 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
       }
       
       // Now perform the update
-      const { data, error } = await supabase
+      const { error: updateError } = await supabase
         .from('experts')
         .update({
           name: formData.name,
           title: formData.title,
           description: formData.description
         })
-        .eq('expert_uuid', expert.expert_uuid)
-        .select()
-        .maybeSingle();
+        .eq('expert_uuid', expert.expert_uuid);
 
-      if (error) {
-        console.error('Error updating expert:', error);
-        toast.error(`Failed to update profile: ${error.message}`);
+      if (updateError) {
+        console.error('Error updating expert:', updateError);
+        toast.error(`Failed to update profile: ${updateError.message}`);
+        setIsLoading(false);
         return;
       }
 
-      if (!data) {
-        toast.error("Failed to retrieve updated expert data");
-        return;
-      }
-
-      // Ensure we maintain the correct types by creating a properly typed Expert object
+      // Instead of trying to get the updated data back, create an updated expert object
+      // by merging the original expert with the form data
       const updatedExpert: Expert = {
-        ...expert, // Keep existing expert data
-        ...data,   // Spread new data while maintaining existing types
-        areas: convertJsonArrayToStringArray(data.areas), // Convert areas to string array
+        ...expert,
         name: formData.name,
         title: formData.title,
         description: formData.description
