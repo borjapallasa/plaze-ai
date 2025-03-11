@@ -20,6 +20,12 @@ export function useCommunityImages(communityUuid: string) {
   }, [communityUuid]);
 
   const fetchImages = async () => {
+    if (!communityUuid || communityUuid === 'temp') {
+      setImages([]);
+      setIsLoading(false);
+      return;
+    }
+    
     try {
       setIsLoading(true);
       const { data, error } = await supabase
@@ -32,13 +38,13 @@ export function useCommunityImages(communityUuid: string) {
       
       // Add public URL to each image before setting state
       const imagesWithUrls = data?.map(image => {
-        const { data } = supabase.storage
+        const { data: urlData } = supabase.storage
           .from('community-images')
           .getPublicUrl(image.storage_path);
           
         return {
           ...image,
-          url: data.publicUrl
+          url: urlData.publicUrl
         };
       }) || [];
       

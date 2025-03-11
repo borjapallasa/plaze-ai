@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
@@ -20,6 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ServiceCategories } from "@/components/service/ServiceCategories";
 import { CATEGORIES, SUBCATEGORIES, CategoryType, SERVICE_TYPES, ServiceType } from "@/constants/service-categories";
 import { CommunityMediaUpload } from "@/components/community/CommunityMediaUpload";
+import { ProductBasicDetailsForm } from "@/components/product/ProductBasicDetailsForm";
 
 const SellPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -37,7 +37,9 @@ const SellPage = () => {
     type: "free",
     price: "",
     thumbnail: "",
-    videoUrl: "" // Added for community video introduction
+    videoUrl: "",
+    productPrice: "",
+    filesLink: ""
   });
   const navigate = useNavigate();
 
@@ -48,7 +50,6 @@ const SellPage = () => {
 
   const handleNext = () => {
     if (currentStep === 3) {
-      // Final step - navigate based on selection
       if (selectedOption === "services") {
         navigate("/seller/services/new", { 
           state: { 
@@ -63,7 +64,14 @@ const SellPage = () => {
           } 
         });
       } else if (selectedOption === "products") {
-        navigate("/seller/products/new");
+        navigate("/seller/products/new", {
+          state: {
+            name: formData.name,
+            description: formData.description,
+            price: formData.productPrice,
+            filesLink: formData.filesLink
+          }
+        });
       } else if (selectedOption === "community") {
         navigate("/seller/communities/new", {
           state: {
@@ -73,12 +81,11 @@ const SellPage = () => {
             type: formData.type,
             price: formData.type === "paid" ? formData.price : "0",
             thumbnail: formData.thumbnail,
-            videoUrl: formData.videoUrl // Added for video URL
+            videoUrl: formData.videoUrl
           }
         });
       }
     } else {
-      // Move to next step
       setCurrentStep(currentStep + 1);
     }
   };
@@ -129,15 +136,12 @@ const SellPage = () => {
   };
 
   const handleFileSelect = (file: File) => {
-    // This would be handled by the actual upload in a production environment
-    // Here we're just storing the file in state to show it in the preview
     const fileUrl = URL.createObjectURL(file);
     setFormData(prev => ({ ...prev, thumbnail: fileUrl }));
   };
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Header */}
       <header className="p-4 md:p-6 flex justify-between items-center border-b">
         <Link to="/" className="flex items-center">
           <Home className="h-6 w-6" />
@@ -167,7 +171,6 @@ const SellPage = () => {
         </div>
       </header>
 
-      {/* Progress indicator */}
       <div className="border-b">
         <div className="max-w-3xl mx-auto py-4 px-4 md:px-0">
           <div className="flex items-center justify-between">
@@ -200,10 +203,8 @@ const SellPage = () => {
         </div>
       </div>
 
-      {/* Main content */}
       <main className="flex-1 flex flex-col items-center justify-center p-4 md:p-6 max-w-3xl mx-auto w-full">
         <div className="w-full space-y-8">
-          {/* Step 1: Choose what to sell */}
           {currentStep === 1 && (
             <div className="space-y-6">
               <div className="text-center space-y-2">
@@ -273,7 +274,6 @@ const SellPage = () => {
             </div>
           )}
 
-          {/* Step 2: Basic information */}
           {currentStep === 2 && (
             <div className="space-y-6">
               <div className="text-center space-y-2">
@@ -288,420 +288,158 @@ const SellPage = () => {
               </div>
 
               <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name" className="font-medium text-gray-700">
-                    Name <span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    className="w-full"
-                    placeholder={`Your ${selectedOption === "services" ? "service" : 
-                                  selectedOption === "products" ? "product" : 
-                                  "community"} name`}
-                    required
+                {selectedOption === "products" ? (
+                  <ProductBasicDetailsForm
+                    productName={formData.name}
+                    setProductName={(value) => setFormData(prev => ({ ...prev, name: value }))}
+                    productDescription={formData.description}
+                    setProductDescription={(value) => setFormData(prev => ({ ...prev, description: value }))}
+                    productPrice={formData.productPrice}
+                    setProductPrice={(value) => setFormData(prev => ({ ...prev, productPrice: value }))}
+                    filesLink={formData.filesLink}
+                    setFilesLink={(value) => setFormData(prev => ({ ...prev, filesLink: value }))}
                   />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="description" className="font-medium text-gray-700">
-                    Brief Description <span className="text-red-500">*</span>
-                  </Label>
-                  <Textarea
-                    id="description"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    rows={3}
-                    className="w-full"
-                    placeholder="Describe what you're offering"
-                    required
-                  />
-                </div>
-
-                {selectedOption === "services" && (
+                ) : (
                   <>
                     <div className="space-y-2">
-                      <Label htmlFor="servicePrice" className="font-medium text-gray-700">
-                        Price <span className="text-red-500">*</span>
+                      <Label htmlFor="name" className="font-medium text-gray-700">
+                        Name <span className="text-red-500">*</span>
                       </Label>
                       <Input
-                        type="number"
-                        id="servicePrice"
-                        name="servicePrice"
-                        value={formData.servicePrice}
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={formData.name}
                         onChange={handleInputChange}
                         className="w-full"
-                        placeholder="0.00"
+                        placeholder={`Your ${selectedOption === "services" ? "service" : 
+                                    selectedOption === "products" ? "product" : 
+                                    "community"} name`}
                         required
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="serviceType" className="font-medium text-gray-700">
-                        Service Type <span className="text-red-500">*</span>
-                      </Label>
-                      <Select 
-                        value={formData.serviceType} 
-                        onValueChange={handleServiceTypeChange}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {SERVICE_TYPES.map((type) => (
-                            <SelectItem key={type.value} value={type.value}>
-                              {type.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="category" className="font-medium text-gray-700">
-                        Category <span className="text-red-500">*</span>
-                      </Label>
-                      <Select 
-                        value={formData.category} 
-                        onValueChange={handleCategoryChange}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select a category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {CATEGORIES.map((cat) => (
-                            <SelectItem key={cat.value} value={cat.value}>
-                              {cat.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {formData.category && (
-                      <div className="space-y-2">
-                        <Label htmlFor="subcategories" className="font-medium text-gray-700">
-                          Subcategories
-                        </Label>
-                        <Select 
-                          value=""
-                          onValueChange={handleSubcategoriesChange}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select subcategories" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {SUBCATEGORIES[formData.category].map((subcat) => (
-                              <SelectItem 
-                                key={subcat.value} 
-                                value={subcat.value}
-                                className="relative py-2.5"
-                              >
-                                <div className="flex items-center justify-between w-full">
-                                  <span>{subcat.label}</span>
-                                  {formData.selectedSubcategories.includes(subcat.value) && (
-                                    <span className="text-primary">✓</span>
-                                  )}
-                                </div>
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        
-                        {formData.selectedSubcategories.length > 0 && (
-                          <div className="mt-2 flex flex-wrap gap-2">
-                            {formData.selectedSubcategories.map((sub) => {
-                              const subcatLabel = SUBCATEGORIES[formData.category as CategoryType].find(s => s.value === sub)?.label;
-                              return (
-                                <span
-                                  key={sub}
-                                  className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm flex items-center gap-1"
-                                >
-                                  {subcatLabel}
-                                  <button
-                                    type="button"
-                                    onClick={() => handleRemoveSubcategory(sub)}
-                                    className="h-4 w-4 rounded-full bg-gray-200 hover:bg-gray-300 inline-flex items-center justify-center text-gray-600"
-                                  >
-                                    ×
-                                  </button>
-                                </span>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </>
-                )}
-
-                {selectedOption === "community" && (
-                  <>
-                    <div className="space-y-2">
-                      <Label htmlFor="type" className="font-medium text-gray-700">
-                        Type <span className="text-red-500">*</span>
-                      </Label>
-                      <Select 
-                        value={formData.type} 
-                        onValueChange={handleCommunityTypeChange}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="free">Free</SelectItem>
-                          <SelectItem value="paid">Paid</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    {formData.type === "paid" && (
-                      <div className="space-y-2">
-                        <Label htmlFor="price" className="font-medium text-gray-700">
-                          Price <span className="text-red-500">*</span>
-                        </Label>
-                        <Input
-                          type="number"
-                          id="price"
-                          name="price"
-                          value={formData.price}
-                          onChange={handleInputChange}
-                          className="w-full"
-                          placeholder="0.00"
-                          required={formData.type === "paid"}
-                        />
-                      </div>
-                    )}
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="intro" className="font-medium text-gray-700">
-                        Brief Introduction
+                      <Label htmlFor="description" className="font-medium text-gray-700">
+                        Brief Description <span className="text-red-500">*</span>
                       </Label>
                       <Textarea
-                        id="intro"
-                        name="intro"
-                        value={formData.intro}
+                        id="description"
+                        name="description"
+                        value={formData.description}
                         onChange={handleInputChange}
-                        rows={2}
+                        rows={3}
                         className="w-full"
-                        placeholder="Introduce your community"
+                        placeholder="Describe what you're offering"
+                        required
                       />
                     </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="videoUrl" className="font-medium text-gray-700">
-                        Video Introduction URL
-                      </Label>
-                      <Input
-                        type="url"
-                        id="videoUrl"
-                        name="videoUrl"
-                        value={formData.videoUrl}
-                        onChange={handleInputChange}
-                        className="w-full"
-                        placeholder="https://www.youtube.com/watch?v=..."
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label className="font-medium text-gray-700">
-                        Thumbnail
-                      </Label>
-                      <div className="mt-1">
-                        <CommunityMediaUpload 
-                          communityUuid="temp" 
-                          onFileSelect={handleFileSelect}
-                        />
-                      </div>
-                      {formData.thumbnail && (
-                        <div className="mt-2">
-                          <p className="text-sm text-gray-500">Preview:</p>
-                          <div className="mt-1 aspect-video w-full max-w-xs overflow-hidden rounded-lg border border-gray-200">
-                            <img 
-                              src={formData.thumbnail} 
-                              alt="Thumbnail preview" 
-                              className="h-full w-full object-cover"
-                            />
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </>
-                )}
 
-                {selectedOption !== "services" && selectedOption !== "community" && (
-                  <div className="space-y-2">
-                    <Label htmlFor="contactEmail" className="font-medium text-gray-700">
-                      Contact Email <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      type="email"
-                      id="contactEmail"
-                      name="contactEmail"
-                      value={formData.contactEmail}
-                      onChange={handleInputChange}
-                      className="w-full"
-                      placeholder="your@email.com"
-                      required
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Step 3: Confirmation */}
-          {currentStep === 3 && (
-            <div className="space-y-6">
-              <div className="text-center space-y-2">
-                <h1 className="text-2xl md:text-3xl font-semibold text-gray-900">
-                  Ready to create your {selectedOption === "services" ? "service" : 
-                                  selectedOption === "products" ? "product" : 
-                                  "community"}?
-                </h1>
-                <p className="text-gray-600">
-                  Here's a summary of what you're about to create:
-                </p>
-              </div>
-
-              <Card className="p-6 space-y-4">
-                <div>
-                  <h3 className="font-medium text-gray-900">Type</h3>
-                  <p className="text-gray-700">
-                    {selectedOption === "services" ? "Service" : 
-                     selectedOption === "products" ? "Product" : 
-                     "Community"}
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="font-medium text-gray-900">Name</h3>
-                  <p className="text-gray-700">{formData.name || "Not specified"}</p>
-                </div>
-
-                <div>
-                  <h3 className="font-medium text-gray-900">Description</h3>
-                  <p className="text-gray-700">{formData.description || "Not specified"}</p>
-                </div>
-
-                {selectedOption === "services" ? (
-                  <>
-                    <div>
-                      <h3 className="font-medium text-gray-900">Price</h3>
-                      <p className="text-gray-700">${formData.servicePrice || "0.00"}</p>
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-gray-900">Service Type</h3>
-                      <p className="text-gray-700">{SERVICE_TYPES.find(t => t.value === formData.serviceType)?.label || "One Time"}</p>
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-gray-900">Category</h3>
-                      <p className="text-gray-700">
-                        {formData.category ? CATEGORIES.find(c => c.value === formData.category)?.label : "Not specified"}
-                      </p>
-                    </div>
-                    {formData.selectedSubcategories.length > 0 && (
-                      <div>
-                        <h3 className="font-medium text-gray-900">Subcategories</h3>
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {formData.selectedSubcategories.map(sub => (
-                            <span key={sub} className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs">
-                              {formData.category && 
-                                CATEGORIES.find(c => c.value === formData.category) &&
-                                SUBCATEGORIES[formData.category as CategoryType].find(s => s.value === sub)?.label}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </>
-                ) : selectedOption === "community" ? (
-                  <>
-                    <div>
-                      <h3 className="font-medium text-gray-900">Type</h3>
-                      <p className="text-gray-700">{formData.type === "free" ? "Free" : "Paid"}</p>
-                    </div>
-                    {formData.type === "paid" && (
-                      <div>
-                        <h3 className="font-medium text-gray-900">Price</h3>
-                        <p className="text-gray-700">${formData.price || "0.00"}</p>
-                      </div>
-                    )}
-                    <div>
-                      <h3 className="font-medium text-gray-900">Introduction</h3>
-                      <p className="text-gray-700">{formData.intro || "Not specified"}</p>
-                    </div>
-                    {formData.videoUrl && (
-                      <div>
-                        <h3 className="font-medium text-gray-900">Video URL</h3>
-                        <p className="text-gray-700">{formData.videoUrl}</p>
-                      </div>
-                    )}
-                    {formData.thumbnail && (
-                      <div>
-                        <h3 className="font-medium text-gray-900">Thumbnail</h3>
-                        <div className="mt-1 aspect-video w-full max-w-xs overflow-hidden rounded-lg border border-gray-200">
-                          <img 
-                            src={formData.thumbnail} 
-                            alt="Thumbnail preview" 
-                            className="h-full w-full object-cover"
+                    {selectedOption === "services" && (
+                      <>
+                        <div className="space-y-2">
+                          <Label htmlFor="servicePrice" className="font-medium text-gray-700">
+                            Price <span className="text-red-500">*</span>
+                          </Label>
+                          <Input
+                            type="number"
+                            id="servicePrice"
+                            name="servicePrice"
+                            value={formData.servicePrice}
+                            onChange={handleInputChange}
+                            className="w-full"
+                            placeholder="0.00"
+                            required
                           />
                         </div>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <div>
-                    <h3 className="font-medium text-gray-900">Contact Email</h3>
-                    <p className="text-gray-700">{formData.contactEmail || "Not specified"}</p>
-                  </div>
-                )}
-              </Card>
 
-              <p className="text-sm text-gray-600 text-center">
-                Click "Continue" to create your {selectedOption === "services" ? "service" : 
-                              selectedOption === "products" ? "product" : 
-                              "community"}.
-              </p>
-            </div>
-          )}
-        </div>
-      </main>
+                        <div className="space-y-2">
+                          <Label htmlFor="serviceType" className="font-medium text-gray-700">
+                            Service Type <span className="text-red-500">*</span>
+                          </Label>
+                          <Select 
+                            value={formData.serviceType} 
+                            onValueChange={handleServiceTypeChange}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {SERVICE_TYPES.map((type) => (
+                                <SelectItem key={type.value} value={type.value}>
+                                  {type.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
 
-      {/* Footer */}
-      <footer className="p-4 md:p-6 border-t bg-white">
-        <div className="max-w-3xl mx-auto flex justify-between">
-          <Button variant="outline" onClick={handleBack}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back
-          </Button>
-          <Button 
-            onClick={handleNext} 
-            disabled={
-              (currentStep === 1 && !selectedOption) ||
-              (currentStep === 2 && (
-                !formData.name || 
-                !formData.description || 
-                (selectedOption === "services" 
-                  ? !formData.servicePrice || !formData.category 
-                  : selectedOption === "community"
-                    ? (formData.type === "paid" && !formData.price)
-                    : !formData.contactEmail
-                )
-              ))
-            }
-          >
-            {currentStep === 3 ? "Continue" : "Next"}
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
-      </footer>
-    </div>
-  );
-};
+                        <div className="space-y-2">
+                          <Label htmlFor="category" className="font-medium text-gray-700">
+                            Category <span className="text-red-500">*</span>
+                          </Label>
+                          <Select 
+                            value={formData.category} 
+                            onValueChange={handleCategoryChange}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select a category" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {CATEGORIES.map((cat) => (
+                                <SelectItem key={cat.value} value={cat.value}>
+                                  {cat.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
 
-export default SellPage;
+                        {formData.category && (
+                          <div className="space-y-2">
+                            <Label htmlFor="subcategories" className="font-medium text-gray-700">
+                              Subcategories
+                            </Label>
+                            <Select 
+                              value=""
+                              onValueChange={handleSubcategoriesChange}
+                            >
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select subcategories" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {SUBCATEGORIES[formData.category].map((subcat) => (
+                                  <SelectItem 
+                                    key={subcat.value} 
+                                    value={subcat.value}
+                                    className="relative py-2.5"
+                                  >
+                                    <div className="flex items-center justify-between w-full">
+                                      <span>{subcat.label}</span>
+                                      {formData.selectedSubcategories.includes(subcat.value) && (
+                                        <span className="text-primary">✓</span>
+                                      )}
+                                    </div>
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            
+                            {formData.selectedSubcategories.length > 0 && (
+                              <div className="mt-2 flex flex-wrap gap-2">
+                                {formData.selectedSubcategories.map((sub) => {
+                                  const subcatLabel = SUBCATEGORIES[formData.category as CategoryType].find(s => s.value === sub)?.label;
+                                  return (
+                                    <span
+                                      key={sub}
+                                      className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm flex items-center gap-1"
+                                    >
+                                      {subcatLabel}
+                                      <button
+                                        type="button"
+                                        onClick={() => handleRemoveSubcategory(sub)}
+                                        className="h-4 w-4 rounded-full bg-gray-200 hover:bg-gray-300 inline-flex items-center justify-center text-gray-600"
+                                      >
+                                        ×
+
+
