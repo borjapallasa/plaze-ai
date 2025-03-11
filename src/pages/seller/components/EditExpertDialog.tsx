@@ -62,16 +62,21 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
     try {
       console.log("Updating expert with UUID:", expert.expert_uuid);
       
-      // Perform the update operation in Supabase
-      const { error } = await supabase
+      // Debugging: Log the update payload
+      const updatePayload = {
+        name: formData.name,
+        title: formData.title,
+        description: formData.description,
+        updated_at: new Date().toISOString()
+      };
+      console.log("Update payload:", updatePayload);
+      
+      // Perform the update operation in Supabase with explicit table name
+      const { data, error } = await supabase
         .from('experts')
-        .update({
-          name: formData.name,
-          title: formData.title,
-          description: formData.description,
-          updated_at: new Date().toISOString()
-        })
-        .eq('expert_uuid', expert.expert_uuid);
+        .update(updatePayload)
+        .eq('expert_uuid', expert.expert_uuid)
+        .select();
 
       if (error) {
         console.error('Error updating expert:', error);
@@ -80,16 +85,21 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
         return;
       }
 
-      console.log("Expert updated successfully");
+      console.log("Expert update response:", data);
+      
+      if (!data || data.length === 0) {
+        console.error('No data returned after update');
+        toast.error("Failed to update profile: No data returned");
+        setIsLoading(false);
+        return;
+      }
       
       // Create an updated expert object by merging the original expert with the form data
-      // We don't include updated_at in the object we pass to onUpdate since it's not part of the Expert type
       const updatedExpert: Expert = {
         ...expert,
         name: formData.name,
         title: formData.title,
         description: formData.description
-        // Don't include updated_at here as it's not part of the Expert type
       };
 
       // Call the onUpdate callback to update the parent component
