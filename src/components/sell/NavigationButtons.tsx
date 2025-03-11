@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
@@ -12,6 +13,7 @@ interface NavigationButtonsProps {
     name: string;
     description: string;
     servicePrice: string;
+    serviceType?: string; // Add this missing property
     category: string;
     type: string;
     price: string;
@@ -111,7 +113,7 @@ export function NavigationButtons({
               name: formData.name,
               description: formData.description,
               price: parseFloat(formData.servicePrice),
-              type: formData.serviceType,
+              type: formData.serviceType || "one time", // Add fallback if serviceType is undefined
               main_category: { value: formData.category },
               status: 'draft'
             });
@@ -131,6 +133,9 @@ export function NavigationButtons({
 
           if (productError) throw productError;
         } else if (selectedOption === "community") {
+          // Fix the type issue by explicitly casting the type to "free" or "paid"
+          const communityType = formData.type === "paid" ? "paid" : "free";
+          
           const { error: communityError } = await supabase
             .from('communities')
             .insert({
@@ -139,7 +144,7 @@ export function NavigationButtons({
               name: formData.name,
               description: formData.description,
               intro: formData.description,
-              type: formData.type,
+              type: communityType, // Use correctly typed variable
               price: formData.type === 'paid' ? parseFloat(formData.price) : 0,
               visibility: 'draft'
             });
