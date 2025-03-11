@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
@@ -31,7 +30,11 @@ const SellPage = () => {
     servicePrice: "",
     serviceType: "one time" as ServiceType,
     category: "" as CategoryType | "",
-    selectedSubcategories: [] as string[]
+    selectedSubcategories: [] as string[],
+    intro: "",
+    type: "free",
+    price: "",
+    thumbnail: ""
   });
   const navigate = useNavigate();
 
@@ -59,7 +62,16 @@ const SellPage = () => {
       } else if (selectedOption === "products") {
         navigate("/seller/products/new");
       } else if (selectedOption === "community") {
-        navigate("/seller/communities/new");
+        navigate("/seller/communities/new", {
+          state: {
+            name: formData.name,
+            description: formData.description,
+            intro: formData.intro,
+            type: formData.type,
+            price: formData.type === "paid" ? formData.price : "0",
+            thumbnail: formData.thumbnail
+          }
+        });
       }
     } else {
       // Move to next step
@@ -543,3 +555,4 @@ const SellPage = () => {
 };
 
 export default SellPage;
+
