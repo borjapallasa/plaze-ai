@@ -63,18 +63,19 @@ export function useCart() {
         return;
       }
 
-      let query = supabase
+      // First, get the transaction
+      const transactionQuery = supabase
         .from('products_transactions')
         .select('product_transaction_uuid, item_count, total_amount')
         .eq('status', 'pending');
       
       if (userId) {
-        query = query.eq('user_uuid', userId);
+        transactionQuery.eq('user_uuid', userId);
       } else if (sessionId) {
-        query = query.eq('guest_session_id', sessionId);
+        transactionQuery.eq('guest_session_id', sessionId);
       }
 
-      const { data: transactionData, error: transactionError } = await query.maybeSingle();
+      const { data: transactionData, error: transactionError } = await transactionQuery.maybeSingle();
       
       if (transactionError) {
         console.error('Error fetching cart transaction:', transactionError);
@@ -86,7 +87,7 @@ export function useCart() {
         return;
       }
 
-      // Now fetch the items for this transaction
+      // Then, get the items for this transaction
       const { data: itemsData, error: itemsError } = await supabase
         .from('products_transaction_items')
         .select(`
@@ -94,9 +95,7 @@ export function useCart() {
           variant_uuid,
           price,
           quantity,
-          total_price,
-          products(name),
-          variants(name)
+          total_price
         `)
         .eq('product_transaction_uuid', transactionData.product_transaction_uuid);
       
@@ -110,13 +109,48 @@ export function useCart() {
         return;
       }
 
-      const items = itemsData.map((item: any) => ({
+      // Get product names in a separate query
+      const productUuids = [...new Set(itemsData.map(item => item.product_uuid))];
+      let productNames: Record<string, string> = {};
+      
+      if (productUuids.length > 0) {
+        const { data: productsData } = await supabase
+          .from('products')
+          .select('product_uuid, name')
+          .in('product_uuid', productUuids);
+          
+        if (productsData) {
+          productsData.forEach((product: any) => {
+            productNames[product.product_uuid] = product.name;
+          });
+        }
+      }
+
+      // Get variant names in a separate query
+      const variantUuids = [...new Set(itemsData.map(item => item.variant_uuid))];
+      let variantNames: Record<string, string> = {};
+      
+      if (variantUuids.length > 0) {
+        const { data: variantsData } = await supabase
+          .from('variants')
+          .select('variant_uuid, name')
+          .in('variant_uuid', variantUuids);
+          
+        if (variantsData) {
+          variantsData.forEach((variant: any) => {
+            variantNames[variant.variant_uuid] = variant.name;
+          });
+        }
+      }
+
+      // Map the items with their names
+      const items: CartItem[] = itemsData.map((item: any) => ({
         product_uuid: item.product_uuid,
         variant_uuid: item.variant_uuid,
         price: item.price,
         quantity: item.quantity,
-        product_name: item.products?.name,
-        variant_name: item.variants?.name
+        product_name: productNames[item.product_uuid] || 'Unknown Product',
+        variant_name: variantNames[item.variant_uuid] || 'Unknown Variant'
       }));
 
       setCart({
@@ -144,7 +178,7 @@ export function useCart() {
         .from('variants')
         .select('*')
         .eq('variant_uuid', selectedVariant)
-        .maybeSingle();
+        .single();
       
       if (variantError || !variantData) {
         toast({
@@ -157,11 +191,9 @@ export function useCart() {
       }
       
       // Check for existing transaction
-      let transactionId;
+      let transactionId = cart?.transaction_uuid;
       
-      if (cart) {
-        transactionId = cart.transaction_uuid;
-      } else {
+      if (!transactionId) {
         // Create a new transaction
         const { data: newTransaction, error: transactionError } = await supabase
           .from('products_transactions')
