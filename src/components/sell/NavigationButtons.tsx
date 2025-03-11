@@ -88,9 +88,15 @@ export function NavigationButtons({
         
         if (!authData.user) throw new Error("Failed to create user");
 
-        // Step 2: Users table entry is automatically created via trigger
-        
-        // Step 3: Create expert record
+        // Step 2: Sign in with the created user to get a valid session for RLS
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: formData.contactEmail,
+          password: tempPassword,
+        });
+
+        if (signInError) throw signInError;
+
+        // Step 3: Create expert record (now we have a valid session)
         const { data: expertData, error: expertError } = await supabase
           .from('experts')
           .insert({
@@ -103,6 +109,10 @@ export function NavigationButtons({
           .single();
 
         if (expertError) throw expertError;
+
+        if (!expertData || !expertData.expert_uuid) {
+          throw new Error("Failed to create expert profile");
+        }
 
         // Step 4: Create the specific type of record
         if (selectedOption === "services") {
