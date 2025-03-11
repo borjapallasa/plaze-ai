@@ -2,7 +2,7 @@
 import React from "react";
 import { ServiceForm } from "@/components/service/ServiceForm";
 import { ProductForm } from "./ProductForm";
-import { CommunityForm } from "@/components/sell/CommunityForm";
+import { CommunityForm } from "@/components/community/CommunityForm";
 import { CategoryType } from "@/constants/service-categories";
 
 interface BasicInfoStepProps {
@@ -37,20 +37,30 @@ export const BasicInfoStep = ({
 
       <div className="space-y-4">
         {selectedOption === "services" && (
-          <ServiceForm 
-            serviceData={{
-              name: formData.name,
-              description: formData.description,
-              servicePrice: formData.servicePrice,
-              serviceType: formData.serviceType,
-              category: formData.category,
-              selectedSubcategories: formData.selectedSubcategories
-            }}
-            onChange={onInputChange}
-            onCategoryChange={onCategoryChange}
-            onSubcategoriesChange={onSubcategoriesChange}
-            onRemoveSubcategory={onRemoveSubcategory}
-          />
+          <div className="space-y-2">
+            <ServiceForm
+              serviceName={formData.name || ""}
+              serviceDescription={formData.description || ""}
+              price={formData.servicePrice || ""}
+              serviceType={formData.serviceType || "one time"}
+              features={[]}
+              category={formData.category || ""}
+              selectedSubcategories={formData.selectedSubcategories || []}
+              status="draft"
+              onServiceNameChange={(value) => onInputChange("name", value)}
+              onServiceDescriptionChange={(value) => onInputChange("description", value)}
+              onPriceChange={(value) => onInputChange("servicePrice", value)}
+              onServiceTypeChange={(value) => onInputChange("serviceType", value)}
+              onAddFeature={() => {}}
+              onRemoveFeature={() => {}}
+              onFeatureChange={() => {}}
+              onCategoryChange={onCategoryChange}
+              onSubcategoriesChange={onSubcategoriesChange}
+              onRemoveSubcategory={onRemoveSubcategory}
+              onStatusChange={() => {}}
+              onSave={() => {}}
+            />
+          </div>
         )}
 
         {selectedOption === "products" && (
