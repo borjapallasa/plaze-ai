@@ -62,53 +62,36 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
     try {
       console.log("Updating expert with UUID:", expert.expert_uuid);
       
-      // First, check if the expert exists
-      const { data: existingExpert, error: checkError } = await supabase
-        .from('experts')
-        .select('expert_uuid')
-        .eq('expert_uuid', expert.expert_uuid)
-        .maybeSingle();
-      
-      if (checkError) {
-        console.error('Error checking expert existence:', checkError);
-        toast.error(`Failed to verify expert: ${checkError.message}`);
-        setIsLoading(false);
-        return;
-      }
-      
-      if (!existingExpert) {
-        console.error('No expert found with UUID:', expert.expert_uuid);
-        toast.error("No expert found with the provided ID");
-        setIsLoading(false);
-        return;
-      }
-      
-      // Now perform the update
-      const { error: updateError } = await supabase
+      // Perform the update operation
+      const { error } = await supabase
         .from('experts')
         .update({
           name: formData.name,
           title: formData.title,
-          description: formData.description
+          description: formData.description,
+          updated_at: new Date().toISOString()
         })
         .eq('expert_uuid', expert.expert_uuid);
 
-      if (updateError) {
-        console.error('Error updating expert:', updateError);
-        toast.error(`Failed to update profile: ${updateError.message}`);
+      if (error) {
+        console.error('Error updating expert:', error);
+        toast.error(`Failed to update profile: ${error.message}`);
         setIsLoading(false);
         return;
       }
 
-      // Instead of trying to get the updated data back, create an updated expert object
-      // by merging the original expert with the form data
+      console.log("Expert updated successfully");
+      
+      // Create an updated expert object by merging the original expert with the form data
       const updatedExpert: Expert = {
         ...expert,
         name: formData.name,
         title: formData.title,
-        description: formData.description
+        description: formData.description,
+        updated_at: new Date().toISOString()
       };
 
+      // Call the onUpdate callback to update the parent component
       onUpdate(updatedExpert);
       toast.success("Profile updated successfully");
       setOpen(false);
