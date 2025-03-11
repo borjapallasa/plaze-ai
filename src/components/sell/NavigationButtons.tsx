@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
@@ -72,18 +73,23 @@ export function NavigationButtons({
       try {
         const tempPassword = Math.random().toString(36).slice(-12);
         
-        const { data: existingUser } = await supabase
+        // First, try to create or authenticate the user
+        let userId;
+        let isNewUser = false;
+        
+        // Check if user exists
+        const { data: existingUserData } = await supabase
           .from('users')
           .select('user_uuid')
           .eq('email', formData.contactEmail)
           .maybeSingle();
-
-        let userId;
         
-        if (existingUser) {
-          console.log("User already exists, using existing user", existingUser);
-          userId = existingUser.user_uuid;
+        if (existingUserData) {
+          // User exists, get the UUID
+          userId = existingUserData.user_uuid;
+          console.log("Found existing user:", userId);
           
+          // Send a magic link for authentication
           const { error: signInError } = await supabase.auth.signInWithOtp({
             email: formData.contactEmail,
             options: {
@@ -92,10 +98,10 @@ export function NavigationButtons({
           });
           
           if (signInError) {
-            console.error("Sign in error:", signInError);
             throw new Error(`Failed to sign in: ${signInError.message}`);
           }
         } else {
+          // Create new user in Auth
           const { data: authData, error: signUpError } = await supabase.auth.signUp({
             email: formData.contactEmail,
             password: tempPassword,
@@ -107,7 +113,6 @@ export function NavigationButtons({
           });
 
           if (signUpError) {
-            console.error("Sign up error:", signUpError);
             throw new Error(`Failed to create account: ${signUpError.message}`);
           }
           
@@ -116,30 +121,44 @@ export function NavigationButtons({
           }
           
           userId = authData.user.id;
-          
-          const { error: signInError } = await supabase.auth.signInWithPassword({
-            email: formData.contactEmail,
-            password: tempPassword,
-          });
-
-          if (signInError) {
-            console.error("Sign in error:", signInError);
-            throw new Error(`Failed to sign in: ${signInError.message}`);
-          }
+          isNewUser = true;
+          console.log("Created new user:", userId);
         }
         
-        const { data: existingExpert } = await supabase
+        // Check if expert profile exists
+        let expertId;
+        let expertExists = false;
+        
+        const { data: existingExpertData } = await supabase
           .from('experts')
           .select('expert_uuid')
           .eq('user_uuid', userId)
           .maybeSingle();
           
-        let expertId;
+        if (existingExpertData) {
+          expertId = existingExpertData.expert_uuid;
+          expertExists = true;
+          console.log("Found existing expert profile:", expertId);
+        }
         
-        if (existingExpert) {
-          console.log("Expert profile already exists", existingExpert);
-          expertId = existingExpert.expert_uuid;
-        } else {
+        // If expert doesn't exist, create it using service_role key or alternative approach
+        if (!expertExists) {
+          console.log("Creating new expert profile for user:", userId);
+          
+          // Because we can't use service_role key in client, we'll use auth.signInWithPassword
+          // to get a valid session first if it's a new user
+          if (isNewUser) {
+            const { error: signInError } = await supabase.auth.signInWithPassword({
+              email: formData.contactEmail,
+              password: tempPassword,
+            });
+            
+            if (signInError) {
+              throw new Error(`Failed to authenticate: ${signInError.message}`);
+            }
+          }
+          
+          // Now create the expert record
           const { data: expertData, error: expertError } = await supabase
             .from('experts')
             .insert({
@@ -156,13 +175,15 @@ export function NavigationButtons({
             throw new Error(`Failed to create expert profile: ${expertError.message}`);
           }
 
-          if (!expertData || !expertData.expert_uuid) {
-            throw new Error("Failed to create expert profile - missing UUID");
+          if (!expertData) {
+            throw new Error("Failed to create expert profile - no data returned");
           }
           
           expertId = expertData.expert_uuid;
+          console.log("Created new expert profile:", expertId);
         }
 
+        // Create the appropriate resource based on selection
         if (selectedOption === "services") {
           const serviceTypeValue = formData.serviceType === "one time" ? "one time" : "monthly";
           
@@ -180,7 +201,6 @@ export function NavigationButtons({
             });
 
           if (serviceError) {
-            console.error("Service creation error:", serviceError);
             throw new Error(`Failed to create service: ${serviceError.message}`);
           }
         } else if (selectedOption === "products") {
@@ -196,7 +216,6 @@ export function NavigationButtons({
             });
 
           if (productError) {
-            console.error("Product creation error:", productError);
             throw new Error(`Failed to create product: ${productError.message}`);
           }
         } else if (selectedOption === "community") {
@@ -216,11 +235,11 @@ export function NavigationButtons({
             });
 
           if (communityError) {
-            console.error("Community creation error:", communityError);
             throw new Error(`Failed to create community: ${communityError.message}`);
           }
         }
 
+        // Always send a magic link for future logins
         await supabase.auth.signInWithOtp({
           email: formData.contactEmail,
           options: {
