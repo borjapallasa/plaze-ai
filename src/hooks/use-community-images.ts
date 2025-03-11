@@ -32,13 +32,13 @@ export function useCommunityImages(communityUuid: string) {
       
       // Add public URL to each image before setting state
       const imagesWithUrls = data?.map(image => {
-        const { publicUrl } = supabase.storage
+        const { data } = supabase.storage
           .from('community-images')
           .getPublicUrl(image.storage_path);
           
         return {
           ...image,
-          url: publicUrl
+          url: data.publicUrl
         };
       }) || [];
       
