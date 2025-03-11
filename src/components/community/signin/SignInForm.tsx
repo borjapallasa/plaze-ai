@@ -5,16 +5,37 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export function SignInForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle sign in logic here
-    console.log("Sign in attempt with:", { email, password });
+    setLoading(true);
+    
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+      
+      if (error) {
+        toast.error(error.message);
+      } else if (data.user) {
+        toast.success("Signed in successfully!");
+        // Redirect is handled by AuthProvider
+      }
+    } catch (error: any) {
+      toast.error("An error occurred while signing in");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -65,14 +86,19 @@ export function SignInForm() {
           <Button
             type="submit"
             className="w-full"
+            disabled={loading}
           >
-            Sign In
+            {loading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              "Sign In"
+            )}
           </Button>
 
           <div className="text-center space-y-4">
             <div className="text-sm">
               <span className="text-muted-foreground">Don't have an account? </span>
-              <Link to="/sign-up/community" className="text-primary hover:underline">
+              <Link to="/sign-up" className="text-primary hover:underline">
                 Sign Up
               </Link>
             </div>

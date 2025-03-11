@@ -2027,7 +2027,7 @@ export type Database = {
           id: number
           is_admin: boolean | null
           is_affiliate: boolean | null
-          is_member: boolean | null
+          is_expert: boolean | null
           job_amount_spent: number | null
           job_sales_amount: number | null
           last_name: string | null
@@ -2073,7 +2073,7 @@ export type Database = {
           id?: number
           is_admin?: boolean | null
           is_affiliate?: boolean | null
-          is_member?: boolean | null
+          is_expert?: boolean | null
           job_amount_spent?: number | null
           job_sales_amount?: number | null
           last_name?: string | null
@@ -2119,7 +2119,7 @@ export type Database = {
           id?: number
           is_admin?: boolean | null
           is_affiliate?: boolean | null
-          is_member?: boolean | null
+          is_expert?: boolean | null
           job_amount_spent?: number | null
           job_sales_amount?: number | null
           last_name?: string | null

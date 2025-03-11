@@ -21,6 +21,7 @@ export default function SignUp() {
     setLoading(true);
 
     try {
+      // Using signUp method without specifying is_member which doesn't exist
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -33,15 +34,18 @@ export default function SignUp() {
       });
 
       if (error) {
+        console.error("Signup error:", error);
         toast.error(error.message);
         return;
       }
 
       if (data.user) {
+        console.log("User created successfully:", data.user);
         toast.success("Successfully signed up! Please check your email for verification.");
         navigate("/sign-in");
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error("Unexpected error during signup:", error);
       toast.error("An unexpected error occurred");
     } finally {
       setLoading(false);
