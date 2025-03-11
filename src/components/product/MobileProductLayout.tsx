@@ -21,6 +21,7 @@ interface MobileProductLayoutProps {
   onAdditionalVariantToggle: (variantId: string, selected: boolean) => void;
   handleContactSeller: () => void;
   reviews: any[];
+  isLoading?: boolean;
 }
 
 export function MobileProductLayout({
@@ -33,7 +34,8 @@ export function MobileProductLayout({
   onAddToCart,
   onAdditionalVariantToggle,
   handleContactSeller,
-  reviews
+  reviews,
+  isLoading = false
 }: MobileProductLayoutProps) {
   const embedUrl = getVideoEmbedUrl(product.demo);
 
@@ -57,6 +59,7 @@ export function MobileProductLayout({
         onVariantChange={onVariantChange}
         onAddToCart={onAddToCart}
         className="mb-3"
+        isLoading={isLoading}
       />
       
       <AdditionalVariants

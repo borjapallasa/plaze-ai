@@ -57,60 +57,74 @@ export function useCart() {
   // Fetch the cart from the database
   const fetchCart = async (userId?: string, sessionId?: string) => {
     try {
+      if (!userId && !sessionId) {
+        // No way to identify the cart
+        setCart(null);
+        return;
+      }
+
       let query = supabase
         .from('products_transactions')
-        .select(`
-          product_transaction_uuid,
-          item_count,
-          total_amount,
-          products_transaction_items(
-            product_uuid,
-            variant_uuid,
-            price,
-            quantity,
-            total_price,
-            products(name),
-            variants(name)
-          )
-        `)
+        .select('product_transaction_uuid, item_count, total_amount')
         .eq('status', 'pending');
       
       if (userId) {
         query = query.eq('user_uuid', userId);
       } else if (sessionId) {
         query = query.eq('guest_session_id', sessionId);
-      } else {
-        // No way to identify the cart
+      }
+
+      const { data: transactionData, error: transactionError } = await query.maybeSingle();
+      
+      if (transactionError) {
+        console.error('Error fetching cart transaction:', transactionError);
+        return;
+      }
+      
+      if (!transactionData) {
         setCart(null);
         return;
       }
 
-      const { data, error } = await query.maybeSingle();
+      // Now fetch the items for this transaction
+      const { data: itemsData, error: itemsError } = await supabase
+        .from('products_transaction_items')
+        .select(`
+          product_uuid,
+          variant_uuid,
+          price,
+          quantity,
+          total_price,
+          products(name),
+          variants(name)
+        `)
+        .eq('product_transaction_uuid', transactionData.product_transaction_uuid);
       
-      if (error) {
-        console.error('Error fetching cart:', error);
+      if (itemsError) {
+        console.error('Error fetching cart items:', itemsError);
         return;
       }
       
-      if (data) {
-        const items = data.products_transaction_items.map((item: any) => ({
-          product_uuid: item.product_uuid,
-          variant_uuid: item.variant_uuid,
-          price: item.price,
-          quantity: item.quantity,
-          product_name: item.products?.name,
-          variant_name: item.variants?.name
-        }));
-
-        setCart({
-          transaction_uuid: data.product_transaction_uuid,
-          item_count: data.item_count,
-          total_amount: data.total_amount,
-          items
-        });
-      } else {
-        setCart(null);
+      if (!itemsData || !Array.isArray(itemsData)) {
+        console.error('No items data or invalid format');
+        return;
       }
+
+      const items = itemsData.map((item: any) => ({
+        product_uuid: item.product_uuid,
+        variant_uuid: item.variant_uuid,
+        price: item.price,
+        quantity: item.quantity,
+        product_name: item.products?.name,
+        variant_name: item.variants?.name
+      }));
+
+      setCart({
+        transaction_uuid: transactionData.product_transaction_uuid,
+        item_count: transactionData.item_count,
+        total_amount: transactionData.total_amount,
+        items
+      });
     } catch (error) {
       console.error('Failed to fetch cart:', error);
     }
@@ -130,7 +144,7 @@ export function useCart() {
         .from('variants')
         .select('*')
         .eq('variant_uuid', selectedVariant)
-        .single();
+        .maybeSingle();
       
       if (variantError || !variantData) {
         toast({

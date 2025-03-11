@@ -25,6 +25,7 @@ export interface VariantPickerProps {
   onVariantChange?: (variantId: string) => void;
   onAddToCart?: () => void;
   className?: string;
+  isLoading?: boolean;
 }
 
 export interface ProductLayoutProps {
@@ -36,4 +37,5 @@ export interface ProductLayoutProps {
   onAddToCart: () => void;
   onAdditionalVariantToggle?: (variantId: string, selected: boolean) => void;
   reviews: any[];
+  isLoading?: boolean;
 }

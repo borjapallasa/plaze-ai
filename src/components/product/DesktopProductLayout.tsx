@@ -22,6 +22,7 @@ interface DesktopProductLayoutProps {
   handleContactSeller: () => void;
   isMobile: boolean;
   reviews: any[];
+  isLoading?: boolean;
 }
 
 export function DesktopProductLayout({
@@ -35,7 +36,8 @@ export function DesktopProductLayout({
   onAdditionalVariantToggle,
   handleContactSeller,
   isMobile,
-  reviews
+  reviews,
+  isLoading = false
 }: DesktopProductLayoutProps) {
   const embedUrl = getVideoEmbedUrl(product.demo);
 
@@ -67,6 +69,7 @@ export function DesktopProductLayout({
             onVariantChange={onVariantChange}
             onAddToCart={onAddToCart}
             className="mb-3"
+            isLoading={isLoading}
           />
           
           <AdditionalVariants
