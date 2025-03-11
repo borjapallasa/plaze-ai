@@ -103,15 +103,6 @@ export function CommunityFieldsForm({
             }}
           />
         </div>
-        {formData.thumbnail && (
-          <div className="mt-2">
-            <img 
-              src={formData.thumbnail} 
-              alt="Thumbnail preview" 
-              className="h-24 w-24 object-cover rounded-md border"
-            />
-          </div>
-        )}
       </div>
     </>
   );

@@ -40,7 +40,9 @@ export function CommunityMediaUpload({
     if (onFileSelect) {
       console.log("Calling parent onFileSelect handler");
       onFileSelect(file);
+      
       // For temp mode, we won't actually upload to Supabase, just pass the file up
+      // and create a local preview
       if (communityUuid === 'temp') {
         const objectUrl = URL.createObjectURL(file);
         setTempImage({ url: objectUrl, storage_path: 'temp' });
@@ -62,6 +64,7 @@ export function CommunityMediaUpload({
   };
 
   // Determine which images to display - use temp image for preview in creation mode
+  // or use images from the hook
   const displayImages = communityUuid === 'temp' && tempImage 
     ? [{ id: 0, url: tempImage.url, storage_path: tempImage.storage_path, is_primary: true, file_name: 'Temporary image' }] 
     : images;
