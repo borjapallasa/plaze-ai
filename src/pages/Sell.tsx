@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
@@ -18,7 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ServiceCategories } from "@/components/service/ServiceCategories";
-import { CATEGORIES, SUBCATEGORIES, CategoryType, SERVICE_TYPES, ServiceType } from "@/constants/service-categories";
+import { CATEGORIES, CategoryType, SERVICE_TYPES, ServiceType } from "@/constants/service-categories";
 
 const SellPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -107,10 +106,6 @@ const SellPage = () => {
   const handleServiceTypeChange = (value: ServiceType) => {
     setFormData(prev => ({ ...prev, serviceType: value }));
   };
-
-  console.log("Current Step:", currentStep);
-  console.log("Selected Option:", selectedOption);
-  console.log("Form Data:", formData);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -423,6 +418,7 @@ const SellPage = () => {
                             <span key={sub} className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs">
                               {formData.category && 
                                 CATEGORIES.find(c => c.value === formData.category) &&
+                                CATEGORIES.find(c => c.value === formData.category)?.value &&
                                 SUBCATEGORIES[formData.category as CategoryType].find(s => s.value === sub)?.label}
                             </span>
                           ))}
