@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
@@ -261,16 +262,16 @@ const SellPage = () => {
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                  <Label htmlFor="name" className="font-medium text-gray-700">
                     Name
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     type="text"
                     id="name"
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                    className="w-full"
                     placeholder={`Your ${selectedOption === "services" ? "service" : 
                                   selectedOption === "products" ? "product" : 
                                   "community"} name`}
@@ -278,16 +279,16 @@ const SellPage = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                  <Label htmlFor="description" className="font-medium text-gray-700">
                     Brief Description
-                  </label>
-                  <textarea
+                  </Label>
+                  <Textarea
                     id="description"
                     name="description"
                     value={formData.description}
                     onChange={handleInputChange}
                     rows={3}
-                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                    className="w-full"
                     placeholder="Describe what you're offering"
                   />
                 </div>
@@ -295,7 +296,7 @@ const SellPage = () => {
                 {selectedOption === "services" && (
                   <>
                     <div className="space-y-2">
-                      <Label htmlFor="servicePrice" className="block text-sm font-medium text-gray-700">
+                      <Label htmlFor="servicePrice" className="font-medium text-gray-700">
                         Price
                       </Label>
                       <Input
@@ -310,7 +311,7 @@ const SellPage = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="serviceType" className="block text-sm font-medium text-gray-700">
+                      <Label htmlFor="serviceType" className="font-medium text-gray-700">
                         Service Type
                       </Label>
                       <Select 
@@ -330,28 +331,96 @@ const SellPage = () => {
                       </Select>
                     </div>
 
-                    <ServiceCategories
-                      category={formData.category}
-                      selectedSubcategories={formData.selectedSubcategories}
-                      onCategoryChange={handleCategoryChange}
-                      onSubcategoriesChange={handleSubcategoriesChange}
-                      onRemoveSubcategory={handleRemoveSubcategory}
-                    />
+                    <div className="space-y-2">
+                      <Label htmlFor="category" className="font-medium text-gray-700">
+                        Category
+                      </Label>
+                      <Select 
+                        value={formData.category} 
+                        onValueChange={handleCategoryChange}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {CATEGORIES.map((cat) => (
+                            <SelectItem key={cat.value} value={cat.value}>
+                              {cat.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {formData.category && (
+                      <div className="space-y-2">
+                        <Label htmlFor="subcategories" className="font-medium text-gray-700">
+                          Subcategories
+                        </Label>
+                        <Select 
+                          value=""
+                          onValueChange={handleSubcategoriesChange}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select subcategories" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {SUBCATEGORIES[formData.category].map((subcat) => (
+                              <SelectItem 
+                                key={subcat.value} 
+                                value={subcat.value}
+                                className="relative py-2.5"
+                              >
+                                <div className="flex items-center justify-between w-full">
+                                  <span>{subcat.label}</span>
+                                  {formData.selectedSubcategories.includes(subcat.value) && (
+                                    <span className="text-primary">✓</span>
+                                  )}
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        
+                        {formData.selectedSubcategories.length > 0 && (
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            {formData.selectedSubcategories.map((sub) => {
+                              const subcatLabel = SUBCATEGORIES[formData.category as CategoryType].find(s => s.value === sub)?.label;
+                              return (
+                                <span
+                                  key={sub}
+                                  className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm flex items-center gap-1"
+                                >
+                                  {subcatLabel}
+                                  <button
+                                    type="button"
+                                    onClick={() => handleRemoveSubcategory(sub)}
+                                    className="h-4 w-4 rounded-full bg-gray-200 hover:bg-gray-300 inline-flex items-center justify-center text-gray-600"
+                                  >
+                                    ×
+                                  </button>
+                                </span>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </>
                 )}
 
                 {selectedOption !== "services" && (
                   <div className="space-y-2">
-                    <label htmlFor="contactEmail" className="block text-sm font-medium text-gray-700">
+                    <Label htmlFor="contactEmail" className="font-medium text-gray-700">
                       Contact Email
-                    </label>
-                    <input
+                    </Label>
+                    <Input
                       type="email"
                       id="contactEmail"
                       name="contactEmail"
                       value={formData.contactEmail}
                       onChange={handleInputChange}
-                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                      className="w-full"
                       placeholder="your@email.com"
                     />
                   </div>
@@ -434,7 +503,9 @@ const SellPage = () => {
               </Card>
 
               <p className="text-sm text-gray-600 text-center">
-                Click "Next" to continue to the detailed creation process.
+                Click "Continue" to create your {selectedOption === "services" ? "service" : 
+                              selectedOption === "products" ? "product" : 
+                              "community"}.
               </p>
             </div>
           )}
