@@ -58,7 +58,12 @@ export const BasicInfoStep = ({
             productData={{
               name: formData.name,
               description: formData.description,
-              contactEmail: formData.contactEmail
+              contactEmail: formData.contactEmail,
+              price: formData.price,
+              techStack: formData.techStack,
+              difficultyLevel: formData.difficultyLevel,
+              thumbnail: formData.thumbnail,
+              productType: formData.productType
             }}
             onChange={onInputChange}
           />

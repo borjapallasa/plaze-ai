@@ -17,7 +17,11 @@ export function useSellForm() {
     selectedSubcategories: [] as string[],
     communityType: "free" as "free" | "paid",
     communityPrice: "",
-    thumbnail: ""
+    thumbnail: "",
+    price: "",
+    techStack: "",
+    difficultyLevel: "beginner",
+    productType: "template"
   });
   const navigate = useNavigate();
 
@@ -43,7 +47,18 @@ export function useSellForm() {
           } 
         });
       } else if (selectedOption === "products") {
-        navigate("/seller/products/new");
+        navigate("/seller/products/new", {
+          state: {
+            name: formData.name,
+            description: formData.description,
+            price: formData.price,
+            techStack: formData.techStack,
+            difficultyLevel: formData.difficultyLevel,
+            thumbnail: formData.thumbnail,
+            contactEmail: formData.contactEmail,
+            productType: formData.productType
+          }
+        });
       } else if (selectedOption === "community") {
         navigate("/seller/communities/new", {
           state: {
@@ -109,7 +124,7 @@ export function useSellForm() {
       } else if (selectedOption === "community") {
         return formData.communityType === "paid" && !formData.communityPrice;
       } else if (selectedOption === "products") {
-        return !formData.contactEmail;
+        return !formData.contactEmail || !formData.price;
       }
     }
     return false;
