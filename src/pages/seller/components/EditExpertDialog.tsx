@@ -60,18 +60,35 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
     setIsLoading(true);
 
     try {
+      // Log the expert UUID we're updating
       console.log("Updating expert with UUID:", expert.expert_uuid);
       
-      // Debugging: Log the update payload
+      // Create the update payload
       const updatePayload = {
         name: formData.name,
         title: formData.title,
         description: formData.description,
-        updated_at: new Date().toISOString()
       };
+      
       console.log("Update payload:", updatePayload);
       
-      // Perform the update operation in Supabase with explicit table name
+      // First check if the expert exists
+      const { data: existingExpert, error: checkError } = await supabase
+        .from('experts')
+        .select('*')
+        .eq('expert_uuid', expert.expert_uuid)
+        .single();
+        
+      if (checkError) {
+        console.error('Error checking expert existence:', checkError);
+        toast.error(`Failed to verify expert: ${checkError.message}`);
+        setIsLoading(false);
+        return;
+      }
+      
+      console.log("Existing expert found:", existingExpert);
+      
+      // Perform the update operation
       const { data, error } = await supabase
         .from('experts')
         .update(updatePayload)
