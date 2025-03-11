@@ -1,8 +1,8 @@
 
 import React from "react";
-import { ServiceForm } from "./ServiceForm";
+import { ServiceForm } from "@/components/service/ServiceForm";
 import { ProductForm } from "./ProductForm";
-import { CommunityForm } from "./CommunityForm";
+import { CommunityForm } from "@/components/sell/CommunityForm";
 import { CategoryType } from "@/constants/service-categories";
 
 interface BasicInfoStepProps {
