@@ -96,7 +96,7 @@ export function NavigationButtons({
 
         if (signInError) throw signInError;
 
-        // Step 3: Create expert record (now we have a valid session)
+        // Step 3: Create expert record - now with a valid session
         const { data: expertData, error: expertError } = await supabase
           .from('experts')
           .insert({
@@ -108,10 +108,13 @@ export function NavigationButtons({
           .select()
           .single();
 
-        if (expertError) throw expertError;
+        if (expertError) {
+          console.error("Expert creation error:", expertError);
+          throw new Error(`Failed to create expert profile: ${expertError.message}`);
+        }
 
         if (!expertData || !expertData.expert_uuid) {
-          throw new Error("Failed to create expert profile");
+          throw new Error("Failed to create expert profile - missing UUID");
         }
 
         // Step 4: Create the specific type of record
@@ -127,12 +130,15 @@ export function NavigationButtons({
               name: formData.name,
               description: formData.description,
               price: parseFloat(formData.servicePrice),
-              type: serviceTypeValue, // Using properly typed value
+              type: serviceTypeValue,
               main_category: { value: formData.category },
               status: 'draft'
             });
 
-          if (serviceError) throw serviceError;
+          if (serviceError) {
+            console.error("Service creation error:", serviceError);
+            throw new Error(`Failed to create service: ${serviceError.message}`);
+          }
         } else if (selectedOption === "products") {
           const { error: productError } = await supabase
             .from('products')
@@ -145,7 +151,10 @@ export function NavigationButtons({
               status: 'draft'
             });
 
-          if (productError) throw productError;
+          if (productError) {
+            console.error("Product creation error:", productError);
+            throw new Error(`Failed to create product: ${productError.message}`);
+          }
         } else if (selectedOption === "community") {
           // Explicitly cast the community type to the correct enum value
           const communityType = formData.type === "paid" ? "paid" : "free";
@@ -158,12 +167,15 @@ export function NavigationButtons({
               name: formData.name,
               description: formData.description,
               intro: formData.description,
-              type: communityType as "free" | "paid", // Explicit type assertion
+              type: communityType as "free" | "paid",
               price: formData.type === 'paid' ? parseFloat(formData.price) : 0,
               visibility: 'draft'
             });
 
-          if (communityError) throw communityError;
+          if (communityError) {
+            console.error("Community creation error:", communityError);
+            throw new Error(`Failed to create community: ${communityError.message}`);
+          }
         }
 
         // Send magic link for future logins
@@ -178,7 +190,7 @@ export function NavigationButtons({
         onNext();
       } catch (error) {
         console.error("Creation error:", error);
-        toast.error("Failed to create account. Please try again.");
+        toast.error(error instanceof Error ? error.message : "Failed to create account. Please try again.");
       } finally {
         setIsAuthenticating(false);
         setIsCreating(false);
