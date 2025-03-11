@@ -69,55 +69,112 @@ export function NavigationButtons({
 
       setIsAuthenticating(true);
       setIsCreating(true);
+      
       try {
         // Generate a random password for immediate login
         const tempPassword = Math.random().toString(36).slice(-12);
         
-        // Step 1: Create authentication user
-        const { data: authData, error: signUpError } = await supabase.auth.signUp({
-          email: formData.contactEmail,
-          password: tempPassword,
-          options: {
-            data: {
-              seller_type: selectedOption,
-            },
-          }
-        });
+        // Step 1: Check if user exists first
+        const { data: existingUser } = await supabase
+          .from('users')
+          .select('user_uuid')
+          .eq('email', formData.contactEmail)
+          .maybeSingle();
 
-        if (signUpError) throw signUpError;
+        let userId;
         
-        if (!authData.user) throw new Error("Failed to create user");
-
-        // Step 2: Sign in with the created user to get a valid session for RLS
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email: formData.contactEmail,
-          password: tempPassword,
-        });
-
-        if (signInError) throw signInError;
-
-        // Step 3: Create expert record - now with a valid session
-        const { data: expertData, error: expertError } = await supabase
-          .from('experts')
-          .insert({
-            user_uuid: authData.user.id,
+        if (existingUser) {
+          console.log("User already exists, using existing user", existingUser);
+          userId = existingUser.user_uuid;
+          
+          // Sign in with the existing user
+          const { error: signInError } = await supabase.auth.signInWithOtp({
             email: formData.contactEmail,
-            name: formData.name,
-            description: formData.description
-          })
-          .select()
-          .single();
+            options: {
+              emailRedirectTo: `${window.location.origin}/seller/dashboard`,
+            },
+          });
+          
+          if (signInError) {
+            console.error("Sign in error:", signInError);
+            throw new Error(`Failed to sign in: ${signInError.message}`);
+          }
+        } else {
+          // Create new user
+          const { data: authData, error: signUpError } = await supabase.auth.signUp({
+            email: formData.contactEmail,
+            password: tempPassword,
+            options: {
+              data: {
+                seller_type: selectedOption,
+              },
+            }
+          });
 
-        if (expertError) {
-          console.error("Expert creation error:", expertError);
-          throw new Error(`Failed to create expert profile: ${expertError.message}`);
+          if (signUpError) {
+            console.error("Sign up error:", signUpError);
+            throw new Error(`Failed to create account: ${signUpError.message}`);
+          }
+          
+          if (!authData.user) {
+            throw new Error("Failed to create user account");
+          }
+          
+          userId = authData.user.id;
+          
+          // Sign in with the created user to get a valid session for RLS
+          const { error: signInError } = await supabase.auth.signInWithPassword({
+            email: formData.contactEmail,
+            password: tempPassword,
+          });
+
+          if (signInError) {
+            console.error("Sign in error:", signInError);
+            throw new Error(`Failed to sign in: ${signInError.message}`);
+          }
+        }
+        
+        // Step 2: Try to get existing expert profile
+        const { data: existingExpert } = await supabase
+          .from('experts')
+          .select('expert_uuid')
+          .eq('user_uuid', userId)
+          .maybeSingle();
+          
+        let expertId;
+        
+        if (existingExpert) {
+          console.log("Expert profile already exists", existingExpert);
+          expertId = existingExpert.expert_uuid;
+        } else {
+          // Create expert record with public access
+          // Using upsert to handle potential race conditions
+          const { data: expertData, error: expertError } = await supabase
+            .from('experts')
+            .upsert({
+              user_uuid: userId,
+              email: formData.contactEmail,
+              name: formData.name,
+              description: formData.description
+            }, {
+              onConflict: 'user_uuid'
+            })
+            .select()
+            .single();
+
+          if (expertError) {
+            console.error("Expert creation error:", expertError);
+            throw new Error(`Failed to create expert profile: ${expertError.message}`);
+          }
+
+          if (!expertData || !expertData.expert_uuid) {
+            throw new Error("Failed to create expert profile - missing UUID");
+          }
+          
+          expertId = expertData.expert_uuid;
         }
 
-        if (!expertData || !expertData.expert_uuid) {
-          throw new Error("Failed to create expert profile - missing UUID");
-        }
-
-        // Step 4: Create the specific type of record
+        // Step 3: Create the specific type of record based on selection
         if (selectedOption === "services") {
           // Ensure serviceType is one of the allowed enum values
           const serviceTypeValue = formData.serviceType === "one time" ? "one time" : "monthly";
@@ -125,8 +182,8 @@ export function NavigationButtons({
           const { error: serviceError } = await supabase
             .from('services')
             .insert({
-              user_uuid: authData.user.id,
-              expert_uuid: expertData.expert_uuid,
+              user_uuid: userId,
+              expert_uuid: expertId,
               name: formData.name,
               description: formData.description,
               price: parseFloat(formData.servicePrice),
@@ -143,8 +200,8 @@ export function NavigationButtons({
           const { error: productError } = await supabase
             .from('products')
             .insert({
-              user_uuid: authData.user.id,
-              expert_uuid: expertData.expert_uuid,
+              user_uuid: userId,
+              expert_uuid: expertId,
               name: formData.name,
               description: formData.description,
               price_from: parseFloat(formData.productPrice),
@@ -162,8 +219,8 @@ export function NavigationButtons({
           const { error: communityError } = await supabase
             .from('communities')
             .insert({
-              user_uuid: authData.user.id,
-              expert_uuid: expertData.expert_uuid,
+              user_uuid: userId,
+              expert_uuid: expertId,
               name: formData.name,
               description: formData.description,
               intro: formData.description,
