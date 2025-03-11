@@ -16,6 +16,7 @@ interface ProductLayoutProps {
   onAddToCart: () => void;
   onAdditionalVariantToggle?: (variantId: string, selected: boolean) => void;
   reviews: any[];
+  isLoading?: boolean;
 }
 
 export function ProductLayout({
@@ -26,7 +27,8 @@ export function ProductLayout({
   onVariantChange,
   onAddToCart,
   onAdditionalVariantToggle,
-  reviews
+  reviews,
+  isLoading = false
 }: ProductLayoutProps) {
   const isMobile = useIsMobile();
   const { images, isLoading: isLoadingImages } = useProductImages(product.product_uuid);
@@ -60,6 +62,7 @@ export function ProductLayout({
           onAdditionalVariantToggle={handleAdditionalVariantSelect}
           handleContactSeller={handleContactSeller}
           reviews={reviews}
+          isLoading={isLoading}
         />
         
         <DesktopProductLayout 
@@ -74,6 +77,7 @@ export function ProductLayout({
           handleContactSeller={handleContactSeller}
           isMobile={isMobile}
           reviews={reviews}
+          isLoading={isLoading}
         />
       </main>
     </div>

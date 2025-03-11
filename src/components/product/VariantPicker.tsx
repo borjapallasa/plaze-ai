@@ -2,7 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Star } from "lucide-react";
+import { Loader2, Star } from "lucide-react";
 import { Variant } from "./types/variants";
 
 interface VariantPickerProps {
@@ -11,6 +11,7 @@ interface VariantPickerProps {
   onVariantChange?: (variantId: string) => void;
   onAddToCart?: () => void;
   className?: string;
+  isLoading?: boolean;
 }
 
 const getBadgeLabel = (index: number, variant: Variant) => {
@@ -25,7 +26,8 @@ export function VariantPicker({
   selectedVariant,
   onVariantChange,
   onAddToCart,
-  className = ""
+  className = "",
+  isLoading = false
 }: VariantPickerProps) {
   return (
     <div className={`space-y-2.5 ${className}`}>
@@ -43,7 +45,7 @@ export function VariantPicker({
                   ? "ring-2 ring-black shadow-md scale-[1.01]"
                   : "hover:ring-1 hover:ring-black/50 hover:shadow-sm"
               } ${variant.highlight && !isSelected ? "ring-1 ring-black/10" : ""}`}
-              onClick={() => onVariantChange?.(variant.id)}
+              onClick={() => !isLoading && onVariantChange?.(variant.id)}
             >
               {badge && (
                 <div className={`absolute -top-2 left-4 ${
@@ -99,9 +101,16 @@ export function VariantPicker({
             className="w-full"
             size="lg"
             onClick={onAddToCart}
-            disabled={!selectedVariant}
+            disabled={!selectedVariant || isLoading}
           >
-            Add to Cart
+            {isLoading ? (
+              <>
+                <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                Adding to Cart...
+              </>
+            ) : (
+              "Add to Cart"
+            )}
           </Button>
         </div>
       )}

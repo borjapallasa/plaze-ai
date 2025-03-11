@@ -22,7 +22,8 @@ export default function Product() {
     showStickyATC,
     variantsRef,
     handleAddToCart,
-    handleAdditionalVariantToggle
+    handleAdditionalVariantToggle,
+    isLoading: isCartLoading
   } = useProductState(variants);
 
   if (isLoading) {
@@ -41,16 +42,18 @@ export default function Product() {
         selectedVariant={selectedVariant}
         averageRating={averageRating}
         onVariantChange={setSelectedVariant}
-        onAddToCart={handleAddToCart}
+        onAddToCart={() => handleAddToCart(product)}
         onAdditionalVariantToggle={handleAdditionalVariantToggle}
         reviews={reviews}
+        isLoading={isCartLoading}
       />
       <StickyATC 
         variants={variants}
         selectedVariant={selectedVariant}
         onVariantChange={setSelectedVariant}
         visible={showStickyATC}
-        onAddToCart={handleAddToCart}
+        onAddToCart={() => handleAddToCart(product)}
+        isLoading={isCartLoading}
       />
     </div>
   );

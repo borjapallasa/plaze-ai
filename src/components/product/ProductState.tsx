@@ -1,5 +1,6 @@
 
 import { useState, useEffect, useRef } from "react";
+import { useCart } from "@/hooks/use-cart";
 import { useToast } from "@/components/ui/use-toast";
 
 export function useProductState(variants: any[]) {
@@ -8,6 +9,7 @@ export function useProductState(variants: any[]) {
   const [showStickyATC, setShowStickyATC] = useState(false);
   const variantsRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const { addToCart, isLoading } = useCart();
 
   useEffect(() => {
     if (variants.length > 0 && !selectedVariant) {
@@ -29,16 +31,24 @@ export function useProductState(variants: any[]) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleAddToCart = () => {
-    const mainVariant = variants.find(v => v.id === selectedVariant);
-    const additionalItems = variants.filter(v => additionalVariants.includes(v.id));
+  const handleAddToCart = async (product: any) => {
+    if (!selectedVariant) {
+      toast({
+        title: "Please select a variant",
+        description: "You need to select a package before adding to cart.",
+      });
+      return;
+    }
     
-    console.log("Adding to cart:", mainVariant, "with additional items:", additionalItems);
+    // Add main variant to cart
+    await addToCart(product, selectedVariant);
     
-    toast({
-      title: "Added to cart",
-      description: `Your item${additionalItems.length > 0 ? ' and add-ons have' : ' has'} been added to the cart.`,
-    });
+    // Add additional variants if selected
+    if (additionalVariants.length > 0) {
+      for (const variantId of additionalVariants) {
+        await addToCart(product, variantId);
+      }
+    }
   };
   
   const handleAdditionalVariantToggle = (variantId: string, selected: boolean) => {
@@ -56,6 +66,7 @@ export function useProductState(variants: any[]) {
     showStickyATC,
     variantsRef,
     handleAddToCart,
-    handleAdditionalVariantToggle
+    handleAdditionalVariantToggle,
+    isLoading
   };
 }
