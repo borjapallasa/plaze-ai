@@ -31,7 +31,10 @@ const SellPage = () => {
     servicePrice: "",
     serviceType: "one time" as ServiceType,
     category: "" as CategoryType | "",
-    selectedSubcategories: [] as string[]
+    selectedSubcategories: [] as string[],
+    communityType: "free" as "free" | "paid",
+    communityPrice: "",
+    thumbnail: ""
   });
   const navigate = useNavigate();
 
@@ -59,7 +62,15 @@ const SellPage = () => {
       } else if (selectedOption === "products") {
         navigate("/seller/products/new");
       } else if (selectedOption === "community") {
-        navigate("/seller/communities/new");
+        navigate("/seller/communities/new", {
+          state: {
+            name: formData.name,
+            description: formData.description,
+            price: formData.communityPrice,
+            type: formData.communityType,
+            thumbnail: formData.thumbnail
+          }
+        });
       }
     } else {
       // Move to next step
@@ -106,6 +117,10 @@ const SellPage = () => {
 
   const handleServiceTypeChange = (value: ServiceType) => {
     setFormData(prev => ({ ...prev, serviceType: value }));
+  };
+  
+  const handleCommunityTypeChange = (value: "free" | "paid") => {
+    setFormData(prev => ({ ...prev, communityType: value }));
   };
 
   console.log("Current Step:", currentStep);
@@ -345,7 +360,61 @@ const SellPage = () => {
                   </>
                 )}
 
-                {selectedOption !== "services" && (
+                {selectedOption === "community" && (
+                  <>
+                    <div className="space-y-2">
+                      <Label htmlFor="communityType" className="block text-sm font-medium text-gray-700">
+                        Community Type
+                      </Label>
+                      <Select 
+                        value={formData.communityType} 
+                        onValueChange={handleCommunityTypeChange}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select community type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="free">Free</SelectItem>
+                          <SelectItem value="paid">Paid</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {formData.communityType === "paid" && (
+                      <div className="space-y-2">
+                        <Label htmlFor="communityPrice" className="block text-sm font-medium text-gray-700">
+                          Price
+                        </Label>
+                        <Input
+                          type="number"
+                          id="communityPrice"
+                          name="communityPrice"
+                          value={formData.communityPrice}
+                          onChange={handleInputChange}
+                          className="w-full"
+                          placeholder="0.00"
+                        />
+                      </div>
+                    )}
+
+                    <div className="space-y-2">
+                      <Label htmlFor="thumbnail" className="block text-sm font-medium text-gray-700">
+                        Thumbnail URL (optional)
+                      </Label>
+                      <Input
+                        type="text"
+                        id="thumbnail"
+                        name="thumbnail"
+                        value={formData.thumbnail}
+                        onChange={handleInputChange}
+                        className="w-full"
+                        placeholder="https://example.com/image.jpg"
+                      />
+                    </div>
+                  </>
+                )}
+
+                {selectedOption !== "services" && selectedOption !== "community" && (
                   <div className="space-y-2">
                     <label htmlFor="contactEmail" className="block text-sm font-medium text-gray-700">
                       Contact Email
@@ -430,6 +499,25 @@ const SellPage = () => {
                       </div>
                     )}
                   </>
+                ) : selectedOption === "community" ? (
+                  <>
+                    <div>
+                      <h3 className="font-medium text-gray-900">Community Type</h3>
+                      <p className="text-gray-700">{formData.communityType === "free" ? "Free" : "Paid"}</p>
+                    </div>
+                    {formData.communityType === "paid" && (
+                      <div>
+                        <h3 className="font-medium text-gray-900">Price</h3>
+                        <p className="text-gray-700">${formData.communityPrice || "0.00"}</p>
+                      </div>
+                    )}
+                    {formData.thumbnail && (
+                      <div>
+                        <h3 className="font-medium text-gray-900">Thumbnail</h3>
+                        <p className="text-gray-700">{formData.thumbnail}</p>
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <div>
                     <h3 className="font-medium text-gray-900">Contact Email</h3>
@@ -462,7 +550,9 @@ const SellPage = () => {
                 !formData.description || 
                 (selectedOption === "services" 
                   ? !formData.servicePrice || !formData.category 
-                  : !formData.contactEmail
+                  : selectedOption === "community"
+                    ? (formData.communityType === "paid" && !formData.communityPrice)
+                    : !formData.contactEmail
                 )
               ))
             }
