@@ -11,7 +11,7 @@ export function useCommunityImages(communityUuid: string) {
 
   // Fetch images when communityUuid changes
   useEffect(() => {
-    if (communityUuid) {
+    if (communityUuid && communityUuid !== 'temp') {
       fetchImages();
     } else {
       setImages([]);
@@ -78,7 +78,12 @@ export function useCommunityImages(communityUuid: string) {
         
       if (!publicURLData.publicUrl) throw new Error("Failed to get public URL");
 
-      // Create database entry
+      // For temporary community, just return the URL without creating a database entry
+      if (communityUuid === 'temp') {
+        return { url: publicURLData.publicUrl, storage_path: filePath };
+      }
+
+      // Create database entry for real communities
       const { data, error: dbError } = await supabase
         .from("community_images")
         .insert({

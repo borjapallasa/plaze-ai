@@ -142,6 +142,8 @@ export function CommunityMediaUpload({
   initialImages = []
 }: CommunityMediaUploadProps) {
   const [selectedImage, setSelectedImage] = useState<null | any>(null);
+  const [tempImage, setTempImage] = useState<{url: string, storage_path: string} | null>(null);
+  
   const {
     images,
     isUploading,
@@ -156,8 +158,17 @@ export function CommunityMediaUpload({
       onFileSelect(file);
       return;
     }
-    await uploadImage(file);
+    
+    const result = await uploadImage(file);
+    if (result && communityUuid === 'temp') {
+      setTempImage(result as {url: string, storage_path: string});
+    }
   };
+
+  // Determine which images to display - use temp image for preview in creation mode
+  const displayImages = communityUuid === 'temp' && tempImage 
+    ? [{ id: 0, url: tempImage.url, storage_path: tempImage.storage_path, is_primary: true, file_name: 'Temporary image' }] 
+    : images;
 
   return (
     <div className="space-y-4">
@@ -167,44 +178,46 @@ export function CommunityMediaUpload({
         accept="image/*"
       />
 
-      {images && images.length > 0 && (
+      {displayImages && displayImages.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-4">
-          {images.map((image, index) => (
-            <Card key={image.id} className="relative group">
+          {displayImages.map((image, index) => (
+            <Card key={image.id || index} className="relative group">
               <div className="aspect-square relative overflow-hidden">
                 <img
                   src={image.url}
                   alt={image.file_name || 'Community image'}
                   className="object-cover w-full h-full"
                 />
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                  {!image.is_primary && (
+                {communityUuid !== 'temp' && (
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                    {!image.is_primary && (
+                      <Button
+                        size="icon"
+                        variant="secondary"
+                        onClick={() => reorderImages(image.id, displayImages.find(img => img.is_primary)?.id || 0)}
+                        className="h-8 w-8"
+                      >
+                        <Check className="h-4 w-4" />
+                      </Button>
+                    )}
                     <Button
                       size="icon"
                       variant="secondary"
-                      onClick={() => reorderImages(image.id, images.find(img => img.is_primary)?.id || 0)}
+                      onClick={() => setSelectedImage(image)}
                       className="h-8 w-8"
                     >
-                      <Check className="h-4 w-4" />
+                      <Edit className="h-4 w-4" />
                     </Button>
-                  )}
-                  <Button
-                    size="icon"
-                    variant="secondary"
-                    onClick={() => setSelectedImage(image)}
-                    className="h-8 w-8"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    size="icon"
-                    variant="destructive"
-                    onClick={() => removeImage(image.id, image.storage_path)}
-                    className="h-8 w-8"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
+                    <Button
+                      size="icon"
+                      variant="destructive"
+                      onClick={() => removeImage(image.id, image.storage_path)}
+                      className="h-8 w-8"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
               </div>
               {image.is_primary && (
                 <div className="absolute top-2 left-2 bg-primary/90 text-primary-foreground text-xs px-2 py-0.5 rounded">
