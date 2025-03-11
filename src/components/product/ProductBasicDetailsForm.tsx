@@ -2,7 +2,6 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ProductEditor } from "@/components/product/ProductEditor";
 import { Textarea } from "@/components/ui/textarea";
 
 interface ProductBasicDetailsFormProps {
@@ -41,7 +40,7 @@ export function ProductBasicDetailsForm({
       {productPrice !== undefined && setProductPrice && (
         <div>
           <Label htmlFor="price">Price</Label>
-          <Input
+          <Input 
             id="price"
             type="number"
             placeholder="0.00"
