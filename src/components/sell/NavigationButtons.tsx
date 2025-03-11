@@ -141,31 +141,35 @@ export function NavigationButtons({
           console.log("Found existing expert profile:", expertId);
         }
         
-        // If expert doesn't exist, create it using service_role key or alternative approach
+        // If expert doesn't exist, create it
         if (!expertExists) {
           console.log("Creating new expert profile for user:", userId);
           
-          // Because we can't use service_role key in client, we'll use auth.signInWithPassword
-          // to get a valid session first if it's a new user
+          // Authenticate with the user's credentials to create resources
           if (isNewUser) {
-            const { error: signInError } = await supabase.auth.signInWithPassword({
+            const { data: sessionData, error: sessionError } = await supabase.auth.signInWithPassword({
               email: formData.contactEmail,
               password: tempPassword,
             });
             
-            if (signInError) {
-              throw new Error(`Failed to authenticate: ${signInError.message}`);
+            if (sessionError) {
+              throw new Error(`Failed to authenticate: ${sessionError.message}`);
+            }
+            
+            if (!sessionData.session) {
+              throw new Error("No session after authentication");
             }
           }
           
-          // Now create the expert record
+          // Create the expert record with proper authentication
           const { data: expertData, error: expertError } = await supabase
             .from('experts')
             .insert({
               user_uuid: userId,
               email: formData.contactEmail,
               name: formData.name,
-              description: formData.description
+              description: formData.description,
+              areas: [] // Initialize with empty areas array
             })
             .select('expert_uuid')
             .single();
@@ -184,6 +188,16 @@ export function NavigationButtons({
         }
 
         // Create the appropriate resource based on selection
+        // We need to ensure we're authenticated before creating these resources
+        const { data: session } = await supabase.auth.getSession();
+        if (!session.session) {
+          // Try to sign in again if no session is found
+          await supabase.auth.signInWithPassword({
+            email: formData.contactEmail,
+            password: tempPassword,
+          });
+        }
+
         if (selectedOption === "services") {
           const serviceTypeValue = formData.serviceType === "one time" ? "one time" : "monthly";
           
