@@ -44,6 +44,7 @@ import AdminTemplateDetailsPage from "./pages/admin/AdminTemplateDetails";
 import AffiliatesPage from "./pages/Affiliates";
 import SellerPage from "./pages/seller/SellerPage";
 import SellPage from "./pages/Sell";
+import { SearchResults } from "./pages/search";
 
 const queryClient = new QueryClient();
 
@@ -93,6 +94,7 @@ function App() {
           <Route path="/admin/templates/draft" element={<DraftTemplatesPage />} />
           <Route path="/admin/template/:id" element={<AdminTemplateDetailsPage />} />
           <Route path="/affiliates" element={<AffiliatesPage />} />
+          <Route path="/search" element={<SearchResults />} />
         </Routes>
         <Toaster />
       </AuthProvider>

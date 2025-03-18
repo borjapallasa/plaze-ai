@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, FormEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, Menu, User, ChevronDown, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -40,7 +40,7 @@ export const MainHeader = () => {
     if (location.pathname.includes('/blog')) {
       return "Products";
     }
-    return "Products"; // default fallback
+    return "Global Search"; // default fallback
   };
 
   const getInitialDesktopSearchCategory = () => {
@@ -56,11 +56,23 @@ export const MainHeader = () => {
     if (location.pathname.includes('/blog')) {
       return "Products";
     }
-    return "Products"; // default fallback
+    return "GlobalSearch"; // default fallback
   };
 
   const [mobileSearchCategory, setMobileSearchCategory] = useState(getInitialSearchCategory());
   const [desktopSearchCategory, setDesktopSearchCategory] = useState(getInitialDesktopSearchCategory());
+  const [searchQuery, setSearchQuery] = useState("");
+  const [mobileSearchQuery, setMobileSearchQuery] = useState("");
+
+  const handleSearch = (e: FormEvent, isMobile: boolean) => {
+    e.preventDefault();
+    const query = isMobile ? mobileSearchQuery : searchQuery;
+    
+    if (!query.trim()) return;
+
+    // Navigate to search results page with query parameter
+    navigate(`/search?q=${encodeURIComponent(query)}`);
+  };
 
   const handleSignOut = async () => {
     try {
@@ -85,6 +97,9 @@ export const MainHeader = () => {
         return "Search communities...";
       case "Jobs":
         return "Search jobs...";
+      case "Global Search":
+      case "GlobalSearch":
+        return "Search everything...";
       default:
         return "Search...";
     }
@@ -96,46 +111,18 @@ export const MainHeader = () => {
         {/* Mobile Header */}
         <div className="flex md:hidden items-center justify-between h-full gap-3">
           <div className="flex-1">
-            <div className="flex items-center gap-1 px-3 py-1.5 rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="h-7 w-7 p-0 hover:bg-transparent"
-                  >
-                    <ChevronDown className="h-3.5 w-3.5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-[200px]">
-                  {(location.pathname.includes('/community') || location.pathname.includes('/classroom')) && (
-                    <DropdownMenuItem onClick={() => setMobileSearchCategory("This Community")}>
-                      This Community
-                    </DropdownMenuItem>
-                  )}
-                  <DropdownMenuItem onClick={() => setMobileSearchCategory("Products")}>
-                    Products
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setMobileSearchCategory("Experts")}>
-                    Experts
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setMobileSearchCategory("Communities")}>
-                    Communities
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setMobileSearchCategory("Jobs")}>
-                    Jobs
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+            <form onSubmit={(e) => handleSearch(e, true)} className="flex items-center gap-1 px-3 py-1.5 rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background">
               <Input
                 className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-7 text-sm flex-1"
                 placeholder={getPlaceholder(mobileSearchCategory)}
                 type="search"
+                value={mobileSearchQuery}
+                onChange={(e) => setMobileSearchQuery(e.target.value)}
               />
-              <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90 h-7 w-7">
+              <Button type="submit" size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90 h-7 w-7">
                 <Search className="h-3.5 w-3.5" />
               </Button>
-            </div>
+            </form>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -183,35 +170,20 @@ export const MainHeader = () => {
           </Link>
 
           <div className="flex-1 max-w-2xl mx-auto">
-            <div className="flex items-center gap-1 px-3 py-1.5 rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background">
+            <form onSubmit={(e) => handleSearch(e, false)} className="flex items-center gap-1 px-3 py-1.5 rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background">
               <div className="flex-1 flex items-center gap-1">
-                <Select 
-                  defaultValue={getInitialDesktopSearchCategory()}
-                  onValueChange={setDesktopSearchCategory}
-                >
-                  <SelectTrigger className="border-0 w-[200px] focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-7 text-sm [&>span]:whitespace-nowrap [&>span]:overflow-visible">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="w-[240px]">
-                    {(location.pathname.includes('/community') || location.pathname.includes('/classroom')) && (
-                      <SelectItem value="ThisCommunity" className="whitespace-nowrap">This Community</SelectItem>
-                    )}
-                    <SelectItem value="Products">Products</SelectItem>
-                    <SelectItem value="Experts">Experts</SelectItem>
-                    <SelectItem value="Communities">Communities</SelectItem>
-                    <SelectItem value="Jobs">Jobs</SelectItem>
-                  </SelectContent>
-                </Select>
                 <Input
                   className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-7 text-sm"
                   placeholder={getPlaceholder(desktopSearchCategory)}
                   type="search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              <Button size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90 h-7 w-7">
+              <Button type="submit" size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90 h-7 w-7">
                 <Search className="h-3.5 w-3.5" />
               </Button>
-            </div>
+            </form>
           </div>
 
           <div className="flex items-center gap-3 w-[140px] justify-end">

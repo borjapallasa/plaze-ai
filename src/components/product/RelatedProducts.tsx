@@ -92,22 +92,12 @@ export function RelatedProducts({
 
   // Update selected products based on relationships
   useEffect(() => {
-    if (relationships.length > 0 && userProducts.length > 0) {
-      try {
-        const relatedProductIds = relationships.map(rel => rel.related_product_uuid);
-        
-        const relatedProducts = userProducts.filter(product => 
-          relatedProductIds.includes(product.product_uuid)
-        );
-        
-        setSelectedProducts(relatedProducts);
-      } catch (error) {
-        console.error("Error setting initial selected products:", error);
-      }
-    } else {
-      setSelectedProducts([]);
-    }
-  }, [relationships, userProducts]);
+    const relatedProductIds = relationships.map(rel => rel.related_product_uuid);
+    const relatedProducts = userProducts.filter(product => 
+      relatedProductIds.includes(product.product_uuid)
+    );
+    setSelectedProducts(relatedProducts);
+  }, [relationships.length]); // Only run when relationships array length changes
 
   // Save all relationships to the database
   const saveRelationships = async () => {
@@ -164,8 +154,8 @@ export function RelatedProducts({
     }
   };
 
-  // Toggle product selection in local state and save changes
-  const toggleProductSelection = async (product: Product) => {
+  // Toggle product selection in local state
+  const toggleProductSelection = (product: Product) => {
     try {
       // Update local state
       setSelectedProducts(prev => {
@@ -182,25 +172,17 @@ export function RelatedProducts({
       
       // Close the popover after selection
       setOpen(false);
-      
-      // Save changes automatically
-      await saveRelationships();
-      
     } catch (error) {
       console.error("Error toggling product selection:", error);
     }
   };
 
-  // Remove a product from selection and save changes
-  const removeSelectedProduct = async (productId: string) => {
+  // Remove a product from selection
+  const removeSelectedProduct = (productId: string) => {
     try {
       setSelectedProducts(prev => 
         prev.filter(p => p.product_uuid !== productId)
       );
-      
-      // Save changes automatically
-      await saveRelationships();
-      
     } catch (error) {
       console.error("Error removing selected product:", error);
     }
@@ -268,32 +250,41 @@ export function RelatedProducts({
       </div>
 
       {selectedProducts.length > 0 ? (
-        <div className="space-y-2">
-          {selectedProducts.map((product) => (
-            <div 
-              key={product.product_uuid}
-              className="flex items-center justify-between p-3 rounded-md border bg-card hover:bg-muted/30 transition-colors"
-            >
-              <div className="truncate flex-1">
-                <p className="font-medium truncate">{product.name}</p>
-                {product.price_from !== undefined && (
-                  <p className="text-sm text-muted-foreground">
-                    ${product.price_from.toFixed(2)}
-                  </p>
-                )}
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => removeSelectedProduct(product.product_uuid)}
-                className="h-8 w-8 p-0 rounded-full"
+        <>
+          <div className="space-y-2">
+            {selectedProducts.map((product) => (
+              <div 
+                key={product.product_uuid}
+                className="flex items-center justify-between p-3 rounded-md border bg-card hover:bg-muted/30 transition-colors"
               >
-                <X className="h-4 w-4" />
-                <span className="sr-only">Remove</span>
-              </Button>
-            </div>
-          ))}
-        </div>
+                <div className="truncate flex-1">
+                  <p className="font-medium truncate">{product.name}</p>
+                  {product.price_from !== undefined && (
+                    <p className="text-sm text-muted-foreground">
+                      ${product.price_from.toFixed(2)}
+                    </p>
+                  )}
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeSelectedProduct(product.product_uuid)}
+                  className="h-8 w-8 p-0 rounded-full"
+                >
+                  <X className="h-4 w-4" />
+                  <span className="sr-only">Remove</span>
+                </Button>
+              </div>
+            ))}
+          </div>
+          <Button 
+            onClick={saveRelationships} 
+            disabled={isSaving}
+            className="w-full"
+          >
+            {isSaving ? "Saving..." : "Save Changes"}
+          </Button>
+        </>
       ) : (
         <div className="border border-dashed rounded-md p-6 flex flex-col items-center justify-center bg-muted/10 text-center">
           <p className="text-muted-foreground text-sm mb-1">No related products</p>
