@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { CartItem, CartTransaction } from '@/types/cart';
 
@@ -48,15 +49,16 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
       return null;
     }
 
-    // Get product names
-    const productUuids = [...new Set(itemsData.map(item => item.product_uuid))];
+    // Get product names - using an array of IDs to avoid deep type issues
+    const productUuids = itemsData.map(item => item.product_uuid).filter(Boolean);
+    const uniqueProductUuids = [...new Set(productUuids)];
     let productNames: Record<string, string> = {};
     
-    if (productUuids.length > 0) {
+    if (uniqueProductUuids.length > 0) {
       const { data: productsData, error: productsError } = await supabase
         .from('products')
         .select('product_uuid, name')
-        .in('product_uuid', productUuids);
+        .in('product_uuid', uniqueProductUuids);
         
       if (!productsError && productsData) {
         productsData.forEach((product: any) => {
@@ -65,15 +67,16 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
       }
     }
 
-    // Get variant names
-    const variantUuids = [...new Set(itemsData.map(item => item.variant_uuid))];
+    // Get variant names - using an array of IDs to avoid deep type issues
+    const variantUuids = itemsData.map(item => item.variant_uuid).filter(Boolean);
+    const uniqueVariantUuids = [...new Set(variantUuids)];
     let variantNames: Record<string, string> = {};
     
-    if (variantUuids.length > 0) {
+    if (uniqueVariantUuids.length > 0) {
       const { data: variantsData, error: variantsError } = await supabase
         .from('variants')
         .select('variant_uuid, name')
-        .in('variant_uuid', variantUuids);
+        .in('variant_uuid', uniqueVariantUuids);
         
       if (!variantsError && variantsData) {
         variantsData.forEach((variant: any) => {

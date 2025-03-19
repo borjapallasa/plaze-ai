@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -235,7 +234,7 @@ export const SearchResults = () => {
                       <div key={expert.expert_uuid} className="border rounded-lg overflow-hidden bg-card hover:shadow-md transition-shadow">
                         <div className="p-4">
                           <h3 className="font-medium text-lg">{expert.name}</h3>
-                          <p className="text-muted-foreground line-clamp-2 mt-1">{expert.bio}</p>
+                          <p className="text-muted-foreground line-clamp-2 mt-1">{expert.description}</p>
                         </div>
                       </div>
                     ))}
