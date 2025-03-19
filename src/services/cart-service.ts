@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { CartItem, CartTransaction } from '@/types/cart';
 
@@ -10,18 +9,20 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
       return null;
     }
 
-    // Build query parameters
-    const queryParams = userId 
-      ? { column: 'user_uuid', value: userId }
-      : { column: 'guest_session_id', value: sessionId as string };
-    
-    // Execute the transaction query
-    const { data: transactionData, error: transactionError } = await supabase
+    // Execute the transaction query with the appropriate condition
+    let transactionQuery = supabase
       .from('products_transactions')
       .select('product_transaction_uuid, item_count, total_amount')
-      .eq('status', 'pending')
-      .eq(queryParams.column, queryParams.value)
-      .maybeSingle();
+      .eq('status', 'pending');
+    
+    // Apply the correct filter based on available ID
+    if (userId) {
+      transactionQuery = transactionQuery.eq('user_uuid', userId);
+    } else if (sessionId) {
+      transactionQuery = transactionQuery.eq('guest_session_id', sessionId);
+    }
+    
+    const { data: transactionData, error: transactionError } = await transactionQuery.maybeSingle();
     
     // Check for errors or no data
     if (transactionError) {
