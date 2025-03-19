@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -24,10 +25,11 @@ interface Product {
   user_uuid: string;
 }
 
+// Updated Expert interface to match the actual DB schema
 interface Expert {
   expert_uuid: string;
   name: string;
-  bio: string;
+  description: string; // Using description instead of bio
   avatar_url?: string;
   slug?: string;
 }
@@ -79,12 +81,21 @@ export const SearchResults = () => {
           .ilike('name', `%${query}%`)
           .limit(8);
 
-        // Fetch experts
-        const { data: experts } = await supabase
+        // Fetch experts - map to match the Expert interface
+        const { data: expertsData } = await supabase
           .from('experts')
           .select('*')
           .ilike('name', `%${query}%`)
           .limit(8);
+          
+        // Transform experts data to match our interface
+        const experts = (expertsData || []).map(expert => ({
+          expert_uuid: expert.expert_uuid,
+          name: expert.name || 'Unknown Expert',
+          description: expert.description || '', // Use description field from DB
+          avatar_url: expert.thumbnail,
+          slug: expert.slug
+        }));
 
         // Fetch communities
         const { data: communities } = await supabase

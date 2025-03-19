@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { CartItem, CartTransaction } from '@/types/cart';
 
@@ -10,62 +9,57 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
       return null;
     }
 
-    // Build a base query
-    const baseQuery = supabase
+    // Build query parameters
+    const queryParams = userId 
+      ? { column: 'user_uuid', value: userId }
+      : { column: 'guest_session_id', value: sessionId as string };
+    
+    // Execute the transaction query
+    const { data: transactionData, error: transactionError } = await supabase
       .from('products_transactions')
       .select('product_transaction_uuid, item_count, total_amount')
-      .eq('status', 'pending');
-    
-    // Execute the appropriate query based on user or guest
-    let response;
-    if (userId) {
-      response = await baseQuery.eq('user_uuid', userId).single();
-    } else {
-      response = await baseQuery.eq('guest_session_id', sessionId as string).single();
-    }
+      .eq('status', 'pending')
+      .eq(queryParams.column, queryParams.value)
+      .maybeSingle();
     
     // Check for errors or no data
-    if (response.error) {
-      console.error('Error fetching cart transaction:', response.error);
+    if (transactionError) {
+      console.error('Error fetching cart transaction:', transactionError);
       return null;
     }
     
-    if (!response.data) {
+    if (!transactionData) {
       return null;
     }
 
-    const transactionData = response.data;
-
     // Get the items for this transaction
-    const itemsResponse = await supabase
+    const { data: itemsData, error: itemsError } = await supabase
       .from('products_transaction_items')
       .select('product_uuid, variant_uuid, price, quantity, total_price')
       .eq('product_transaction_uuid', transactionData.product_transaction_uuid);
     
-    if (itemsResponse.error) {
-      console.error('Error fetching cart items:', itemsResponse.error);
+    if (itemsError) {
+      console.error('Error fetching cart items:', itemsError);
       return null;
     }
     
-    if (!itemsResponse.data || !Array.isArray(itemsResponse.data)) {
+    if (!itemsData || !Array.isArray(itemsData)) {
       console.error('No items data or invalid format');
       return null;
     }
-
-    const itemsData = itemsResponse.data;
 
     // Get product names
     const productUuids = [...new Set(itemsData.map(item => item.product_uuid))];
     let productNames: Record<string, string> = {};
     
     if (productUuids.length > 0) {
-      const productsResponse = await supabase
+      const { data: productsData, error: productsError } = await supabase
         .from('products')
         .select('product_uuid, name')
         .in('product_uuid', productUuids);
         
-      if (productsResponse.data) {
-        productsResponse.data.forEach((product: any) => {
+      if (!productsError && productsData) {
+        productsData.forEach((product: any) => {
           productNames[product.product_uuid] = product.name;
         });
       }
@@ -76,13 +70,13 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
     let variantNames: Record<string, string> = {};
     
     if (variantUuids.length > 0) {
-      const variantsResponse = await supabase
+      const { data: variantsData, error: variantsError } = await supabase
         .from('variants')
         .select('variant_uuid, name')
         .in('variant_uuid', variantUuids);
         
-      if (variantsResponse.data) {
-        variantsResponse.data.forEach((variant: any) => {
+      if (!variantsError && variantsData) {
+        variantsData.forEach((variant: any) => {
           variantNames[variant.variant_uuid] = variant.name;
         });
       }
