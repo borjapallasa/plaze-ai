@@ -12,12 +12,12 @@ interface ProductEditorProps {
   maxHeight?: string;
 }
 
-export function ProductEditor({ 
-  value, 
-  onChange, 
-  placeholder = "Write your product description...", 
+export function ProductEditor({
+  value,
+  onChange,
+  placeholder = "Write your product description...",
   minHeight = "150px",
-  maxHeight = "300px" 
+  maxHeight = "300px"
 }: ProductEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
 
@@ -35,22 +35,22 @@ export function ProductEditor({
       // Store the current selection
       const selection = window.getSelection();
       const range = selection?.getRangeAt(0);
-      
+
       // Focus the editor
       editorRef.current.focus();
-      
+
       // Restore the selection if it exists
       if (selection && range) {
         selection.removeAllRanges();
         selection.addRange(range);
       }
-      
+
       // Execute the command
       document.execCommand(command, false, value);
-      
+
       // Save content
       saveContent();
-      
+
       // Maintain focus
       editorRef.current.focus();
     }
@@ -70,35 +70,35 @@ export function ProductEditor({
 
   // Show placeholder only if there's no content
   const isEmpty = !value || value === "<p></p>" || value === "<br>" || value === "";
-  
+
   return (
     <div className="rounded-md border">
       <div className="flex flex-wrap items-center gap-1 border-b p-2 bg-muted/20">
         <div className="flex items-center gap-1 mr-2">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-8 w-8 p-0" 
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0"
             onClick={() => execCommand('bold')}
             title="Bold"
             type="button"
           >
             <Bold className="h-4 w-4" />
           </Button>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-8 w-8 p-0" 
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0"
             onClick={() => execCommand('italic')}
             title="Italic"
             type="button"
           >
             <Italic className="h-4 w-4" />
           </Button>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-8 w-8 p-0" 
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0"
             onClick={() => execCommand('underline')}
             title="Underline"
             type="button"
@@ -108,22 +108,22 @@ export function ProductEditor({
         </div>
 
         <div className="h-4 w-px bg-border mx-1" />
-        
+
         <div className="flex items-center gap-1 mr-2">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-8 w-8 p-0" 
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0"
             onClick={() => execCommand('formatBlock', '<h1>')}
             title="Heading 1"
             type="button"
           >
             <Heading1 className="h-4 w-4" />
           </Button>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-8 w-8 p-0" 
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0"
             onClick={() => execCommand('formatBlock', '<h2>')}
             title="Heading 2"
             type="button"
@@ -133,12 +133,12 @@ export function ProductEditor({
         </div>
 
         <div className="h-4 w-px bg-border mx-1" />
-        
+
         <div className="flex items-center gap-1 mr-2">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-8 w-8 p-0" 
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0"
             onClick={() => {
               const url = prompt('Enter URL');
               if (url) execCommand('createLink', url);
@@ -148,10 +148,10 @@ export function ProductEditor({
           >
             <LinkIcon className="h-4 w-4" />
           </Button>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-8 w-8 p-0" 
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0"
             onClick={() => execCommand('insertUnorderedList')}
             title="Bullet List"
             type="button"
@@ -161,32 +161,32 @@ export function ProductEditor({
         </div>
 
         <div className="h-4 w-px bg-border mx-1" />
-        
+
         <div className="flex items-center gap-1">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-8 w-8 p-0" 
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0"
             onClick={() => execCommand('justifyLeft')}
             title="Align Left"
             type="button"
           >
             <AlignLeft className="h-4 w-4" />
           </Button>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-8 w-8 p-0" 
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0"
             onClick={() => execCommand('justifyCenter')}
             title="Align Center"
             type="button"
           >
             <AlignCenter className="h-4 w-4" />
           </Button>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-8 w-8 p-0" 
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0"
             onClick={() => execCommand('justifyRight')}
             title="Align Right"
             type="button"
@@ -194,11 +194,11 @@ export function ProductEditor({
             <AlignRight className="h-4 w-4" />
           </Button>
         </div>
-        
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="h-8 w-8 p-0 ml-auto" 
+
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 w-8 p-0 ml-auto"
           title="More Options"
           type="button"
         >
@@ -214,10 +214,9 @@ export function ProductEditor({
               isEmpty ? "text-muted-foreground" : ""
             )}
             contentEditable
-            onInput={saveContent}
             onBlur={saveContent}
             onPaste={handlePaste}
-            style={{ 
+            style={{
               minHeight
             }}
             dangerouslySetInnerHTML={{ __html: value || '' }}
