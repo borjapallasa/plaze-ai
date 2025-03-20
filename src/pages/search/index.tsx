@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { MainHeader } from '@/components/MainHeader';
 import { Loader2 } from 'lucide-react';
@@ -50,8 +50,9 @@ interface Job {
 
 export const SearchResults = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const query = searchParams.get('q') || '';
-  const category = searchParams.get('category') || 'Products';
+  const category = searchParams.get('category') || 'All';
   
   const [results, setResults] = useState<{
     products: Product[];
@@ -115,8 +116,17 @@ export const SearchResults = () => {
 
     if (query) {
       fetchResults();
+    } else {
+      setLoading(false);
     }
-  }, [query, category]);
+  }, [query]);
+
+  // Update active tab when category changes in URL
+  useEffect(() => {
+    if (category && ['Products', 'Experts', 'Communities', 'Jobs', 'All'].includes(category)) {
+      setActiveTab(category);
+    }
+  }, [category]);
 
   const getTotalResults = () => {
     return results.products.length + results.experts.length + results.communities.length + results.jobs.length;
@@ -153,7 +163,12 @@ export const SearchResults = () => {
               <div className="flex flex-wrap gap-2 mb-6 border-b">
                 <Button 
                   variant={activeTab === 'All' ? "default" : "ghost"} 
-                  onClick={() => setActiveTab('All')}
+                  onClick={() => {
+                    setActiveTab('All');
+                    const newSearchParams = new URLSearchParams(searchParams);
+                    newSearchParams.delete('category');
+                    navigate(`/search?${newSearchParams.toString()}`);
+                  }}
                   className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
                   data-state={activeTab === 'All' ? 'active' : 'inactive'}
                 >
@@ -161,7 +176,12 @@ export const SearchResults = () => {
                 </Button>
                 <Button 
                   variant={activeTab === 'Products' ? "default" : "ghost"} 
-                  onClick={() => setActiveTab('Products')}
+                  onClick={() => {
+                    setActiveTab('Products');
+                    const newSearchParams = new URLSearchParams(searchParams);
+                    newSearchParams.set('category', 'Products');
+                    navigate(`/search?${newSearchParams.toString()}`);
+                  }}
                   className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
                   data-state={activeTab === 'Products' ? 'active' : 'inactive'}
                 >
@@ -169,7 +189,12 @@ export const SearchResults = () => {
                 </Button>
                 <Button 
                   variant={activeTab === 'Experts' ? "default" : "ghost"} 
-                  onClick={() => setActiveTab('Experts')}
+                  onClick={() => {
+                    setActiveTab('Experts');
+                    const newSearchParams = new URLSearchParams(searchParams);
+                    newSearchParams.set('category', 'Experts');
+                    navigate(`/search?${newSearchParams.toString()}`);
+                  }}
                   className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
                   data-state={activeTab === 'Experts' ? 'active' : 'inactive'}
                 >
@@ -177,7 +202,12 @@ export const SearchResults = () => {
                 </Button>
                 <Button 
                   variant={activeTab === 'Communities' ? "default" : "ghost"} 
-                  onClick={() => setActiveTab('Communities')}
+                  onClick={() => {
+                    setActiveTab('Communities');
+                    const newSearchParams = new URLSearchParams(searchParams);
+                    newSearchParams.set('category', 'Communities');
+                    navigate(`/search?${newSearchParams.toString()}`);
+                  }}
                   className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
                   data-state={activeTab === 'Communities' ? 'active' : 'inactive'}
                 >
@@ -185,7 +215,12 @@ export const SearchResults = () => {
                 </Button>
                 <Button 
                   variant={activeTab === 'Jobs' ? "default" : "ghost"} 
-                  onClick={() => setActiveTab('Jobs')}
+                  onClick={() => {
+                    setActiveTab('Jobs');
+                    const newSearchParams = new URLSearchParams(searchParams);
+                    newSearchParams.set('category', 'Jobs');
+                    navigate(`/search?${newSearchParams.toString()}`);
+                  }}
                   className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
                   data-state={activeTab === 'Jobs' ? 'active' : 'inactive'}
                 >
@@ -284,3 +319,5 @@ export const SearchResults = () => {
     </div>
   );
 };
+
+export default SearchResults;
