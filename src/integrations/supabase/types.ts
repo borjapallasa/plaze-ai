@@ -38,6 +38,51 @@ export type Database = {
           },
         ]
       }
+      affiliate_products: {
+        Row: {
+          affiliate_products_uuid: string
+          affiliate_share: number | null
+          affiliate_uuid: string | null
+          created_at: string
+          expert_share: number | null
+          id: number
+          product_uuid: string | null
+        }
+        Insert: {
+          affiliate_products_uuid?: string
+          affiliate_share?: number | null
+          affiliate_uuid?: string | null
+          created_at?: string
+          expert_share?: number | null
+          id?: number
+          product_uuid?: string | null
+        }
+        Update: {
+          affiliate_products_uuid?: string
+          affiliate_share?: number | null
+          affiliate_uuid?: string | null
+          created_at?: string
+          expert_share?: number | null
+          id?: number
+          product_uuid?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_products_affiliate_uuid_fkey"
+            columns: ["affiliate_uuid"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["affiliate_uuid"]
+          },
+          {
+            foreignKeyName: "affiliate_products_product_uuid_fkey"
+            columns: ["product_uuid"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["product_uuid"]
+          },
+        ]
+      }
       affiliates: {
         Row: {
           affiliate_code: string | null
@@ -478,6 +523,70 @@ export type Database = {
           },
         ]
       }
+      community_products: {
+        Row: {
+          classroom_uuid: string | null
+          community_product_uuid: string
+          community_uuid: string | null
+          created_at: string
+          expert_uuid: string | null
+          id: number
+          payment_link: string | null
+          price: number | null
+          product_type:
+            | Database["public"]["Enums"]["community_product_type"]
+            | null
+        }
+        Insert: {
+          classroom_uuid?: string | null
+          community_product_uuid?: string
+          community_uuid?: string | null
+          created_at?: string
+          expert_uuid?: string | null
+          id?: number
+          payment_link?: string | null
+          price?: number | null
+          product_type?:
+            | Database["public"]["Enums"]["community_product_type"]
+            | null
+        }
+        Update: {
+          classroom_uuid?: string | null
+          community_product_uuid?: string
+          community_uuid?: string | null
+          created_at?: string
+          expert_uuid?: string | null
+          id?: number
+          payment_link?: string | null
+          price?: number | null
+          product_type?:
+            | Database["public"]["Enums"]["community_product_type"]
+            | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_products_classroom_uuid_fkey"
+            columns: ["classroom_uuid"]
+            isOneToOne: false
+            referencedRelation: "classrooms"
+            referencedColumns: ["classroom_uuid"]
+          },
+          {
+            foreignKeyName: "community_products_community_uuid_fkey"
+            columns: ["community_uuid"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["community_uuid"]
+          },
+          {
+            foreignKeyName: "community_products_expert_uuid_fkey"
+            columns: ["expert_uuid"]
+            isOneToOne: false
+            referencedRelation: "experts"
+            referencedColumns: ["expert_uuid"]
+          },
+        ]
+      }
       community_subscriptions: {
         Row: {
           cancelled_at: string | null
@@ -632,6 +741,7 @@ export type Database = {
       }
       conversations: {
         Row: {
+          archived: boolean | null
           conversation_uuid: string
           created_at: string
           draft_created: boolean | null
@@ -651,6 +761,7 @@ export type Database = {
           user_starter_uuid: string | null
         }
         Insert: {
+          archived?: boolean | null
           conversation_uuid?: string
           created_at?: string
           draft_created?: boolean | null
@@ -670,6 +781,7 @@ export type Database = {
           user_starter_uuid?: string | null
         }
         Update: {
+          archived?: boolean | null
           conversation_uuid?: string
           created_at?: string
           draft_created?: boolean | null
@@ -805,6 +917,7 @@ export type Database = {
           location: string | null
           name: string | null
           response_rate: number | null
+          sales_amount: number | null
           slug: string | null
           thumbnail: string | null
           title: string | null
@@ -824,6 +937,7 @@ export type Database = {
           location?: string | null
           name?: string | null
           response_rate?: number | null
+          sales_amount?: number | null
           slug?: string | null
           thumbnail?: string | null
           title?: string | null
@@ -843,6 +957,7 @@ export type Database = {
           location?: string | null
           name?: string | null
           response_rate?: number | null
+          sales_amount?: number | null
           slug?: string | null
           thumbnail?: string | null
           title?: string | null
@@ -886,7 +1001,7 @@ export type Database = {
           description?: string | null
           id?: number
           job_transaction_uuid?: string | null
-          job_uuid: string
+          job_uuid?: string
           paid_at?: string | null
           status?: Database["public"]["Enums"]["job_status"] | null
           tech_stack?: string | null
@@ -1191,6 +1306,7 @@ export type Database = {
       products: {
         Row: {
           accept_terms: boolean | null
+          affiliate_information: string | null
           affiliate_program: boolean | null
           affiliation_amount: number | null
           change_reasons: string | null
@@ -1213,6 +1329,7 @@ export type Database = {
           product_uuid: string
           public_link: string | null
           related_products: string[] | null
+          review_count: number | null
           reviewed_by: string | null
           sales_amount: number | null
           sales_count: number | null
@@ -1235,6 +1352,7 @@ export type Database = {
         }
         Insert: {
           accept_terms?: boolean | null
+          affiliate_information?: string | null
           affiliate_program?: boolean | null
           affiliation_amount?: number | null
           change_reasons?: string | null
@@ -1257,6 +1375,7 @@ export type Database = {
           product_uuid?: string
           public_link?: string | null
           related_products?: string[] | null
+          review_count?: number | null
           reviewed_by?: string | null
           sales_amount?: number | null
           sales_count?: number | null
@@ -1279,6 +1398,7 @@ export type Database = {
         }
         Update: {
           accept_terms?: boolean | null
+          affiliate_information?: string | null
           affiliate_program?: boolean | null
           affiliation_amount?: number | null
           change_reasons?: string | null
@@ -1301,6 +1421,7 @@ export type Database = {
           product_uuid?: string
           public_link?: string | null
           related_products?: string[] | null
+          review_count?: number | null
           reviewed_by?: string | null
           sales_amount?: number | null
           sales_count?: number | null
@@ -1993,21 +2114,55 @@ export type Database = {
       }
       transactions: {
         Row: {
+          amount: number | null
+          buyer_user_uuid: string | null
           created_at: string
+          expert_uuid: string | null
           id: number
+          seller_user_uuid: string | null
           transaction_uuid: string
         }
         Insert: {
+          amount?: number | null
+          buyer_user_uuid?: string | null
           created_at?: string
+          expert_uuid?: string | null
           id?: number
+          seller_user_uuid?: string | null
           transaction_uuid: string
         }
         Update: {
+          amount?: number | null
+          buyer_user_uuid?: string | null
           created_at?: string
+          expert_uuid?: string | null
           id?: number
+          seller_user_uuid?: string | null
           transaction_uuid?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "transactions_buyer_user_uuid_fkey"
+            columns: ["buyer_user_uuid"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["user_uuid"]
+          },
+          {
+            foreignKeyName: "transactions_expert_uuid_fkey"
+            columns: ["expert_uuid"]
+            isOneToOne: false
+            referencedRelation: "experts"
+            referencedColumns: ["expert_uuid"]
+          },
+          {
+            foreignKeyName: "transactions_seller_user_uuid_fkey"
+            columns: ["seller_user_uuid"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["user_uuid"]
+          },
+        ]
       }
       users: {
         Row: {
@@ -2037,6 +2192,7 @@ export type Database = {
           product_amount_spent: number | null
           product_count: number | null
           product_sales_amount: number | null
+          referral_source: string | null
           requested_amount: number | null
           service_sales_amount: number | null
           service_transaction_amount_spent: number | null
@@ -2083,6 +2239,7 @@ export type Database = {
           product_amount_spent?: number | null
           product_count?: number | null
           product_sales_amount?: number | null
+          referral_source?: string | null
           requested_amount?: number | null
           service_sales_amount?: number | null
           service_transaction_amount_spent?: number | null
@@ -2129,6 +2286,7 @@ export type Database = {
           product_amount_spent?: number | null
           product_count?: number | null
           product_sales_amount?: number | null
+          referral_source?: string | null
           requested_amount?: number | null
           service_sales_amount?: number | null
           service_transaction_amount_spent?: number | null
@@ -2227,6 +2385,7 @@ export type Database = {
       commnunity_subscription_type: "free" | "paid"
       community_billing_period: "monthly" | "yearly"
       community_price_status: "active" | "inactive"
+      community_product_type: "free" | "paid"
       community_subscription_status: "active" | "inactive"
       community_type: "free" | "paid"
       community_visibility: "draft" | "private" | "public"
