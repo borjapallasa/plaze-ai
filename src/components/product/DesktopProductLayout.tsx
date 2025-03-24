@@ -9,6 +9,7 @@ import { ProductInfo } from "./ProductInfo";
 import { ProductFullWidthSections } from "./ProductFullWidthSections";
 import { ProductImage } from "@/hooks/use-product-images";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
+import { RelatedProductsList } from "./RelatedProductsList";
 
 interface DesktopProductLayoutProps {
   product: any;
@@ -46,9 +47,9 @@ export function DesktopProductLayout({
       <div className="hidden lg:grid grid-cols-1 lg:grid-cols-3 gap-7">
         <div className="lg:col-span-2">
           <div className="space-y-6">
-            <ProductGallery 
+            <ProductGallery
               images={images}
-              className="mb-5" 
+              className="mb-5"
               priority={!isMobile}
             />
             <ProductDescription description={product.description} />
@@ -56,13 +57,19 @@ export function DesktopProductLayout({
         </div>
 
         <div className="lg:space-y-4">
-          <ProductHeader 
+          <ProductHeader
             title={product.name}
             seller="Design Master"
             rating={averageRating}
             onContactSeller={handleContactSeller}
             className="mb-2"
           />
+
+          <RelatedProductsList
+            productUUID={product.product_uuid}
+            className="mb-4"
+          />
+
           <VariantPicker
             variants={variants}
             selectedVariant={selectedVariant}
@@ -71,15 +78,15 @@ export function DesktopProductLayout({
             className="mb-3"
             isLoading={isLoading}
           />
-          
+
           <AdditionalVariants
             variants={variants}
             selectedMainVariant={selectedVariant}
             onAdditionalSelect={onAdditionalVariantToggle}
             className="mb-4"
           />
-          
-          <ProductInfo 
+
+          <ProductInfo
             techStack={product.tech_stack}
             productIncludes={product.product_includes}
             difficultyLevel={product.difficulty_level}
@@ -88,7 +95,7 @@ export function DesktopProductLayout({
       </div>
 
       <div className="hidden lg:block mt-8 space-y-6">
-        <ProductFullWidthSections 
+        <ProductFullWidthSections
           embedUrl={embedUrl}
           reviews={reviews}
           expert_uuid={product.expert_uuid}

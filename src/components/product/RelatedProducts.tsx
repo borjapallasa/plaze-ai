@@ -48,20 +48,22 @@ export function RelatedProducts({
     queryKey: ['userProducts', userUuid, productId],
     queryFn: async () => {
       if (!userUuid || !productId) {
+        console.log('No user or product')
         return [];
       }
-      
+
       const { data, error } = await supabase
         .from('products')
         .select('product_uuid, name, price_from, slug')
         .eq('user_uuid', userUuid)
         .neq('product_uuid', productId);
-      
+
+
       if (error) {
         console.error("Error fetching user products:", error);
         return [];
       }
-      
+
       return data || [];
     },
     enabled: Boolean(userUuid) && Boolean(productId),
@@ -74,17 +76,17 @@ export function RelatedProducts({
       if (!productId) {
         return [];
       }
-      
+
       const { data, error } = await supabase
         .from('product_relationships')
         .select('*')
         .eq('product_uuid', productId);
-      
+
       if (error) {
         console.error("Error fetching product relationships:", error);
         return [];
       }
-      
+
       return data || [];
     },
     enabled: Boolean(productId),
@@ -93,7 +95,7 @@ export function RelatedProducts({
   // Update selected products based on relationships
   useEffect(() => {
     const relatedProductIds = relationships.map(rel => rel.related_product_uuid);
-    const relatedProducts = userProducts.filter(product => 
+    const relatedProducts = userProducts.filter(product =>
       relatedProductIds.includes(product.product_uuid)
     );
     setSelectedProducts(relatedProducts);
@@ -102,41 +104,41 @@ export function RelatedProducts({
   // Save all relationships to the database
   const saveRelationships = async () => {
     if (!productId) return;
-    
+
     setSaving(true);
-    
+
     try {
       // First, delete all existing relationships
       const { error: deleteError } = await supabase
         .from('product_relationships')
         .delete()
         .eq('product_uuid', productId);
-      
+
       if (deleteError) {
         throw deleteError;
       }
-      
+
       // Then, insert all selected products as new relationships
       if (selectedProducts.length > 0) {
         const relationshipsToInsert = selectedProducts.map((product, index) => ({
           product_uuid: productId,
           related_product_uuid: product.product_uuid,
-          relationship_type: 'related',
+          relationship_type: 'upsell',
           display_order: index
         }));
-        
+
         const { error: insertError } = await supabase
           .from('product_relationships')
           .insert(relationshipsToInsert);
-        
+
         if (insertError) {
           throw insertError;
         }
       }
-      
+
       // Refresh data
       queryClient.invalidateQueries({ queryKey: ['productRelationships', productId] });
-      
+
       toast({
         title: "Changes saved",
         description: "Related products have been updated successfully",
@@ -160,16 +162,16 @@ export function RelatedProducts({
       // Update local state
       setSelectedProducts(prev => {
         const isAlreadySelected = prev.some(p => p.product_uuid === product.product_uuid);
-        
+
         // If it's already selected, remove it
         if (isAlreadySelected) {
           return prev.filter(p => p.product_uuid !== product.product_uuid);
         }
-        
+
         // Otherwise, add it to the selected products
         return [...prev, product];
       });
-      
+
       // Close the popover after selection
       setOpen(false);
     } catch (error) {
@@ -178,13 +180,37 @@ export function RelatedProducts({
   };
 
   // Remove a product from selection
-  const removeSelectedProduct = (productId: string) => {
+  const removeSelectedProduct = async (productId: string) => {
     try {
-      setSelectedProducts(prev => 
-        prev.filter(p => p.product_uuid !== productId)
-      );
+      // Delete relationship from database
+      await deleteProductRelationship(productId);
     } catch (error) {
       console.error("Error removing selected product:", error);
+    }
+  };
+
+  // Function to delete product relationships from the database
+  const deleteProductRelationship = async (relatedProductId: string) => {
+    console.log('Attempting to delete relationship:', { relatedProductId, productId });
+    try {
+      const { error, data } = await supabase
+        .from('product_relationships')
+        .delete()
+        .eq('product_uuid', productId)
+
+      if (error) {
+        throw error;
+      }
+
+      // Remove from local state only if the deletion was successful
+      setSelectedProducts(prev =>
+        prev.filter(p => p.product_uuid !== relatedProductId)
+      );
+
+      // Refresh data
+      queryClient.invalidateQueries({ queryKey: ['productRelationships', productId] });
+    } catch (error) {
+      console.error("Error deleting product relationship:", error);
     }
   };
 
@@ -203,7 +229,7 @@ export function RelatedProducts({
     <div className={cn("space-y-4", className)}>
       <div className="flex items-center justify-between">
         <Label className="text-base font-medium">Related Products</Label>
-        
+
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <Button variant="outline" size="sm" className="gap-1.5">
@@ -219,7 +245,7 @@ export function RelatedProducts({
               <CommandGroup className="max-h-64 overflow-auto">
                 {userProducts.map((product) => {
                   const isSelected = selectedProducts.some(p => p.product_uuid === product.product_uuid);
-                  
+
                   return (
                     <CommandItem
                       key={product.product_uuid}
@@ -253,7 +279,7 @@ export function RelatedProducts({
         <>
           <div className="space-y-2">
             {selectedProducts.map((product) => (
-              <div 
+              <div
                 key={product.product_uuid}
                 className="flex items-center justify-between p-3 rounded-md border bg-card hover:bg-muted/30 transition-colors"
               >
@@ -277,8 +303,8 @@ export function RelatedProducts({
               </div>
             ))}
           </div>
-          <Button 
-            onClick={saveRelationships} 
+          <Button
+            onClick={saveRelationships}
             disabled={isSaving}
             className="w-full"
           >

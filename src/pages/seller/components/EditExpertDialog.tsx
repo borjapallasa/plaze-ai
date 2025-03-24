@@ -9,7 +9,6 @@ import { Pencil } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { Expert } from "@/types/expert";
-import type { Json } from "@/integrations/supabase/types";
 
 interface EditExpertDialogProps {
   expert: Expert;
@@ -149,38 +148,38 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
-            <Input 
-              id="name" 
-              name="name" 
-              value={formData.name} 
-              onChange={handleChange} 
+            <Input
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
               placeholder="Your name"
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="title">Title</Label>
-            <Input 
-              id="title" 
-              name="title" 
-              value={formData.title} 
-              onChange={handleChange} 
+            <Input
+              id="title"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
               placeholder="Professional title"
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
-            <Textarea 
-              id="description" 
-              name="description" 
-              value={formData.description} 
-              onChange={handleChange} 
+            <Textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
               placeholder="Describe your expertise"
               rows={4}
             />
           </div>
           <DialogFooter>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={isLoading}
               className="w-full"
             >
