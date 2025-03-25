@@ -306,8 +306,8 @@ export type Database = {
           active_price_id: string | null
           active_product_id: string | null
           billing_period:
-            | Database["public"]["Enums"]["community_billing_period"]
-            | null
+          | Database["public"]["Enums"]["community_billing_period"]
+          | null
           classroom_count: number | null
           community_price_uuid: string | null
           community_uuid: string
@@ -341,8 +341,8 @@ export type Database = {
           active_price_id?: string | null
           active_product_id?: string | null
           billing_period?:
-            | Database["public"]["Enums"]["community_billing_period"]
-            | null
+          | Database["public"]["Enums"]["community_billing_period"]
+          | null
           classroom_count?: number | null
           community_price_uuid?: string | null
           community_uuid?: string
@@ -370,16 +370,16 @@ export type Database = {
           type?: Database["public"]["Enums"]["community_type"] | null
           user_uuid?: string | null
           visibility?:
-            | Database["public"]["Enums"]["community_visibility"]
-            | null
+          | Database["public"]["Enums"]["community_visibility"]
+          | null
           webhook?: string | null
         }
         Update: {
           active_price_id?: string | null
           active_product_id?: string | null
           billing_period?:
-            | Database["public"]["Enums"]["community_billing_period"]
-            | null
+          | Database["public"]["Enums"]["community_billing_period"]
+          | null
           classroom_count?: number | null
           community_price_uuid?: string | null
           community_uuid?: string
@@ -407,8 +407,8 @@ export type Database = {
           type?: Database["public"]["Enums"]["community_type"] | null
           user_uuid?: string | null
           visibility?:
-            | Database["public"]["Enums"]["community_visibility"]
-            | null
+          | Database["public"]["Enums"]["community_visibility"]
+          | null
           webhook?: string | null
         }
         Relationships: [
@@ -522,7 +522,13 @@ export type Database = {
             referencedColumns: ["community_uuid"]
           },
         ]
-      }
+      },
+      community_product_relationships: {
+        id: number
+        created_at: string
+        community_uuid: string
+        community_product_uuid: string
+      },
       community_products: {
         Row: {
           classroom_uuid: string | null
@@ -533,9 +539,10 @@ export type Database = {
           id: number
           payment_link: string | null
           price: number | null
+          name: string
           product_type:
-            | Database["public"]["Enums"]["community_product_type"]
-            | null
+          | Database["public"]["Enums"]["community_product_type"]
+          | null
         }
         Insert: {
           classroom_uuid?: string | null
@@ -547,8 +554,8 @@ export type Database = {
           payment_link?: string | null
           price?: number | null
           product_type?:
-            | Database["public"]["Enums"]["community_product_type"]
-            | null
+          | Database["public"]["Enums"]["community_product_type"]
+          | null
         }
         Update: {
           classroom_uuid?: string | null
@@ -560,8 +567,8 @@ export type Database = {
           payment_link?: string | null
           price?: number | null
           product_type?:
-            | Database["public"]["Enums"]["community_product_type"]
-            | null
+          | Database["public"]["Enums"]["community_product_type"]
+          | null
         }
         Relationships: [
           {
@@ -598,13 +605,13 @@ export type Database = {
           id: number
           seller_user_uuid: string | null
           status:
-            | Database["public"]["Enums"]["community_subscription_status"]
-            | null
+          | Database["public"]["Enums"]["community_subscription_status"]
+          | null
           stripe_id: string | null
           total_amount: number | null
           type:
-            | Database["public"]["Enums"]["commnunity_subscription_type"]
-            | null
+          | Database["public"]["Enums"]["commnunity_subscription_type"]
+          | null
           user_uuid: string | null
           utm_campaign: string | null
           utm_content: string | null
@@ -623,13 +630,13 @@ export type Database = {
           id?: number
           seller_user_uuid?: string | null
           status?:
-            | Database["public"]["Enums"]["community_subscription_status"]
-            | null
+          | Database["public"]["Enums"]["community_subscription_status"]
+          | null
           stripe_id?: string | null
           total_amount?: number | null
           type?:
-            | Database["public"]["Enums"]["commnunity_subscription_type"]
-            | null
+          | Database["public"]["Enums"]["commnunity_subscription_type"]
+          | null
           user_uuid?: string | null
           utm_campaign?: string | null
           utm_content?: string | null
@@ -648,13 +655,13 @@ export type Database = {
           id?: number
           seller_user_uuid?: string | null
           status?:
-            | Database["public"]["Enums"]["community_subscription_status"]
-            | null
+          | Database["public"]["Enums"]["community_subscription_status"]
+          | null
           stripe_id?: string | null
           total_amount?: number | null
           type?:
-            | Database["public"]["Enums"]["commnunity_subscription_type"]
-            | null
+          | Database["public"]["Enums"]["commnunity_subscription_type"]
+          | null
           user_uuid?: string | null
           utm_campaign?: string | null
           utm_content?: string | null
@@ -1318,8 +1325,8 @@ export type Database = {
           expert_uuid: string | null
           fees_amount: number | null
           free_or_paid:
-            | Database["public"]["Enums"]["product_free_or_paid"]
-            | null
+          | Database["public"]["Enums"]["product_free_or_paid"]
+          | null
           id: number
           industries: Json | null
           name: string | null
@@ -1364,8 +1371,8 @@ export type Database = {
           expert_uuid?: string | null
           fees_amount?: number | null
           free_or_paid?:
-            | Database["public"]["Enums"]["product_free_or_paid"]
-            | null
+          | Database["public"]["Enums"]["product_free_or_paid"]
+          | null
           id?: number
           industries?: Json | null
           name?: string | null
@@ -1410,8 +1417,8 @@ export type Database = {
           expert_uuid?: string | null
           fees_amount?: number | null
           free_or_paid?:
-            | Database["public"]["Enums"]["product_free_or_paid"]
-            | null
+          | Database["public"]["Enums"]["product_free_or_paid"]
+          | null
           id?: number
           industries?: Json | null
           name?: string | null
@@ -1522,13 +1529,13 @@ export type Database = {
           id: number
           item_count: number | null
           payment_provider:
-            | Database["public"]["Enums"]["payment_provider"]
-            | null
+          | Database["public"]["Enums"]["payment_provider"]
+          | null
           payment_reference_id: string | null
           product_transaction_uuid: string
           status:
-            | Database["public"]["Enums"]["product_transaction_status"]
-            | null
+          | Database["public"]["Enums"]["product_transaction_status"]
+          | null
           total_amount: number | null
           type: Database["public"]["Enums"]["product_transaction_type"] | null
           updated_at: string | null
@@ -1538,13 +1545,13 @@ export type Database = {
           id?: number
           item_count?: number | null
           payment_provider?:
-            | Database["public"]["Enums"]["payment_provider"]
-            | null
+          | Database["public"]["Enums"]["payment_provider"]
+          | null
           payment_reference_id?: string | null
           product_transaction_uuid?: string
           status?:
-            | Database["public"]["Enums"]["product_transaction_status"]
-            | null
+          | Database["public"]["Enums"]["product_transaction_status"]
+          | null
           total_amount?: number | null
           type?: Database["public"]["Enums"]["product_transaction_type"] | null
           updated_at?: string | null
@@ -1554,13 +1561,13 @@ export type Database = {
           id?: number
           item_count?: number | null
           payment_provider?:
-            | Database["public"]["Enums"]["payment_provider"]
-            | null
+          | Database["public"]["Enums"]["payment_provider"]
+          | null
           payment_reference_id?: string | null
           product_transaction_uuid?: string
           status?:
-            | Database["public"]["Enums"]["product_transaction_status"]
-            | null
+          | Database["public"]["Enums"]["product_transaction_status"]
+          | null
           total_amount?: number | null
           type?: Database["public"]["Enums"]["product_transaction_type"] | null
           updated_at?: string | null
@@ -1608,8 +1615,8 @@ export type Database = {
           status: Database["public"]["Enums"]["review_status"] | null
           title: string | null
           transaction_type:
-            | Database["public"]["Enums"]["transaction_type"]
-            | null
+          | Database["public"]["Enums"]["transaction_type"]
+          | null
           transaction_uuid: string | null
           type: Database["public"]["Enums"]["review_type"] | null
           verified: boolean | null
@@ -1627,8 +1634,8 @@ export type Database = {
           status?: Database["public"]["Enums"]["review_status"] | null
           title?: string | null
           transaction_type?:
-            | Database["public"]["Enums"]["transaction_type"]
-            | null
+          | Database["public"]["Enums"]["transaction_type"]
+          | null
           transaction_uuid?: string | null
           type?: Database["public"]["Enums"]["review_type"] | null
           verified?: boolean | null
@@ -1646,8 +1653,8 @@ export type Database = {
           status?: Database["public"]["Enums"]["review_status"] | null
           title?: string | null
           transaction_type?:
-            | Database["public"]["Enums"]["transaction_type"]
-            | null
+          | Database["public"]["Enums"]["transaction_type"]
+          | null
           transaction_uuid?: string | null
           type?: Database["public"]["Enums"]["review_type"] | null
           verified?: boolean | null
@@ -1689,8 +1696,8 @@ export type Database = {
           created_at: string
           id: number
           service_price_status:
-            | Database["public"]["Enums"]["service_price_status"]
-            | null
+          | Database["public"]["Enums"]["service_price_status"]
+          | null
           service_price_uuid: string
           service_uuid: string | null
           stripe_id: string | null
@@ -1701,8 +1708,8 @@ export type Database = {
           created_at?: string
           id?: number
           service_price_status?:
-            | Database["public"]["Enums"]["service_price_status"]
-            | null
+          | Database["public"]["Enums"]["service_price_status"]
+          | null
           service_price_uuid?: string
           service_uuid?: string | null
           stripe_id?: string | null
@@ -1713,8 +1720,8 @@ export type Database = {
           created_at?: string
           id?: number
           service_price_status?:
-            | Database["public"]["Enums"]["service_price_status"]
-            | null
+          | Database["public"]["Enums"]["service_price_status"]
+          | null
           service_price_uuid?: string
           service_uuid?: string | null
           stripe_id?: string | null
@@ -1739,8 +1746,8 @@ export type Database = {
           service_subscription_uuid: string
           service_uuid: string | null
           status:
-            | Database["public"]["Enums"]["service_subscription_status"]
-            | null
+          | Database["public"]["Enums"]["service_subscription_status"]
+          | null
           stripe_id: string | null
           total_amount: number | null
           user_uuid: string | null
@@ -1759,8 +1766,8 @@ export type Database = {
           service_subscription_uuid?: string
           service_uuid?: string | null
           status?:
-            | Database["public"]["Enums"]["service_subscription_status"]
-            | null
+          | Database["public"]["Enums"]["service_subscription_status"]
+          | null
           stripe_id?: string | null
           total_amount?: number | null
           user_uuid?: string | null
@@ -1779,8 +1786,8 @@ export type Database = {
           service_subscription_uuid?: string
           service_uuid?: string | null
           status?:
-            | Database["public"]["Enums"]["service_subscription_status"]
-            | null
+          | Database["public"]["Enums"]["service_subscription_status"]
+          | null
           stripe_id?: string | null
           total_amount?: number | null
           user_uuid?: string | null
@@ -2375,12 +2382,12 @@ export type Database = {
     Enums: {
       affiliate_status: "new" | "accepted" | "needs attention" | "rejected"
       applications_status:
-        | "open"
-        | "rejected"
-        | "pending"
-        | "accepted"
-        | "withdrawn"
-        | "open conversation"
+      | "open"
+      | "rejected"
+      | "pending"
+      | "accepted"
+      | "withdrawn"
+      | "open conversation"
       classroom_status: "visible" | "not visible"
       commnunity_subscription_type: "free" | "paid"
       community_billing_period: "monthly" | "yearly"
@@ -2392,24 +2399,24 @@ export type Database = {
       conversation_source: "template" | "job request" | "information request"
       conversation_status: "open" | "closed" | "need attention"
       job_status:
-        | "open"
-        | "archived"
-        | "closed"
-        | "paid"
-        | "completed"
-        | "pending payment"
-        | "disputed"
+      | "open"
+      | "archived"
+      | "closed"
+      | "paid"
+      | "completed"
+      | "pending payment"
+      | "disputed"
       payment_provider: "stripe"
       payout_status: "requested" | "paid out"
       product_free_or_paid: "free" | "paid"
       product_status: "active" | "draft" | "inactive"
       product_transaction_status:
-        | "pending"
-        | "processing"
-        | "paid"
-        | "failed"
-        | "refunded"
-        | "chargeback"
+      | "pending"
+      | "processing"
+      | "paid"
+      | "failed"
+      | "refunded"
+      | "chargeback"
       product_transaction_type: "guest" | "user"
       product_type: "template" | "guide or manual"
       review_status: "published" | "not published"
@@ -2419,41 +2426,41 @@ export type Database = {
       service_subscription_status: "active" | "inactive"
       service_type: "one time" | "monthly"
       signup_via:
-        | "sign-up"
-        | "sign-up community"
-        | "guest transaction"
-        | "sign-up community paid"
+      | "sign-up"
+      | "sign-up community"
+      | "guest transaction"
+      | "sign-up community paid"
       thread_status: "open" | "closed"
       thread_tag: "general" | "support" | "off topic" | "anouncements"
       ticket_status:
-        | "open"
-        | "archived"
-        | "closed"
-        | "requires attention"
-        | "in progress"
+      | "open"
+      | "archived"
+      | "closed"
+      | "requires attention"
+      | "in progress"
       ticket_type:
-        | "others"
-        | "problem with a purchase"
-        | "join as seller"
-        | "product question"
+      | "others"
+      | "problem with a purchase"
+      | "join as seller"
+      | "product question"
       transaction_item_status:
-        | "pending"
-        | "processing"
-        | "completed"
-        | "failed"
-        | "cancelled"
-        | "expired"
-        | "refunded"
-        | "partially refunded"
-        | "chargeback"
-        | "access revoked"
-        | "failed fulfillment"
+      | "pending"
+      | "processing"
+      | "completed"
+      | "failed"
+      | "cancelled"
+      | "expired"
+      | "refunded"
+      | "partially refunded"
+      | "chargeback"
+      | "access revoked"
+      | "failed fulfillment"
       transaction_type:
-        | "product"
-        | "job"
-        | "service"
-        | "community"
-        | "custom request"
+      | "product"
+      | "job"
+      | "service"
+      | "community"
+      | "custom request"
       variant_tags: "premium" | "basic"
     }
     CompositeTypes: {
@@ -2466,95 +2473,95 @@ type PublicSchema = Database[Extract<keyof Database, "public">]
 
 export type Tables<
   PublicTableNameOrOptions extends
-    | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
-    | { schema: keyof Database },
+  | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
+  | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-        Database[PublicTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+  ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
+    Database[PublicTableNameOrOptions["schema"]]["Views"])
+  : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+    Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
-    ? R
-    : never
+  ? R
+  : never
   : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
-        PublicSchema["Views"])
-    ? (PublicSchema["Tables"] &
-        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
-        Row: infer R
-      }
-      ? R
-      : never
-    : never
+    PublicSchema["Views"])
+  ? (PublicSchema["Tables"] &
+    PublicSchema["Views"])[PublicTableNameOrOptions] extends {
+      Row: infer R
+    }
+  ? R
+  : never
+  : never
 
 export type TablesInsert<
   PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
-    | { schema: keyof Database },
+  | keyof PublicSchema["Tables"]
+  | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+  ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+  : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Insert: infer I
-    }
-    ? I
-    : never
+    Insert: infer I
+  }
+  ? I
+  : never
   : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
-        Insert: infer I
-      }
-      ? I
-      : never
-    : never
+  ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+    Insert: infer I
+  }
+  ? I
+  : never
+  : never
 
 export type TablesUpdate<
   PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
-    | { schema: keyof Database },
+  | keyof PublicSchema["Tables"]
+  | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+  ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+  : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Update: infer U
-    }
-    ? U
-    : never
+    Update: infer U
+  }
+  ? U
+  : never
   : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
-        Update: infer U
-      }
-      ? U
-      : never
-    : never
+  ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+    Update: infer U
+  }
+  ? U
+  : never
+  : never
 
 export type Enums<
   PublicEnumNameOrOptions extends
-    | keyof PublicSchema["Enums"]
-    | { schema: keyof Database },
+  | keyof PublicSchema["Enums"]
+  | { schema: keyof Database },
   EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+  ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
+  : never = never,
 > = PublicEnumNameOrOptions extends { schema: keyof Database }
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
-    ? PublicSchema["Enums"][PublicEnumNameOrOptions]
-    : never
+  ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+  : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof PublicSchema["CompositeTypes"]
-    | { schema: keyof Database },
+  | keyof PublicSchema["CompositeTypes"]
+  | { schema: keyof Database },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof Database
   }
-    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+  ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+  : never = never,
 > = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
   ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
-    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
-    : never
+  ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+  : never

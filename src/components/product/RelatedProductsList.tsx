@@ -1,4 +1,3 @@
-import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Label } from "@/components/ui/label";
@@ -46,7 +45,10 @@ export function RelatedProductsList({ productUUID, className = "" }: RelatedProd
         return [];
       }
 
-      return data || [];
+      return data.map((item) => ({
+        related_product_uuid: item.related_product_uuid,
+        related_product: item.related_product[0] // Ensure related_product is an object
+      })) || [];
     },
     enabled: Boolean(productUUID),
   });

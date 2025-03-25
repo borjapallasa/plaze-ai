@@ -1,28 +1,30 @@
 
-import React from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Copy, Check } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { CommunityDangerZone } from "./CommunityDangerZone";
+import { EditCommunityRelatedProducts } from "./EditCommunityRelatedProduts";
 
+export interface Community {
+  community_uuid: string | null
+  product_count?: number | null;
+  classroom_count?: number | null;
+  post_count?: number | null;
+  monthly_recurring_revenue?: number | null;
+  total_revenue?: number | null;
+  paid_member_count?: number | null;
+  member_count?: number | null;
+  expert_uuid?: string | null;
+}
 interface CommunityStatsProps {
   paymentLink: string;
   onCopyPaymentLink: () => void;
   hasCopied: boolean;
   webhook: string;
   setWebhook: (value: string) => void;
-  community: {
-    product_count?: number | null;
-    classroom_count?: number | null;
-    post_count?: number | null;
-    monthly_recurring_revenue?: number | null;
-    total_revenue?: number | null;
-    paid_member_count?: number | null;
-    member_count?: number | null;
-    expert_uuid?: string | null;
-  };
+  community: Community;
   showDeleteDialog: boolean;
   setShowDeleteDialog: (show: boolean) => void;
   isDeleting: boolean;
@@ -124,6 +126,12 @@ export function CommunityStats({
             </div>
           </div>
         </div>
+      </Card>
+
+      {/* Add community related products section here */}
+      <Card className="p-4 sm:p-6 border border-border/40 bg-card/40">
+        <h2 className="text-lg font-semibold tracking-tight mb-4">Related Community Products</h2>
+        <EditCommunityRelatedProducts community={community} />
       </Card>
 
       <Card className="p-4 sm:p-6 border border-border/40 bg-card/40">
