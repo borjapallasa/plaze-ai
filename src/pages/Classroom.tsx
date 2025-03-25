@@ -11,11 +11,11 @@ import { useParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
   DialogFooter,
   DialogClose,
   DialogDescription
@@ -25,6 +25,9 @@ import { Label } from "@/components/ui/label";
 import { ProductEditor } from "@/components/product/ProductEditor";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/auth";
+import { CommunityProduct } from "@/components/community/EditCommunityRelatedProduts";
+import { Community } from "@/components/community/CommunityStats";
+import { Variant } from "@/components/product/types/variants";
 
 export default function Classroom() {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -47,7 +50,7 @@ export default function Classroom() {
   const { id } = useParams();
   const queryClient = useQueryClient();
   const { user } = useAuth();
-  
+
   const { data: classroom, isLoading: isClassroomLoading } = useQuery({
     queryKey: ['classroom', id],
     queryFn: async () => {
@@ -67,21 +70,61 @@ export default function Classroom() {
     enabled: !!id
   });
 
-  const { data: community, isLoading: isCommunityLoading } = useQuery({
+  const { data: community, isLoading: isCommunityLoading } = useQuery<Community | null>({
     queryKey: ['classroom-community', classroom?.community_uuid],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('communities')
-        .select('name')
-        .eq('community_uuid', classroom?.community_uuid)
+        .select('*')
+        .eq('community_uuid', classroom.community_uuid)
         .single();
+
+      console.log('data', data)
 
       if (error) {
         console.error("Error fetching community:", error);
         return null;
       }
 
-      return data;
+      return data as Community;
+    },
+    enabled: !!classroom?.community_uuid
+  });
+
+  const { data: variants } = useQuery({
+    queryKey: ['classroomCommunityProducts', classroom?.community_uuid],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('community_product_relationships')
+        .select(`
+          community_product_uuid (
+            community_product_uuid, 
+            name, 
+            price 
+          )
+        `)
+        .eq('community_uuid', classroom.community_uuid);
+
+      if (error) {
+        console.error("Error fetching community:", error);
+        return null;
+      }
+
+      return data.map((community: any) => {
+        return {
+          id: community.community_product_uuid.community_product_uuid,
+          name: community.community_product_uuid.name,
+          price: community.community_product_uuid.price,
+          comparePrice: community.community_product_uuid.price * 1.5,
+          label: community.product_type === 'premium' ? 'Best Value' : 'Most Popular',
+          features: community.product_type === 'premium' ? ["Core Course", "Premium Resources"] : ["Core Course", "Basic Resources"],
+          highlight: false,
+          tags: [],
+          hidden: false,
+          createdAt: new Date().toISOString(),
+          filesLink: ''
+        }
+      }) as Variant[];
     },
     enabled: !!classroom?.community_uuid
   });
@@ -105,6 +148,7 @@ export default function Classroom() {
     enabled: !!id
   });
 
+
   const addLessonMutation = useMutation({
     mutationFn: async (newLesson: any) => {
       const { data, error } = await supabase
@@ -126,7 +170,7 @@ export default function Classroom() {
         video_url: ''
       });
       setIsAddLessonOpen(false);
-      
+
       queryClient.invalidateQueries({ queryKey: ['classroom-lessons', id] });
       toast({
         title: "Success",
@@ -160,11 +204,11 @@ export default function Classroom() {
     },
     onSuccess: (data) => {
       setIsEditLessonOpen(false);
-      
+
       if (activeLesson && activeLesson.lesson_uuid === data[0]?.lesson_uuid) {
         setActiveLesson(data[0]);
       }
-      
+
       queryClient.invalidateQueries({ queryKey: ['classroom-lessons', id] });
       toast({
         title: "Success",
@@ -195,7 +239,7 @@ export default function Classroom() {
     },
     onSuccess: () => {
       setIsDeleteLessonOpen(false);
-      
+
       if (activeLesson && lessons && lessons.length > 1) {
         const newActiveLesson = lessons.find(
           lesson => lesson.lesson_uuid !== activeLesson.lesson_uuid
@@ -204,7 +248,7 @@ export default function Classroom() {
       } else {
         setActiveLesson(null);
       }
-      
+
       queryClient.invalidateQueries({ queryKey: ['classroom-lessons', id] });
       toast({
         title: "Success",
@@ -291,13 +335,13 @@ export default function Classroom() {
     if (e) {
       e.stopPropagation();
     }
-    
+
     setEditLessonData({
       name: lesson.name || '',
       description: lesson.description || '',
       video_url: lesson.video_url || ''
     });
-    
+
     setActiveLesson(lesson);
     setIsEditLessonOpen(true);
   };
@@ -306,7 +350,7 @@ export default function Classroom() {
     if (e) {
       e.stopPropagation();
     }
-    
+
     setActiveLesson(lesson);
     setIsDeleteLessonOpen(true);
   };
@@ -317,33 +361,6 @@ export default function Classroom() {
     }
   }, [lessons, activeLesson]);
 
-  const variants = [
-    { 
-      id: "basic",
-      name: "Basic Package",
-      price: 99.99,
-      comparePrice: 149.99,
-      label: "Most Popular",
-      features: ["Core Course", "Basic Resources"]
-    },
-    {
-      id: "premium",
-      name: "Premium Package",
-      price: 149.99,
-      comparePrice: 199.99,
-      label: "Best Value",
-      highlight: true,
-      features: ["Core Course", "Premium Resources"]
-    },
-    {
-      id: "pro",
-      name: "Professional Package",
-      price: 199.99,
-      comparePrice: 299.99,
-      label: "Most Complete",
-      features: ["Core Course", "Premium Resources"]
-    }
-  ];
 
   const handleAddToCart = () => {
     // Add to cart logic here
@@ -351,7 +368,7 @@ export default function Classroom() {
 
   const videoUrl = activeLesson?.video_url || classroom?.video_url;
   const videoEmbedUrl = videoUrl ? getVideoEmbedUrl(videoUrl) : null;
-  
+
   useEffect(() => {
     if (videoUrl) {
       console.log("Original video URL:", videoUrl);
@@ -430,19 +447,19 @@ export default function Classroom() {
                 <CardContent className="p-6 space-y-6">
                   <div className="space-y-4">
                     <div>
-                      <button 
+                      <button
                         onClick={() => setIsExpanded(!isExpanded)}
                         className="w-full flex items-center justify-between text-left text-xl font-semibold py-2"
                       >
                         <span>{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
-                        <ChevronDown 
+                        <ChevronDown
                           className={cn(
                             "h-5 w-5 text-muted-foreground transition-transform duration-200",
                             isExpanded ? "transform rotate-180" : ""
-                          )} 
+                          )}
                         />
                       </button>
-                      
+
                       <div className={cn(
                         "space-y-2 overflow-hidden transition-all duration-200 pt-2",
                         isExpanded ? "max-h-[500px]" : "max-h-0"
@@ -455,27 +472,27 @@ export default function Classroom() {
                           ))
                         ) : lessons && lessons.length > 0 ? (
                           lessons.map((lesson) => (
-                            <div 
-                              key={lesson.lesson_uuid} 
+                            <div
+                              key={lesson.lesson_uuid}
                               className={cn(
                                 "p-3 rounded-lg cursor-pointer group relative",
-                                activeLesson?.lesson_uuid === lesson.lesson_uuid 
-                                  ? "bg-muted/50" 
+                                activeLesson?.lesson_uuid === lesson.lesson_uuid
+                                  ? "bg-muted/50"
                                   : "hover:bg-muted/30"
                               )}
                               onClick={() => setActiveLesson(lesson)}
                             >
                               <span className="text-sm">{lesson.name ? capitalizeFirstLetter(lesson.name) : ''}</span>
-                              
+
                               <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button 
+                                <button
                                   onClick={(e) => handleOpenEditLesson(lesson, e)}
                                   className="p-1 hover:bg-muted rounded-full"
                                   aria-label="Edit lesson"
                                 >
                                   <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
                                 </button>
-                                <button 
+                                <button
                                   onClick={(e) => handleOpenDeleteDialog(lesson, e)}
                                   className="p-1 hover:bg-muted rounded-full"
                                   aria-label="Delete lesson"
@@ -488,9 +505,9 @@ export default function Classroom() {
                         ) : (
                           <p className="text-sm text-muted-foreground p-2">No lessons available yet</p>
                         )}
-                        
-                        <Button 
-                          variant="outline" 
+
+                        <Button
+                          variant="outline"
                           className="w-full mt-2 bg-primary/5 border-dashed"
                           onClick={() => setIsAddLessonOpen(true)}
                         >
@@ -500,7 +517,7 @@ export default function Classroom() {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-4">
                     <h2 className="text-xl">
                       <span className="font-bold text-black">{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
@@ -511,7 +528,7 @@ export default function Classroom() {
                         </>
                       )}
                     </h2>
-                    
+
                     {videoEmbedUrl ? (
                       <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
                         <iframe
@@ -525,7 +542,7 @@ export default function Classroom() {
                       </div>
                     ) : (
                       <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
-                        <img 
+                        <img
                           src={activeLesson?.thumbnail_url || classroom?.thumbnail || "/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"}
                           alt="Course thumbnail"
                           className="w-full h-full object-cover"
@@ -701,18 +718,18 @@ export default function Classroom() {
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Name</Label>
-                  <Input 
-                    id="name" 
+                  <Input
+                    id="name"
                     placeholder="Enter lesson name"
                     value={newLessonData.name}
-                    onChange={(e) => setNewLessonData({...newLessonData, name: e.target.value})}
+                    onChange={(e) => setNewLessonData({ ...newLessonData, name: e.target.value })}
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="description">Description</Label>
-                  <ProductEditor 
+                  <ProductEditor
                     value={newLessonData.description}
-                    onChange={(value) => setNewLessonData({...newLessonData, description: value})}
+                    onChange={(value) => setNewLessonData({ ...newLessonData, description: value })}
                     placeholder="Enter lesson description"
                     minHeight="150px"
                     maxHeight="250px"
@@ -720,11 +737,11 @@ export default function Classroom() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="video_url">Video URL</Label>
-                  <Input 
-                    id="video_url" 
+                  <Input
+                    id="video_url"
                     placeholder="Enter video URL"
                     value={newLessonData.video_url}
-                    onChange={(e) => setNewLessonData({...newLessonData, video_url: e.target.value})}
+                    onChange={(e) => setNewLessonData({ ...newLessonData, video_url: e.target.value })}
                   />
                 </div>
               </div>
@@ -732,7 +749,7 @@ export default function Classroom() {
                 <DialogClose asChild>
                   <Button variant="outline">Cancel</Button>
                 </DialogClose>
-                <Button 
+                <Button
                   onClick={handleAddLesson}
                   disabled={addLessonMutation.isPending}
                 >
@@ -751,18 +768,18 @@ export default function Classroom() {
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
                   <Label htmlFor="edit-name">Name</Label>
-                  <Input 
-                    id="edit-name" 
+                  <Input
+                    id="edit-name"
                     placeholder="Enter lesson name"
                     value={editLessonData.name}
-                    onChange={(e) => setEditLessonData({...editLessonData, name: e.target.value})}
+                    onChange={(e) => setEditLessonData({ ...editLessonData, name: e.target.value })}
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="edit-description">Description</Label>
-                  <ProductEditor 
+                  <ProductEditor
                     value={editLessonData.description}
-                    onChange={(value) => setEditLessonData({...editLessonData, description: value})}
+                    onChange={(value) => setEditLessonData({ ...editLessonData, description: value })}
                     placeholder="Enter lesson description"
                     minHeight="150px"
                     maxHeight="250px"
@@ -770,11 +787,11 @@ export default function Classroom() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="edit-video_url">Video URL</Label>
-                  <Input 
-                    id="edit-video_url" 
+                  <Input
+                    id="edit-video_url"
                     placeholder="Enter video URL"
                     value={editLessonData.video_url}
-                    onChange={(e) => setEditLessonData({...editLessonData, video_url: e.target.value})}
+                    onChange={(e) => setEditLessonData({ ...editLessonData, video_url: e.target.value })}
                   />
                 </div>
               </div>
@@ -782,7 +799,7 @@ export default function Classroom() {
                 <DialogClose asChild>
                   <Button variant="outline">Cancel</Button>
                 </DialogClose>
-                <Button 
+                <Button
                   onClick={handleEditLesson}
                   disabled={updateLessonMutation.isPending}
                 >
@@ -805,8 +822,8 @@ export default function Classroom() {
                 <DialogClose asChild>
                   <Button variant="outline">Cancel</Button>
                 </DialogClose>
-                <Button 
-                  variant="destructive" 
+                <Button
+                  variant="destructive"
                   onClick={handleDeleteLesson}
                   disabled={deleteLessonMutation.isPending}
                 >
@@ -816,7 +833,7 @@ export default function Classroom() {
             </DialogContent>
           </Dialog>
         </div>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 }

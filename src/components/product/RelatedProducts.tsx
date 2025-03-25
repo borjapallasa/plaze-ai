@@ -69,7 +69,6 @@ export function RelatedProducts({
     enabled: Boolean(userUuid) && Boolean(productId),
   });
 
-  // Fetch existing relationships
   const { data: relationships = [], isLoading: isLoadingRelationships } = useQuery({
     queryKey: ['productRelationships', productId],
     queryFn: async () => {
@@ -98,6 +97,7 @@ export function RelatedProducts({
     const relatedProducts = userProducts.filter(product =>
       relatedProductIds.includes(product.product_uuid)
     );
+
     setSelectedProducts(relatedProducts);
   }, [relationships.length]); // Only run when relationships array length changes
 

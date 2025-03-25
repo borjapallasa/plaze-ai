@@ -58,7 +58,7 @@ export default function EditCommunity() {
       <div className="fixed top-0 left-0 right-0 z-50 bg-background">
         <MainHeader />
       </div>
-      
+
       <div className="container mx-auto px-4 pt-24 pb-8">
         <CommunityHeader onSave={handleSave} isSaving={isSaving} />
 

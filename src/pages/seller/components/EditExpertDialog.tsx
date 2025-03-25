@@ -29,64 +29,35 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Helper function to convert Json array to string array
-  const convertJsonArrayToStringArray = (jsonArray: Json | null): string[] => {
-    if (!jsonArray) return [];
-    
-    // If it's already an array, map each item to a string
-    if (Array.isArray(jsonArray)) {
-      return jsonArray.map(item => String(item));
-    }
-    
-    // If it's a string (possibly JSON), try to parse it
-    if (typeof jsonArray === 'string') {
-      try {
-        const parsed = JSON.parse(jsonArray);
-        if (Array.isArray(parsed)) {
-          return parsed.map(item => String(item));
-        }
-      } catch (e) {
-        console.error('Error parsing JSON string:', e);
-      }
-    }
-    
-    // Fallback to empty array
-    return [];
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      // Log the expert UUID we're updating
-      console.log("Updating expert with UUID:", expert.expert_uuid);
-      
-      // Create the update payload
       const updatePayload = {
         name: formData.name,
         title: formData.title,
         description: formData.description,
       };
-      
+
       console.log("Update payload:", updatePayload);
-      
+
       // First check if the expert exists
       const { data: existingExpert, error: checkError } = await supabase
         .from('experts')
         .select('*')
         .eq('expert_uuid', expert.expert_uuid)
         .single();
-        
+
       if (checkError) {
         console.error('Error checking expert existence:', checkError);
         toast.error(`Failed to verify expert: ${checkError.message}`);
         setIsLoading(false);
         return;
       }
-      
+
       console.log("Existing expert found:", existingExpert);
-      
+
       // Perform the update operation
       const { data, error } = await supabase
         .from('experts')
@@ -102,14 +73,14 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
       }
 
       console.log("Expert update response:", data);
-      
+
       if (!data || data.length === 0) {
         console.error('No data returned after update');
         toast.error("Failed to update profile: No data returned");
         setIsLoading(false);
         return;
       }
-      
+
       // Create an updated expert object by merging the original expert with the form data
       const updatedExpert: Expert = {
         ...expert,

@@ -20,17 +20,12 @@ import {
   CommandItem,
 } from "@/components/ui/command";
 
-interface RelatedCommunityProductProps {
+export interface RelatedCommunityProductProps {
   community: Community;
   className?: string;
 }
 
-interface CommunityProductRelationships {
-  community_uuid: string;
-  product_uuid: string;
-}
-
-interface CommunityProduct {
+export interface CommunityProduct {
   community_product_uuid: string
   community_uuid: string;
   price?: number;
