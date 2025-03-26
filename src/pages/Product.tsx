@@ -8,7 +8,6 @@ import { useProductState } from "@/components/product/ProductState";
 import { Sheet } from "@/components/ui/sheet";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { productVariantsToVariants } from "@/utils/product-utils";
-import { Variant } from "@/components/product/types/variants";
 
 export default function Product() {
   const {
@@ -43,7 +42,6 @@ export default function Product() {
     return <ProductNotFound />;
   }
   
-  // Convert ProductVariant[] to Variant[]
   const convertedVariants = productVariantsToVariants(variants);
 
   return (

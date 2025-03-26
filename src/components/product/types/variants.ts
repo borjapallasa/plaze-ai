@@ -2,8 +2,8 @@
 export interface Variant {
   id: string;
   name: string; // Make name required
-  price: string | number;
-  comparePrice: string | number;
+  price: number; // Change to number for consistency
+  comparePrice: number; // Change to number for consistency
   highlight?: boolean;
   tags?: string[];
   label?: string;

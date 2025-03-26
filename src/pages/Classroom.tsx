@@ -1,3 +1,4 @@
+
 // src/pages/Classroom.tsx
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
@@ -15,15 +16,37 @@ import { ProductSkeleton } from "@/components/product/ProductSkeleton";
 import { CommunityProduct } from "@/types/Product";
 
 interface ClassroomParams {
-  id?: string;
+  id: string;
 }
 
 interface Community {
   community_uuid: string;
   name: string;
   description: string;
-  logo_url: string;
-  hero_image_url: string;
+  logo_url?: string;
+  hero_image_url?: string;
+  thumbnail?: string;
+  // Include additional properties from communities table
+  active_price_id?: string;
+  active_product_id?: string;
+  billing_period?: "monthly" | "yearly";
+  classroom_count?: number;
+  community_price_uuid?: string;
+  expert_name?: string;
+  expert_thumbnail?: string;
+  expert_uuid?: string;
+  last_activity?: string;
+  member_count?: number;
+  monthly_recurring_revenue?: number;
+  paid_member_count?: number;
+  payment_link?: string;
+  post_count?: number;
+  price?: number;
+  product_count?: number;
+  total_revenue?: number;
+  type?: string;
+  visibility?: string;
+  webhook?: string;
 }
 
 async function fetchCommunity(communityId: string): Promise<Community | null> {
@@ -56,7 +79,7 @@ async function fetchCommunityProducts(communityId: string): Promise<any[]> {
 }
 
 export default function ClassroomPage() {
-  const { id } = useParams<ClassroomParams>();
+  const { id } = useParams<{ id: string }>();
   const isMobile = useIsMobile();
   const { toast } = useToast();
   const [community, setCommunity] = useState<Community | null>(null);
@@ -86,8 +109,8 @@ export default function ClassroomPage() {
             community_product_uuid: product.community_product_uuid,
             name: product.name,
             price: product.price,
-            community_uuid: product.community_uuid || '', // Add required properties
-            product_type: product.product_type || 'default', // Add required properties
+            community_uuid: product.community_uuid || '',
+            product_type: product.product_type || 'default',
             variant_uuid: product.variant_uuid,
             variant_name: product.variant_name,
             variant_price: product.variant_price

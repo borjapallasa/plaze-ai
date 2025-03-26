@@ -47,10 +47,9 @@ export function useProduct() {
       console.log("Product data found:", data);
 
       // Ensure all the fields are returned as expected
-      // Fix property names and types to match ProductData interface
       const productData: ProductData = {
         ...data,
-        accept_terms: data.accept_terms || null,
+        accept_terms: data.accept_terms === null ? null : !!data.accept_terms,
         changes_needed: data.changes_neeeded || null, // Match the misspelled field in the database
         demo: data.demo || null
       };
