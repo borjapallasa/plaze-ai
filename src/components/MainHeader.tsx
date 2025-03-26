@@ -198,7 +198,9 @@ export const MainHeader = () => {
               <Link to="/affiliates">
                 <DropdownMenuItem>Affiliates</DropdownMenuItem>
               </Link>
-              <DropdownMenuItem>Sell on Plaze</DropdownMenuItem>
+              <Link to="/sell">
+                <DropdownMenuItem>Sell on Plaze</DropdownMenuItem>
+              </Link>
               <DropdownMenuItem>Help Center</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
