@@ -167,8 +167,8 @@ export function useCreateProduct() {
       });
 
       // Finally, navigate to the product page
-      navigate(`/seller/products/product/${product.product_uuid}`);
-      
+      navigate(`/product/${product.product_uuid}`);
+
     } catch (error) {
       console.error('Error in handleSave:', error);
       toast({
