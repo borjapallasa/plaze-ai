@@ -84,12 +84,14 @@ export function DesktopProductLayout({
             className="mb-3"
             isLoading={isLoading}
           />
-
-          <AdditionalVariants
-            relatedProductsWithVariants={relatedProductsWithVariants}
-            onAdditionalSelect={onAdditionalVariantToggle}
-            className="mb-4"
-          />
+          {relatedProductsWithVariants && relatedProductsWithVariants.length > 0 && (
+            <AdditionalVariants
+              relatedProductsWithVariants={relatedProductsWithVariants}
+              onAdditionalSelect={onAdditionalVariantToggle}
+              className="mb-4"
+            />
+          )
+          }
 
           <ProductInfo
             techStack={product.tech_stack}
