@@ -256,9 +256,11 @@ export function RelatedProducts({
                     >
                       <div className="flex items-center justify-between w-full">
                         <span className="truncate">{product.name}</span>
-                        <span className="text-xs text-muted-foreground">
-                          ${product.price_from?.toFixed(2) || '0.00'}
-                        </span>
+                        {product.price_from !== null && (
+                          <span className="text-xs text-muted-foreground">
+                            ${product.price_from.toFixed(2)}
+                          </span>
+                        )}
                       </div>
                       <Check
                         className={cn(
@@ -285,9 +287,9 @@ export function RelatedProducts({
               >
                 <div className="truncate flex-1">
                   <p className="font-medium truncate">{product.name}</p>
-                  {product.price_from !== undefined && (
+                  {product.price_from !== null && (
                     <p className="text-sm text-muted-foreground">
-                      ${product.price_from.toFixed(2)}
+                      ${product?.price_from?.toFixed(2)}
                     </p>
                   )}
                 </div>
