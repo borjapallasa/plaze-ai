@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -723,3 +724,18 @@ export default function Classroom() {
         setModerationPolicy(data.moderation_policy);
         setReportingMechanism(data.reporting_mechanism);
         setEnforcementActions(data.enforcement_actions);
+        setAppealsProcess(data.appeals_process);
+      }
+    }
+  });
+
+  // Add any additional logic or components needed
+  return (
+    <div>
+      {/* Placeholder for rendering classroom details */}
+      <MainHeader />
+      {isLoading && <p>Loading classroom...</p>}
+      {error && <p>Error loading classroom: {error.message}</p>}
+    </div>
+  );
+}
