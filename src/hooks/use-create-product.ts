@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { Variant } from "@/components/product/types/variants";
-import { usePendingImages } from "@/hooks/use-pending-images";
+import { PendingImage, usePendingImages } from "@/hooks/use-pending-images";
 
 export type ProductStatus = 'draft' | 'active' | 'inactive';
 
@@ -22,6 +22,7 @@ export interface ProductData {
   platform: string[];
   team: string[];
   variants: Variant[];
+  pendingImages?: PendingImage[]
 }
 
 export function useCreateProduct() {
@@ -141,7 +142,7 @@ export function useCreateProduct() {
 
       // Step 4: Upload images and wait for completion
       console.log('Starting image upload...');
-      await uploadPendingImages(product.product_uuid);
+      await uploadPendingImages(product.product_uuid, productData?.pendingImages);
       console.log('Images uploaded successfully');
 
       // Step 5: Verify the product and its images

@@ -113,6 +113,7 @@ export default function NewProduct() {
         platform,
         team,
         variants,
+        pendingImages
       });
     } catch (error) {
       console.error('Error creating product:', error);

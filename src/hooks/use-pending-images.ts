@@ -3,7 +3,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
-interface PendingImage {
+export interface PendingImage {
   file: File;
   previewUrl: string;
 }
@@ -22,26 +22,28 @@ export function usePendingImages() {
     });
   };
 
-  const uploadPendingImages = async (productUuid: string) => {
+  const uploadPendingImages = async (productUuid: string, pendingImagesInput?: PendingImage[]) => {
     console.log('uploadPendingImages called with productUuid:', productUuid);
     console.log('Current pending images:', pendingImages);
+
+    const theImages = pendingImagesInput ? pendingImagesInput : pendingImages;
 
     if (!productUuid) {
       console.error('usePendingImages: No product UUID provided for image upload');
       return;
     }
 
-    if (pendingImages.length === 0) {
+    if (theImages.length === 0) {
       console.log('usePendingImages: No pending images to upload');
       return;
     }
 
     try {
-      console.log('usePendingImages: Starting upload for', pendingImages.length, 'images');
-      
+      console.log('usePendingImages: Starting upload for', theImages.length, 'images');
+
       // First, upload all files to storage and collect their data
       const uploadResults = await Promise.all(
-        pendingImages.map(async (pendingImage, index) => {
+        theImages.map(async (pendingImage, index) => {
           const fileExt = pendingImage.file.name.split('.').pop();
           const filePath = `${productUuid}/${crypto.randomUUID()}.${fileExt}`;
 
@@ -103,7 +105,7 @@ export function usePendingImages() {
       // Update product thumbnail with first image's URL if available
       if (uploadResults.length > 0) {
         console.log('usePendingImages: Updating product thumbnail with:', uploadResults[0].publicUrl);
-        
+
         const { error: thumbnailError } = await supabase
           .from('products')
           .update({ thumbnail: uploadResults[0].publicUrl })
