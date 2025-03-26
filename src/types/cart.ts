@@ -1,5 +1,4 @@
 
-// Types for cart functionality
 export interface CartItem {
   product_uuid: string;
   variant_uuid: string;
