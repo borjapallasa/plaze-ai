@@ -109,15 +109,7 @@ export default function Classroom() {
         return [];
       }
 
-      return data.map((community: any) => {
-        return {
-          id: community.community_product_uuid.community_product_uuid,
-          name: community.community_product_uuid.name,
-          price: community.community_product_uuid.price,
-          comparePrice: community.community_product_uuid.price * 1.5, // Example calculation for compare price
-          // Add any missing required properties from the Variant type
-        }
-      });
+      return communityProductsToVariants(data.map(community => community.community_product_uuid));
     },
     enabled: !!classroom?.community_uuid
   });
@@ -140,7 +132,6 @@ export default function Classroom() {
     },
     enabled: !!id
   });
-
 
   const addLessonMutation = useMutation({
     mutationFn: async (newLesson: any) => {
@@ -353,7 +344,6 @@ export default function Classroom() {
       setActiveLesson(lessons[0]);
     }
   }, [lessons, activeLesson]);
-
 
   const handleAddToCart = () => {
     // Add to cart logic here
@@ -829,4 +819,14 @@ export default function Classroom() {
       </div>
     </div>
   );
+}
+
+function communityProductsToVariants(communityProducts: CommunityProduct[]): any[] {
+  return communityProducts.map(product => ({
+    id: product.community_product_uuid,
+    name: product.name,
+    price: product.price,
+    comparePrice: product.price * 1.5,
+    // Add any missing required properties from the Variant type
+  }));
 }

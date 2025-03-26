@@ -16,7 +16,7 @@ export interface Product {
   affiliate_program: null;
   affiliation_amount: null;
   change_reasons: null;
-  changes_needed: null;
+  changes_needed: null; // Changed from "changes_neeeded" to "changes_needed"
   created_at: string;
   demo: string;
   description: string;
@@ -62,8 +62,8 @@ export interface ProductData extends Product {}
 export interface ProductVariant {
   id: string;
   name: string;
-  price: number | string;
-  comparePrice: number | string;
+  price: number;
+  comparePrice: number;
   label?: string;
   highlight?: boolean;
   features?: string[];

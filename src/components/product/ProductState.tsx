@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { useCart } from "@/hooks/use-cart";
 import { useToast } from "@/components/ui/use-toast";
@@ -44,26 +45,25 @@ export function useProductState(variants: any[]) {
 
     const result = await addToCart(product, selectedVariant);
     
-    if (result?.updatedCart) {
-      const addedItem = result.updatedCart.items.find(
-        item => item.product_uuid === product.product_uuid && item.variant_uuid === selectedVariant
-      );
-      
-      if (addedItem) {
-        setLastAddedItem(addedItem);
+    if (result?.success) {
+      // If successfully added to cart, show the cart drawer
+      if (result.cartItem) {
+        setLastAddedItem(result.cartItem);
         setCartDrawerOpen(true);
       }
-    }
-
-    if (additionalVariants.length > 0) {
-      for (const variantId of additionalVariants) {
-        await addToCart(product, variantId);
+      
+      // Add additional variants if selected
+      if (additionalVariants.length > 0) {
+        for (const variantId of additionalVariants) {
+          await addToCart(product, variantId);
+        }
       }
     }
   };
 
   const closeCartDrawer = () => {
     setCartDrawerOpen(false);
+    setLastAddedItem(null);
   };
 
   const handleAdditionalVariantToggle = (variantId: string, selected: boolean) => {

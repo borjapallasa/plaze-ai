@@ -1,5 +1,6 @@
 
 import { Variant } from "@/components/product/types/variants";
+import { ProductVariant } from "@/types/Product";
 
 /**
  * Converts a CommunityProduct to a Variant
@@ -8,8 +9,8 @@ export function communityProductToVariant(product: any): Variant {
   return {
     id: product.community_product_uuid || product.variant_uuid || '',
     name: product.name || 'Product',
-    price: product.price || 0,
-    comparePrice: product.comparePrice || product.price ? product.price * 1.25 : 0, // default higher compare price
+    price: Number(product.price) || 0,
+    comparePrice: Number(product.comparePrice || (product.price ? product.price * 1.25 : 0)), // default higher compare price
     label: product.product_type || 'Package',
     features: product.features || []
   };
@@ -21,4 +22,27 @@ export function communityProductToVariant(product: any): Variant {
 export function communityProductsToVariants(products: any[]): Variant[] {
   if (!products || !Array.isArray(products)) return [];
   return products.map(communityProductToVariant);
+}
+
+/**
+ * Converts a ProductVariant to Variant type
+ */
+export function productVariantToVariant(variant: ProductVariant): Variant {
+  return {
+    id: variant.id,
+    name: variant.name || 'Package',
+    price: Number(variant.price),
+    comparePrice: Number(variant.comparePrice),
+    label: variant.label || 'Package',
+    highlight: variant.highlight,
+    features: variant.features || []
+  };
+}
+
+/**
+ * Converts ProductVariant array to Variant array
+ */
+export function productVariantsToVariants(variants: ProductVariant[]): Variant[] {
+  if (!variants || !Array.isArray(variants)) return [];
+  return variants.map(productVariantToVariant);
 }

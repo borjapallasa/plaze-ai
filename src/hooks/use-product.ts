@@ -46,9 +46,11 @@ export function useProduct() {
 
       console.log("Product data found:", data);
 
+      // Ensure all the fields are returned as expected
       return {
         ...data,
-        demo: data.demo || null
+        demo: data.demo || null,
+        changes_needed: data.changes_needed || null
       };
     },
     enabled: !!id

@@ -7,6 +7,7 @@ import { useProductData } from "@/hooks/use-product-data";
 import { useProductState } from "@/components/product/ProductState";
 import { Sheet } from "@/components/ui/sheet";
 import { CartDrawer } from "@/components/cart/CartDrawer";
+import { productVariantsToVariants } from "@/utils/product-utils";
 
 export default function Product() {
   const {
@@ -40,12 +41,15 @@ export default function Product() {
   if (error || !product) {
     return <ProductNotFound />;
   }
+  
+  // Convert ProductVariant[] to Variant[]
+  const convertedVariants = productVariantsToVariants(variants);
 
   return (
     <div ref={variantsRef}>
       <ProductLayout
         product={product}
-        variants={variants}
+        variants={convertedVariants}
         relatedProductsWithVariants={relatedProductsWithVariants}
         selectedVariant={selectedVariant}
         averageRating={averageRating}
@@ -56,7 +60,7 @@ export default function Product() {
         isLoading={isCartLoading}
       />
       <StickyATC
-        variants={variants}
+        variants={convertedVariants}
         selectedVariant={selectedVariant}
         onVariantChange={setSelectedVariant}
         visible={showStickyATC}

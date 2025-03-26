@@ -37,7 +37,7 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
     // Get the items for this transaction
     const { data: itemsData, error: itemsError } = await supabase
       .from('products_transaction_items')
-      .select('product_uuid, variant_uuid, price, quantity, total_price')
+      .select('product_transaction_uuid, product_uuid, variant_uuid, price, quantity, total_price')
       .eq('product_transaction_uuid', transactionData.product_transaction_uuid);
     
     if (itemsError) {
@@ -51,13 +51,8 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
     }
 
     // Extract product UUIDs and variant UUIDs
-    const productUuids: string[] = [];
-    const variantUuids: string[] = [];
-    
-    itemsData.forEach(item => {
-      if (item.product_uuid) productUuids.push(item.product_uuid);
-      if (item.variant_uuid) variantUuids.push(item.variant_uuid);
-    });
+    const productUuids = itemsData.filter(item => item.product_uuid).map(item => item.product_uuid);
+    const variantUuids = itemsData.filter(item => item.variant_uuid).map(item => item.variant_uuid);
     
     // Prepare result maps
     let productNames: Record<string, string> = {};
@@ -128,7 +123,7 @@ export async function addItemToCart(
   selectedVariant: string,
   userId?: string, 
   guestSessionId?: string
-): Promise<{ success: boolean; message?: string; updatedCart?: CartTransaction }> {
+): Promise<{ success: boolean; message?: string; updatedCart?: CartTransaction; cartItem?: CartItem }> {
   try {
     // Get the variant details
     const variantResponse = await supabase
@@ -150,14 +145,14 @@ export async function addItemToCart(
     let transactionId = cart?.transaction_uuid;
     
     if (!transactionId) {
-      // Create a new transaction - with simplified structure
+      // Create a new transaction
       const newTransaction = {
         user_uuid: userId || null,
         guest_session_id: !userId ? guestSessionId : null,
         item_count: 1,
         total_amount: variantData.price,
         type: userId ? 'user' : 'guest',
-        status: 'pending'
+        status: 'pending' as const
       };
       
       const { data, error } = await supabase
@@ -179,6 +174,9 @@ export async function addItemToCart(
     // Check if this item is already in the cart
     const existingItem = findItemInCart(cart, product.product_uuid, selectedVariant);
     
+    // Prepare the new or updated cart item
+    let cartItem: CartItem;
+    
     if (existingItem) {
       // Update the quantity of existing item
       const updateResponse = await supabase
@@ -197,6 +195,12 @@ export async function addItemToCart(
           message: "Could not update item quantity"
         };
       }
+      
+      cartItem = {
+        ...existingItem,
+        quantity: existingItem.quantity + 1
+      };
+      
     } else {
       // Add new item to cart
       const itemResponse = await supabase
@@ -216,6 +220,15 @@ export async function addItemToCart(
           message: "Could not add item to cart"
         };
       }
+      
+      cartItem = {
+        product_uuid: product.product_uuid,
+        variant_uuid: selectedVariant,
+        price: variantData.price,
+        quantity: 1,
+        product_name: product.name || 'Unknown Product',
+        variant_name: variantData.name || 'Unknown Variant'
+      };
     }
     
     // Update the transaction totals
@@ -243,7 +256,8 @@ export async function addItemToCart(
     return {
       success: true,
       message: "Item added to cart successfully",
-      updatedCart: updatedCart || undefined
+      updatedCart: updatedCart || undefined,
+      cartItem
     };
   } catch (error) {
     console.error('Failed to add to cart:', error);
