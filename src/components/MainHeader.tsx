@@ -14,8 +14,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { CartDrawerTrigger } from "@/components/cart/CartDrawerTrigger";
 
-export const MainHeader = () => {
+export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -165,6 +166,9 @@ export const MainHeader = () => {
               </Button>
             </form>
           </div>
+          
+          <CartDrawerTrigger className="mr-2" />
+          
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -271,6 +275,8 @@ export const MainHeader = () => {
           </div>
 
           <div className="flex items-center gap-3 w-[140px] justify-end">
+            <CartDrawerTrigger className="mr-2" />
+            
             <Button
               variant="ghost"
               size="sm"
@@ -324,6 +330,9 @@ export const MainHeader = () => {
           </div>
         </div>
       </div>
+      
+      {/* Pass children to allow additional content */}
+      {children}
     </header>
   );
 };

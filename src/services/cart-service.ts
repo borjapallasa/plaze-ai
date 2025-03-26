@@ -13,14 +13,13 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
     // Create a base query for transactions
     let query = supabase
       .from('products_transactions')
-      .select('product_transaction_uuid, item_count, total_amount')
-      .eq('status', 'pending');
+      .select('product_transaction_uuid, item_count, total_amount');
     
     // Apply the correct filter based on available ID
     if (userId) {
-      query = query.eq('user_uuid', userId);
+      query = query.eq('user_uuid', userId).eq('status', 'pending');
     } else if (sessionId) {
-      query = query.eq('guest_session_id', sessionId);
+      query = query.eq('guest_session_id', sessionId).eq('status', 'pending');
     }
     
     const { data: transactionData, error: transactionError } = await query.maybeSingle();

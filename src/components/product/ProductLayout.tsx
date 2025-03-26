@@ -41,9 +41,7 @@ export function ProductLayout({
   return (
     <div className="min-h-screen">
       <MainHeader>
-        <div className="ml-auto">
-          <CartDrawerTrigger className="mr-2" />
-        </div>
+        <CartDrawerTrigger className="mr-2" />
       </MainHeader>
       <main className="container mx-auto px-4 pt-28 md:pt-32">
         {isMobile ? (
