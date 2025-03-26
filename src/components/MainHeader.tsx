@@ -271,17 +271,19 @@ export const MainHeader = () => {
           </div>
 
           <div className="flex items-center gap-3 w-[140px] justify-end">
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               className="font-medium text-primary hover:text-primary/90 hover:bg-primary/10 h-8"
             >
-              Sell on Plaze
+              <Link to="/sell">
+                Sell on Plaze
+              </Link>
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="rounded-full px-2.5 py-1.5 h-8 border-2 hover:border-primary/20 transition-colors"
                 >
                   <Menu className="h-3.5 w-3.5 mr-1.5" />
