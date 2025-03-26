@@ -46,36 +46,38 @@ export function ProductLayout({
         </div>
       </MainHeader>
       <main className="container mx-auto px-4 pt-28 md:pt-32">
-        <MobileProductLayout
-          product={product}
-          images={images}
-          variants={variants}
-          relatedProductsWithVariants={relatedProductsWithVariants}
-          selectedVariant={selectedVariant}
-          averageRating={averageRating}
-          onVariantChange={onVariantChange}
-          onAddToCart={onAddToCart}
-          onAdditionalVariantToggle={handleAdditionalVariantSelect}
-          handleContactSeller={handleContactSeller}
-          reviews={reviews}
-          isLoading={isLoading}
-        />
-
-        <DesktopProductLayout
-          product={product}
-          images={images}
-          variants={variants}
-          relatedProductsWithVariants={relatedProductsWithVariants}
-          selectedVariant={selectedVariant}
-          averageRating={averageRating}
-          onVariantChange={onVariantChange}
-          onAddToCart={onAddToCart}
-          onAdditionalVariantToggle={handleAdditionalVariantSelect}
-          handleContactSeller={handleContactSeller}
-          isMobile={isMobile}
-          reviews={reviews}
-          isLoading={isLoading}
-        />
+        {isMobile ? (
+          <MobileProductLayout
+            product={product}
+            images={images}
+            variants={variants}
+            relatedProductsWithVariants={relatedProductsWithVariants}
+            selectedVariant={selectedVariant}
+            averageRating={averageRating}
+            onVariantChange={onVariantChange}
+            onAddToCart={onAddToCart}
+            onAdditionalVariantToggle={handleAdditionalVariantSelect}
+            handleContactSeller={handleContactSeller}
+            reviews={reviews}
+            isLoading={isLoading}
+          />
+        ) : (
+          <DesktopProductLayout
+            product={product}
+            images={images}
+            variants={variants}
+            relatedProductsWithVariants={relatedProductsWithVariants}
+            selectedVariant={selectedVariant}
+            averageRating={averageRating}
+            onVariantChange={onVariantChange}
+            onAddToCart={onAddToCart}
+            onAdditionalVariantToggle={handleAdditionalVariantSelect}
+            handleContactSeller={handleContactSeller}
+            isMobile={isMobile}
+            reviews={reviews}
+            isLoading={isLoading}
+          />
+        )}
       </main>
     </div>
   );

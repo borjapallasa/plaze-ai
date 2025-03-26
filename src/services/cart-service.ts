@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { CartItem, CartTransaction } from '@/types/cart';
 
@@ -113,7 +114,7 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
   }
 }
 
-// Check if item exists in cart
+// Find existing item in cart
 export function findItemInCart(cart: CartTransaction | null, productUuid: string, variantUuid: string): CartItem | undefined {
   if (!cart) return undefined;
   return cart.items.find(item => 
