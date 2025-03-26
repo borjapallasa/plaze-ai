@@ -46,7 +46,7 @@ export default function NewProduct() {
         price: techStackPrice || variants[0].price,
         comparePrice: variants[0].comparePrice
       };
-      
+
       if (JSON.stringify(updatedVariant) !== JSON.stringify(variants[0])) {
         setVariants([updatedVariant]);
       }
@@ -81,7 +81,7 @@ export default function NewProduct() {
 
   const renderSelectedTags = (items: string[]) => {
     if (items.length === 0) return null;
-    
+
     return (
       <div className="flex flex-wrap gap-1.5 max-w-full">
         {items.map((item) => (
@@ -125,7 +125,7 @@ export default function NewProduct() {
       <MainHeader />
       <div className="mt-16">
         <div className="w-full max-w-[1400px] mx-auto px-2 xs:px-3 sm:px-6 lg:px-8 py-3 sm:py-6">
-          <ProductCreateHeader 
+          <ProductCreateHeader
             productStatus={productStatus}
             onStatusChange={handleStatusChange}
             onSave={handleCreateProduct}
@@ -146,13 +146,13 @@ export default function NewProduct() {
                       productPrice={techStackPrice}
                       setProductPrice={setTechStackPrice}
                       filesLink=""
-                      setFilesLink={() => {}}
+                      setFilesLink={() => { }}
                     />
                     <div className="pt-2">
                       <div className="flex items-center justify-between mb-4">
                         <h2 className="text-lg font-medium">Variants</h2>
                       </div>
-                      <ProductVariantsEditor 
+                      <ProductVariantsEditor
                         variants={variants}
                         onVariantsChange={setVariants}
                       />

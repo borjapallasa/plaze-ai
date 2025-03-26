@@ -44,13 +44,14 @@ export function useCreateProduct() {
     queryKey: ['expertUuid', currentUser?.id],
     queryFn: async () => {
       if (!currentUser?.id) throw new Error('No user logged in');
-      
+
       const { data, error } = await supabase
         .from('experts')
         .select('expert_uuid')
         .eq('user_uuid', currentUser.id)
         .single();
-      
+      console.log(data, error, currentUser)
+
       if (error) throw error;
       return data;
     },

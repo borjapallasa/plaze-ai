@@ -142,7 +142,7 @@ export function RelatedProducts({
       toast({
         title: "Changes saved",
         description: "Related products have been updated successfully",
-        duration: 3000,
+        duration: 1000,
       });
     } catch (error) {
       console.error("Error saving relationships:", error);

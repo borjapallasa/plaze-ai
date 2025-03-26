@@ -7,13 +7,7 @@ import { ProductInfo } from "./ProductInfo";
 import { ProductFullWidthSections } from "./ProductFullWidthSections";
 import { ProductImage } from "@/hooks/use-product-images";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
-import { RelatedProductsList } from "./RelatedProductsList";
 import { Product, RelatedProduct } from "@/types/Product";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useEffect } from "react";
-
-
 
 interface DesktopProductLayoutProps {
   product: Product;
@@ -71,11 +65,6 @@ export function DesktopProductLayout({
             className="mb-2"
           />
 
-          {/* <RelatedProductsList
-            productUUID={product.product_uuid}
-            className="mb-4"
-          /> */}
-
           <VariantPicker
             variants={variants}
             selectedVariant={selectedVariant}
@@ -89,8 +78,7 @@ export function DesktopProductLayout({
               relatedProductsWithVariants={relatedProductsWithVariants}
               onAdditionalSelect={onAdditionalVariantToggle}
               className="mb-4"
-            />
-          )
+            />)
           }
 
           <ProductInfo

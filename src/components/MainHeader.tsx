@@ -20,7 +20,7 @@ export const MainHeader = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
-  
+
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileSearchQuery, setMobileSearchQuery] = useState("");
   const [searchHistory, setSearchHistory] = useState<string[]>(() => {
@@ -44,14 +44,14 @@ export const MainHeader = () => {
       }
     }
   }, [location.pathname, searchParams]);
-  
+
   // Check if we're on the homepage
   const isHomePage = location.pathname === '/';
 
   const handleSearch = (e: FormEvent, isMobile: boolean) => {
     e.preventDefault();
     const query = isMobile ? mobileSearchQuery : searchQuery;
-    
+
     if (!query.trim()) return;
 
     // Add to search history (avoid duplicates and limit to 5 items)
@@ -128,14 +128,14 @@ export const MainHeader = () => {
                   onFocus={() => searchHistory.length > 0 && setShowSearchHistory(true)}
                   onBlur={() => setTimeout(() => setShowSearchHistory(false), 200)}
                 />
-                
+
                 {/* Search History Dropdown (Mobile) */}
                 {showSearchHistory && searchHistory.length > 0 && (
                   <div className="absolute top-full left-0 right-0 mt-1 bg-background border rounded-md shadow-md z-10 search-history-dropdown">
                     <div className="p-1 text-xs text-muted-foreground border-b">Recent searches</div>
                     <ul>
                       {searchHistory.map((item, index) => (
-                        <li 
+                        <li
                           key={index}
                           className="px-3 py-2 hover:bg-muted cursor-pointer text-sm"
                           onClick={() => {
@@ -148,7 +148,7 @@ export const MainHeader = () => {
                         </li>
                       ))}
                     </ul>
-                    <div 
+                    <div
                       className="p-1 text-xs text-primary hover:underline cursor-pointer text-center border-t"
                       onClick={() => {
                         setSearchHistory([]);
@@ -167,8 +167,8 @@ export const MainHeader = () => {
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="rounded-full px-2.5 py-1.5 h-8 border-2 hover:border-primary/20 transition-colors"
               >
                 <Menu className="h-3.5 w-3.5" />
@@ -224,14 +224,14 @@ export const MainHeader = () => {
                   onFocus={() => searchHistory.length > 0 && setShowSearchHistory(true)}
                   onBlur={() => setTimeout(() => setShowSearchHistory(false), 200)}
                 />
-                
+
                 {/* Search History Dropdown */}
                 {showSearchHistory && searchHistory.length > 0 && (
                   <div className="absolute top-full left-0 right-0 mt-1 bg-background border rounded-md shadow-md z-10 search-history-dropdown">
                     <div className="p-1 text-xs text-muted-foreground border-b">Recent searches</div>
                     <ul>
                       {searchHistory.map((item, index) => (
-                        <li 
+                        <li
                           key={index}
                           className="px-3 py-2 hover:bg-muted cursor-pointer text-sm"
                           onClick={() => {
@@ -244,7 +244,7 @@ export const MainHeader = () => {
                         </li>
                       ))}
                     </ul>
-                    <div 
+                    <div
                       className="p-1 text-xs text-primary hover:underline cursor-pointer text-center border-t"
                       onClick={() => {
                         setSearchHistory([]);

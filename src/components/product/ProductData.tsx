@@ -62,7 +62,7 @@ export function useProductData() {
         .select('*')
         .eq('product_uuid', id)
         .maybeSingle();
-      
+
       // If no data found and no error, try with slug
       if (!data && !error) {
         console.log("No product found by UUID, trying with slug...");
@@ -72,19 +72,19 @@ export function useProductData() {
           .eq('slug', id)
           .maybeSingle());
       }
-      
+
       if (error) {
         console.error("Error fetching product:", error);
         throw error;
       }
-      
+
       if (!data) {
         console.log("No product found");
         return null;
       }
-      
+
       console.log("Product data found:", data);
-      
+
       return {
         ...data,
         demo: data.demo || null

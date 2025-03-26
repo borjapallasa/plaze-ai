@@ -18,7 +18,7 @@ export function ProductMediaUpload({ productUuid, onFileSelect }: ProductMediaUp
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
-
+  console.log('PR', productUuid)
   // Query existing product images
   const { data: images = [] } = useQuery({
     queryKey: ['productImages', productUuid],

@@ -151,7 +151,7 @@ export function CommunityStats({
             className="h-9"
           />
         </div>
-        
+
         {/* Danger Zone component */}
         <CommunityDangerZone
           communityName={communityName} // Use the communityName prop instead of community.name

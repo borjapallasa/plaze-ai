@@ -14,6 +14,7 @@ export function useProductState(variants: any[]) {
   useEffect(() => {
     if (variants.length > 0 && !selectedVariant) {
       const highlightedVariant = variants.find(v => v.highlight);
+      console.log('Setting selected Variant: ', highlightedVariant)
       setSelectedVariant(highlightedVariant ? highlightedVariant.id : variants[0].id);
     }
   }, [variants, selectedVariant]);
@@ -39,10 +40,10 @@ export function useProductState(variants: any[]) {
       });
       return;
     }
-    
+
     // Add main variant to cart
     await addToCart(product, selectedVariant);
-    
+
     // Add additional variants if selected
     if (additionalVariants.length > 0) {
       for (const variantId of additionalVariants) {
@@ -50,10 +51,10 @@ export function useProductState(variants: any[]) {
       }
     }
   };
-  
+
   const handleAdditionalVariantToggle = (variantId: string, selected: boolean) => {
-    setAdditionalVariants(prev => 
-      selected 
+    setAdditionalVariants(prev =>
+      selected
         ? [...prev, variantId]
         : prev.filter(id => id !== variantId)
     );

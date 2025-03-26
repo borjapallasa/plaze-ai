@@ -552,10 +552,10 @@ export default function Classroom() {
 
                   <div className="space-y-6">
                     {(activeLesson?.description || classroom?.description) && (
-                      <div className="prose prose-sm max-w-none" 
-                        dangerouslySetInnerHTML={{ 
-                          __html: activeLesson?.description || classroom?.description 
-                        }} 
+                      <div className="prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{
+                          __html: activeLesson?.description || classroom?.description
+                        }}
                       />
                     )}
                   </div>
@@ -574,19 +574,19 @@ export default function Classroom() {
                 <CardContent className="p-4">
                   <div className="space-y-6">
                     <div>
-                      <button 
+                      <button
                         onClick={() => setIsExpanded(!isExpanded)}
                         className="w-full flex items-center justify-between text-left text-lg font-semibold mb-2"
                       >
                         <span>{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
-                        <ChevronDown 
+                        <ChevronDown
                           className={cn(
                             "h-5 w-5 text-muted-foreground transition-transform duration-200",
                             isExpanded ? "transform rotate-180" : ""
-                          )} 
+                          )}
                         />
                       </button>
-                      
+
                       <div className={cn(
                         "space-y-2 overflow-hidden transition-all duration-200",
                         isExpanded ? "max-h-[500px]" : "max-h-0"
@@ -599,27 +599,27 @@ export default function Classroom() {
                           ))
                         ) : lessons && lessons.length > 0 ? (
                           lessons.map((lesson) => (
-                            <div 
-                              key={lesson.lesson_uuid} 
+                            <div
+                              key={lesson.lesson_uuid}
                               className={cn(
                                 "p-3 rounded-lg cursor-pointer group relative",
-                                activeLesson?.lesson_uuid === lesson.lesson_uuid 
-                                  ? "bg-muted" 
+                                activeLesson?.lesson_uuid === lesson.lesson_uuid
+                                  ? "bg-muted"
                                   : "hover:bg-muted/30"
                               )}
                               onClick={() => setActiveLesson(lesson)}
                             >
                               <span className="text-sm">{lesson.name ? capitalizeFirstLetter(lesson.name) : ''}</span>
-                              
+
                               <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button 
+                                <button
                                   onClick={(e) => handleOpenEditLesson(lesson, e)}
                                   className="p-1 hover:bg-muted rounded-full"
                                   aria-label="Edit lesson"
                                 >
                                   <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
                                 </button>
-                                <button 
+                                <button
                                   onClick={(e) => handleOpenDeleteDialog(lesson, e)}
                                   className="p-1 hover:bg-muted rounded-full"
                                   aria-label="Delete lesson"
@@ -632,9 +632,9 @@ export default function Classroom() {
                         ) : (
                           <p className="text-sm text-muted-foreground p-2">No lessons available yet</p>
                         )}
-                        
-                        <Button 
-                          variant="outline" 
+
+                        <Button
+                          variant="outline"
                           className="w-full mt-3 bg-primary/5 border-dashed"
                           onClick={() => setIsAddLessonOpen(true)}
                         >
@@ -660,7 +660,7 @@ export default function Classroom() {
                       </>
                     )}
                   </h1>
-                  
+
                   <div className="space-y-4">
                     {videoEmbedUrl ? (
                       <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
@@ -675,7 +675,7 @@ export default function Classroom() {
                       </div>
                     ) : (
                       <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
-                        <img 
+                        <img
                           src={activeLesson?.thumbnail_url || classroom?.thumbnail || "/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"}
                           alt="Course thumbnail"
                           className="w-full h-full object-cover"
@@ -691,10 +691,10 @@ export default function Classroom() {
 
                   <div className="space-y-6">
                     {(activeLesson?.description || classroom?.description) && (
-                      <div className="prose prose-sm max-w-none" 
-                        dangerouslySetInnerHTML={{ 
-                          __html: activeLesson?.description || classroom?.description 
-                        }} 
+                      <div className="prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{
+                          __html: activeLesson?.description || classroom?.description
+                        }}
                       />
                     )}
                   </div>
@@ -827,7 +827,7 @@ export default function Classroom() {
             </DialogContent>
           </Dialog>
         </div>
-      </div >
-    </div >
+      </div>
+    </div>
   );
 }
