@@ -62,12 +62,14 @@ function App() {
           <Route path="/experts" element={<ExpertsPage />} />
           <Route path="/expert/:expert_uuid" element={<ExpertPage />} />
           <Route path="/products" element={<ProductsPage />} />
+          <Route path="/product/:slug/:id" element={<ProductPage />} />
           <Route path="/sell" element={<SellPage />} />
           <Route path="/seller/products/new" element={<NewProductPage />} />
           <Route path="/seller/services/new" element={<NewServicePage />} />
           <Route path="/seller/communities/new" element={<NewCommunityPage />} />
           <Route path="/seller/:id" element={<SellerPage />} />
           <Route path="/product/:id/edit" element={<EditProductPage />} />
+          <Route path="/product/:slug/:id/edit" element={<EditProductPage />} />
           <Route path="/service/:id/edit" element={<EditServicePage />} />
           <Route path="/community/:id/edit" element={<EditCommunityPage />} />
           <Route path="/communities" element={<CommunitiesPage />} />
