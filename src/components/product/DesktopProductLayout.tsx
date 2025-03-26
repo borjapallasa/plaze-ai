@@ -1,4 +1,3 @@
-import React from "react";
 import { ProductGallery } from "./ProductGallery";
 import { ProductHeader } from "./ProductHeader";
 import { VariantPicker } from "./VariantPicker";
@@ -9,11 +8,18 @@ import { ProductFullWidthSections } from "./ProductFullWidthSections";
 import { ProductImage } from "@/hooks/use-product-images";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
 import { RelatedProductsList } from "./RelatedProductsList";
+import { Product, RelatedProduct } from "@/types/Product";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useEffect } from "react";
+
+
 
 interface DesktopProductLayoutProps {
-  product: any;
+  product: Product;
   images: ProductImage[];
   variants: any[];
+  relatedProductsWithVariants: any[];
   selectedVariant?: string;
   averageRating: number;
   onVariantChange: (variantId: string) => void;
@@ -29,6 +35,7 @@ export function DesktopProductLayout({
   product,
   images,
   variants,
+  relatedProductsWithVariants,
   selectedVariant,
   averageRating,
   onVariantChange,
@@ -64,10 +71,10 @@ export function DesktopProductLayout({
             className="mb-2"
           />
 
-          <RelatedProductsList
+          {/* <RelatedProductsList
             productUUID={product.product_uuid}
             className="mb-4"
-          />
+          /> */}
 
           <VariantPicker
             variants={variants}
@@ -79,8 +86,7 @@ export function DesktopProductLayout({
           />
 
           <AdditionalVariants
-            variants={variants}
-            selectedMainVariant={selectedVariant}
+            relatedProductsWithVariants={relatedProductsWithVariants}
             onAdditionalSelect={onAdditionalVariantToggle}
             className="mb-4"
           />

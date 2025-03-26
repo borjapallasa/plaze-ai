@@ -9,11 +9,6 @@ interface RelatedProduct {
   price_from?: number;
 }
 
-interface ProductRelationship {
-  related_product_uuid: string;
-  related_product: RelatedProduct;
-}
-
 interface RelatedProductsListProps {
   productUUID: string;
   className?: string;
@@ -21,7 +16,7 @@ interface RelatedProductsListProps {
 
 export function RelatedProductsList({ productUUID, className = "" }: RelatedProductsListProps) {
   // Fetch related products
-  const { data: relatedProducts = [], isLoading } = useQuery<ProductRelationship[]>({
+  const { data: relatedProducts = [], isLoading } = useQuery<any>({
     queryKey: ['relatedProducts', productUUID],
     queryFn: async () => {
       if (!productUUID) {
@@ -31,7 +26,6 @@ export function RelatedProductsList({ productUUID, className = "" }: RelatedProd
       const { data, error } = await supabase
         .from('product_relationships')
         .select(`
-          related_product_uuid,
           related_product:products!product_relationships_related_product_uuid_fkey (
             product_uuid,
             name,
@@ -45,10 +39,9 @@ export function RelatedProductsList({ productUUID, className = "" }: RelatedProd
         return [];
       }
 
-      return data.map((item) => ({
-        related_product_uuid: item.related_product_uuid,
-        related_product: item.related_product[0] // Ensure related_product is an object
-      })) || [];
+      return data.map((item) => {
+        return item.related_product
+      }) || [] as RelatedProduct[];
     },
     enabled: Boolean(productUUID),
   });
@@ -71,14 +64,14 @@ export function RelatedProductsList({ productUUID, className = "" }: RelatedProd
         <div className="space-y-2">
           {relatedProducts.map((rel) => (
             <div
-              key={rel.related_product_uuid}
+              key={rel.product_uuid}
               className="flex items-center justify-between p-3 rounded-md border bg-card hover:bg-muted/30 transition-colors"
             >
               <div className="truncate flex-1">
-                <p className="font-medium truncate">{rel.related_product.name}</p>
-                {rel.related_product.price_from !== undefined && (
+                <p className="font-medium truncate">{rel.name}</p>
+                {rel.price_from !== undefined || rel.price_from !== null && (
                   <p className="text-sm text-muted-foreground">
-                    ${rel.related_product.price_from.toFixed(2)}
+                    ${rel.price_from?.toFixed(2)}
                   </p>
                 )}
               </div>

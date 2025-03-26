@@ -123,10 +123,28 @@ export function useProductData() {
         comparePrice: variant.compare_price || 149.99,
         label: "Package",
         highlight: variant.highlighted || index === 1,
-        features: Array.isArray(variant.tags) 
+        features: Array.isArray(variant.tags)
           ? variant.tags.map(tag => String(tag))
           : ["Core Features", "Basic Support"]
       }));
+    },
+    enabled: !!product?.product_uuid
+  });
+
+  // Fetch related products with variants
+  const { data: relatedProductsWithVariants } = useQuery({
+    queryKey: ["relatedProducts", product?.product_uuid],
+    queryFn: async () => {
+      const { data: relatedProductsWithVariants, error } = await supabase
+        .rpc('get_related_products_with_variants', { product_uuid_input: product?.product_uuid });
+
+      if (error) {
+        console.error("Error fetching related products:", error);
+        throw error;
+      }
+      console.log("Found related products:", relatedProductsWithVariants.length);
+
+      return relatedProductsWithVariants
     },
     enabled: !!product?.product_uuid
   });
@@ -173,13 +191,14 @@ export function useProductData() {
   });
 
   // Calculate average rating
-  const averageRating = reviews.length 
+  const averageRating = reviews.length
     ? Number((reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length).toFixed(1))
     : 0;
 
   return {
     product,
     variants,
+    relatedProductsWithVariants,
     reviews,
     averageRating,
     isLoading: isLoadingProduct || isLoadingVariants,

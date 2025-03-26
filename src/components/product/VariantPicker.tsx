@@ -36,33 +36,30 @@ export function VariantPicker({
         {variants.map((variant, index) => {
           const badge = getBadgeLabel(index, variant);
           const isSelected = selectedVariant === variant.id;
-          
+
           return (
             <Card
               key={variant.id}
-              className={`p-4 cursor-pointer relative overflow-visible transition-all duration-200 ease-in-out ${
-                isSelected
-                  ? "ring-2 ring-black shadow-md scale-[1.01]"
-                  : "hover:ring-1 hover:ring-black/50 hover:shadow-sm"
-              } ${variant.highlight && !isSelected ? "ring-1 ring-black/10" : ""}`}
+              className={`p-4 cursor-pointer relative overflow-visible transition-all duration-200 ease-in-out ${isSelected
+                ? "ring-2 ring-black shadow-md scale-[1.01]"
+                : "hover:ring-1 hover:ring-black/50 hover:shadow-sm"
+                } ${variant.highlight && !isSelected ? "ring-1 ring-black/10" : ""}`}
               onClick={() => !isLoading && onVariantChange?.(variant.id)}
             >
               {badge && (
-                <div className={`absolute -top-2 left-4 ${
-                  variant.highlight 
-                    ? "bg-black text-white" 
-                    : "bg-white text-black border border-gray-200"
-                } px-2 py-0.5 rounded-full text-xs font-medium shadow-sm`}>
+                <div className={`absolute -top-2 left-4 ${variant.highlight
+                  ? "bg-black text-white"
+                  : "bg-white text-black border border-gray-200"
+                  } px-2 py-0.5 rounded-full text-xs font-medium shadow-sm`}>
                   {badge}
                 </div>
               )}
-              
+
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors duration-200 ${
-                      isSelected ? "border-black" : "border-gray-300"
-                    }`}>
+                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors duration-200 ${isSelected ? "border-black" : "border-gray-300"
+                      }`}>
                       {isSelected && (
                         <div className="w-2 h-2 rounded-full bg-black animate-scale-in" />
                       )}

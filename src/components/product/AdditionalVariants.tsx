@@ -15,34 +15,35 @@ import { Package } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface AdditionalVariantsProps {
-  variants: Variant[];
-  selectedMainVariant?: string;
+  relatedProductsWithVariants: any[]
   onAdditionalSelect?: (variantId: string, selected: boolean) => void;
   className?: string;
 }
 
 export function AdditionalVariants({
-  variants,
-  selectedMainVariant,
+  relatedProductsWithVariants,
   onAdditionalSelect,
   className = ""
 }: AdditionalVariantsProps) {
   const [selectedAdditional, setSelectedAdditional] = useState<string[]>([]);
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
-  
-  // Filter out the main selected variant
-  const additionalVariants = variants.filter(v => v.id !== selectedMainVariant);
-  
+
   // Group variants by name to create product groups
-  const productGroups = additionalVariants.reduce((groups, variant) => {
-    const name = variant.name || 'Unknown Product';
-    if (!groups[name]) {
-      groups[name] = [];
+  // Group related products by UUID to create product groups
+  const productGroups = relatedProductsWithVariants.reduce<Record<string, { productName: string; variants: any[] }>>((groups, product) => {
+    const productUuid = product.related_product_uuid;
+
+    if (!groups[productUuid]) {
+      groups[productUuid] = {
+        productName: product.related_product_name,
+        variants: []
+      };
     }
-    groups[name].push(variant);
+
+    groups[productUuid].variants.push(product);
     return groups;
-  }, {} as Record<string, Variant[]>);
-  
+  }, {} as Record<string, { productName: string; variants: any[] }>);
+
   if (Object.keys(productGroups).length === 0) {
     return null;
   }
@@ -162,9 +163,9 @@ export function AdditionalVariants({
                       <SelectValue placeholder="Options" />
                     </SelectTrigger>
                     <SelectContent className="min-w-[220px]">
-                      {productVariants.map((variant) => (
-                        <SelectItem key={variant.id} value={variant.id} className="text-xs">
-                          {variant.label || "Option"} - ${formatPrice(variant.price)}
+                      {variants.map((variant) => (
+                        <SelectItem key={variant.variant_uuid} value={variant.variant_uuid} className="text-xs">
+                          {variant.variant_name || "Option"} - ${formatPrice(variant.variant_price)}
                         </SelectItem>
                       ))}
                     </SelectContent>

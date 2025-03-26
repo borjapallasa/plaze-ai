@@ -27,7 +27,6 @@ import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/auth";
 import { CommunityProduct } from "@/components/community/EditCommunityRelatedProduts";
 import { Community } from "@/components/community/CommunityStats";
-import { Variant } from "@/components/product/types/variants";
 
 export default function Classroom() {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -115,16 +114,11 @@ export default function Classroom() {
           id: community.community_product_uuid.community_product_uuid,
           name: community.community_product_uuid.name,
           price: community.community_product_uuid.price,
-          comparePrice: community.community_product_uuid.price * 1.5,
-          label: community.product_type === 'premium' ? 'Best Value' : 'Most Popular',
-          features: community.product_type === 'premium' ? ["Core Course", "Premium Resources"] : ["Core Course", "Basic Resources"],
-          highlight: false,
-          tags: [],
-          hidden: false,
-          createdAt: new Date().toISOString(),
-          filesLink: ''
+          comparePrice: community.community_product_uuid.price * 1.5, // Example calculation for compare price
+          // label: community.product_type === 'premium' ? 'Best Value' : 'Most Popular',
+          // features: community.product_type === 'premium' ? ["Core Course", "Premium Resources"] : ["Core Course", "Basic Resources"]
         }
-      }) as Variant[];
+      }) as unknown as CommunityProduct[];
     },
     enabled: !!classroom?.community_uuid
   });

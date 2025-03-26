@@ -7,13 +7,14 @@ import { useProductData } from "@/components/product/ProductData";
 import { useProductState } from "@/components/product/ProductState";
 
 export default function Product() {
-  const { 
-    product, 
-    variants, 
-    reviews, 
-    averageRating, 
-    isLoading, 
-    error 
+  const {
+    product,
+    variants,
+    relatedProductsWithVariants,
+    reviews,
+    averageRating,
+    isLoading,
+    error
   } = useProductData();
 
   const {
@@ -39,6 +40,7 @@ export default function Product() {
       <ProductLayout
         product={product}
         variants={variants}
+        relatedProductsWithVariants={relatedProductsWithVariants}
         selectedVariant={selectedVariant}
         averageRating={averageRating}
         onVariantChange={setSelectedVariant}
@@ -47,7 +49,7 @@ export default function Product() {
         reviews={reviews}
         isLoading={isCartLoading}
       />
-      <StickyATC 
+      <StickyATC
         variants={variants}
         selectedVariant={selectedVariant}
         onVariantChange={setSelectedVariant}

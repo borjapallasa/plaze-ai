@@ -51,7 +51,7 @@ export function ProductHeaderSection({
                   <SelectItem value="inactive">Inactive</SelectItem>
                 </SelectContent>
               </Select>
-              <Button 
+              <Button
                 onClick={onSave}
                 disabled={isSaving}
               >
@@ -61,6 +61,6 @@ export function ProductHeaderSection({
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }

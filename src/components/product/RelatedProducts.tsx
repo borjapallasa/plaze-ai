@@ -44,7 +44,7 @@ export function RelatedProducts({
   const [isSaving, setSaving] = useState(false);
 
   // Fetch user's products (excluding the current product)
-  const { data: userProducts = [], isLoading: isLoadingProducts } = useQuery({
+  const { data: userProducts = [], isLoading: isLoadingProducts } = useQuery<Product[]>({
     queryKey: ['userProducts', userUuid, productId],
     queryFn: async () => {
       if (!userUuid || !productId) {

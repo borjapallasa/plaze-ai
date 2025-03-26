@@ -23,6 +23,7 @@ export function ProductLayout({
   product,
   variants,
   selectedVariant,
+  relatedProductsWithVariants,
   averageRating,
   onVariantChange,
   onAddToCart,
@@ -32,7 +33,7 @@ export function ProductLayout({
 }: ProductLayoutProps) {
   const isMobile = useIsMobile();
   const { images, isLoading: isLoadingImages } = useProductImages(product.product_uuid);
-  
+
   const mainImage = images[0]?.url;
   usePreloadImage(mainImage);
 
@@ -51,10 +52,11 @@ export function ProductLayout({
     <div className="min-h-screen">
       <MainHeader />
       <main className="container mx-auto px-4 pt-28 md:pt-32">
-        <MobileProductLayout 
+        <MobileProductLayout
           product={product}
           images={images}
           variants={variants}
+          relatedProductsWithVariants={relatedProductsWithVariants}
           selectedVariant={selectedVariant}
           averageRating={averageRating}
           onVariantChange={onVariantChange}
@@ -64,11 +66,12 @@ export function ProductLayout({
           reviews={reviews}
           isLoading={isLoading}
         />
-        
-        <DesktopProductLayout 
+
+        <DesktopProductLayout
           product={product}
           images={images}
           variants={variants}
+          relatedProductsWithVariants={relatedProductsWithVariants}
           selectedVariant={selectedVariant}
           averageRating={averageRating}
           onVariantChange={onVariantChange}

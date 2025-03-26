@@ -14,6 +14,7 @@ interface MobileProductLayoutProps {
   product: any;
   images: ProductImage[];
   variants: any[];
+  relatedProductsWithVariants: any[];
   selectedVariant?: string;
   averageRating: number;
   onVariantChange: (variantId: string) => void;
@@ -28,6 +29,7 @@ export function MobileProductLayout({
   product,
   images,
   variants,
+  relatedProductsWithVariants,
   selectedVariant,
   averageRating,
   onVariantChange,
@@ -41,12 +43,12 @@ export function MobileProductLayout({
 
   return (
     <div className="lg:hidden">
-      <ProductGallery 
+      <ProductGallery
         images={images}
-        className="mb-4" 
+        className="mb-4"
         priority={true}
       />
-      <ProductHeader 
+      <ProductHeader
         title={product.name}
         seller="Design Master"
         rating={averageRating}
