@@ -14,11 +14,12 @@ export function ProductVariantsEditor({
   const [internalVariants, setInternalVariants] = React.useState<Variant[]>([
     {
       id: "1",
-      name: "",
-      price: "",
-      comparePrice: "",
+      name: "Default Variant",
+      price: 0,
+      comparePrice: 0,
       highlight: false,
       tags: [],
+      label: "Package",
       createdAt: new Date().toISOString(),
       filesLink: "",
     },
@@ -38,11 +39,12 @@ export function ProductVariantsEditor({
       ...variants,
       {
         id: `temp_${Date.now()}`,
-        name: "",
-        price: "0",
-        comparePrice: "0",
+        name: "New Variant",
+        price: 0,
+        comparePrice: 0,
         highlight: false,
         tags: [],
+        label: "Package",
         createdAt: new Date().toISOString(),
         filesLink: "",
       },
@@ -69,6 +71,13 @@ export function ProductVariantsEditor({
       setVariants(
         variants.map((v) =>
           v.id === id ? { ...v, highlight: true } : { ...v, highlight: false }
+        )
+      );
+    } else if (field === 'price' || field === 'comparePrice') {
+      // Convert string inputs to numbers for price fields
+      setVariants(
+        variants.map((v) =>
+          v.id === id ? { ...v, [field]: Number(value) || 0 } : v
         )
       );
     } else {

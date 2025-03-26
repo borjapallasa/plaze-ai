@@ -1,4 +1,3 @@
-
 export interface RelatedProduct {
   product_uuid: string;
   name: string;
@@ -90,7 +89,7 @@ export interface CommunityProduct {
   community_product_uuid: string;
   name: string;
   price: number;
-  community_uuid?: string;
+  community_uuid: string;
   product_type?: string;
   variant_uuid?: string;
   variant_name?: string;

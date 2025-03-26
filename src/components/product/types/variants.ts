@@ -1,12 +1,12 @@
 
 export interface Variant {
   id: string;
-  name: string; // Make name required
-  price: number; // Change to number for consistency
-  comparePrice: number; // Change to number for consistency
+  name: string; // Name is required
+  price: number; // Price is number
+  comparePrice: number; // Compare price is number
   highlight?: boolean;
   tags?: string[];
-  label?: string;
+  label: string; // Make label required to match usage
   features?: string[];
   hidden?: boolean;
   createdAt?: string;

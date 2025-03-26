@@ -31,8 +31,8 @@ export function productVariantToVariant(variant: ProductVariant): Variant {
   return {
     id: variant.id,
     name: variant.name || 'Package',
-    price: Number(variant.price),
-    comparePrice: Number(variant.comparePrice),
+    price: Number(variant.price) || 0,
+    comparePrice: Number(variant.comparePrice) || 0,
     label: variant.label || 'Package',
     highlight: variant.highlight,
     features: variant.features || []

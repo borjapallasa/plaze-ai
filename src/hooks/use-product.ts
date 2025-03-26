@@ -46,11 +46,13 @@ export function useProduct() {
 
       console.log("Product data found:", data);
 
-      // Ensure all the fields are returned as expected
+      // Ensure all the fields are returned as expected and with correct types
       const productData: ProductData = {
         ...data,
-        accept_terms: data.accept_terms === null ? null : !!data.accept_terms,
-        changes_needed: data.changes_neeeded || null, // Match the misspelled field in the database
+        // Handle null or boolean values correctly
+        accept_terms: data.accept_terms,
+        changes_neeeded: data.changes_neeeded, // Keep the misspelled field as it is in the database
+        changes_needed: data.changes_neeeded, // Use the misspelled field for code compatibility
         demo: data.demo || null
       };
       

@@ -30,9 +30,10 @@ export default function NewProduct() {
     {
       id: "1",
       name: "",
-      price: "0",
-      comparePrice: "0",
+      price: 0,
+      comparePrice: 0,
       highlight: false,
+      label: "Package",
       tags: [],
       createdAt: new Date().toISOString(),
     }
@@ -43,7 +44,7 @@ export default function NewProduct() {
       const updatedVariant = {
         ...variants[0],
         name: productName || variants[0].name,
-        price: techStackPrice || variants[0].price,
+        price: Number(techStackPrice) || variants[0].price,
         comparePrice: variants[0].comparePrice
       };
 

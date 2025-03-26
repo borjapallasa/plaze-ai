@@ -42,6 +42,7 @@ export default function Product() {
     return <ProductNotFound />;
   }
   
+  // Convert variants to ensure they match the required type
   const convertedVariants = productVariantsToVariants(variants);
 
   return (
