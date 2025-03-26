@@ -9,20 +9,20 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
       return null;
     }
 
-    // Execute the transaction query with the appropriate condition
-    let transactionQuery = supabase
+    // Create a base query for transactions
+    let query = supabase
       .from('products_transactions')
       .select('product_transaction_uuid, item_count, total_amount')
       .eq('status', 'pending');
     
     // Apply the correct filter based on available ID
     if (userId) {
-      transactionQuery = transactionQuery.eq('user_uuid', userId);
+      query = query.eq('user_uuid', userId);
     } else if (sessionId) {
-      transactionQuery = transactionQuery.eq('guest_session_id', sessionId);
+      query = query.eq('guest_session_id', sessionId);
     }
     
-    const { data: transactionData, error: transactionError } = await transactionQuery.maybeSingle();
+    const { data: transactionData, error: transactionError } = await query.maybeSingle();
     
     // Check for errors or no data
     if (transactionError) {
@@ -50,36 +50,48 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
       return null;
     }
 
-    // Get product names - using an array of IDs to avoid deep type issues
-    const productUuids = itemsData.map(item => item.product_uuid).filter(Boolean);
-    const uniqueProductUuids = [...new Set(productUuids)];
-    let productNames: Record<string, string> = {};
+    // Extract product UUIDs without using map directly in the .in() query
+    const productUuids: string[] = [];
+    itemsData.forEach(item => {
+      if (item.product_uuid) {
+        productUuids.push(item.product_uuid);
+      }
+    });
     
-    if (uniqueProductUuids.length > 0) {
-      const { data: productsData, error: productsError } = await supabase
+    // Extract variant UUIDs without using map directly in the .in() query
+    const variantUuids: string[] = [];
+    itemsData.forEach(item => {
+      if (item.variant_uuid) {
+        variantUuids.push(item.variant_uuid);
+      }
+    });
+    
+    // Prepare result maps
+    let productNames: Record<string, string> = {};
+    let variantNames: Record<string, string> = {};
+    
+    // Only fetch product names if we have product UUIDs
+    if (productUuids.length > 0) {
+      const { data: productsData } = await supabase
         .from('products')
         .select('product_uuid, name')
-        .in('product_uuid', uniqueProductUuids);
+        .in('product_uuid', productUuids);
         
-      if (!productsError && productsData) {
+      if (productsData) {
         productsData.forEach((product: any) => {
           productNames[product.product_uuid] = product.name;
         });
       }
     }
 
-    // Get variant names - using an array of IDs to avoid deep type issues
-    const variantUuids = itemsData.map(item => item.variant_uuid).filter(Boolean);
-    const uniqueVariantUuids = [...new Set(variantUuids)];
-    let variantNames: Record<string, string> = {};
-    
-    if (uniqueVariantUuids.length > 0) {
-      const { data: variantsData, error: variantsError } = await supabase
+    // Only fetch variant names if we have variant UUIDs
+    if (variantUuids.length > 0) {
+      const { data: variantsData } = await supabase
         .from('variants')
         .select('variant_uuid, name')
-        .in('variant_uuid', uniqueVariantUuids);
+        .in('variant_uuid', variantUuids);
         
-      if (!variantsError && variantsData) {
+      if (variantsData) {
         variantsData.forEach((variant: any) => {
           variantNames[variant.variant_uuid] = variant.name;
         });

@@ -2,11 +2,15 @@
 import { useState, useEffect, useRef } from "react";
 import { useCart } from "@/hooks/use-cart";
 import { useToast } from "@/components/ui/use-toast";
+import { CartItem } from "@/types/cart";
+import { Sheet } from "@/components/ui/sheet";
 
 export function useProductState(variants: any[]) {
   const [selectedVariant, setSelectedVariant] = useState<string | undefined>();
   const [additionalVariants, setAdditionalVariants] = useState<string[]>([]);
   const [showStickyATC, setShowStickyATC] = useState(false);
+  const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
+  const [lastAddedItem, setLastAddedItem] = useState<CartItem | null>(null);
   const variantsRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const { addToCart, isLoading } = useCart();
@@ -14,7 +18,6 @@ export function useProductState(variants: any[]) {
   useEffect(() => {
     if (variants.length > 0 && !selectedVariant) {
       const highlightedVariant = variants.find(v => v.highlight);
-      console.log('Setting selected Variant: ', highlightedVariant)
       setSelectedVariant(highlightedVariant ? highlightedVariant.id : variants[0].id);
     }
   }, [variants, selectedVariant]);
@@ -42,7 +45,19 @@ export function useProductState(variants: any[]) {
     }
 
     // Add main variant to cart
-    await addToCart(product, selectedVariant);
+    const result = await addToCart(product, selectedVariant);
+    
+    if (result?.updatedCart) {
+      // Find the latest added item
+      const addedItem = result.updatedCart.items.find(
+        item => item.product_uuid === product.product_uuid && item.variant_uuid === selectedVariant
+      );
+      
+      if (addedItem) {
+        setLastAddedItem(addedItem);
+        setCartDrawerOpen(true);
+      }
+    }
 
     // Add additional variants if selected
     if (additionalVariants.length > 0) {
@@ -50,6 +65,10 @@ export function useProductState(variants: any[]) {
         await addToCart(product, variantId);
       }
     }
+  };
+
+  const closeCartDrawer = () => {
+    setCartDrawerOpen(false);
   };
 
   const handleAdditionalVariantToggle = (variantId: string, selected: boolean) => {
@@ -68,6 +87,10 @@ export function useProductState(variants: any[]) {
     variantsRef,
     handleAddToCart,
     handleAdditionalVariantToggle,
-    isLoading
+    isLoading,
+    cartDrawerOpen,
+    setCartDrawerOpen,
+    lastAddedItem,
+    closeCartDrawer
   };
 }

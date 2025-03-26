@@ -5,6 +5,8 @@ import { ProductNotFound } from "@/components/product/ProductNotFound";
 import { StickyATC } from "@/components/product/StickyATC";
 import { useProductData } from "@/components/product/ProductData";
 import { useProductState } from "@/components/product/ProductState";
+import { Sheet } from "@/components/ui/sheet";
+import { CartDrawer } from "@/components/cart/CartDrawer";
 
 export default function Product() {
   const {
@@ -24,7 +26,11 @@ export default function Product() {
     variantsRef,
     handleAddToCart,
     handleAdditionalVariantToggle,
-    isLoading: isCartLoading
+    isLoading: isCartLoading,
+    cartDrawerOpen,
+    setCartDrawerOpen,
+    lastAddedItem,
+    closeCartDrawer
   } = useProductState(variants);
 
   if (isLoading) {
@@ -57,6 +63,10 @@ export default function Product() {
         onAddToCart={() => handleAddToCart(product)}
         isLoading={isCartLoading}
       />
+
+      <Sheet open={cartDrawerOpen} onOpenChange={setCartDrawerOpen}>
+        <CartDrawer cartItem={lastAddedItem} onClose={closeCartDrawer} />
+      </Sheet>
     </div>
   );
 }

@@ -82,12 +82,15 @@ export function useCart() {
           title: "Added to cart",
           description: `${product.name} has been added to your cart.`
         });
+        
+        return result;
       } else {
         toast({
           title: "Error",
           description: result.message || "Failed to add item to cart",
           variant: "destructive"
         });
+        return null;
       }
     } catch (error) {
       console.error('Failed to add to cart:', error);
@@ -96,6 +99,7 @@ export function useCart() {
         description: "Failed to add item to cart. Please try again.",
         variant: "destructive"
       });
+      return null;
     } finally {
       setIsLoading(false);
     }
