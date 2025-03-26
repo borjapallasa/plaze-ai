@@ -7,7 +7,6 @@ import { useProductImages } from "@/hooks/use-product-images";
 import { MobileProductLayout } from "./MobileProductLayout";
 import { DesktopProductLayout } from "./DesktopProductLayout";
 import { ProductLayoutProps } from "./types/variants";
-import { CartDrawerTrigger } from "@/components/cart/CartDrawerTrigger";
 
 export function ProductLayout({
   product,
@@ -40,9 +39,7 @@ export function ProductLayout({
 
   return (
     <div className="min-h-screen">
-      <MainHeader>
-        <CartDrawerTrigger className="mr-2" />
-      </MainHeader>
+      <MainHeader />
       <main className="container mx-auto px-4 pt-28 md:pt-32">
         {isMobile ? (
           <MobileProductLayout
