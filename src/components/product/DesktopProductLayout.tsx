@@ -64,15 +64,16 @@ export function DesktopProductLayout({
             onContactSeller={handleContactSeller}
             className="mb-2"
           />
-
-          <VariantPicker
-            variants={variants}
-            selectedVariant={selectedVariant}
-            onVariantChange={onVariantChange}
-            onAddToCart={onAddToCart}
-            className="mb-3"
-            isLoading={isLoading}
-          />
+          {variants && variants.length > 0 && (
+            <VariantPicker
+              variants={variants}
+              selectedVariant={selectedVariant}
+              onVariantChange={onVariantChange}
+              onAddToCart={onAddToCart}
+              className="mb-3"
+              isLoading={isLoading}
+            />)
+          }
           {relatedProductsWithVariants && relatedProductsWithVariants.length > 0 && (
             <AdditionalVariants
               relatedProductsWithVariants={relatedProductsWithVariants}

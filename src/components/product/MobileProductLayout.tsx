@@ -55,14 +55,16 @@ export function MobileProductLayout({
         onContactSeller={handleContactSeller}
         className="mb-3"
       />
-      <VariantPicker
-        variants={variants}
-        selectedVariant={selectedVariant}
-        onVariantChange={onVariantChange}
-        onAddToCart={onAddToCart}
-        className="mb-3"
-        isLoading={isLoading}
-      />
+      {variants && variants.length > 0 && (
+        <VariantPicker
+          variants={variants}
+          selectedVariant={selectedVariant}
+          onVariantChange={onVariantChange}
+          onAddToCart={onAddToCart}
+          className="mb-3"
+          isLoading={isLoading}
+        />)
+      }
       {relatedProductsWithVariants && relatedProductsWithVariants.length > 0 && (
         <AdditionalVariants
           relatedProductsWithVariants={relatedProductsWithVariants}

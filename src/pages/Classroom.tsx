@@ -1,431 +1,58 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAuth } from '@/lib/auth';
-import { supabase } from '@/integrations/supabase/client';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
-import { toast } from '@/components/ui/use-toast';
-import { MainHeader } from '@/components/MainHeader';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Link } from "react-router-dom";
+import { cn } from "@/lib/utils";
+import { ChevronDown, PlusCircle, Pencil, Trash2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { MainHeader } from "@/components/MainHeader";
+import { VariantPicker } from "@/components/product/VariantPicker";
+import { useParams } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { getVideoEmbedUrl } from "@/utils/videoEmbed";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import { cn } from "@/lib/utils"
-import { Badge } from "@/components/ui/badge"
-import { Calendar } from "@/components/ui/calendar"
-import { CalendarIcon } from "lucide-react"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { format } from "date-fns"
-import { Separator } from "@/components/ui/separator"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Progress } from "@/components/ui/progress"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerOverlay,
-  DrawerPortal,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer"
-import { communityProductsToVariants } from "@/utils/product-utils";
-
-interface CommunityProduct {
-  community_product_uuid: string;
-  name: string;
-  price: number;
-  product_type: string;
-}
-
-interface ClassroomData {
-  classroom_uuid: string;
-  name: string;
-  description: string;
-  expert_uuid: string;
-  created_at: string;
-  updated_at: string;
-  user_uuid: string;
-  status: string;
-  welcome_message: string;
-  about: string;
-  hero_image_url: string;
-  video_url: string;
-  category: string;
-  difficulty_level: string;
-  tech_stack: string;
-  product_includes: string;
-  learn_paths: string;
-  target_audience: string;
-  prerequisites: string;
-  total_seats: number;
-  available_seats: number;
-  start_date: string;
-  end_date: string;
-  schedule: string;
-  location: string;
-  instructor_name: string;
-  instructor_bio: string;
-  instructor_image_url: string;
-  price: number;
-  discount: number;
-  early_bird_discount: number;
-  early_bird_deadline: string;
-  currency: string;
-  payment_options: string;
-  cancellation_policy: string;
-  faq: string;
-  testimonials: string;
-  contact_email: string;
-  contact_phone: string;
-  social_links: string;
-  related_products: string;
-  upsell_products: string;
-  cross_sell_products: string;
-  seo_title: string;
-  seo_description: string;
-  keywords: string;
-  meta_tags: string;
-  schema_markup: string;
-  structured_data: string;
-  analytics_code: string;
-  conversion_tracking: string;
-  ab_testing: string;
-  heatmap_tracking: string;
-  user_feedback: string;
-  accessibility_features: string;
-  terms_of_service: string;
-  privacy_policy: string;
-  cookie_policy: string;
-  disclaimer: string;
-  code_of_conduct: string;
-  community_guidelines: string;
-  moderation_policy: string;
-  reporting_mechanism: string;
-  enforcement_actions: string;
-  appeals_process: string;
-  communication_channels: string;
-  notification_settings: string;
-  email_marketing: string;
-  sms_marketing: string;
-  push_notifications: string;
-  in_app_messaging: string;
-  live_chat: string;
-  chatbot_integration: string;
-  customer_support: string;
-  help_center: string;
-  knowledge_base: string;
-  tutorials: string;
-  onboarding_process: string;
-  user_training: string;
-  certification_program: string;
-  gamification_elements: string;
-  rewards_system: string;
-  leaderboards: string;
-  progress_tracking: string;
-  performance_metrics: string;
-  data_visualization: string;
-  reporting_tools: string;
-  feedback_mechanisms: string;
-  survey_tools: string;
-  polling_features: string;
-  rating_systems: string;
-  review_management: string;
-  referral_program: string;
-  affiliate_marketing: string;
-  influencer_collaboration: string;
-  social_sharing: string;
-  content_creation: string;
-  content_curation: string;
-  content_optimization: string;
-  content_distribution: string;
-  content_promotion: string;
-  content_monetization: string;
-  event_management: string;
-  webinar_integration: string;
-  workshop_scheduling: string;
-  conference_planning: string;
-  networking_opportunities: string;
-  mentorship_programs: string;
-  career_services: string;
-  job_boards: string;
-  recruiting_events: string;
-  alumni_network: string;
-  success_stories: string;
-  case_studies: string;
-  testimonials_page: string;
-  brand_assets: string;
-  style_guide: string;
-  logo_variations: string;
-  color_palette: string;
-  typography_rules: string;
-  image_guidelines: string;
-  video_standards: string;
-  voice_and_tone: string;
-  messaging_framework: string;
-  value_proposition: string;
-  unique_selling_points: string;
-  competitive_analysis: string;
-  market_research: string;
-  customer_segmentation: string;
-  persona_development: string;
-  user_journey_mapping: string;
-  customer_feedback_loop: string;
-  iterative_design: string;
-  agile_development: string;
-  lean_startup: string;
-  design_thinking: string;
-  growth_hacking: string;
-  innovation_strategy: string;
-  digital_transformation: string;
-  business_model_innovation: string;
-  strategic_partnerships: string;
-  mergers_and_acquisitions: string;
-  venture_capital: string;
-  private_equity: string;
-  initial_public_offering: string;
-  financial_modeling: string;
-  budgeting_and_forecasting: string;
-  risk_management: string;
-  compliance_and_regulation: string;
-  legal_and_ethical_considerations: string;
-  intellectual_property: string;
-  data_privacy: string;
-  cybersecurity: string;
-  crisis_management: string;
-  reputation_management: string;
-  corporate_social_responsibility: string;
-  sustainability_initiatives: string;
-  environmental_impact: string;
-  social_impact: string;
-  governance_structure: string;
-  leadership_development: string;
-  organizational_culture: string;
-  employee_engagement: string;
-  diversity_and_inclusion: string;
-  workplace_wellness: string;
-  remote_work_policies: string;
-  flexible_work_arrangements: string;
-  performance_management_systems: string;
-  talent_acquisition: string;
-  succession_planning: string;
-  change_management: string;
-  continuous_improvement: string;
-  knowledge_management: string;
-  innovation_ecosystem: string;
-  open_source_contributions: string;
-  research_and_development: string;
-  technology_transfer: string;
-  intellectual_capital: string;
-  human_capital: string;
-  social_capital: string;
-  brand_equity: string;
-  customer_loyalty: string;
-  network_effects: string;
-  data_driven_decision_making: string;
-  artificial_intelligence: string;
-  machine_learning: string;
-  big_data_analytics: string;
-  cloud_computing: string;
-  internet_of_things: string;
-  blockchain_technology: string;
-  virtual_reality: string;
-  augmented_reality: string;
-  mixed_reality: string;
-  quantum_computing: string;
-  nanotechnology: string;
-  biotechnology: string;
-  renewable_energy: string;
-  sustainable_agriculture: string;
-  circular_economy: string;
-  social_entrepreneurship: string;
-  impact_investing: string;
-  philanthropy: string;
-  nonprofit_management: string;
-  global_development: string;
-  international_relations: string;
-  diplomacy: string;
-  peacebuilding: string;
-  humanitarian_aid: string;
-  disaster_relief: string;
-  public_health: string;
-  education_reform: string;
-  poverty_alleviation: string;
-  environmental_conservation: string;
-  climate_change_mitigation: string;
-  social_justice: string;
-  human_rights: string;
-  democracy_promotion: string;
-  good_governance: string;
-  rule_of_law: string;
-  access_to_justice: string;
-  citizen_engagement: string;
-  civic_participation: string;
-  community_development: string;
-  grassroots_movements: string;
-  social_innovation: string;
-  systems_thinking: string;
-  complexity_science: string;
-  network_analysis: string;
-  game_theory: string;
-  behavioral_economics: string;
-  neuroscience: string;
-  cognitive_science: string;
-  positive_psychology: string;
-  mindfulness: string;
-  meditation: string;
-  yoga: string;
-  holistic_health: string;
-  integrative_medicine: string;
-  preventive_care: string;
-  personalized_medicine: string;
-  regenerative_medicine: string;
-  longevity_research: string;
-  biohacking: string;
-  transhumanism: string;
-  space_exploration: string;
-  planetary_science: string;
-  astrophysics: string;
-  cosmology: string;
-  theoretical_physics: string;
-  string_theory: string;
-  quantum_mechanics: string;
-  general_relativity: string;
-  unified_field_theory: string;
-  grand_unification_theory: string;
-  theory_of_everything: string;
-  multiverse_theory: string;
-  simulation_hypothesis: string;
-  consciousness_studies: string;
-  artificial_general_intelligence: string;
-  singularity: string;
-  existential_risk: string;
-  long_term_thinking: string;
-  effective_altruism: string;
-  rationality: string;
-  critical_thinking: string;
-  skepticism: string;
-  scientific_method: string;
-  evidence_based_decision_making: string;
-  open_science: string;
-  citizen_science: string;
-  collaborative_research: string;
-  interdisciplinary_studies: string;
-  systems_integration: string;
-  holistic_approaches: string;
-  sustainable_solutions: string;
-  resilient_systems: string;
-  adaptive_strategies: string;
-  transformative_innovation: string;
-  exponential_technologies: string;
-  disruptive_innovation: string;
-  creative_destruction: string;
-  value_creation: string;
-  economic_growth: string;
-  social_progress: string;
-  human_flourishing: string;
-  global_wellbeing: string;
-  planetary_health: string;
-  cosmic_harmony: string;
-}
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogClose,
+  DialogDescription
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ProductEditor } from "@/components/product/ProductEditor";
+import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/lib/auth";
+import { CommunityProduct } from "@/components/community/EditCommunityRelatedProduts";
+import { Community } from "@/components/community/CommunityStats";
 
 export default function Classroom() {
+  const [isExpanded, setIsExpanded] = useState(true);
+  const [selectedVariant, setSelectedVariant] = useState("basic");
+  const [activeLesson, setActiveLesson] = useState<any>(null);
+  const [isAddLessonOpen, setIsAddLessonOpen] = useState(false);
+  const [isEditLessonOpen, setIsEditLessonOpen] = useState(false);
+  const [isDeleteLessonOpen, setIsDeleteLessonOpen] = useState(false);
+  const [newLessonData, setNewLessonData] = useState({
+    name: '',
+    description: '',
+    video_url: ''
+  });
+  const [editLessonData, setEditLessonData] = useState({
+    name: '',
+    description: '',
+    video_url: ''
+  });
+  const isMobile = useIsMobile();
   const { id } = useParams();
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { user } = useAuth();
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [welcomeMessage, setWelcomeMessage] = useState('');
-  const [about, setAbout] = useState('');
-  const [heroImageUrl, setHeroImageUrl] = useState('');
-  const [videoUrl, setVideoUrl] = useState('');
-  const [category, setCategory] = useState('');
-  const [difficultyLevel, setDifficultyLevel] = useState('');
-  const [techStack, setTechStack] = useState('');
-  const [productIncludes, setProductIncludes] = useState('');
-  const [learnPaths, setLearnPaths] = useState('');
-  const [targetAudience, setTargetAudience] = useState('');
-  const [prerequisites, setPrerequisites] = useState('');
-  const [totalSeats, setTotalSeats] = useState(0);
-  const [availableSeats, setAvailableSeats] = useState(0);
-  const [startDate, setStartDate] = useState<Date | undefined>();
-  const [endDate, setEndDate] = useState<Date | undefined>();
-  const [schedule, setSchedule] = useState('');
-  const [location, setLocation] = useState('');
-  const [instructorName, setInstructorName] = useState('');
-  const [instructorBio, setInstructorBio] = useState('');
-  const [instructorImageUrl, setInstructorImageUrl] = useState('');
-  const [price, setPrice] = useState(0);
-  const [discount, setDiscount] = useState(0);
-  const [earlyBirdDiscount, setEarlyBirdDiscount] = useState(0);
-  const [earlyBirdDeadline, setEarlyBirdDeadline] = useState<Date | undefined>();
-  const [currency, setCurrency] = useState('USD');
-  const [paymentOptions, setPaymentOptions] = useState('');
-  const [cancellationPolicy, setCancellationPolicy] = useState('');
-  const [faq, setFaq] = useState('');
-  const [testimonials, setTestimonials] = useState('');
-  const [contactEmail, setContactEmail] = useState('');
-  const [contactPhone, setContactPhone] = useState('');
-  const [socialLinks, setSocialLinks] = useState('');
-  const [relatedProducts, setRelatedProducts] = useState('');
-  const [upsellProducts, setUpsellProducts] = useState('');
-  const [crossSellProducts, setCrossSellProducts] = useState('');
-  const [seoTitle, setSeoTitle] = useState('');
-  const [seoDescription, setSeoDescription] = useState('');
-  const [keywords, setKeywords] = useState('');
-  const [metaTags, setMetaTags] = useState('');
-  const [schemaMarkup, setSchemaMarkup] = useState('');
-  const [structuredData, setStructuredData] = useState('');
-  const [analyticsCode, setAnalyticsCode] = useState('');
-  const [conversionTracking, setConversionTracking] = useState('');
-  const [abTesting, setAbTesting] = useState('');
-  const [heatmapTracking, setHeatmapTracking] = useState('');
-  const [userFeedback, setUserFeedback] = useState('');
-  const [accessibilityFeatures, setAccessibilityFeatures] = useState('');
-  const [termsOfService, setTermsOfService] = useState('');
-  const [privacyPolicy, setPrivacyPolicy] = useState('');
-  const [cookiePolicy, setCookiePolicy] = useState('');
-  const [disclaimer, setDisclaimer] = useState('');
-  const [codeOfConduct, setCodeOfConduct] = useState('');
-  const [communityGuidelines, setCommunityGuidelines] = useState('');
-  const [moderationPolicy, setModerationPolicy] = useState('');
-  const [reportingMechanism, setReportingMechanism] = useState('');
-  const [enforcementActions, setEnforcementActions] = useState('');
-  const [appealsProcess, setAppealsProcess] = useState('');
-  const [communityProducts, setCommunityProducts] = useState<CommunityProduct[]>([]);
 
-  const { data: classroom, isLoading, error } = useQuery({
+  const { data: classroom, isLoading: isClassroomLoading } = useQuery({
     queryKey: ['classroom', id],
     queryFn: async () => {
-      if (!id) {
-        throw new Error("No classroom ID provided");
-      }
-
       const { data, error } = await supabase
         .from('classrooms')
         .select('*')
@@ -437,86 +64,770 @@ export default function Classroom() {
         throw error;
       }
 
-      return data as unknown as ClassroomData;
+      return data;
+    },
+    enabled: !!id
+  });
+
+  const { data: community, isLoading: isCommunityLoading } = useQuery<Community | null>({
+    queryKey: ['classroom-community', classroom?.community_uuid],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('communities')
+        .select('*')
+        .eq('community_uuid', classroom.community_uuid)
+        .single();
+
+      console.log('data', data)
+
+      if (error) {
+        console.error("Error fetching community:", error);
+        return null;
+      }
+
+      return data as Community;
+    },
+    enabled: !!classroom?.community_uuid
+  });
+
+  const { data: variants } = useQuery({
+    queryKey: ['classroomCommunityProducts', classroom?.community_uuid],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('community_product_relationships')
+        .select(`
+          community_product_uuid (
+            community_product_uuid, 
+            name, 
+            price 
+          )
+        `)
+        .eq('community_uuid', classroom.community_uuid);
+
+      if (error) {
+        console.error("Error fetching community:", error);
+        return null;
+      }
+
+      return data.map((community: any) => {
+        return {
+          id: community.community_product_uuid.community_product_uuid,
+          name: community.community_product_uuid.name,
+          price: community.community_product_uuid.price,
+          comparePrice: community.community_product_uuid.price * 1.5, // Example calculation for compare price
+          // label: community.product_type === 'premium' ? 'Best Value' : 'Most Popular',
+          // features: community.product_type === 'premium' ? ["Core Course", "Premium Resources"] : ["Core Course", "Basic Resources"]
+        }
+      }) as unknown as CommunityProduct[];
+    },
+    enabled: !!classroom?.community_uuid
+  });
+
+  const { data: lessons, isLoading: isLessonsLoading } = useQuery({
+    queryKey: ['classroom-lessons', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('lessons')
+        .select('*')
+        .eq('classroom_uuid', id)
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        console.error("Error fetching lessons:", error);
+        throw error;
+      }
+
+      return data;
+    },
+    enabled: !!id
+  });
+
+
+  const addLessonMutation = useMutation({
+    mutationFn: async (newLesson: any) => {
+      const { data, error } = await supabase
+        .from('lessons')
+        .insert([newLesson])
+        .select();
+
+      if (error) {
+        console.error("Error adding lesson:", error);
+        throw error;
+      }
+
+      return data;
+    },
+    onSuccess: () => {
+      setNewLessonData({
+        name: '',
+        description: '',
+        video_url: ''
+      });
+      setIsAddLessonOpen(false);
+
+      queryClient.invalidateQueries({ queryKey: ['classroom-lessons', id] });
+      toast({
+        title: "Success",
+        description: "Lesson added successfully",
+      });
+    },
+    onError: (error) => {
+      console.error("Error adding lesson:", error);
+      toast({
+        title: "Error",
+        description: "Failed to add lesson. Please try again.",
+        variant: "destructive"
+      });
     }
   });
 
-  useEffect(() => {
-    if (classroom) {
-      setName(classroom.name || '');
-      setDescription(classroom.description || '');
-      setWelcomeMessage(classroom.welcome_message || '');
-      setAbout(classroom.about || '');
-      setHeroImageUrl(classroom.hero_image_url || '');
-      setVideoUrl(classroom.video_url || '');
-      setCategory(classroom.category || '');
-      setDifficultyLevel(classroom.difficulty_level || '');
-      setTechStack(classroom.tech_stack || '');
-      setProductIncludes(classroom.product_includes || '');
-      setLearnPaths(classroom.learn_paths || '');
-      setTargetAudience(classroom.target_audience || '');
-      setPrerequisites(classroom.prerequisites || '');
-      setTotalSeats(classroom.total_seats || 0);
-      setAvailableSeats(classroom.available_seats || 0);
-      setStartDate(classroom.start_date ? new Date(classroom.start_date) : undefined);
-      setEndDate(classroom.end_date ? new Date(classroom.end_date) : undefined);
-      setSchedule(classroom.schedule || '');
-      setLocation(classroom.location || '');
-      setInstructorName(classroom.instructor_name || '');
-      setInstructorBio(classroom.instructor_bio || '');
-      setInstructorImageUrl(classroom.instructor_image_url || '');
-      setPrice(classroom.price || 0);
-      setDiscount(classroom.discount || 0);
-      setEarlyBirdDiscount(classroom.early_bird_discount || 0);
-      setEarlyBirdDeadline(classroom.early_bird_deadline ? new Date(classroom.early_bird_deadline) : undefined);
-      setCurrency(classroom.currency || 'USD');
-      setPaymentOptions(classroom.payment_options || '');
-      setCancellationPolicy(classroom.cancellation_policy || '');
-      setFaq(classroom.faq || '');
-      setTestimonials(classroom.testimonials || '');
-      setContactEmail(classroom.contact_email || '');
-      setContactPhone(classroom.contact_phone || '');
-      setSocialLinks(classroom.social_links || '');
-      setRelatedProducts(classroom.related_products || '');
-      setUpsellProducts(classroom.upsell_products || '');
-      setCrossSellProducts(classroom.cross_sell_products || '');
-      setSeoTitle(classroom.seo_title || '');
-      setSeoDescription(classroom.seo_description || '');
-      setKeywords(classroom.keywords || '');
-      setMetaTags(classroom.meta_tags || '');
-      setSchemaMarkup(classroom.schema_markup || '');
-      setStructuredData(classroom.structured_data || '');
-      setAnalyticsCode(classroom.analytics_code || '');
-      setConversionTracking(classroom.conversion_tracking || '');
-      setAbTesting(classroom.ab_testing || '');
-      setHeatmapTracking(classroom.heatmap_tracking || '');
-      setUserFeedback(classroom.user_feedback || '');
-      setAccessibilityFeatures(classroom.accessibility_features || '');
-      setTermsOfService(classroom.terms_of_service || '');
-      setPrivacyPolicy(classroom.privacy_policy || '');
-      setCookiePolicy(classroom.cookie_policy || '');
-      setDisclaimer(classroom.disclaimer || '');
-      setCodeOfConduct(classroom.code_of_conduct || '');
-      setCommunityGuidelines(classroom.community_guidelines || '');
-      setModerationPolicy(classroom.moderation_policy || '');
-      setReportingMechanism(classroom.reporting_mechanism || '');
-      setEnforcementActions(classroom.enforcement_actions || '');
-      setAppealsProcess(classroom.appeals_process || '');
+  const updateLessonMutation = useMutation({
+    mutationFn: async ({ lessonId, lessonData }: { lessonId: string, lessonData: any }) => {
+      const { data, error } = await supabase
+        .from('lessons')
+        .update(lessonData)
+        .eq('lesson_uuid', lessonId)
+        .select();
+
+      if (error) {
+        console.error("Error updating lesson:", error);
+        throw error;
+      }
+
+      return data;
+    },
+    onSuccess: (data) => {
+      setIsEditLessonOpen(false);
+
+      if (activeLesson && activeLesson.lesson_uuid === data[0]?.lesson_uuid) {
+        setActiveLesson(data[0]);
+      }
+
+      queryClient.invalidateQueries({ queryKey: ['classroom-lessons', id] });
+      toast({
+        title: "Success",
+        description: "Lesson updated successfully",
+      });
+    },
+    onError: (error) => {
+      console.error("Error updating lesson:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update lesson. Please try again.",
+        variant: "destructive"
+      });
     }
-  }, [classroom]);
+  });
+
+  const deleteLessonMutation = useMutation({
+    mutationFn: async (lessonId: string) => {
+      const { error } = await supabase
+        .from('lessons')
+        .delete()
+        .eq('lesson_uuid', lessonId);
+
+      if (error) {
+        console.error("Error deleting lesson:", error);
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      setIsDeleteLessonOpen(false);
+
+      if (activeLesson && lessons && lessons.length > 1) {
+        const newActiveLesson = lessons.find(
+          lesson => lesson.lesson_uuid !== activeLesson.lesson_uuid
+        );
+        setActiveLesson(newActiveLesson || null);
+      } else {
+        setActiveLesson(null);
+      }
+
+      queryClient.invalidateQueries({ queryKey: ['classroom-lessons', id] });
+      toast({
+        title: "Success",
+        description: "Lesson deleted successfully",
+      });
+    },
+    onError: (error) => {
+      console.error("Error deleting lesson:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete lesson. Please try again.",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const handleAddLesson = async () => {
+    if (!newLessonData.name.trim()) {
+      toast({
+        title: "Error",
+        description: "Lesson name is required",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!user?.id) {
+      toast({
+        title: "Error",
+        description: "You need to be logged in to add a lesson",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const newLesson = {
+      ...newLessonData,
+      classroom_uuid: id,
+      user_uuid: user.id
+    };
+
+    addLessonMutation.mutate(newLesson);
+  };
+
+  const handleEditLesson = () => {
+    if (!editLessonData.name.trim()) {
+      toast({
+        title: "Error",
+        description: "Lesson name is required",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!activeLesson?.lesson_uuid) {
+      toast({
+        title: "Error",
+        description: "No lesson selected",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    updateLessonMutation.mutate({
+      lessonId: activeLesson.lesson_uuid,
+      lessonData: editLessonData
+    });
+  };
+
+  const handleDeleteLesson = () => {
+    if (!activeLesson?.lesson_uuid) {
+      toast({
+        title: "Error",
+        description: "No lesson selected",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    deleteLessonMutation.mutate(activeLesson.lesson_uuid);
+  };
+
+  const handleOpenEditLesson = (lesson: any, e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
+
+    setEditLessonData({
+      name: lesson.name || '',
+      description: lesson.description || '',
+      video_url: lesson.video_url || ''
+    });
+
+    setActiveLesson(lesson);
+    setIsEditLessonOpen(true);
+  };
+
+  const handleOpenDeleteDialog = (lesson: any, e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
+
+    setActiveLesson(lesson);
+    setIsDeleteLessonOpen(true);
+  };
+
+  useEffect(() => {
+    if (lessons && lessons.length > 0 && !activeLesson) {
+      setActiveLesson(lessons[0]);
+    }
+  }, [lessons, activeLesson]);
+
+
+  const handleAddToCart = () => {
+    // Add to cart logic here
+  };
+
+  const videoUrl = activeLesson?.video_url || classroom?.video_url;
+  const videoEmbedUrl = videoUrl ? getVideoEmbedUrl(videoUrl) : null;
+
+  useEffect(() => {
+    if (videoUrl) {
+      console.log("Original video URL:", videoUrl);
+      console.log("Embedded video URL:", videoEmbedUrl);
+    }
+  }, [videoUrl, videoEmbedUrl]);
+
+  const capitalizeFirstLetter = (string: string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
+  const ProductsSection = () => (
+    <div className="pt-4 border-t">
+      <h3 className="font-semibold mb-4">Products in this class</h3>
+      <VariantPicker
+        variants={variants}
+        selectedVariant={selectedVariant}
+        onVariantChange={setSelectedVariant}
+        onAddToCart={handleAddToCart}
+        className="space-y-2"
+      />
+    </div>
+  );
+
+  const isLoading = isClassroomLoading || (classroom?.community_uuid && isCommunityLoading);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="pt-16">
+          <MainHeader />
+          <div className="container mx-auto px-4 py-8 max-w-[1400px]">
+            <div className="animate-pulse space-y-6">
+              <div className="h-8 bg-muted rounded w-1/3"></div>
+              <div className="h-64 bg-muted rounded"></div>
+              <div className="h-4 bg-muted rounded w-full"></div>
+              <div className="h-4 bg-muted rounded w-2/3"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!classroom) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="pt-16">
+          <MainHeader />
+          <div className="container mx-auto px-4 py-8 max-w-[1400px]">
+            <Card>
+              <CardContent className="p-6">
+                <h1 className="text-xl font-bold">Classroom not found</h1>
+                <p className="text-muted-foreground mt-2">
+                  The classroom you are looking for does not exist or you don't have access to it.
+                </p>
+                <Button asChild className="mt-4">
+                  <Link to="/communities">Browse Communities</Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <MainHeader />
-      {isLoading && <p>Loading classroom...</p>}
-      {error && <p>Error loading classroom: {(error as Error).message}</p>}
-      {classroom && (
-        <div className="container mx-auto p-4">
-          <h1 className="text-2xl font-bold mb-4">{name}</h1>
-          <p className="mb-4">{description}</p>
-          {/* Add more UI components to display classroom data */}
+    <div className="min-h-screen bg-background">
+      <div className="pt-16">
+        <MainHeader />
+        <div className="container mx-auto px-4 py-8 max-w-[1400px]">
+          {isMobile ? (
+            <div className="space-y-6">
+              <Card className="w-full">
+                <CardContent className="p-6 space-y-6">
+                  <div className="space-y-4">
+                    <div>
+                      <button
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        className="w-full flex items-center justify-between text-left text-xl font-semibold py-2"
+                      >
+                        <span>{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
+                        <ChevronDown
+                          className={cn(
+                            "h-5 w-5 text-muted-foreground transition-transform duration-200",
+                            isExpanded ? "transform rotate-180" : ""
+                          )}
+                        />
+                      </button>
+
+                      <div className={cn(
+                        "space-y-2 overflow-hidden transition-all duration-200 pt-2",
+                        isExpanded ? "max-h-[500px]" : "max-h-0"
+                      )}>
+                        {isLessonsLoading ? (
+                          Array(2).fill(0).map((_, index) => (
+                            <div key={index} className="animate-pulse">
+                              <div className="w-full h-10 bg-muted rounded-lg my-1"></div>
+                            </div>
+                          ))
+                        ) : lessons && lessons.length > 0 ? (
+                          lessons.map((lesson) => (
+                            <div
+                              key={lesson.lesson_uuid}
+                              className={cn(
+                                "p-3 rounded-lg cursor-pointer group relative",
+                                activeLesson?.lesson_uuid === lesson.lesson_uuid
+                                  ? "bg-muted/50"
+                                  : "hover:bg-muted/30"
+                              )}
+                              onClick={() => setActiveLesson(lesson)}
+                            >
+                              <span className="text-sm">{lesson.name ? capitalizeFirstLetter(lesson.name) : ''}</span>
+
+                              <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button
+                                  onClick={(e) => handleOpenEditLesson(lesson, e)}
+                                  className="p-1 hover:bg-muted rounded-full"
+                                  aria-label="Edit lesson"
+                                >
+                                  <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
+                                </button>
+                                <button
+                                  onClick={(e) => handleOpenDeleteDialog(lesson, e)}
+                                  className="p-1 hover:bg-muted rounded-full"
+                                  aria-label="Delete lesson"
+                                >
+                                  <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
+                                </button>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-sm text-muted-foreground p-2">No lessons available yet</p>
+                        )}
+
+                        <Button
+                          variant="outline"
+                          className="w-full mt-2 bg-primary/5 border-dashed"
+                          onClick={() => setIsAddLessonOpen(true)}
+                        >
+                          <PlusCircle className="mr-2 h-4 w-4" />
+                          Add New Lesson
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h2 className="text-xl">
+                      <span className="font-bold text-black">{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
+                      {activeLesson && (
+                        <>
+                          <span className="mx-2 text-gray-400">/</span>
+                          <span className="text-gray-500">{activeLesson.name ? capitalizeFirstLetter(activeLesson.name) : ''}</span>
+                        </>
+                      )}
+                    </h2>
+
+                    {videoEmbedUrl ? (
+                      <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
+                        <iframe
+                          src={videoEmbedUrl}
+                          title={activeLesson?.name || classroom?.name}
+                          className="w-full h-full absolute inset-0"
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          allowFullScreen
+                        ></iframe>
+                      </div>
+                    ) : (
+                      <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
+                        <img
+                          src={activeLesson?.thumbnail_url || classroom?.thumbnail || "/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"}
+                          alt="Course thumbnail"
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                          <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center cursor-pointer hover:bg-white transition-colors">
+                            <div className="w-6 h-6 border-8 border-transparent border-l-primary ml-1" style={{ transform: 'rotate(-45deg)' }} />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-6">
+                    {(activeLesson?.description || classroom?.description) && (
+                      <div className="prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{
+                          __html: activeLesson?.description || classroom?.description
+                        }}
+                      />
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="w-full">
+                <CardContent className="p-4">
+                  <ProductsSection />
+                </CardContent>
+              </Card>
+            </div>
+          ) : (
+            <div className="flex gap-6">
+              <Card className="w-80 flex-shrink-0 h-fit">
+                <CardContent className="p-4">
+                  <div className="space-y-6">
+                    <div>
+                      <button
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        className="w-full flex items-center justify-between text-left text-lg font-semibold mb-2"
+                      >
+                        <span>{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
+                        <ChevronDown
+                          className={cn(
+                            "h-5 w-5 text-muted-foreground transition-transform duration-200",
+                            isExpanded ? "transform rotate-180" : ""
+                          )}
+                        />
+                      </button>
+
+                      <div className={cn(
+                        "space-y-2 overflow-hidden transition-all duration-200",
+                        isExpanded ? "max-h-[500px]" : "max-h-0"
+                      )}>
+                        {isLessonsLoading ? (
+                          Array(2).fill(0).map((_, index) => (
+                            <div key={index} className="animate-pulse">
+                              <div className="w-full h-10 bg-muted rounded-lg my-1"></div>
+                            </div>
+                          ))
+                        ) : lessons && lessons.length > 0 ? (
+                          lessons.map((lesson) => (
+                            <div
+                              key={lesson.lesson_uuid}
+                              className={cn(
+                                "p-3 rounded-lg cursor-pointer group relative",
+                                activeLesson?.lesson_uuid === lesson.lesson_uuid
+                                  ? "bg-muted"
+                                  : "hover:bg-muted/30"
+                              )}
+                              onClick={() => setActiveLesson(lesson)}
+                            >
+                              <span className="text-sm">{lesson.name ? capitalizeFirstLetter(lesson.name) : ''}</span>
+
+                              <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button
+                                  onClick={(e) => handleOpenEditLesson(lesson, e)}
+                                  className="p-1 hover:bg-muted rounded-full"
+                                  aria-label="Edit lesson"
+                                >
+                                  <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
+                                </button>
+                                <button
+                                  onClick={(e) => handleOpenDeleteDialog(lesson, e)}
+                                  className="p-1 hover:bg-muted rounded-full"
+                                  aria-label="Delete lesson"
+                                >
+                                  <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
+                                </button>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-sm text-muted-foreground p-2">No lessons available yet</p>
+                        )}
+
+                        <Button
+                          variant="outline"
+                          className="w-full mt-3 bg-primary/5 border-dashed"
+                          onClick={() => setIsAddLessonOpen(true)}
+                        >
+                          <PlusCircle className="mr-2 h-4 w-4" />
+                          Add New Lesson
+                        </Button>
+                      </div>
+                    </div>
+
+                    <ProductsSection />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="flex-1">
+                <CardContent className="p-6 space-y-6">
+                  <h1 className="text-2xl flex flex-wrap items-center">
+                    <span className="font-bold text-black">{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
+                    {activeLesson && (
+                      <>
+                        <span className="mx-2 text-gray-400">/</span>
+                        <span className="text-gray-500">{activeLesson.name ? capitalizeFirstLetter(activeLesson.name) : ''}</span>
+                      </>
+                    )}
+                  </h1>
+
+                  <div className="space-y-4">
+                    {videoEmbedUrl ? (
+                      <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
+                        <iframe
+                          src={videoEmbedUrl}
+                          title={activeLesson?.name || classroom?.name}
+                          className="w-full h-full absolute inset-0"
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          allowFullScreen
+                        ></iframe>
+                      </div>
+                    ) : (
+                      <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
+                        <img
+                          src={activeLesson?.thumbnail_url || classroom?.thumbnail || "/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"}
+                          alt="Course thumbnail"
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                          <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center cursor-pointer hover:bg-white transition-colors">
+                            <div className="w-6 h-6 border-8 border-transparent border-l-primary ml-1" style={{ transform: 'rotate(-45deg)' }} />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-6">
+                    {(activeLesson?.description || classroom?.description) && (
+                      <div className="prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{
+                          __html: activeLesson?.description || classroom?.description
+                        }}
+                      />
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Add Lesson Dialog */}
+          <Dialog open={isAddLessonOpen} onOpenChange={setIsAddLessonOpen}>
+            <DialogContent className="sm:max-w-[500px]">
+              <DialogHeader>
+                <DialogTitle>Add New Lesson</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Name</Label>
+                  <Input
+                    id="name"
+                    placeholder="Enter lesson name"
+                    value={newLessonData.name}
+                    onChange={(e) => setNewLessonData({ ...newLessonData, name: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <ProductEditor
+                    value={newLessonData.description}
+                    onChange={(value) => setNewLessonData({ ...newLessonData, description: value })}
+                    placeholder="Enter lesson description"
+                    minHeight="150px"
+                    maxHeight="250px"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="video_url">Video URL</Label>
+                  <Input
+                    id="video_url"
+                    placeholder="Enter video URL"
+                    value={newLessonData.video_url}
+                    onChange={(e) => setNewLessonData({ ...newLessonData, video_url: e.target.value })}
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button
+                  onClick={handleAddLesson}
+                  disabled={addLessonMutation.isPending}
+                >
+                  {addLessonMutation.isPending ? "Adding..." : "Add Lesson"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* Edit Lesson Dialog */}
+          <Dialog open={isEditLessonOpen} onOpenChange={setIsEditLessonOpen}>
+            <DialogContent className="sm:max-w-[500px]">
+              <DialogHeader>
+                <DialogTitle>Edit Lesson</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-name">Name</Label>
+                  <Input
+                    id="edit-name"
+                    placeholder="Enter lesson name"
+                    value={editLessonData.name}
+                    onChange={(e) => setEditLessonData({ ...editLessonData, name: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-description">Description</Label>
+                  <ProductEditor
+                    value={editLessonData.description}
+                    onChange={(value) => setEditLessonData({ ...editLessonData, description: value })}
+                    placeholder="Enter lesson description"
+                    minHeight="150px"
+                    maxHeight="250px"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-video_url">Video URL</Label>
+                  <Input
+                    id="edit-video_url"
+                    placeholder="Enter video URL"
+                    value={editLessonData.video_url}
+                    onChange={(e) => setEditLessonData({ ...editLessonData, video_url: e.target.value })}
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button
+                  onClick={handleEditLesson}
+                  disabled={updateLessonMutation.isPending}
+                >
+                  {updateLessonMutation.isPending ? "Updating..." : "Update Lesson"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* Delete Lesson Confirmation Dialog */}
+          <Dialog open={isDeleteLessonOpen} onOpenChange={setIsDeleteLessonOpen}>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Delete Lesson</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this lesson? This action cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter className="gap-2 sm:gap-0">
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button
+                  variant="destructive"
+                  onClick={handleDeleteLesson}
+                  disabled={deleteLessonMutation.isPending}
+                >
+                  {deleteLessonMutation.isPending ? "Deleting..." : "Delete Lesson"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
-      )}
+      </div>
     </div>
   );
 }
