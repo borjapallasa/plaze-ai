@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/lib/auth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,7 +24,6 @@ import { Calendar } from "@/components/ui/calendar"
 import { CalendarIcon } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { format } from "date-fns"
-import { DatePicker } from "@/components/ui/date-picker"
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Progress } from "@/components/ui/progress"
@@ -644,7 +642,7 @@ export default function Classroom() {
   const [cosmicHarmony, setCosmicHarmony] = useState('');
   const [communityProducts, setCommunityProducts] = useState<CommunityProduct[]>([]);
 
-  const { data: classroom, isLoading, error } = useQuery<ClassroomData>({
+  const { data: classroom, isLoading, error } = useQuery({
     queryKey: ['classroom', id],
     queryFn: async () => {
       if (!id) {
@@ -662,7 +660,7 @@ export default function Classroom() {
         throw error;
       }
 
-      return data;
+      return data as ClassroomData;
     },
     onSuccess: (data) => {
       if (data) {
@@ -729,10 +727,8 @@ export default function Classroom() {
     }
   });
 
-  // Add any additional logic or components needed
   return (
     <div>
-      {/* Placeholder for rendering classroom details */}
       <MainHeader />
       {isLoading && <p>Loading classroom...</p>}
       {error && <p>Error loading classroom: {error.message}</p>}
