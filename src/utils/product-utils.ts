@@ -10,7 +10,8 @@ export function communityProductToVariant(product: any): Variant {
     name: product.name || 'Product',
     price: product.price || 0,
     comparePrice: product.price ? product.price * 1.25 : 0, // default higher compare price
-    label: product.product_type || 'Package'
+    label: product.product_type || 'Package',
+    features: product.features || []
   };
 }
 

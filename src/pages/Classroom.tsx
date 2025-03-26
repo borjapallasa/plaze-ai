@@ -106,7 +106,7 @@ export default function Classroom() {
 
       if (error) {
         console.error("Error fetching community:", error);
-        return null;
+        return [];
       }
 
       return data.map((community: any) => {
@@ -115,10 +115,9 @@ export default function Classroom() {
           name: community.community_product_uuid.name,
           price: community.community_product_uuid.price,
           comparePrice: community.community_product_uuid.price * 1.5, // Example calculation for compare price
-          // label: community.product_type === 'premium' ? 'Best Value' : 'Most Popular',
-          // features: community.product_type === 'premium' ? ["Core Course", "Premium Resources"] : ["Core Course", "Basic Resources"]
+          // Add any missing required properties from the Variant type
         }
-      }) as unknown as CommunityProduct[];
+      });
     },
     enabled: !!classroom?.community_uuid
   });
