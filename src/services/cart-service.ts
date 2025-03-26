@@ -17,10 +17,8 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
     
     // Apply the correct filter based on available ID
     if (userId) {
-      // Note: Using user_uuid directly instead of a complex recursive query
       query = query.eq('user_uuid', userId).eq('status', 'pending');
     } else if (sessionId) {
-      // Note: Using guest_session_id directly instead of a complex recursive query
       query = query.eq('guest_session_id', sessionId).eq('status', 'pending');
     }
     
@@ -154,7 +152,7 @@ export async function addItemToCart(
     if (!transactionId) {
       // Create a new transaction - with simplified structure
       const newTransaction = {
-        user_uuid: userId,
+        user_uuid: userId || null,
         guest_session_id: !userId ? guestSessionId : null,
         item_count: 1,
         total_amount: variantData.price,
@@ -164,7 +162,7 @@ export async function addItemToCart(
       
       const { data, error } = await supabase
         .from('products_transactions')
-        .insert([newTransaction])
+        .insert(newTransaction)
         .select('product_transaction_uuid')
         .single();
       

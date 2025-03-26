@@ -1,9 +1,7 @@
-
 import { useState, useEffect, useRef } from "react";
 import { useCart } from "@/hooks/use-cart";
 import { useToast } from "@/components/ui/use-toast";
 import { CartItem } from "@/types/cart";
-import { Sheet } from "@/components/ui/sheet";
 
 export function useProductState(variants: any[]) {
   const [selectedVariant, setSelectedVariant] = useState<string | undefined>();
@@ -44,11 +42,9 @@ export function useProductState(variants: any[]) {
       return;
     }
 
-    // Add main variant to cart
     const result = await addToCart(product, selectedVariant);
     
     if (result?.updatedCart) {
-      // Find the latest added item
       const addedItem = result.updatedCart.items.find(
         item => item.product_uuid === product.product_uuid && item.variant_uuid === selectedVariant
       );
@@ -59,7 +55,6 @@ export function useProductState(variants: any[]) {
       }
     }
 
-    // Add additional variants if selected
     if (additionalVariants.length > 0) {
       for (const variantId of additionalVariants) {
         await addToCart(product, variantId);

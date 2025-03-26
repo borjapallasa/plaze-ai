@@ -1,13 +1,14 @@
+
 export interface RelatedProduct {
   product_uuid: string;
   name: string;
   price_from?: number;
 }
+
 export interface RelatedProductsListProps {
   productUUID: string;
   className?: string;
 }
-
 
 export interface Product {
   accept_terms: null;
@@ -52,4 +53,33 @@ export interface Product {
   utm_source: null;
   utm_term: null;
   variant_count: null;
+}
+
+// Type for the product data from the API
+export interface ProductData extends Product {}
+
+// Type for the product variant
+export interface ProductVariant {
+  id: string;
+  name: string;
+  price: number | string;
+  comparePrice: number | string;
+  label?: string;
+  highlight?: boolean;
+  features?: string[];
+}
+
+// Type for the product review
+export interface ProductReview {
+  id: string;
+  author: string;
+  rating: number;
+  content: string;
+  description: string;
+  avatar: string;
+  date: string;
+  itemQuality: number;
+  shipping: number;
+  customerService: number;
+  type: string;
 }

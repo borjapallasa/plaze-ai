@@ -3,7 +3,7 @@ import { ProductLayout } from "@/components/product/ProductLayout";
 import { ProductSkeleton } from "@/components/product/ProductSkeleton";
 import { ProductNotFound } from "@/components/product/ProductNotFound";
 import { StickyATC } from "@/components/product/StickyATC";
-import { useProductData } from "@/components/product/ProductData";
+import { useProductData } from "@/hooks/use-product-data";
 import { useProductState } from "@/components/product/ProductState";
 import { Sheet } from "@/components/ui/sheet";
 import { CartDrawer } from "@/components/cart/CartDrawer";

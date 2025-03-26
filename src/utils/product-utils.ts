@@ -9,7 +9,7 @@ export function communityProductToVariant(product: any): Variant {
     id: product.community_product_uuid || product.variant_uuid || '',
     name: product.name || 'Product',
     price: product.price || 0,
-    comparePrice: product.price ? product.price * 1.25 : 0, // default higher compare price
+    comparePrice: product.comparePrice || product.price ? product.price * 1.25 : 0, // default higher compare price
     label: product.product_type || 'Package',
     features: product.features || []
   };
