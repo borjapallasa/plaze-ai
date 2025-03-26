@@ -73,18 +73,20 @@ export function EditCommunityRelatedProducts({
       if (!community) {
         return [];
       }
+      const session = await supabase.auth.getSession();
+      console.log("Session", session);
 
       const { data, error } = await supabase
         .from('community_product_relationships')
         .select(`
         community_product_uuid (
           community_product_uuid, 
-          name, 
-          price 
+          name,
+          price
         )
       `)
         .eq('community_uuid', community.community_uuid);
-      console.log('data', data, 'error', error);
+      console.log('data n2', data, 'error', error);
 
       if (error) {
         console.error("Error fetching product relationships:", error);
@@ -125,9 +127,11 @@ export function EditCommunityRelatedProducts({
 
       // Then, insert all selected products as new relationships
       if (selectedProducts.length > 0) {
+        console.log('UID: ', community.user_uuid)
         const relationshipsToInsert = selectedProducts.map((product, index) => ({
           community_uuid: community.community_uuid,
           community_product_uuid: product.community_product_uuid,
+          user_uuid: community.user_uuid
         }));
 
         const { data, error: insertError } = await supabase

@@ -8,6 +8,7 @@ import { CommunityDangerZone } from "./CommunityDangerZone";
 import { EditCommunityRelatedProducts } from "./EditCommunityRelatedProduts";
 
 export interface Community {
+  user_uuid: string | null
   community_uuid: string | null
   product_count?: number | null;
   classroom_count?: number | null;
