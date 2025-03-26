@@ -1,3 +1,4 @@
+
 import { ProductGallery } from "./ProductGallery";
 import { ProductHeader } from "./ProductHeader";
 import { VariantPicker } from "./VariantPicker";
@@ -28,8 +29,8 @@ interface DesktopProductLayoutProps {
 export function DesktopProductLayout({
   product,
   images,
-  variants,
-  relatedProductsWithVariants,
+  variants = [],
+  relatedProductsWithVariants = [],
   selectedVariant,
   averageRating,
   onVariantChange,
@@ -64,7 +65,7 @@ export function DesktopProductLayout({
             onContactSeller={handleContactSeller}
             className="mb-2"
           />
-          {variants && variants.length > 0 && (
+          {Array.isArray(variants) && variants.length > 0 && (
             <VariantPicker
               variants={variants}
               selectedVariant={selectedVariant}
@@ -74,7 +75,7 @@ export function DesktopProductLayout({
               isLoading={isLoading}
             />)
           }
-          {relatedProductsWithVariants && relatedProductsWithVariants.length > 0 && (
+          {Array.isArray(relatedProductsWithVariants) && relatedProductsWithVariants.length > 0 && (
             <AdditionalVariants
               relatedProductsWithVariants={relatedProductsWithVariants}
               onAdditionalSelect={onAdditionalVariantToggle}

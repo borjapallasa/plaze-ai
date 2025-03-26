@@ -22,7 +22,7 @@ const getBadgeLabel = (index: number, variant: Variant) => {
 };
 
 export function VariantPicker({
-  variants,
+  variants = [],
   selectedVariant,
   onVariantChange,
   onAddToCart,
@@ -33,7 +33,7 @@ export function VariantPicker({
     <div className={`space-y-2.5 ${className}`}>
       <h2 className="text-lg font-semibold">Choose your package</h2>
       <div className="grid gap-3.5">
-        {variants.map((variant, index) => {
+        {Array.isArray(variants) && variants.map((variant, index) => {
           const badge = getBadgeLabel(index, variant);
           const isSelected = selectedVariant === variant.id;
 
@@ -77,7 +77,7 @@ export function VariantPicker({
                 </div>
 
                 <div className="flex flex-row gap-1.5 flex-wrap pt-1">
-                  {variant.features && variant.features.map((feature, index) => (
+                  {variant.features && Array.isArray(variant.features) && variant.features.map((feature, index) => (
                     <span
                       key={index}
                       className="inline-flex items-center gap-1 bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full text-xs"
@@ -91,6 +91,12 @@ export function VariantPicker({
             </Card>
           );
         })}
+
+        {(!Array.isArray(variants) || variants.length === 0) && (
+          <Card className="p-4 text-center text-gray-500">
+            No package options available
+          </Card>
+        )}
       </div>
       {onAddToCart && (
         <div className="pt-2">

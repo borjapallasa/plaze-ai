@@ -28,8 +28,8 @@ interface MobileProductLayoutProps {
 export function MobileProductLayout({
   product,
   images,
-  variants,
-  relatedProductsWithVariants,
+  variants = [],
+  relatedProductsWithVariants = [],
   selectedVariant,
   averageRating,
   onVariantChange,
@@ -55,7 +55,7 @@ export function MobileProductLayout({
         onContactSeller={handleContactSeller}
         className="mb-3"
       />
-      {variants && variants.length > 0 && (
+      {Array.isArray(variants) && variants.length > 0 && (
         <VariantPicker
           variants={variants}
           selectedVariant={selectedVariant}
@@ -65,7 +65,7 @@ export function MobileProductLayout({
           isLoading={isLoading}
         />)
       }
-      {relatedProductsWithVariants && relatedProductsWithVariants.length > 0 && (
+      {Array.isArray(relatedProductsWithVariants) && relatedProductsWithVariants.length > 0 && (
         <AdditionalVariants
           relatedProductsWithVariants={relatedProductsWithVariants}
           onAdditionalSelect={onAdditionalVariantToggle}
