@@ -1,7 +1,7 @@
 
 export interface Variant {
   id: string;
-  name?: string;
+  name: string; // Make name required
   price: string | number;
   comparePrice: string | number;
   highlight?: boolean;
@@ -30,7 +30,7 @@ export interface VariantPickerProps {
 
 export interface ProductLayoutProps {
   product: any;
-  variants: any[];
+  variants: Variant[];
   relatedProductsWithVariants: any[];
   selectedVariant?: string;
   averageRating: number;

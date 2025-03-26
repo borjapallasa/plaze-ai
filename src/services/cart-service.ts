@@ -1,5 +1,6 @@
 
 import { supabase } from '@/integrations/supabase/client';
+import { v4 as uuidv4 } from 'uuid';
 import { CartItem, CartTransaction } from '@/types/cart';
 
 // Fetch cart data by user or guest session ID
@@ -51,8 +52,13 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
     }
 
     // Extract product UUIDs and variant UUIDs
-    const productUuids = itemsData.filter(item => item.product_uuid).map(item => item.product_uuid);
-    const variantUuids = itemsData.filter(item => item.variant_uuid).map(item => item.variant_uuid);
+    const productUuids = itemsData
+      .filter(item => item.product_uuid)
+      .map(item => item.product_uuid);
+    
+    const variantUuids = itemsData
+      .filter(item => item.variant_uuid)
+      .map(item => item.variant_uuid);
     
     // Prepare result maps
     let productNames: Record<string, string> = {};
@@ -145,13 +151,13 @@ export async function addItemToCart(
     let transactionId = cart?.transaction_uuid;
     
     if (!transactionId) {
-      // Create a new transaction
+      // Create a new transaction - Fix type to be "guest" or "user" explicitly
       const newTransaction = {
         user_uuid: userId || null,
         guest_session_id: !userId ? guestSessionId : null,
         item_count: 1,
         total_amount: variantData.price,
-        type: userId ? 'user' : 'guest',
+        type: userId ? 'user' as const : 'guest' as const, // Fix: Use type assertion to specify literal type
         status: 'pending' as const
       };
       

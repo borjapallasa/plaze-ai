@@ -47,11 +47,15 @@ export function useProduct() {
       console.log("Product data found:", data);
 
       // Ensure all the fields are returned as expected
-      return {
+      // Fix property names and types to match ProductData interface
+      const productData: ProductData = {
         ...data,
-        demo: data.demo || null,
-        changes_needed: data.changes_needed || null
+        accept_terms: data.accept_terms || null,
+        changes_needed: data.changes_neeeded || null, // Match the misspelled field in the database
+        demo: data.demo || null
       };
+      
+      return productData;
     },
     enabled: !!id
   });

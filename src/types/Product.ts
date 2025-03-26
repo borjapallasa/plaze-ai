@@ -16,7 +16,8 @@ export interface Product {
   affiliate_program: null;
   affiliation_amount: null;
   change_reasons: null;
-  changes_needed: null; // Changed from "changes_neeeded" to "changes_needed"
+  changes_neeeded: null; // Keep the misspelled field as it is in the database
+  changes_needed: null; // Add this for code compatibility
   created_at: string;
   demo: string;
   description: string;
@@ -82,4 +83,16 @@ export interface ProductReview {
   shipping: number;
   customerService: number;
   type: string;
+}
+
+// Define a CommunityProduct interface for classroom and other components
+export interface CommunityProduct {
+  community_product_uuid: string;
+  name: string;
+  price: number;
+  community_uuid?: string;
+  product_type?: string;
+  variant_uuid?: string;
+  variant_name?: string;
+  variant_price?: number;
 }
