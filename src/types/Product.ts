@@ -3,7 +3,6 @@ export interface RelatedProduct {
   name: string;
   price_from?: number;
 }
-ga
 export interface RelatedProductsListProps {
   productUUID: string;
   className?: string;
