@@ -63,24 +63,24 @@ export function MobileProductLayout({
         className="mb-3"
         isLoading={isLoading}
       />
-      
-      <AdditionalVariants
-        variants={variants}
-        selectedMainVariant={selectedVariant}
-        onAdditionalSelect={onAdditionalVariantToggle}
-        className="mb-5"
-      />
+      {relatedProductsWithVariants && relatedProductsWithVariants.length > 0 && (
+        <AdditionalVariants
+          relatedProductsWithVariants={relatedProductsWithVariants}
+          onAdditionalSelect={onAdditionalVariantToggle}
+          className="mb-5"
+        />)
+      }
 
       <div className="space-y-6">
         <ProductDescription description={product.description} />
 
-        <ProductInfo 
+        <ProductInfo
           techStack={product.tech_stack}
           productIncludes={product.product_includes}
           difficultyLevel={product.difficulty_level}
         />
 
-        <ProductFullWidthSections 
+        <ProductFullWidthSections
           embedUrl={embedUrl}
           reviews={reviews}
           expert_uuid={product.expert_uuid}
