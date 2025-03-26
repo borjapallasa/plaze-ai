@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Variant } from "./types/variants";
 import { Checkbox } from "@/components/ui/checkbox";
-import { 
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -51,12 +51,12 @@ export function AdditionalVariants({
   const handleCheckboxChange = (productName: string, checked: boolean) => {
     const variants = productGroups[productName];
     const variantId = selectedVariants[productName] || variants[0].id;
-    
+
     if (checked) {
       // Select this variant
       if (!selectedAdditional.includes(variantId)) {
         setSelectedAdditional(prev => [...prev, variantId]);
-        
+
         if (onAdditionalSelect) {
           onAdditionalSelect(variantId, true);
         }
@@ -65,7 +65,7 @@ export function AdditionalVariants({
       // Deselect this variant
       if (selectedAdditional.includes(variantId)) {
         setSelectedAdditional(prev => prev.filter(id => id !== variantId));
-        
+
         if (onAdditionalSelect) {
           onAdditionalSelect(variantId, false);
         }
@@ -82,17 +82,17 @@ export function AdditionalVariants({
       }
       setSelectedAdditional(prev => prev.filter(id => id !== oldVariantId));
     }
-    
+
     // Update the selected variant for this product
     setSelectedVariants(prev => ({
       ...prev,
       [productName]: variantId
     }));
-    
+
     // If the product is checked, also select the new variant
     if (oldVariantId && selectedAdditional.includes(oldVariantId)) {
       setSelectedAdditional(prev => [...prev, variantId]);
-      
+
       if (onAdditionalSelect) {
         onAdditionalSelect(variantId, true);
       }
@@ -108,44 +108,44 @@ export function AdditionalVariants({
 
   return (
     <div className={cn("relative", className)}>
-      <Badge 
-        variant="outline" 
+      <Badge
+        variant="outline"
         className="absolute -top-2 left-4 z-10 bg-background px-2 py-0.5 text-xs font-medium flex items-center gap-1.5 border-muted-foreground/20"
       >
         <Package className="h-3 w-3 text-primary" />
         Bundle & Save
       </Badge>
-      
+
       <Card className="pt-4 pb-2.5 px-4 bg-gray-50 border border-gray-200/70 shadow-sm rounded-xl">
         <div className="space-y-1">
-          {Object.entries(productGroups).map(([productName, productVariants]) => {
-            const selectedVariantId = selectedVariants[productName] || productVariants[0].id;
-            const selectedVariant = productVariants.find(v => v.id === selectedVariantId);
+          {Object.entries(productGroups).map(([productUuid, { productName, variants }]) => {
+            const selectedVariantId = selectedVariants[productName] || variants[0].variant_uuid;
+            const selectedVariant = variants.find(v => v.variant_uuid === selectedVariantId);
             const isSelected = selectedAdditional.includes(selectedVariantId);
-            
+
             // Initialize selected variant if not set
             if (!selectedVariants[productName]) {
               setTimeout(() => {
                 setSelectedVariants(prev => ({
                   ...prev,
-                  [productName]: productVariants[0].id
+                  [productName]: variants[0].variant_uuid
                 }));
               }, 0);
             }
-            
+
             return (
               <div key={productName} className="flex items-center gap-3 py-2 px-2 rounded hover:bg-white transition-colors">
                 <div className="flex items-start pt-0.5">
-                  <Checkbox 
+                  <Checkbox
                     id={`product-${productName}`}
                     checked={isSelected}
                     onCheckedChange={(checked) => handleCheckboxChange(productName, checked === true)}
                     className="h-4 w-4"
                   />
                 </div>
-                
+
                 <div className="flex items-center justify-between min-w-0 flex-1 gap-3">
-                  <label 
+                  <label
                     htmlFor={`product-${productName}`}
                     className="text-sm cursor-pointer truncate flex items-center gap-1.5"
                   >
@@ -153,7 +153,7 @@ export function AdditionalVariants({
                     <span className="mx-1">-</span>
                     <span className="font-medium">${formatPrice(selectedVariant?.price || 0)}</span>
                   </label>
-                  
+
                   <Select
                     value={selectedVariantId}
                     onValueChange={(value) => handleVariantChange(productName, value)}
