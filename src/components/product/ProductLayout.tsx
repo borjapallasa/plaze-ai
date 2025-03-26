@@ -6,18 +6,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useProductImages } from "@/hooks/use-product-images";
 import { MobileProductLayout } from "./MobileProductLayout";
 import { DesktopProductLayout } from "./DesktopProductLayout";
-
-interface ProductLayoutProps {
-  product: any;
-  variants: any[];
-  selectedVariant?: string;
-  averageRating: number;
-  onVariantChange: (variantId: string) => void;
-  onAddToCart: () => void;
-  onAdditionalVariantToggle?: (variantId: string, selected: boolean) => void;
-  reviews: any[];
-  isLoading?: boolean;
-}
+import { ProductLayoutProps } from "./types/variants";
 
 export function ProductLayout({
   product,

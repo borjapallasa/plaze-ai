@@ -50,20 +50,13 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
       return null;
     }
 
-    // Extract product UUIDs without using map directly in the .in() query
+    // Extract product UUIDs and variant UUIDs
     const productUuids: string[] = [];
-    itemsData.forEach(item => {
-      if (item.product_uuid) {
-        productUuids.push(item.product_uuid);
-      }
-    });
-    
-    // Extract variant UUIDs without using map directly in the .in() query
     const variantUuids: string[] = [];
+    
     itemsData.forEach(item => {
-      if (item.variant_uuid) {
-        variantUuids.push(item.variant_uuid);
-      }
+      if (item.product_uuid) productUuids.push(item.product_uuid);
+      if (item.variant_uuid) variantUuids.push(item.variant_uuid);
     });
     
     // Prepare result maps

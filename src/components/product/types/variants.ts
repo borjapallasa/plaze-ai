@@ -31,6 +31,7 @@ export interface VariantPickerProps {
 export interface ProductLayoutProps {
   product: any;
   variants: any[];
+  relatedProductsWithVariants: any[];
   selectedVariant?: string;
   averageRating: number;
   onVariantChange: (variantId: string) => void;
