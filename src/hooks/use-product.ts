@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { ProductData } from '@/types/Product';
@@ -21,7 +20,7 @@ const mapProductData = (data: any): ProductData => {
     type: data.type || '',
     free_or_paid: data.free_or_paid || '',
     accept_terms: data.accept_terms === null ? null : Boolean(data.accept_terms),
-    affiliate_information: data.affiliate_information || '',
+    affiliate_information: data.affiliate_information || null,
     affiliate_program: data.affiliate_program === null ? null : Boolean(data.affiliate_program),
     affiliation_amount: data.affiliation_amount || null,
     change_reasons: data.change_reasons || null,
@@ -76,7 +75,7 @@ export function useProductData({ productId, productSlug }: UseProductDataProps =
         let productQuery = supabase
           .from('products')
           .select('*')
-          .eq('status', 'live' as any) // Using type assertion to handle status value
+          .eq('status', 'live')
 
         if (productId) {
           productQuery = productQuery.eq('product_uuid', productId);
@@ -106,7 +105,7 @@ export function useProductData({ productId, productSlug }: UseProductDataProps =
           .from('variants')
           .select('*')
           .eq('product_uuid', mappedProduct.product_uuid)
-          .order('highlighted', { ascending: false });
+          .order('highlight', { ascending: false });
 
         if (variantsError) {
           setError(variantsError);
@@ -126,7 +125,7 @@ export function useProductData({ productId, productSlug }: UseProductDataProps =
             .from('products')
             .select('*, variants(*)')
             .in('product_uuid', mappedProduct.related_products)
-            .eq('status', 'live' as any); // Using type assertion for status
+            .eq('status', 'live');
 
           if (relatedProductsError) {
             setError(relatedProductsError);
@@ -141,31 +140,30 @@ export function useProductData({ productId, productSlug }: UseProductDataProps =
           setRelatedProductsWithVariants(relatedProductsData || []);
         }
 
-        // Use custom query for reviews since product_reviews might not be a direct table
-        try {
-          const { data: reviewsData, error: reviewsError } = await supabase
-            .from('reviews')
-            .select('*')
-            .eq('product_uuid', mappedProduct.product_uuid);
+        // Fetch reviews and calculate average rating
+        const { data: reviewsData, error: reviewsError } = await supabase
+          .from('product_reviews')
+          .select('*')
+          .eq('product_uuid', mappedProduct.product_uuid);
 
-          if (reviewsError) {
-            console.error("Error fetching reviews:", reviewsError);
-          } else {
-            setReviews(reviewsData || []);
+        if (reviewsError) {
+          setError(reviewsError);
+          toast({
+            title: "Error",
+            description: "Failed to load product reviews.",
+            variant: "destructive"
+          });
+          return;
+        }
 
-            if (reviewsData && reviewsData.length > 0) {
-              // Calculate average based on the actual field from the reviews table
-              const totalRating = reviewsData.reduce((sum, review) => {
-                return sum + (review.rating || 0);
-              }, 0);
-              const avgRating = totalRating / reviewsData.length;
-              setAverageRating(avgRating);
-            } else {
-              setAverageRating(0);
-            }
-          }
-        } catch (reviewErr) {
-          console.error("Error in reviews processing:", reviewErr);
+        setReviews(reviewsData || []);
+
+        if (reviewsData && reviewsData.length > 0) {
+          const totalRating = reviewsData.reduce((sum, review) => sum + review.rating, 0);
+          const avgRating = totalRating / reviewsData.length;
+          setAverageRating(avgRating);
+        } else {
+          setAverageRating(0);
         }
 
       } catch (err: any) {
@@ -193,6 +191,3 @@ export function useProductData({ productId, productSlug }: UseProductDataProps =
     error
   };
 }
-
-// Export the hook to be used elsewhere
-export { useProductData as useProduct };

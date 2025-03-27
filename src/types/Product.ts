@@ -1,4 +1,3 @@
-
 export interface RelatedProduct {
   product_uuid: string;
   name: string;
@@ -95,19 +94,4 @@ export interface CommunityProduct {
   variant_uuid?: string;
   variant_name?: string;
   variant_price?: number;
-}
-
-// For forward compatibility, also export Variant
-export interface Variant {
-  id: string;
-  name: string;
-  price: number;
-  comparePrice: number;
-  highlight?: boolean;
-  tags?: string[];
-  label?: string;
-  features?: string[];
-  hidden?: boolean;
-  createdAt?: string;
-  filesLink?: string;
 }

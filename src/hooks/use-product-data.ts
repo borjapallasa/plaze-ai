@@ -1,11 +1,11 @@
 
-import { useProductData as useProduct } from "./use-product";
+import { useProduct } from "./use-product";
 import { useProductVariants } from "./use-product-variants";
 import { useRelatedProducts } from "./use-related-products";
 import { useProductReviews, calculateAverageRating } from "./use-product-reviews";
 
 export function useProductData() {
-  const { product, isLoading: isLoadingProduct, error: productError } = useProduct();
+  const { data: product, isLoading: isLoadingProduct, error: productError } = useProduct();
   
   const { data: variants = [], isLoading: isLoadingVariants } = useProductVariants(
     product?.product_uuid
