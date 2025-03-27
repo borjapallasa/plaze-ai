@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { ProductData } from '@/types/Product';
@@ -75,7 +76,7 @@ export function useProductData({ productId, productSlug }: UseProductDataProps =
         let productQuery = supabase
           .from('products')
           .select('*')
-          .eq('status', 'live')
+          .eq('status', 'live') // This is intentionally 'live', we'll handle the type conversion inside
 
         if (productId) {
           productQuery = productQuery.eq('product_uuid', productId);
@@ -125,7 +126,7 @@ export function useProductData({ productId, productSlug }: UseProductDataProps =
             .from('products')
             .select('*, variants(*)')
             .in('product_uuid', mappedProduct.related_products)
-            .eq('status', 'live');
+            .eq('status', 'live'); // This is intentionally 'live'
 
           if (relatedProductsError) {
             setError(relatedProductsError);
@@ -192,3 +193,6 @@ export function useProductData({ productId, productSlug }: UseProductDataProps =
     error
   };
 }
+
+// Export the hook to be used elsewhere
+export { useProductData as useProduct };

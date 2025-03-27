@@ -1,5 +1,5 @@
 
-import { useProduct } from "./use-product";
+import { useProductData as useProduct } from "./use-product";
 import { useProductVariants } from "./use-product-variants";
 import { useRelatedProducts } from "./use-related-products";
 import { useProductReviews, calculateAverageRating } from "./use-product-reviews";

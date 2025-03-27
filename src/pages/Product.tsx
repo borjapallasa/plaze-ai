@@ -7,7 +7,7 @@ import { useProductState } from "@/components/product/ProductState";
 import { Sheet } from "@/components/ui/sheet";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { productVariantsToVariants } from "@/utils/product-utils";
-import { Variant } from "@/types/Product"; 
+import { Variant } from "@/components/product/types/variants"; 
 
 export default function Product() {
   const {
