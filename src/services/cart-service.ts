@@ -13,25 +13,24 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
 
     // Apply the correct filter based on available ID
     if (userId) {
-      // @ts-ignore
       const { data: transactionData, error: transactionError } = await supabase
         .from('products_transactions')
         .select('product_transaction_uuid, item_count, total_amount, status, payment_link, user_uuid')
         .eq('user_uuid', userId)
         .eq('status', 'pending')
         .order('created_at', { ascending: false }) // Sort by latest
-        .limit(1) as any;
+        .limit(1);
 
       // Check for errors or no data
       if (transactionError) {
+        console.error('Error fetching cart transaction:', transactionError);
         return null;
       }
 
-      if (!transactionData || transactionData.length == 0) {
+      if (!transactionData || transactionData.length === 0) {
         return null;
       }
 
-      // @ts-ignore
       // Get the items for this transaction
       const { data: itemsData, error: itemsError } = await supabase
         .from('products_transaction_items')
@@ -100,13 +99,17 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
       }));
 
       return {
-        transaction_uuid: transactionData.product_transaction_uuid,
-        item_count: transactionData.item_count,
-        total_amount: transactionData.total_amount,
+        transaction_uuid: transactionData[0].product_transaction_uuid,
+        item_count: transactionData[0].item_count,
+        total_amount: transactionData[0].total_amount,
         items
       };
+    } else if (sessionId) {
+      // Handle guest cart (this would be implemented in a similar way)
+      console.log('Guest cart not fully implemented yet');
+      return null;
     } else {
-      console.error('No user ID found')
+      console.error('No user ID or session ID found')
       throw new Error('No user ID')
     }
   } catch (error) {
@@ -152,13 +155,12 @@ export async function addItemToCart(
     let transactionId = cart?.transaction_uuid;
 
     if (!transactionId) {
-      // Create a new transaction - Fix type to be "guest" or "user" explicitly
+      // Create a new transaction
       const newTransaction = {
         user_uuid: userId,
-        // user_uuid: userId || null, // null allowed if guest carts work
         item_count: 1,
         total_amount: variantData.price,
-        type: userId ? 'user' as const : 'guest' as const, // Fix: Use type assertion to specify literal type
+        type: userId ? 'user' : 'guest', // Ensure it's one of the allowed values
         status: 'pending' as const
       };
 
@@ -188,7 +190,6 @@ export async function addItemToCart(
 
     if (existingItem) {
       // Update the quantity of existing item
-      // @ts-ignore
       const updateResponse = await supabase
         .from('products_transaction_items')
         .update({
@@ -260,13 +261,30 @@ export async function addItemToCart(
       };
     }
     
-    // Fetch the updated cart
-    const updatedCart = await fetchCartData(userId, !userId ? guestSessionId : undefined);
+    // Construct updated cart object instead of refetching
+    const updatedCart: CartTransaction = {
+      transaction_uuid: transactionId,
+      item_count: newItemCount,
+      total_amount: newTotalAmount,
+      items: cart ? [...cart.items] : []
+    };
+    
+    // Update or add item in the items array
+    if (existingItem) {
+      const itemIndex = updatedCart.items.findIndex(item => 
+        item.product_uuid === product.product_uuid && item.variant_uuid === selectedVariant
+      );
+      if (itemIndex !== -1) {
+        updatedCart.items[itemIndex] = cartItem;
+      }
+    } else {
+      updatedCart.items.push(cartItem);
+    }
     
     return {
       success: true,
       message: "Item added to cart successfully",
-      updatedCart: updatedCart || undefined,
+      updatedCart,
       cartItem
     };
   } catch (error) {

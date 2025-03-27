@@ -529,18 +529,21 @@ export type Database = {
           community_uuid: string
           created_at: string
           id: number
+          user_uuid: string
         }
         Insert: {
           community_product_uuid: string
           community_uuid: string
           created_at?: string
           id?: number
+          user_uuid: string
         }
         Update: {
           community_product_uuid?: string
           community_uuid?: string
           created_at?: string
           id?: number
+          user_uuid?: string
         }
         Relationships: [
           {
@@ -1507,6 +1510,7 @@ export type Database = {
           id: number
           price: number | null
           product_transaction_item_uuid: string
+          product_transaction_uuid: string
           product_uuid: string | null
           quantity: number | null
           status: Database["public"]["Enums"]["transaction_item_status"] | null
@@ -1520,6 +1524,7 @@ export type Database = {
           id?: number
           price?: number | null
           product_transaction_item_uuid?: string
+          product_transaction_uuid: string
           product_uuid?: string | null
           quantity?: number | null
           status?: Database["public"]["Enums"]["transaction_item_status"] | null
@@ -1533,6 +1538,7 @@ export type Database = {
           id?: number
           price?: number | null
           product_transaction_item_uuid?: string
+          product_transaction_uuid?: string
           product_uuid?: string | null
           quantity?: number | null
           status?: Database["public"]["Enums"]["transaction_item_status"] | null
@@ -1542,6 +1548,13 @@ export type Database = {
           variant_uuid?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "products_transaction_items_product_transaction_uuid_fkey"
+            columns: ["product_transaction_uuid"]
+            isOneToOne: false
+            referencedRelation: "products_transactions"
+            referencedColumns: ["product_transaction_uuid"]
+          },
           {
             foreignKeyName: "products_transaction_items_product_uuid_fkey"
             columns: ["product_uuid"]
@@ -1575,6 +1588,7 @@ export type Database = {
           total_amount: number | null
           type: Database["public"]["Enums"]["product_transaction_type"] | null
           updated_at: string | null
+          user_uuid: string | null
         }
         Insert: {
           created_at?: string
@@ -1592,6 +1606,7 @@ export type Database = {
           total_amount?: number | null
           type?: Database["public"]["Enums"]["product_transaction_type"] | null
           updated_at?: string | null
+          user_uuid?: string | null
         }
         Update: {
           created_at?: string
@@ -1609,8 +1624,17 @@ export type Database = {
           total_amount?: number | null
           type?: Database["public"]["Enums"]["product_transaction_type"] | null
           updated_at?: string | null
+          user_uuid?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "products_transactions_user_uuid_fkey"
+            columns: ["user_uuid"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["user_uuid"]
+          },
+        ]
       }
       profiles: {
         Row: {

@@ -44,6 +44,7 @@ export function useCart() {
     try {
       const cartData = await fetchCartData(userId, sessionId);
       setCart(cartData);
+      return cartData;
     } catch (error) {
       console.error('Failed to fetch cart:', error);
       toast({
@@ -51,6 +52,7 @@ export function useCart() {
         description: "Failed to load your cart. Please try again.",
         variant: "destructive"
       });
+      return null;
     }
   };
 
@@ -75,7 +77,17 @@ export function useCart() {
           setCart(result.updatedCart);
         } else {
           // Refetch cart if updated cart wasn't returned
-          await fetchCart(userId, !userId ? guestSessionId : undefined);
+          const updatedCart = await fetchCart(userId, !userId ? guestSessionId : undefined);
+          if (updatedCart) {
+            // Set specific cart item that was just added
+            return {
+              ...result,
+              cartItem: result.cartItem || updatedCart.items.find(item => 
+                item.product_uuid === product.product_uuid && 
+                item.variant_uuid === selectedVariant
+              )
+            };
+          }
         }
         
         toast({
