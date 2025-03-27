@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Label } from "@/components/ui/label";
@@ -16,35 +17,65 @@ interface RelatedProductsListProps {
 
 export function RelatedProductsList({ productUUID, className = "" }: RelatedProductsListProps) {
   // Fetch related products
-  const { data: relatedProducts = [], isLoading } = useQuery<any>({
+  const { data: relatedProducts = [], isLoading, error } = useQuery<any>({
     queryKey: ['relatedProducts', productUUID],
     queryFn: async () => {
       if (!productUUID) {
         return [];
       }
 
-      const { data, error } = await supabase
-        .from('product_relationships')
-        .select(`
-          related_product:products!product_relationships_related_product_uuid_fkey (
-            product_uuid,
-            name,
-            price_from
-          )
-        `)
-        .eq('product_uuid', productUUID);
+      try {
+        // First attempt - try the RPC function for detailed data
+        const { data: rpcData, error: rpcError } = await supabase
+          .rpc('get_related_products_with_variants', { product_uuid_input: productUUID });
+          
+        if (!rpcError && rpcData && rpcData.length > 0) {
+          // Transform RPC data to the format we need
+          return rpcData.map(item => ({
+            product_uuid: item.related_product_uuid,
+            name: item.related_product_name,
+            price_from: item.related_product_price_from
+          }));
+        }
+        
+        // Fallback - direct query
+        const { data, error } = await supabase
+          .from('product_relationships')
+          .select(`
+            related_product:products!product_relationships_related_product_uuid_fkey (
+              product_uuid,
+              name,
+              price_from
+            )
+          `)
+          .eq('product_uuid', productUUID);
 
-      if (error) {
-        console.error("Error fetching related products:", error);
+        if (error) {
+          console.error("Error fetching related products:", error);
+          throw error;
+        }
+
+        return data.map((item) => item.related_product).filter(Boolean) || [];
+      } catch (error) {
+        console.error("Failed to fetch related products:", error);
         return [];
       }
-
-      return data.map((item) => {
-        return item.related_product
-      }) || [] as RelatedProduct[];
     },
     enabled: Boolean(productUUID),
+    retry: 3,
+    staleTime: 1000 * 60 * 5 // 5 minutes
   });
+
+  if (error) {
+    return (
+      <div className={className}>
+        <Label className="text-base font-medium mb-4 block">Related Products</Label>
+        <div className="bg-red-50 border border-red-200 rounded-md p-4 text-center text-red-800">
+          Error loading related products. Please try again later.
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -62,16 +93,16 @@ export function RelatedProductsList({ productUUID, className = "" }: RelatedProd
       <Label className="text-base font-medium">Related Products</Label>
       {relatedProducts.length > 0 ? (
         <div className="space-y-2">
-          {relatedProducts.map((rel) => (
+          {relatedProducts.map((rel: RelatedProduct) => (
             <div
               key={rel.product_uuid}
               className="flex items-center justify-between p-3 rounded-md border bg-card hover:bg-muted/30 transition-colors"
             >
               <div className="truncate flex-1">
                 <p className="font-medium truncate">{rel.name}</p>
-                {rel.price_from !== undefined || rel.price_from !== null && (
+                {rel.price_from !== undefined && rel.price_from !== null && (
                   <p className="text-sm text-muted-foreground">
-                    ${rel.price_from?.toFixed(2)}
+                    ${rel.price_from.toFixed(2)}
                   </p>
                 )}
               </div>

@@ -44,7 +44,7 @@ export function RelatedProducts({
   const [isSaving, setSaving] = useState(false);
 
   // Fetch user's products (excluding the current product)
-  const { data: userProducts = [], isLoading: isLoadingProducts } = useQuery<Product[]>({
+  const { data: userProducts = [], isLoading: isLoadingProducts, error: productsError } = useQuery<Product[]>({
     queryKey: ['userProducts', userUuid, productId],
     queryFn: async () => {
       if (!userUuid || !productId) {
@@ -52,54 +52,76 @@ export function RelatedProducts({
         return [];
       }
 
-      const { data, error } = await supabase
-        .from('products')
-        .select('product_uuid, name, price_from, slug')
-        .eq('user_uuid', userUuid)
-        .neq('product_uuid', productId);
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('product_uuid, name, price_from, slug')
+          .eq('user_uuid', userUuid)
+          .neq('product_uuid', productId);
 
+        if (error) {
+          console.error("Error fetching user products:", error);
+          throw error;
+        }
 
-      if (error) {
-        console.error("Error fetching user products:", error);
+        return data || [];
+      } catch (error) {
+        console.error("Failed to fetch user products:", error);
         return [];
       }
-
-      return data || [];
     },
     enabled: Boolean(userUuid) && Boolean(productId),
+    retry: 3,
+    staleTime: 1000 * 60 * 5 // 5 minutes
   });
 
-  const { data: relationships = [], isLoading: isLoadingRelationships } = useQuery({
+  const { data: relationships = [], isLoading: isLoadingRelationships, error: relationshipsError } = useQuery({
     queryKey: ['productRelationships', productId],
     queryFn: async () => {
       if (!productId) {
         return [];
       }
 
-      const { data, error } = await supabase
-        .from('product_relationships')
-        .select('*')
-        .eq('product_uuid', productId);
+      try {
+        const { data, error } = await supabase
+          .from('product_relationships')
+          .select('*')
+          .eq('product_uuid', productId);
 
-      if (error) {
-        console.error("Error fetching product relationships:", error);
+        if (error) {
+          console.error("Error fetching product relationships:", error);
+          throw error;
+        }
+
+        return data || [];
+      } catch (error) {
+        console.error("Failed to fetch product relationships:", error);
         return [];
       }
-
-      return data || [];
     },
     enabled: Boolean(productId),
+    retry: 3,
+    staleTime: 1000 * 60 * 5 // 5 minutes
   });
 
   // Update selected products based on relationships
   useEffect(() => {
-    const relatedProductIds = relationships.map(rel => rel.related_product_uuid);
-    const relatedProducts = userProducts.filter(product =>
-      relatedProductIds.includes(product.product_uuid)
-    );
-
-    setSelectedProducts(relatedProducts);
-  }, [relationships.length]); // Only run when relationships array length changes
+    console.log("Relationships changed:", relationships.length);
+    
+    if (relationships.length > 0 && userProducts.length > 0) {
+      try {
+        const relatedProductIds = relationships.map(rel => rel.related_product_uuid);
+        const relatedProducts = userProducts.filter(product =>
+          relatedProductIds.includes(product.product_uuid)
+        );
+        
+        console.log("Setting selected products:", relatedProducts.length);
+        setSelectedProducts(relatedProducts);
+      } catch (error) {
+        console.error("Error processing relationships:", error);
+      }
+    }
+  }, [relationships, userProducts]); // Run when either relationships or userProducts changes
 
   // Save all relationships to the database
   const saveRelationships = async () => {
@@ -138,11 +160,12 @@ export function RelatedProducts({
 
       // Refresh data
       queryClient.invalidateQueries({ queryKey: ['productRelationships', productId] });
+      queryClient.invalidateQueries({ queryKey: ['relatedProducts', productId] });
 
       toast({
         title: "Changes saved",
         description: "Related products have been updated successfully",
-        duration: 1000,
+        duration: 3000,
       });
     } catch (error) {
       console.error("Error saving relationships:", error);
@@ -180,40 +203,30 @@ export function RelatedProducts({
   };
 
   // Remove a product from selection
-  const removeSelectedProduct = async (productId: string) => {
+  const removeSelectedProduct = (productToRemove: string) => {
     try {
-      // Delete relationship from database
-      await deleteProductRelationship(productId);
+      // Remove from local state only
+      setSelectedProducts(prev =>
+        prev.filter(p => p.product_uuid !== productToRemove)
+      );
     } catch (error) {
       console.error("Error removing selected product:", error);
     }
   };
 
-  // Function to delete product relationships from the database
-  const deleteProductRelationship = async (relatedProductId: string) => {
-    console.log('Attempting to delete relationship:', { relatedProductId, productId });
-    try {
-      const { error, data } = await supabase
-        .from('product_relationships')
-        .delete()
-        .eq('product_uuid', productId)
+  // Error handling
+  if (productsError || relationshipsError) {
+    return (
+      <div className={className}>
+        <Label className="text-base font-medium mb-4 block">Related Products</Label>
+        <div className="bg-red-50 border border-red-200 rounded-md p-4 text-center text-red-800">
+          Error loading related products. Please try refreshing the page.
+        </div>
+      </div>
+    );
+  }
 
-      if (error) {
-        throw error;
-      }
-
-      // Remove from local state only if the deletion was successful
-      setSelectedProducts(prev =>
-        prev.filter(p => p.product_uuid !== relatedProductId)
-      );
-
-      // Refresh data
-      queryClient.invalidateQueries({ queryKey: ['productRelationships', productId] });
-    } catch (error) {
-      console.error("Error deleting product relationship:", error);
-    }
-  };
-
+  // Loading state
   if (isLoadingProducts || isLoadingRelationships) {
     return (
       <div className={className}>
@@ -258,7 +271,7 @@ export function RelatedProducts({
                         <span className="truncate">{product.name}</span>
                         {product.price_from !== null && (
                           <span className="text-xs text-muted-foreground">
-                            ${product.price_from.toFixed(2)}
+                            ${product.price_from?.toFixed(2)}
                           </span>
                         )}
                       </div>
@@ -289,7 +302,7 @@ export function RelatedProducts({
                   <p className="font-medium truncate">{product.name}</p>
                   {product.price_from !== null && (
                     <p className="text-sm text-muted-foreground">
-                      ${product?.price_from?.toFixed(2)}
+                      ${product.price_from?.toFixed(2)}
                     </p>
                   )}
                 </div>
