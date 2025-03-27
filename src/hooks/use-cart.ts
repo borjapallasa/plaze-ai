@@ -57,7 +57,12 @@ export function useCart() {
   };
 
   // Add an item to cart
-  const addToCart = async (product: any, selectedVariant: string, additionalVariants: string[] = []) => {
+  const addToCart = async (
+    product: any, 
+    selectedVariant: string, 
+    additionalVariants: string[] = [],
+    isClassroomProduct: boolean = false
+  ) => {
     setIsLoading(true);
     try {
       // Get the user's session
@@ -70,7 +75,9 @@ export function useCart() {
         product,
         selectedVariant,
         userId,
-        !userId ? guestSessionId : undefined
+        !userId ? guestSessionId : undefined,
+        undefined,
+        isClassroomProduct
       );
 
       if (!result.success) {
@@ -94,7 +101,8 @@ export function useCart() {
             variantId,
             userId,
             !userId ? guestSessionId : undefined,
-            cartTransactionId // Pass the transaction ID to ensure items are added to the same cart
+            cartTransactionId, // Pass the transaction ID to ensure items are added to the same cart
+            isClassroomProduct
           );
           
           if (additionalResult.success && additionalResult.updatedCart) {

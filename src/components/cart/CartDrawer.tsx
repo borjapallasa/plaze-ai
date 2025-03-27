@@ -1,4 +1,3 @@
-
 import { SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, X, ArrowRight, Loader2, Trash2 } from "lucide-react";
@@ -20,11 +19,8 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
   const { cart, isLoading, removeFromCart, fetchCart } = useCart();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Only run once when the drawer is opened, not on every re-render
   useEffect(() => {
     const refreshCartData = async () => {
-      // Only refresh if we're not already refreshing and don't have a specific cart item
-      // (if we have a specific cartItem, we're opening the drawer for that specific item)
       if (!isRefreshing && !cartItem) {
         setIsRefreshing(true);
         const { data: { session } } = await supabase.auth.getSession();
@@ -37,7 +33,7 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
     };
 
     refreshCartData();
-  }, []);  // Empty dependency array means this runs once on mount
+  }, []);
 
   const handleViewCart = () => {
     alert('Redirect to stripe integration flow based on the cart UUID -> payment link')
@@ -48,10 +44,8 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
     await removeFromCart(variantId);
   };
 
-  // Combine cart item with additional items for instant display
   const allAddedItems = cartItem ? [cartItem, ...additionalItems] : additionalItems;
   
-  // Check if we should display the newly added items or use the cart from the hook
   const effectiveCart = cart || (allAddedItems.length > 0 ? {
     transaction_uuid: '',
     item_count: allAddedItems.length,
@@ -104,18 +98,13 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
     );
   }
 
-  // Decide what items to display - combine newly added items with cart items
-  // Make sure we don't show duplicates
   const displayItems = (() => {
-    // Start with cart items (if available)
     const displayedItems = [...effectiveCart.items];
     
-    // Add main cartItem if it's not already in the list
     if (cartItem && !displayedItems.some(item => item.variant_uuid === cartItem.variant_uuid)) {
       displayedItems.unshift(cartItem);
     }
     
-    // Add additional items if they're not already in the list
     if (additionalItems && additionalItems.length > 0) {
       additionalItems.forEach(additionalItem => {
         if (!displayedItems.some(item => item.variant_uuid === additionalItem.variant_uuid)) {
@@ -155,7 +144,7 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
         
         <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
           {displayItems.map((item) => (
-            <div key={item.variant_uuid} className="flex items-start gap-3 pb-3 border-b">
+            <div key={item.variant_uuid} className={`flex items-start gap-3 pb-3 border-b ${!item.product_uuid ? 'border-red-200 bg-red-50/30 rounded p-2' : ''}`}>
               <div className="w-16 h-16 rounded-lg overflow-hidden bg-accent flex-shrink-0">
                 <img
                   src="/lovable-uploads/3cfa57c2-16ef-4ec7-baa5-0f454c33a1b6.png"
@@ -165,7 +154,14 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
               </div>
               
               <div className="flex-1 min-w-0">
-                <h3 className="font-medium text-sm line-clamp-2">{item.product_name || "Product"}</h3>
+                <h3 className="font-medium text-sm line-clamp-2">
+                  {item.product_name || "Product"}
+                  {!item.product_uuid && (
+                    <span className="ml-1 text-xs text-red-500 font-normal">
+                      (unavailable)
+                    </span>
+                  )}
+                </h3>
                 <p className="text-xs text-muted-foreground mt-1">{item.variant_name || "Variant"}</p>
                 <div className="flex items-center justify-between mt-2">
                   <p className="text-xs">Qty: {item.quantity}</p>

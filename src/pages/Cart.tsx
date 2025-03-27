@@ -10,7 +10,6 @@ import { supabase } from "@/integrations/supabase/client";
 export default function Cart() {
   const { cart, isLoading, fetchCart, removeFromCart } = useCart();
 
-  // Refetch cart when component mounts
   useEffect(() => {
     const refreshCart = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -23,17 +22,14 @@ export default function Cart() {
     refreshCart();
   }, [fetchCart]);
 
-  // Helper function to remove item
   const handleRemoveItem = async (variantId: string) => {
     await removeFromCart(variantId);
   };
 
-  // Calculate totals
   const subtotal = cart ? cart.total_amount : 0;
   const tax = subtotal * 0.1; // 10% tax rate
   const total = subtotal + tax;
 
-  // Loading state
   if (isLoading) {
     return (
       <div className="bg-background min-h-screen">
@@ -48,7 +44,6 @@ export default function Cart() {
     );
   }
 
-  // Empty cart state
   if (!cart || cart.items.length === 0) {
     return (
       <div className="bg-background min-h-screen">
@@ -82,10 +77,9 @@ export default function Cart() {
           <h1 className="text-2xl font-semibold mb-4">Shopping Cart</h1>
           
           <div className="lg:grid lg:grid-cols-3 lg:gap-6">
-            {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
               {cart.items.map((item) => (
-                <Card key={item.variant_uuid} className="overflow-hidden">
+                <Card key={item.variant_uuid} className={`overflow-hidden ${!item.product_uuid ? 'border-red-400' : ''}`}>
                   <CardContent className="p-4">
                     <div className="flex items-start gap-4">
                       <div className="w-20 h-20 rounded-lg overflow-hidden bg-accent flex-shrink-0">
@@ -98,6 +92,11 @@ export default function Cart() {
                       <div className="flex-1 min-w-0">
                         <h2 className="text-lg font-semibold leading-tight mb-2 line-clamp-2">
                           {item.product_name || "Product"}
+                          {!item.product_uuid && (
+                            <span className="ml-2 text-sm text-red-500 font-normal">
+                              (Product unavailable)
+                            </span>
+                          )}
                         </h2>
                         <div className="inline-block bg-[#F1F0FB] text-primary px-3 py-1 rounded-full text-sm mb-2">
                           {item.variant_name || "Variant"}
@@ -124,7 +123,6 @@ export default function Cart() {
               ))}
             </div>
 
-            {/* Order Summary */}
             <div className="mt-4 lg:mt-0">
               <Card>
                 <CardContent className="p-4">

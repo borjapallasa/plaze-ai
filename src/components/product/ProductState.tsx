@@ -59,7 +59,10 @@ export function useProductState(variants: any[]) {
       return;
     }
 
-    const result = await addToCart(product, selectedVariant, additionalVariants);
+    // Determine if this is a classroom product (community product) by checking for special properties
+    const isClassroomProduct = !!product.community_product_uuid;
+
+    const result = await addToCart(product, selectedVariant, additionalVariants, isClassroomProduct);
 
     if (result?.success) {
       // Clear previous added items

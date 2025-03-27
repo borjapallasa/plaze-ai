@@ -399,10 +399,11 @@ export default function Classroom() {
 
     const product = {
       product_uuid: selectedProduct.id,
-      name: selectedProduct.name
+      name: selectedProduct.name,
+      community_product_uuid: selectedProduct.id
     };
 
-    const result = await addToCart(product, selectedProduct.id, []);
+    const result = await addToCart(product, selectedProduct.id, [], true);
 
     if (result?.success) {
       if (result.cartItem) {

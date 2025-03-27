@@ -131,24 +131,52 @@ export async function addItemToCart(
   selectedVariant: string,
   userId?: string,
   guestSessionId?: string,
-  existingTransactionId?: string
+  existingTransactionId?: string,
+  isClassroomProduct: boolean = false
 ): Promise<{ success: boolean; message?: string; updatedCart?: CartTransaction; cartItem?: CartItem }> {
   try {
     console.log('Adding to cart', cart, selectedVariant, 'using transaction:', existingTransactionId);
-    const variantResponse = await supabase
-      .from('variants')
-      .select('*')
-      .eq('variant_uuid', selectedVariant)
-      .single();
+    console.log('Is classroom product:', isClassroomProduct);
+    
+    let variantData;
+    let productUuid;
+    
+    if (isClassroomProduct) {
+      // For classroom products, we need to fetch from community_products
+      const { data, error } = await supabase
+        .from('community_products')
+        .select('*')
+        .eq('community_product_uuid', selectedVariant)
+        .single();
+      
+      if (error || !data) {
+        console.error('Error fetching classroom product:', error);
+        return {
+          success: false,
+          message: "Could not find the selected classroom product"
+        };
+      }
+      
+      variantData = data;
+      productUuid = data.community_product_uuid; // Use the community product UUID as the product UUID
+    } else {
+      // Regular product variants
+      const variantResponse = await supabase
+        .from('variants')
+        .select('*')
+        .eq('variant_uuid', selectedVariant)
+        .single();
 
-    if (variantResponse.error || !variantResponse.data) {
-      return {
-        success: false,
-        message: "Could not find the selected variant"
-      };
+      if (variantResponse.error || !variantResponse.data) {
+        return {
+          success: false,
+          message: "Could not find the selected variant"
+        };
+      }
+      
+      variantData = variantResponse.data;
+      productUuid = product.product_uuid;
     }
-
-    const variantData = variantResponse.data;
 
     // Check for existing transaction
     let transactionId = existingTransactionId || cart?.transaction_uuid;
@@ -183,7 +211,12 @@ export async function addItemToCart(
     }
 
     // Check if this item is already in the cart
-    const existingItem = findItemInCart(cart, product.product_uuid, selectedVariant);
+    const existingItem = isClassroomProduct 
+      ? (cart?.items || []).find(item => 
+          item.variant_uuid === selectedVariant && 
+          (item.product_uuid === productUuid || item.product_uuid === selectedVariant)
+        )
+      : findItemInCart(cart, productUuid, selectedVariant);
 
     // Prepare the new or updated cart item
     let cartItem: CartItem;
@@ -196,7 +229,7 @@ export async function addItemToCart(
           quantity: existingItem.quantity + 1,
           total_price: (existingItem.quantity + 1) * existingItem.price
         })
-        .eq('product_uuid', product.product_uuid)
+        .eq(isClassroomProduct ? 'variant_uuid' : 'product_uuid', isClassroomProduct ? selectedVariant : productUuid)
         .eq('variant_uuid', selectedVariant)
         .eq('product_transaction_uuid', transactionId);
 
@@ -218,7 +251,7 @@ export async function addItemToCart(
         .from('products_transaction_items')
         .insert({
           product_transaction_uuid: transactionId,
-          product_uuid: product.product_uuid,
+          product_uuid: productUuid,
           variant_uuid: selectedVariant,
           price: variantData.price,
           quantity: 1,
@@ -233,11 +266,11 @@ export async function addItemToCart(
       }
 
       cartItem = {
-        product_uuid: product.product_uuid,
+        product_uuid: productUuid,
         variant_uuid: selectedVariant,
         price: variantData.price,
         quantity: 1,
-        product_name: product.name || 'Unknown Product',
+        product_name: isClassroomProduct ? variantData.name : (product.name || 'Unknown Product'),
         variant_name: variantData.name || 'Unknown Variant'
       };
     }
@@ -298,7 +331,7 @@ export async function addItemToCart(
     // Add or update the current item in the items array
     if (existingItem) {
       const itemIndex = updatedCart.items.findIndex(item =>
-        item.product_uuid === product.product_uuid && item.variant_uuid === selectedVariant
+        item.product_uuid === productUuid && item.variant_uuid === selectedVariant
       );
       if (itemIndex !== -1) {
         updatedCart.items[itemIndex] = cartItem;
