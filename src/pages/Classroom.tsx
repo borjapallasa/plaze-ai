@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { ChevronDown, PlusCircle, Pencil, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -58,6 +58,7 @@ export default function Classroom() {
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
   const [lastAddedItem, setLastAddedItem] = useState<any>(null);
   const [lastAddedAdditionalItems, setLastAddedAdditionalItems] = useState<any[]>([]);
+  const navigate = useNavigate();
   const [newLessonData, setNewLessonData] = useState({
     name: '',
     description: '',
@@ -377,6 +378,15 @@ export default function Classroom() {
       return;
     }
 
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign up or log in to add items to your cart.",
+      });
+      navigate("/sign-up");
+      return;
+    }
+
     const selectedProduct = variants?.find(v => v.id === selectedVariant);
     if (!selectedProduct) {
       toast({
@@ -393,7 +403,7 @@ export default function Classroom() {
     };
 
     const result = await addToCart(product, selectedProduct.id, []);
-    
+
     if (result?.success) {
       if (result.cartItem) {
         setLastAddedItem(result.cartItem);
@@ -403,7 +413,7 @@ export default function Classroom() {
         );
         setLastAddedItem(selectedVariantItem || result.updatedCart.items[0]);
       }
-      
+
       setLastAddedAdditionalItems([]);
       setCartDrawerOpen(true);
     }
@@ -884,10 +894,10 @@ export default function Classroom() {
 
           {/* Cart Drawer */}
           <Sheet open={cartDrawerOpen} onOpenChange={setCartDrawerOpen}>
-            <CartDrawer 
-              cartItem={lastAddedItem} 
+            <CartDrawer
+              cartItem={lastAddedItem}
               additionalItems={lastAddedAdditionalItems}
-              onClose={closeCartDrawer} 
+              onClose={closeCartDrawer}
             />
           </Sheet>
         </div>

@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from "react";
 import { useCart } from "@/hooks/use-cart";
 import { useToast } from "@/components/ui/use-toast";
 import { CartItem } from "@/types/cart";
+import { useAuth } from "@/lib/auth";
+import { useNavigate } from "react-router-dom";
 
 export function useProductState(variants: any[]) {
   const [selectedVariant, setSelectedVariant] = useState<string | undefined>();
@@ -12,6 +14,9 @@ export function useProductState(variants: any[]) {
   const [lastAddedItem, setLastAddedItem] = useState<CartItem | null>(null);
   const [lastAddedAdditionalItems, setLastAddedAdditionalItems] = useState<CartItem[]>([]);
   const variantsRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
   const { toast } = useToast();
   const { addToCart, isLoading, fetchCart } = useCart();
 
@@ -44,15 +49,22 @@ export function useProductState(variants: any[]) {
       return;
     }
 
-    console.log('Adding to cart:', product.name, 'with variant:', selectedVariant);
-    console.log('Additional variants:', additionalVariants);
-    
+    // Check if user is authenticated
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign up or log in to add items to your cart.",
+      });
+      navigate("/sign-up");
+      return;
+    }
+
     const result = await addToCart(product, selectedVariant, additionalVariants);
-    
+
     if (result?.success) {
       // Clear previous added items
       setLastAddedAdditionalItems([]);
-      
+
       // If successfully added to cart, get the cart item and show the cart drawer
       if (result.cartItem) {
         console.log('Setting last added item:', result.cartItem);
@@ -65,7 +77,7 @@ export function useProductState(variants: any[]) {
         console.log('Setting last added item from updated cart:', selectedVariantItem || result.updatedCart.items[0]);
         setLastAddedItem(selectedVariantItem || result.updatedCart.items[0]);
       }
-      
+
       // Find and set the additional variant items
       if (result.updatedCart && additionalVariants.length > 0) {
         const additionalItems = result.updatedCart.items.filter(
@@ -74,7 +86,7 @@ export function useProductState(variants: any[]) {
         console.log('Setting additional items:', additionalItems);
         setLastAddedAdditionalItems(additionalItems);
       }
-      
+
       setCartDrawerOpen(true);
     }
   };
