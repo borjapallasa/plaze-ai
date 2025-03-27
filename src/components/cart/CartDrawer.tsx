@@ -47,6 +47,10 @@ export function CartDrawer({ cartItem, onClose }: CartDrawerProps) {
     await removeFromCart(variantId);
   };
 
+  // Check if we should display the newly added cartItem or use the cart from the hook
+  const effectiveCart = cart || (cartItem ? { transaction_uuid: '', item_count: 1, total_amount: cartItem.price, items: [cartItem] } : null);
+  const isCartEmpty = !effectiveCart || effectiveCart.items.length === 0;
+
   if (isLoading || isRefreshing) {
     return (
       <SheetContent className="w-full sm:max-w-md overflow-y-auto">
@@ -58,7 +62,7 @@ export function CartDrawer({ cartItem, onClose }: CartDrawerProps) {
     );
   }
 
-  if (!cart || cart.items.length === 0) {
+  if (isCartEmpty) {
     return (
       <SheetContent className="w-full sm:max-w-md overflow-y-auto">
         <SheetHeader className="space-y-3 pr-6">
@@ -90,9 +94,10 @@ export function CartDrawer({ cartItem, onClose }: CartDrawerProps) {
     );
   }
 
-  const displayItems = cartItem
-    ? [cartItem, ...cart.items.filter(item => item.variant_uuid !== cartItem.variant_uuid)]
-    : cart.items;
+  // Decide what items to display
+  const displayItems = cartItem 
+    ? [cartItem, ...effectiveCart.items.filter(item => item.variant_uuid !== cartItem.variant_uuid)]
+    : effectiveCart.items;
 
   const subtotal = displayItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 

@@ -51,12 +51,14 @@ export function useProductState(variants: any[]) {
     if (result?.success) {
       // If successfully added to cart, get the cart item and show the cart drawer
       if (result.cartItem) {
+        console.log('Setting last added item:', result.cartItem);
         setLastAddedItem(result.cartItem);
       } else if (result.updatedCart && result.updatedCart.items.length > 0) {
         // If no specific cart item is returned but we have an updated cart, use the first item
         const selectedVariantItem = result.updatedCart.items.find(
           item => item.variant_uuid === selectedVariant
         );
+        console.log('Setting last added item from updated cart:', selectedVariantItem || result.updatedCart.items[0]);
         setLastAddedItem(selectedVariantItem || result.updatedCart.items[0]);
       }
       setCartDrawerOpen(true);
