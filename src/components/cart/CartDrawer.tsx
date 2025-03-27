@@ -11,10 +11,11 @@ import { supabase } from '@/integrations/supabase/client';
 
 interface CartDrawerProps {
   cartItem: CartItem | null;
+  additionalItems?: CartItem[];
   onClose: () => void;
 }
 
-export function CartDrawer({ cartItem, onClose }: CartDrawerProps) {
+export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDrawerProps) {
   const navigate = useNavigate();
   const { cart, isLoading, removeFromCart, fetchCart } = useCart();
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -47,8 +48,17 @@ export function CartDrawer({ cartItem, onClose }: CartDrawerProps) {
     await removeFromCart(variantId);
   };
 
-  // Check if we should display the newly added cartItem or use the cart from the hook
-  const effectiveCart = cart || (cartItem ? { transaction_uuid: '', item_count: 1, total_amount: cartItem.price, items: [cartItem] } : null);
+  // Combine cart item with additional items for instant display
+  const allAddedItems = cartItem ? [cartItem, ...additionalItems] : additionalItems;
+  
+  // Check if we should display the newly added items or use the cart from the hook
+  const effectiveCart = cart || (allAddedItems.length > 0 ? {
+    transaction_uuid: '',
+    item_count: allAddedItems.length,
+    total_amount: allAddedItems.reduce((sum, item) => sum + item.price, 0),
+    items: allAddedItems
+  } : null);
+  
   const isCartEmpty = !effectiveCart || effectiveCart.items.length === 0;
 
   if (isLoading || isRefreshing) {
@@ -94,10 +104,28 @@ export function CartDrawer({ cartItem, onClose }: CartDrawerProps) {
     );
   }
 
-  // Decide what items to display
-  const displayItems = cartItem 
-    ? [cartItem, ...effectiveCart.items.filter(item => item.variant_uuid !== cartItem.variant_uuid)]
-    : effectiveCart.items;
+  // Decide what items to display - combine newly added items with cart items
+  // Make sure we don't show duplicates
+  const displayItems = (() => {
+    // Start with cart items (if available)
+    const displayedItems = [...effectiveCart.items];
+    
+    // Add main cartItem if it's not already in the list
+    if (cartItem && !displayedItems.some(item => item.variant_uuid === cartItem.variant_uuid)) {
+      displayedItems.unshift(cartItem);
+    }
+    
+    // Add additional items if they're not already in the list
+    if (additionalItems && additionalItems.length > 0) {
+      additionalItems.forEach(additionalItem => {
+        if (!displayedItems.some(item => item.variant_uuid === additionalItem.variant_uuid)) {
+          displayedItems.push(additionalItem);
+        }
+      });
+    }
+    
+    return displayedItems;
+  })();
 
   const subtotal = displayItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 
@@ -117,10 +145,10 @@ export function CartDrawer({ cartItem, onClose }: CartDrawerProps) {
       </SheetHeader>
 
       <div className="mt-6 space-y-6">
-        {cartItem && (
+        {(cartItem || additionalItems.length > 0) && (
           <div className="bg-primary/5 p-3 rounded-lg mb-4">
             <p className="text-sm font-medium text-primary flex items-center">
-              <span className="mr-2">✓</span> Item added to cart
+              <span className="mr-2">✓</span> Item{allAddedItems.length > 1 ? 's' : ''} added to cart
             </p>
           </div>
         )}

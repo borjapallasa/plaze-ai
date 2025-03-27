@@ -10,6 +10,7 @@ export function useProductState(variants: any[]) {
   const [showStickyATC, setShowStickyATC] = useState(false);
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
   const [lastAddedItem, setLastAddedItem] = useState<CartItem | null>(null);
+  const [lastAddedAdditionalItems, setLastAddedAdditionalItems] = useState<CartItem[]>([]);
   const variantsRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const { addToCart, isLoading, fetchCart } = useCart();
@@ -49,6 +50,9 @@ export function useProductState(variants: any[]) {
     const result = await addToCart(product, selectedVariant, additionalVariants);
     
     if (result?.success) {
+      // Clear previous added items
+      setLastAddedAdditionalItems([]);
+      
       // If successfully added to cart, get the cart item and show the cart drawer
       if (result.cartItem) {
         console.log('Setting last added item:', result.cartItem);
@@ -61,6 +65,16 @@ export function useProductState(variants: any[]) {
         console.log('Setting last added item from updated cart:', selectedVariantItem || result.updatedCart.items[0]);
         setLastAddedItem(selectedVariantItem || result.updatedCart.items[0]);
       }
+      
+      // Find and set the additional variant items
+      if (result.updatedCart && additionalVariants.length > 0) {
+        const additionalItems = result.updatedCart.items.filter(
+          item => additionalVariants.includes(item.variant_uuid)
+        );
+        console.log('Setting additional items:', additionalItems);
+        setLastAddedAdditionalItems(additionalItems);
+      }
+      
       setCartDrawerOpen(true);
     }
   };
@@ -68,6 +82,7 @@ export function useProductState(variants: any[]) {
   const closeCartDrawer = () => {
     setCartDrawerOpen(false);
     setLastAddedItem(null);
+    setLastAddedAdditionalItems([]);
   };
 
   const handleAdditionalVariantToggle = (variantId: string, selected: boolean) => {
@@ -91,6 +106,7 @@ export function useProductState(variants: any[]) {
     cartDrawerOpen,
     setCartDrawerOpen,
     lastAddedItem,
+    lastAddedAdditionalItems,
     closeCartDrawer
   };
 }

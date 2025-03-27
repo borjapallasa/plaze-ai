@@ -40,6 +40,7 @@ export default function Product() {
     cartDrawerOpen,
     setCartDrawerOpen,
     lastAddedItem,
+    lastAddedAdditionalItems,
     closeCartDrawer
   } = useProductState(variants);
 
@@ -78,7 +79,11 @@ export default function Product() {
       />
 
       <Sheet open={cartDrawerOpen} onOpenChange={setCartDrawerOpen}>
-        <CartDrawer cartItem={lastAddedItem} onClose={closeCartDrawer} />
+        <CartDrawer 
+          cartItem={lastAddedItem} 
+          additionalItems={lastAddedAdditionalItems}
+          onClose={closeCartDrawer} 
+        />
       </Sheet>
     </div>
   );
