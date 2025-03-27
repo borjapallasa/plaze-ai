@@ -43,6 +43,7 @@ export function useProductState(variants: any[]) {
       return;
     }
 
+    console.log("Adding main product variant to cart:", selectedVariant);
     const result = await addToCart(product, selectedVariant);
     
     if (result?.success) {
@@ -54,10 +55,15 @@ export function useProductState(variants: any[]) {
       
       // Add additional variants if selected
       if (additionalVariants.length > 0) {
+        console.log("Adding additional variants to cart:", additionalVariants);
         for (const variantId of additionalVariants) {
           await addToCart(product, variantId);
         }
       }
+      
+      return result;
+    } else {
+      return null;
     }
   };
 

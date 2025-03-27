@@ -12,7 +12,7 @@ export function communityProductToVariant(product: CommunityProduct): Variant {
     price: Number(product.price) || 0,
     comparePrice: Number(product.price ? product.price * 1.25 : 0), // default higher compare price
     label: product.product_type || 'Package',
-    features: [] // Ensure features is always an array
+    features: Array.isArray(product.features) ? product.features : [] // Ensure features is always an array
   };
 }
 
@@ -28,6 +28,9 @@ export function communityProductsToVariants(products: CommunityProduct[]): Varia
  * Converts a ProductVariant to Variant type
  */
 export function productVariantToVariant(variant: ProductVariant): Variant {
+  // Make sure features is always an array, even if it's undefined or null in the source
+  const features = Array.isArray(variant.features) ? variant.features : [];
+  
   return {
     id: variant.id,
     name: variant.name || 'Package',
@@ -35,7 +38,7 @@ export function productVariantToVariant(variant: ProductVariant): Variant {
     comparePrice: Number(variant.comparePrice) || 0,
     label: variant.label || 'Package',
     highlight: variant.highlight,
-    features: Array.isArray(variant.features) ? variant.features : [] // Ensure features is always an array
+    features: features
   };
 }
 

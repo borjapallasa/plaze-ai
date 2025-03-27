@@ -1,219 +1,470 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { MainHeader } from "@/components/MainHeader";
-import { Card } from "@/components/ui/card";
-import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProductVariantsEditor } from "@/components/product/ProductVariants";
-import { ProductDetailsForm } from "@/components/product/ProductDetailsForm";
-import { ProductOrganization } from "@/components/product/ProductOrganization";
 import { Variant } from "@/components/product/types/variants";
-import { useCreateProduct, ProductStatus } from "@/hooks/use-create-product";
-import { usePendingImages } from "@/hooks/use-pending-images";
-import { ProductCreateHeader } from "@/components/product/ProductCreateHeader";
-import { ProductBasicDetailsForm } from "@/components/product/ProductBasicDetailsForm";
+import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { v4 as uuidv4 } from "uuid";
+import { Loader2 } from "lucide-react";
+import { useDropzone } from "react-dropzone";
+import { UploadCloud } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function NewProduct() {
-  const [productName, setProductName] = useState("");
-  const [productDescription, setProductDescription] = useState("");
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("basic");
+  const [productUuid, setProductUuid] = useState("");
+  const [productSlug, setProductSlug] = useState("");
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [uploadedFileUrls, setUploadedFileUrls] = useState<string[]>([]);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  // Form state
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [productType, setProductType] = useState("");
   const [techStack, setTechStack] = useState("");
-  const [techStackPrice, setTechStackPrice] = useState("");
   const [productIncludes, setProductIncludes] = useState("");
   const [difficultyLevel, setDifficultyLevel] = useState("");
-  const [demo, setDemo] = useState("");
-  const [productStatus, setProductStatus] = useState<ProductStatus>("draft");
-  const [industries, setIndustries] = useState<string[]>([]);
-  const [useCases, setUseCases] = useState<string[]>([]);
-  const [platform, setPlatform] = useState<string[]>([]);
-  const [team, setTeam] = useState<string[]>([]);
-  const { pendingImages, addPendingImage, uploadPendingImages } = usePendingImages();
-
+  const [demoLink, setDemoLink] = useState("");
   const [variants, setVariants] = useState<Variant[]>([
     {
       id: "1",
-      name: "",
+      name: "Default Variant",
       price: 0,
       comparePrice: 0,
       highlight: false,
-      label: "Package",
       tags: [],
+      label: "Package",
+      features: [],
       createdAt: new Date().toISOString(),
-    }
+    },
   ]);
 
+  // Generate product UUID and slug on component mount
   useEffect(() => {
-    if (variants.length === 1) {
-      const updatedVariant = {
-        ...variants[0],
-        name: productName || variants[0].name,
-        price: Number(techStackPrice) || variants[0].price,
-        comparePrice: variants[0].comparePrice
-      };
+    const uuid = uuidv4();
+    setProductUuid(uuid);
+    
+    // Generate a slug from the product name
+    const generateSlug = () => {
+      if (name) {
+        const slug = name
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/(^-|-$)/g, "");
+        setProductSlug(slug);
+      }
+    };
 
-      if (JSON.stringify(updatedVariant) !== JSON.stringify(variants[0])) {
-        setVariants([updatedVariant]);
+    generateSlug();
+  }, [name]);
+
+  // Handle file uploads
+  const { getRootProps, getInputProps } = useDropzone({
+    accept: {
+      'image/*': ['.jpeg', '.jpg', '.png', '.gif'],
+    },
+    maxFiles: 5,
+    onDrop: acceptedFiles => {
+      setUploadedFiles(prev => [...prev, ...acceptedFiles]);
+    }
+  });
+
+  const handleFileUpload = async () => {
+    if (uploadedFiles.length === 0) return;
+    
+    setIsLoading(true);
+    const urls = [];
+    
+    for (let i = 0; i < uploadedFiles.length; i++) {
+      const file = uploadedFiles[i];
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${uuidv4()}.${fileExt}`;
+      const filePath = `lovable-uploads/${fileName}`;
+      
+      try {
+        const { error: uploadError, data } = await supabase.storage
+          .from('public')
+          .upload(filePath, file);
+        
+        if (uploadError) {
+          throw uploadError;
+        }
+        
+        const { data: { publicUrl } } = supabase.storage
+          .from('public')
+          .getPublicUrl(filePath);
+        
+        urls.push(publicUrl);
+        setUploadProgress(Math.round(((i + 1) / uploadedFiles.length) * 100));
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        toast({
+          title: "Upload Error",
+          description: "Failed to upload file. Please try again.",
+          variant: "destructive",
+        });
       }
     }
-  }, [productName, techStackPrice, variants]);
-
-  const { handleSave, isSaving } = useCreateProduct();
-
-  const handleStatusChange = (value: ProductStatus) => {
-    setProductStatus(value);
+    
+    setUploadedFileUrls(urls);
+    setIsLoading(false);
+    setUploadProgress(0);
+    
+    toast({
+      title: "Files Uploaded",
+      description: `Successfully uploaded ${urls.length} files.`,
+    });
   };
 
-  const handleIndustryChange = (value: string) => {
-    if (!value) return;
-    setIndustries(prev => prev.includes(value) ? prev.filter(i => i !== value) : [...prev, value]);
-  };
-
-  const handleUseCaseChange = (value: string) => {
-    if (!value) return;
-    setUseCases(prev => prev.includes(value) ? prev.filter(uc => uc !== value) : [...prev, value]);
-  };
-
-  const handlePlatformChange = (value: string) => {
-    if (!value) return;
-    setPlatform(prev => prev.includes(value) ? prev.filter(p => p !== value) : [...prev, value]);
-  };
-
-  const handleTeamChange = (value: string) => {
-    if (!value) return;
-    setTeam(prev => prev.includes(value) ? prev.filter(t => t !== value) : [...prev, value]);
-  };
-
-  const renderSelectedTags = (items: string[]) => {
-    if (items.length === 0) return null;
-
-    return (
-      <div className="flex flex-wrap gap-1.5 max-w-full">
-        {items.map((item) => (
-          <span
-            key={item}
-            className="inline-flex items-center gap-1.5 bg-secondary text-secondary-foreground px-2.5 py-0.5 rounded-md text-sm relative isolate cursor-pointer group"
-          >
-            {item}
-          </span>
-        ))}
-      </div>
-    );
-  };
-
-  const handleCreateProduct = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    
     try {
-      console.log('Starting product creation with pending images:', pendingImages.length);
-      await handleSave({
-        name: productName,
-        description: productDescription,
-        techStack,
-        techStackPrice,
-        productIncludes,
-        difficultyLevel,
-        demo,
-        status: productStatus,
-        industries,
-        useCases,
-        platform,
-        team,
-        variants,
-        pendingImages
+      // Get the current user
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast({
+          title: "Authentication Error",
+          description: "You must be logged in to create a product.",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+      
+      // Insert the product
+      const { data: productData, error: productError } = await supabase
+        .from('products')
+        .insert({
+          product_uuid: productUuid,
+          name,
+          description,
+          type: productType,
+          tech_stack: techStack,
+          product_includes: productIncludes,
+          difficulty_level: difficultyLevel,
+          demo: demoLink,
+          slug: productSlug,
+          user_uuid: session.user.id,
+          status: 'active',
+        })
+        .select();
+      
+      if (productError) {
+        throw productError;
+      }
+      
+      // Insert variants
+      for (const variant of variants) {
+        const { error: variantError } = await supabase
+          .from('variants')
+          .insert({
+            variant_uuid: uuidv4(),
+            product_uuid: productUuid,
+            name: variant.name,
+            price: variant.price,
+            compare_price: variant.comparePrice,
+            label: variant.label,
+            features: variant.features,
+            highlight: variant.highlight,
+          });
+        
+        if (variantError) {
+          throw variantError;
+        }
+      }
+      
+      // Insert product images
+      for (const url of uploadedFileUrls) {
+        const { error: imageError } = await supabase
+          .from('product_images')
+          .insert({
+            product_image_uuid: uuidv4(),
+            product_uuid: productUuid,
+            url,
+            position: uploadedFileUrls.indexOf(url),
+          });
+        
+        if (imageError) {
+          throw imageError;
+        }
+      }
+      
+      toast({
+        title: "Product Created",
+        description: "Your product has been successfully created.",
       });
+      
+      // Redirect to the product page
+      navigate(`/product/${productSlug}/${productUuid}`);
     } catch (error) {
       console.error('Error creating product:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create product. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const nextTab = () => {
+    if (activeTab === "basic") {
+      setActiveTab("variants");
+    } else if (activeTab === "variants") {
+      setActiveTab("media");
+    }
+  };
+
+  const prevTab = () => {
+    if (activeTab === "variants") {
+      setActiveTab("basic");
+    } else if (activeTab === "media") {
+      setActiveTab("variants");
     }
   };
 
   return (
     <div className="min-h-screen bg-background">
       <MainHeader />
-      <div className="mt-16">
-        <div className="w-full max-w-[1400px] mx-auto px-2 xs:px-3 sm:px-6 lg:px-8 py-3 sm:py-6">
-          <ProductCreateHeader
-            productStatus={productStatus}
-            onStatusChange={handleStatusChange}
-            onSave={handleCreateProduct}
-            isSaving={isSaving}
-            isValid={!!productName.trim()}
-          />
-
-          <div className="space-y-3 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-6">
-            <div className="lg:col-span-8">
-              <div className="space-y-3 sm:space-y-6">
-                <Card className="p-3 sm:p-6">
-                  <div className="space-y-4">
-                    <ProductBasicDetailsForm
-                      productName={productName}
-                      setProductName={setProductName}
-                      productDescription={productDescription}
-                      setProductDescription={setProductDescription}
-                      productPrice={techStackPrice}
-                      setProductPrice={setTechStackPrice}
-                      filesLink=""
-                      setFilesLink={() => { }}
-                    />
-                    <div className="pt-2">
-                      <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-lg font-medium">Variants</h2>
-                      </div>
-                      <ProductVariantsEditor
-                        variants={variants}
-                        onVariantsChange={setVariants}
+      <main className="container mx-auto px-4 py-8 pt-28">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-3xl font-bold mb-6">Create New Product</h1>
+          
+          <form onSubmit={handleSubmit}>
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+              <TabsList className="grid grid-cols-3 w-full">
+                <TabsTrigger value="basic">Basic Info</TabsTrigger>
+                <TabsTrigger value="variants">Pricing & Variants</TabsTrigger>
+                <TabsTrigger value="media">Media & Publish</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="basic" className="space-y-6">
+                <Card>
+                  <CardContent className="pt-6 space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Product Name</Label>
+                      <Input 
+                        id="name" 
+                        value={name} 
+                        onChange={(e) => setName(e.target.value)} 
+                        placeholder="Enter product name"
+                        required
                       />
                     </div>
-                  </div>
-                </Card>
-
-                <Card className="p-3 sm:p-6">
-                  <h2 className="text-lg font-medium mb-3 sm:mb-4">Media</h2>
-                  <ProductMediaUpload productUuid="" onFileSelect={addPendingImage} />
-                  {pendingImages.length > 0 && (
-                    <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                      {pendingImages.map((image, index) => (
-                        <div key={index} className="relative aspect-square rounded-lg border overflow-hidden">
-                          <img
-                            src={image.previewUrl}
-                            alt={`Preview ${index + 1}`}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                      ))}
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="description">Description</Label>
+                      <Textarea 
+                        id="description" 
+                        value={description} 
+                        onChange={(e) => setDescription(e.target.value)} 
+                        placeholder="Describe your product"
+                        rows={6}
+                        required
+                      />
                     </div>
-                  )}
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="productType">Product Type</Label>
+                      <Select value={productType} onValueChange={setProductType} required>
+                        <SelectTrigger id="productType">
+                          <SelectValue placeholder="Select product type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="template">Template</SelectItem>
+                          <SelectItem value="plugin">Plugin</SelectItem>
+                          <SelectItem value="script">Script</SelectItem>
+                          <SelectItem value="app">App</SelectItem>
+                          <SelectItem value="service">Service</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="techStack">Tech Stack</Label>
+                      <Input 
+                        id="techStack" 
+                        value={techStack} 
+                        onChange={(e) => setTechStack(e.target.value)} 
+                        placeholder="e.g. React, Node.js, MongoDB"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="productIncludes">What's Included</Label>
+                      <Textarea 
+                        id="productIncludes" 
+                        value={productIncludes} 
+                        onChange={(e) => setProductIncludes(e.target.value)} 
+                        placeholder="List what's included in your product"
+                        rows={4}
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="difficultyLevel">Difficulty Level</Label>
+                      <Select value={difficultyLevel} onValueChange={setDifficultyLevel}>
+                        <SelectTrigger id="difficultyLevel">
+                          <SelectValue placeholder="Select difficulty level" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="beginner">Beginner</SelectItem>
+                          <SelectItem value="intermediate">Intermediate</SelectItem>
+                          <SelectItem value="advanced">Advanced</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="demoLink">Demo Link</Label>
+                      <Input 
+                        id="demoLink" 
+                        value={demoLink} 
+                        onChange={(e) => setDemoLink(e.target.value)} 
+                        placeholder="URL to demo or video"
+                      />
+                    </div>
+                  </CardContent>
                 </Card>
-
-                <Card className="p-3 sm:p-6">
-                  <div className="space-y-3 sm:space-y-4">
-                    <ProductDetailsForm
-                      techStack={techStack}
-                      setTechStack={setTechStack}
-                      techStackPrice={techStackPrice}
-                      setTechStackPrice={setTechStackPrice}
-                      productIncludes={productIncludes}
-                      setProductIncludes={setProductIncludes}
-                      difficultyLevel={difficultyLevel}
-                      setDifficultyLevel={setDifficultyLevel}
-                      demo={demo}
-                      setDemo={setDemo}
+                
+                <div className="flex justify-end">
+                  <Button type="button" onClick={nextTab}>
+                    Next: Pricing & Variants
+                  </Button>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="variants" className="space-y-6">
+                <Card>
+                  <CardContent className="pt-6">
+                    <ProductVariantsEditor 
+                      variants={variants} 
+                      onVariantsChange={setVariants} 
                     />
-                  </div>
+                  </CardContent>
                 </Card>
-              </div>
-            </div>
-
-            <div className="lg:col-span-4 space-y-3 sm:space-y-6">
-              <ProductOrganization
-                industries={industries}
-                useCases={useCases}
-                platform={platform}
-                team={team}
-                onIndustryChange={handleIndustryChange}
-                onUseCaseChange={handleUseCaseChange}
-                onPlatformChange={handlePlatformChange}
-                onTeamChange={handleTeamChange}
-                renderSelectedTags={renderSelectedTags}
-              />
-            </div>
-          </div>
+                
+                <div className="flex justify-between">
+                  <Button type="button" variant="outline" onClick={prevTab}>
+                    Back
+                  </Button>
+                  <Button type="button" onClick={nextTab}>
+                    Next: Media & Publish
+                  </Button>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="media" className="space-y-6">
+                <Card>
+                  <CardContent className="pt-6 space-y-4">
+                    <div className="space-y-2">
+                      <Label>Product Images</Label>
+                      <div 
+                        {...getRootProps()} 
+                        className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:bg-gray-50 transition-colors"
+                      >
+                        <input {...getInputProps()} />
+                        <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />
+                        <p className="mt-2 text-sm text-gray-600">
+                          Drag & drop images here, or click to select files
+                        </p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          (Up to 5 images, JPEG, PNG or GIF)
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {uploadedFiles.length > 0 && (
+                      <div className="space-y-2">
+                        <Label>Selected Files</Label>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                          {uploadedFiles.map((file, index) => (
+                            <div key={index} className="relative rounded-lg overflow-hidden border">
+                              <img 
+                                src={URL.createObjectURL(file)} 
+                                alt={`Preview ${index}`}
+                                className="w-full h-32 object-cover"
+                              />
+                              <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-1 truncate">
+                                {file.name}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          onClick={handleFileUpload}
+                          disabled={isLoading || uploadedFiles.length === 0}
+                          className="mt-2"
+                        >
+                          {isLoading ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Uploading ({uploadProgress}%)
+                            </>
+                          ) : (
+                            "Upload Files"
+                          )}
+                        </Button>
+                      </div>
+                    )}
+                    
+                    {uploadedFileUrls.length > 0 && (
+                      <div className="space-y-2">
+                        <Label>Uploaded Images</Label>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                          {uploadedFileUrls.map((url, index) => (
+                            <div key={index} className="relative rounded-lg overflow-hidden border">
+                              <img 
+                                src={url} 
+                                alt={`Uploaded ${index}`}
+                                className="w-full h-32 object-cover"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+                
+                <div className="flex justify-between">
+                  <Button type="button" variant="outline" onClick={prevTab}>
+                    Back
+                  </Button>
+                  <Button type="submit" disabled={isLoading}>
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Creating Product...
+                      </>
+                    ) : (
+                      "Create Product"
+                    )}
+                  </Button>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </form>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
