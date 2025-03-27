@@ -154,6 +154,7 @@ export async function addItemToCart(
     let transactionId = cart?.transaction_uuid;
 
     if (!transactionId) {
+      console.log('Creating NEW transaction for variant: ', selectedVariant)
       // Create a new transaction
       const newTransaction = {
         user_uuid: userId,

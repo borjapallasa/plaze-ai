@@ -16,10 +16,10 @@ export function useCart() {
   useEffect(() => {
     const initializeCart = async () => {
       setIsLoading(true);
-      
+
       // Check for user session
       const { data: { session } } = await supabase.auth.getSession();
-      
+
       // Check for existing guest session in localStorage if not logged in
       if (!session) {
         let sessionId = localStorage.getItem('guest_session_id');
@@ -29,13 +29,13 @@ export function useCart() {
         }
         setGuestSessionId(sessionId);
       }
-      
+
       // Try to fetch existing cart
       await fetchCart(session?.user?.id, !session ? guestSessionId : undefined);
-      
+
       setIsLoading(false);
     };
-    
+
     initializeCart();
   }, [guestSessionId]);
 
@@ -63,15 +63,15 @@ export function useCart() {
       // Get the user's session
       const { data: { session } } = await supabase.auth.getSession();
       const userId = session?.user?.id;
-      
+
       const result = await addItemToCart(
-        cart, 
-        product, 
-        selectedVariant, 
-        userId, 
+        cart,
+        product,
+        selectedVariant,
+        userId,
         !userId ? guestSessionId : undefined
       );
-      
+
       if (result.success) {
         if (result.updatedCart) {
           setCart(result.updatedCart);
@@ -82,19 +82,19 @@ export function useCart() {
             // Set specific cart item that was just added
             return {
               ...result,
-              cartItem: result.cartItem || updatedCart.items.find(item => 
-                item.product_uuid === product.product_uuid && 
+              cartItem: result.cartItem || updatedCart.items.find(item =>
+                item.product_uuid === product.product_uuid &&
                 item.variant_uuid === selectedVariant
               )
             };
           }
         }
-        
+
         toast({
           title: "Added to cart",
           description: `${product.name} has been added to your cart.`
         });
-        
+
         return result;
       } else {
         toast({

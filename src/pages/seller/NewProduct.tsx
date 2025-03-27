@@ -36,6 +36,7 @@ export default function NewProduct() {
       label: "Package",
       tags: [],
       createdAt: new Date().toISOString(),
+      features: []
     }
   ]);
 
