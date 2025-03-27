@@ -144,7 +144,14 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
         
         <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
           {displayItems.map((item) => (
-            <div key={item.variant_uuid} className={`flex items-start gap-3 pb-3 border-b ${!item.product_uuid ? 'border-red-200 bg-red-50/30 rounded p-2' : ''}`}>
+            <div 
+              key={item.variant_uuid} 
+              className={`flex items-start gap-3 pb-3 border-b ${
+                !item.product_uuid && !item.is_classroom_product ? 'border-red-200 bg-red-50/30 rounded p-2' : ''
+              } ${
+                item.is_classroom_product ? 'border-purple-200 bg-purple-50/30 rounded p-2' : ''
+              }`}
+            >
               <div className="w-16 h-16 rounded-lg overflow-hidden bg-accent flex-shrink-0">
                 <img
                   src="/lovable-uploads/3cfa57c2-16ef-4ec7-baa5-0f454c33a1b6.png"
@@ -156,9 +163,14 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
               <div className="flex-1 min-w-0">
                 <h3 className="font-medium text-sm line-clamp-2">
                   {item.product_name || "Product"}
-                  {!item.product_uuid && (
+                  {!item.product_uuid && !item.is_classroom_product && (
                     <span className="ml-1 text-xs text-red-500 font-normal">
                       (unavailable)
+                    </span>
+                  )}
+                  {item.is_classroom_product && (
+                    <span className="ml-1 text-xs text-purple-600 font-normal">
+                      (Classroom)
                     </span>
                   )}
                 </h3>

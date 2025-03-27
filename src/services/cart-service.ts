@@ -32,7 +32,7 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
       // Get the items for this transaction
       const { data: itemsData, error: itemsError } = await supabase
         .from('products_transaction_items')
-        .select('product_transaction_item_uuid, product_uuid, variant_uuid, price, quantity, total_price')
+        .select('product_transaction_item_uuid, product_uuid, variant_uuid, price, quantity, total_price, is_classroom_product')
         .eq('product_transaction_uuid', transactionData[0].product_transaction_uuid);
 
       if (itemsError) {
@@ -47,16 +47,22 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
 
       // Extract product UUIDs and variant UUIDs
       const productUuids = itemsData
-        .filter(item => item.product_uuid)
+        .filter(item => item.product_uuid && !item.is_classroom_product)
         .map(item => item.product_uuid);
 
       const variantUuids = itemsData
         .filter(item => item.variant_uuid)
         .map(item => item.variant_uuid);
 
+      // Get classroom product variant UUIDs
+      const classroomVariantUuids = itemsData
+        .filter(item => item.is_classroom_product)
+        .map(item => item.variant_uuid);
+
       // Prepare result maps
       let productNames: Record<string, string> = {};
       let variantNames: Record<string, string> = {};
+      let classroomProductData: Record<string, any> = {};
 
       // Only fetch product names if we have product UUIDs
       if (productUuids.length > 0) {
@@ -86,15 +92,48 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
         }
       }
 
+      // Fetch classroom product data if we have classroom product UUIDs
+      if (classroomVariantUuids.length > 0) {
+        const { data: classroomData } = await supabase
+          .from('community_products')
+          .select('community_product_uuid, name')
+          .in('community_product_uuid', classroomVariantUuids);
+
+        if (classroomData) {
+          classroomData.forEach((product: any) => {
+            classroomProductData[product.community_product_uuid] = {
+              name: product.name,
+              product_uuid: product.community_product_uuid
+            };
+          });
+        }
+      }
+
       // Map the items with their names
-      const items: CartItem[] = itemsData.map((item: any) => ({
-        product_uuid: item.product_uuid,
-        variant_uuid: item.variant_uuid,
-        price: item.price,
-        quantity: item.quantity,
-        product_name: productNames[item.product_uuid] || 'Unknown Product',
-        variant_name: variantNames[item.variant_uuid] || 'Unknown Variant'
-      }));
+      const items: CartItem[] = itemsData.map((item: any) => {
+        if (item.is_classroom_product) {
+          const classroomProduct = classroomProductData[item.variant_uuid] || {};
+          return {
+            product_uuid: classroomProduct.product_uuid || item.variant_uuid,
+            variant_uuid: item.variant_uuid,
+            price: item.price,
+            quantity: item.quantity,
+            product_name: classroomProduct.name || 'Classroom Product',
+            variant_name: classroomProduct.name || 'Classroom',
+            is_classroom_product: true
+          };
+        } else {
+          return {
+            product_uuid: item.product_uuid,
+            variant_uuid: item.variant_uuid,
+            price: item.price,
+            quantity: item.quantity,
+            product_name: productNames[item.product_uuid] || 'Unknown Product',
+            variant_name: variantNames[item.variant_uuid] || 'Unknown Variant',
+            is_classroom_product: false
+          };
+        }
+      });
 
       return {
         transaction_uuid: transactionData[0].product_transaction_uuid,
@@ -140,6 +179,7 @@ export async function addItemToCart(
     
     let variantData;
     let productUuid;
+    let referenceProductUuid; // This will be the UUID from the products table to satisfy the foreign key
     
     if (isClassroomProduct) {
       // For classroom products, we need to fetch from community_products
@@ -159,11 +199,15 @@ export async function addItemToCart(
       
       variantData = data;
       productUuid = data.community_product_uuid; // Use the community product UUID as the product UUID
+
+      // For classroom products, we'll use a placeholder product or null
+      // We'll retrieve this properly when displaying in the cart
+      referenceProductUuid = null;
     } else {
       // Regular product variants
       const variantResponse = await supabase
         .from('variants')
-        .select('*')
+        .select('*, products(product_uuid)')
         .eq('variant_uuid', selectedVariant)
         .single();
 
@@ -176,6 +220,7 @@ export async function addItemToCart(
       
       variantData = variantResponse.data;
       productUuid = product.product_uuid;
+      referenceProductUuid = productUuid; // For regular products, we use the actual product UUID
     }
 
     // Check for existing transaction
@@ -188,7 +233,7 @@ export async function addItemToCart(
         user_uuid: userId,
         item_count: 0,
         total_amount: variantData.price,
-        type: userId ? 'user' as const : 'guest' as const, // Ensure it's one of the allowed values
+        type: userId ? 'user' as const : 'guest' as const,
         status: 'pending' as const
       };
 
@@ -246,19 +291,21 @@ export async function addItemToCart(
       };
 
     } else {
-      // Add new item to cart
+      // Add new item to cart - for classroom products, we set product_uuid to null to avoid foreign key constraint
       const itemResponse = await supabase
         .from('products_transaction_items')
         .insert({
           product_transaction_uuid: transactionId,
-          product_uuid: productUuid,
+          product_uuid: referenceProductUuid, // This will be null for classroom products, actual product_uuid for regular products
           variant_uuid: selectedVariant,
           price: variantData.price,
           quantity: 1,
-          total_price: variantData.price
+          total_price: variantData.price,
+          is_classroom_product: isClassroomProduct // Store flag to identify classroom products
         });
 
       if (itemResponse.error) {
+        console.error('Error adding item to cart:', itemResponse.error);
         return {
           success: false,
           message: "Could not add item to cart"
@@ -266,12 +313,13 @@ export async function addItemToCart(
       }
 
       cartItem = {
-        product_uuid: productUuid,
+        product_uuid: productUuid, // Store the original product UUID for reference
         variant_uuid: selectedVariant,
         price: variantData.price,
         quantity: 1,
         product_name: isClassroomProduct ? variantData.name : (product.name || 'Unknown Product'),
-        variant_name: variantData.name || 'Unknown Variant'
+        variant_name: variantData.name || 'Unknown Variant',
+        is_classroom_product: isClassroomProduct
       };
     }
 
@@ -313,7 +361,7 @@ export async function addItemToCart(
     // Fetch the updated cart items
     const { data: updatedItems, error: itemsError } = await supabase
       .from('products_transaction_items')
-      .select('product_uuid, variant_uuid, price, quantity')
+      .select('product_uuid, variant_uuid, price, quantity, is_classroom_product')
       .eq('product_transaction_uuid', transactionId);
 
     if (itemsError || !updatedItems) {
