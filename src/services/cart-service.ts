@@ -158,7 +158,7 @@ export async function addItemToCart(
       // Create a new transaction
       const newTransaction = {
         user_uuid: userId,
-        item_count: 1,
+        item_count: 0,
         total_amount: variantData.price,
         type: userId ? 'user' as const : 'guest' as const, // Ensure it's one of the allowed values
         status: 'pending' as const
