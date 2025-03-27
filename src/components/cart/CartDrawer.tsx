@@ -1,7 +1,7 @@
 
 import { SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, X, ArrowRight, Loader2, Trash2 } from "lucide-react";
+import { ShoppingCart, X, ArrowRight, Loader2, Trash2, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { CartItem } from "@/types/cart";
 import { useCart } from "@/hooks/use-cart";
@@ -40,7 +40,7 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
   }, []);  // Empty dependency array means this runs once on mount
 
   const handleViewCart = () => {
-    alert('Redirect to stripe integration flow based on the cart UUID -> payment link')
+    navigate('/cart');
     onClose();
   };
 
@@ -60,6 +60,9 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
   } : null);
   
   const isCartEmpty = !effectiveCart || effectiveCart.items.length === 0;
+
+  // Check if there are unavailable products
+  const hasUnavailableProducts = effectiveCart?.items.some(item => !item.product_uuid);
 
   if (isLoading || isRefreshing) {
     return (
@@ -153,20 +156,43 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
           </div>
         )}
         
+        {hasUnavailableProducts && (
+          <div className="p-3 rounded-lg mb-4 bg-yellow-50 border border-yellow-200">
+            <p className="text-sm font-medium text-yellow-800 flex items-center">
+              <AlertCircle className="h-4 w-4 mr-2" />
+              Some products are no longer available
+            </p>
+          </div>
+        )}
+        
         <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
           {displayItems.map((item) => (
-            <div key={item.variant_uuid} className="flex items-start gap-3 pb-3 border-b">
+            <div 
+              key={item.variant_uuid} 
+              className={`flex items-start gap-3 pb-3 border-b ${!item.product_uuid ? 'border-yellow-200' : ''}`}
+            >
               <div className="w-16 h-16 rounded-lg overflow-hidden bg-accent flex-shrink-0">
-                <img
-                  src="/lovable-uploads/3cfa57c2-16ef-4ec7-baa5-0f454c33a1b6.png"
-                  alt={item.product_name || "Product"}
-                  className="w-full h-full object-cover"
-                />
+                {item.product_uuid ? (
+                  <img
+                    src="/lovable-uploads/3cfa57c2-16ef-4ec7-baa5-0f454c33a1b6.png"
+                    alt={item.product_name || "Product"}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-yellow-100">
+                    <AlertCircle className="h-6 w-6 text-yellow-500" />
+                  </div>
+                )}
               </div>
               
               <div className="flex-1 min-w-0">
-                <h3 className="font-medium text-sm line-clamp-2">{item.product_name || "Product"}</h3>
+                <h3 className={`font-medium text-sm line-clamp-2 ${!item.product_uuid ? 'text-yellow-800' : ''}`}>
+                  {item.product_uuid ? (item.product_name || "Product") : "Product unavailable"}
+                </h3>
                 <p className="text-xs text-muted-foreground mt-1">{item.variant_name || "Variant"}</p>
+                {!item.product_uuid && (
+                  <p className="text-xs text-yellow-700 mt-1">This product has been removed</p>
+                )}
                 <div className="flex items-center justify-between mt-2">
                   <p className="text-xs">Qty: {item.quantity}</p>
                   <p className="font-medium text-sm">${(item.price * item.quantity).toFixed(2)}</p>
@@ -205,7 +231,7 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
             onClick={handleViewCart} 
             className="w-full"
           >
-            Checkout
+            View Cart
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
           <Button 
