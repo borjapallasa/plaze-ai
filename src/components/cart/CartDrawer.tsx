@@ -1,12 +1,14 @@
+
 import { SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, X, ArrowRight, Loader2, Trash2 } from "lucide-react";
+import { ShoppingCart, X, ArrowRight, Loader2, Trash2, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { CartItem } from "@/types/cart";
 import { useCart } from "@/hooks/use-cart";
 import { Separator } from "@/components/ui/separator";
 import { useEffect, useState } from "react";
 import { supabase } from '@/integrations/supabase/client';
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface CartDrawerProps {
   cartItem: CartItem | null;
@@ -16,7 +18,7 @@ interface CartDrawerProps {
 
 export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDrawerProps) {
   const navigate = useNavigate();
-  const { cart, isLoading, removeFromCart, fetchCart } = useCart();
+  const { cart, isLoading, removeFromCart, fetchCart, cleanupCart } = useCart();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
@@ -28,6 +30,8 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
         const guestId = !userId ? localStorage.getItem('guest_session_id') : undefined;
         
         await fetchCart(userId, !userId ? guestId || undefined : undefined);
+        // Clean up any unavailable items
+        await cleanupCart();
         setIsRefreshing(false);
       }
     };
@@ -36,8 +40,8 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
   }, []);
 
   const handleViewCart = () => {
-    alert('Redirect to stripe integration flow based on the cart UUID -> payment link')
     onClose();
+    navigate('/cart');
   };
 
   const handleRemoveItem = async (variantId: string) => {
@@ -54,6 +58,9 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
   } : null);
   
   const isCartEmpty = !effectiveCart || effectiveCart.items.length === 0;
+  
+  // Check if we have any unavailable items
+  const hasUnavailableItems = effectiveCart?.items.some(item => item.is_available === false);
 
   if (isLoading || isRefreshing) {
     return (
@@ -142,9 +149,21 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
           </div>
         )}
         
+        {hasUnavailableItems && (
+          <Alert variant="destructive">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription className="text-xs">
+              Some items in your cart are no longer available.
+            </AlertDescription>
+          </Alert>
+        )}
+        
         <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
           {displayItems.map((item) => (
-            <div key={item.variant_uuid} className={`flex items-start gap-3 pb-3 border-b ${!item.product_uuid ? 'border-red-200 bg-red-50/30 rounded p-2' : ''}`}>
+            <div 
+              key={item.variant_uuid} 
+              className={`flex items-start gap-3 pb-3 border-b ${!item.is_available ? 'border-red-200 bg-red-50/30 rounded p-2' : ''}`}
+            >
               <div className="w-16 h-16 rounded-lg overflow-hidden bg-accent flex-shrink-0">
                 <img
                   src="/lovable-uploads/3cfa57c2-16ef-4ec7-baa5-0f454c33a1b6.png"
@@ -156,7 +175,7 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
               <div className="flex-1 min-w-0">
                 <h3 className="font-medium text-sm line-clamp-2">
                   {item.product_name || "Product"}
-                  {!item.product_uuid && (
+                  {!item.is_available && (
                     <span className="ml-1 text-xs text-red-500 font-normal">
                       (unavailable)
                     </span>
@@ -201,7 +220,7 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
             onClick={handleViewCart} 
             className="w-full"
           >
-            Checkout
+            View Cart
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
           <Button 

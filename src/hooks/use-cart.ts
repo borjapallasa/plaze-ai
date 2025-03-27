@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from '@/components/ui/use-toast';
 import { CartTransaction } from '@/types/cart';
-import { fetchCartData, addItemToCart, removeItemFromCart } from '@/services/cart-service';
+import { fetchCartData, addItemToCart, removeItemFromCart, cleanupUnavailableCartItems } from '@/services/cart-service';
 
 export function useCart() {
   const [cart, setCart] = useState<CartTransaction | null>(null);
@@ -43,6 +43,17 @@ export function useCart() {
   const fetchCart = async (userId?: string, sessionId?: string) => {
     try {
       const cartData = await fetchCartData(userId, sessionId);
+      
+      // If we have a cart, clean up any unavailable items
+      if (cartData && cartData.transaction_uuid) {
+        await cleanupUnavailableCartItems(cartData.transaction_uuid);
+        
+        // Re-fetch the cart to get updated data after cleanup
+        const updatedCartData = await fetchCartData(userId, sessionId);
+        setCart(updatedCartData);
+        return updatedCartData;
+      }
+      
       setCart(cartData);
       return cartData;
     } catch (error) {
@@ -207,11 +218,40 @@ export function useCart() {
     }
   };
 
+  // New function to clean up unavailable items from the cart
+  const cleanupCart = async () => {
+    if (!cart || !cart.transaction_uuid) {
+      return false;
+    }
+    
+    setIsLoading(true);
+    try {
+      const success = await cleanupUnavailableCartItems(cart.transaction_uuid);
+      
+      if (success) {
+        // Refetch the cart to get the latest data
+        const { data: { session } } = await supabase.auth.getSession();
+        const userId = session?.user?.id;
+        const guestId = !userId ? localStorage.getItem('guest_session_id') : undefined;
+        
+        await fetchCart(userId, !userId ? guestId || undefined : undefined);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Failed to clean up cart:', error);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     cart,
     isLoading,
     addToCart,
     fetchCart,
-    removeFromCart
+    removeFromCart,
+    cleanupCart
   };
 }

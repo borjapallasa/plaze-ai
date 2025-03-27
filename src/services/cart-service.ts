@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { CartItem, CartTransaction } from '@/types/cart';
 
@@ -57,6 +58,8 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
       // Prepare result maps
       let productNames: Record<string, string> = {};
       let variantNames: Record<string, string> = {};
+      let availableProducts = new Set<string>();
+      let availableVariants = new Set<string>();
 
       // Only fetch product names if we have product UUIDs
       if (productUuids.length > 0) {
@@ -68,11 +71,12 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
         if (productsData) {
           productsData.forEach((product: any) => {
             productNames[product.product_uuid] = product.name;
+            availableProducts.add(product.product_uuid);
           });
         }
       }
 
-      // Only fetch variant names if we have variant UUIDs
+      // Check if variants exist in standard variants table
       if (variantUuids.length > 0) {
         const { data: variantsData } = await supabase
           .from('variants')
@@ -82,19 +86,41 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
         if (variantsData) {
           variantsData.forEach((variant: any) => {
             variantNames[variant.variant_uuid] = variant.name;
+            availableVariants.add(variant.variant_uuid);
           });
         }
       }
 
-      // Map the items with their names
-      const items: CartItem[] = itemsData.map((item: any) => ({
-        product_uuid: item.product_uuid,
-        variant_uuid: item.variant_uuid,
-        price: item.price,
-        quantity: item.quantity,
-        product_name: productNames[item.product_uuid] || 'Unknown Product',
-        variant_name: variantNames[item.variant_uuid] || 'Unknown Variant'
-      }));
+      // Check if any variants are community products
+      if (variantUuids.length > 0) {
+        const { data: communityProductsData } = await supabase
+          .from('community_products')
+          .select('community_product_uuid, name')
+          .in('community_product_uuid', variantUuids);
+
+        if (communityProductsData) {
+          communityProductsData.forEach((product: any) => {
+            variantNames[product.community_product_uuid] = product.name;
+            availableVariants.add(product.community_product_uuid);
+          });
+        }
+      }
+
+      // Map the items with their names and availability status
+      const items: CartItem[] = itemsData.map((item: any) => {
+        const isProductAvailable = item.product_uuid ? availableProducts.has(item.product_uuid) : true;
+        const isVariantAvailable = availableVariants.has(item.variant_uuid);
+        
+        return {
+          product_uuid: item.product_uuid,
+          variant_uuid: item.variant_uuid,
+          price: item.price,
+          quantity: item.quantity,
+          product_name: item.product_uuid ? (productNames[item.product_uuid] || 'Unknown Product') : 'Classroom Product',
+          variant_name: variantNames[item.variant_uuid] || 'Unknown Variant',
+          is_available: isProductAvailable && isVariantAvailable
+        };
+      });
 
       return {
         transaction_uuid: transactionData[0].product_transaction_uuid,
@@ -442,5 +468,75 @@ export async function removeItemFromCart(
       success: false,
       message: "Failed to remove item from cart. Please try again."
     };
+  }
+}
+
+// New function to clean up unavailable items from cart
+export async function cleanupUnavailableCartItems(transactionId: string): Promise<boolean> {
+  try {
+    // Get all cart items that have either null product_uuid or variant_uuid
+    const { data: unavailableItems, error: queryError } = await supabase
+      .from('products_transaction_items')
+      .select('product_transaction_item_uuid, variant_uuid, quantity, total_price')
+      .eq('product_transaction_uuid', transactionId)
+      .or('product_uuid.is.null,variant_uuid.is.null');
+    
+    if (queryError) {
+      console.error('Error finding unavailable items:', queryError);
+      return false;
+    }
+    
+    if (!unavailableItems || unavailableItems.length === 0) {
+      // No unavailable items to clean up
+      return true;
+    }
+    
+    // Calculate totals to adjust
+    const itemCount = unavailableItems.reduce((sum, item) => sum + item.quantity, 0);
+    const totalPrice = unavailableItems.reduce((sum, item) => sum + item.total_price, 0);
+    
+    // Delete unavailable items
+    const { error: deleteError } = await supabase
+      .from('products_transaction_items')
+      .delete()
+      .in('product_transaction_item_uuid', unavailableItems.map(item => item.product_transaction_item_uuid));
+      
+    if (deleteError) {
+      console.error('Error deleting unavailable items:', deleteError);
+      return false;
+    }
+    
+    // Update transaction totals
+    const { data: transaction, error: transactionError } = await supabase
+      .from('products_transactions')
+      .select('item_count, total_amount')
+      .eq('product_transaction_uuid', transactionId)
+      .single();
+      
+    if (transactionError) {
+      console.error('Error fetching transaction:', transactionError);
+      return false;
+    }
+    
+    const newItemCount = Math.max(0, (transaction.item_count || 0) - itemCount);
+    const newTotalAmount = Math.max(0, (transaction.total_amount || 0) - totalPrice);
+    
+    const { error: updateError } = await supabase
+      .from('products_transactions')
+      .update({
+        item_count: newItemCount,
+        total_amount: newTotalAmount
+      })
+      .eq('product_transaction_uuid', transactionId);
+      
+    if (updateError) {
+      console.error('Error updating transaction totals:', updateError);
+      return false;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Failed to clean up unavailable items:', error);
+    return false;
   }
 }
