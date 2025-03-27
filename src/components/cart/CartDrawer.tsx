@@ -1,5 +1,4 @@
 
-import React from "react";
 import { SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, X, ArrowRight, Loader2, Trash2 } from "lucide-react";
@@ -18,7 +17,7 @@ export function CartDrawer({ cartItem, onClose }: CartDrawerProps) {
   const { cart, isLoading } = useCart();
 
   const handleViewCart = () => {
-    navigate("/cart");
+    alert('Redirect to stripe integration flow based on the cart UUID -> payment link')
     onClose();
   };
 
@@ -38,10 +37,10 @@ export function CartDrawer({ cartItem, onClose }: CartDrawerProps) {
       <SheetContent className="w-full sm:max-w-md overflow-y-auto">
         <SheetHeader className="space-y-3 pr-6">
           <SheetTitle className="text-xl">Shopping Cart</SheetTitle>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="absolute right-4 top-4" 
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute right-4 top-4"
             onClick={onClose}
           >
             <X className="h-4 w-4" />
@@ -53,9 +52,9 @@ export function CartDrawer({ cartItem, onClose }: CartDrawerProps) {
           <ShoppingCart className="h-12 w-12 text-muted-foreground mb-4" />
           <p className="font-medium mb-2">Your cart is empty</p>
           <p className="text-sm text-muted-foreground mb-6">Looks like you haven't added anything to your cart yet.</p>
-          <Button 
-            variant="outline" 
-            className="w-full max-w-xs" 
+          <Button
+            variant="outline"
+            className="w-full max-w-xs"
             onClick={onClose}
           >
             Continue Shopping
@@ -66,7 +65,7 @@ export function CartDrawer({ cartItem, onClose }: CartDrawerProps) {
   }
 
   // Display the newly added item at the top if provided
-  const displayItems = cartItem 
+  const displayItems = cartItem
     ? [cartItem, ...cart.items.filter(item => item.variant_uuid !== cartItem.variant_uuid)]
     : cart.items;
 
@@ -77,10 +76,10 @@ export function CartDrawer({ cartItem, onClose }: CartDrawerProps) {
     <SheetContent className="w-full sm:max-w-md overflow-y-auto">
       <SheetHeader className="space-y-3 pr-6">
         <SheetTitle className="text-xl">Shopping Cart</SheetTitle>
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="absolute right-4 top-4" 
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute right-4 top-4"
           onClick={onClose}
         >
           <X className="h-4 w-4" />

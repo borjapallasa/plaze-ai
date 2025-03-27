@@ -1,6 +1,5 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { v4 as uuidv4 } from 'uuid';
 import { CartItem, CartTransaction } from '@/types/cart';
 
 // Fetch cart data by user or guest session ID
@@ -160,7 +159,7 @@ export async function addItemToCart(
         user_uuid: userId,
         item_count: 1,
         total_amount: variantData.price,
-        type: userId ? 'user' : 'guest', // Ensure it's one of the allowed values
+        type: userId ? 'user' as const : 'guest' as const, // Ensure it's one of the allowed values
         status: 'pending' as const
       };
 
@@ -199,19 +198,19 @@ export async function addItemToCart(
         .eq('product_uuid', product.product_uuid)
         .eq('variant_uuid', selectedVariant)
         .eq('product_transaction_uuid', transactionId);
-      
+
       if (updateResponse.error) {
         return {
           success: false,
           message: "Could not update item quantity"
         };
       }
-      
+
       cartItem = {
         ...existingItem,
         quantity: existingItem.quantity + 1
       };
-      
+
     } else {
       // Add new item to cart
       const itemResponse = await supabase
@@ -224,14 +223,14 @@ export async function addItemToCart(
           quantity: 1,
           total_price: variantData.price
         });
-      
+
       if (itemResponse.error) {
         return {
           success: false,
           message: "Could not add item to cart"
         };
       }
-      
+
       cartItem = {
         product_uuid: product.product_uuid,
         variant_uuid: selectedVariant,
@@ -241,11 +240,11 @@ export async function addItemToCart(
         variant_name: variantData.name || 'Unknown Variant'
       };
     }
-    
+
     // Update the transaction totals
     const newTotalAmount = (cart?.total_amount || 0) + variantData.price;
     const newItemCount = (cart?.item_count || 0) + 1;
-    
+
     const updateTransactionResponse = await supabase
       .from('products_transactions')
       .update({
@@ -253,14 +252,14 @@ export async function addItemToCart(
         total_amount: newTotalAmount
       })
       .eq('product_transaction_uuid', transactionId);
-    
+
     if (updateTransactionResponse.error) {
       return {
         success: false,
         message: "Could not update cart totals"
       };
     }
-    
+
     // Construct updated cart object instead of refetching
     const updatedCart: CartTransaction = {
       transaction_uuid: transactionId,
@@ -268,10 +267,12 @@ export async function addItemToCart(
       total_amount: newTotalAmount,
       items: cart ? [...cart.items] : []
     };
-    
+
+    console.log('UPDATED CART:', updatedCart)
+
     // Update or add item in the items array
     if (existingItem) {
-      const itemIndex = updatedCart.items.findIndex(item => 
+      const itemIndex = updatedCart.items.findIndex(item =>
         item.product_uuid === product.product_uuid && item.variant_uuid === selectedVariant
       );
       if (itemIndex !== -1) {
@@ -280,7 +281,7 @@ export async function addItemToCart(
     } else {
       updatedCart.items.push(cartItem);
     }
-    
+
     return {
       success: true,
       message: "Item added to cart successfully",

@@ -12,7 +12,7 @@ export function useProductState(variants: any[]) {
   const [lastAddedItem, setLastAddedItem] = useState<CartItem | null>(null);
   const variantsRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  const { addToCart, isLoading } = useCart();
+  const { addToCart, isLoading, fetchCart } = useCart();
 
   useEffect(() => {
     if (variants.length > 0 && !selectedVariant) {
