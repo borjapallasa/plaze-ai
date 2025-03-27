@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from '@/components/ui/use-toast';
 import { CartTransaction } from '@/types/cart';
-import { fetchCartData, addItemToCart } from '@/services/cart-service';
+import { fetchCartData, addItemToCart } from '@/services/cart';
 
 export function useCart() {
   const [cart, setCart] = useState<CartTransaction | null>(null);

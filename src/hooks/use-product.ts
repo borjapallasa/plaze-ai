@@ -19,9 +19,9 @@ const mapProductData = (data: any): ProductData => {
     status: data.status || '',
     type: data.type || '',
     free_or_paid: data.free_or_paid || '',
-    accept_terms: data.accept_terms === null ? null : Boolean(data.accept_terms),
-    affiliate_information: data.affiliate_information || null,
-    affiliate_program: data.affiliate_program === null ? null : Boolean(data.affiliate_program),
+    accept_terms: data.accept_terms === null ? false : Boolean(data.accept_terms),
+    affiliate_information: data.affiliate_information || '',
+    affiliate_program: data.affiliate_program === null ? false : Boolean(data.affiliate_program),
     affiliation_amount: data.affiliation_amount || null,
     change_reasons: data.change_reasons || null,
     changes_neeeded: data.changes_neeeded || null,
@@ -105,7 +105,7 @@ export function useProductData({ productId, productSlug }: UseProductDataProps =
           .from('variants')
           .select('*')
           .eq('product_uuid', mappedProduct.product_uuid)
-          .order('highlight', { ascending: false });
+          .order('highlighted', { ascending: false });
 
         if (variantsError) {
           setError(variantsError);
@@ -140,30 +140,31 @@ export function useProductData({ productId, productSlug }: UseProductDataProps =
           setRelatedProductsWithVariants(relatedProductsData || []);
         }
 
-        // Fetch reviews and calculate average rating
-        const { data: reviewsData, error: reviewsError } = await supabase
-          .from('product_reviews')
-          .select('*')
-          .eq('product_uuid', mappedProduct.product_uuid);
+        // Use custom query for reviews since product_reviews might not be a direct table
+        try {
+          const { data: reviewsData, error: reviewsError } = await supabase
+            .from('reviews')
+            .select('*')
+            .eq('product_uuid', mappedProduct.product_uuid);
 
-        if (reviewsError) {
-          setError(reviewsError);
-          toast({
-            title: "Error",
-            description: "Failed to load product reviews.",
-            variant: "destructive"
-          });
-          return;
-        }
+          if (reviewsError) {
+            console.error("Error fetching reviews:", reviewsError);
+          } else {
+            setReviews(reviewsData || []);
 
-        setReviews(reviewsData || []);
-
-        if (reviewsData && reviewsData.length > 0) {
-          const totalRating = reviewsData.reduce((sum, review) => sum + review.rating, 0);
-          const avgRating = totalRating / reviewsData.length;
-          setAverageRating(avgRating);
-        } else {
-          setAverageRating(0);
+            if (reviewsData && reviewsData.length > 0) {
+              // Calculate average based on the actual field from the reviews table
+              const totalRating = reviewsData.reduce((sum, review) => {
+                return sum + (review.rating || 0);
+              }, 0);
+              const avgRating = totalRating / reviewsData.length;
+              setAverageRating(avgRating);
+            } else {
+              setAverageRating(0);
+            }
+          }
+        } catch (reviewErr) {
+          console.error("Error in reviews processing:", reviewErr);
         }
 
       } catch (err: any) {
