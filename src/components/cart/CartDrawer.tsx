@@ -1,3 +1,4 @@
+
 import { SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, X, ArrowRight, Loader2, Trash2 } from "lucide-react";
@@ -18,19 +19,24 @@ export function CartDrawer({ cartItem, onClose }: CartDrawerProps) {
   const { cart, isLoading, removeFromCart, fetchCart } = useCart();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
+  // Only run once when the drawer is opened, not on every re-render
   useEffect(() => {
     const refreshCartData = async () => {
-      setIsRefreshing(true);
-      const { data: { session } } = await supabase.auth.getSession();
-      const userId = session?.user?.id;
-      const guestId = !userId ? localStorage.getItem('guest_session_id') : undefined;
-      
-      await fetchCart(userId, !userId ? guestId || undefined : undefined);
-      setIsRefreshing(false);
+      // Only refresh if we're not already refreshing and don't have a specific cart item
+      // (if we have a specific cartItem, we're opening the drawer for that specific item)
+      if (!isRefreshing && !cartItem) {
+        setIsRefreshing(true);
+        const { data: { session } } = await supabase.auth.getSession();
+        const userId = session?.user?.id;
+        const guestId = !userId ? localStorage.getItem('guest_session_id') : undefined;
+        
+        await fetchCart(userId, !userId ? guestId || undefined : undefined);
+        setIsRefreshing(false);
+      }
     };
 
     refreshCartData();
-  }, [fetchCart]);
+  }, []);  // Empty dependency array means this runs once on mount
 
   const handleViewCart = () => {
     alert('Redirect to stripe integration flow based on the cart UUID -> payment link')
