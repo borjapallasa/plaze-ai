@@ -10,13 +10,12 @@ export interface RelatedProductsListProps {
 }
 
 export interface Product {
-  accept_terms: null;
+  accept_terms: null | boolean;
   affiliate_information: null;
-  affiliate_program: null;
+  affiliate_program: null | boolean;
   affiliation_amount: null;
   change_reasons: null;
   changes_neeeded: null; // Keep the misspelled field as it is in the database
-  changes_needed: null; // Add this for code compatibility
   created_at: string;
   demo: string;
   description: string;
@@ -56,7 +55,7 @@ export interface Product {
 }
 
 // Type for the product data from the API
-export interface ProductData extends Product {}
+export interface ProductData extends Product { }
 
 // Type for the product variant
 export interface ProductVariant {

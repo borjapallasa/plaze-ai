@@ -6,8 +6,9 @@ import { useToast } from '@/components/ui/use-toast';
 // Maps the raw data from Supabase to our ProductData type
 const mapProductData = (data: any): ProductData => {
   if (!data) return null;
-  
+
   return {
+    id: data.id,
     product_uuid: data.product_uuid,
     name: data.name || '',
     description: data.description || '',
@@ -31,6 +32,7 @@ const mapProductData = (data: any): ProductData => {
     public_link: data.public_link || null,
     related_products: data.related_products || [],
     reviewed_by: data.reviewed_by || null,
+    review_count: data.review_count || null,
     sales_amount: data.sales_amount || null,
     sales_count: data.sales_count || null,
     tech_stack: data.tech_stack || null,
@@ -56,7 +58,7 @@ interface UseProductDataProps {
   productSlug?: string;
 }
 
-export function useProductData({ productId, productSlug }: UseProductDataProps = {}) {
+export function useProduct({ productId, productSlug }: UseProductDataProps = {}) {
   const [product, setProduct] = useState<ProductData | null>(null);
   const [variants, setVariants] = useState<any[]>([]);
   const [relatedProductsWithVariants, setRelatedProductsWithVariants] = useState<any[]>([]);
@@ -75,7 +77,7 @@ export function useProductData({ productId, productSlug }: UseProductDataProps =
         let productQuery = supabase
           .from('products')
           .select('*')
-          .eq('status', 'live')
+          .eq('status', 'active')
 
         if (productId) {
           productQuery = productQuery.eq('product_uuid', productId);
@@ -125,7 +127,7 @@ export function useProductData({ productId, productSlug }: UseProductDataProps =
             .from('products')
             .select('*, variants(*)')
             .in('product_uuid', mappedProduct.related_products)
-            .eq('status', 'live');
+            .eq('status', 'active');
 
           if (relatedProductsError) {
             setError(relatedProductsError);
@@ -141,10 +143,11 @@ export function useProductData({ productId, productSlug }: UseProductDataProps =
         }
 
         // Fetch reviews and calculate average rating
+        //@ts-ignore
         const { data: reviewsData, error: reviewsError } = await supabase
-          .from('product_reviews')
+          .from('reviews')
           .select('*')
-          .eq('product_uuid', mappedProduct.product_uuid);
+          .eq('product_uuid', mappedProduct.product_uuid) as unknown as any;
 
         if (reviewsError) {
           setError(reviewsError);
