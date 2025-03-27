@@ -28,18 +28,19 @@ const Index = () => {
       const { data, error } = await supabase
         .from('products')
         .select('*')
+        .eq('status', 'active')
         .order('created_at', { ascending: false });
-      
+
       if (error) {
         console.error('Error fetching products:', error);
         throw error;
       }
-      
+
       return data;
     }
   });
 
-  const filteredProducts = useMemo(() => 
+  const filteredProducts = useMemo(() =>
     selectedCategory && products
       ? products.filter(product => product.type === selectedCategory)
       : products,
@@ -73,7 +74,7 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <MainHeader />
-      
+
       <main className="pt-24">
         {/* Hero Section */}
         <div className="container mx-auto px-4 py-8 text-center">
@@ -93,7 +94,7 @@ const Index = () => {
           </div>
         </div>
 
-        <CategoryHeader 
+        <CategoryHeader
           selectedCategory={selectedCategory}
           onCategoryChange={setSelectedCategory}
         />
