@@ -20,9 +20,9 @@ const mapProductData = (data: any): ProductData => {
     status: data.status || '',
     type: data.type || '',
     free_or_paid: data.free_or_paid || '',
-    accept_terms: data.accept_terms === null ? false : Boolean(data.accept_terms),
+    accept_terms: data.accept_terms === null ? null : Boolean(data.accept_terms),
     affiliate_information: data.affiliate_information || '',
-    affiliate_program: data.affiliate_program === null ? false : Boolean(data.affiliate_program),
+    affiliate_program: data.affiliate_program === null ? null : Boolean(data.affiliate_program),
     affiliation_amount: data.affiliation_amount || null,
     change_reasons: data.change_reasons || null,
     changes_neeeded: data.changes_neeeded || null,
@@ -76,7 +76,7 @@ export function useProductData({ productId, productSlug }: UseProductDataProps =
         let productQuery = supabase
           .from('products')
           .select('*')
-          .eq('status', 'live') // This is intentionally 'live', we'll handle the type conversion inside
+          .eq('status', 'live' as any) // Using type assertion to handle status value
 
         if (productId) {
           productQuery = productQuery.eq('product_uuid', productId);
@@ -126,7 +126,7 @@ export function useProductData({ productId, productSlug }: UseProductDataProps =
             .from('products')
             .select('*, variants(*)')
             .in('product_uuid', mappedProduct.related_products)
-            .eq('status', 'live'); // This is intentionally 'live'
+            .eq('status', 'live' as any); // Using type assertion for status
 
           if (relatedProductsError) {
             setError(relatedProductsError);

@@ -5,7 +5,7 @@ import { useRelatedProducts } from "./use-related-products";
 import { useProductReviews, calculateAverageRating } from "./use-product-reviews";
 
 export function useProductData() {
-  const { data: product, isLoading: isLoadingProduct, error: productError } = useProduct();
+  const { product, isLoading: isLoadingProduct, error: productError } = useProduct();
   
   const { data: variants = [], isLoading: isLoadingVariants } = useProductVariants(
     product?.product_uuid

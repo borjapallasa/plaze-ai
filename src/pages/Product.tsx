@@ -1,3 +1,4 @@
+
 import { ProductLayout } from "@/components/product/ProductLayout";
 import { ProductSkeleton } from "@/components/product/ProductSkeleton";
 import { ProductNotFound } from "@/components/product/ProductNotFound";
