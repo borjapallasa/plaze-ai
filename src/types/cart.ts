@@ -4,9 +4,8 @@ export interface CartItem {
   variant_uuid: string;
   price: number;
   quantity: number;
-  product_name: string;
-  variant_name: string;
-  is_classroom_product?: boolean;
+  product_name?: string;
+  variant_name?: string;
 }
 
 export interface CartTransaction {

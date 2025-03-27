@@ -79,11 +79,7 @@ export default function Cart() {
           <div className="lg:grid lg:grid-cols-3 lg:gap-6">
             <div className="lg:col-span-2 space-y-4">
               {cart.items.map((item) => (
-                <Card key={item.variant_uuid} className={`overflow-hidden ${
-                  !item.product_uuid && !item.is_classroom_product ? 'border-red-400' : ''
-                } ${
-                  item.is_classroom_product ? 'border-purple-400' : ''
-                }`}>
+                <Card key={item.variant_uuid} className={`overflow-hidden ${!item.product_uuid ? 'border-red-400' : ''}`}>
                   <CardContent className="p-4">
                     <div className="flex items-start gap-4">
                       <div className="w-20 h-20 rounded-lg overflow-hidden bg-accent flex-shrink-0">
@@ -96,14 +92,9 @@ export default function Cart() {
                       <div className="flex-1 min-w-0">
                         <h2 className="text-lg font-semibold leading-tight mb-2 line-clamp-2">
                           {item.product_name || "Product"}
-                          {!item.product_uuid && !item.is_classroom_product && (
+                          {!item.product_uuid && (
                             <span className="ml-2 text-sm text-red-500 font-normal">
                               (Product unavailable)
-                            </span>
-                          )}
-                          {item.is_classroom_product && (
-                            <span className="ml-2 text-sm text-purple-600 font-normal">
-                              (Classroom)
                             </span>
                           )}
                         </h2>
