@@ -28,20 +28,23 @@ import { useAuth } from "@/lib/auth";
 import { CommunityProduct } from "@/components/community/EditCommunityRelatedProduts";
 import { Community } from "@/components/community/CommunityStats";
 import { Variant } from "@/components/product/types/variants";
+import { Sheet } from "@/components/ui/sheet";
+import { CartDrawer } from "@/components/cart/CartDrawer";
+import { useCart } from "@/hooks/use-cart";
 
 function transformToVariant(data: any[]): Variant[] {
   return data.map((item) => ({
     id: item.community_product_uuid.community_product_uuid,
     name: item.community_product_uuid.name,
-    price: item.community_product_uuid.price ?? 0, // Default to 0 if null
-    comparePrice: 0, // Set default or modify if applicable
-    label: item.community_product_uuid.name, // Assuming label is same as name
-    highlight: false, // Default value
-    tags: [], // Default empty array
-    features: [], // Default empty array
-    hidden: false, // Default false
-    createdAt: null, // Default null
-    filesLink: null // Default null
+    price: item.community_product_uuid.price ?? 0,
+    comparePrice: 0,
+    label: item.community_product_uuid.name,
+    highlight: false,
+    tags: [],
+    features: [],
+    hidden: false,
+    createdAt: null,
+    filesLink: null
   }));
 }
 
@@ -52,6 +55,9 @@ export default function Classroom() {
   const [isAddLessonOpen, setIsAddLessonOpen] = useState(false);
   const [isEditLessonOpen, setIsEditLessonOpen] = useState(false);
   const [isDeleteLessonOpen, setIsDeleteLessonOpen] = useState(false);
+  const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
+  const [lastAddedItem, setLastAddedItem] = useState<any>(null);
+  const [lastAddedAdditionalItems, setLastAddedAdditionalItems] = useState<any[]>([]);
   const [newLessonData, setNewLessonData] = useState({
     name: '',
     description: '',
@@ -66,6 +72,7 @@ export default function Classroom() {
   const { id } = useParams();
   const queryClient = useQueryClient();
   const { user } = useAuth();
+  const { addToCart, isLoading: isCartLoading } = useCart();
 
   const { data: classroom, isLoading: isClassroomLoading } = useQuery({
     queryKey: ['classroom', id],
@@ -361,8 +368,51 @@ export default function Classroom() {
     }
   }, [lessons, activeLesson]);
 
-  const handleAddToCart = () => {
-    // Add to cart logic here
+  const handleAddToCart = async () => {
+    if (!selectedVariant) {
+      toast({
+        title: "Please select a product",
+        description: "You need to select a product before adding to cart.",
+      });
+      return;
+    }
+
+    const selectedProduct = variants?.find(v => v.id === selectedVariant);
+    if (!selectedProduct) {
+      toast({
+        title: "Product not found",
+        description: "The selected product could not be found.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const product = {
+      product_uuid: selectedProduct.id,
+      name: selectedProduct.name
+    };
+
+    const result = await addToCart(product, selectedProduct.id, []);
+    
+    if (result?.success) {
+      if (result.cartItem) {
+        setLastAddedItem(result.cartItem);
+      } else if (result.updatedCart && result.updatedCart.items.length > 0) {
+        const selectedVariantItem = result.updatedCart.items.find(
+          item => item.variant_uuid === selectedProduct.id
+        );
+        setLastAddedItem(selectedVariantItem || result.updatedCart.items[0]);
+      }
+      
+      setLastAddedAdditionalItems([]);
+      setCartDrawerOpen(true);
+    }
+  };
+
+  const closeCartDrawer = () => {
+    setCartDrawerOpen(false);
+    setLastAddedItem(null);
+    setLastAddedAdditionalItems([]);
   };
 
   const videoUrl = activeLesson?.video_url || classroom?.video_url;
@@ -831,6 +881,15 @@ export default function Classroom() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
+
+          {/* Cart Drawer */}
+          <Sheet open={cartDrawerOpen} onOpenChange={setCartDrawerOpen}>
+            <CartDrawer 
+              cartItem={lastAddedItem} 
+              additionalItems={lastAddedAdditionalItems}
+              onClose={closeCartDrawer} 
+            />
+          </Sheet>
         </div>
       </div>
     </div>
