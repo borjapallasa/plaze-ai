@@ -1,11 +1,22 @@
 
+import { useParams } from "react-router-dom";
 import { useProductVariants } from "./use-product-variants";
 import { useRelatedProducts } from "./use-related-products";
 import { useProductReviews, calculateAverageRating } from "./use-product-reviews";
 import { useProduct } from "./use-product";
 
 export function useProductData() {
-  const { product, isLoading: isLoadingProduct, error: productError } = useProduct();
+  const params = useParams();
+  
+  // Pass the URL parameters to the useProduct hook
+  const { product, isLoading: isLoadingProduct, error: productError } = useProduct({
+    productId: params.id,
+    productSlug: params.slug
+  });
+
+  // Log the parameters and product data for debugging
+  console.log("useProductData params:", params);
+  console.log("useProductData product:", product);
 
   const { data: variants = [], isLoading: isLoadingVariants } = useProductVariants(
     product?.product_uuid

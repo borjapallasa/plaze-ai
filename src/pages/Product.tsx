@@ -1,4 +1,6 @@
 
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { ProductLayout } from "@/components/product/ProductLayout";
 import { ProductSkeleton } from "@/components/product/ProductSkeleton";
 import { ProductNotFound } from "@/components/product/ProductNotFound";
@@ -11,6 +13,12 @@ import { productVariantsToVariants } from "@/utils/product-utils";
 import { Variant } from "@/components/product/types/variants";
 
 export default function Product() {
+  const params = useParams();
+  
+  useEffect(() => {
+    console.log("Product page params:", params);
+  }, [params]);
+
   const {
     product,
     variants,
@@ -44,8 +52,7 @@ export default function Product() {
   }
 
   // Convert variants to ensure they match the required type
-  // Cast the result to Variant[] to ensure type compatibility
-  const convertedVariants = productVariantsToVariants(variants) as Variant[];
+  const convertedVariants = productVariantsToVariants(variants);
 
   return (
     <div ref={variantsRef}>

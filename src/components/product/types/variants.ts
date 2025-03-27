@@ -7,7 +7,7 @@ export interface Variant {
   highlight?: boolean;
   tags?: string[];
   label: string; // Make label required to match usage
-  features: string[];
+  features: string[]; // Make features required and always an array
   hidden?: boolean;
   createdAt?: string;
   filesLink?: string;

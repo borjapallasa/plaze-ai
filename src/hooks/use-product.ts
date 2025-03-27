@@ -1,7 +1,9 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { ProductData } from '@/types/Product';
 import { useToast } from '@/components/ui/use-toast';
+import { useParams } from 'react-router-dom';
 
 // Maps the raw data from Supabase to our ProductData type
 const mapProductData = (data: any): ProductData => {
@@ -18,8 +20,8 @@ const mapProductData = (data: any): ProductData => {
     price_from: data.price_from || 0,
     created_at: data.created_at || '',
     status: data.status || '',
-    type: data.type || '',
-    free_or_paid: data.free_or_paid || '',
+    type: data.type || null,
+    free_or_paid: data.free_or_paid || null,
     accept_terms: data.accept_terms === null ? null : Boolean(data.accept_terms),
     affiliate_information: data.affiliate_information || null,
     affiliate_program: data.affiliate_program === null ? null : Boolean(data.affiliate_program),
@@ -28,15 +30,15 @@ const mapProductData = (data: any): ProductData => {
     changes_neeeded: data.changes_neeeded || null,
     demo: data.demo || '',
     fees_amount: data.fees_amount || null,
-    product_includes: data.product_includes || null,
+    product_includes: data.product_includes || '',
     public_link: data.public_link || null,
     related_products: data.related_products || [],
     reviewed_by: data.reviewed_by || null,
     review_count: data.review_count || null,
     sales_amount: data.sales_amount || null,
     sales_count: data.sales_count || null,
-    tech_stack: data.tech_stack || null,
-    tech_stack_price: data.tech_stack_price || null,
+    tech_stack: data.tech_stack || '',
+    tech_stack_price: data.tech_stack_price || '',
     difficulty_level: data.difficulty_level || null,
     use_case: data.use_case || null,
     utm_campaign: data.utm_campaign || null,
@@ -59,14 +61,15 @@ interface UseProductDataProps {
 }
 
 export function useProduct({ productId, productSlug }: UseProductDataProps = {}) {
+  const params = useParams();
   const [product, setProduct] = useState<ProductData | null>(null);
-  const [variants, setVariants] = useState<any[]>([]);
-  const [relatedProductsWithVariants, setRelatedProductsWithVariants] = useState<any[]>([]);
-  const [reviews, setReviews] = useState<any[]>([]);
-  const [averageRating, setAverageRating] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const { toast } = useToast();
+  
+  // Use URL params if direct props aren't provided
+  const effectiveProductId = productId || params.id;
+  const effectiveProductSlug = productSlug || params.slug;
 
   useEffect(() => {
     const fetchProductData = async () => {
@@ -74,15 +77,17 @@ export function useProduct({ productId, productSlug }: UseProductDataProps = {})
       setError(null);
 
       try {
+        console.log("Fetching product with ID:", effectiveProductId, "or slug:", effectiveProductSlug);
+        
         let productQuery = supabase
           .from('products')
           .select('*')
           .eq('status', 'active')
 
-        if (productId) {
-          productQuery = productQuery.eq('product_uuid', productId);
-        } else if (productSlug) {
-          productQuery = productQuery.eq('slug', productSlug);
+        if (effectiveProductId) {
+          productQuery = productQuery.eq('product_uuid', effectiveProductId);
+        } else if (effectiveProductSlug) {
+          productQuery = productQuery.eq('slug', effectiveProductSlug);
         } else {
           throw new Error("Either productId or productSlug must be provided.");
         }
@@ -90,6 +95,7 @@ export function useProduct({ productId, productSlug }: UseProductDataProps = {})
         const { data: productData, error: productError } = await productQuery.single();
 
         if (productError) {
+          console.error("Error fetching product:", productError);
           setError(productError);
           toast({
             title: "Error",
@@ -99,77 +105,12 @@ export function useProduct({ productId, productSlug }: UseProductDataProps = {})
           return;
         }
 
+        console.log("Product data retrieved:", productData);
         const mappedProduct = mapProductData(productData);
         setProduct(mappedProduct);
 
-        // Fetch variants
-        const { data: variantsData, error: variantsError } = await supabase
-          .from('variants')
-          .select('*')
-          .eq('product_uuid', mappedProduct.product_uuid)
-          .order('highlight', { ascending: false });
-
-        if (variantsError) {
-          setError(variantsError);
-          toast({
-            title: "Error",
-            description: "Failed to load product variants.",
-            variant: "destructive"
-          });
-          return;
-        }
-
-        setVariants(variantsData);
-
-        // Fetch related products with variants
-        if (mappedProduct.related_products && mappedProduct.related_products.length > 0) {
-          const { data: relatedProductsData, error: relatedProductsError } = await supabase
-            .from('products')
-            .select('*, variants(*)')
-            .in('product_uuid', mappedProduct.related_products)
-            .eq('status', 'active');
-
-          if (relatedProductsError) {
-            setError(relatedProductsError);
-            toast({
-              title: "Error",
-              description: "Failed to load related products.",
-              variant: "destructive"
-            });
-            return;
-          }
-
-          setRelatedProductsWithVariants(relatedProductsData || []);
-        }
-
-        // Fetch reviews and calculate average rating
-        //@ts-ignore
-        const { data: reviewsData, error: reviewsError } = await supabase
-          .from('reviews')
-          .select('*')
-          .eq('product_uuid', mappedProduct.product_uuid) as unknown as any;
-
-        if (reviewsError) {
-          setError(reviewsError);
-          toast({
-            title: "Error",
-            description: "Failed to load product reviews.",
-            variant: "destructive"
-          });
-          return;
-        }
-
-        setReviews(reviewsData || []);
-
-        if (reviewsData && reviewsData.length > 0) {
-          const totalRating = reviewsData.reduce((sum, review) => sum + review.rating, 0);
-          const avgRating = totalRating / reviewsData.length;
-          setAverageRating(avgRating);
-        } else {
-          setAverageRating(0);
-        }
-
       } catch (err: any) {
+        console.error("Error in useProduct hook:", err);
         setError(err);
         toast({
           title: "Error",
@@ -181,15 +122,16 @@ export function useProduct({ productId, productSlug }: UseProductDataProps = {})
       }
     };
 
-    fetchProductData();
-  }, [productId, productSlug, toast]);
+    if (effectiveProductId || effectiveProductSlug) {
+      fetchProductData();
+    } else {
+      setIsLoading(false);
+      setError(new Error("No product ID or slug provided"));
+    }
+  }, [effectiveProductId, effectiveProductSlug, toast]);
 
   return {
     product,
-    variants,
-    relatedProductsWithVariants,
-    reviews,
-    averageRating,
     isLoading,
     error
   };

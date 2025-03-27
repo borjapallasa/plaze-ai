@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -20,6 +19,7 @@ export function ProductVariantsEditor({
       highlight: false,
       tags: [],
       label: "Package",
+      features: [],
       createdAt: new Date().toISOString(),
       filesLink: "",
     },
@@ -45,6 +45,7 @@ export function ProductVariantsEditor({
         highlight: false,
         tags: [],
         label: "Package",
+        features: [],
         createdAt: new Date().toISOString(),
         filesLink: "",
       },
@@ -56,7 +57,6 @@ export function ProductVariantsEditor({
       return;
     }
     
-    // Mark the variant as hidden instead of removing it immediately
     setVariants(
       variants.map(v => 
         v.id === id 
@@ -74,7 +74,6 @@ export function ProductVariantsEditor({
         )
       );
     } else if (field === 'price' || field === 'comparePrice') {
-      // Convert string inputs to numbers for price fields
       setVariants(
         variants.map((v) =>
           v.id === id ? { ...v, [field]: Number(value) || 0 } : v
@@ -137,5 +136,4 @@ export function ProductVariantsEditor({
   );
 }
 
-// Export both components with appropriate types
 export const ProductVariants = VariantPicker;

@@ -12,7 +12,7 @@ export function communityProductToVariant(product: CommunityProduct): Variant {
     price: Number(product.price) || 0,
     comparePrice: Number(product.price ? product.price * 1.25 : 0), // default higher compare price
     label: product.product_type || 'Package',
-    features: []
+    features: [] // Ensure features is always an array
   };
 }
 
@@ -35,7 +35,7 @@ export function productVariantToVariant(variant: ProductVariant): Variant {
     comparePrice: Number(variant.comparePrice) || 0,
     label: variant.label || 'Package',
     highlight: variant.highlight,
-    features: variant.features || []
+    features: Array.isArray(variant.features) ? variant.features : [] // Ensure features is always an array
   };
 }
 
