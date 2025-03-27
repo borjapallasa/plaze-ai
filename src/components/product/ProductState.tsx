@@ -58,15 +58,6 @@ export function useProductState(variants: any[]) {
       navigate("/sign-up");
       return;
     }
-    
-    // Add validation to ensure the product exists
-    if (!product || !product.product_uuid) {
-      toast({
-        title: "Product unavailable",
-        description: "This product is no longer available.",
-      });
-      return;
-    }
 
     const result = await addToCart(product, selectedVariant, additionalVariants);
 
