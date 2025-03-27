@@ -57,13 +57,14 @@ export function useCart() {
   };
 
   // Add an item to cart
-  const addToCart = async (product: any, selectedVariant: string) => {
+  const addToCart = async (product: any, selectedVariant: string, additionalVariants: string[] = []) => {
     setIsLoading(true);
     try {
       // Get the user's session
       const { data: { session } } = await supabase.auth.getSession();
       const userId = session?.user?.id;
-
+      
+      // First add the primary product
       const result = await addItemToCart(
         cart,
         product,
@@ -72,31 +73,7 @@ export function useCart() {
         !userId ? guestSessionId : undefined
       );
 
-      if (result.success) {
-        if (result.updatedCart) {
-          setCart(result.updatedCart);
-        } else {
-          // Refetch cart if updated cart wasn't returned
-          const updatedCart = await fetchCart(userId, !userId ? guestSessionId : undefined);
-          if (updatedCart) {
-            // Set specific cart item that was just added
-            return {
-              ...result,
-              cartItem: result.cartItem || updatedCart.items.find(item =>
-                item.product_uuid === product.product_uuid &&
-                item.variant_uuid === selectedVariant
-              )
-            };
-          }
-        }
-
-        toast({
-          title: "Added to cart",
-          description: `${product.name} has been added to your cart.`
-        });
-
-        return result;
-      } else {
+      if (!result.success) {
         toast({
           title: "Error",
           description: result.message || "Failed to add item to cart",
@@ -104,6 +81,45 @@ export function useCart() {
         });
         return null;
       }
+
+      let updatedCart = result.updatedCart;
+      const cartTransactionId = updatedCart?.transaction_uuid;
+
+      // If there are additional variants, add them to the same transaction
+      if (additionalVariants.length > 0 && updatedCart) {
+        for (const variantId of additionalVariants) {
+          const additionalResult = await addItemToCart(
+            updatedCart,
+            product,
+            variantId,
+            userId,
+            !userId ? guestSessionId : undefined,
+            cartTransactionId // Pass the transaction ID to ensure items are added to the same cart
+          );
+          
+          if (additionalResult.success && additionalResult.updatedCart) {
+            updatedCart = additionalResult.updatedCart;
+          }
+        }
+      }
+
+      // Set the updated cart
+      if (updatedCart) {
+        setCart(updatedCart);
+      } else {
+        // Refetch cart if updated cart wasn't returned
+        await fetchCart(userId, !userId ? guestSessionId : undefined);
+      }
+
+      toast({
+        title: "Added to cart",
+        description: `${product.name} has been added to your cart.`
+      });
+
+      return {
+        ...result,
+        updatedCart
+      };
     } catch (error) {
       console.error('Failed to add to cart:', error);
       toast({

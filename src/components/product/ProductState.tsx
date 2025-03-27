@@ -43,20 +43,16 @@ export function useProductState(variants: any[]) {
       return;
     }
 
-    const result = await addToCart(product, selectedVariant);
+    console.log('Adding to cart:', product.name, 'with variant:', selectedVariant);
+    console.log('Additional variants:', additionalVariants);
+    
+    const result = await addToCart(product, selectedVariant, additionalVariants);
     
     if (result?.success) {
       // If successfully added to cart, show the cart drawer
       if (result.cartItem) {
         setLastAddedItem(result.cartItem);
         setCartDrawerOpen(true);
-      }
-      
-      // Add additional variants if selected
-      if (additionalVariants.length > 0) {
-        for (const variantId of additionalVariants) {
-          await addToCart(product, variantId);
-        }
       }
     }
   };
@@ -67,6 +63,7 @@ export function useProductState(variants: any[]) {
   };
 
   const handleAdditionalVariantToggle = (variantId: string, selected: boolean) => {
+    console.log('Toggle additional variant:', variantId, selected);
     setAdditionalVariants(prev =>
       selected
         ? [...prev, variantId]

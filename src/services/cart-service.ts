@@ -131,10 +131,11 @@ export async function addItemToCart(
   product: any,
   selectedVariant: string,
   userId?: string,
-  guestSessionId?: string
+  guestSessionId?: string,
+  existingTransactionId?: string
 ): Promise<{ success: boolean; message?: string; updatedCart?: CartTransaction; cartItem?: CartItem }> {
   try {
-    console.log('Adding to cart', cart, selectedVariant)
+    console.log('Adding to cart', cart, selectedVariant, 'using transaction:', existingTransactionId);
     const variantResponse = await supabase
       .from('variants')
       .select('*')
@@ -151,10 +152,10 @@ export async function addItemToCart(
     const variantData = variantResponse.data;
 
     // Check for existing transaction
-    let transactionId = cart?.transaction_uuid;
+    let transactionId = existingTransactionId || cart?.transaction_uuid;
 
     if (!transactionId) {
-      console.log('Creating NEW transaction for variant: ', selectedVariant)
+      console.log('Creating NEW transaction for variant: ', selectedVariant);
       // Create a new transaction
       const newTransaction = {
         user_uuid: userId,
@@ -170,7 +171,7 @@ export async function addItemToCart(
         .select('product_transaction_uuid')
         .single();
 
-      console.log('Create TX: ', newTransaction, error)
+      console.log('Create TX: ', newTransaction, error);
 
       if (error || !data) {
         return {
@@ -242,9 +243,25 @@ export async function addItemToCart(
       };
     }
 
+    // Get the current values of the transaction
+    const { data: currentTransaction, error: fetchError } = await supabase
+      .from('products_transactions')
+      .select('item_count, total_amount')
+      .eq('product_transaction_uuid', transactionId)
+      .single();
+
+    if (fetchError || !currentTransaction) {
+      console.error('Error fetching current transaction:', fetchError);
+      return {
+        success: true,
+        message: "Item added but couldn't update totals",
+        cartItem
+      };
+    }
+
     // Update the transaction totals
-    const newTotalAmount = (cart?.total_amount || 0) + variantData.price;
-    const newItemCount = (cart?.item_count || 0) + 1;
+    const newItemCount = (currentTransaction.item_count || 0) + 1;
+    const newTotalAmount = (currentTransaction.total_amount || 0) + variantData.price;
 
     const updateTransactionResponse = await supabase
       .from('products_transactions')
@@ -261,7 +278,17 @@ export async function addItemToCart(
       };
     }
 
-    // Construct updated cart object instead of refetching
+    // Fetch the updated cart items
+    const { data: updatedItems, error: itemsError } = await supabase
+      .from('products_transaction_items')
+      .select('product_uuid, variant_uuid, price, quantity')
+      .eq('product_transaction_uuid', transactionId);
+
+    if (itemsError || !updatedItems) {
+      console.error('Error fetching updated items:', itemsError);
+    }
+
+    // Construct updated cart object
     const updatedCart: CartTransaction = {
       transaction_uuid: transactionId,
       item_count: newItemCount,
@@ -269,9 +296,7 @@ export async function addItemToCart(
       items: cart ? [...cart.items] : []
     };
 
-    console.log('UPDATED CART:', updatedCart)
-
-    // Update or add item in the items array
+    // Add or update the current item in the items array
     if (existingItem) {
       const itemIndex = updatedCart.items.findIndex(item =>
         item.product_uuid === product.product_uuid && item.variant_uuid === selectedVariant
@@ -282,6 +307,8 @@ export async function addItemToCart(
     } else {
       updatedCart.items.push(cartItem);
     }
+
+    console.log('UPDATED CART:', updatedCart);
 
     return {
       success: true,
