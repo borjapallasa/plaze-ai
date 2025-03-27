@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,7 +8,7 @@ import { useCart } from "@/hooks/use-cart";
 import { supabase } from "@/integrations/supabase/client";
 
 export default function Cart() {
-  const { cart, isLoading, fetchCart } = useCart();
+  const { cart, isLoading, fetchCart, removeFromCart } = useCart();
 
   // Refetch cart when component mounts
   useEffect(() => {
@@ -24,12 +23,9 @@ export default function Cart() {
     refreshCart();
   }, [fetchCart]);
 
-  // Helper function to remove item (not implemented yet)
-  const handleRemoveItem = (id: string) => {
-    toast({
-      title: "Not implemented",
-      description: "Item removal is not implemented yet",
-    });
+  // Helper function to remove item
+  const handleRemoveItem = async (variantId: string) => {
+    await removeFromCart(variantId);
   };
 
   // Calculate totals

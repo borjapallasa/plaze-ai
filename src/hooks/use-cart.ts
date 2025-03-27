@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from '@/components/ui/use-toast';
 import { CartTransaction } from '@/types/cart';
-import { fetchCartData, addItemToCart } from '@/services/cart-service';
+import { fetchCartData, addItemToCart, removeItemFromCart } from '@/services/cart-service';
 
 export function useCart() {
   const [cart, setCart] = useState<CartTransaction | null>(null);
@@ -133,10 +132,60 @@ export function useCart() {
     }
   };
 
+  // Remove an item from cart
+  const removeFromCart = async (variantUuid: string) => {
+    if (!cart || !cart.transaction_uuid) {
+      toast({
+        title: "Error",
+        description: "No active cart found",
+        variant: "destructive"
+      });
+      return false;
+    }
+
+    setIsLoading(true);
+    try {
+      const result = await removeItemFromCart(cart.transaction_uuid, variantUuid);
+      
+      if (result.success) {
+        // Refetch the cart to update the UI
+        const { data: { session } } = await supabase.auth.getSession();
+        const userId = session?.user?.id;
+        const guestId = !userId ? localStorage.getItem('guest_session_id') : undefined;
+        
+        await fetchCart(userId, !userId ? guestId || undefined : undefined);
+        
+        toast({
+          title: "Success",
+          description: "Item removed from cart"
+        });
+        return true;
+      } else {
+        toast({
+          title: "Error",
+          description: result.message || "Failed to remove item from cart",
+          variant: "destructive"
+        });
+        return false;
+      }
+    } catch (error) {
+      console.error('Failed to remove from cart:', error);
+      toast({
+        title: "Error",
+        description: "Failed to remove item from cart. Please try again.",
+        variant: "destructive"
+      });
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     cart,
     isLoading,
     addToCart,
-    fetchCart
+    fetchCart,
+    removeFromCart
   };
 }

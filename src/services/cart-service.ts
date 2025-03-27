@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { CartItem, CartTransaction } from '@/types/cart';
 
@@ -321,6 +320,94 @@ export async function addItemToCart(
     return {
       success: false,
       message: "Failed to add item to cart. Please try again."
+    };
+  }
+}
+
+// Remove item from cart
+export async function removeItemFromCart(
+  transactionId: string,
+  variantUuid: string
+): Promise<{ success: boolean; message?: string }> {
+  try {
+    console.log('Removing item from cart:', 'transaction:', transactionId, 'variant:', variantUuid);
+    
+    // First get the item to calculate the price
+    const { data: itemData, error: itemError } = await supabase
+      .from('products_transaction_items')
+      .select('price, quantity, total_price')
+      .eq('product_transaction_uuid', transactionId)
+      .eq('variant_uuid', variantUuid)
+      .single();
+    
+    if (itemError || !itemData) {
+      console.error('Error fetching item for removal:', itemError);
+      return {
+        success: false,
+        message: "Could not find the item to remove"
+      };
+    }
+
+    // Delete the item
+    const { error: deleteError } = await supabase
+      .from('products_transaction_items')
+      .delete()
+      .eq('product_transaction_uuid', transactionId)
+      .eq('variant_uuid', variantUuid);
+
+    if (deleteError) {
+      console.error('Error deleting item:', deleteError);
+      return {
+        success: false,
+        message: "Failed to remove item from cart"
+      };
+    }
+
+    // Update the transaction totals
+    const { data: transactionData, error: transactionError } = await supabase
+      .from('products_transactions')
+      .select('item_count, total_amount')
+      .eq('product_transaction_uuid', transactionId)
+      .single();
+
+    if (transactionError || !transactionData) {
+      console.error('Error fetching transaction for update:', transactionError);
+      return {
+        success: true,
+        message: "Item removed but couldn't update cart totals"
+      };
+    }
+
+    // Calculate new totals
+    const newItemCount = Math.max(0, (transactionData.item_count || 0) - itemData.quantity);
+    const newTotalAmount = Math.max(0, (transactionData.total_amount || 0) - itemData.total_price);
+
+    // Update the transaction
+    const { error: updateError } = await supabase
+      .from('products_transactions')
+      .update({
+        item_count: newItemCount,
+        total_amount: newTotalAmount
+      })
+      .eq('product_transaction_uuid', transactionId);
+
+    if (updateError) {
+      console.error('Error updating transaction totals:', updateError);
+      return {
+        success: false,
+        message: "Item removed but failed to update cart totals"
+      };
+    }
+
+    return {
+      success: true,
+      message: "Item removed from cart"
+    };
+  } catch (error) {
+    console.error('Failed to remove item from cart:', error);
+    return {
+      success: false,
+      message: "Failed to remove item from cart. Please try again."
     };
   }
 }

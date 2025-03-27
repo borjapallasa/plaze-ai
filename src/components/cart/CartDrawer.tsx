@@ -14,11 +14,15 @@ interface CartDrawerProps {
 
 export function CartDrawer({ cartItem, onClose }: CartDrawerProps) {
   const navigate = useNavigate();
-  const { cart, isLoading } = useCart();
+  const { cart, isLoading, removeFromCart } = useCart();
 
   const handleViewCart = () => {
     alert('Redirect to stripe integration flow based on the cart UUID -> payment link')
     onClose();
+  };
+
+  const handleRemoveItem = async (variantId: string) => {
+    await removeFromCart(variantId);
   };
 
   if (isLoading) {
@@ -120,6 +124,7 @@ export function CartDrawer({ cartItem, onClose }: CartDrawerProps) {
                 variant="ghost" 
                 size="icon" 
                 className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                onClick={() => handleRemoveItem(item.variant_uuid)}
               >
                 <Trash2 className="h-4 w-4" />
                 <span className="sr-only">Remove</span>
