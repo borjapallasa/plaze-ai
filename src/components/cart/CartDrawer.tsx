@@ -1,4 +1,3 @@
-
 import { SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, X, ArrowRight, Loader2, Trash2 } from "lucide-react";
@@ -6,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { CartItem } from "@/types/cart";
 import { useCart } from "@/hooks/use-cart";
 import { Separator } from "@/components/ui/separator";
+import { useEffect, useState } from "react";
+import { supabase } from '@/integrations/supabase/client';
 
 interface CartDrawerProps {
   cartItem: CartItem | null;
@@ -14,7 +15,22 @@ interface CartDrawerProps {
 
 export function CartDrawer({ cartItem, onClose }: CartDrawerProps) {
   const navigate = useNavigate();
-  const { cart, isLoading, removeFromCart } = useCart();
+  const { cart, isLoading, removeFromCart, fetchCart } = useCart();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  useEffect(() => {
+    const refreshCartData = async () => {
+      setIsRefreshing(true);
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session?.user?.id;
+      const guestId = !userId ? localStorage.getItem('guest_session_id') : undefined;
+      
+      await fetchCart(userId, !userId ? guestId || undefined : undefined);
+      setIsRefreshing(false);
+    };
+
+    refreshCartData();
+  }, [fetchCart]);
 
   const handleViewCart = () => {
     alert('Redirect to stripe integration flow based on the cart UUID -> payment link')
@@ -25,7 +41,7 @@ export function CartDrawer({ cartItem, onClose }: CartDrawerProps) {
     await removeFromCart(variantId);
   };
 
-  if (isLoading) {
+  if (isLoading || isRefreshing) {
     return (
       <SheetContent className="w-full sm:max-w-md overflow-y-auto">
         <div className="flex flex-col items-center justify-center h-full">
@@ -68,12 +84,10 @@ export function CartDrawer({ cartItem, onClose }: CartDrawerProps) {
     );
   }
 
-  // Display the newly added item at the top if provided
   const displayItems = cartItem
     ? [cartItem, ...cart.items.filter(item => item.variant_uuid !== cartItem.variant_uuid)]
     : cart.items;
 
-  // Calculate subtotal
   const subtotal = displayItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 
   return (

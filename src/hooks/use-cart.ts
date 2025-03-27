@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { v4 as uuidv4 } from 'uuid';
@@ -102,7 +103,7 @@ export function useCart() {
         }
       }
 
-      // Set the updated cart
+      // Important: Always update the cart state with the updatedCart if available
       if (updatedCart) {
         setCart(updatedCart);
       } else {
@@ -148,7 +149,24 @@ export function useCart() {
       const result = await removeItemFromCart(cart.transaction_uuid, variantUuid);
       
       if (result.success) {
-        // Refetch the cart to update the UI
+        // Update the local cart state immediately to reflect the removed item
+        if (cart) {
+          const updatedItems = cart.items.filter(item => item.variant_uuid !== variantUuid);
+          const updatedItemCount = cart.item_count - 1;
+          const removedItem = cart.items.find(item => item.variant_uuid === variantUuid);
+          const updatedTotalAmount = removedItem 
+            ? cart.total_amount - (removedItem.price * removedItem.quantity) 
+            : cart.total_amount;
+            
+          setCart({
+            ...cart,
+            items: updatedItems,
+            item_count: updatedItemCount,
+            total_amount: updatedTotalAmount
+          });
+        }
+        
+        // Also refetch to ensure all data is synced
         const { data: { session } } = await supabase.auth.getSession();
         const userId = session?.user?.id;
         const guestId = !userId ? localStorage.getItem('guest_session_id') : undefined;

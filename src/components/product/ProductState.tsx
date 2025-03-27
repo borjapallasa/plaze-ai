@@ -49,11 +49,17 @@ export function useProductState(variants: any[]) {
     const result = await addToCart(product, selectedVariant, additionalVariants);
     
     if (result?.success) {
-      // If successfully added to cart, show the cart drawer
+      // If successfully added to cart, get the cart item and show the cart drawer
       if (result.cartItem) {
         setLastAddedItem(result.cartItem);
-        setCartDrawerOpen(true);
+      } else if (result.updatedCart && result.updatedCart.items.length > 0) {
+        // If no specific cart item is returned but we have an updated cart, use the first item
+        const selectedVariantItem = result.updatedCart.items.find(
+          item => item.variant_uuid === selectedVariant
+        );
+        setLastAddedItem(selectedVariantItem || result.updatedCart.items[0]);
       }
+      setCartDrawerOpen(true);
     }
   };
 
