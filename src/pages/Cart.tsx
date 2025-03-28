@@ -1,11 +1,11 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Trash2, ShoppingCart, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { useCart } from "@/hooks/use-cart";
-import { supabase } from "@/integrations/supabase/client";
+import { useCart } from "@/context/CartContext";
 
 export default function Cart() {
   const { cart, isLoading, fetchCart, removeFromCart, cleanupCart } = useCart();
@@ -18,11 +18,8 @@ export default function Cart() {
 
       setIsRefreshing(true);
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        const userId = session?.user?.id;
-        const guestId = !userId ? localStorage.getItem('guest_session_id') : undefined;
-
-        await fetchCart(userId);
+        await fetchCart();
+        await cleanupCart();
       } catch (error) {
         console.error('Error refreshing cart:', error);
         toast({
@@ -39,18 +36,18 @@ export default function Cart() {
   }, []);
 
   const handleRemoveItem = async (variantId: string) => {
-    const success = await removeFromCart(variantId);
-
-    if (success) {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        const userId = session?.user?.id;
-
-        await fetchCart(userId);
-      } catch (error) {
-        console.error('Error refreshing cart after item removal:', error);
-      }
+    console.log('Cart page: Removing item', variantId);
+    if (!cart) {
+      toast({
+        title: "Error",
+        description: "No active cart found",
+        variant: "destructive"
+      });
+      return;
     }
+    
+    const success = await removeFromCart(variantId);
+    console.log('Remove result:', success);
   };
 
   if (isLoading || isRefreshing) {

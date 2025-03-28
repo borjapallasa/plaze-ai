@@ -1,12 +1,12 @@
+
 import { SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, X, ArrowRight, Loader2, Trash2, AlertTriangle } from "lucide-react";
+import { ShoppingCart, Loader2, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { CartItem } from "@/types/cart";
-import { useCart } from "@/hooks/use-cart";
+import { useCart } from "@/context/CartContext";
 import { Separator } from "@/components/ui/separator";
 import { useEffect, useState } from "react";
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from "@/components/ui/use-toast";
 
 interface CartDrawerProps {
@@ -27,10 +27,7 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
         console.log('CartDrawer: Refreshing cart data');
         setIsRefreshing(true);
         try {
-          const { data: { session } } = await supabase.auth.getSession();
-          const userId = session?.user?.id;
-
-          await fetchCart(userId);
+          await fetchCart();
           await cleanupCart();
         } catch (error) {
           console.error('Error refreshing cart:', error);
@@ -55,10 +52,20 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
 
   const handleRemoveItem = async (variantId: string) => {
     try {
-      const success = await removeFromCart(variantId);
-
-      if (success) {
+      console.log('CartDrawer: Removing item', variantId);
+      console.log('Current cart:', cart);
+      
+      if (!cart) {
+        toast({
+          title: "Error",
+          description: "Unable to remove item. Cart data is not available.",
+          variant: "destructive"
+        });
+        return;
       }
+      
+      const success = await removeFromCart(variantId);
+      console.log('Remove result:', success);
     } catch (error) {
       console.error('Error removing item:', error);
       toast({
@@ -157,7 +164,7 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
         )}
 
         <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
-          {effectiveCart.items.map((item) => (
+          {displayItems.map((item) => (
             <div
               key={item.variant_uuid}
               className="flex items-start gap-3 pb-3 border-b"
@@ -214,7 +221,6 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
             className="w-full"
           >
             View Cart
-            <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
           <Button
             variant="outline"

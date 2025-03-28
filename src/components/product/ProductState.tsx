@@ -1,5 +1,6 @@
+
 import { useState, useEffect, useRef } from "react";
-import { useCart } from "@/hooks/use-cart";
+import { useCart } from "@/context/CartContext";
 import { useToast } from "@/components/ui/use-toast";
 import { CartItem } from "@/types/cart";
 import { useAuth } from "@/lib/auth";

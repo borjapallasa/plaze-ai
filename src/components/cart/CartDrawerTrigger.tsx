@@ -4,7 +4,7 @@ import { ShoppingCart } from "lucide-react";
 import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { CartDrawer } from "./CartDrawer";
-import { useCart } from "@/hooks/use-cart";
+import { useCart } from "@/context/CartContext";
 import { Badge } from "@/components/ui/badge";
 
 interface CartDrawerTriggerProps {
