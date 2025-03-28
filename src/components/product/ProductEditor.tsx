@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Bold, Italic, Underline, Link as LinkIcon, List, MoreHorizontal, Heading1, Heading2, AlignLeft, AlignCenter, AlignRight } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -20,14 +20,25 @@ export function ProductEditor({
   maxHeight = "300px"
 }: ProductEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
+  const [isContentEmpty, setIsContentEmpty] = useState(true);
 
   useEffect(() => {
     if (editorRef.current) {
       if (value) {
         editorRef.current.innerHTML = value;
+        checkIfEmpty();
       }
     }
   }, [value]);
+
+  // Check if the editor content is empty
+  const checkIfEmpty = () => {
+    if (editorRef.current) {
+      const content = editorRef.current.innerHTML;
+      const isEmpty = !content || content === "<p></p>" || content === "<br>" || content === "";
+      setIsContentEmpty(isEmpty);
+    }
+  };
 
   // Ensure the editor has focus and selection is preserved
   const execCommand = (command: string, value: string = '') => {
@@ -51,6 +62,9 @@ export function ProductEditor({
       // Save content
       saveContent();
 
+      // Check if content is empty after command execution
+      checkIfEmpty();
+
       // Maintain focus
       editorRef.current.focus();
     }
@@ -59,6 +73,7 @@ export function ProductEditor({
   const saveContent = () => {
     if (editorRef.current && onChange) {
       onChange(editorRef.current.innerHTML);
+      checkIfEmpty();
     }
   };
 
@@ -66,10 +81,12 @@ export function ProductEditor({
     e.preventDefault();
     const text = e.clipboardData.getData('text/plain');
     document.execCommand('insertText', false, text);
+    checkIfEmpty();
   };
 
-  // Show placeholder only if there's no content
-  const isEmpty = !value || value === "<p></p>" || value === "<br>" || value === "";
+  const handleInput = () => {
+    checkIfEmpty();
+  };
 
   return (
     <div className="rounded-md border">
@@ -210,18 +227,18 @@ export function ProductEditor({
           <div
             ref={editorRef}
             className={cn(
-              "px-3 py-2 focus:outline-none w-full",
-              isEmpty ? "text-muted-foreground" : ""
+              "px-3 py-2 focus:outline-none w-full"
             )}
             contentEditable
             onBlur={saveContent}
+            onInput={handleInput}
             onPaste={handlePaste}
             style={{
               minHeight
             }}
             dangerouslySetInnerHTML={{ __html: value || '' }}
           />
-          {isEmpty && (
+          {isContentEmpty && (
             <div className="absolute inset-0 pointer-events-none px-3 py-2 text-muted-foreground">
               {placeholder}
             </div>
@@ -230,7 +247,7 @@ export function ProductEditor({
       </div>
       <div className="flex items-center justify-end p-1 border-t bg-muted/10">
         <div className="text-xs text-muted-foreground">
-          {isEmpty ? "0 characters" : `${(value || "").length} characters`}
+          {isContentEmpty ? "0 characters" : `${(value || "").length} characters`}
         </div>
       </div>
     </div>
