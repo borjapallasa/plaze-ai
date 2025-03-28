@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { useCart } from "@/hooks/use-cart";
 import { useToast } from "@/components/ui/use-toast";
@@ -9,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 export function useProductState(variants: any[]) {
   const [selectedVariant, setSelectedVariant] = useState<string | undefined>();
   const [additionalVariants, setAdditionalVariants] = useState<string[]>([]);
+  const [additionalVariantDetails, setAdditionalVariantDetails] = useState<Record<string, { productName: string, variantName: string }>>({});
   const [showStickyATC, setShowStickyATC] = useState(false);
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
   const [lastAddedItem, setLastAddedItem] = useState<CartItem | null>(null);
@@ -93,14 +95,19 @@ export function useProductState(variants: any[]) {
         setLastAddedItem(cartItem);
       }
 
-      // Find and set the additional variant items
+      // Find and set the additional variant items with proper product names
       if (result.updatedCart && additionalVariants.length > 0) {
         const additionalItems = result.updatedCart.items
           .filter(item => additionalVariants.includes(item.variant_uuid))
-          .map(item => ({
-            ...item,
-            last_updated: Date.now()
-          }));
+          .map(item => {
+            const details = additionalVariantDetails[item.variant_uuid];
+            return {
+              ...item,
+              product_name: details?.productName || item.product_name,
+              variant_name: details?.variantName || item.variant_name,
+              last_updated: Date.now()
+            };
+          });
           
         console.log('Setting additional items:', additionalItems);
         setLastAddedAdditionalItems(additionalItems);
@@ -117,13 +124,26 @@ export function useProductState(variants: any[]) {
     setLastAddedAdditionalItems([]);
   };
 
-  const handleAdditionalVariantToggle = (variantId: string, selected: boolean) => {
-    console.log('Toggle additional variant:', variantId, selected);
+  const handleAdditionalVariantToggle = (variantId: string, selected: boolean, productName?: string, variantName?: string) => {
+    console.log('Toggle additional variant:', variantId, selected, productName, variantName);
+    
+    // Update the additionalVariants array
     setAdditionalVariants(prev =>
       selected
         ? [...prev, variantId]
         : prev.filter(id => id !== variantId)
     );
+    
+    // Store additional product and variant information
+    if (selected && productName) {
+      setAdditionalVariantDetails(prev => ({
+        ...prev,
+        [variantId]: {
+          productName: productName || '',
+          variantName: variantName || ''
+        }
+      }));
+    }
   };
 
   return {
