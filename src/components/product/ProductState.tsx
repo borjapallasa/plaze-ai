@@ -68,6 +68,7 @@ export function useProductState(variants: any[]) {
         let productUuid = null;
         let variantData = null;
         let variantName = null;
+        let productName = null;
         
         if (isDefaultVariant) {
           // Extract product UUID from the default variant ID
@@ -86,17 +87,20 @@ export function useProductState(variants: any[]) {
           }
           
           variantName = "Default Option";
+          productName = productData.name;
+          
           return { 
             variantId, 
             productUuid,
-            productName: productData.name,
-            variantName
+            productName,
+            variantName,
+            price: productData.price_from || 0
           };
         } else {
           // Regular variant, fetch from variants table
           const { data: variantData, error: variantError } = await supabase
             .from('variants')
-            .select('*')
+            .select('*, products:product_uuid(name)')
             .eq('variant_uuid', variantId)
             .single();
           
@@ -108,8 +112,9 @@ export function useProductState(variants: any[]) {
           return { 
             variantId, 
             productUuid: variantData.product_uuid,
-            productName: null,
-            variantName: variantData.name
+            productName: variantData.products?.name || null,
+            variantName: variantData.name,
+            price: variantData.price || 0
           };
         }
       })
@@ -125,6 +130,8 @@ export function useProductState(variants: any[]) {
         variantId: item.variantId,
         productUuid: item.productUuid,
         variantName: item.variantName,
+        productName: item.productName,
+        price: item.price,
         isDefaultVariant: item.variantId.startsWith('default-')
       }));
 

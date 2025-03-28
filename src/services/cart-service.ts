@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { CartItem, CartTransaction } from '@/types/cart';
 
@@ -164,15 +165,17 @@ export async function addItemToCart(
   guestSessionId?: string,
   existingTransactionId?: string,
   isClassroomProduct: boolean = false,
-  isAdditionalVariant: boolean = false
+  isAdditionalVariant: boolean = false,
+  overridePrice?: number,
+  isDefaultVariant: boolean = false
 ): Promise<{ success: boolean; message?: string; updatedCart?: CartTransaction; cartItem?: CartItem }> {
   try {
-    console.log('Adding to cart', cart, selectedVariant, 'using transaction:', existingTransactionId);
-    console.log('Is classroom product:', isClassroomProduct);
+    console.log('Adding to cart', { cart, selectedVariant, transaction: existingTransactionId, isClassroomProduct, isAdditionalVariant, overridePrice, isDefaultVariant });
 
     let variantData;
     let productUuid;
     let productName;
+    let price;
 
     if (isClassroomProduct) {
       // For classroom products, we need to fetch from community_products
@@ -193,6 +196,34 @@ export async function addItemToCart(
       variantData = data;
       productUuid = data.community_product_uuid; // Use the community product UUID as the product UUID
       productName = data.name;
+      price = data.price;
+    } else if (isDefaultVariant) {
+      // For default variants (products with no variants)
+      const productId = selectedVariant.replace('default-', '');
+      
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('product_uuid', productId)
+        .single();
+        
+      if (error || !data) {
+        console.error('Error fetching product for default variant:', error);
+        return {
+          success: false,
+          message: "Could not find the selected product"
+        };
+      }
+      
+      variantData = {
+        name: 'Default Option',
+        price: overridePrice || data.price_from || 0
+      };
+      productUuid = data.product_uuid;
+      productName = data.name;
+      price = overridePrice || data.price_from || 0;
+      
+      console.log('Default variant data:', { variantData, productUuid, productName, price });
     } else {
       // Regular product variants
       const variantResponse = await supabase
@@ -209,6 +240,7 @@ export async function addItemToCart(
       }
 
       variantData = variantResponse.data;
+      price = overridePrice !== undefined ? overridePrice : variantData.price;
 
       // For additional variants, use the product UUID that was passed
       if (isAdditionalVariant && product.product_uuid) {
@@ -241,7 +273,7 @@ export async function addItemToCart(
       const newTransaction = {
         user_uuid: userId,
         item_count: 0,
-        total_amount: variantData.price,
+        total_amount: price,
         type: userId ? 'user' as const : 'guest' as const, // Ensure it's one of the allowed values
         status: 'pending' as const
       };
@@ -305,19 +337,30 @@ export async function addItemToCart(
 
     } else {
       // Add new item to cart
+      console.log('Inserting new cart item:', {
+        transaction_uuid: transactionId,
+        product_uuid: isClassroomProduct ? null : productUuid,
+        variant_uuid: selectedVariant,
+        price: price,
+        quantity: 1,
+        total_price: price,
+        product_type: isClassroomProduct ? 'community' : (isDefaultVariant ? 'default' : 'regular')
+      });
+
       const itemResponse = await supabase
         .from('products_transaction_items')
         .insert({
           product_transaction_uuid: transactionId,
           product_uuid: isClassroomProduct ? null : productUuid,
           variant_uuid: selectedVariant,
-          price: variantData.price,
+          price: price,
           quantity: 1,
-          total_price: variantData.price,
-          product_type: isClassroomProduct ? 'community' : 'regular'
+          total_price: price,
+          product_type: isClassroomProduct ? 'community' : (isDefaultVariant ? 'default' : 'regular')
         });
 
       if (itemResponse.error) {
+        console.error('Error adding item to cart:', itemResponse.error);
         return {
           success: false,
           message: "Could not add item to cart"
@@ -327,7 +370,7 @@ export async function addItemToCart(
       cartItem = {
         product_uuid: isClassroomProduct ? null : productUuid,
         variant_uuid: selectedVariant,
-        price: variantData.price,
+        price: price,
         quantity: 1,
         product_name: productName || (isClassroomProduct ? variantData.name : (product.name || 'Unknown Product')),
         variant_name: variantData.name || 'Unknown Variant',
@@ -353,7 +396,7 @@ export async function addItemToCart(
 
     // Update the transaction totals
     const newItemCount = (currentTransaction.item_count || 0) + 1;
-    const newTotalAmount = (currentTransaction.total_amount || 0) + variantData.price;
+    const newTotalAmount = (currentTransaction.total_amount || 0) + price;
 
     const updateTransactionResponse = await supabase
       .from('products_transactions')

@@ -17,7 +17,14 @@ type CartContextType = {
   addToCart: (
     product: any,
     selectedVariant: string,
-    additionalVariants?: Array<{ variantId: string, productUuid: string | null, variantName?: string }>,
+    additionalVariants?: Array<{ 
+      variantId: string, 
+      productUuid: string | null, 
+      variantName?: string,
+      productName?: string,
+      price?: number,
+      isDefaultVariant?: boolean
+    }>,
     isClassroomProduct?: boolean
   ) => Promise<any>;
   fetchCart: (userId?: string) => Promise<CartTransaction | null>;
@@ -101,7 +108,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const addToCart = async (
     product: any,
     selectedVariant: string,
-    additionalVariants: Array<{ variantId: string, productUuid: string | null, variantName?: string }> = [],
+    additionalVariants: Array<{ 
+      variantId: string, 
+      productUuid: string | null, 
+      variantName?: string,
+      productName?: string,
+      price?: number,
+      isDefaultVariant?: boolean
+    }> = [],
     isClassroomProduct: boolean = false
   ) => {
     console.log('CartContext: addToCart called with', { product, selectedVariant, additionalVariants, isClassroomProduct });
@@ -135,19 +149,28 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
       if (additionalVariants.length > 0 && updatedCart) {
         for (const variantInfo of additionalVariants) {
+          console.log('Adding additional variant to cart:', variantInfo);
+          
           const additionalResult = await addItemToCart(
             updatedCart,
-            { product_uuid: variantInfo.productUuid || null, name: product.name },
+            { 
+              product_uuid: variantInfo.productUuid || null, 
+              name: variantInfo.productName || product.name 
+            },
             variantInfo.variantId,
             userId,
             !userId ? guestSessionId : undefined,
             cartTransactionId,
             isClassroomProduct,
-            true
+            true,
+            variantInfo.price,
+            variantInfo.isDefaultVariant
           );
 
           if (additionalResult.success && additionalResult.updatedCart) {
             updatedCart = additionalResult.updatedCart;
+          } else {
+            console.error('Failed to add additional variant:', additionalResult.message);
           }
         }
       }
