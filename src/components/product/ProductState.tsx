@@ -5,6 +5,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { CartItem } from "@/types/cart";
 import { useAuth } from "@/lib/auth";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 export function useProductState(variants: any[]) {
   const [selectedVariant, setSelectedVariant] = useState<string | undefined>();
