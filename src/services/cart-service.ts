@@ -1,289 +1,542 @@
-import { CartItem, CartTransaction } from "@/types/cart";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from '@/integrations/supabase/client';
+import { CartItem, CartTransaction } from '@/types/cart';
 
-// Fetch cart data from the database or local storage
-export const fetchCartData = async (userId?: string, sessionId?: string): Promise<CartTransaction | null> => {
-  console.log('Fetching cart data for', { userId, sessionId });
-  
-  if (!userId && !sessionId) {
-    console.log('No user ID or session ID provided, returning null');
-    return null;
-  }
-  
+// Fetch cart data by user or guest session ID
+export async function fetchCartData(userId?: string, sessionId?: string): Promise<CartTransaction | null> {
   try {
-    // In a real implementation, this would fetch from a database
-    // For now, we'll simulate by checking localStorage
-    
-    // For logged-in users, we would fetch from the database
+    if (!userId && !sessionId) {
+      // No way to identify the cart
+      return null;
+    }
+
+    // Apply the correct filter based on available ID
     if (userId) {
-      // This is where you would query your database
-      // For example: const { data, error } = await supabase.from('carts').select('*').eq('user_id', userId).single();
-      
-      // For now, we'll use localStorage as a simulation
-      const storedCart = localStorage.getItem(`cart_${userId}`);
-      if (storedCart) {
-        return JSON.parse(storedCart);
+      const { data: transactionData, error: transactionError } = await supabase
+        .from('products_transactions')
+        .select('product_transaction_uuid, item_count, total_amount, status, payment_link, user_uuid')
+        .eq('user_uuid', userId)
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false }) // Sort by latest
+        .limit(1);
+
+      // Check for errors or no data
+      if (transactionError) {
+        console.error('Error fetching cart transaction:', transactionError);
+        return null;
       }
-    }
-    
-    // For guest users, we use the session ID to retrieve from localStorage
-    if (sessionId) {
-      const storedCart = localStorage.getItem(`cart_guest_${sessionId}`);
-      if (storedCart) {
-        return JSON.parse(storedCart);
+
+      if (!transactionData || transactionData.length === 0) {
+        return null;
       }
+
+      // Get the items for this transaction
+      const { data: itemsData, error: itemsError } = await supabase
+        .from('products_transaction_items')
+        .select('product_transaction_item_uuid, product_uuid, variant_uuid, price, quantity, total_price')
+        .eq('product_transaction_uuid', transactionData[0].product_transaction_uuid);
+
+      if (itemsError) {
+        console.error('Error fetching cart items:', itemsError);
+        return null;
+      }
+
+      if (!itemsData || !Array.isArray(itemsData)) {
+        console.error('No items data or invalid format');
+        return null;
+      }
+
+      // Extract product UUIDs and variant UUIDs
+      const productUuids = itemsData
+        .filter(item => item.product_uuid)
+        .map(item => item.product_uuid);
+
+      const variantUuids = itemsData
+        .filter(item => item.variant_uuid)
+        .map(item => item.variant_uuid);
+
+      // Prepare result maps
+      let productNames: Record<string, string> = {};
+      let variantNames: Record<string, string> = {};
+      let availableProducts = new Set<string>();
+      let availableVariants = new Set<string>();
+
+      // Only fetch product names if we have product UUIDs
+      if (productUuids.length > 0) {
+        const { data: productsData } = await supabase
+          .from('products')
+          .select('product_uuid, name')
+          .in('product_uuid', productUuids);
+
+        if (productsData) {
+          productsData.forEach((product: any) => {
+            productNames[product.product_uuid] = product.name;
+            availableProducts.add(product.product_uuid);
+          });
+        }
+      }
+
+      // Check if variants exist in standard variants table
+      if (variantUuids.length > 0) {
+        const { data: variantsData } = await supabase
+          .from('variants')
+          .select('variant_uuid, name')
+          .in('variant_uuid', variantUuids);
+
+        if (variantsData) {
+          variantsData.forEach((variant: any) => {
+            variantNames[variant.variant_uuid] = variant.name;
+            availableVariants.add(variant.variant_uuid);
+          });
+        }
+      }
+
+      // Check if any variants are community products
+      if (variantUuids.length > 0) {
+        const { data: communityProductsData } = await supabase
+          .from('community_products')
+          .select('community_product_uuid, name')
+          .in('community_product_uuid', variantUuids);
+
+        if (communityProductsData) {
+          communityProductsData.forEach((product: any) => {
+            variantNames[product.community_product_uuid] = product.name;
+            availableVariants.add(product.community_product_uuid);
+          });
+        }
+      }
+
+      // Map the items with their names and availability status
+      const items: CartItem[] = itemsData.map((item: any) => {
+        // Always assume the item is available if it's in the cart
+        // Only mark it unavailable if specifically needed
+        const isAvailable = true;
+        
+        return {
+          product_uuid: item.product_uuid,
+          variant_uuid: item.variant_uuid,
+          price: item.price,
+          quantity: item.quantity,
+          product_name: item.product_uuid ? (productNames[item.product_uuid] || 'Unknown Product') : 'Classroom Product',
+          variant_name: variantNames[item.variant_uuid] || 'Unknown Variant',
+          is_available: isAvailable
+        };
+      });
+
+      return {
+        transaction_uuid: transactionData[0].product_transaction_uuid,
+        item_count: transactionData[0].item_count,
+        total_amount: transactionData[0].total_amount,
+        items
+      };
+    } else if (sessionId) {
+      // Handle guest cart (this would be implemented in a similar way)
+      console.log('Guest cart not fully implemented yet');
+      return null;
+    } else {
+      console.error('No user ID or session ID found')
+      throw new Error('No user ID')
     }
-    
-    // If no cart exists yet, return null
-    return null;
   } catch (error) {
-    console.error('Error fetching cart data:', error);
+    console.error('Failed to fetch cart:', error);
     return null;
   }
-};
+}
 
-export const addItemToCart = async (
-  existingCart: CartTransaction | null,
+// Find existing item in cart
+export function findItemInCart(cart: CartTransaction | null, productUuid: string, variantUuid: string): CartItem | undefined {
+  if (!cart) return undefined;
+  return cart.items.find(item =>
+    item.product_uuid === productUuid && item.variant_uuid === variantUuid
+  );
+}
+
+// Add item to cart
+export async function addItemToCart(
+  cart: CartTransaction | null,
   product: any,
-  variantId: string,
+  selectedVariant: string,
   userId?: string,
   guestSessionId?: string,
-  transactionId?: string,
+  existingTransactionId?: string,
   isClassroomProduct: boolean = false
-) => {
-  console.log('Starting addItemToCart for variant', variantId);
-  // Validate input
-  if (!variantId || (!userId && !guestSessionId)) {
-    console.error('Missing required parameters for addItemToCart');
-    return {
-      success: false,
-      message: 'Missing required parameters for adding to cart',
-      updatedCart: existingCart
-    };
-  }
-
+): Promise<{ success: boolean; message?: string; updatedCart?: CartTransaction; cartItem?: CartItem }> {
   try {
-    // Find the correct variant from the product
-    const selectedVariant = product.variants?.find((v: any) => v.id === variantId);
+    console.log('Adding to cart', cart, selectedVariant, 'using transaction:', existingTransactionId);
+    console.log('Is classroom product:', isClassroomProduct);
     
-    if (!selectedVariant) {
-      console.error('Variant not found in product:', variantId);
-      return {
-        success: false,
-        message: 'Selected variant not found',
-        updatedCart: existingCart
-      };
-    }
-
-    // Determine which cart to use (create new one if none exists)
-    let cartTransaction = existingCart;
-    let isNewCart = false;
-
-    if (!cartTransaction || !cartTransaction.transaction_uuid) {
-      console.log('Creating new cart transaction');
-      // Create a new cart transaction
-      if (userId) {
-        // For logged-in users, create a cart in DB
-        // This is simplified for now, in production we'd create a DB entry
-        cartTransaction = {
-          transaction_uuid: transactionId || crypto.randomUUID(),
-          item_count: 0,
-          total_amount: 0,
-          items: []
-        };
-      } else {
-        // For guests, only store in memory/localStorage
-        cartTransaction = {
-          transaction_uuid: transactionId || crypto.randomUUID(),
-          item_count: 0,
-          total_amount: 0,
-          items: []
+    let variantData;
+    let productUuid;
+    
+    if (isClassroomProduct) {
+      // For classroom products, we need to fetch from community_products
+      const { data, error } = await supabase
+        .from('community_products')
+        .select('*')
+        .eq('community_product_uuid', selectedVariant)
+        .single();
+      
+      if (error || !data) {
+        console.error('Error fetching classroom product:', error);
+        return {
+          success: false,
+          message: "Could not find the selected classroom product"
         };
       }
-      isNewCart = true;
-    }
-
-    // Check if the item is already in the cart
-    const existingItemIndex = cartTransaction.items.findIndex(
-      item => item.variant_uuid === variantId
-    );
-
-    // If item exists, increment quantity
-    if (existingItemIndex !== -1) {
-      console.log('Item already in cart, incrementing quantity');
-      const updatedItems = [...cartTransaction.items];
-      updatedItems[existingItemIndex].quantity += 1;
       
-      // Update total values
-      cartTransaction = {
-        ...cartTransaction,
-        items: updatedItems,
-        item_count: updatedItems.reduce((sum, item) => sum + item.quantity, 0),
-        total_amount: updatedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-      };
+      variantData = data;
+      productUuid = data.community_product_uuid; // Use the community product UUID as the product UUID
     } else {
-      // Otherwise, add as new item
-      console.log('Adding new item to cart');
+      // Regular product variants
+      const variantResponse = await supabase
+        .from('variants')
+        .select('*')
+        .eq('variant_uuid', selectedVariant)
+        .single();
+
+      if (variantResponse.error || !variantResponse.data) {
+        return {
+          success: false,
+          message: "Could not find the selected variant"
+        };
+      }
       
-      // Get the appropriate name for the product
-      const productName = product.name;
-      const variantName = selectedVariant.name;
-      
-      // Create the new cart item
-      const newItem: CartItem = {
-        product_uuid: product.id || null,
-        variant_uuid: variantId,
-        price: parseFloat(selectedVariant.price) || 0,
-        quantity: 1,
-        product_name: productName,
-        variant_name: variantName,
-        is_available: true // Assume the item is available
+      variantData = variantResponse.data;
+      productUuid = product.product_uuid;
+    }
+
+    // Check for existing transaction
+    let transactionId = existingTransactionId || cart?.transaction_uuid;
+
+    if (!transactionId) {
+      console.log('Creating NEW transaction for variant: ', selectedVariant);
+      // Create a new transaction
+      const newTransaction = {
+        user_uuid: userId,
+        item_count: 0,
+        total_amount: variantData.price,
+        type: userId ? 'user' as const : 'guest' as const, // Ensure it's one of the allowed values
+        status: 'pending' as const
       };
-      
-      const updatedItems = [...cartTransaction.items, newItem];
-      
-      // Update total values
-      cartTransaction = {
-        ...cartTransaction,
-        items: updatedItems,
-        item_count: updatedItems.reduce((sum, item) => sum + item.quantity, 0),
-        total_amount: updatedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+
+      const { data, error } = await supabase
+        .from('products_transactions')
+        .insert(newTransaction)
+        .select('product_transaction_uuid')
+        .single();
+
+      console.log('Create TX: ', newTransaction, error);
+
+      if (error || !data) {
+        return {
+          success: false,
+          message: "Could not create shopping cart"
+        };
+      }
+
+      transactionId = data.product_transaction_uuid;
+    }
+
+    // Check if this item is already in the cart
+    const existingItem = isClassroomProduct 
+      ? (cart?.items || []).find(item => 
+          item.variant_uuid === selectedVariant && 
+          (item.product_uuid === productUuid || item.product_uuid === selectedVariant)
+        )
+      : findItemInCart(cart, productUuid, selectedVariant);
+
+    // Prepare the new or updated cart item
+    let cartItem: CartItem;
+
+    if (existingItem) {
+      // Update the quantity of existing item
+      const updateResponse = await supabase
+        .from('products_transaction_items')
+        .update({
+          quantity: existingItem.quantity + 1,
+          total_price: (existingItem.quantity + 1) * existingItem.price
+        })
+        .eq(isClassroomProduct ? 'variant_uuid' : 'product_uuid', isClassroomProduct ? selectedVariant : productUuid)
+        .eq('variant_uuid', selectedVariant)
+        .eq('product_transaction_uuid', transactionId);
+
+      if (updateResponse.error) {
+        return {
+          success: false,
+          message: "Could not update item quantity"
+        };
+      }
+
+      cartItem = {
+        ...existingItem,
+        quantity: existingItem.quantity + 1
+      };
+
+    } else {
+      // Add new item to cart
+      const itemResponse = await supabase
+        .from('products_transaction_items')
+        .insert({
+          product_transaction_uuid: transactionId,
+          product_uuid: productUuid,
+          variant_uuid: selectedVariant,
+          price: variantData.price,
+          quantity: 1,
+          total_price: variantData.price
+        });
+
+      if (itemResponse.error) {
+        return {
+          success: false,
+          message: "Could not add item to cart"
+        };
+      }
+
+      cartItem = {
+        product_uuid: productUuid,
+        variant_uuid: selectedVariant,
+        price: variantData.price,
+        quantity: 1,
+        product_name: isClassroomProduct ? variantData.name : (product.name || 'Unknown Product'),
+        variant_name: variantData.name || 'Unknown Variant'
       };
     }
 
-    // For this example implementation, we're just returning the updated cart
-    // In a real app, you would save it to a database or local storage
-    console.log('Updated cart:', cartTransaction);
+    // Get the current values of the transaction
+    const { data: currentTransaction, error: fetchError } = await supabase
+      .from('products_transactions')
+      .select('item_count, total_amount')
+      .eq('product_transaction_uuid', transactionId)
+      .single();
 
-    // Get the newly added/updated item to return to caller
-    const cartItem = cartTransaction.items.find(item => item.variant_uuid === variantId);
+    if (fetchError || !currentTransaction) {
+      console.error('Error fetching current transaction:', fetchError);
+      return {
+        success: true,
+        message: "Item added but couldn't update totals",
+        cartItem
+      };
+    }
+
+    // Update the transaction totals
+    const newItemCount = (currentTransaction.item_count || 0) + 1;
+    const newTotalAmount = (currentTransaction.total_amount || 0) + variantData.price;
+
+    const updateTransactionResponse = await supabase
+      .from('products_transactions')
+      .update({
+        item_count: newItemCount,
+        total_amount: newTotalAmount
+      })
+      .eq('product_transaction_uuid', transactionId);
+
+    if (updateTransactionResponse.error) {
+      return {
+        success: false,
+        message: "Could not update cart totals"
+      };
+    }
+
+    // Fetch the updated cart items
+    const { data: updatedItems, error: itemsError } = await supabase
+      .from('products_transaction_items')
+      .select('product_uuid, variant_uuid, price, quantity')
+      .eq('product_transaction_uuid', transactionId);
+
+    if (itemsError || !updatedItems) {
+      console.error('Error fetching updated items:', itemsError);
+    }
+
+    // Construct updated cart object
+    const updatedCart: CartTransaction = {
+      transaction_uuid: transactionId,
+      item_count: newItemCount,
+      total_amount: newTotalAmount,
+      items: cart ? [...cart.items] : []
+    };
+
+    // Add or update the current item in the items array
+    if (existingItem) {
+      const itemIndex = updatedCart.items.findIndex(item =>
+        item.product_uuid === productUuid && item.variant_uuid === selectedVariant
+      );
+      if (itemIndex !== -1) {
+        updatedCart.items[itemIndex] = cartItem;
+      }
+    } else {
+      updatedCart.items.push(cartItem);
+    }
+
+    console.log('UPDATED CART:', updatedCart);
 
     return {
       success: true,
-      message: 'Item added to cart',
-      updatedCart: cartTransaction,
+      message: "Item added to cart successfully",
+      updatedCart,
       cartItem
     };
   } catch (error) {
-    console.error('Error adding item to cart:', error);
+    console.error('Failed to add to cart:', error);
     return {
       success: false,
-      message: 'Error adding item to cart',
-      updatedCart: existingCart
+      message: "Failed to add item to cart. Please try again."
     };
   }
-};
+}
 
-export const removeItemFromCart = async (transactionId: string, variantId: string) => {
-  console.log('Removing item from cart:', { transactionId, variantId });
-  
-  if (!transactionId || !variantId) {
-    return {
-      success: false,
-      message: 'Missing transaction ID or variant ID'
-    };
-  }
-  
+// Remove item from cart
+export async function removeItemFromCart(
+  transactionId: string,
+  variantUuid: string
+): Promise<{ success: boolean; message?: string }> {
   try {
-    // In a real implementation, this would update the database
-    // For now, we'll simulate by updating localStorage
+    console.log('Removing item from cart:', 'transaction:', transactionId, 'variant:', variantUuid);
     
-    // First, find the cart in localStorage (this is just a simulation)
-    let foundCart: CartTransaction | null = null;
-    let storageKey: string | null = null;
+    // First get the item to calculate the price
+    const { data: itemData, error: itemError } = await supabase
+      .from('products_transaction_items')
+      .select('price, quantity, total_price')
+      .eq('product_transaction_uuid', transactionId)
+      .eq('variant_uuid', variantUuid)
+      .single();
     
-    // Check for user carts
-    const { data: { session } } = await supabase.auth.getSession();
-    const userId = session?.user?.id;
-    
-    if (userId) {
-      const key = `cart_${userId}`;
-      const storedCart = localStorage.getItem(key);
-      if (storedCart) {
-        const parsedCart = JSON.parse(storedCart);
-        if (parsedCart.transaction_uuid === transactionId) {
-          foundCart = parsedCart;
-          storageKey = key;
-        }
-      }
-    }
-    
-    // Check for guest carts if no user cart was found
-    if (!foundCart) {
-      const guestId = localStorage.getItem('guest_session_id');
-      if (guestId) {
-        const key = `cart_guest_${guestId}`;
-        const storedCart = localStorage.getItem(key);
-        if (storedCart) {
-          const parsedCart = JSON.parse(storedCart);
-          if (parsedCart.transaction_uuid === transactionId) {
-            foundCart = parsedCart;
-            storageKey = key;
-          }
-        }
-      }
-    }
-    
-    if (!foundCart || !storageKey) {
+    if (itemError || !itemData) {
+      console.error('Error fetching item for removal:', itemError);
       return {
         success: false,
-        message: 'Cart not found'
+        message: "Could not find the item to remove"
       };
     }
-    
-    // Remove the item from the cart
-    const itemIndex = foundCart.items.findIndex(item => item.variant_uuid === variantId);
-    if (itemIndex === -1) {
+
+    // Delete the item
+    const { error: deleteError } = await supabase
+      .from('products_transaction_items')
+      .delete()
+      .eq('product_transaction_uuid', transactionId)
+      .eq('variant_uuid', variantUuid);
+
+    if (deleteError) {
+      console.error('Error deleting item:', deleteError);
       return {
         success: false,
-        message: 'Item not found in cart'
+        message: "Failed to remove item from cart"
       };
     }
-    
-    // Get the item to calculate price reduction
-    const removedItem = foundCart.items[itemIndex];
-    const priceReduction = removedItem.price * removedItem.quantity;
-    
-    // Remove the item
-    foundCart.items.splice(itemIndex, 1);
-    
-    // Update totals
-    foundCart.item_count = foundCart.items.reduce((sum, item) => sum + item.quantity, 0);
-    foundCart.total_amount = foundCart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    
-    // Save the updated cart
-    localStorage.setItem(storageKey, JSON.stringify(foundCart));
-    
+
+    // Update the transaction totals
+    const { data: transactionData, error: transactionError } = await supabase
+      .from('products_transactions')
+      .select('item_count, total_amount')
+      .eq('product_transaction_uuid', transactionId)
+      .single();
+
+    if (transactionError || !transactionData) {
+      console.error('Error fetching transaction for update:', transactionError);
+      return {
+        success: true,
+        message: "Item removed but couldn't update cart totals"
+      };
+    }
+
+    // Calculate new totals
+    const newItemCount = Math.max(0, (transactionData.item_count || 0) - itemData.quantity);
+    const newTotalAmount = Math.max(0, (transactionData.total_amount || 0) - itemData.total_price);
+
+    // Update the transaction
+    const { error: updateError } = await supabase
+      .from('products_transactions')
+      .update({
+        item_count: newItemCount,
+        total_amount: newTotalAmount
+      })
+      .eq('product_transaction_uuid', transactionId);
+
+    if (updateError) {
+      console.error('Error updating transaction totals:', updateError);
+      return {
+        success: false,
+        message: "Item removed but failed to update cart totals"
+      };
+    }
+
     return {
       success: true,
-      message: 'Item removed from cart'
+      message: "Item removed from cart"
     };
   } catch (error) {
-    console.error('Error removing item from cart:', error);
+    console.error('Failed to remove item from cart:', error);
     return {
       success: false,
-      message: 'Error removing item from cart'
+      message: "Failed to remove item from cart. Please try again."
     };
   }
-};
+}
 
-export const cleanupUnavailableCartItems = async (transactionId: string) => {
-  console.log('Cleaning up unavailable items in cart:', transactionId);
-  
-  if (!transactionId) {
-    return false;
-  }
-  
+// New function to clean up unavailable items from cart
+export async function cleanupUnavailableCartItems(transactionId: string): Promise<boolean> {
   try {
-    // In a real implementation, this would check product availability in the database
-    // and remove unavailable items from the cart
+    // Get all cart items that have either null product_uuid or variant_uuid
+    const { data: unavailableItems, error: queryError } = await supabase
+      .from('products_transaction_items')
+      .select('product_transaction_item_uuid, variant_uuid, quantity, total_price')
+      .eq('product_transaction_uuid', transactionId)
+      .or('product_uuid.is.null,variant_uuid.is.null');
     
-    // For now, we'll simulate by assuming all items are available
-    // In a real app, you would check each item against your inventory
+    if (queryError) {
+      console.error('Error finding unavailable items:', queryError);
+      return false;
+    }
+    
+    if (!unavailableItems || unavailableItems.length === 0) {
+      // No unavailable items to clean up
+      return true;
+    }
+    
+    // Calculate totals to adjust
+    const itemCount = unavailableItems.reduce((sum, item) => sum + item.quantity, 0);
+    const totalPrice = unavailableItems.reduce((sum, item) => sum + item.total_price, 0);
+    
+    // Delete unavailable items
+    const { error: deleteError } = await supabase
+      .from('products_transaction_items')
+      .delete()
+      .in('product_transaction_item_uuid', unavailableItems.map(item => item.product_transaction_item_uuid));
+      
+    if (deleteError) {
+      console.error('Error deleting unavailable items:', deleteError);
+      return false;
+    }
+    
+    // Update transaction totals
+    const { data: transaction, error: transactionError } = await supabase
+      .from('products_transactions')
+      .select('item_count, total_amount')
+      .eq('product_transaction_uuid', transactionId)
+      .single();
+      
+    if (transactionError) {
+      console.error('Error fetching transaction:', transactionError);
+      return false;
+    }
+    
+    const newItemCount = Math.max(0, (transaction.item_count || 0) - itemCount);
+    const newTotalAmount = Math.max(0, (transaction.total_amount || 0) - totalPrice);
+    
+    const { error: updateError } = await supabase
+      .from('products_transactions')
+      .update({
+        item_count: newItemCount,
+        total_amount: newTotalAmount
+      })
+      .eq('product_transaction_uuid', transactionId);
+      
+    if (updateError) {
+      console.error('Error updating transaction totals:', updateError);
+      return false;
+    }
     
     return true;
   } catch (error) {
-    console.error('Error cleaning up cart:', error);
+    console.error('Failed to clean up unavailable items:', error);
     return false;
   }
-};
+}
