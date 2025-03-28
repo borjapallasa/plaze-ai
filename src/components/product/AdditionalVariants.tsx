@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Variant } from "./types/variants";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -43,6 +43,11 @@ export function AdditionalVariants({
     return groups;
   }, {} as Record<string, { productName: string; variants: any[] }>);
 
+  // Log product groups for debugging
+  useEffect(() => {
+    console.log("Product groups:", productGroups);
+  }, [productGroups]);
+
   if (Object.keys(productGroups).length === 0) {
     return null;
   }
@@ -51,6 +56,8 @@ export function AdditionalVariants({
     const variants = productGroups[productUuid].variants;
     const variantId = selectedVariants[productUuid] || variants[0].variant_uuid;
 
+    console.log("Toggle variant:", variantId, checked);
+    
     if (checked) {
       // Select this variant
       if (!selectedAdditional.includes(variantId)) {
@@ -118,11 +125,7 @@ export function AdditionalVariants({
       <Card className="pt-4 pb-2.5 px-4 bg-gray-50 border border-gray-200/70 shadow-sm rounded-xl">
         <div className="space-y-1">
           {Object.entries(productGroups).map(([productUuid, { productName, variants }]) => {
-            const selectedVariantId = selectedVariants[productUuid] || variants[0].variant_uuid;
-            const selectedVariant = variants.find(v => v.variant_uuid === selectedVariantId);
-            const isSelected = selectedAdditional.includes(selectedVariantId);
-
-            // Initialize selected variant if not set
+            // Initialize and get the selected variant
             if (!selectedVariants[productUuid]) {
               setTimeout(() => {
                 setSelectedVariants(prev => ({
@@ -131,6 +134,14 @@ export function AdditionalVariants({
                 }));
               }, 0);
             }
+            
+            const selectedVariantId = selectedVariants[productUuid] || variants[0].variant_uuid;
+            const selectedVariant = variants.find(v => v.variant_uuid === selectedVariantId);
+            const isSelected = selectedAdditional.includes(selectedVariantId);
+            
+            // Check if this is a default variant (product with no variants)
+            const isDefaultVariant = selectedVariantId.startsWith('default-');
+            const hasMultipleVariants = variants.length > 1;
 
             return (
               <div key={productName} className="flex items-center gap-3 py-2 px-2 rounded hover:bg-white transition-colors">
@@ -150,15 +161,20 @@ export function AdditionalVariants({
                   >
                     <span className="font-medium">{productName}</span>
                     <span className="mx-1">-</span>
-                    <span className="font-medium">${formatPrice(selectedVariant?.price || 0)}</span>
+                    <span className="font-medium">${formatPrice(selectedVariant?.variant_price || 0)}</span>
                   </label>
 
                   <Select
                     value={selectedVariantId}
                     onValueChange={(value) => handleVariantChange(productUuid, value)}
-                    disabled={!isSelected}
+                    disabled={!isSelected || isDefaultVariant || !hasMultipleVariants}
                   >
-                    <SelectTrigger className="w-[180px] h-8 text-xs border-muted">
+                    <SelectTrigger 
+                      className={cn(
+                        "w-[180px] h-8 text-xs border-muted",
+                        (isDefaultVariant || !hasMultipleVariants) && "opacity-50 cursor-not-allowed"
+                      )}
+                    >
                       <SelectValue placeholder="Options" />
                     </SelectTrigger>
                     <SelectContent className="min-w-[220px]">
