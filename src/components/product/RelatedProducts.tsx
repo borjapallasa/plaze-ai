@@ -15,10 +15,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useToast } from "@/components/ui/use-toast";
 import { Check, ChevronsUpDown, Plus, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner"
 
 interface Product {
   product_uuid: string;
@@ -38,7 +38,6 @@ export function RelatedProducts({
   userUuid,
   className
 }: RelatedProductsProps) {
-  const { toast } = useToast();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
@@ -109,14 +108,14 @@ export function RelatedProducts({
   // Update selected products based on relationships
   useEffect(() => {
     console.log("Relationships changed:", relationships.length);
-    
+
     if (relationships.length > 0 && userProducts.length > 0) {
       try {
         const relatedProductIds = relationships.map(rel => rel.related_product_uuid);
         const relatedProducts = userProducts.filter(product =>
           relatedProductIds.includes(product.product_uuid)
         );
-        
+
         console.log("Setting selected products:", relatedProducts.length);
         setSelectedProducts(relatedProducts);
       } catch (error) {
@@ -163,19 +162,10 @@ export function RelatedProducts({
       // Refresh data
       queryClient.invalidateQueries({ queryKey: ['productRelationships', productId] });
       queryClient.invalidateQueries({ queryKey: ['relatedProducts', productId] });
-
-      toast({
-        title: "Changes saved",
-        description: "Related products have been updated successfully",
-        duration: 3000,
-      });
+      toast.success("Related products have been updated successfully");
     } catch (error) {
       console.error("Error saving relationships:", error);
-      toast({
-        title: "Error",
-        description: "Failed to save related products",
-        variant: "destructive",
-      });
+      toast.error("Failed to save related products");
     } finally {
       setSaving(false);
     }
@@ -184,10 +174,11 @@ export function RelatedProducts({
   // Delete a specific product relationship from the database
   const deleteProductRelationship = async (relatedProductUuid: string) => {
     if (!productId) return false;
-    
+
+    console.log('deleting', productId, relatedProductUuid)
     try {
       setIsDeleting(true);
-      
+
       const { error } = await supabase
         .from('product_relationships')
         .delete()
@@ -195,15 +186,10 @@ export function RelatedProducts({
         .eq('related_product_uuid', relatedProductUuid);
 
       if (error) {
-        console.error("Error deleting product relationship:", error);
-        toast({
-          title: "Error",
-          description: "Failed to remove related product",
-          variant: "destructive",
-        });
+        toast.error("Failed to remove related product");
         return false;
       }
-      
+
       return true;
     } catch (error) {
       console.error("Error in deleteProductRelationship:", error);
@@ -241,30 +227,22 @@ export function RelatedProducts({
     try {
       // First delete from database
       const success = await deleteProductRelationship(productToRemove);
-      
+
       if (success) {
         // Then remove from local state
-        setSelectedProducts(prev => 
+        setSelectedProducts(prev =>
           prev.filter(p => p.product_uuid !== productToRemove)
         );
-        
+
         // Refresh queries
         queryClient.invalidateQueries({ queryKey: ['productRelationships', productId] });
         queryClient.invalidateQueries({ queryKey: ['relatedProducts', productId] });
-        
-        toast({
-          title: "Product removed",
-          description: "Related product has been removed successfully",
-          duration: 3000,
-        });
+
+        toast.success("Related product has been removed successfully");
       }
     } catch (error) {
       console.error("Error removing selected product:", error);
-      toast({
-        title: "Error",
-        description: "Failed to remove related product",
-        variant: "destructive",
-      });
+      toast.error("Failed to remove related product");
     }
   };
 
