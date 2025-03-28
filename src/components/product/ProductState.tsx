@@ -63,65 +63,25 @@ export function useProductState(variants: any[]) {
 
     const additionalVariantsInfo = await Promise.all(
       additionalVariants.map(async (variantId) => {
-        console.log("Processing additional variant:", variantId);
+        const { data: variantData, error: variantError } = await supabase
+          .from('variants')
+          .select('*')
+          .eq('variant_uuid', variantId)
+          .single();
         
-        // Check if this variant ID is a default variant (prefixed with 'default-')
-        const isDefaultVariant = variantId.startsWith('default-');
-        
-        try {
-          if (isDefaultVariant) {
-            // For default variants that represent products without real variants
-            const productUuid = variantId.replace('default-', '');
-            
-            console.log("Processing default variant for product:", productUuid);
-            
-            const { data: productData, error: productError } = await supabase
-              .from('products')
-              .select('product_uuid, name, price_from')
-              .eq('product_uuid', productUuid)
-              .single();
-              
-            if (productError || !productData) {
-              console.error('Error fetching product data:', productError);
-              return { variantId, productUuid, productName: 'Unknown Product', variantName: 'Default option' };
-            }
-            
-            console.log("Found product data for default variant:", productData);
-            
-            return { 
-              variantId, 
-              productUuid: productData.product_uuid,
-              productName: productData.name,
-              variantName: 'Default option'
-            };
-          } else {
-            // Regular variants
-            const { data: variantData, error: variantError } = await supabase
-              .from('variants')
-              .select('*')
-              .eq('variant_uuid', variantId)
-              .single();
-            
-            if (variantError || !variantData) {
-              console.error('Error fetching variant data:', variantError);
-              return { variantId, productUuid: null };
-            }
-            
-            return { 
-              variantId, 
-              productUuid: variantData.product_uuid,
-              productName: null,
-              variantName: variantData.name
-            };
-          }
-        } catch (error) {
-          console.error('Error processing variant:', error);
+        if (variantError || !variantData) {
+          console.error('Error fetching variant data:', variantError);
           return { variantId, productUuid: null };
         }
+        
+        return { 
+          variantId, 
+          productUuid: variantData.product_uuid,
+          productName: null,
+          variantName: variantData.name
+        };
       })
     );
-
-    console.log("Additional variants info:", additionalVariantsInfo);
 
     const isClassroomProduct = !!product.community_product_uuid;
 
@@ -130,11 +90,8 @@ export function useProductState(variants: any[]) {
       .map(item => ({
         variantId: item.variantId,
         productUuid: item.productUuid,
-        variantName: item.variantName,
-        isDefaultVariant: item.variantId.startsWith('default-')
+        variantName: item.variantName
       }));
-
-    console.log("Valid additional variants:", validAdditionalVariants);
 
     const result = await addToCart(
       product, 
@@ -166,20 +123,8 @@ export function useProductState(variants: any[]) {
       }
 
       if (result.updatedCart && validAdditionalVariants.length > 0) {
-        // For default variants, we need to match them differently
         const additionalItems = result.updatedCart.items
-          .filter(item => {
-            // Check if this item is one of our additional variants
-            return additionalVariants.some(variantId => {
-              // For default variants, compare product_uuid
-              if (variantId.startsWith('default-')) {
-                const productUuid = variantId.replace('default-', '');
-                return item.product_uuid === productUuid;
-              }
-              // For regular variants, compare variant_uuid
-              return item.variant_uuid === variantId;
-            });
-          })
+          .filter(item => additionalVariants.includes(item.variant_uuid))
           .map(item => ({
             ...item,
             last_updated: Date.now()
