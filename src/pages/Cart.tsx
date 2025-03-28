@@ -1,44 +1,61 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Trash2, ShoppingCart, Loader2, AlertTriangle } from "lucide-react";
-import { useEffect } from "react";
-import { toast } from "@/components/ui/use-toast";
+import { useEffect, useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
 import { useCart } from "@/hooks/use-cart";
 import { supabase } from "@/integrations/supabase/client";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function Cart() {
   const { cart, isLoading, fetchCart, removeFromCart, cleanupCart } = useCart();
+  const { toast } = useToast();
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
     const refreshCart = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      const userId = session?.user?.id;
-      const guestId = !userId ? localStorage.getItem('guest_session_id') : undefined;
-      
-      await fetchCart(userId, guestId || undefined);
-      
-      // Clean up any unavailable items
-      await cleanupCart();
+      setIsRefreshing(true);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const userId = session?.user?.id;
+        const guestId = !userId ? localStorage.getItem('guest_session_id') : undefined;
+        
+        await fetchCart(userId, guestId || undefined);
+        
+        await cleanupCart();
+      } catch (error) {
+        console.error('Error refreshing cart:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load your cart. Please try again.",
+          variant: "destructive"
+        });
+      } finally {
+        setIsRefreshing(false);
+      }
     };
     
     refreshCart();
-  }, [fetchCart, cleanupCart]);
+  }, [fetchCart, cleanupCart, toast]);
 
   const handleRemoveItem = async (variantId: string) => {
-    await removeFromCart(variantId);
+    const success = await removeFromCart(variantId);
+    
+    if (success) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const userId = session?.user?.id;
+        const guestId = !userId ? localStorage.getItem('guest_session_id') : undefined;
+        
+        await fetchCart(userId, guestId || undefined);
+      } catch (error) {
+        console.error('Error refreshing cart after item removal:', error);
+      }
+    }
   };
 
-  const subtotal = cart ? cart.total_amount : 0;
-  const tax = subtotal * 0.1; // 10% tax rate
-  const total = subtotal + tax;
-  
-  // Check if we have any unavailable items
-  const hasUnavailableItems = cart?.items.some(item => item.is_available === false);
-
-  if (isLoading) {
+  if (isLoading || isRefreshing) {
     return (
       <div className="bg-background min-h-screen">
         <MainHeader />
@@ -84,7 +101,7 @@ export default function Cart() {
         <div className="max-w-7xl mx-auto">
           <h1 className="text-2xl font-semibold mb-4">Shopping Cart</h1>
           
-          {hasUnavailableItems && (
+          {cart.items.some(item => item.is_available === false) && (
             <Alert variant="destructive" className="mb-4">
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
@@ -126,7 +143,7 @@ export default function Cart() {
                         </p>
                       </div>
                       <div className="flex flex-col items-end gap-3">
-                        <span className="text-lg font-semibold">${item.price * item.quantity}</span>
+                        <span className="text-lg font-semibold">${(item.price * item.quantity).toFixed(2)}</span>
                         <Button 
                           variant="ghost" 
                           size="icon" 
@@ -150,24 +167,23 @@ export default function Cart() {
                   <div className="space-y-3">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Subtotal</span>
-                      <span>${subtotal.toFixed(2)}</span>
+                      <span>${cart.total_amount.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Tax (10%)</span>
-                      <span>${tax.toFixed(2)}</span>
+                      <span>${(cart.total_amount * 0.1).toFixed(2)}</span>
                     </div>
                     <div className="border-t pt-3">
                       <div className="flex justify-between font-semibold">
                         <span>Total</span>
-                        <span>${total.toFixed(2)}</span>
+                        <span>${(cart.total_amount * 1.1).toFixed(2)}</span>
                       </div>
                     </div>
                     <Button 
                       size="lg" 
                       className="w-full bg-primary hover:bg-primary/90 transition-colors"
                       onClick={() => {
-                        // Remove unavailable items before checkout
-                        if (hasUnavailableItems) {
+                        if (cart.items.some(item => item.is_available === false)) {
                           cleanupCart().then(() => {
                             toast({
                               title: "Cart updated",

@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from '@/components/ui/use-toast';
@@ -40,8 +40,11 @@ export function useCart() {
   }, [guestSessionId]);
 
   // Fetch the cart from the database
-  const fetchCart = async (userId?: string, sessionId?: string) => {
+  const fetchCart = useCallback(async (userId?: string, sessionId?: string) => {
+    console.log('useCart: fetchCart called with', {userId, sessionId});
+    
     try {
+      setIsLoading(true);
       const cartData = await fetchCartData(userId, sessionId);
       
       // If we have a cart, clean up any unavailable items
@@ -50,11 +53,19 @@ export function useCart() {
         
         // Re-fetch the cart to get updated data after cleanup
         const updatedCartData = await fetchCartData(userId, sessionId);
+        
+        // Add timestamp to track when the cart was last fetched
+        if (updatedCartData) {
+          updatedCartData.last_fetched = Date.now();
+        }
+        
         setCart(updatedCartData);
+        setIsLoading(false);
         return updatedCartData;
       }
       
       setCart(cartData);
+      setIsLoading(false);
       return cartData;
     } catch (error) {
       console.error('Failed to fetch cart:', error);
@@ -63,9 +74,10 @@ export function useCart() {
         description: "Failed to load your cart. Please try again.",
         variant: "destructive"
       });
+      setIsLoading(false);
       return null;
     }
-  };
+  }, [toast]);
 
   // Add an item to cart
   const addToCart = async (
@@ -74,6 +86,7 @@ export function useCart() {
     additionalVariants: string[] = [],
     isClassroomProduct: boolean = false
   ) => {
+    console.log('useCart: addToCart called with', {product, selectedVariant, additionalVariants, isClassroomProduct});
     setIsLoading(true);
     try {
       // Get the user's session
@@ -97,6 +110,7 @@ export function useCart() {
           description: result.message || "Failed to add item to cart",
           variant: "destructive"
         });
+        setIsLoading(false);
         return null;
       }
 
@@ -124,6 +138,16 @@ export function useCart() {
 
       // Important: Always update the cart state with the updatedCart if available
       if (updatedCart) {
+        // Add timestamp for last update
+        if (updatedCart) {
+          updatedCart.last_fetched = Date.now();
+          if (updatedCart.items) {
+            updatedCart.items.forEach(item => {
+              item.last_updated = Date.now();
+            });
+          }
+        }
+        
         setCart(updatedCart);
       } else {
         // Refetch cart if updated cart wasn't returned
@@ -135,6 +159,7 @@ export function useCart() {
         description: `${product.name} has been added to your cart.`
       });
 
+      setIsLoading(false);
       return {
         ...result,
         updatedCart
@@ -146,14 +171,15 @@ export function useCart() {
         description: "Failed to add item to cart. Please try again.",
         variant: "destructive"
       });
-      return null;
-    } finally {
       setIsLoading(false);
+      return null;
     }
   };
 
   // Remove an item from cart
   const removeFromCart = async (variantUuid: string) => {
+    console.log('useCart: removeFromCart called for variant', variantUuid);
+    
     if (!cart || !cart.transaction_uuid) {
       toast({
         title: "Error",
@@ -177,12 +203,15 @@ export function useCart() {
             ? cart.total_amount - (removedItem.price * removedItem.quantity) 
             : cart.total_amount;
             
-          setCart({
+          const optimisticCart = {
             ...cart,
             items: updatedItems,
             item_count: updatedItemCount,
-            total_amount: updatedTotalAmount
-          });
+            total_amount: updatedTotalAmount,
+            last_fetched: Date.now()
+          };
+          
+          setCart(optimisticCart);
         }
         
         // Also refetch to ensure all data is synced
@@ -196,6 +225,8 @@ export function useCart() {
           title: "Success",
           description: "Item removed from cart"
         });
+        
+        setIsLoading(false);
         return true;
       } else {
         toast({
@@ -203,6 +234,7 @@ export function useCart() {
           description: result.message || "Failed to remove item from cart",
           variant: "destructive"
         });
+        setIsLoading(false);
         return false;
       }
     } catch (error) {
@@ -212,9 +244,8 @@ export function useCart() {
         description: "Failed to remove item from cart. Please try again.",
         variant: "destructive"
       });
-      return false;
-    } finally {
       setIsLoading(false);
+      return false;
     }
   };
 
@@ -235,14 +266,15 @@ export function useCart() {
         const guestId = !userId ? localStorage.getItem('guest_session_id') : undefined;
         
         await fetchCart(userId, !userId ? guestId || undefined : undefined);
+        setIsLoading(false);
         return true;
       }
+      setIsLoading(false);
       return false;
     } catch (error) {
       console.error('Failed to clean up cart:', error);
-      return false;
-    } finally {
       setIsLoading(false);
+      return false;
     }
   };
 
