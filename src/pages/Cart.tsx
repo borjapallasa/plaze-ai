@@ -15,13 +15,13 @@ export default function Cart() {
   useEffect(() => {
     const refreshCart = async () => {
       if (isRefreshing) return;
-      
+
       setIsRefreshing(true);
       try {
         const { data: { session } } = await supabase.auth.getSession();
         const userId = session?.user?.id;
         const guestId = !userId ? localStorage.getItem('guest_session_id') : undefined;
-        
+
         await fetchCart(userId, guestId || undefined);
       } catch (error) {
         console.error('Error refreshing cart:', error);
@@ -34,20 +34,19 @@ export default function Cart() {
         setIsRefreshing(false);
       }
     };
-    
+
     refreshCart();
   }, []);
 
   const handleRemoveItem = async (variantId: string) => {
     const success = await removeFromCart(variantId);
-    
+
     if (success) {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         const userId = session?.user?.id;
-        const guestId = !userId ? localStorage.getItem('guest_session_id') : undefined;
-        
-        await fetchCart(userId, guestId || undefined);
+
+        await fetchCart(userId);
       } catch (error) {
         console.error('Error refreshing cart after item removal:', error);
       }
@@ -75,12 +74,12 @@ export default function Cart() {
         <main className="container mx-auto px-4 py-4 pt-24">
           <div className="max-w-7xl mx-auto">
             <h1 className="text-2xl font-semibold mb-4">Shopping Cart</h1>
-            
+
             <div className="text-center py-12">
               <ShoppingCart className="mx-auto h-16 w-16 text-muted-foreground mb-4" />
               <p className="text-lg text-muted-foreground mb-4">Your cart is empty</p>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="mt-4"
                 onClick={() => window.location.href = '/'}
               >
@@ -99,12 +98,12 @@ export default function Cart() {
       <main className="container mx-auto px-4 py-4 pt-24">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-2xl font-semibold mb-4">Shopping Cart</h1>
-          
+
           <div className="lg:grid lg:grid-cols-3 lg:gap-6">
             <div className="lg:col-span-2 space-y-4">
               {cart.items.map((item) => (
-                <Card 
-                  key={item.variant_uuid} 
+                <Card
+                  key={item.variant_uuid}
                   className="overflow-hidden"
                 >
                   <CardContent className="p-4">
@@ -129,9 +128,9 @@ export default function Cart() {
                       </div>
                       <div className="flex flex-col items-end gap-3">
                         <span className="text-lg font-semibold">${(item.price * item.quantity).toFixed(2)}</span>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           className="rounded-full text-destructive hover:text-destructive hover:bg-destructive/10"
                           onClick={() => handleRemoveItem(item.variant_uuid)}
                         >
@@ -164,8 +163,8 @@ export default function Cart() {
                         <span>${(cart.total_amount * 1.1).toFixed(2)}</span>
                       </div>
                     </div>
-                    <Button 
-                      size="lg" 
+                    <Button
+                      size="lg"
                       className="w-full bg-primary hover:bg-primary/90 transition-colors"
                       onClick={() => {
                         toast({

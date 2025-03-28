@@ -7,7 +7,6 @@ import { useCart } from "@/hooks/use-cart";
 import { Separator } from "@/components/ui/separator";
 import { useEffect, useState } from "react";
 import { supabase } from '@/integrations/supabase/client';
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/components/ui/use-toast";
 
 interface CartDrawerProps {
@@ -30,9 +29,8 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
         try {
           const { data: { session } } = await supabase.auth.getSession();
           const userId = session?.user?.id;
-          const guestId = !userId ? localStorage.getItem('guest_session_id') : undefined;
 
-          await fetchCart(userId, !userId ? guestId || undefined : undefined);
+          await fetchCart(userId);
           await cleanupCart();
         } catch (error) {
           console.error('Error refreshing cart:', error);
@@ -48,7 +46,7 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
     };
 
     refreshCartData();
-  }, [toast]);
+  }, []);
 
   const handleViewCart = () => {
     onClose();
@@ -157,7 +155,7 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
             </p>
           </div>
         )}
-        
+
         <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
           {effectiveCart.items.map((item) => (
             <div

@@ -27,7 +27,7 @@ export function useCart() {
         setGuestSessionId(sessionId);
       }
 
-      await fetchCart(session?.user?.id, !session ? guestSessionId : undefined);
+      await fetchCart(session?.user?.id);
 
       setIsLoading(false);
     };
@@ -35,31 +35,31 @@ export function useCart() {
     initializeCart();
   }, [guestSessionId]);
 
-  const fetchCart = useCallback(async (userId?: string, sessionId?: string) => {
-    console.log('useCart: fetchCart called with', {userId, sessionId});
-    
+  const fetchCart = useCallback(async (userId?: string) => {
+    console.log('useCart: fetchCart called with', { userId });
+
     const now = Date.now();
-    if (now - lastFetchTime < 1000) {
+    if (now - lastFetchTime < 1000) { // Less than one second, just return null
       console.log('Skipping fetch, too soon after last fetch');
       return cart;
     }
-    
+
     try {
       setIsLoading(true);
       setLastFetchTime(now);
-      
-      const cartData = await fetchCartData(userId, sessionId);
-      
+
+      const cartData = await fetchCartData(userId);
+
       if (cartData && cartData.transaction_uuid) {
         if (cartData) {
           cartData.last_fetched = Date.now();
         }
-        
+
         setCart(cartData);
         setIsLoading(false);
         return cartData;
       }
-      
+
       setCart(cartData);
       setIsLoading(false);
       return cartData;
@@ -76,17 +76,17 @@ export function useCart() {
   }, [cart, lastFetchTime, toast]);
 
   const addToCart = async (
-    product: any, 
-    selectedVariant: string, 
+    product: any,
+    selectedVariant: string,
     additionalVariants: Array<{ variantId: string, productUuid: string | null, variantName?: string }> = [],
     isClassroomProduct: boolean = false
   ) => {
-    console.log('useCart: addToCart called with', {product, selectedVariant, additionalVariants, isClassroomProduct});
+    console.log('useCart: addToCart called with', { product, selectedVariant, additionalVariants, isClassroomProduct });
     setIsLoading(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const userId = session?.user?.id;
-      
+
       const result = await addItemToCart(
         cart,
         product,
@@ -122,7 +122,7 @@ export function useCart() {
             isClassroomProduct,
             true
           );
-          
+
           if (additionalResult.success && additionalResult.updatedCart) {
             updatedCart = additionalResult.updatedCart;
           }
@@ -138,10 +138,10 @@ export function useCart() {
             });
           }
         }
-        
+        console.log('SET CART UPDATED CART', updatedCart)
         setCart(updatedCart);
       } else {
-        await fetchCart(userId, !userId ? guestSessionId : undefined);
+        await fetchCart(userId);
       }
 
       toast({
@@ -168,7 +168,7 @@ export function useCart() {
 
   const removeFromCart = async (variantUuid: string) => {
     console.log('useCart: removeFromCart called for variant', variantUuid);
-    
+    console.log('THE CART', cart)
     if (!cart || !cart.transaction_uuid) {
       toast({
         title: "Error",
@@ -181,16 +181,16 @@ export function useCart() {
     setIsLoading(true);
     try {
       const result = await removeItemFromCart(cart.transaction_uuid, variantUuid);
-      
+
       if (result.success) {
         if (cart) {
           const updatedItems = cart.items.filter(item => item.variant_uuid !== variantUuid);
           const updatedItemCount = cart.item_count - 1;
           const removedItem = cart.items.find(item => item.variant_uuid === variantUuid);
-          const updatedTotalAmount = removedItem 
-            ? cart.total_amount - (removedItem.price * removedItem.quantity) 
+          const updatedTotalAmount = removedItem
+            ? cart.total_amount - (removedItem.price * removedItem.quantity)
             : cart.total_amount;
-            
+
           const optimisticCart = {
             ...cart,
             items: updatedItems,
@@ -198,21 +198,20 @@ export function useCart() {
             total_amount: updatedTotalAmount,
             last_fetched: Date.now()
           };
-          
+
           setCart(optimisticCart);
         }
-        
+
         const { data: { session } } = await supabase.auth.getSession();
         const userId = session?.user?.id;
-        const guestId = !userId ? localStorage.getItem('guest_session_id') : undefined;
-        
-        await fetchCart(userId, !userId ? guestId || undefined : undefined);
-        
+
+        await fetchCart(userId);
+
         toast({
           title: "Success",
           description: "Item removed from cart"
         });
-        
+
         setIsLoading(false);
         return true;
       } else {
@@ -240,11 +239,11 @@ export function useCart() {
     if (!cart || !cart.transaction_uuid) {
       return false;
     }
-    
+
     setIsLoading(true);
     try {
       const success = await cleanupUnavailableCartItems(cart.transaction_uuid);
-      
+
       if (success) {
         setLastFetchTime(Date.now());
         setIsLoading(false);

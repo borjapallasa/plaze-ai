@@ -4,7 +4,7 @@ import { CartItem, CartTransaction } from '@/types/cart';
 // Fetch cart data by user or guest session ID
 export async function fetchCartData(userId?: string, sessionId?: string): Promise<CartTransaction | null> {
   try {
-    if (!userId && !sessionId) {
+    if (!userId) {
       // No way to identify the cart
       return null;
     }
@@ -110,7 +110,7 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
         // Always assume the item is available if it's in the cart
         // Only mark it unavailable if specifically needed
         const isAvailable = true;
-        
+
         return {
           product_uuid: item.product_uuid,
           variant_uuid: item.variant_uuid,
@@ -121,13 +121,14 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
           is_available: isAvailable
         };
       });
-
-      return {
+      const cartData = {
         transaction_uuid: transactionData[0].product_transaction_uuid,
         item_count: transactionData[0].item_count,
         total_amount: transactionData[0].total_amount,
         items
-      };
+      }
+      console.log('Returning cart data: ', cartData)
+      return cartData;
     } else if (sessionId) {
       // Handle guest cart (this would be implemented in a similar way)
       console.log('Guest cart not fully implemented yet');
@@ -164,11 +165,11 @@ export async function addItemToCart(
   try {
     console.log('Adding to cart', cart, selectedVariant, 'using transaction:', existingTransactionId);
     console.log('Is classroom product:', isClassroomProduct);
-    
+
     let variantData;
     let productUuid;
     let productName;
-    
+
     if (isClassroomProduct) {
       // For classroom products, we need to fetch from community_products
       const { data, error } = await supabase
@@ -176,7 +177,7 @@ export async function addItemToCart(
         .select('*')
         .eq('community_product_uuid', selectedVariant)
         .single();
-      
+
       if (error || !data) {
         console.error('Error fetching classroom product:', error);
         return {
@@ -184,7 +185,7 @@ export async function addItemToCart(
           message: "Could not find the selected classroom product"
         };
       }
-      
+
       variantData = data;
       productUuid = data.community_product_uuid; // Use the community product UUID as the product UUID
       productName = data.name;
@@ -202,20 +203,20 @@ export async function addItemToCart(
           message: "Could not find the selected variant"
         };
       }
-      
+
       variantData = variantResponse.data;
-      
+
       // For additional variants, use the product UUID that was passed
       if (isAdditionalVariant && product.product_uuid) {
         productUuid = product.product_uuid;
-        
+
         // Fetch the actual product name for this product UUID
         const { data: productData, error: productError } = await supabase
           .from('products')
           .select('name')
           .eq('product_uuid', productUuid)
           .single();
-        
+
         if (!productError && productData) {
           productName = productData.name;
         } else {
@@ -260,15 +261,15 @@ export async function addItemToCart(
     }
 
     // Check if this item is already in the cart
-    const existingItem = isClassroomProduct 
-      ? (cart?.items || []).find(item => 
-          item.variant_uuid === selectedVariant && 
-          (item.product_uuid === productUuid || item.product_uuid === selectedVariant)
-        )
-      : (cart?.items || []).find(item => 
-          item.product_uuid === productUuid && 
-          item.variant_uuid === selectedVariant
-        );
+    const existingItem = isClassroomProduct
+      ? (cart?.items || []).find(item =>
+        item.variant_uuid === selectedVariant &&
+        (item.product_uuid === productUuid || item.product_uuid === selectedVariant)
+      )
+      : (cart?.items || []).find(item =>
+        item.product_uuid === productUuid &&
+        item.variant_uuid === selectedVariant
+      );
 
     // Prepare the new or updated cart item
     let cartItem: CartItem;
@@ -418,7 +419,7 @@ export async function removeItemFromCart(
 ): Promise<{ success: boolean; message?: string }> {
   try {
     console.log('Removing item from cart:', 'transaction:', transactionId, 'variant:', variantUuid);
-    
+
     // First get the item to calculate the price
     const { data: itemData, error: itemError } = await supabase
       .from('products_transaction_items')
@@ -426,7 +427,7 @@ export async function removeItemFromCart(
       .eq('product_transaction_uuid', transactionId)
       .eq('variant_uuid', variantUuid)
       .single();
-    
+
     if (itemError || !itemData) {
       console.error('Error fetching item for removal:', itemError);
       return {
@@ -508,47 +509,47 @@ export async function cleanupUnavailableCartItems(transactionId: string): Promis
       .select('product_transaction_item_uuid, variant_uuid, quantity, total_price')
       .eq('product_transaction_uuid', transactionId)
       .or('product_uuid.is.null,variant_uuid.is.null');
-    
+
     if (queryError) {
       console.error('Error finding unavailable items:', queryError);
       return false;
     }
-    
+
     if (!unavailableItems || unavailableItems.length === 0) {
       // No unavailable items to clean up
       return true;
     }
-    
+
     // Calculate totals to adjust
     const itemCount = unavailableItems.reduce((sum, item) => sum + item.quantity, 0);
     const totalPrice = unavailableItems.reduce((sum, item) => sum + item.total_price, 0);
-    
+
     // Delete unavailable items
     const { error: deleteError } = await supabase
       .from('products_transaction_items')
       .delete()
       .in('product_transaction_item_uuid', unavailableItems.map(item => item.product_transaction_item_uuid));
-      
+
     if (deleteError) {
       console.error('Error deleting unavailable items:', deleteError);
       return false;
     }
-    
+
     // Update transaction totals
     const { data: transaction, error: transactionError } = await supabase
       .from('products_transactions')
       .select('item_count, total_amount')
       .eq('product_transaction_uuid', transactionId)
       .single();
-      
+
     if (transactionError) {
       console.error('Error fetching transaction:', transactionError);
       return false;
     }
-    
+
     const newItemCount = Math.max(0, (transaction.item_count || 0) - itemCount);
     const newTotalAmount = Math.max(0, (transaction.total_amount || 0) - totalPrice);
-    
+
     const { error: updateError } = await supabase
       .from('products_transactions')
       .update({
@@ -556,12 +557,12 @@ export async function cleanupUnavailableCartItems(transactionId: string): Promis
         total_amount: newTotalAmount
       })
       .eq('product_transaction_uuid', transactionId);
-      
+
     if (updateError) {
       console.error('Error updating transaction totals:', updateError);
       return false;
     }
-    
+
     return true;
   } catch (error) {
     console.error('Failed to clean up unavailable items:', error);
