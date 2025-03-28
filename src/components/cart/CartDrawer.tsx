@@ -1,3 +1,4 @@
+
 import { SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, X, ArrowRight, Loader2, Trash2, AlertTriangle } from "lucide-react";
@@ -74,14 +75,24 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
     }
   };
 
-  const allAddedItems = cartItem ? [cartItem, ...additionalItems] : additionalItems;
+  // Create a default empty cart if cart is null to prevent "null.items" error
+  const defaultEmptyCart = {
+    transaction_uuid: '',
+    item_count: 0,
+    total_amount: 0,
+    items: []
+  };
 
+  // Use the actual cart or a default empty cart if cart is null
   const effectiveCart = cart || (allAddedItems.length > 0 ? {
     transaction_uuid: '',
     item_count: allAddedItems.length,
     total_amount: allAddedItems.reduce((sum, item) => sum + item.price, 0),
     items: allAddedItems
-  } : null);
+  } : defaultEmptyCart);
+
+  // Make sure to compute this after effectiveCart is defined
+  const allAddedItems = cartItem ? [cartItem, ...additionalItems] : additionalItems;
 
   const isCartEmpty = !effectiveCart || effectiveCart.items.length === 0;
 
@@ -155,7 +166,7 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
           </div>
         )}
 
-        {cart.items.some(item => item.is_available === false) && (
+        {effectiveCart.items.some(item => item.is_available === false) && (
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription className="text-xs">
@@ -165,7 +176,7 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
         )}
 
         <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
-          {cart.items.map((item) => (
+          {effectiveCart.items.map((item) => (
             <div
               key={item.variant_uuid}
               className={`flex items-start gap-3 pb-3 border-b ${!item.is_available ? 'border-red-200 bg-red-50/30 rounded p-2' : ''}`}
@@ -210,14 +221,14 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
         <div className="space-y-3">
           <div className="flex justify-between items-center">
             <span className="text-sm">Subtotal</span>
-            <span className="font-medium">${cart.total_amount.toFixed(2)}</span>
+            <span className="font-medium">${effectiveCart.total_amount.toFixed(2)}</span>
           </div>
 
           <Separator />
 
           <div className="flex justify-between items-center font-medium">
             <span>Total</span>
-            <span>${cart.total_amount.toFixed(2)}</span>
+            <span>${effectiveCart.total_amount.toFixed(2)}</span>
           </div>
         </div>
 
