@@ -1,4 +1,3 @@
-
 import { SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, X, ArrowRight, Loader2, Trash2, AlertTriangle } from "lucide-react";
@@ -9,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { useEffect, useState } from "react";
 import { supabase } from '@/integrations/supabase/client';
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useToast } from "@/components/ui/use-toast";
 
 interface CartDrawerProps {
   cartItem: CartItem | null;
@@ -20,24 +20,36 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
   const navigate = useNavigate();
   const { cart, isLoading, removeFromCart, fetchCart, cleanupCart } = useCart();
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     const refreshCartData = async () => {
-      if (!isRefreshing && !cartItem) {
+      if (!isRefreshing) {
+        console.log('CartDrawer: Refreshing cart data');
         setIsRefreshing(true);
-        const { data: { session } } = await supabase.auth.getSession();
-        const userId = session?.user?.id;
-        const guestId = !userId ? localStorage.getItem('guest_session_id') : undefined;
-        
-        await fetchCart(userId, !userId ? guestId || undefined : undefined);
-        // Clean up any unavailable items
-        await cleanupCart();
-        setIsRefreshing(false);
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          const userId = session?.user?.id;
+          const guestId = !userId ? localStorage.getItem('guest_session_id') : undefined;
+
+          await fetchCart(userId, !userId ? guestId || undefined : undefined);
+          // Clean up any unavailable items
+          await cleanupCart();
+        } catch (error) {
+          console.error('Error refreshing cart:', error);
+          toast({
+            title: "Error",
+            description: "Could not refresh cart data. Please try again.",
+            variant: "destructive"
+          });
+        } finally {
+          setIsRefreshing(false);
+        }
       }
     };
 
     refreshCartData();
-  }, []);
+  }, [fetchCart, cleanupCart, toast]);
 
   const handleViewCart = () => {
     onClose();
@@ -45,27 +57,42 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
   };
 
   const handleRemoveItem = async (variantId: string) => {
-    await removeFromCart(variantId);
+    try {
+      const success = await removeFromCart(variantId);
+
+      if (success) {
+        // Explicitly refresh the cart after removal to ensure UI is in sync
+        const { data: { session } } = await supabase.auth.getSession();
+        const userId = session?.user?.id;
+        const guestId = !userId ? localStorage.getItem('guest_session_id') : undefined;
+
+        await fetchCart(userId, !userId ? guestId || undefined : undefined);
+      }
+    } catch (error) {
+      console.error('Error removing item:', error);
+      toast({
+        title: "Error",
+        description: "Could not remove item. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   const allAddedItems = cartItem ? [cartItem, ...additionalItems] : additionalItems;
-  
+
   const effectiveCart = cart || (allAddedItems.length > 0 ? {
     transaction_uuid: '',
     item_count: allAddedItems.length,
     total_amount: allAddedItems.reduce((sum, item) => sum + item.price, 0),
     items: allAddedItems
   } : null);
-  
+
   const isCartEmpty = !effectiveCart || effectiveCart.items.length === 0;
-  
-  // Check if we have any unavailable items
-  const hasUnavailableItems = effectiveCart?.items.some(item => item.is_available === false);
 
   if (isLoading || isRefreshing) {
     return (
       <SheetContent className="w-full sm:max-w-md overflow-y-auto">
-        <div className="flex flex-col items-center justify-center h-full">
+        <div className="flex flex-col items-center justify-center h-full mt-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
           <p className="text-muted-foreground">Loading cart...</p>
         </div>
@@ -99,11 +126,11 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
 
   const displayItems = (() => {
     const displayedItems = [...effectiveCart.items];
-    
+
     if (cartItem && !displayedItems.some(item => item.variant_uuid === cartItem.variant_uuid)) {
       displayedItems.unshift(cartItem);
     }
-    
+
     if (additionalItems && additionalItems.length > 0) {
       additionalItems.forEach(additionalItem => {
         if (!displayedItems.some(item => item.variant_uuid === additionalItem.variant_uuid)) {
@@ -111,7 +138,7 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
         }
       });
     }
-    
+
     return displayedItems;
   })();
 
@@ -127,12 +154,12 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
         {(cartItem || additionalItems.length > 0) && (
           <div className="bg-primary/5 p-3 rounded-lg mb-4">
             <p className="text-sm font-medium text-primary flex items-center">
-              <span className="mr-2">✓</span> Item{allAddedItems.length > 1 ? 's' : ''} added to cart
+              <span className="mr-2">✓</span> Item{additionalItems.length > 0 ? 's' : ''} added to cart
             </p>
           </div>
         )}
 
-        {hasUnavailableItems && (
+        {cart.items.some(item => item.is_available === false) && (
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription className="text-xs">
@@ -142,7 +169,7 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
         )}
 
         <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
-          {displayItems.map((item) => (
+          {cart.items.map((item) => (
             <div
               key={item.variant_uuid}
               className={`flex items-start gap-3 pb-3 border-b ${!item.is_available ? 'border-red-200 bg-red-50/30 rounded p-2' : ''}`}
@@ -187,14 +214,14 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
         <div className="space-y-3">
           <div className="flex justify-between items-center">
             <span className="text-sm">Subtotal</span>
-            <span className="font-medium">${subtotal.toFixed(2)}</span>
+            <span className="font-medium">${cart.total_amount.toFixed(2)}</span>
           </div>
 
           <Separator />
 
           <div className="flex justify-between items-center font-medium">
             <span>Total</span>
-            <span>${subtotal.toFixed(2)}</span>
+            <span>${cart.total_amount.toFixed(2)}</span>
           </div>
         </div>
 

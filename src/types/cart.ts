@@ -7,6 +7,7 @@ export interface CartItem {
   product_name?: string;
   variant_name?: string;
   is_available?: boolean; // Flag to indicate if the product/variant is still available
+  last_updated?: number; // Timestamp to track the most recent update
 }
 
 export interface CartTransaction {
@@ -14,4 +15,5 @@ export interface CartTransaction {
   item_count: number;
   total_amount: number;
   items: CartItem[];
+  last_fetched?: number; // Timestamp to track when the cart was last fetched
 }

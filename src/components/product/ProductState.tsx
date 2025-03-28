@@ -5,6 +5,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { CartItem } from "@/types/cart";
 import { useAuth } from "@/lib/auth";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 export function useProductState(variants: any[]) {
   const [selectedVariant, setSelectedVariant] = useState<string | undefined>();
@@ -20,6 +21,7 @@ export function useProductState(variants: any[]) {
   const { toast } = useToast();
   const { addToCart, isLoading, fetchCart } = useCart();
 
+  // Select a default variant when variants load
   useEffect(() => {
     if (variants.length > 0 && !selectedVariant) {
       const highlightedVariant = variants.find(v => v.highlight);
@@ -27,6 +29,7 @@ export function useProductState(variants: any[]) {
     }
   }, [variants, selectedVariant]);
 
+  // Handle sticky Add to Cart button visibility
   useEffect(() => {
     const handleScroll = () => {
       if (variantsRef.current) {
@@ -41,6 +44,8 @@ export function useProductState(variants: any[]) {
   }, []);
 
   const handleAddToCart = async (product: any) => {
+    console.log('ProductState: handleAddToCart called with variant', selectedVariant);
+    
     if (!selectedVariant) {
       toast({
         title: "Please select a variant",
@@ -71,25 +76,43 @@ export function useProductState(variants: any[]) {
       // If successfully added to cart, get the cart item and show the cart drawer
       if (result.cartItem) {
         console.log('Setting last added item:', result.cartItem);
-        setLastAddedItem(result.cartItem);
+        const cartItem: CartItem = {
+          ...result.cartItem,
+          last_updated: Date.now()
+        };
+        setLastAddedItem(cartItem);
       } else if (result.updatedCart && result.updatedCart.items.length > 0) {
         // If no specific cart item is returned but we have an updated cart, use the first item
         const selectedVariantItem = result.updatedCart.items.find(
           item => item.variant_uuid === selectedVariant
         );
-        console.log('Setting last added item from updated cart:', selectedVariantItem || result.updatedCart.items[0]);
-        setLastAddedItem(selectedVariantItem || result.updatedCart.items[0]);
+        
+        const cartItem = selectedVariantItem || result.updatedCart.items[0];
+        cartItem.last_updated = Date.now();
+        
+        console.log('Setting last added item from updated cart:', cartItem);
+        setLastAddedItem(cartItem);
       }
 
       // Find and set the additional variant items
       if (result.updatedCart && additionalVariants.length > 0) {
-        const additionalItems = result.updatedCart.items.filter(
-          item => additionalVariants.includes(item.variant_uuid)
-        );
+        const additionalItems = result.updatedCart.items
+          .filter(item => additionalVariants.includes(item.variant_uuid))
+          .map(item => ({
+            ...item,
+            last_updated: Date.now()
+          }));
+          
         console.log('Setting additional items:', additionalItems);
         setLastAddedAdditionalItems(additionalItems);
       }
 
+      // Ensure we have the latest cart data before opening drawer
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session?.user?.id;
+      const guestId = !userId ? localStorage.getItem('guest_session_id') : undefined;
+      
+      await fetchCart(userId, !userId ? guestId || undefined : undefined);
       setCartDrawerOpen(true);
     }
   };
