@@ -19,6 +19,7 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
   const navigate = useNavigate();
   const { cart, isLoading, removeFromCart, fetchCart, cleanupCart } = useCart();
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [removingItemIds, setRemovingItemIds] = useState<string[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -53,7 +54,6 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
   const handleRemoveItem = async (variantId: string) => {
     try {
       console.log('CartDrawer: Removing item', variantId);
-      console.log('Current cart:', cart);
       
       if (!cart) {
         toast({
@@ -64,10 +64,18 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
         return;
       }
       
+      // Add to removing items to trigger immediate UI feedback
+      setRemovingItemIds(prev => [...prev, variantId]);
+      
       const success = await removeFromCart(variantId);
       console.log('Remove result:', success);
+      
+      // Remove from the removing items list when done
+      setRemovingItemIds(prev => prev.filter(id => id !== variantId));
     } catch (error) {
       console.error('Error removing item:', error);
+      // Also remove from the list in case of error
+      setRemovingItemIds(prev => prev.filter(id => id !== variantId));
       toast({
         title: "Error",
         description: "Could not remove item. Please try again.",
@@ -92,7 +100,9 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
     items: allAddedItems
   } : defaultEmptyCart);
 
-  const isCartEmpty = !effectiveCart || effectiveCart.items.length === 0;
+  // Filter out items that are currently being removed for display purposes
+  const displayItems = effectiveCart?.items?.filter(item => !removingItemIds.includes(item.variant_uuid)) || [];
+  const isCartEmpty = !displayItems.length;
 
   if (isLoading || isRefreshing) {
     return (
@@ -127,24 +137,6 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
       </SheetContent>
     );
   }
-
-  const displayItems = (() => {
-    const displayedItems = [...effectiveCart.items];
-
-    if (cartItem && !displayedItems.some(item => item.variant_uuid === cartItem.variant_uuid)) {
-      displayedItems.unshift(cartItem);
-    }
-
-    if (additionalItems && additionalItems.length > 0) {
-      additionalItems.forEach(additionalItem => {
-        if (!displayedItems.some(item => item.variant_uuid === additionalItem.variant_uuid)) {
-          displayedItems.push(additionalItem);
-        }
-      });
-    }
-
-    return displayedItems;
-  })();
 
   const subtotal = displayItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 
@@ -193,8 +185,13 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
                 size="icon"
                 className="h-8 w-8 text-muted-foreground hover:text-destructive"
                 onClick={() => handleRemoveItem(item.variant_uuid)}
+                disabled={removingItemIds.includes(item.variant_uuid)}
               >
-                <Trash2 className="h-4 w-4" />
+                {removingItemIds.includes(item.variant_uuid) ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Trash2 className="h-4 w-4" />
+                )}
                 <span className="sr-only">Remove</span>
               </Button>
             </div>
@@ -204,14 +201,14 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
         <div className="space-y-3">
           <div className="flex justify-between items-center">
             <span className="text-sm">Subtotal</span>
-            <span className="font-medium">${effectiveCart.total_amount.toFixed(2)}</span>
+            <span className="font-medium">${subtotal.toFixed(2)}</span>
           </div>
 
           <Separator />
 
           <div className="flex justify-between items-center font-medium">
             <span>Total</span>
-            <span>${effectiveCart.total_amount.toFixed(2)}</span>
+            <span>${subtotal.toFixed(2)}</span>
           </div>
         </div>
 

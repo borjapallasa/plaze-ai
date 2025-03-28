@@ -11,6 +11,7 @@ export default function Cart() {
   const { cart, isLoading, fetchCart, removeFromCart, cleanupCart } = useCart();
   const { toast } = useToast();
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [removingItems, setRemovingItems] = useState<string[]>([]);
 
   useEffect(() => {
     const refreshCart = async () => {
@@ -46,8 +47,16 @@ export default function Cart() {
       return;
     }
     
-    const success = await removeFromCart(variantId);
-    console.log('Remove result:', success);
+    // Add to removing items for UI feedback
+    setRemovingItems(prev => [...prev, variantId]);
+    
+    try {
+      const success = await removeFromCart(variantId);
+      console.log('Remove result:', success);
+    } finally {
+      // Always remove from removing items when done, whether successful or not
+      setRemovingItems(prev => prev.filter(id => id !== variantId));
+    }
   };
 
   if (isLoading || isRefreshing) {
@@ -130,8 +139,13 @@ export default function Cart() {
                           size="icon"
                           className="rounded-full text-destructive hover:text-destructive hover:bg-destructive/10"
                           onClick={() => handleRemoveItem(item.variant_uuid)}
+                          disabled={removingItems.includes(item.variant_uuid)}
                         >
-                          <Trash2 className="h-5 w-5" />
+                          {removingItems.includes(item.variant_uuid) ? (
+                            <Loader2 className="h-5 w-5 animate-spin" />
+                          ) : (
+                            <Trash2 className="h-5 w-5" />
+                          )}
                           <span className="sr-only">Remove item</span>
                         </Button>
                       </div>

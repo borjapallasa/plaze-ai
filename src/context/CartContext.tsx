@@ -204,32 +204,37 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     setIsLoading(true);
     try {
+      // First update the local cart state optimistically
+      const updatedItems = cart.items.filter(item => item.variant_uuid !== variantUuid);
+      const updatedItemCount = cart.item_count - 1;
+      const removedItem = cart.items.find(item => item.variant_uuid === variantUuid);
+      const updatedTotalAmount = removedItem
+        ? cart.total_amount - (removedItem.price * removedItem.quantity)
+        : cart.total_amount;
+
+      // Immediately update the state optimistically for a responsive UI
+      const optimisticCart = {
+        ...cart,
+        items: updatedItems,
+        item_count: updatedItemCount,
+        total_amount: updatedTotalAmount,
+        last_fetched: Date.now()
+      };
+      
+      setCart(optimisticCart);
+
+      // Then call the API to actually remove the item
       const result = await removeItemFromCart(cart.transaction_uuid, variantUuid);
 
       if (result.success) {
-        if (cart) {
-          const updatedItems = cart.items.filter(item => item.variant_uuid !== variantUuid);
-          const updatedItemCount = cart.item_count - 1;
-          const removedItem = cart.items.find(item => item.variant_uuid === variantUuid);
-          const updatedTotalAmount = removedItem
-            ? cart.total_amount - (removedItem.price * removedItem.quantity)
-            : cart.total_amount;
-
-          const optimisticCart = {
-            ...cart,
-            items: updatedItems,
-            item_count: updatedItemCount,
-            total_amount: updatedTotalAmount,
-            last_fetched: Date.now()
-          };
-
-          setCart(optimisticCart);
-        }
-
+        // If the API call succeeds, the state is already updated
         const { data: { session } } = await supabase.auth.getSession();
         const userId = session?.user?.id;
 
-        await fetchCart(userId);
+        // Refresh cart data after a short delay to ensure backend has processed the removal
+        setTimeout(async () => {
+          await fetchCart(userId);
+        }, 500);
 
         toast({
           title: "Success",
@@ -239,6 +244,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(false);
         return true;
       } else {
+        // If the API call fails, revert to the previous state
+        setCart(cart);
+        
         toast({
           title: "Error",
           description: result.message || "Failed to remove item from cart",
