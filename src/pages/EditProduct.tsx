@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { X } from "lucide-react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { useToast } from "@/hooks/use-toast";
 import { MainHeader } from "@/components/MainHeader";
+import { toast } from "sonner";
 import { ProductHeaderSection } from "@/components/product/ProductHeaderSection";
 import { ProductMainInfoPanel } from "@/components/product/ProductMainInfoPanel";
 import { ProductTechnicalDetails } from "@/components/product/ProductTechnicalDetails";
@@ -19,7 +19,7 @@ type ProductStatus = 'draft' | 'active' | 'inactive';
 
 const USE_CASES = [
   "E-commerce",
-  "Blog", 
+  "Blog",
   "Portfolio",
   "Dashboard",
   "Social Network",
@@ -51,7 +51,6 @@ const TEAM_ROLES = [
 
 export default function EditProduct() {
   const { id } = useParams();
-  const { toast } = useToast();
   const navigate = useNavigate();
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -97,7 +96,7 @@ export default function EditProduct() {
 
   const renderSelectedTags = (items: string[]) => {
     if (items.length === 0) return null;
-    
+
     return (
       <div className="flex flex-wrap gap-1.5 max-w-full">
         {items.map((item) => (
@@ -120,7 +119,7 @@ export default function EditProduct() {
             >
               <X className="h-3.5 w-3.5" />
             </button>
-            <div 
+            <div
               className="absolute inset-0 -z-10 opacity-0 group-hover:opacity-100"
               onClick={(e) => e.stopPropagation()}
             />
@@ -138,7 +137,7 @@ export default function EditProduct() {
         .select('*')
         .eq('product_uuid', id)
         .single();
-      
+
       if (error) throw error;
       return data;
     },
@@ -154,7 +153,7 @@ export default function EditProduct() {
         .from('variants')
         .select('*')
         .eq('product_uuid', id);
-      
+
       if (error) throw error;
       return data || [];
     },
@@ -195,7 +194,7 @@ export default function EditProduct() {
     try {
       setIsSaving(true);
       console.log('Saving product with ID:', id);
-      
+
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       if (userError) throw userError;
       if (!user) throw new Error('No authenticated user found');
@@ -225,7 +224,7 @@ export default function EditProduct() {
           .from('variants')
           .delete()
           .in('variant_uuid', deletedVariantIds);
-        
+
         if (deleteError) throw deleteError;
       }
 
@@ -243,7 +242,7 @@ export default function EditProduct() {
               tags: Array.isArray(variant.tags) ? variant.tags : [],
               files_link: variant.filesLink
             });
-          
+
           if (insertError) throw insertError;
         } else {
           const { error: updateError } = await supabase
@@ -257,29 +256,19 @@ export default function EditProduct() {
               files_link: variant.filesLink
             })
             .eq('variant_uuid', variant.id);
-          
+
           if (updateError) throw updateError;
         }
       }
+      toast.success("All changes have been saved successfully");
 
-      toast({
-        title: "Saved",
-        description: "All changes have been saved successfully",
-        className: "bg-[#F2FCE2] border-green-100 text-green-800",
-        duration: 2000,
-      });
-      
       setDeletedVariantIds([]);
-      
+
       refetchVariants();
-      
+
     } catch (error) {
       console.error('Error updating product:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update product",
-        variant: "destructive",
-      });
+      toast.error("Failed to update product");
     } finally {
       setIsSaving(false);
     }
@@ -294,7 +283,7 @@ export default function EditProduct() {
       highlight: false,
       tags: []
     };
-    
+
     setLocalVariants(prev => [...prev, newVariant]);
   };
 
@@ -303,47 +292,39 @@ export default function EditProduct() {
       .filter(v => !updatedVariants.find(uv => uv.id === v.id))
       .filter(v => !v.id.toString().includes('temp_'))
       .map(v => v.id);
-    
+
     setDeletedVariantIds(prev => [...prev, ...removedVariants]);
     setLocalVariants(updatedVariants);
   };
 
   const handleDeleteProduct = async (redirectUrl: string) => {
     if (!id) return;
-    
+
     try {
       setIsDeleting(true);
-      
+
       const { error: variantsError } = await supabase
         .from('variants')
         .delete()
         .eq('product_uuid', id);
-      
+
       if (variantsError) throw variantsError;
-      
+
       const { error: productError } = await supabase
         .from('products')
         .delete()
         .eq('product_uuid', id);
-      
+
       if (productError) throw productError;
 
-      toast({
-        title: "Product deleted",
-        description: "Your product has been permanently deleted",
-        className: "bg-red-50 border-red-200 text-red-800",
-        duration: 3000,
-      });
-      
+      toast.error("Your product has been permanently deleted");
+
       navigate(redirectUrl);
-      
+
     } catch (error) {
       console.error('Error deleting product:', error);
-      toast({
-        title: "Error",
-        description: "Failed to delete product",
-        variant: "destructive",
-      });
+      toast.error("Failed to delete product");
+
     } finally {
       setIsDeleting(false);
       setShowDeleteDialog(false);
@@ -364,7 +345,7 @@ export default function EditProduct() {
       <MainHeader />
       <div className="mt-16">
         <div className="w-full max-w-[1400px] mx-auto px-2 xs:px-3 sm:px-6 lg:px-8 py-3 sm:py-6">
-          <ProductHeaderSection 
+          <ProductHeaderSection
             productStatus={productStatus}
             onStatusChange={handleStatusChange}
             onSave={handleSave}
@@ -374,7 +355,7 @@ export default function EditProduct() {
           <div className="space-y-3 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-6">
             <div className="lg:col-span-8">
               <div className="space-y-3 sm:space-y-6">
-                <ProductMainInfoPanel 
+                <ProductMainInfoPanel
                   productName={productName}
                   setProductName={setProductName}
                   productDescription={productDescription}
@@ -384,7 +365,7 @@ export default function EditProduct() {
                   onVariantsChange={handleVariantsChange}
                 />
 
-                <ProductTechnicalDetails 
+                <ProductTechnicalDetails
                   techStack={techStack}
                   setTechStack={setTechStack}
                   techStackPrice={techStackPrice}
@@ -416,14 +397,14 @@ export default function EditProduct() {
                     onTeamChange={handleTeamChange}
                     renderSelectedTags={renderSelectedTags}
                   />
-                  
+
                   <RelatedProducts
                     productId={id || ""}
                     userUuid={product?.user_uuid || ""}
                     className="mt-6 pt-4 border-t"
                   />
 
-                  <DangerZone 
+                  <DangerZone
                     productName={productName}
                     isDeleting={isDeleting}
                     showDeleteDialog={showDeleteDialog}

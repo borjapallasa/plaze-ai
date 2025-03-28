@@ -78,15 +78,7 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
       <SheetContent className="w-full sm:max-w-md overflow-y-auto">
         <SheetHeader className="space-y-3 pr-6">
           <SheetTitle className="text-xl">Shopping Cart</SheetTitle>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute right-4 top-4"
-            onClick={onClose}
-          >
-            <X className="h-4 w-4" />
-            <span className="sr-only">Close</span>
-          </Button>
+
         </SheetHeader>
 
         <div className="flex flex-col items-center justify-center h-[70vh]">
@@ -129,15 +121,6 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
     <SheetContent className="w-full sm:max-w-md overflow-y-auto">
       <SheetHeader className="space-y-3 pr-6">
         <SheetTitle className="text-xl">Shopping Cart</SheetTitle>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute right-4 top-4"
-          onClick={onClose}
-        >
-          <X className="h-4 w-4" />
-          <span className="sr-only">Close</span>
-        </Button>
       </SheetHeader>
 
       <div className="mt-6 space-y-6">
@@ -148,7 +131,7 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
             </p>
           </div>
         )}
-        
+
         {hasUnavailableItems && (
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
@@ -157,11 +140,11 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
             </AlertDescription>
           </Alert>
         )}
-        
+
         <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
           {displayItems.map((item) => (
-            <div 
-              key={item.variant_uuid} 
+            <div
+              key={item.variant_uuid}
               className={`flex items-start gap-3 pb-3 border-b ${!item.is_available ? 'border-red-200 bg-red-50/30 rounded p-2' : ''}`}
             >
               <div className="w-16 h-16 rounded-lg overflow-hidden bg-accent flex-shrink-0">
@@ -171,7 +154,7 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
                   className="w-full h-full object-cover"
                 />
               </div>
-              
+
               <div className="flex-1 min-w-0">
                 <h3 className="font-medium text-sm line-clamp-2">
                   {item.product_name || "Product"}
@@ -187,10 +170,10 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
                   <p className="font-medium text-sm">${(item.price * item.quantity).toFixed(2)}</p>
                 </div>
               </div>
-              
-              <Button 
-                variant="ghost" 
-                size="icon" 
+
+              <Button
+                variant="ghost"
+                size="icon"
                 className="h-8 w-8 text-muted-foreground hover:text-destructive"
                 onClick={() => handleRemoveItem(item.variant_uuid)}
               >
@@ -200,15 +183,15 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
             </div>
           ))}
         </div>
-        
+
         <div className="space-y-3">
           <div className="flex justify-between items-center">
             <span className="text-sm">Subtotal</span>
             <span className="font-medium">${subtotal.toFixed(2)}</span>
           </div>
-          
+
           <Separator />
-          
+
           <div className="flex justify-between items-center font-medium">
             <span>Total</span>
             <span>${subtotal.toFixed(2)}</span>
@@ -216,16 +199,16 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
         </div>
 
         <div className="pt-2">
-          <Button 
-            onClick={handleViewCart} 
+          <Button
+            onClick={handleViewCart}
             className="w-full"
           >
             View Cart
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
-          <Button 
-            variant="outline" 
-            className="w-full mt-2" 
+          <Button
+            variant="outline"
+            className="w-full mt-2"
             onClick={onClose}
           >
             Continue Shopping
