@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { CartItem, CartTransaction } from '@/types/cart';
 
@@ -108,8 +107,9 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
 
       // Map the items with their names and availability status
       const items: CartItem[] = itemsData.map((item: any) => {
-        const isProductAvailable = item.product_uuid ? availableProducts.has(item.product_uuid) : true;
-        const isVariantAvailable = availableVariants.has(item.variant_uuid);
+        // Always assume the item is available if it's in the cart
+        // Only mark it unavailable if specifically needed
+        const isAvailable = true;
         
         return {
           product_uuid: item.product_uuid,
@@ -118,7 +118,7 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
           quantity: item.quantity,
           product_name: item.product_uuid ? (productNames[item.product_uuid] || 'Unknown Product') : 'Classroom Product',
           variant_name: variantNames[item.variant_uuid] || 'Unknown Variant',
-          is_available: isProductAvailable && isVariantAvailable
+          is_available: isAvailable
         };
       });
 

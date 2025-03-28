@@ -112,7 +112,6 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
       <SheetContent className="w-full sm:max-w-md overflow-y-auto">
         <SheetHeader className="space-y-3 pr-6">
           <SheetTitle className="text-xl">Shopping Cart</SheetTitle>
-
         </SheetHeader>
 
         <div className="flex flex-col items-center justify-center h-[70vh]">
@@ -166,20 +165,13 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
           </div>
         )}
 
-        {effectiveCart.items.some(item => item.is_available === false) && (
-          <Alert variant="destructive">
-            <AlertTriangle className="h-4 w-4" />
-            <AlertDescription className="text-xs">
-              Some items in your cart are no longer available.
-            </AlertDescription>
-          </Alert>
-        )}
-
+        {/* Remove the check for unavailable items since we're setting all items as available */}
+        
         <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
           {effectiveCart.items.map((item) => (
             <div
               key={item.variant_uuid}
-              className={`flex items-start gap-3 pb-3 border-b ${!item.is_available ? 'border-red-200 bg-red-50/30 rounded p-2' : ''}`}
+              className="flex items-start gap-3 pb-3 border-b"
             >
               <div className="w-16 h-16 rounded-lg overflow-hidden bg-accent flex-shrink-0">
                 <img
@@ -192,11 +184,6 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
               <div className="flex-1 min-w-0">
                 <h3 className="font-medium text-sm line-clamp-2">
                   {item.product_name || "Product"}
-                  {!item.is_available && (
-                    <span className="ml-1 text-xs text-red-500 font-normal">
-                      (unavailable)
-                    </span>
-                  )}
                 </h3>
                 <p className="text-xs text-muted-foreground mt-1">{item.variant_name || "Variant"}</p>
                 <div className="flex items-center justify-between mt-2">

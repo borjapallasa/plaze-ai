@@ -1,12 +1,12 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Trash2, ShoppingCart, Loader2, AlertTriangle } from "lucide-react";
+import { Trash2, ShoppingCart, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { useCart } from "@/hooks/use-cart";
 import { supabase } from "@/integrations/supabase/client";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function Cart() {
   const { cart, isLoading, fetchCart, removeFromCart, cleanupCart } = useCart();
@@ -103,21 +103,12 @@ export default function Cart() {
         <div className="max-w-7xl mx-auto">
           <h1 className="text-2xl font-semibold mb-4">Shopping Cart</h1>
           
-          {cart.items.some(item => item.is_available === false) && (
-            <Alert variant="destructive" className="mb-4">
-              <AlertTriangle className="h-4 w-4" />
-              <AlertDescription>
-                Some items in your cart are no longer available. These items will be removed during checkout.
-              </AlertDescription>
-            </Alert>
-          )}
-          
           <div className="lg:grid lg:grid-cols-3 lg:gap-6">
             <div className="lg:col-span-2 space-y-4">
               {cart.items.map((item) => (
                 <Card 
                   key={item.variant_uuid} 
-                  className={`overflow-hidden ${!item.is_available ? 'border-red-400 bg-red-50/30' : ''}`}
+                  className="overflow-hidden"
                 >
                   <CardContent className="p-4">
                     <div className="flex items-start gap-4">
@@ -131,11 +122,6 @@ export default function Cart() {
                       <div className="flex-1 min-w-0">
                         <h2 className="text-lg font-semibold leading-tight mb-2 line-clamp-2">
                           {item.product_name || "Product"}
-                          {!item.is_available && (
-                            <span className="ml-2 text-sm text-red-500 font-normal">
-                              (Product unavailable)
-                            </span>
-                          )}
                         </h2>
                         <div className="inline-block bg-[#F1F0FB] text-primary px-3 py-1 rounded-full text-sm mb-2">
                           {item.variant_name || "Variant"}
@@ -185,19 +171,10 @@ export default function Cart() {
                       size="lg" 
                       className="w-full bg-primary hover:bg-primary/90 transition-colors"
                       onClick={() => {
-                        if (cart.items.some(item => item.is_available === false)) {
-                          cleanupCart().then(() => {
-                            toast({
-                              title: "Cart updated",
-                              description: "Unavailable items have been removed from your cart."
-                            });
-                          });
-                        } else {
-                          toast({
-                            title: "Payment processing",
-                            description: "This is where the payment processing would begin."
-                          });
-                        }
+                        toast({
+                          title: "Payment processing",
+                          description: "This is where the payment processing would begin."
+                        });
                       }}
                     >
                       Pay Now
