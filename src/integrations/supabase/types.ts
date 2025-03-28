@@ -1558,13 +1558,6 @@ export type Database = {
             referencedRelation: "products_transactions"
             referencedColumns: ["product_transaction_uuid"]
           },
-          {
-            foreignKeyName: "products_transaction_items_variant_uuid_fkey"
-            columns: ["variant_uuid"]
-            isOneToOne: false
-            referencedRelation: "variants"
-            referencedColumns: ["variant_uuid"]
-          },
         ]
       }
       products_transactions: {

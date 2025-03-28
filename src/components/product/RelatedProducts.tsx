@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -42,6 +43,7 @@ export function RelatedProducts({
   const [open, setOpen] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
   const [isSaving, setSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Fetch user's products (excluding the current product)
   const { data: userProducts = [], isLoading: isLoadingProducts, error: productsError } = useQuery<Product[]>({
@@ -179,6 +181,38 @@ export function RelatedProducts({
     }
   };
 
+  // Delete a specific product relationship from the database
+  const deleteProductRelationship = async (relatedProductUuid: string) => {
+    if (!productId) return false;
+    
+    try {
+      setIsDeleting(true);
+      
+      const { error } = await supabase
+        .from('product_relationships')
+        .delete()
+        .eq('product_uuid', productId)
+        .eq('related_product_uuid', relatedProductUuid);
+
+      if (error) {
+        console.error("Error deleting product relationship:", error);
+        toast({
+          title: "Error",
+          description: "Failed to remove related product",
+          variant: "destructive",
+        });
+        return false;
+      }
+      
+      return true;
+    } catch (error) {
+      console.error("Error in deleteProductRelationship:", error);
+      return false;
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   // Toggle product selection in local state
   const toggleProductSelection = (product: Product) => {
     try {
@@ -202,15 +236,35 @@ export function RelatedProducts({
     }
   };
 
-  // Remove a product from selection
-  const removeSelectedProduct = (productToRemove: string) => {
+  // Remove a product from selection and delete from database
+  const removeSelectedProduct = async (productToRemove: string) => {
     try {
-      // Remove from local state only
-      setSelectedProducts(prev =>
-        prev.filter(p => p.product_uuid !== productToRemove)
-      );
+      // First delete from database
+      const success = await deleteProductRelationship(productToRemove);
+      
+      if (success) {
+        // Then remove from local state
+        setSelectedProducts(prev => 
+          prev.filter(p => p.product_uuid !== productToRemove)
+        );
+        
+        // Refresh queries
+        queryClient.invalidateQueries({ queryKey: ['productRelationships', productId] });
+        queryClient.invalidateQueries({ queryKey: ['relatedProducts', productId] });
+        
+        toast({
+          title: "Product removed",
+          description: "Related product has been removed successfully",
+          duration: 3000,
+        });
+      }
     } catch (error) {
       console.error("Error removing selected product:", error);
+      toast({
+        title: "Error",
+        description: "Failed to remove related product",
+        variant: "destructive",
+      });
     }
   };
 
@@ -311,6 +365,7 @@ export function RelatedProducts({
                   size="sm"
                   onClick={() => removeSelectedProduct(product.product_uuid)}
                   className="h-8 w-8 p-0 rounded-full"
+                  disabled={isDeleting}
                 >
                   <X className="h-4 w-4" />
                   <span className="sr-only">Remove</span>
@@ -320,7 +375,7 @@ export function RelatedProducts({
           </div>
           <Button
             onClick={saveRelationships}
-            disabled={isSaving}
+            disabled={isSaving || isDeleting}
             className="w-full"
           >
             {isSaving ? "Saving..." : "Save Changes"}

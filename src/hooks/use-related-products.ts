@@ -61,6 +61,7 @@ export function useRelatedProducts(productUuid?: string) {
       }
     },
     enabled: !!productUuid,
-    staleTime: 1000 * 60 * 5 // 5 minutes
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchOnWindowFocus: true
   });
 }
