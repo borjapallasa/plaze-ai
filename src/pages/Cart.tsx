@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,7 +14,6 @@ export default function Cart() {
 
   useEffect(() => {
     const refreshCart = async () => {
-      // Only refresh if not already refreshing
       if (isRefreshing) return;
       
       setIsRefreshing(true);
@@ -38,7 +36,6 @@ export default function Cart() {
     };
     
     refreshCart();
-    // Only depend on isRefreshing to prevent loops
   }, []);
 
   const handleRemoveItem = async (variantId: string) => {

@@ -28,7 +28,6 @@ export function AdditionalVariants({
   const [selectedAdditional, setSelectedAdditional] = useState<string[]>([]);
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
 
-  // Group variants by name to create product groups
   // Group related products by UUID to create product groups
   const productGroups = relatedProductsWithVariants.reduce<Record<string, { productName: string; variants: any[] }>>((groups, product) => {
     const productUuid = product.related_product_uuid;
@@ -48,9 +47,9 @@ export function AdditionalVariants({
     return null;
   }
 
-  const handleCheckboxChange = (productName: string, checked: boolean) => {
-    const variants = productGroups[productName];
-    const variantId = selectedVariants[productName] || variants[0].id;
+  const handleCheckboxChange = (productUuid: string, checked: boolean) => {
+    const variants = productGroups[productUuid].variants;
+    const variantId = selectedVariants[productUuid] || variants[0].variant_uuid;
 
     if (checked) {
       // Select this variant
@@ -73,9 +72,9 @@ export function AdditionalVariants({
     }
   };
 
-  const handleVariantChange = (productName: string, variantId: string) => {
+  const handleVariantChange = (productUuid: string, variantId: string) => {
     // Deselect old variant if it was selected
-    const oldVariantId = selectedVariants[productName];
+    const oldVariantId = selectedVariants[productUuid];
     if (oldVariantId && selectedAdditional.includes(oldVariantId)) {
       if (onAdditionalSelect) {
         onAdditionalSelect(oldVariantId, false);
@@ -86,7 +85,7 @@ export function AdditionalVariants({
     // Update the selected variant for this product
     setSelectedVariants(prev => ({
       ...prev,
-      [productName]: variantId
+      [productUuid]: variantId
     }));
 
     // If the product is checked, also select the new variant
@@ -119,16 +118,16 @@ export function AdditionalVariants({
       <Card className="pt-4 pb-2.5 px-4 bg-gray-50 border border-gray-200/70 shadow-sm rounded-xl">
         <div className="space-y-1">
           {Object.entries(productGroups).map(([productUuid, { productName, variants }]) => {
-            const selectedVariantId = selectedVariants[productName] || variants[0].variant_uuid;
+            const selectedVariantId = selectedVariants[productUuid] || variants[0].variant_uuid;
             const selectedVariant = variants.find(v => v.variant_uuid === selectedVariantId);
             const isSelected = selectedAdditional.includes(selectedVariantId);
 
             // Initialize selected variant if not set
-            if (!selectedVariants[productName]) {
+            if (!selectedVariants[productUuid]) {
               setTimeout(() => {
                 setSelectedVariants(prev => ({
                   ...prev,
-                  [productName]: variants[0].variant_uuid
+                  [productUuid]: variants[0].variant_uuid
                 }));
               }, 0);
             }
@@ -137,16 +136,16 @@ export function AdditionalVariants({
               <div key={productName} className="flex items-center gap-3 py-2 px-2 rounded hover:bg-white transition-colors">
                 <div className="flex items-start pt-0.5">
                   <Checkbox
-                    id={`product-${productName}`}
+                    id={`product-${productUuid}`}
                     checked={isSelected}
-                    onCheckedChange={(checked) => handleCheckboxChange(productName, checked === true)}
+                    onCheckedChange={(checked) => handleCheckboxChange(productUuid, checked === true)}
                     className="h-4 w-4"
                   />
                 </div>
 
                 <div className="flex items-center justify-between min-w-0 flex-1 gap-3">
                   <label
-                    htmlFor={`product-${productName}`}
+                    htmlFor={`product-${productUuid}`}
                     className="text-sm cursor-pointer truncate flex items-center gap-1.5"
                   >
                     <span className="font-medium">{productName}</span>
@@ -156,7 +155,7 @@ export function AdditionalVariants({
 
                   <Select
                     value={selectedVariantId}
-                    onValueChange={(value) => handleVariantChange(productName, value)}
+                    onValueChange={(value) => handleVariantChange(productUuid, value)}
                     disabled={!isSelected}
                   >
                     <SelectTrigger className="w-[180px] h-8 text-xs border-muted">

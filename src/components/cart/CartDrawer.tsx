@@ -1,4 +1,3 @@
-
 import { SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, X, ArrowRight, Loader2, Trash2, AlertTriangle } from "lucide-react";
@@ -34,7 +33,6 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
           const guestId = !userId ? localStorage.getItem('guest_session_id') : undefined;
 
           await fetchCart(userId, !userId ? guestId || undefined : undefined);
-          // Clean up any unavailable items
           await cleanupCart();
         } catch (error) {
           console.error('Error refreshing cart:', error);
@@ -62,8 +60,6 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
       const success = await removeFromCart(variantId);
 
       if (success) {
-        // No need to explicitly refresh the cart after removal
-        // The removeFromCart function will handle updating the cart state
       }
     } catch (error) {
       console.error('Error removing item:', error);
@@ -75,10 +71,8 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
     }
   };
 
-  // First, define what items we have to add to the cart
   const allAddedItems = cartItem ? [cartItem, ...additionalItems] : additionalItems;
 
-  // Create a default empty cart if cart is null to prevent "null.items" error
   const defaultEmptyCart = {
     transaction_uuid: '',
     item_count: 0,
@@ -86,7 +80,6 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
     items: []
   };
 
-  // Use the actual cart or a default empty cart if cart is null
   const effectiveCart = cart || (allAddedItems.length > 0 ? {
     transaction_uuid: '',
     item_count: allAddedItems.length,
@@ -164,8 +157,6 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
             </p>
           </div>
         )}
-
-        {/* Remove the check for unavailable items since we're setting all items as available */}
         
         <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
           {effectiveCart.items.map((item) => (

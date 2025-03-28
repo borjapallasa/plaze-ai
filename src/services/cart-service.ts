@@ -158,7 +158,8 @@ export async function addItemToCart(
   userId?: string,
   guestSessionId?: string,
   existingTransactionId?: string,
-  isClassroomProduct: boolean = false
+  isClassroomProduct: boolean = false,
+  isAdditionalVariant: boolean = false
 ): Promise<{ success: boolean; message?: string; updatedCart?: CartTransaction; cartItem?: CartItem }> {
   try {
     console.log('Adding to cart', cart, selectedVariant, 'using transaction:', existingTransactionId);
@@ -166,6 +167,7 @@ export async function addItemToCart(
     
     let variantData;
     let productUuid;
+    let productName;
     
     if (isClassroomProduct) {
       // For classroom products, we need to fetch from community_products
@@ -185,6 +187,7 @@ export async function addItemToCart(
       
       variantData = data;
       productUuid = data.community_product_uuid; // Use the community product UUID as the product UUID
+      productName = data.name;
     } else {
       // Regular product variants
       const variantResponse = await supabase
@@ -201,7 +204,27 @@ export async function addItemToCart(
       }
       
       variantData = variantResponse.data;
-      productUuid = product.product_uuid;
+      
+      // For additional variants, use the product UUID that was passed
+      if (isAdditionalVariant && product.product_uuid) {
+        productUuid = product.product_uuid;
+        
+        // Fetch the actual product name for this product UUID
+        const { data: productData, error: productError } = await supabase
+          .from('products')
+          .select('name')
+          .eq('product_uuid', productUuid)
+          .single();
+        
+        if (!productError && productData) {
+          productName = productData.name;
+        } else {
+          productName = product.name || 'Unknown Product';
+        }
+      } else {
+        productUuid = product.product_uuid;
+        productName = product.name || 'Unknown Product';
+      }
     }
 
     // Check for existing transaction
@@ -242,7 +265,10 @@ export async function addItemToCart(
           item.variant_uuid === selectedVariant && 
           (item.product_uuid === productUuid || item.product_uuid === selectedVariant)
         )
-      : findItemInCart(cart, productUuid, selectedVariant);
+      : (cart?.items || []).find(item => 
+          item.product_uuid === productUuid && 
+          item.variant_uuid === selectedVariant
+        );
 
     // Prepare the new or updated cart item
     let cartItem: CartItem;
@@ -268,7 +294,8 @@ export async function addItemToCart(
 
       cartItem = {
         ...existingItem,
-        quantity: existingItem.quantity + 1
+        quantity: existingItem.quantity + 1,
+        product_name: productName || existingItem.product_name
       };
 
     } else {
@@ -296,8 +323,9 @@ export async function addItemToCart(
         variant_uuid: selectedVariant,
         price: variantData.price,
         quantity: 1,
-        product_name: isClassroomProduct ? variantData.name : (product.name || 'Unknown Product'),
-        variant_name: variantData.name || 'Unknown Variant'
+        product_name: productName || (isClassroomProduct ? variantData.name : (product.name || 'Unknown Product')),
+        variant_name: variantData.name || 'Unknown Variant',
+        is_available: true
       };
     }
 

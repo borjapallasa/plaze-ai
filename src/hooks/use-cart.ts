@@ -12,15 +12,12 @@ export function useCart() {
   const { toast } = useToast();
   const [lastFetchTime, setLastFetchTime] = useState<number>(0);
 
-  // Initialize cart on component mount
   useEffect(() => {
     const initializeCart = async () => {
       setIsLoading(true);
 
-      // Check for user session
       const { data: { session } } = await supabase.auth.getSession();
 
-      // Check for existing guest session in localStorage if not logged in
       if (!session) {
         let sessionId = localStorage.getItem('guest_session_id');
         if (!sessionId) {
@@ -30,7 +27,6 @@ export function useCart() {
         setGuestSessionId(sessionId);
       }
 
-      // Try to fetch existing cart
       await fetchCart(session?.user?.id, !session ? guestSessionId : undefined);
 
       setIsLoading(false);
@@ -39,13 +35,11 @@ export function useCart() {
     initializeCart();
   }, [guestSessionId]);
 
-  // Fetch the cart from the database with debounce to prevent infinite loops
   const fetchCart = useCallback(async (userId?: string, sessionId?: string) => {
     console.log('useCart: fetchCart called with', {userId, sessionId});
     
-    // Implement a simple debounce mechanism to prevent multiple rapid fetches
     const now = Date.now();
-    if (now - lastFetchTime < 1000) { // Prevent fetches less than 1 second apart
+    if (now - lastFetchTime < 1000) {
       console.log('Skipping fetch, too soon after last fetch');
       return cart;
     }
@@ -56,9 +50,7 @@ export function useCart() {
       
       const cartData = await fetchCartData(userId, sessionId);
       
-      // If we have a cart, clean up any unavailable items
       if (cartData && cartData.transaction_uuid) {
-        // Add timestamp to track when the cart was last fetched
         if (cartData) {
           cartData.last_fetched = Date.now();
         }
@@ -83,21 +75,18 @@ export function useCart() {
     }
   }, [cart, lastFetchTime, toast]);
 
-  // Add an item to cart
   const addToCart = async (
     product: any, 
     selectedVariant: string, 
-    additionalVariants: string[] = [],
+    additionalVariants: Array<{ variantId: string, productUuid: string | null, variantName?: string }> = [],
     isClassroomProduct: boolean = false
   ) => {
     console.log('useCart: addToCart called with', {product, selectedVariant, additionalVariants, isClassroomProduct});
     setIsLoading(true);
     try {
-      // Get the user's session
       const { data: { session } } = await supabase.auth.getSession();
       const userId = session?.user?.id;
       
-      // First add the primary product
       const result = await addItemToCart(
         cart,
         product,
@@ -121,17 +110,17 @@ export function useCart() {
       let updatedCart = result.updatedCart;
       const cartTransactionId = updatedCart?.transaction_uuid;
 
-      // If there are additional variants, add them to the same transaction
       if (additionalVariants.length > 0 && updatedCart) {
-        for (const variantId of additionalVariants) {
+        for (const variantInfo of additionalVariants) {
           const additionalResult = await addItemToCart(
             updatedCart,
-            product,
-            variantId,
+            { product_uuid: variantInfo.productUuid || null, name: product.name },
+            variantInfo.variantId,
             userId,
             !userId ? guestSessionId : undefined,
-            cartTransactionId, // Pass the transaction ID to ensure items are added to the same cart
-            isClassroomProduct
+            cartTransactionId,
+            isClassroomProduct,
+            true
           );
           
           if (additionalResult.success && additionalResult.updatedCart) {
@@ -140,9 +129,7 @@ export function useCart() {
         }
       }
 
-      // Important: Always update the cart state with the updatedCart if available
       if (updatedCart) {
-        // Add timestamp for last update
         if (updatedCart) {
           updatedCart.last_fetched = Date.now();
           if (updatedCart.items) {
@@ -154,7 +141,6 @@ export function useCart() {
         
         setCart(updatedCart);
       } else {
-        // Refetch cart if updated cart wasn't returned
         await fetchCart(userId, !userId ? guestSessionId : undefined);
       }
 
@@ -180,7 +166,6 @@ export function useCart() {
     }
   };
 
-  // Remove an item from cart
   const removeFromCart = async (variantUuid: string) => {
     console.log('useCart: removeFromCart called for variant', variantUuid);
     
@@ -198,7 +183,6 @@ export function useCart() {
       const result = await removeItemFromCart(cart.transaction_uuid, variantUuid);
       
       if (result.success) {
-        // Update the local cart state immediately to reflect the removed item
         if (cart) {
           const updatedItems = cart.items.filter(item => item.variant_uuid !== variantUuid);
           const updatedItemCount = cart.item_count - 1;
@@ -218,7 +202,6 @@ export function useCart() {
           setCart(optimisticCart);
         }
         
-        // Also refetch to ensure all data is synced
         const { data: { session } } = await supabase.auth.getSession();
         const userId = session?.user?.id;
         const guestId = !userId ? localStorage.getItem('guest_session_id') : undefined;
@@ -253,7 +236,6 @@ export function useCart() {
     }
   };
 
-  // New function to clean up unavailable items from the cart
   const cleanupCart = async () => {
     if (!cart || !cart.transaction_uuid) {
       return false;
@@ -264,7 +246,6 @@ export function useCart() {
       const success = await cleanupUnavailableCartItems(cart.transaction_uuid);
       
       if (success) {
-        // No need to refresh here, just update lastFetchTime
         setLastFetchTime(Date.now());
         setIsLoading(false);
         return true;

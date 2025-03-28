@@ -20,7 +20,6 @@ export function useProductState(variants: any[]) {
   const { toast } = useToast();
   const { addToCart, isLoading } = useCart();
 
-  // Select a default variant when variants load
   useEffect(() => {
     if (variants.length > 0 && !selectedVariant) {
       const highlightedVariant = variants.find(v => v.highlight);
@@ -28,7 +27,6 @@ export function useProductState(variants: any[]) {
     }
   }, [variants, selectedVariant]);
 
-  // Handle sticky Add to Cart button visibility
   useEffect(() => {
     const handleScroll = () => {
       if (variantsRef.current) {
@@ -53,7 +51,6 @@ export function useProductState(variants: any[]) {
       return;
     }
 
-    // Check if user is authenticated
     if (!user) {
       toast({
         title: "Authentication required",
@@ -63,16 +60,48 @@ export function useProductState(variants: any[]) {
       return;
     }
 
-    // Determine if this is a classroom product (community product) by checking for special properties
+    const additionalVariantsInfo = await Promise.all(
+      additionalVariants.map(async (variantId) => {
+        const { data: variantData, error: variantError } = await supabase
+          .from('variants')
+          .select('*')
+          .eq('variant_uuid', variantId)
+          .single();
+        
+        if (variantError || !variantData) {
+          console.error('Error fetching variant data:', variantError);
+          return { variantId, productUuid: null };
+        }
+        
+        return { 
+          variantId, 
+          productUuid: variantData.product_uuid,
+          productName: null,
+          variantName: variantData.name
+        };
+      })
+    );
+
     const isClassroomProduct = !!product.community_product_uuid;
 
-    const result = await addToCart(product, selectedVariant, additionalVariants, isClassroomProduct);
+    const validAdditionalVariants = additionalVariantsInfo
+      .filter(item => item.productUuid)
+      .map(item => ({
+        variantId: item.variantId,
+        productUuid: item.productUuid,
+        variantName: item.variantName
+      }));
+
+    const result = await addToCart(
+      product, 
+      selectedVariant, 
+      validAdditionalVariants, 
+      isClassroomProduct
+    );
 
     if (result?.success) {
-      // Clear previous added items
       setLastAddedAdditionalItems([]);
 
-      // If successfully added to cart, get the cart item and show the cart drawer
       if (result.cartItem) {
         console.log('Setting last added item:', result.cartItem);
         const cartItem: CartItem = {
@@ -81,7 +110,6 @@ export function useProductState(variants: any[]) {
         };
         setLastAddedItem(cartItem);
       } else if (result.updatedCart && result.updatedCart.items.length > 0) {
-        // If no specific cart item is returned but we have an updated cart, use the first item
         const selectedVariantItem = result.updatedCart.items.find(
           item => item.variant_uuid === selectedVariant
         );
@@ -93,8 +121,7 @@ export function useProductState(variants: any[]) {
         setLastAddedItem(cartItem);
       }
 
-      // Find and set the additional variant items
-      if (result.updatedCart && additionalVariants.length > 0) {
+      if (result.updatedCart && validAdditionalVariants.length > 0) {
         const additionalItems = result.updatedCart.items
           .filter(item => additionalVariants.includes(item.variant_uuid))
           .map(item => ({
@@ -106,7 +133,6 @@ export function useProductState(variants: any[]) {
         setLastAddedAdditionalItems(additionalItems);
       }
 
-      // Open cart drawer without triggering an additional fetch
       setCartDrawerOpen(true);
     }
   };
