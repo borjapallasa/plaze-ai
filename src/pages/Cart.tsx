@@ -22,7 +22,7 @@ export default function Cart() {
         const userId = session?.user?.id;
         const guestId = !userId ? localStorage.getItem('guest_session_id') : undefined;
 
-        await fetchCart(userId, guestId || undefined);
+        await fetchCart(userId);
       } catch (error) {
         console.error('Error refreshing cart:', error);
         toast({
