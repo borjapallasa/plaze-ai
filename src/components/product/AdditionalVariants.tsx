@@ -46,10 +46,14 @@ export function AdditionalVariants({
   if (Object.keys(productGroups).length === 0) {
     return null;
   }
+  
+  console.log("AdditionalVariants - Product Groups:", productGroups);
 
   const handleCheckboxChange = (productUuid: string, checked: boolean) => {
     const variants = productGroups[productUuid].variants;
     const variantId = selectedVariants[productUuid] || variants[0].variant_uuid;
+    
+    console.log("Checkbox change for product:", productUuid, "variant:", variantId, "checked:", checked);
 
     if (checked) {
       // Select this variant

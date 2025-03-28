@@ -28,7 +28,7 @@ export function useRelatedProducts(productUuid?: string) {
           if (!item.variant_uuid) {
             return {
               ...item,
-              variant_uuid: item.related_product_uuid, // Use product UUID as variant UUID for products without variants
+              variant_uuid: `default-${item.related_product_uuid}`, // Use prefixed product UUID as variant UUID for products without variants
               variant_name: "Default option",
               variant_price: item.related_product_price_from,
               variant_tags: null,
@@ -38,6 +38,7 @@ export function useRelatedProducts(productUuid?: string) {
           return item;
         }) || [];
         
+        console.log("Processed related products:", processedData);
         return processedData;
       } catch (rpcError) {
         // If RPC fails, fall back to direct query
@@ -66,7 +67,7 @@ export function useRelatedProducts(productUuid?: string) {
           related_product_uuid: rel.related_product_uuid,
           related_product_name: rel.products?.name || '',
           related_product_price_from: rel.products?.price_from || 0,
-          variant_uuid: rel.related_product_uuid, // Use product UUID as variant UUID for default variant
+          variant_uuid: `default-${rel.related_product_uuid}`, // Prefixed product UUID as variant UUID for default variant
           variant_name: "Default option",
           variant_price: rel.products?.price_from || 0,
           variant_tags: null,
@@ -74,6 +75,7 @@ export function useRelatedProducts(productUuid?: string) {
         })) || [];
         
         console.log("Found related products from fallback:", transformedData.length);
+        console.log("Transformed data:", transformedData);
         return transformedData;
       }
     },

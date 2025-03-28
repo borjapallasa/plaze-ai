@@ -63,22 +63,30 @@ export function useProductState(variants: any[]) {
 
     const additionalVariantsInfo = await Promise.all(
       additionalVariants.map(async (variantId) => {
-        // Check if this variant ID is actually a product UUID (for products without variants)
-        const isProductUuid = variantId.length === 36 && !variantId.includes('-variant-');
+        console.log("Processing additional variant:", variantId);
+        
+        // Check if this variant ID is a default variant (prefixed with 'default-')
+        const isDefaultVariant = variantId.startsWith('default-');
         
         try {
-          if (isProductUuid) {
-            // For variants that are actually products (no real variants)
+          if (isDefaultVariant) {
+            // For default variants that represent products without real variants
+            const productUuid = variantId.replace('default-', '');
+            
+            console.log("Processing default variant for product:", productUuid);
+            
             const { data: productData, error: productError } = await supabase
               .from('products')
               .select('product_uuid, name, price_from')
-              .eq('product_uuid', variantId)
+              .eq('product_uuid', productUuid)
               .single();
               
             if (productError || !productData) {
               console.error('Error fetching product data:', productError);
-              return { variantId, productUuid: variantId, productName: 'Unknown Product', variantName: 'Default option' };
+              return { variantId, productUuid, productName: 'Unknown Product', variantName: 'Default option' };
             }
+            
+            console.log("Found product data for default variant:", productData);
             
             return { 
               variantId, 
@@ -113,6 +121,8 @@ export function useProductState(variants: any[]) {
       })
     );
 
+    console.log("Additional variants info:", additionalVariantsInfo);
+
     const isClassroomProduct = !!product.community_product_uuid;
 
     const validAdditionalVariants = additionalVariantsInfo
@@ -120,8 +130,11 @@ export function useProductState(variants: any[]) {
       .map(item => ({
         variantId: item.variantId,
         productUuid: item.productUuid,
-        variantName: item.variantName
+        variantName: item.variantName,
+        isDefaultVariant: item.variantId.startsWith('default-')
       }));
+
+    console.log("Valid additional variants:", validAdditionalVariants);
 
     const result = await addToCart(
       product, 
@@ -153,8 +166,20 @@ export function useProductState(variants: any[]) {
       }
 
       if (result.updatedCart && validAdditionalVariants.length > 0) {
+        // For default variants, we need to match them differently
         const additionalItems = result.updatedCart.items
-          .filter(item => additionalVariants.includes(item.variant_uuid))
+          .filter(item => {
+            // Check if this item is one of our additional variants
+            return additionalVariants.some(variantId => {
+              // For default variants, compare product_uuid
+              if (variantId.startsWith('default-')) {
+                const productUuid = variantId.replace('default-', '');
+                return item.product_uuid === productUuid;
+              }
+              // For regular variants, compare variant_uuid
+              return item.variant_uuid === variantId;
+            });
+          })
           .map(item => ({
             ...item,
             last_updated: Date.now()
