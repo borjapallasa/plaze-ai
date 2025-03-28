@@ -49,7 +49,7 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
     };
 
     refreshCartData();
-  }, [fetchCart, cleanupCart, toast]);
+  }, [toast]);
 
   const handleViewCart = () => {
     onClose();
@@ -61,12 +61,8 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
       const success = await removeFromCart(variantId);
 
       if (success) {
-        // Explicitly refresh the cart after removal to ensure UI is in sync
-        const { data: { session } } = await supabase.auth.getSession();
-        const userId = session?.user?.id;
-        const guestId = !userId ? localStorage.getItem('guest_session_id') : undefined;
-
-        await fetchCart(userId, !userId ? guestId || undefined : undefined);
+        // No need to explicitly refresh the cart after removal
+        // The removeFromCart function will handle updating the cart state
       }
     } catch (error) {
       console.error('Error removing item:', error);

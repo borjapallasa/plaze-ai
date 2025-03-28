@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { v4 as uuidv4 } from 'uuid';
@@ -11,6 +10,7 @@ export function useCart() {
   const [isLoading, setIsLoading] = useState(true);
   const [guestSessionId, setGuestSessionId] = useState<string>('');
   const { toast } = useToast();
+  const [lastFetchTime, setLastFetchTime] = useState<number>(0);
 
   // Initialize cart on component mount
   useEffect(() => {
@@ -39,29 +39,33 @@ export function useCart() {
     initializeCart();
   }, [guestSessionId]);
 
-  // Fetch the cart from the database
+  // Fetch the cart from the database with debounce to prevent infinite loops
   const fetchCart = useCallback(async (userId?: string, sessionId?: string) => {
     console.log('useCart: fetchCart called with', {userId, sessionId});
     
+    // Implement a simple debounce mechanism to prevent multiple rapid fetches
+    const now = Date.now();
+    if (now - lastFetchTime < 1000) { // Prevent fetches less than 1 second apart
+      console.log('Skipping fetch, too soon after last fetch');
+      return cart;
+    }
+    
     try {
       setIsLoading(true);
+      setLastFetchTime(now);
+      
       const cartData = await fetchCartData(userId, sessionId);
       
       // If we have a cart, clean up any unavailable items
       if (cartData && cartData.transaction_uuid) {
-        await cleanupUnavailableCartItems(cartData.transaction_uuid);
-        
-        // Re-fetch the cart to get updated data after cleanup
-        const updatedCartData = await fetchCartData(userId, sessionId);
-        
         // Add timestamp to track when the cart was last fetched
-        if (updatedCartData) {
-          updatedCartData.last_fetched = Date.now();
+        if (cartData) {
+          cartData.last_fetched = Date.now();
         }
         
-        setCart(updatedCartData);
+        setCart(cartData);
         setIsLoading(false);
-        return updatedCartData;
+        return cartData;
       }
       
       setCart(cartData);
@@ -77,7 +81,7 @@ export function useCart() {
       setIsLoading(false);
       return null;
     }
-  }, [toast]);
+  }, [cart, lastFetchTime, toast]);
 
   // Add an item to cart
   const addToCart = async (
@@ -260,12 +264,8 @@ export function useCart() {
       const success = await cleanupUnavailableCartItems(cart.transaction_uuid);
       
       if (success) {
-        // Refetch the cart to get the latest data
-        const { data: { session } } = await supabase.auth.getSession();
-        const userId = session?.user?.id;
-        const guestId = !userId ? localStorage.getItem('guest_session_id') : undefined;
-        
-        await fetchCart(userId, !userId ? guestId || undefined : undefined);
+        // No need to refresh here, just update lastFetchTime
+        setLastFetchTime(Date.now());
         setIsLoading(false);
         return true;
       }

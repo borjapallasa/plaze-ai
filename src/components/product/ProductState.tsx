@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { useCart } from "@/hooks/use-cart";
 import { useToast } from "@/components/ui/use-toast";
@@ -19,7 +18,7 @@ export function useProductState(variants: any[]) {
   const navigate = useNavigate();
 
   const { toast } = useToast();
-  const { addToCart, isLoading, fetchCart } = useCart();
+  const { addToCart, isLoading } = useCart();
 
   // Select a default variant when variants load
   useEffect(() => {
@@ -107,12 +106,7 @@ export function useProductState(variants: any[]) {
         setLastAddedAdditionalItems(additionalItems);
       }
 
-      // Ensure we have the latest cart data before opening drawer
-      const { data: { session } } = await supabase.auth.getSession();
-      const userId = session?.user?.id;
-      const guestId = !userId ? localStorage.getItem('guest_session_id') : undefined;
-      
-      await fetchCart(userId, !userId ? guestId || undefined : undefined);
+      // Open cart drawer without triggering an additional fetch
       setCartDrawerOpen(true);
     }
   };

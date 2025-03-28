@@ -15,6 +15,9 @@ export default function Cart() {
 
   useEffect(() => {
     const refreshCart = async () => {
+      // Only refresh if not already refreshing
+      if (isRefreshing) return;
+      
       setIsRefreshing(true);
       try {
         const { data: { session } } = await supabase.auth.getSession();
@@ -22,8 +25,6 @@ export default function Cart() {
         const guestId = !userId ? localStorage.getItem('guest_session_id') : undefined;
         
         await fetchCart(userId, guestId || undefined);
-        
-        await cleanupCart();
       } catch (error) {
         console.error('Error refreshing cart:', error);
         toast({
@@ -37,7 +38,8 @@ export default function Cart() {
     };
     
     refreshCart();
-  }, [fetchCart, cleanupCart, toast]);
+    // Only depend on isRefreshing to prevent loops
+  }, []);
 
   const handleRemoveItem = async (variantId: string) => {
     const success = await removeFromCart(variantId);
