@@ -1511,6 +1511,7 @@ export type Database = {
           price: number | null
           product_transaction_item_uuid: string
           product_transaction_uuid: string
+          product_type: string | null
           product_uuid: string | null
           quantity: number | null
           status: Database["public"]["Enums"]["transaction_item_status"] | null
@@ -1525,6 +1526,7 @@ export type Database = {
           price?: number | null
           product_transaction_item_uuid?: string
           product_transaction_uuid: string
+          product_type?: string | null
           product_uuid?: string | null
           quantity?: number | null
           status?: Database["public"]["Enums"]["transaction_item_status"] | null
@@ -1539,6 +1541,7 @@ export type Database = {
           price?: number | null
           product_transaction_item_uuid?: string
           product_transaction_uuid?: string
+          product_type?: string | null
           product_uuid?: string | null
           quantity?: number | null
           status?: Database["public"]["Enums"]["transaction_item_status"] | null
@@ -1554,13 +1557,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "products_transactions"
             referencedColumns: ["product_transaction_uuid"]
-          },
-          {
-            foreignKeyName: "products_transaction_items_product_uuid_fkey"
-            columns: ["product_uuid"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["product_uuid"]
           },
           {
             foreignKeyName: "products_transaction_items_variant_uuid_fkey"

@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { ChevronDown, PlusCircle, Pencil, Trash2 } from "lucide-react";
+import { ChevronDown, PlusCircle, Pencil, Trash2, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MainHeader } from "@/components/MainHeader";
@@ -23,14 +23,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ProductEditor } from "@/components/product/ProductEditor";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/auth";
 import { CommunityProduct } from "@/components/community/EditCommunityRelatedProduts";
 import { Community } from "@/components/community/CommunityStats";
 import { Variant } from "@/components/product/types/variants";
 import { Sheet } from "@/components/ui/sheet";
 import { CartDrawer } from "@/components/cart/CartDrawer";
-import { useCart } from "@/hooks/use-cart";
+import { useCart } from "@/context/CartContext";
 
 function transformToVariant(data: any[]): Variant[] {
   return data.map((item) => ({

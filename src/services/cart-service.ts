@@ -107,6 +107,9 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
 
       // Map the items with their names and availability status
       const items: CartItem[] = itemsData.map((item: any) => {
+        // Check if this is a community product (where variant_uuid matches community_product_uuid)
+        const isClassroomProduct = item.product_type === 'community';
+        
         // Always assume the item is available if it's in the cart
         // Only mark it unavailable if specifically needed
         const isAvailable = true;
@@ -116,7 +119,8 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
           variant_uuid: item.variant_uuid,
           price: item.price,
           quantity: item.quantity,
-          product_name: item.product_uuid ? (productNames[item.product_uuid] || 'Unknown Product') : 'Classroom Product',
+          product_name: isClassroomProduct ? 'Classroom Product' : 
+                    (item.product_uuid ? (productNames[item.product_uuid] || 'Unknown Product') : 'Classroom Product'),
           variant_name: variantNames[item.variant_uuid] || 'Unknown Variant',
           is_available: isAvailable
         };
@@ -305,11 +309,12 @@ export async function addItemToCart(
         .from('products_transaction_items')
         .insert({
           product_transaction_uuid: transactionId,
-          product_uuid: productUuid,
+          product_uuid: isClassroomProduct ? null : productUuid,
           variant_uuid: selectedVariant,
           price: variantData.price,
           quantity: 1,
-          total_price: variantData.price
+          total_price: variantData.price,
+          product_type: isClassroomProduct ? 'community' : 'regular'
         });
 
       if (itemResponse.error) {
@@ -320,7 +325,7 @@ export async function addItemToCart(
       }
 
       cartItem = {
-        product_uuid: productUuid,
+        product_uuid: isClassroomProduct ? null : productUuid,
         variant_uuid: selectedVariant,
         price: variantData.price,
         quantity: 1,
