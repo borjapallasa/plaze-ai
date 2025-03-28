@@ -124,6 +124,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const { data: { session } } = await supabase.auth.getSession();
       const userId = session?.user?.id;
 
+      // Determine if the main selectedVariant is a default variant
+      const isMainDefaultVariant = selectedVariant.startsWith('default-');
+
       const result = await addItemToCart(
         cart,
         product,
@@ -131,7 +134,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         userId,
         !userId ? guestSessionId : undefined,
         undefined,
-        isClassroomProduct
+        isClassroomProduct,
+        false, // not an additional variant
+        undefined, // no override price for main variant
+        isMainDefaultVariant // Pass whether this is a default variant
       );
 
       if (!result.success) {
@@ -162,7 +168,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             !userId ? guestSessionId : undefined,
             cartTransactionId,
             isClassroomProduct,
-            true,
+            true, // is additional variant
             variantInfo.price,
             variantInfo.isDefaultVariant
           );

@@ -69,6 +69,7 @@ export function useProductState(variants: any[]) {
         let variantData = null;
         let variantName = null;
         let productName = null;
+        let price = 0;
         
         if (isDefaultVariant) {
           // Extract product UUID from the default variant ID
@@ -83,18 +84,33 @@ export function useProductState(variants: any[]) {
           
           if (productError || !productData) {
             console.error('Error fetching product data for default variant:', productError);
-            return { variantId, productUuid: null, productName: null, variantName: null };
+            return { 
+              variantId, 
+              productUuid: null, 
+              productName: null, 
+              variantName: null,
+              price: 0
+            };
           }
           
           variantName = "Default Option";
           productName = productData.name;
+          price = productData.price_from || 0;
+          
+          console.log('Found default variant data:', { 
+            productUuid, 
+            productName, 
+            price, 
+            variantId 
+          });
           
           return { 
             variantId, 
             productUuid,
             productName,
             variantName,
-            price: productData.price_from || 0
+            price,
+            isDefaultVariant: true
           };
         } else {
           // Regular variant, fetch from variants table
@@ -106,7 +122,13 @@ export function useProductState(variants: any[]) {
           
           if (variantError || !variantData) {
             console.error('Error fetching variant data:', variantError);
-            return { variantId, productUuid: null, productName: null, variantName: null };
+            return { 
+              variantId, 
+              productUuid: null, 
+              productName: null, 
+              variantName: null,
+              price: 0
+            };
           }
           
           return { 
@@ -114,7 +136,8 @@ export function useProductState(variants: any[]) {
             productUuid: variantData.product_uuid,
             productName: variantData.products?.name || null,
             variantName: variantData.name,
-            price: variantData.price || 0
+            price: variantData.price || 0,
+            isDefaultVariant: false
           };
         }
       })
@@ -132,7 +155,7 @@ export function useProductState(variants: any[]) {
         variantName: item.variantName,
         productName: item.productName,
         price: item.price,
-        isDefaultVariant: item.variantId.startsWith('default-')
+        isDefaultVariant: item.isDefaultVariant
       }));
 
     console.log('Valid additional variants:', validAdditionalVariants);

@@ -33,7 +33,7 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
       // Get the items for this transaction
       const { data: itemsData, error: itemsError } = await supabase
         .from('products_transaction_items')
-        .select('product_transaction_item_uuid, product_uuid, variant_uuid, price, quantity, total_price')
+        .select('product_transaction_item_uuid, product_uuid, variant_uuid, price, quantity, total_price, product_type')
         .eq('product_transaction_uuid', transactionData[0].product_transaction_uuid);
 
       if (itemsError) {
@@ -110,6 +110,13 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
       const items: CartItem[] = itemsData.map((item: any) => {
         // Check if this is a community product (where variant_uuid matches community_product_uuid)
         const isClassroomProduct = item.product_type === 'community';
+        const isDefaultVariant = item.product_type === 'default';
+        
+        // For default variants, we use the product name as variant name
+        let productName = item.product_uuid ? (productNames[item.product_uuid] || 'Unknown Product') : 'Classroom Product';
+        let variantName = isDefaultVariant 
+          ? 'Default Option' 
+          : (variantNames[item.variant_uuid] || 'Unknown Variant');
         
         // Always assume the item is available if it's in the cart
         // Only mark it unavailable if specifically needed
@@ -120,12 +127,12 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
           variant_uuid: item.variant_uuid,
           price: item.price,
           quantity: item.quantity,
-          product_name: isClassroomProduct ? 'Classroom Product' : 
-                    (item.product_uuid ? (productNames[item.product_uuid] || 'Unknown Product') : 'Classroom Product'),
-          variant_name: variantNames[item.variant_uuid] || 'Unknown Variant',
+          product_name: isClassroomProduct ? 'Classroom Product' : productName,
+          variant_name: variantName,
           is_available: isAvailable
         };
       });
+      
       const cartData = {
         transaction_uuid: transactionData[0].product_transaction_uuid,
         item_count: transactionData[0].item_count,
@@ -170,7 +177,15 @@ export async function addItemToCart(
   isDefaultVariant: boolean = false
 ): Promise<{ success: boolean; message?: string; updatedCart?: CartTransaction; cartItem?: CartItem }> {
   try {
-    console.log('Adding to cart', { cart, selectedVariant, transaction: existingTransactionId, isClassroomProduct, isAdditionalVariant, overridePrice, isDefaultVariant });
+    console.log('Adding to cart', { 
+      cart, 
+      selectedVariant, 
+      transaction: existingTransactionId, 
+      isClassroomProduct, 
+      isAdditionalVariant, 
+      overridePrice, 
+      isDefaultVariant 
+    });
 
     let variantData;
     let productUuid;
@@ -416,7 +431,7 @@ export async function addItemToCart(
     // Fetch the updated cart items
     const { data: updatedItems, error: itemsError } = await supabase
       .from('products_transaction_items')
-      .select('product_uuid, variant_uuid, price, quantity')
+      .select('product_uuid, variant_uuid, price, quantity, product_type')
       .eq('product_transaction_uuid', transactionId);
 
     if (itemsError || !updatedItems) {
