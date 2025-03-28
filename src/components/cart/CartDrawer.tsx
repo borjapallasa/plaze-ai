@@ -75,6 +75,9 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
     }
   };
 
+  // First, define what items we have to add to the cart
+  const allAddedItems = cartItem ? [cartItem, ...additionalItems] : additionalItems;
+
   // Create a default empty cart if cart is null to prevent "null.items" error
   const defaultEmptyCart = {
     transaction_uuid: '',
@@ -90,9 +93,6 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
     total_amount: allAddedItems.reduce((sum, item) => sum + item.price, 0),
     items: allAddedItems
   } : defaultEmptyCart);
-
-  // Make sure to compute this after effectiveCart is defined
-  const allAddedItems = cartItem ? [cartItem, ...additionalItems] : additionalItems;
 
   const isCartEmpty = !effectiveCart || effectiveCart.items.length === 0;
 
