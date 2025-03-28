@@ -63,23 +63,53 @@ export function useProductState(variants: any[]) {
 
     const additionalVariantsInfo = await Promise.all(
       additionalVariants.map(async (variantId) => {
-        const { data: variantData, error: variantError } = await supabase
-          .from('variants')
-          .select('*')
-          .eq('variant_uuid', variantId)
-          .single();
+        // Check if this variant ID is actually a product UUID (for products without variants)
+        const isProductUuid = variantId.length === 36 && !variantId.includes('-variant-');
         
-        if (variantError || !variantData) {
-          console.error('Error fetching variant data:', variantError);
+        try {
+          if (isProductUuid) {
+            // For variants that are actually products (no real variants)
+            const { data: productData, error: productError } = await supabase
+              .from('products')
+              .select('product_uuid, name, price_from')
+              .eq('product_uuid', variantId)
+              .single();
+              
+            if (productError || !productData) {
+              console.error('Error fetching product data:', productError);
+              return { variantId, productUuid: variantId, productName: 'Unknown Product', variantName: 'Default option' };
+            }
+            
+            return { 
+              variantId, 
+              productUuid: productData.product_uuid,
+              productName: productData.name,
+              variantName: 'Default option'
+            };
+          } else {
+            // Regular variants
+            const { data: variantData, error: variantError } = await supabase
+              .from('variants')
+              .select('*')
+              .eq('variant_uuid', variantId)
+              .single();
+            
+            if (variantError || !variantData) {
+              console.error('Error fetching variant data:', variantError);
+              return { variantId, productUuid: null };
+            }
+            
+            return { 
+              variantId, 
+              productUuid: variantData.product_uuid,
+              productName: null,
+              variantName: variantData.name
+            };
+          }
+        } catch (error) {
+          console.error('Error processing variant:', error);
           return { variantId, productUuid: null };
         }
-        
-        return { 
-          variantId, 
-          productUuid: variantData.product_uuid,
-          productName: null,
-          variantName: variantData.name
-        };
       })
     );
 

@@ -118,8 +118,18 @@ export function AdditionalVariants({
       <Card className="pt-4 pb-2.5 px-4 bg-gray-50 border border-gray-200/70 shadow-sm rounded-xl">
         <div className="space-y-1">
           {Object.entries(productGroups).map(([productUuid, { productName, variants }]) => {
+            // Handle case where variants array is empty
+            if (variants.length === 0) {
+              return null;
+            }
+            
             const selectedVariantId = selectedVariants[productUuid] || variants[0].variant_uuid;
             const selectedVariant = variants.find(v => v.variant_uuid === selectedVariantId);
+            
+            if (!selectedVariant) {
+              return null; // Skip if no valid variant found
+            }
+            
             const isSelected = selectedAdditional.includes(selectedVariantId);
 
             // Initialize selected variant if not set
@@ -131,6 +141,9 @@ export function AdditionalVariants({
                 }));
               }, 0);
             }
+
+            // Determine if Select should be shown (only for products with multiple variants)
+            const hasMultipleVariants = variants.length > 1;
 
             return (
               <div key={productName} className="flex items-center gap-3 py-2 px-2 rounded hover:bg-white transition-colors">
@@ -150,25 +163,31 @@ export function AdditionalVariants({
                   >
                     <span className="font-medium">{productName}</span>
                     <span className="mx-1">-</span>
-                    <span className="font-medium">${formatPrice(selectedVariant?.price || 0)}</span>
+                    <span className="font-medium">${formatPrice(selectedVariant?.variant_price || selectedVariant?.price || 0)}</span>
                   </label>
 
-                  <Select
-                    value={selectedVariantId}
-                    onValueChange={(value) => handleVariantChange(productUuid, value)}
-                    disabled={!isSelected}
-                  >
-                    <SelectTrigger className="w-[180px] h-8 text-xs border-muted">
-                      <SelectValue placeholder="Options" />
-                    </SelectTrigger>
-                    <SelectContent className="min-w-[220px]">
-                      {variants.map((variant) => (
-                        <SelectItem key={variant.variant_uuid} value={variant.variant_uuid} className="text-xs">
-                          {variant.variant_name || "Option"} - ${formatPrice(variant.variant_price)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {hasMultipleVariants ? (
+                    <Select
+                      value={selectedVariantId}
+                      onValueChange={(value) => handleVariantChange(productUuid, value)}
+                      disabled={!isSelected}
+                    >
+                      <SelectTrigger className="w-[180px] h-8 text-xs border-muted">
+                        <SelectValue placeholder="Options" />
+                      </SelectTrigger>
+                      <SelectContent className="min-w-[220px]">
+                        {variants.map((variant) => (
+                          <SelectItem key={variant.variant_uuid} value={variant.variant_uuid} className="text-xs">
+                            {variant.variant_name || "Option"} - ${formatPrice(variant.variant_price)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <div className="w-[180px] text-xs text-muted-foreground">
+                      {selectedVariant.variant_name || "Default option"}
+                    </div>
+                  )}
                 </div>
               </div>
             );
