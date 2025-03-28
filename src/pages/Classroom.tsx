@@ -157,6 +157,8 @@ export default function Classroom() {
     enabled: !!id
   });
 
+  const { toast } = useToast();
+
   const addLessonMutation = useMutation({
     mutationFn: async (newLesson: any) => {
       const { data, error } = await supabase
