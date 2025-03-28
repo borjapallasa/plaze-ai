@@ -75,7 +75,7 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
     }
   };
 
-  // First, define what items we have to add to the cart
+  // Define what items we have to add to the cart
   const allAddedItems = cartItem ? [cartItem, ...additionalItems] : additionalItems;
 
   // Create a default empty cart if cart is null to prevent "null.items" error
@@ -164,8 +164,6 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
             </p>
           </div>
         )}
-
-        {/* Remove the check for unavailable items since we're setting all items as available */}
         
         <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
           {effectiveCart.items.map((item) => (
