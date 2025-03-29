@@ -21,4 +21,7 @@ export default defineConfig(({ mode }) => ({
   build: {
     minify: false, // Turn off minification for debugging
   },
+  optimizeDeps: {
+    exclude: ["@/components/ui/popover"],
+  },
 }));

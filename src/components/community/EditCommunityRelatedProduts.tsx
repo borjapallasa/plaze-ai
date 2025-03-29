@@ -1,11 +1,7 @@
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, ChevronsUpDown, Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -40,7 +36,6 @@ export function EditCommunityRelatedProducts({
 }: RelatedCommunityProductProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [open, setOpen] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<CommunityProduct[]>([]);
   const [isSaving, setSaving] = useState(false);
 
@@ -178,9 +173,6 @@ export function EditCommunityRelatedProducts({
         // Otherwise, add it to the selected products
         return [...prev, product];
       });
-
-      // Close the popover after selection
-      setOpen(false);
     } catch (error) {
       console.error("Error toggling product selection:", error);
     }
@@ -235,7 +227,7 @@ export function EditCommunityRelatedProducts({
   return (
     <div className={cn("space-y-4", className)}>
       <div className="flex items-center justify-between">
-        <Popover open={open} onOpenChange={setOpen}>
+        <Popover>
           <PopoverTrigger asChild>
             <Button variant="outline" size="sm" className="gap-1.5">
               <Plus className="h-3.5 w-3.5" />

@@ -10,11 +10,7 @@ import {
   CommandInput,
   CommandItem,
 } from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Check, ChevronsUpDown, Plus, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -39,7 +35,6 @@ export function RelatedProducts({
   className
 }: RelatedProductsProps) {
   const queryClient = useQueryClient();
-  const [open, setOpen] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
   const [isSaving, setSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -215,8 +210,6 @@ export function RelatedProducts({
         return [...prev, product];
       });
 
-      // Close the popover after selection
-      setOpen(false);
     } catch (error) {
       console.error("Error toggling product selection:", error);
     }
@@ -275,7 +268,7 @@ export function RelatedProducts({
       <div className="flex items-center justify-between">
         <Label className="text-base font-medium">Related Products</Label>
 
-        <Popover open={open} onOpenChange={setOpen}>
+        <Popover>
           <PopoverTrigger asChild>
             <Button variant="outline" size="sm" className="gap-1.5">
               <Plus className="h-3.5 w-3.5" />
