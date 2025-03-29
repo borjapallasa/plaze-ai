@@ -276,41 +276,7 @@ export function RelatedProducts({
               <ChevronsUpDown className="h-3.5 w-3.5 opacity-50" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[300px] p-0" align="end">
-            <Command>
-              <CommandInput placeholder="Search products..." />
-              <CommandEmpty>No products found</CommandEmpty>
-              <CommandGroup className="max-h-64 overflow-auto">
-                {userProducts.map((product) => {
-                  const isSelected = selectedProducts.some(p => p.product_uuid === product.product_uuid);
-
-                  return (
-                    <CommandItem
-                      key={product.product_uuid}
-                      value={product.name}
-                      onSelect={() => {
-                        toggleProductSelection(product);
-                      }}
-                    >
-                      <div className="flex items-center justify-between w-full">
-                        <span className="truncate">{product.name}</span>
-                        {product.price_from !== null && (
-                          <span className="text-xs text-muted-foreground">
-                            ${product.price_from?.toFixed(2)}
-                          </span>
-                        )}
-                      </div>
-                      <Check
-                        className={cn(
-                          "ml-2 h-4 w-4",
-                          isSelected ? "opacity-100" : "opacity-0"
-                        )}
-                      />
-                    </CommandItem>
-                  );
-                })}
-              </CommandGroup>
-            </Command>
+          <PopoverContent className="w-[300px] p-0">
           </PopoverContent>
         </Popover>
       </div>
