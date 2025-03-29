@@ -41,7 +41,7 @@ export function RelatedProducts({
   const [isDeleting, setIsDeleting] = useState(false);
 
   // Fetch user's products (excluding the current product)
-  const { data: userProducts = [], isLoading: isLoadingProducts, error: productsError } = useQuery<Product[]>({
+  const { data: userProducts = [], isLoading: isLoadingProducts, error: productsError } = useQuery({
     queryKey: ['userProducts', userUuid, productId],
     queryFn: async () => {
       if (!userUuid || !productId) {
@@ -49,25 +49,20 @@ export function RelatedProducts({
         return [];
       }
 
-      try {
-        const { data, error } = await supabase
-          .from('products')
-          .select('product_uuid, name, price_from, slug')
-          .eq('user_uuid', userUuid)
-          .neq('product_uuid', productId);
+      const { data, error } = await supabase
+        .from('products')
+        .select('product_uuid, name, price_from, slug')
+        .eq('user_uuid', userUuid)
+        .neq('product_uuid', productId);
 
-        if (error) {
-          console.error("Error fetching user products:", error);
-          throw error;
-        }
-
-        return data || [];
-      } catch (error) {
-        console.error("Failed to fetch user products:", error);
-        return [];
+      if (error) {
+        console.error("Error fetching user products:", error);
+        throw error;
       }
+
+      return data || [];
     },
-    enabled: Boolean(userUuid) && Boolean(productId),
+    enabled: true,
   });
 
   // const { data: relationships = [], isLoading: isLoadingRelationships, error: relationshipsError } = useQuery({
@@ -192,27 +187,27 @@ export function RelatedProducts({
   // };
 
   // Toggle product selection in local state
-  const toggleProductSelection = (product: Product) => {
-    try {
-      // Update local state
-      setSelectedProducts(prev => {
-        const isAlreadySelected = prev.some(p => p.product_uuid === product.product_uuid);
+  // const toggleProductSelection = (product: Product) => {
+  //   try {
+  //     // Update local state
+  //     setSelectedProducts(prev => {
+  //       const isAlreadySelected = prev.some(p => p.product_uuid === product.product_uuid);
 
-        // If it's already selected, remove it
-        if (isAlreadySelected) {
-          return prev.filter(p => p.product_uuid !== product.product_uuid);
-        }
+  //       // If it's already selected, remove it
+  //       if (isAlreadySelected) {
+  //         return prev.filter(p => p.product_uuid !== product.product_uuid);
+  //       }
 
-        // Otherwise, add it to the selected products
-        return [...prev, product];
-      });
+  //       // Otherwise, add it to the selected products
+  //       return [...prev, product];
+  //     });
 
-      // Close the popover after selection
-      setOpen(false);
-    } catch (error) {
-      console.error("Error toggling product selection:", error);
-    }
-  };
+  //     // Close the popover after selection
+  //     setOpen(false);
+  //   } catch (error) {
+  //     console.error("Error toggling product selection:", error);
+  //   }
+  // };
 
   // Remove a product from selection and delete from database
   // const removeSelectedProduct = async (productToRemove: string) => {
@@ -281,30 +276,12 @@ export function RelatedProducts({
               <CommandEmpty>No products found</CommandEmpty>
               <CommandGroup className="max-h-64 overflow-auto">
                 {userProducts.map((product) => {
-                  const isSelected = selectedProducts.some(p => p.product_uuid === product.product_uuid);
-
                   return (
                     <CommandItem
-                      key={product.product_uuid}
-                      value={product.name}
-                      onSelect={() => {
-                        toggleProductSelection(product);
-                      }}
                     >
                       <div className="flex items-center justify-between w-full">
                         <span className="truncate">{product.name}</span>
-                        {product.price_from !== null && (
-                          <span className="text-xs text-muted-foreground">
-                            ${product.price_from?.toFixed(2)}
-                          </span>
-                        )}
                       </div>
-                      <Check
-                        className={cn(
-                          "ml-2 h-4 w-4",
-                          isSelected ? "opacity-100" : "opacity-0"
-                        )}
-                      />
                     </CommandItem>
                   );
                 })}
