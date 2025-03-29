@@ -48,143 +48,148 @@ export function RelatedProducts({
         console.log('No user or product')
         return [];
       }
-      return [
-        {
-          "product_uuid": "67133349-4216-4eda-a238-7fe61ba11068",
-          "name": "test",
-          "price_from": null,
-          "slug": "test"
-        }
-      ]
-    },
-    enabled: Boolean(userUuid) && Boolean(productId),
-    retry: 3,
-    staleTime: 1000 * 60 * 5 // 5 minutes
-  });
-  console.log(userProducts, 'userProducts')
-
-  const { data: relationships = [], isLoading: isLoadingRelationships, error: relationshipsError } = useQuery({
-    queryKey: ['productRelationships', productId],
-    queryFn: async () => {
-      if (!productId) {
-        return [];
-      }
 
       try {
         const { data, error } = await supabase
-          .from('product_relationships')
-          .select('*')
-          .eq('product_uuid', productId);
+          .from('products')
+          .select('product_uuid, name, price_from, slug')
+          .eq('user_uuid', userUuid)
+          .neq('product_uuid', productId);
 
         if (error) {
-          console.error("Error fetching product relationships:", error);
+          console.error("Error fetching user products:", error);
           throw error;
         }
 
         return data || [];
       } catch (error) {
-        console.error("Failed to fetch product relationships:", error);
+        console.error("Failed to fetch user products:", error);
         return [];
       }
     },
-    enabled: Boolean(productId),
-    retry: 3,
-    staleTime: 1000 * 60 * 5 // 5 minutes
+    enabled: Boolean(userUuid) && Boolean(productId),
   });
 
+  // const { data: relationships = [], isLoading: isLoadingRelationships, error: relationshipsError } = useQuery({
+  //   queryKey: ['productRelationships', productId],
+  //   queryFn: async () => {
+  //     if (!productId) {
+  //       return [];
+  //     }
+
+  //     try {
+  //       const { data, error } = await supabase
+  //         .from('product_relationships')
+  //         .select('*')
+  //         .eq('product_uuid', productId);
+
+  //       if (error) {
+  //         console.error("Error fetching product relationships:", error);
+  //         throw error;
+  //       }
+
+  //       return data || [];
+  //     } catch (error) {
+  //       console.error("Failed to fetch product relationships:", error);
+  //       return [];
+  //     }
+  //   },
+  //   enabled: Boolean(productId),
+  // });
+
   // Update selected products based on relationships
-  useEffect(() => {
-    console.log("Relationships changed:", relationships.length);
+  // useEffect(() => {
+  //   console.log("Relationships changed:", relationships.length);
 
-    if (relationships.length > 0 && userProducts.length > 0) {
-      try {
-        const relatedProductIds = relationships.map(rel => rel.related_product_uuid);
-        const relatedProducts = userProducts.filter(product =>
-          relatedProductIds.includes(product.product_uuid)
-        );
+  //   if (relationships.length > 0 && userProducts.length > 0) {
+  //     try {
+  //       const relatedProductIds = relationships.map(rel => rel.related_product_uuid);
+  //       const relatedProducts = userProducts.filter(product =>
+  //         relatedProductIds.includes(product.product_uuid)
+  //       );
 
-        console.log("Setting selected products:", relatedProducts.length);
-        setSelectedProducts(relatedProducts);
-      } catch (error) {
-        console.error("Error processing relationships:", error);
-      }
-    }
-  }, [relationships, userProducts]); // Run when either relationships or userProducts changes
+  //       console.log("Setting selected products:", relatedProducts.length);
+  //       setSelectedProducts(relatedProducts);
+  //     } catch (error) {
+  //       console.error("Error processing relationships:", error);
+  //     }
+  //   }
+  // }, [relationships, userProducts]); // Run when either relationships or userProducts changes
 
   // Save all relationships to the database
-  const saveRelationships = async () => {
-    if (!productId) return;
+  // const saveRelationships = async () => {
+  //   if (!productId) return;
 
-    setSaving(true);
+  //   setSaving(true);
 
-    try {
-      // First, delete all existing relationships
-      const { error: deleteError } = await supabase
-        .from('product_relationships')
-        .delete()
-        .eq('product_uuid', productId);
+  //   try {
+  //     // First, delete all existing relationships
+  //     const { error: deleteError } = await supabase
+  //       .from('product_relationships')
+  //       .delete()
+  //       .eq('product_uuid', productId);
 
-      if (deleteError) {
-        throw deleteError;
-      }
+  //     if (deleteError) {
+  //       throw deleteError;
+  //     }
 
-      // Then, insert all selected products as new relationships
-      if (selectedProducts.length > 0) {
-        const relationshipsToInsert = selectedProducts.map((product, index) => ({
-          product_uuid: productId,
-          related_product_uuid: product.product_uuid,
-          relationship_type: 'upsell',
-          display_order: index
-        }));
+  //     // Then, insert all selected products as new relationships
+  //     if (selectedProducts.length > 0) {
+  //       const relationshipsToInsert = selectedProducts.map((product, index) => ({
+  //         product_uuid: productId,
+  //         related_product_uuid: product.product_uuid,
+  //         relationship_type: 'upsell',
+  //         display_order: index
+  //       }));
 
-        const { error: insertError } = await supabase
-          .from('product_relationships')
-          .insert(relationshipsToInsert);
+  //       const { error: insertError } = await supabase
+  //         .from('product_relationships')
+  //         .insert(relationshipsToInsert);
 
-        if (insertError) {
-          throw insertError;
-        }
-      }
+  //       if (insertError) {
+  //         throw insertError;
+  //       }
+  //     }
 
-      // Refresh data
-      queryClient.invalidateQueries({ queryKey: ['productRelationships', productId] });
-      queryClient.invalidateQueries({ queryKey: ['relatedProducts', productId] });
-      toast.success("Related products have been updated successfully");
-    } catch (error) {
-      console.error("Error saving relationships:", error);
-      toast.error("Failed to save related products");
-    } finally {
-      setSaving(false);
-    }
-  };
+  //     // Refresh data
+  //     queryClient.invalidateQueries({ queryKey: ['productRelationships', productId] });
+  //     queryClient.invalidateQueries({ queryKey: ['relatedProducts', productId] });
+  //     toast.success("Related products have been updated successfully");
+  //   } catch (error) {
+  //     console.error("Error saving relationships:", error);
+  //     toast.error("Failed to save related products");
+  //   } finally {
+  //     setSaving(false);
+  //   }
+  // };
 
-  // Delete a specific product relationship from the database
-  const deleteProductRelationship = async (relatedProductUuid: string) => {
-    if (!productId) return false;
+  // // Delete a specific product relationship from the database
+  // const deleteProductRelationship = async (relatedProductUuid: string) => {
+  //   if (!productId) return false;
 
-    console.log('deleting', productId, relatedProductUuid)
-    try {
-      setIsDeleting(true);
+  //   console.log('deleting', productId, relatedProductUuid)
+  //   try {
+  //     setIsDeleting(true);
 
-      const { error } = await supabase
-        .from('product_relationships')
-        .delete()
-        .eq('product_uuid', productId)
-        .eq('related_product_uuid', relatedProductUuid);
+  //     const { error } = await supabase
+  //       .from('product_relationships')
+  //       .delete()
+  //       .eq('product_uuid', productId)
+  //       .eq('related_product_uuid', relatedProductUuid);
 
-      if (error) {
-        toast.error("Failed to remove related product");
-        return false;
-      }
+  //     if (error) {
+  //       toast.error("Failed to remove related product");
+  //       return false;
+  //     }
 
-      return true;
-    } catch (error) {
-      console.error("Error in deleteProductRelationship:", error);
-      return false;
-    } finally {
-      setIsDeleting(false);
-    }
-  };
+  //     return true;
+  //   } catch (error) {
+  //     console.error("Error in deleteProductRelationship:", error);
+  //     return false;
+  //   } finally {
+  //     setIsDeleting(false);
+  //   }
+  // };
 
   // Toggle product selection in local state
   const toggleProductSelection = (product: Product) => {
@@ -210,31 +215,31 @@ export function RelatedProducts({
   };
 
   // Remove a product from selection and delete from database
-  const removeSelectedProduct = async (productToRemove: string) => {
-    try {
-      // First delete from database
-      const success = await deleteProductRelationship(productToRemove);
+  // const removeSelectedProduct = async (productToRemove: string) => {
+  //   try {
+  //     // First delete from database
+  //     const success = await deleteProductRelationship(productToRemove);
 
-      if (success) {
-        // Then remove from local state
-        setSelectedProducts(prev =>
-          prev.filter(p => p.product_uuid !== productToRemove)
-        );
+  //     if (success) {
+  //       // Then remove from local state
+  //       setSelectedProducts(prev =>
+  //         prev.filter(p => p.product_uuid !== productToRemove)
+  //       );
 
-        // Refresh queries
-        queryClient.invalidateQueries({ queryKey: ['productRelationships', productId] });
-        queryClient.invalidateQueries({ queryKey: ['relatedProducts', productId] });
+  //       // Refresh queries
+  //       queryClient.invalidateQueries({ queryKey: ['productRelationships', productId] });
+  //       queryClient.invalidateQueries({ queryKey: ['relatedProducts', productId] });
 
-        toast.success("Related product has been removed successfully");
-      }
-    } catch (error) {
-      console.error("Error removing selected product:", error);
-      toast.error("Failed to remove related product");
-    }
-  };
+  //       toast.success("Related product has been removed successfully");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error removing selected product:", error);
+  //     toast.error("Failed to remove related product");
+  //   }
+  // };
 
   // Error handling
-  if (productsError || relationshipsError) {
+  if (productsError) {
     return (
       <div className={className}>
         <Label className="text-base font-medium mb-4 block">Related Products</Label>
@@ -246,7 +251,7 @@ export function RelatedProducts({
   }
 
   // Loading state
-  if (isLoadingProducts || isLoadingRelationships) {
+  if (isLoadingProducts) {
     return (
       <div className={className}>
         <Label className="text-base font-medium mb-4 block">Related Products</Label>
@@ -328,7 +333,6 @@ export function RelatedProducts({
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => removeSelectedProduct(product.product_uuid)}
                   className="h-8 w-8 p-0 rounded-full"
                   disabled={isDeleting}
                 >
@@ -339,7 +343,6 @@ export function RelatedProducts({
             ))}
           </div>
           <Button
-            onClick={saveRelationships}
             disabled={isSaving || isDeleting}
             className="w-full"
           >
