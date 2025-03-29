@@ -277,6 +277,11 @@ export function RelatedProducts({
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-[300px] p-0">
+            <Command>
+              <CommandInput placeholder="Search products..." />
+              <CommandEmpty>No products found</CommandEmpty>
+
+            </Command>
           </PopoverContent>
         </Popover>
       </div>
