@@ -274,15 +274,52 @@ export function RelatedProducts({
     <div className={cn("space-y-4", className)}>
       <div className="flex items-center justify-between">
         <Label className="text-base font-medium">Related Products</Label>
-        {!isLoadingProducts && userProducts.map((product) => {
-          return (
-            <span
-              key={product.product_uuid}
-            >
-              <p className="truncate">{product.product_uuid}</p>
-            </span>
-          );
-        })}
+
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <Button variant="outline" size="sm" className="gap-1.5">
+              <Plus className="h-3.5 w-3.5" />
+              <span>Add Product</span>
+              <ChevronsUpDown className="h-3.5 w-3.5 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[300px] p-0" align="end">
+            <Command>
+              <CommandInput placeholder="Search products..." />
+              <CommandEmpty>No products found</CommandEmpty>
+              <CommandGroup className="max-h-64 overflow-auto">
+                {userProducts.map((product) => {
+                  const isSelected = selectedProducts.some(p => p.product_uuid === product.product_uuid);
+
+                  return (
+                    <CommandItem
+                      key={product.product_uuid}
+                      value={product.name}
+                      onSelect={() => {
+                        toggleProductSelection(product);
+                      }}
+                    >
+                      <div className="flex items-center justify-between w-full">
+                        <span className="truncate">{product.name}</span>
+                        {product.price_from !== null && (
+                          <span className="text-xs text-muted-foreground">
+                            ${product.price_from?.toFixed(2)}
+                          </span>
+                        )}
+                      </div>
+                      <Check
+                        className={cn(
+                          "ml-2 h-4 w-4",
+                          isSelected ? "opacity-100" : "opacity-0"
+                        )}
+                      />
+                    </CommandItem>
+                  );
+                })}
+              </CommandGroup>
+            </Command>
+          </PopoverContent>
+        </Popover>
       </div>
 
       {selectedProducts.length > 0 ? (
