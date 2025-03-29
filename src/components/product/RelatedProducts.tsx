@@ -280,7 +280,18 @@ export function RelatedProducts({
             <Command>
               <CommandInput placeholder="Search products..." />
               <CommandEmpty>No products found</CommandEmpty>
-
+              <CommandGroup className="max-h-64 overflow-auto">
+                {userProducts.map((product) => {
+                  return (
+                    <CommandItem
+                    >
+                      <div>
+                        <span>{product.name}</span>
+                      </div>
+                    </CommandItem>
+                  );
+                })}
+              </CommandGroup>
             </Command>
           </PopoverContent>
         </Popover>
