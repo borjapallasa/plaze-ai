@@ -9,6 +9,7 @@ import { ProductFullWidthSections } from "./ProductFullWidthSections";
 import { ProductImage } from "@/hooks/use-product-images";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
 import { Product, RelatedProduct } from "@/types/Product";
+import { RelatedProductsList } from "./RelatedProductsList";
 
 interface DesktopProductLayoutProps {
   product: Product;
@@ -75,7 +76,7 @@ export function DesktopProductLayout({
               isLoading={isLoading}
             />)
           }
-          {Array.isArray(relatedProductsWithVariants) && relatedProductsWithVariants.length > 0 && (
+          {Array.isArray(variants) && variants.length > 0 && Array.isArray(relatedProductsWithVariants) && relatedProductsWithVariants.length > 0 && (
             <AdditionalVariants
               relatedProductsWithVariants={relatedProductsWithVariants}
               onAdditionalSelect={onAdditionalVariantToggle}
