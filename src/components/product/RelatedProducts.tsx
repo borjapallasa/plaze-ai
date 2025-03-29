@@ -35,6 +35,7 @@ export function RelatedProducts({
   className
 }: RelatedProductsProps) {
   const queryClient = useQueryClient();
+  const [open, setOpen] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
   const [isSaving, setSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -47,29 +48,20 @@ export function RelatedProducts({
         console.log('No user or product')
         return [];
       }
-
-      try {
-        const { data, error } = await supabase
-          .from('products')
-          .select('product_uuid, name, price_from, slug')
-          .eq('user_uuid', userUuid)
-          .neq('product_uuid', productId);
-
-        if (error) {
-          console.error("Error fetching user products:", error);
-          throw error;
+      return [
+        {
+          "product_uuid": "67133349-4216-4eda-a238-7fe61ba11068",
+          "name": "test",
+          "price_from": null,
+          "slug": "test"
         }
-
-        return data || [];
-      } catch (error) {
-        console.error("Failed to fetch user products:", error);
-        return [];
-      }
+      ]
     },
     enabled: Boolean(userUuid) && Boolean(productId),
     retry: 3,
     staleTime: 1000 * 60 * 5 // 5 minutes
   });
+  console.log(userProducts, 'userProducts')
 
   const { data: relationships = [], isLoading: isLoadingRelationships, error: relationshipsError } = useQuery({
     queryKey: ['productRelationships', productId],
@@ -210,6 +202,8 @@ export function RelatedProducts({
         return [...prev, product];
       });
 
+      // Close the popover after selection
+      setOpen(false);
     } catch (error) {
       console.error("Error toggling product selection:", error);
     }
@@ -268,7 +262,7 @@ export function RelatedProducts({
       <div className="flex items-center justify-between">
         <Label className="text-base font-medium">Related Products</Label>
 
-        <Popover>
+        <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <Button variant="outline" size="sm" className="gap-1.5">
               <Plus className="h-3.5 w-3.5" />
@@ -276,18 +270,36 @@ export function RelatedProducts({
               <ChevronsUpDown className="h-3.5 w-3.5 opacity-50" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[300px] p-0">
+          <PopoverContent className="w-[300px] p-0" align="end">
             <Command>
               <CommandInput placeholder="Search products..." />
               <CommandEmpty>No products found</CommandEmpty>
               <CommandGroup className="max-h-64 overflow-auto">
                 {userProducts.map((product) => {
+                  const isSelected = selectedProducts.some(p => p.product_uuid === product.product_uuid);
+
                   return (
                     <CommandItem
+                      key={product.product_uuid}
+                      value={product.name}
+                      onSelect={() => {
+                        toggleProductSelection(product);
+                      }}
                     >
-                      <div>
-                        <span>{product.name}</span>
+                      <div className="flex items-center justify-between w-full">
+                        <span className="truncate">{product.name}</span>
+                        {product.price_from !== null && (
+                          <span className="text-xs text-muted-foreground">
+                            ${product.price_from?.toFixed(2)}
+                          </span>
+                        )}
                       </div>
+                      <Check
+                        className={cn(
+                          "ml-2 h-4 w-4",
+                          isSelected ? "opacity-100" : "opacity-0"
+                        )}
+                      />
                     </CommandItem>
                   );
                 })}
