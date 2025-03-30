@@ -408,6 +408,12 @@ export default function Classroom() {
     const result = await addToCart(product, selectedProduct.id, [], true);
 
     if (result?.success) {
+      if (result.payment_link) {
+        console.log('Navigating to payment link:', result.payment_link);
+        window.location.href = result.payment_link;
+        return;
+      }
+      
       if (result.cartItem) {
         setLastAddedItem(result.cartItem);
       } else if (result.updatedCart && result.updatedCart.items.length > 0) {

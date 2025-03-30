@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { v4 as uuidv4 } from 'uuid';
@@ -150,6 +149,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         return null;
       }
 
+      // Return early with payment_link for classroom products
+      if (isClassroomProduct && result.payment_link) {
+        setIsLoading(false);
+        return {
+          ...result,
+          success: true
+        };
+      }
+      
+      // Continue with regular cart flow for non-classroom products
       let updatedCart = result.updatedCart;
       const cartTransactionId = updatedCart?.transaction_uuid;
 

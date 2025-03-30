@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { CartItem, CartTransaction } from '@/types/cart';
 
@@ -175,7 +174,7 @@ export async function addItemToCart(
   isAdditionalVariant: boolean = false,
   overridePrice?: number,
   isDefaultVariant: boolean = false
-): Promise<{ success: boolean; message?: string; updatedCart?: CartTransaction; cartItem?: CartItem }> {
+): Promise<{ success: boolean; message?: string; updatedCart?: CartTransaction; cartItem?: CartItem; payment_link?: string }> {
   try {
     console.log('Adding to cart', {
       cart,
@@ -281,6 +280,7 @@ export async function addItemToCart(
 
     // Check for existing transaction
     let transactionId = existingTransactionId || cart?.transaction_uuid;
+    let payment_link;
 
     if (!transactionId) {
       console.log('Creating NEW transaction for variant: ', selectedVariant);
@@ -309,6 +309,19 @@ export async function addItemToCart(
       }
 
       transactionId = data.product_transaction_uuid;
+    }
+
+    // For classroom products, get payment_link immediately after inserting transaction
+    if (isClassroomProduct) {
+      const { data: transactionData, error: transactionError } = await supabase
+        .from('products_transactions')
+        .select('payment_link')
+        .eq('product_transaction_uuid', transactionId)
+        .single();
+        
+      if (!transactionError && transactionData && transactionData.payment_link) {
+        payment_link = transactionData.payment_link;
+      }
     }
 
     // Check if this item is already in the cart
@@ -396,7 +409,7 @@ export async function addItemToCart(
     // Get the current values of the transaction
     const { data: currentTransaction, error: fetchError } = await supabase
       .from('products_transactions')
-      .select('item_count, total_amount')
+      .select('item_count, total_amount, payment_link')
       .eq('product_transaction_uuid', transactionId)
       .single();
 
@@ -405,8 +418,14 @@ export async function addItemToCart(
       return {
         success: true,
         message: "Item added but couldn't update totals",
-        cartItem
+        cartItem,
+        payment_link
       };
+    }
+
+    // If we didn't get the payment link earlier, get it now
+    if (!payment_link && currentTransaction.payment_link) {
+      payment_link = currentTransaction.payment_link;
     }
 
     // Update the transaction totals
@@ -459,12 +478,14 @@ export async function addItemToCart(
     }
 
     console.log('UPDATED CART:', updatedCart);
+    console.log('PAYMENT LINK (if classroom product):', payment_link);
 
     return {
       success: true,
       message: "Item added to cart successfully",
       updatedCart,
-      cartItem
+      cartItem,
+      payment_link
     };
   } catch (error) {
     console.error('Failed to add to cart:', error);
