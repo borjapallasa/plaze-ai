@@ -111,13 +111,13 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
         // Check if this is a community product (where variant_uuid matches community_product_uuid)
         const isClassroomProduct = item.product_type === 'community';
         const isDefaultVariant = item.product_type === 'default';
-        
+
         // For default variants, we use the product name as variant name
         let productName = item.product_uuid ? (productNames[item.product_uuid] || 'Unknown Product') : 'Classroom Product';
-        let variantName = isDefaultVariant 
-          ? 'Default Option' 
+        let variantName = isDefaultVariant
+          ? 'Default Option'
           : (variantNames[item.variant_uuid] || 'Unknown Variant');
-        
+
         // Always assume the item is available if it's in the cart
         // Only mark it unavailable if specifically needed
         const isAvailable = true;
@@ -132,7 +132,7 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
           is_available: isAvailable
         };
       });
-      
+
       const cartData = {
         transaction_uuid: transactionData[0].product_transaction_uuid,
         item_count: transactionData[0].item_count,
@@ -177,14 +177,14 @@ export async function addItemToCart(
   isDefaultVariant: boolean = false
 ): Promise<{ success: boolean; message?: string; updatedCart?: CartTransaction; cartItem?: CartItem }> {
   try {
-    console.log('Adding to cart', { 
-      cart, 
-      selectedVariant, 
-      transaction: existingTransactionId, 
-      isClassroomProduct, 
-      isAdditionalVariant, 
-      overridePrice, 
-      isDefaultVariant 
+    console.log('Adding to cart', {
+      cart,
+      selectedVariant,
+      transaction: existingTransactionId,
+      isClassroomProduct,
+      isAdditionalVariant,
+      overridePrice,
+      isDefaultVariant
     });
 
     let variantData;
@@ -215,13 +215,13 @@ export async function addItemToCart(
     } else if (isDefaultVariant) {
       // For default variants (products with no variants)
       const productId = selectedVariant.replace('default-', '');
-      
+
       const { data, error } = await supabase
         .from('products')
         .select('*')
         .eq('product_uuid', productId)
         .single();
-        
+
       if (error || !data) {
         console.error('Error fetching product for default variant:', error);
         return {
@@ -229,7 +229,7 @@ export async function addItemToCart(
           message: "Could not find the selected product"
         };
       }
-      
+
       variantData = {
         name: 'Default Option',
         price: overridePrice || data.price_from || 0
@@ -237,7 +237,7 @@ export async function addItemToCart(
       productUuid = data.product_uuid;
       productName = data.name;
       price = overridePrice || data.price_from || 0;
-      
+
       console.log('Default variant data:', { variantData, productUuid, productName, price });
     } else {
       // Regular product variants
@@ -499,7 +499,6 @@ export async function removeItemFromCart(
       };
     }
 
-    // Delete the item
     const { error: deleteError } = await supabase
       .from('products_transaction_items')
       .delete()
@@ -514,41 +513,25 @@ export async function removeItemFromCart(
       };
     }
 
-    // Update the transaction totals
-    const { data: transactionData, error: transactionError } = await supabase
-      .from('products_transactions')
-      .select('item_count, total_amount')
-      .eq('product_transaction_uuid', transactionId)
-      .single();
-
-    if (transactionError || !transactionData) {
-      console.error('Error fetching transaction for update:', transactionError);
-      return {
-        success: true,
-        message: "Item removed but couldn't update cart totals"
-      };
-    }
-
-    // Calculate new totals
-    const newItemCount = Math.max(0, (transactionData.item_count || 0) - itemData.quantity);
-    const newTotalAmount = Math.max(0, (transactionData.total_amount || 0) - itemData.total_price);
-
-    // Update the transaction
-    const { error: updateError } = await supabase
-      .from('products_transactions')
-      .update({
-        item_count: newItemCount,
-        total_amount: newTotalAmount
-      })
+    const { data: remainingItems, error: remainingError } = await supabase
+      .from('products_transaction_items')
+      .select('total_price')
       .eq('product_transaction_uuid', transactionId);
 
-    if (updateError) {
-      console.error('Error updating transaction totals:', updateError);
-      return {
-        success: false,
-        message: "Item removed but failed to update cart totals"
-      };
+    if (remainingError) {
+      console.error('Error fetching remaining cart items:', remainingError);
+      return { success: false, message: 'Failed to update cart total' };
     }
+
+    // Sum up the remaining total price
+    const newTotalAmount = remainingItems.reduce((sum, item) => sum + item.total_price, 0);
+    const newItemCount = remainingItems.length;
+
+    // Update the total amount
+    await supabase
+      .from('products_transactions')
+      .update({ total_amount: newTotalAmount, item_count: newItemCount })
+      .eq('product_transaction_uuid', transactionId);
 
     return {
       success: true,
