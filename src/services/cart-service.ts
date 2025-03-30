@@ -190,7 +190,8 @@ export async function addItemToCart(
     let productUuid;
     let productName;
     let price;
-
+    let paymentLink;
+    console.log('isClassroomProduct:', isClassroomProduct);
     if (isClassroomProduct) {
       // For classroom products, we need to fetch from community_products
       const { data, error } = await supabase
@@ -211,6 +212,7 @@ export async function addItemToCart(
       productUuid = data.community_product_uuid; // Use the community product UUID as the product UUID
       productName = data.name;
       price = data.price;
+      paymentLink = data.payment_link || null;
     } else if (isDefaultVariant) {
       // For default variants (products with no variants)
       const productId = selectedVariant.replace('default-', '');
@@ -286,6 +288,7 @@ export async function addItemToCart(
       console.log('Creating NEW transaction for variant: ', selectedVariant);
       // Create a new transaction
       const newTransaction = {
+        payment_link: isClassroomProduct ? paymentLink : null,
         user_uuid: userId,
         item_count: 0,
         total_amount: price,
@@ -318,7 +321,7 @@ export async function addItemToCart(
         .select('payment_link')
         .eq('product_transaction_uuid', transactionId)
         .single();
-        
+
       if (!transactionError && transactionData && transactionData.payment_link) {
         payment_link = transactionData.payment_link;
       }
@@ -426,6 +429,8 @@ export async function addItemToCart(
     // If we didn't get the payment link earlier, get it now
     if (!payment_link && currentTransaction.payment_link) {
       payment_link = currentTransaction.payment_link;
+      console.log('Payment link:', payment_link);
+      console.log('currentTransaction:', currentTransaction);
     }
 
     // Update the transaction totals
