@@ -1,3 +1,4 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { ProductCard } from "@/components/ProductCard";
 import { useQuery } from "@tanstack/react-query";
@@ -72,6 +73,8 @@ export default function Products() {
               return (
                 <ProductCard
                   key={product.id}
+                  id={product.product_uuid}
+                  slug={product.slug}
                   title={product.name}
                   price="$99.99"
                   image="https://images.unsplash.com/photo-1649972904349-6e44c42644a7"
@@ -79,8 +82,6 @@ export default function Products() {
                   description={product.description}
                   tags={product.tech_stack ? product.tech_stack.split(',') : []}
                   category={product.type}
-                  id={product.product_uuid}
-                  slug={product.slug}
                 />
               );
             })}

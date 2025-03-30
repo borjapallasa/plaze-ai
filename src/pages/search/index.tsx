@@ -263,6 +263,8 @@ export const SearchResults = () => {
                       {results.products.map((product) => (
                         <ProductCard
                           key={product.product_uuid}
+                          id={product.product_uuid}
+                          slug={product.slug}
                           title={product.name}
                           price="$99.99"
                           image="https://images.unsplash.com/photo-1649972904349-6e44c42644a7"
@@ -274,8 +276,6 @@ export const SearchResults = () => {
                               : []
                           }
                           category={product.type}
-                          id={product.product_uuid}
-                          slug={product.slug}
                         />
                       ))}
                     </div>
