@@ -14,6 +14,8 @@ import { ProductBasicDetailsForm } from "@/components/product/ProductBasicDetail
 import { ProductStatus } from "@/hooks/use-create-product";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ExistingProductSelector } from "@/components/community/ExistingProductSelector";
+import { CommunityProduct } from "@/types/Product";
 
 export default function NewCommunityProductPage() {
   const { id: communityId } = useParams<{ id: string }>();
@@ -23,6 +25,8 @@ export default function NewCommunityProductPage() {
   const [communityName, setCommunityName] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [expertUuid, setExpertUuid] = useState<string | undefined>();
+  const [selectedTemplate, setSelectedTemplate] = useState<CommunityProduct | null>(null);
   
   // Product form state
   const [productName, setProductName] = useState("");
@@ -42,7 +46,7 @@ export default function NewCommunityProductPage() {
       try {
         const { data, error } = await supabase
           .from("communities")
-          .select("name")
+          .select("name, expert_uuid")
           .eq("community_uuid", communityId)
           .single();
 
@@ -55,6 +59,7 @@ export default function NewCommunityProductPage() {
 
         if (data) {
           setCommunityName(data.name);
+          setExpertUuid(data.expert_uuid);
         }
       } catch (err) {
         console.error("Error in fetching community:", err);
@@ -70,6 +75,16 @@ export default function NewCommunityProductPage() {
 
   const handleStatusChange = (value: ProductStatus) => {
     setProductStatus(value);
+  };
+
+  const handleTemplateSelect = (product: CommunityProduct) => {
+    setSelectedTemplate(product);
+    setProductName(product.name || "");
+    setProductType(product.product_type as CommunityProductType || "free");
+    setProductPrice(product.price ? product.price.toString() : "");
+    setFilesLink(product.files_link || "");
+    setPaymentLink(product.payment_link || "");
+    toast.success("Product details loaded from template");
   };
 
   const handleCreateProduct = async () => {
@@ -141,11 +156,20 @@ export default function NewCommunityProductPage() {
               <div className="space-y-3 sm:space-y-6">
                 <Card className="p-3 sm:p-6">
                   <div className="space-y-4">
+                    {/* Template selector */}
+                    <ExistingProductSelector 
+                      expertUuid={expertUuid}
+                      onSelect={handleTemplateSelect}
+                      selectedProduct={selectedTemplate}
+                    />
+                    
                     <ProductBasicDetailsForm
                       productName={productName}
                       setProductName={setProductName}
                       productDescription={productDescription}
                       setProductDescription={setProductDescription}
+                      filesLink={filesLink}
+                      setFilesLink={setFilesLink}
                     />
                     
                     {/* Product type selection */}
@@ -175,20 +199,6 @@ export default function NewCommunityProductPage() {
                           <span>Paid</span>
                         </label>
                       </div>
-                    </div>
-                    
-                    {/* Files link field */}
-                    <div className="space-y-2">
-                      <Label htmlFor="filesLink">Files Link</Label>
-                      <Input
-                        id="filesLink"
-                        placeholder="Enter link to product files (Google Drive, Dropbox, etc.)"
-                        value={filesLink}
-                        onChange={(e) => setFilesLink(e.target.value)}
-                      />
-                      <p className="text-sm text-muted-foreground">
-                        Provide a link where users can download or access the product files
-                      </p>
                     </div>
                     
                     {/* Price and payment link fields for paid products */}
