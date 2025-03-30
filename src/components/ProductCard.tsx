@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +14,9 @@ interface ProductCardProps {
   tags: string[];
   category: string;
   product?: any;
+  id?: string;
+  slug?: string;
+  split?: string;
 }
 
 export function ProductCard({
@@ -23,7 +27,9 @@ export function ProductCard({
   description,
   tags,
   category,
-  product
+  product,
+  id,
+  slug
 }: ProductCardProps) {
   const navigate = useNavigate();
 
@@ -37,7 +43,15 @@ export function ProductCard({
         return;
       }
     }
-    navigate(`/product/${product?.product_uuid}`);
+    
+    // If product has id directly, or we have the id prop
+    const productId = product?.product_uuid || product?.community_product_uuid || id;
+    
+    if (productId) {
+      navigate(`/product/${productId}`);
+    } else if (slug) {
+      navigate(`/product/s/${slug}`);
+    }
   };
 
   return (

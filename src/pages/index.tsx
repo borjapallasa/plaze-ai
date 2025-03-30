@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -104,8 +103,6 @@ const Index = () => {
             {filteredProducts?.map((product) => (
               <ProductCard
                 key={product.product_uuid}
-                id={product.product_uuid}
-                slug={product.slug}
                 title={product.name}
                 price="Free"
                 image="https://images.unsplash.com/photo-1649972904349-6e44c42644a7"
@@ -113,6 +110,8 @@ const Index = () => {
                 description={product.description}
                 tags={product.tech_stack ? product.tech_stack.split(',') : []}
                 category={product.type}
+                id={product.product_uuid}
+                slug={product.slug}
               />
             ))}
           </div>
