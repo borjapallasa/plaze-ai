@@ -11,6 +11,7 @@ interface CommunityFieldsFormProps {
     type: string;
     price: string;
     thumbnail: string;
+    videoUrl?: string;
   };
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   handleCommunityTypeChange: (value: string) => void;
@@ -102,6 +103,15 @@ export function CommunityFieldsForm({
               handleFileSelect(file);
             }}
           />
+          {formData.thumbnail && (
+            <div className="mt-2">
+              <img 
+                src={formData.thumbnail} 
+                alt="Community thumbnail preview" 
+                className="w-32 h-32 object-cover rounded-md"
+              />
+            </div>
+          )}
         </div>
       </div>
     </>

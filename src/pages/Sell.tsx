@@ -20,7 +20,7 @@ const SellPage = () => {
     description: "",
     contactEmail: "",
     servicePrice: "",
-    serviceType: "one time" as ServiceType, // Ensure this is initialized with a default value
+    serviceType: "one time" as ServiceType,
     category: "" as CategoryType | "",
     selectedSubcategories: [] as string[],
     intro: "",

@@ -1,6 +1,6 @@
 
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { MainHeader } from "@/components/MainHeader";
 import { CommunityForm } from "@/components/community/CommunityForm";
 import { useCreateCommunity } from "@/hooks/use-create-community";
@@ -10,16 +10,23 @@ import { getVideoEmbedUrl } from "@/utils/videoEmbed";
 
 export default function NewCommunityPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const initialFormData = location.state || {};
   const { createCommunity, isCreating } = useCreateCommunity();
 
-  const [communityName, setCommunityName] = useState("");
-  const [communityIntro, setCommunityIntro] = useState("");
-  const [communityDescription, setCommunityDescription] = useState("");
-  const [price, setPrice] = useState("");
-  const [communityType, setCommunityType] = useState<CommunityType>("free");
+  const [communityName, setCommunityName] = useState(initialFormData.name || "");
+  const [communityIntro, setCommunityIntro] = useState(initialFormData.intro || initialFormData.videoUrl || "");
+  const [communityDescription, setCommunityDescription] = useState(initialFormData.description || "");
+  const [price, setPrice] = useState(initialFormData.price || "");
+  const [communityType, setCommunityType] = useState<CommunityType>(initialFormData.type || "free");
   const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>("monthly");
   const [visibility, setVisibility] = useState<CommunityVisibility>("draft");
   const [links, setLinks] = useState<{ platform: string; url: string }[]>([{ platform: "", url: "" }]);
+  const [thumbnail, setThumbnail] = useState(initialFormData.thumbnail || "");
+
+  useEffect(() => {
+    console.log("Initial form data received:", initialFormData);
+  }, [initialFormData]);
 
   const handleLinkChange = (index: number, field: "platform" | "url", value: string) => {
     const updatedLinks = [...links];
@@ -59,7 +66,9 @@ export default function NewCommunityPage() {
         type: communityType,
         billing_period: billingPeriod,
         visibility: visibility,
-        links: validLinks
+        links: validLinks,
+        thumbnail: thumbnail,
+        videoUrl: initialFormData.videoUrl
       };
 
       const result = await createCommunity(communityData);

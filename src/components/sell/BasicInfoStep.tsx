@@ -19,6 +19,7 @@ interface BasicInfoStepProps {
     type: string;
     price: string;
     thumbnail: string;
+    videoUrl: string;
     productPrice: string;
     filesLink: string;
   };

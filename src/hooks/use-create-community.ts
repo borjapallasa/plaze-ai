@@ -17,6 +17,8 @@ interface CommunityData {
   billing_period: BillingPeriod;
   visibility: CommunityVisibility;
   links: { platform: string; url: string }[];
+  thumbnail?: string;
+  videoUrl?: string;
 }
 
 export const useCreateCommunity = () => {
@@ -50,13 +52,14 @@ export const useCreateCommunity = () => {
           user_uuid: user.id,
           expert_uuid: expertUuid,
           name: communityData.name,
-          intro: communityData.intro,
+          intro: communityData.intro || communityData.videoUrl || "",
           description: communityData.description,
           price: communityData.price,
           type: communityData.type,
           billing_period: communityData.billing_period,
           visibility: communityData.visibility,
           links: communityData.links as unknown as Json,
+          thumbnail: communityData.thumbnail || null,
         })
         .select()
         .single();
