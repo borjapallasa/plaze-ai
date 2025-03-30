@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -25,7 +26,14 @@ export interface ProductData {
   pendingImages?: PendingImage[]
 }
 
-export function useCreateProduct() {
+export interface ProductInitialData {
+  name?: string;
+  description?: string;
+  price?: string;
+  filesLink?: string;
+}
+
+export function useCreateProduct(initialData?: ProductInitialData) {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
@@ -186,6 +194,7 @@ export function useCreateProduct() {
     handleSave,
     isSaving,
     currentUser,
-    expertData
+    expertData,
+    initialData
   };
 }

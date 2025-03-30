@@ -1,4 +1,6 @@
+
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { MainHeader } from "@/components/MainHeader";
 import { Card } from "@/components/ui/card";
 import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
@@ -12,13 +14,17 @@ import { ProductCreateHeader } from "@/components/product/ProductCreateHeader";
 import { ProductBasicDetailsForm } from "@/components/product/ProductBasicDetailsForm";
 
 export default function NewProduct() {
-  const [productName, setProductName] = useState("");
-  const [productDescription, setProductDescription] = useState("");
+  const location = useLocation();
+  const initialFormData = location.state || {};
+  
+  const [productName, setProductName] = useState(initialFormData.name || "");
+  const [productDescription, setProductDescription] = useState(initialFormData.description || "");
   const [techStack, setTechStack] = useState("");
-  const [techStackPrice, setTechStackPrice] = useState("");
+  const [techStackPrice, setTechStackPrice] = useState(initialFormData.price || "");
   const [productIncludes, setProductIncludes] = useState("");
   const [difficultyLevel, setDifficultyLevel] = useState("");
   const [demo, setDemo] = useState("");
+  const [filesLink, setFilesLink] = useState(initialFormData.filesLink || "");
   const [productStatus, setProductStatus] = useState<ProductStatus>("draft");
   const [industries, setIndustries] = useState<string[]>([]);
   const [useCases, setUseCases] = useState<string[]>([]);
@@ -29,8 +35,8 @@ export default function NewProduct() {
   const [variants, setVariants] = useState<Variant[]>([
     {
       id: "1",
-      name: "",
-      price: 0,
+      name: initialFormData.name || "",
+      price: Number(initialFormData.price) || 0,
       comparePrice: 0,
       highlight: false,
       label: "Package",
@@ -147,8 +153,8 @@ export default function NewProduct() {
                       setProductDescription={setProductDescription}
                       productPrice={techStackPrice}
                       setProductPrice={setTechStackPrice}
-                      filesLink=""
-                      setFilesLink={() => { }}
+                      filesLink={filesLink}
+                      setFilesLink={setFilesLink}
                     />
                     <div className="pt-2">
                       <div className="flex items-center justify-between mb-4">
