@@ -8,10 +8,12 @@ export type CommunityProductType = "free" | "paid";
 
 interface CommunityProductData {
   name: string;
+  description?: string;
   communityUuid: string;
   productType: CommunityProductType;
   price?: number;
   paymentLink?: string;
+  filesLink?: string;
 }
 
 export const useCreateCommunityProduct = () => {
@@ -35,7 +37,7 @@ export const useCreateCommunityProduct = () => {
       // Verify user has permission to add products to this community
       const { data: communityData, error: communityError } = await supabase
         .from("communities")
-        .select("user_uuid")
+        .select("user_uuid, expert_uuid")
         .eq("community_uuid", productData.communityUuid)
         .single();
 
@@ -44,7 +46,8 @@ export const useCreateCommunityProduct = () => {
         throw new Error("Could not verify community ownership");
       }
 
-      if (communityData.user_uuid !== user.id) {
+      const isAuthorized = user.id === communityData.user_uuid;
+      if (!isAuthorized) {
         throw new Error("You do not have permission to add products to this community");
       }
 
@@ -53,10 +56,13 @@ export const useCreateCommunityProduct = () => {
         .from("community_products")
         .insert({
           name: productData.name,
+          description: productData.description,
           community_uuid: productData.communityUuid,
           product_type: productData.productType,
           price: productData.productType === "paid" ? productData.price : null,
           payment_link: productData.productType === "paid" ? productData.paymentLink : null,
+          files_link: productData.filesLink,
+          expert_uuid: communityData.expert_uuid,
         })
         .select()
         .single();

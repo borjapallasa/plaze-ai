@@ -25,6 +25,16 @@ interface Link {
   url: string;
 }
 
+interface CommunityProduct {
+  name: string;
+  description?: string;
+  price?: number; 
+  product_type: 'free' | 'paid';
+  payment_link?: string;
+  files_link?: string;
+  community_product_uuid: string;
+}
+
 function isValidLink(link: unknown): link is Link {
   if (typeof link !== 'object' || link === null) return false;
   const l = link as any;
@@ -120,6 +130,23 @@ export default function CommunityPage() {
     enabled: !!communityId
   });
 
+  const { data: communityProducts, isLoading: isProductsLoading } = useQuery({
+    queryKey: ['community-products', communityId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('community_products')
+        .select('*')
+        .eq('community_uuid', communityId);
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    },
+    enabled: !!communityId
+  });
+
   const videoEmbedUrl = getVideoEmbedUrl(community?.intro);
   const links = parseLinks(community?.links);
   
@@ -155,6 +182,7 @@ export default function CommunityPage() {
   }
 
   const isOwner = user?.id === community?.expert?.user_uuid;
+  const communityName = community?.name || "Community";
 
   const templates = [
     {
@@ -526,18 +554,43 @@ export default function CommunityPage() {
               {renderAddProductButton()}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {templates.map((template, index) => (
-                <ProductCard
-                  key={index}
-                  title={template.title}
-                  price={template.price}
-                  image={template.image}
-                  seller={template.seller}
-                  description={template.description}
-                  tags={template.tags}
-                  category={template.category}
-                />
-              ))}
+              {isProductsLoading ? (
+                [...Array(3)].map((_, index) => (
+                  <Card key={index} className="group relative flex flex-col animate-pulse">
+                    <div className="aspect-[1.25] bg-muted rounded-t-lg"></div>
+                    <CardContent className="p-6 relative space-y-4">
+                      <div className="h-6 bg-muted rounded w-3/4"></div>
+                      <div className="h-4 bg-muted rounded w-full"></div>
+                      <div className="h-4 bg-muted rounded w-2/3"></div>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : communityProducts && communityProducts.length > 0 ? (
+                communityProducts.map((product) => (
+                  <ProductCard
+                    key={product.community_product_uuid}
+                    title={product.name}
+                    price={product.product_type === "paid" ? `$${product.price}` : "Free"}
+                    image="/placeholder.svg"
+                    seller={communityName}
+                    description={product.description || ""}
+                    tags={[product.product_type === "paid" ? "paid" : "free"]}
+                    category="community"
+                    product={product}
+                  />
+                ))
+              ) : (
+                <Card className="col-span-full p-6">
+                  <div className="text-center text-muted-foreground">
+                    <p className="mb-4">No products available yet.</p>
+                    {isOwner && (
+                      <Link to={`/community/${communityId}/products/new`}>
+                        <Button variant="outline">Add your first product</Button>
+                      </Link>
+                    )}
+                  </div>
+                </Card>
+              )}
             </div>
           </TabsContent>
 

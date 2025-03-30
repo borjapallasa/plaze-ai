@@ -59,10 +59,12 @@ export default function NewCommunityProductPage() {
     try {
       await createCommunityProduct({
         name: data.name,
+        description: data.description || undefined,
         communityUuid: communityId,
         productType: data.productType,
         price: data.price ? parseFloat(data.price) : undefined,
         paymentLink: data.paymentLink || undefined,
+        filesLink: data.filesLink || undefined,
       });
 
       toast.success("Product added to your community successfully");
@@ -104,7 +106,7 @@ export default function NewCommunityProductPage() {
   return (
     <div className="min-h-screen bg-background">
       <MainHeader />
-      <div className="container max-w-6xl py-12">
+      <div className="container max-w-6xl py-12 pt-28">
         <CommunityProductForm
           communityId={communityId || ""}
           communityName={communityName}
