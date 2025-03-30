@@ -45,6 +45,7 @@ import AffiliatesPage from "./pages/Affiliates";
 import SellerPage from "./pages/seller/SellerPage";
 import SellPage from "./pages/Sell";
 import { SearchResults } from "./pages/search";
+import NewCommunityProductPage from "./pages/community/NewCommunityProductPage";
 
 const queryClient = new QueryClient();
 
@@ -72,6 +73,7 @@ function App() {
           <Route path="/product/:slug/:id/edit" element={<EditProductPage />} />
           <Route path="/service/:id/edit" element={<EditServicePage />} />
           <Route path="/community/:id/edit" element={<EditCommunityPage />} />
+          <Route path="/community/:id/products/new" element={<NewCommunityProductPage />} />
           <Route path="/communities" element={<CommunitiesPage />} />
           <Route path="/community/:id" element={<CommunityPage />} />
           <Route path="/classroom/:id" element={<ClassroomPage />} />

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight } from "lucide-react";
+import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight, Plus } from "lucide-react";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/ProductCard";
@@ -53,21 +53,21 @@ function parseLinks(data: unknown): Link[] {
   return validLinks;
 }
 
-export default function Community() {
-  const { id } = useParams();
+export default function CommunityPage() {
+  const { id: communityId } = useParams();
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [isThreadOpen, setIsThreadOpen] = useState(false);
   const [selectedThread, setSelectedThread] = useState<any>(null);
   const { user } = useAuth();
-  const { images } = useCommunityImages(id);
+  const { images } = useCommunityImages(communityId);
 
   const { data: community, isLoading: isCommunityLoading } = useQuery({
-    queryKey: ['community', id],
+    queryKey: ['community', communityId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('communities')
         .select('*, expert:expert_uuid(*)')
-        .eq('community_uuid', id)
+        .eq('community_uuid', communityId)
         .single();
 
       if (error) {
@@ -76,11 +76,11 @@ export default function Community() {
 
       return data;
     },
-    enabled: !!id
+    enabled: !!communityId
   });
 
   const { data: threads, isLoading: isThreadsLoading } = useQuery({
-    queryKey: ['community-threads', id],
+    queryKey: ['community-threads', communityId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('threads')
@@ -88,7 +88,7 @@ export default function Community() {
           *,
           user:user_uuid(*)
         `)
-        .eq('community_uuid', id)
+        .eq('community_uuid', communityId)
         .eq('status', 'open')
         .order('last_message_at', { ascending: false });
 
@@ -98,16 +98,16 @@ export default function Community() {
 
       return data;
     },
-    enabled: !!id
+    enabled: !!communityId
   });
 
   const { data: classrooms, isLoading: isClassroomsLoading } = useQuery({
-    queryKey: ['community-classrooms', id],
+    queryKey: ['community-classrooms', communityId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('classrooms')
         .select('*')
-        .eq('community_uuid', id)
+        .eq('community_uuid', communityId)
         .eq('status', 'visible')
         .order('created_at', { ascending: false });
 
@@ -117,7 +117,7 @@ export default function Community() {
 
       return data;
     },
-    enabled: !!id
+    enabled: !!communityId
   });
 
   const videoEmbedUrl = getVideoEmbedUrl(community?.intro);
@@ -237,6 +237,23 @@ export default function Community() {
   const handleThreadClick = (thread: any) => {
     setSelectedThread(thread);
     setIsThreadOpen(true);
+  };
+
+  const renderAddProductButton = () => {
+    if (isOwner) {
+      return (
+        <Button 
+          as={Link} 
+          to={`/community/${communityId}/products/new`} 
+          variant="outline" 
+          className="flex items-center gap-2"
+        >
+          <Plus className="h-4 w-4" />
+          <span>Add Product</span>
+        </Button>
+      );
+    }
+    return null;
   };
 
   return (
