@@ -1,3 +1,4 @@
+
 export interface RelatedProduct {
   product_uuid: string;
   name: string;
@@ -93,4 +94,7 @@ export interface CommunityProduct {
   variant_uuid?: string;
   variant_name?: string;
   variant_price?: number;
+  files_link?: string;  // Added missing property
+  payment_link?: string; // Added missing property
+  expert_uuid?: string;  // Added for completeness
 }
