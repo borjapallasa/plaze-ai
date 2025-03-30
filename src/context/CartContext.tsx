@@ -124,6 +124,30 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const { data: { session } } = await supabase.auth.getSession();
       const userId = session?.user?.id;
 
+      // For classroom products, bypass the regular cart flow entirely
+      if (isClassroomProduct) {
+        // Determine if the main selectedVariant is a default variant
+        const isMainDefaultVariant = selectedVariant.startsWith('default-');
+        
+        // Call addItemToCart with minimal parameters for classroom products
+        const result = await addItemToCart(
+          null, // Don't use/update the current cart for classroom products
+          product,
+          selectedVariant,
+          userId,
+          !userId ? guestSessionId : undefined,
+          undefined,
+          isClassroomProduct,
+          false, 
+          undefined,
+          isMainDefaultVariant
+        );
+
+        setIsLoading(false);
+        return result; // Return the result with payment_link
+      }
+
+      // Standard cart flow for regular products
       // Determine if the main selectedVariant is a default variant
       const isMainDefaultVariant = selectedVariant.startsWith('default-');
 
@@ -134,7 +158,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         userId,
         !userId ? guestSessionId : undefined,
         undefined,
-        isClassroomProduct,
+        false, // not a classroom product
         false, // not an additional variant
         undefined, // no override price for main variant
         isMainDefaultVariant // Pass whether this is a default variant
@@ -148,16 +172,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         });
         setIsLoading(false);
         return null;
-      }
-
-      // For classroom products, return early with the payment link
-      // This ensures we don't update the cart UI unnecessarily
-      if (isClassroomProduct && result.payment_link) {
-        setIsLoading(false);
-        return {
-          ...result,
-          success: true
-        };
       }
       
       // Continue with regular cart flow for non-classroom products
@@ -178,7 +192,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             userId,
             !userId ? guestSessionId : undefined,
             cartTransactionId,
-            isClassroomProduct,
+            false, // not a classroom product
             true, // is additional variant
             variantInfo.price,
             variantInfo.isDefaultVariant

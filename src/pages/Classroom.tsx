@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
@@ -56,9 +55,7 @@ export default function Classroom() {
   const [isAddLessonOpen, setIsAddLessonOpen] = useState(false);
   const [isEditLessonOpen, setIsEditLessonOpen] = useState(false);
   const [isDeleteLessonOpen, setIsDeleteLessonOpen] = useState(false);
-  const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
-  const [lastAddedItem, setLastAddedItem] = useState<any>(null);
-  const [lastAddedAdditionalItems, setLastAddedAdditionalItems] = useState<any[]>([]);
+  const [isProcessingPurchase, setIsProcessingPurchase] = useState(false);
   const navigate = useNavigate();
   const [newLessonData, setNewLessonData] = useState({
     name: '',
@@ -75,6 +72,7 @@ export default function Classroom() {
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const { addToCart, isLoading: isCartLoading } = useCart();
+  const { toast } = useToast();
 
   const { data: classroom, isLoading: isClassroomLoading } = useQuery({
     queryKey: ['classroom', id],
@@ -157,8 +155,6 @@ export default function Classroom() {
     },
     enabled: !!id
   });
-
-  const { toast } = useToast();
 
   const addLessonMutation = useMutation({
     mutationFn: async (newLesson: any) => {
@@ -400,41 +396,44 @@ export default function Classroom() {
       return;
     }
 
-    const product = {
-      product_uuid: selectedProduct.id,
-      name: selectedProduct.name,
-      community_product_uuid: selectedProduct.id
-    };
+    try {
+      setIsProcessingPurchase(true);
+      
+      const product = {
+        product_uuid: selectedProduct.id,
+        name: selectedProduct.name,
+        community_product_uuid: selectedProduct.id
+      };
 
-    const result = await addToCart(product, selectedProduct.id, [], true);
+      // Set classroom product flag to true to bypass cart
+      const result = await addToCart(product, selectedProduct.id, [], true);
 
-    // If successful and there's a payment link, navigate to it immediately
-    if (result?.success && result.payment_link) {
-      console.log('Navigating to payment link:', result.payment_link);
-      window.location.href = result.payment_link;
-      return;
-    }
-    
-    // Only proceed with cart drawer if no payment link is available
-    if (result?.success) {
-      if (result.cartItem) {
-        setLastAddedItem(result.cartItem);
-      } else if (result.updatedCart && result.updatedCart.items.length > 0) {
-        const selectedVariantItem = result.updatedCart.items.find(
-          item => item.variant_uuid === selectedProduct.id
-        );
-        setLastAddedItem(selectedVariantItem || result.updatedCart.items[0]);
+      // If successful, immediately redirect to payment link
+      if (result?.success && result.payment_link) {
+        console.log('Navigating to payment link:', result.payment_link);
+        window.location.href = result.payment_link;
+        return;
+      } else {
+        // If there's no payment link but the operation was successful
+        toast({
+          title: "Success",
+          description: "Product added to your account."
+        });
       }
-
-      setLastAddedAdditionalItems([]);
-      setCartDrawerOpen(true);
+    } catch (error) {
+      console.error('Error processing classroom purchase:', error);
+      toast({
+        title: "Error",
+        description: "There was a problem processing your request. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsProcessingPurchase(false);
     }
   };
 
   const closeCartDrawer = () => {
-    setCartDrawerOpen(false);
-    setLastAddedItem(null);
-    setLastAddedAdditionalItems([]);
+    
   };
 
   const videoUrl = activeLesson?.video_url || classroom?.video_url;
@@ -460,6 +459,7 @@ export default function Classroom() {
         onVariantChange={setSelectedVariant}
         onAddToCart={handleAddToCart}
         className="space-y-2"
+        isLoading={isProcessingPurchase || isCartLoading}
       />
     </div>
   );
@@ -905,13 +905,7 @@ export default function Classroom() {
           </Dialog>
 
           {/* Cart Drawer */}
-          <Sheet open={cartDrawerOpen} onOpenChange={setCartDrawerOpen}>
-            <CartDrawer
-              cartItem={lastAddedItem}
-              additionalItems={lastAddedAdditionalItems}
-              onClose={closeCartDrawer}
-            />
-          </Sheet>
+          
         </div>
       </div>
     </div>
