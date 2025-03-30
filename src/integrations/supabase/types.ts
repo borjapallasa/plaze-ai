@@ -569,6 +569,7 @@ export type Database = {
           community_uuid: string | null
           created_at: string
           expert_uuid: string | null
+          files_link: string | null
           id: number
           name: string
           payment_link: string | null
@@ -583,6 +584,7 @@ export type Database = {
           community_uuid?: string | null
           created_at?: string
           expert_uuid?: string | null
+          files_link?: string | null
           id?: number
           name?: string
           payment_link?: string | null
@@ -597,6 +599,7 @@ export type Database = {
           community_uuid?: string | null
           created_at?: string
           expert_uuid?: string | null
+          files_link?: string | null
           id?: number
           name?: string
           payment_link?: string | null

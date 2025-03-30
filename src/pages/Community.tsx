@@ -242,15 +242,12 @@ export default function CommunityPage() {
   const renderAddProductButton = () => {
     if (isOwner) {
       return (
-        <Button 
-          as={Link} 
-          to={`/community/${communityId}/products/new`} 
-          variant="outline" 
-          className="flex items-center gap-2"
-        >
-          <Plus className="h-4 w-4" />
-          <span>Add Product</span>
-        </Button>
+        <Link to={`/community/${communityId}/products/new`}>
+          <Button variant="outline" className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            <span>Add Product</span>
+          </Button>
+        </Link>
       );
     }
     return null;
@@ -472,7 +469,7 @@ export default function CommunityPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {isClassroomsLoading ? (
                 [...Array(3)].map((_, index) => (
-                  <Card key={index} className="group relative flex flex-col hover:bg-accent transition-colors overflow-hidden animate-pulse">
+                  <Card key={index} className="group relative flex flex-col hover:bg-accent transition-colors animate-pulse">
                     <div className="aspect-[1.25] bg-muted rounded-t-lg"></div>
                     <CardContent className="p-6 relative space-y-4">
                       <div className="h-6 bg-muted rounded w-3/4"></div>
@@ -524,6 +521,9 @@ export default function CommunityPage() {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input placeholder="Search products" className="pl-9" />
+            </div>
+            <div className="flex justify-end mb-4">
+              {renderAddProductButton()}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {templates.map((template, index) => (
