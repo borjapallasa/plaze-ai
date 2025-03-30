@@ -20,17 +20,17 @@ interface ProductCreateHeaderProps {
   isValid: boolean;
 }
 
-export function ProductCreateHeader({ 
-  productStatus, 
-  onStatusChange, 
-  onSave, 
+export function ProductCreateHeader({
+  productStatus,
+  onStatusChange,
+  onSave,
   isSaving,
-  isValid 
+  isValid
 }: ProductCreateHeaderProps) {
   return (
     <div className="mb-6">
       <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
-        <Link to="/seller/products">
+        <Link to="/">
           <Button variant="ghost" size="icon" className="rounded-full flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 mt-1">
             <ArrowLeft className="h-4 w-4" />
           </Button>
@@ -50,7 +50,7 @@ export function ProductCreateHeader({
                   <SelectItem value="inactive">Inactive</SelectItem>
                 </SelectContent>
               </Select>
-              <Button 
+              <Button
                 onClick={onSave}
                 disabled={isSaving || !isValid}
               >
