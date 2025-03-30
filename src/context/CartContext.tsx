@@ -1,7 +1,8 @@
+
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { v4 as uuidv4 } from 'uuid';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { CartTransaction, CartItem } from '@/types/cart';
 import { 
   fetchCartData, 
@@ -149,7 +150,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         return null;
       }
 
-      // Return early with payment_link for classroom products
+      // For classroom products, return early with the payment link
+      // This ensures we don't update the cart UI unnecessarily
       if (isClassroomProduct && result.payment_link) {
         setIsLoading(false);
         return {

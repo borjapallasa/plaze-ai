@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
@@ -407,13 +408,15 @@ export default function Classroom() {
 
     const result = await addToCart(product, selectedProduct.id, [], true);
 
+    // If successful and there's a payment link, navigate to it immediately
+    if (result?.success && result.payment_link) {
+      console.log('Navigating to payment link:', result.payment_link);
+      window.location.href = result.payment_link;
+      return;
+    }
+    
+    // Only proceed with cart drawer if no payment link is available
     if (result?.success) {
-      if (result.payment_link) {
-        console.log('Navigating to payment link:', result.payment_link);
-        window.location.href = result.payment_link;
-        return;
-      }
-      
       if (result.cartItem) {
         setLastAddedItem(result.cartItem);
       } else if (result.updatedCart && result.updatedCart.items.length > 0) {
