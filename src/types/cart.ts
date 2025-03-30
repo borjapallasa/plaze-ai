@@ -8,6 +8,7 @@ export interface CartItem {
   variant_name?: string;
   is_available?: boolean; // Flag to indicate if the product/variant is still available
   last_updated?: number; // Timestamp to track the most recent update
+  product_type?: string; // Type of product (community, default, regular)
 }
 
 export interface CartTransaction {

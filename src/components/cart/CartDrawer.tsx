@@ -84,7 +84,11 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
     }
   };
 
-  const allAddedItems = cartItem ? [cartItem, ...additionalItems] : additionalItems;
+  // Filter out community products
+  const filteredCartItem = cartItem && cartItem.product_type !== 'community' ? cartItem : null;
+  const filteredAdditionalItems = additionalItems.filter(item => item.product_type !== 'community');
+
+  const allAddedItems = filteredCartItem ? [filteredCartItem, ...filteredAdditionalItems] : filteredAdditionalItems;
 
   const defaultEmptyCart = {
     transaction_uuid: '',
@@ -147,10 +151,10 @@ export function CartDrawer({ cartItem, additionalItems = [], onClose }: CartDraw
       </SheetHeader>
 
       <div className="mt-6 space-y-6">
-        {(cartItem || additionalItems.length > 0) && (
+        {(filteredCartItem || filteredAdditionalItems.length > 0) && (
           <div className="bg-primary/5 p-3 rounded-lg mb-4">
             <p className="text-sm font-medium text-primary flex items-center">
-              <span className="mr-2">✓</span> Item{additionalItems.length > 0 ? 's' : ''} added to cart
+              <span className="mr-2">✓</span> Item{filteredAdditionalItems.length > 0 ? 's' : ''} added to cart
             </p>
           </div>
         )}

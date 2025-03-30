@@ -2,7 +2,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { CartItem, CartTransaction } from '@/types/cart';
 
 // Fetch cart data by user or guest session ID
-export async function fetchCartData(userId?: string, sessionId?: string): Promise<CartTransaction | null> {
+export async function fetchCartData(userId?: string, sessionId?: string, includeClassroomProducts: boolean = false): Promise<CartTransaction | null> {
   try {
     if (!userId) {
       // No way to identify the cart
@@ -30,10 +30,17 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
       }
 
       // Get the items for this transaction
-      const { data: itemsData, error: itemsError } = await supabase
+      let itemsQuery = supabase
         .from('products_transaction_items')
         .select('product_transaction_item_uuid, product_uuid, variant_uuid, price, quantity, total_price, product_type')
         .eq('product_transaction_uuid', transactionData[0].product_transaction_uuid);
+      
+      // If we don't want to include classroom products, filter them out
+      if (!includeClassroomProducts) {
+        itemsQuery = itemsQuery.not('product_type', 'eq', 'community');
+      }
+      
+      const { data: itemsData, error: itemsError } = await itemsQuery;
 
       if (itemsError) {
         console.error('Error fetching cart items:', itemsError);
@@ -128,14 +135,25 @@ export async function fetchCartData(userId?: string, sessionId?: string): Promis
           quantity: item.quantity,
           product_name: isClassroomProduct ? 'Classroom Product' : productName,
           variant_name: variantName,
-          is_available: isAvailable
+          is_available: isAvailable,
+          product_type: item.product_type
         };
       });
 
+      // Calculate actual item count excluding community products if needed
+      let filteredItemCount = transactionData[0].item_count;
+      let filteredTotalAmount = transactionData[0].total_amount;
+      
+      if (!includeClassroomProducts) {
+        // Recalculate the totals based only on the filtered items
+        filteredItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+        filteredTotalAmount = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      }
+
       const cartData = {
         transaction_uuid: transactionData[0].product_transaction_uuid,
-        item_count: transactionData[0].item_count,
-        total_amount: transactionData[0].total_amount,
+        item_count: filteredItemCount,
+        total_amount: filteredTotalAmount,
         items
       }
       console.log('Returning cart data: ', cartData)
@@ -299,7 +317,7 @@ export async function addItemToCart(
       const { data, error } = await supabase
         .from('products_transactions')
         .insert(newTransaction)
-        .select('product_transaction_uuid')
+        .select('product_transaction_uuid, payment_link')
         .single();
 
       console.log('Create TX: ', newTransaction, error);
@@ -312,10 +330,11 @@ export async function addItemToCart(
       }
 
       transactionId = data.product_transaction_uuid;
+      payment_link = data.payment_link;
     }
 
     // For classroom products, get payment_link immediately after inserting transaction
-    if (isClassroomProduct) {
+    if (isClassroomProduct && !payment_link) {
       const { data: transactionData, error: transactionError } = await supabase
         .from('products_transactions')
         .select('payment_link')
@@ -324,6 +343,15 @@ export async function addItemToCart(
 
       if (!transactionError && transactionData && transactionData.payment_link) {
         payment_link = transactionData.payment_link;
+      } else if (paymentLink) {
+        // If we couldn't get the payment link from the transaction but have it from the community product,
+        // update the transaction with the payment link from the community product
+        await supabase
+          .from('products_transactions')
+          .update({ payment_link: paymentLink })
+          .eq('product_transaction_uuid', transactionId);
+          
+        payment_link = paymentLink;
       }
     }
 
@@ -405,7 +433,8 @@ export async function addItemToCart(
         quantity: 1,
         product_name: productName || (isClassroomProduct ? variantData.name : (product.name || 'Unknown Product')),
         variant_name: variantData.name || 'Unknown Variant',
-        is_available: true
+        is_available: true,
+        product_type: isClassroomProduct ? 'community' : (isDefaultVariant ? 'default' : 'regular')
       };
     }
 

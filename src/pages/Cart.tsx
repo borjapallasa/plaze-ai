@@ -73,7 +73,11 @@ export default function Cart() {
     );
   }
 
-  if (!cart || cart.items.length === 0) {
+  // Check if cart is empty or contains only classroom products
+  const displayItems = cart?.items?.filter(item => item.product_type !== 'community') || [];
+  const isCartEmpty = !displayItems.length;
+
+  if (isCartEmpty) {
     return (
       <div className="bg-background min-h-screen">
         <MainHeader />
@@ -98,6 +102,9 @@ export default function Cart() {
     );
   }
 
+  // Calculate subtotal based only on non-community items
+  const subtotal = displayItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+
   return (
     <div className="bg-background min-h-screen">
       <MainHeader />
@@ -107,7 +114,7 @@ export default function Cart() {
 
           <div className="lg:grid lg:grid-cols-3 lg:gap-6">
             <div className="lg:col-span-2 space-y-4">
-              {cart.items.map((item) => (
+              {displayItems.map((item) => (
                 <Card
                   key={item.variant_uuid}
                   className="overflow-hidden"
@@ -162,16 +169,16 @@ export default function Cart() {
                   <div className="space-y-3">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Subtotal</span>
-                      <span>${cart.total_amount.toFixed(2)}</span>
+                      <span>${subtotal.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Tax (10%)</span>
-                      <span>${(cart.total_amount * 0.1).toFixed(2)}</span>
+                      <span>${(subtotal * 0.1).toFixed(2)}</span>
                     </div>
                     <div className="border-t pt-3">
                       <div className="flex justify-between font-semibold">
                         <span>Total</span>
-                        <span>${(cart.total_amount * 1.1).toFixed(2)}</span>
+                        <span>${(subtotal * 1.1).toFixed(2)}</span>
                       </div>
                     </div>
                     <Button

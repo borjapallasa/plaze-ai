@@ -24,6 +24,7 @@ export function CartDrawerTrigger({ className }: CartDrawerTriggerProps) {
     }
   };
 
+  // Only count non-community items
   const itemCount = cart?.item_count || 0;
 
   return (

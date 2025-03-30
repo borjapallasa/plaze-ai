@@ -77,7 +77,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(true);
       setLastFetchTime(now);
 
-      const cartData = await fetchCartData(userId);
+      // Only fetch regular products for the cart display (exclude classroom products)
+      const cartData = await fetchCartData(userId, undefined, false);
       console.log('CartContext: fetchCart received data', cartData);
 
       if (cartData && cartData.transaction_uuid) {
@@ -207,14 +208,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (updatedCart) {
-        if (updatedCart) {
-          updatedCart.last_fetched = Date.now();
-          if (updatedCart.items) {
-            updatedCart.items.forEach(item => {
-              item.last_updated = Date.now();
-            });
-          }
+        updatedCart.last_fetched = Date.now();
+        if (updatedCart.items) {
+          updatedCart.items.forEach(item => {
+            item.last_updated = Date.now();
+          });
         }
+        // Filter out any classroom products from the cart that we show to the user
+        updatedCart.items = updatedCart.items.filter(item => item.product_type !== 'community');
+        
+        // Recalculate totals based on filtered items
+        updatedCart.item_count = updatedCart.items.reduce((sum, item) => sum + item.quantity, 0);
+        updatedCart.total_amount = updatedCart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        
         console.log('CartContext: Setting updated cart', updatedCart);
         setCart(updatedCart);
       } else {
