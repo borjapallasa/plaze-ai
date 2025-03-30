@@ -3,18 +3,17 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { MainHeader } from "@/components/MainHeader";
 import { Card } from "@/components/ui/card";
-import { useCreateCommunityProduct } from "@/hooks/use-create-community-product";
+import { CommunityProductType, useCreateCommunityProduct } from "@/hooks/use-create-community-product";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
-import { ProductVariantsEditor } from "@/components/product/ProductVariants";
-import { ProductOrganization } from "@/components/product/ProductOrganization";
 import { usePendingImages } from "@/hooks/use-pending-images";
 import { ProductCreateHeader } from "@/components/product/ProductCreateHeader";
 import { ProductBasicDetailsForm } from "@/components/product/ProductBasicDetailsForm";
 import { ProductStatus } from "@/hooks/use-create-product";
-import { Variant } from "@/components/product/types/variants";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function NewCommunityProductPage() {
   const { id: communityId } = useParams<{ id: string }>();
@@ -28,44 +27,13 @@ export default function NewCommunityProductPage() {
   // Product form state
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
-  const [productType, setProductType] = useState<"free" | "paid">("free");
+  const [productType, setProductType] = useState<CommunityProductType>("free");
   const [productPrice, setProductPrice] = useState("");
   const [filesLink, setFilesLink] = useState("");
   const [paymentLink, setPaymentLink] = useState("");
   const [productStatus, setProductStatus] = useState<ProductStatus>("draft");
   
   const { pendingImages, addPendingImage } = usePendingImages();
-
-  // Default variant for pricing display
-  const [variants, setVariants] = useState<Variant[]>([
-    {
-      id: "1",
-      name: "",
-      price: 0,
-      comparePrice: 0,
-      highlight: false,
-      label: "Package",
-      tags: [],
-      createdAt: new Date().toISOString(),
-      features: [],
-      filesLink: ""
-    }
-  ]);
-
-  useEffect(() => {
-    if (variants.length === 1) {
-      const updatedVariant = {
-        ...variants[0],
-        name: productName || variants[0].name,
-        price: Number(productPrice) || variants[0].price,
-        filesLink: filesLink || variants[0].filesLink
-      };
-
-      if (JSON.stringify(updatedVariant) !== JSON.stringify(variants[0])) {
-        setVariants([updatedVariant]);
-      }
-    }
-  }, [productName, productPrice, filesLink]);
 
   useEffect(() => {
     const fetchCommunityDetails = async () => {
@@ -178,15 +146,11 @@ export default function NewCommunityProductPage() {
                       setProductName={setProductName}
                       productDescription={productDescription}
                       setProductDescription={setProductDescription}
-                      productPrice={productPrice}
-                      setProductPrice={setProductPrice}
-                      filesLink={filesLink}
-                      setFilesLink={setFilesLink}
                     />
                     
                     {/* Product type selection */}
                     <div className="space-y-2">
-                      <h3 className="font-medium">Product Type</h3>
+                      <Label>Product Type</Label>
                       <div className="flex gap-4">
                         <label className="flex items-center gap-2 cursor-pointer">
                           <input
@@ -213,28 +177,48 @@ export default function NewCommunityProductPage() {
                       </div>
                     </div>
                     
-                    {productType === "paid" && (
-                      <div className="space-y-2">
-                        <h3 className="font-medium">Payment Link</h3>
-                        <input
-                          type="url"
-                          placeholder="https://your-payment-provider.com/buy/your-product"
-                          value={paymentLink}
-                          onChange={(e) => setPaymentLink(e.target.value)}
-                          className="w-full px-3 py-2 border rounded-md"
-                        />
-                      </div>
-                    )}
-                    
-                    <div className="pt-2">
-                      <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-lg font-medium">Variants</h2>
-                      </div>
-                      <ProductVariantsEditor
-                        variants={variants}
-                        onVariantsChange={setVariants}
+                    {/* Files link field */}
+                    <div className="space-y-2">
+                      <Label htmlFor="filesLink">Files Link</Label>
+                      <Input
+                        id="filesLink"
+                        placeholder="Enter link to product files (Google Drive, Dropbox, etc.)"
+                        value={filesLink}
+                        onChange={(e) => setFilesLink(e.target.value)}
                       />
+                      <p className="text-sm text-muted-foreground">
+                        Provide a link where users can download or access the product files
+                      </p>
                     </div>
+                    
+                    {/* Price and payment link fields for paid products */}
+                    {productType === "paid" && (
+                      <>
+                        <div className="space-y-2">
+                          <Label htmlFor="price">Price</Label>
+                          <Input
+                            id="price"
+                            type="number"
+                            placeholder="0.00"
+                            value={productPrice}
+                            onChange={(e) => setProductPrice(e.target.value)}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="paymentLink">Payment Link</Label>
+                          <Input
+                            id="paymentLink"
+                            type="url"
+                            placeholder="https://your-payment-provider.com/buy/your-product"
+                            value={paymentLink}
+                            onChange={(e) => setPaymentLink(e.target.value)}
+                          />
+                          <p className="text-sm text-muted-foreground">
+                            Add a payment link from Stripe, PayPal, or another payment processor
+                          </p>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </Card>
 
@@ -264,6 +248,15 @@ export default function NewCommunityProductPage() {
                 <p className="text-sm text-muted-foreground">This product will be added to:</p>
                 <div className="mt-2 p-3 bg-secondary/20 rounded-md">
                   <h3 className="font-medium">{communityName}</h3>
+                </div>
+                
+                <div className="mt-4">
+                  <h3 className="font-medium mb-2">About Community Products</h3>
+                  <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                    <li>Free products allow community members to download files directly</li>
+                    <li>Paid products redirect users to your payment page</li>
+                    <li>All products are visible only to community members</li>
+                  </ul>
                 </div>
               </Card>
             </div>
