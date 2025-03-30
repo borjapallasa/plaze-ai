@@ -12,6 +12,7 @@ interface CommunityProductData {
   productType: CommunityProductType;
   price?: number;
   paymentLink?: string;
+  filesLink?: string;
 }
 
 export const useCreateCommunityProduct = () => {
@@ -57,6 +58,7 @@ export const useCreateCommunityProduct = () => {
           product_type: productData.productType,
           price: productData.productType === "paid" ? productData.price : null,
           payment_link: productData.productType === "paid" ? productData.paymentLink : null,
+          files_link: productData.filesLink || null,
         })
         .select()
         .single();

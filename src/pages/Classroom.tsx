@@ -399,22 +399,36 @@ export default function Classroom() {
     try {
       setIsProcessingPurchase(true);
       
+      const { data: productData, error: productError } = await supabase
+        .from('community_products')
+        .select('*')
+        .eq('community_product_uuid', selectedProduct.id)
+        .single();
+        
+      if (productError) {
+        throw new Error("Could not retrieve product information");
+      }
+      
+      if (productData.product_type === 'free' && productData.files_link) {
+        console.log('Free product - redirecting to files link:', productData.files_link);
+        window.location.href = productData.files_link;
+        setIsProcessingPurchase(false);
+        return;
+      }
+      
       const product = {
         product_uuid: selectedProduct.id,
         name: selectedProduct.name,
         community_product_uuid: selectedProduct.id
       };
 
-      // Set classroom product flag to true to bypass cart
       const result = await addToCart(product, selectedProduct.id, [], true);
 
-      // If successful, immediately redirect to payment link
       if (result?.success && result.payment_link) {
         console.log('Navigating to payment link:', result.payment_link);
         window.location.href = result.payment_link;
         return;
       } else {
-        // If there's no payment link but the operation was successful
         toast({
           title: "Success",
           description: "Product added to your account."
