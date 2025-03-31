@@ -481,8 +481,7 @@ export default function Classroom() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm">
-              <Plus className="h-4 w-4 mr-1" />
-              Add Product
+              <Plus className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
