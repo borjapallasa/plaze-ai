@@ -83,6 +83,7 @@ export default function Classroom() {
 
   const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
+  const [isOwner, setIsOwner] = useState(false);
 
   const { data: classroom, isLoading: isClassroomLoading } = useQuery({
     queryKey: ['classroom', id],
@@ -123,6 +124,36 @@ export default function Classroom() {
     },
     enabled: !!classroom?.community_uuid
   });
+
+  useEffect(() => {
+    const checkOwnership = async () => {
+      if (!user || !classroom || !classroom.expert_uuid) {
+        setIsOwner(false);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('experts')
+          .select('user_uuid')
+          .eq('expert_uuid', classroom.expert_uuid)
+          .single();
+
+        if (error) {
+          console.error("Error checking expert ownership:", error);
+          setIsOwner(false);
+          return;
+        }
+
+        setIsOwner(data.user_uuid === user.id);
+      } catch (error) {
+        console.error("Error in ownership check:", error);
+        setIsOwner(false);
+      }
+    };
+
+    checkOwnership();
+  }, [user, classroom]);
 
   const { data: variants } = useQuery({
     queryKey: ['classroomCommunityProducts', classroom?.community_uuid],
@@ -478,27 +509,29 @@ export default function Classroom() {
     <div className="pt-4 border-t">
       <div className="flex justify-between items-center mb-4">
         <h3 className="font-semibold">Products in this class</h3>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm">
-              <Plus className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => {
-              setShowTemplateSelector(false);
-              setIsProductDialogOpen(true);
-            }}>
-              Create from scratch
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => {
-              setShowTemplateSelector(true);
-              setIsProductDialogOpen(true);
-            }}>
-              Create from template
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {isOwner && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm">
+                <Plus className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => {
+                setShowTemplateSelector(false);
+                setIsProductDialogOpen(true);
+              }}>
+                Create from scratch
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {
+                setShowTemplateSelector(true);
+                setIsProductDialogOpen(true);
+              }}>
+                Create from template
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
       <VariantPicker
         variants={variants}
