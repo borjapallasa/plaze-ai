@@ -79,7 +79,7 @@ export function ExistingProductSelector({
               {existingProducts.map((product) => (
                 <CommandItem
                   key={product.community_product_uuid}
-                  value={product.name}
+                  value={product.name || ""}
                   onSelect={() => {
                     onSelect(product);
                     setOpen(false);

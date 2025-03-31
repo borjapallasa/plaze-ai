@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { ChevronDown, PlusCircle, Pencil, Trash2, Loader2 } from "lucide-react";
+import { ChevronDown, PlusCircle, Pencil, Trash2, Loader2, Plus } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MainHeader } from "@/components/MainHeader";
@@ -20,6 +20,12 @@ import {
   DialogClose,
   DialogDescription
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ProductEditor } from "@/components/product/ProductEditor";
@@ -31,6 +37,7 @@ import { Variant } from "@/components/product/types/variants";
 import { Sheet } from "@/components/ui/sheet";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { useCart } from "@/context/CartContext";
+import { CommunityProductDialog } from "@/components/community/CommunityProductDialog";
 
 function transformToVariant(data: any[]): Variant[] {
   return data.map((item) => ({
@@ -73,6 +80,9 @@ export default function Classroom() {
   const { user } = useAuth();
   const { addToCart, isLoading: isCartLoading } = useCart();
   const { toast } = useToast();
+
+  const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
+  const [showTemplateSelector, setShowTemplateSelector] = useState(false);
 
   const { data: classroom, isLoading: isClassroomLoading } = useQuery({
     queryKey: ['classroom', id],
@@ -466,7 +476,31 @@ export default function Classroom() {
 
   const ProductsSection = () => (
     <div className="pt-4 border-t">
-      <h3 className="font-semibold mb-4">Products in this class</h3>
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="font-semibold">Products in this class</h3>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm">
+              <Plus className="h-4 w-4 mr-1" />
+              Add Product
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => {
+              setShowTemplateSelector(false);
+              setIsProductDialogOpen(true);
+            }}>
+              Create from scratch
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => {
+              setShowTemplateSelector(true);
+              setIsProductDialogOpen(true);
+            }}>
+              Create from template
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
       <VariantPicker
         variants={variants}
         selectedVariant={selectedVariant}
@@ -920,6 +954,14 @@ export default function Classroom() {
 
           {/* Cart Drawer */}
           
+          {/* Product Creation Dialog */}
+          <CommunityProductDialog
+            open={isProductDialogOpen}
+            onOpenChange={setIsProductDialogOpen}
+            communityUuid={community?.community_uuid || ""}
+            expertUuid={community?.expert_uuid}
+            showTemplateSelector={showTemplateSelector}
+          />
         </div>
       </div>
     </div>
