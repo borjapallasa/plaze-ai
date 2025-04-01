@@ -439,24 +439,24 @@ export default function Classroom() {
 
     try {
       setIsProcessingPurchase(true);
-      
+
       const { data: productData, error: productError } = await supabase
         .from('community_products')
         .select('*')
         .eq('community_product_uuid', selectedProduct.id)
         .single();
-        
+
       if (productError) {
         throw new Error("Could not retrieve product information");
       }
-      
+
       if (productData.product_type === 'free' && productData.files_link) {
         console.log('Free product - redirecting to files link:', productData.files_link);
         window.location.href = productData.files_link;
         setIsProcessingPurchase(false);
         return;
       }
-      
+
       const product = {
         product_uuid: selectedProduct.id,
         name: selectedProduct.name,
@@ -466,7 +466,6 @@ export default function Classroom() {
       const result = await addToCart(product, selectedProduct.id, [], true);
 
       if (result?.success && result.payment_link) {
-        console.log('Navigating to payment link:', result.payment_link);
         window.location.href = result.payment_link;
         return;
       } else {
@@ -488,7 +487,7 @@ export default function Classroom() {
   };
 
   const closeCartDrawer = () => {
-    
+
   };
 
   const videoUrl = activeLesson?.video_url || classroom?.video_url;
@@ -985,7 +984,7 @@ export default function Classroom() {
           </Dialog>
 
           {/* Cart Drawer */}
-          
+
           {/* Product Creation Dialog */}
           <CommunityProductDialog
             open={isProductDialogOpen}
