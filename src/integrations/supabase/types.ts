@@ -296,8 +296,8 @@ export type Database = {
             foreignKeyName: "classrooms_expert_uuid_fkey"
             columns: ["expert_uuid"]
             isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["user_uuid"]
+            referencedRelation: "experts"
+            referencedColumns: ["expert_uuid"]
           },
         ]
       }

@@ -10,6 +10,7 @@ import { CommunityProduct } from "@/types/Product";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { useAuth } from "@/lib/auth";
 
 interface CommunityProductDialogProps {
   open: boolean;
@@ -33,6 +34,7 @@ export function CommunityProductDialog({
   const [paymentLink, setPaymentLink] = useState("");
   const [filesLink, setFilesLink] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const { user } = useAuth();
 
   const handleTemplateSelect = (product: CommunityProduct) => {
     setSelectedTemplate(product);
@@ -54,9 +56,15 @@ export function CommunityProductDialog({
       return;
     }
 
+    if (!user?.id) {
+      toast.error("You need to be logged in to create a product");
+      return;
+    }
+
     try {
       setIsSaving(true);
 
+      // Step 1: Create the community product
       const { data, error } = await supabase
         .from("community_products")
         .insert({
@@ -75,6 +83,21 @@ export function CommunityProductDialog({
         console.error("Error creating community product:", error);
         toast.error("Failed to create product");
         throw error;
+      }
+
+      // Step 2: Create the product relationship to make it appear in the classroom
+      const { error: relationshipError } = await supabase
+        .from("community_product_relationships")
+        .insert({
+          community_uuid: communityUuid,
+          community_product_uuid: data.community_product_uuid,
+          user_uuid: user.id,
+        });
+
+      if (relationshipError) {
+        console.error("Error creating product relationship:", relationshipError);
+        toast.error("Product created but not linked to classroom");
+        throw relationshipError;
       }
 
       toast.success("Product added successfully");

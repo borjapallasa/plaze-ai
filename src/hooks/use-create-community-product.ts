@@ -68,6 +68,20 @@ export const useCreateCommunityProduct = () => {
         throw error;
       }
 
+      // Create the product relationship to make it appear in the community
+      const { error: relationshipError } = await supabase
+        .from("community_product_relationships")
+        .insert({
+          community_uuid: productData.communityUuid,
+          community_product_uuid: data.community_product_uuid,
+          user_uuid: user.id,
+        });
+
+      if (relationshipError) {
+        console.error("Error creating product relationship:", relationshipError);
+        toast.error("Product created but not fully linked to community");
+      }
+
       toast.success("Community product created successfully");
       return data;
     } catch (error) {
