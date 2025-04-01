@@ -3,6 +3,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 export type CommunityProductType = "free" | "paid";
 
@@ -18,6 +19,7 @@ interface CommunityProductData {
 export const useCreateCommunityProduct = () => {
   const [isCreating, setIsCreating] = useState(false);
   const { user } = useAuth();
+  const queryClient = useQueryClient();
 
   const createCommunityProduct = async (productData: CommunityProductData) => {
     if (!user) {
@@ -81,6 +83,11 @@ export const useCreateCommunityProduct = () => {
         console.error("Error creating product relationship:", relationshipError);
         toast.error("Product created but not fully linked to community");
       }
+
+      // Invalidate related queries to refresh the UI
+      queryClient.invalidateQueries({ queryKey: ['classroomCommunityProducts', productData.communityUuid] });
+      queryClient.invalidateQueries({ queryKey: ['communityProducts', productData.communityUuid] });
+      queryClient.invalidateQueries({ queryKey: ['communityProductRelationships'] });
 
       toast.success("Community product created successfully");
       return data;

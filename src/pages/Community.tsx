@@ -12,13 +12,14 @@ import { Separator } from "@/components/ui/separator";
 import { ThreadDialog } from "@/components/ThreadDialog";
 import { MainHeader } from "@/components/MainHeader";
 import { useParams, Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
 import { useAuth } from "@/lib/auth";
 import { useCommunityImages } from "@/hooks/use-community-images";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import type { ProductImage } from "@/types/product-images";
+import { CommunityProductDialog } from "@/components/community/CommunityProductDialog";
 
 interface Link {
   name: string;
@@ -55,9 +56,12 @@ function parseLinks(data: unknown): Link[] {
 
 export default function CommunityPage() {
   const { id: communityId } = useParams();
+  const queryClient = useQueryClient();
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [isThreadOpen, setIsThreadOpen] = useState(false);
   const [selectedThread, setSelectedThread] = useState<any>(null);
+  const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
+  const [showProductTemplateSelector, setShowProductTemplateSelector] = useState(false);
   const { user } = useAuth();
   const { images } = useCommunityImages(communityId);
 
@@ -116,6 +120,33 @@ export default function CommunityPage() {
       }
 
       return data;
+    },
+    enabled: !!communityId
+  });
+
+  const { data: communityProducts, isLoading: isProductsLoading } = useQuery({
+    queryKey: ['communityProducts', communityId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('community_product_relationships')
+        .select(`
+          community_product_uuid (
+            community_product_uuid, 
+            name,
+            price,
+            product_type,
+            payment_link,
+            files_link
+          )
+        `)
+        .eq('community_uuid', communityId);
+
+      if (error) {
+        console.error("Error fetching community products:", error);
+        return [];
+      }
+
+      return data?.map(item => item.community_product_uuid) || [];
     },
     enabled: !!communityId
   });
@@ -239,15 +270,24 @@ export default function CommunityPage() {
     setIsThreadOpen(true);
   };
 
+  const handleOpenProductDialog = (useTemplates: boolean) => {
+    setShowProductTemplateSelector(useTemplates);
+    setIsProductDialogOpen(true);
+  };
+
   const renderAddProductButton = () => {
     if (isOwner) {
       return (
-        <Link to={`/community/${communityId}/products/new`}>
-          <Button variant="outline" className="flex items-center gap-2">
+        <div className="dropdown relative">
+          <Button
+            variant="outline"
+            className="flex items-center gap-2"
+            onClick={() => handleOpenProductDialog(false)}
+          >
             <Plus className="h-4 w-4" />
             <span>Add Product</span>
           </Button>
-        </Link>
+        </div>
       );
     }
     return null;
@@ -526,18 +566,44 @@ export default function CommunityPage() {
               {renderAddProductButton()}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {templates.map((template, index) => (
-                <ProductCard
-                  key={index}
-                  title={template.title}
-                  price={template.price}
-                  image={template.image}
-                  seller={template.seller}
-                  description={template.description}
-                  tags={template.tags}
-                  category={template.category}
-                />
-              ))}
+              {isProductsLoading ? (
+                Array.from({ length: 3 }).map((_, index) => (
+                  <Card key={index} className="animate-pulse">
+                    <div className="h-48 bg-muted"></div>
+                    <CardContent className="p-4">
+                      <div className="h-6 bg-muted rounded w-2/3 mb-2"></div>
+                      <div className="h-4 bg-muted rounded w-full"></div>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : communityProducts && communityProducts.length > 0 ? (
+                communityProducts.map((product: any) => (
+                  <ProductCard
+                    key={product.community_product_uuid}
+                    title={product.name}
+                    price={product.price ? `$${product.price}` : "Free"}
+                    image="/placeholder.svg"
+                    seller={community?.name || "Community"}
+                    description={`A product by ${community?.name}`}
+                    tags={[product.product_type || "product"]}
+                    category="community"
+                  />
+                ))
+              ) : (
+                <div className="col-span-full text-center py-8 border border-dashed rounded-md bg-muted/10">
+                  <p className="text-muted-foreground mb-2">No products available in this community.</p>
+                  {isOwner && (
+                    <Button 
+                      variant="outline" 
+                      onClick={() => handleOpenProductDialog(false)}
+                      className="gap-2"
+                    >
+                      <Plus className="h-4 w-4" />
+                      Add Your First Product
+                    </Button>
+                  )}
+                </div>
+              )}
             </div>
           </TabsContent>
 
@@ -567,6 +633,14 @@ export default function CommunityPage() {
             setSelectedThread(null);
           }}
           thread={selectedThread}
+        />
+
+        <CommunityProductDialog
+          open={isProductDialogOpen}
+          onOpenChange={setIsProductDialogOpen}
+          communityUuid={communityId || ''}
+          expertUuid={community?.expert_uuid}
+          showTemplateSelector={showProductTemplateSelector}
         />
       </div>
     </>

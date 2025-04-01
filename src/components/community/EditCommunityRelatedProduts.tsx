@@ -1,3 +1,4 @@
+
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -138,8 +139,10 @@ export function EditCommunityRelatedProducts({
         }
       }
 
-      // Refresh data
-      queryClient.invalidateQueries({ queryKey: ['communityProductRelationships'] }); // todo: check correct
+      // Refresh data - update to invalidate all the related queries
+      queryClient.invalidateQueries({ queryKey: ['communityProductRelationships'] });
+      queryClient.invalidateQueries({ queryKey: ['classroomCommunityProducts', community.community_uuid] });
+      queryClient.invalidateQueries({ queryKey: ['communityProducts', community.community_uuid] });
 
       toast({
         title: "Changes saved",
@@ -207,7 +210,9 @@ export function EditCommunityRelatedProducts({
       );
 
       // Refresh data
-      queryClient.invalidateQueries({ queryKey: ['communityProductRelationships'] }); // todo: check correct
+      queryClient.invalidateQueries({ queryKey: ['communityProductRelationships'] }); 
+      queryClient.invalidateQueries({ queryKey: ['classroomCommunityProducts', community.community_uuid] });
+      queryClient.invalidateQueries({ queryKey: ['communityProducts', community.community_uuid] });
     } catch (error) {
       console.error("Error deleting product relationship:", error);
     }

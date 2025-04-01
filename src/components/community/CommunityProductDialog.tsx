@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -35,6 +35,7 @@ export function CommunityProductDialog({
   const [filesLink, setFilesLink] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const { user } = useAuth();
+  const queryClient = useQueryClient();
 
   const handleTemplateSelect = (product: CommunityProduct) => {
     setSelectedTemplate(product);
@@ -100,6 +101,11 @@ export function CommunityProductDialog({
         throw relationshipError;
       }
 
+      // Invalidate related queries to refresh the UI
+      queryClient.invalidateQueries({ queryKey: ['classroomCommunityProducts', communityUuid] });
+      queryClient.invalidateQueries({ queryKey: ['communityProducts', communityUuid] });
+      queryClient.invalidateQueries({ queryKey: ['communityProductRelationships'] });
+      
       toast.success("Product added successfully");
       onOpenChange(false);
       
