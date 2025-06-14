@@ -118,10 +118,10 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
         {/* Mobile Header */}
         <div className="flex md:hidden items-center justify-between h-full gap-3">
           <div className="flex-1">
-            <form onSubmit={(e) => handleSearch(e, true)} className={`flex items-center gap-1 px-3 ${isHomePage ? 'py-2.5' : 'py-1.5'} rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background`}>
+            <form onSubmit={(e) => handleSearch(e, true)} className={`flex items-center gap-1 px-3 ${isHomePage ? 'py-1.5' : 'py-1.5'} rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background`}>
               <div className="relative flex-1">
                 <Input
-                  className={`border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent ${isHomePage ? 'h-9 text-base' : 'h-7 text-sm'} flex-1`}
+                  className={`border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent ${isHomePage ? 'h-8 text-sm' : 'h-7 text-sm'} flex-1`}
                   placeholder={isHomePage ? "Search for products, experts, jobs..." : "Search..."}
                   type="search"
                   value={mobileSearchQuery}
@@ -161,8 +161,8 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                   </div>
                 )}
               </div>
-              <Button type="submit" size="icon" variant="default" className={`rounded-full bg-primary hover:bg-primary/90 ${isHomePage ? 'h-9 w-9' : 'h-7 w-7'}`}>
-                <Search className={isHomePage ? "h-4.5 w-4.5" : "h-3.5 w-3.5"} />
+              <Button type="submit" size="icon" variant="default" className={`rounded-full bg-primary hover:bg-primary/90 ${isHomePage ? 'h-8 w-8' : 'h-7 w-7'}`}>
+                <Search className={isHomePage ? "h-4 w-4" : "h-3.5 w-3.5"} />
               </Button>
             </form>
           </div>
@@ -217,10 +217,10 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
           </Link>
 
           <div className={`flex-1 ${isHomePage ? 'max-w-3xl' : 'max-w-2xl'} mx-auto`}>
-            <form onSubmit={(e) => handleSearch(e, false)} className={`flex items-center gap-1 px-3 py-1.5 rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background ${isHomePage ? 'py-2.5' : ''}`}>
+            <form onSubmit={(e) => handleSearch(e, false)} className={`flex items-center gap-1 px-3 py-1.5 rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background ${isHomePage ? 'py-1.5' : ''}`}>
               <div className="flex-1 relative">
                 <Input
-                  className={`border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent ${isHomePage ? 'h-9 text-base' : 'h-7 text-sm'}`}
+                  className={`border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent ${isHomePage ? 'h-8 text-sm' : 'h-7 text-sm'}`}
                   placeholder={isHomePage ? "Search for products, experts, communities, jobs..." : "Search..."}
                   type="search"
                   value={searchQuery}
@@ -261,8 +261,8 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                 )}
               </div>
               <div className="flex items-center gap-1">
-                <Button type="submit" size="icon" variant="default" className={`rounded-full bg-primary hover:bg-primary/90 ${isHomePage ? 'h-9 w-9' : 'h-7 w-7'}`}>
-                  <Search className={isHomePage ? "h-4.5 w-4.5" : "h-3.5 w-3.5"} />
+                <Button type="submit" size="icon" variant="default" className={`rounded-full bg-primary hover:bg-primary/90 ${isHomePage ? 'h-8 w-8' : 'h-7 w-7'}`}>
+                  <Search className={isHomePage ? "h-4 w-4" : "h-3.5 w-3.5"} />
                 </Button>
                 {!isHomePage && (
                   <span className="text-xs text-muted-foreground hidden lg:inline-block ml-1">
