@@ -28,7 +28,7 @@ export function SellerHeader({
       <CardContent className="p-6 md:p-8">
         <div className="max-w-6xl mx-auto">
           {/* Main container with two sections */}
-          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8 lg:gap-12">
+          <div className="flex flex-col lg:flex-row lg:items-start gap-8 lg:gap-12">
             
             {/* Group A (Left): Profile Information */}
             <div className="flex items-start gap-4 flex-1">
@@ -56,7 +56,7 @@ export function SellerHeader({
                 </h1>
                 
                 {/* Role & Location Line */}
-                <div className="flex items-center gap-3 mb-2 text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                <div className="flex items-center gap-3 mb-2 text-sm font-medium text-muted-foreground">
                   {seller.title && (
                     <span>{seller.title}</span>
                   )}
@@ -80,45 +80,48 @@ export function SellerHeader({
               </div>
             </div>
 
+            {/* Vertical Divider - Hidden on small screens, shown on lg+ */}
+            <div className="hidden lg:block w-px bg-border h-24 flex-shrink-0"></div>
+
             {/* Group B (Right): Stats & CTA - Hidden on small screens, shown on lg+ */}
             <div className="hidden lg:flex lg:flex-col lg:items-end gap-4">
               
-              {/* Inline Stats Row */}
-              <div className="flex items-center gap-6">
+              {/* Stacked Stats Column */}
+              <div className="flex flex-col gap-3">
                 
                 {/* Client Satisfaction */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 justify-end">
                   <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" aria-hidden="true" />
                   <span className="text-sm font-semibold text-foreground">
-                    {seller.client_satisfaction}%
+                    {seller.client_satisfaction}% satisfaction
                   </span>
                   <span className="sr-only">client satisfaction rate</span>
                 </div>
 
                 {/* Completed Projects */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 justify-end">
                   <Briefcase className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
                   <span className="text-sm font-semibold text-foreground">
-                    {seller.completed_projects}
+                    {seller.completed_projects} projects
                   </span>
                   <span className="sr-only">completed projects</span>
                 </div>
 
                 {/* Products Count */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 justify-end">
                   <Package className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
                   <span className="text-sm font-semibold text-foreground">
-                    {productsCount}
+                    {productsCount} products
                   </span>
                   <span className="sr-only">products</span>
                 </div>
 
                 {/* Communities Count */}
                 {communitiesCount > 0 && (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 justify-end">
                     <Users className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
                     <span className="text-sm font-semibold text-foreground">
-                      {communitiesCount}
+                      {communitiesCount} communities
                     </span>
                     <span className="sr-only">communities</span>
                   </div>
