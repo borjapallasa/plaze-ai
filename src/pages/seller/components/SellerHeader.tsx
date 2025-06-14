@@ -103,12 +103,7 @@ export function SellerHeader({
             <EditExpertDialog
               expert={seller}
               onUpdate={onSellerUpdate}
-            >
-              <Button variant="outline" size="sm" className="flex items-center gap-2">
-                <Edit2 className="h-4 w-4" />
-                Edit Profile
-              </Button>
-            </EditExpertDialog>
+            />
           </div>
         </div>
       </CardContent>
