@@ -143,20 +143,20 @@ export const CategoryHeader = ({
           {/* View Mode Toggle - Full width on mobile/tablet, auto width on desktop */}
           {onViewModeChange && (
             <div className="mt-4 lg:mt-0 lg:flex-shrink-0 w-full lg:w-auto">
-              <div className="relative flex bg-gray-100 rounded-full p-1 w-full lg:w-auto lg:inline-flex">
-                {/* Sliding background indicator */}
+              <div className="relative flex bg-gray-100 rounded-full p-1 w-full lg:w-auto lg:inline-flex overflow-hidden">
+                {/* Sliding background indicator - constrained within parent */}
                 <div 
-                  className={`absolute top-1 bottom-1 bg-white rounded-full shadow-sm transition-transform duration-200 ease-out lg:w-[84px] lg:first:w-[110px] ${
+                  className={`absolute top-1 bottom-1 bg-white rounded-full shadow-sm transition-transform duration-200 ease-out ${
                     viewMode === "communities" 
-                      ? "w-1/2 translate-x-full lg:w-[110px] lg:translate-x-[84px]" 
-                      : "w-1/2 translate-x-0 lg:w-[84px] lg:translate-x-0"
+                      ? "w-1/2 translate-x-full" 
+                      : "w-1/2 translate-x-0"
                   }`}
                 />
                 
                 {/* Toggle buttons */}
                 <button
                   onClick={() => onViewModeChange("products")}
-                  className={`relative z-10 flex-1 py-2 text-sm font-medium rounded-full transition-colors duration-200 flex items-center justify-center lg:w-[84px] lg:flex-initial ${
+                  className={`relative z-10 flex-1 py-2 px-3 text-sm font-medium rounded-full transition-colors duration-200 flex items-center justify-center ${
                     viewMode === "products" 
                       ? "text-gray-900" 
                       : "text-gray-500 hover:text-gray-700"
@@ -166,7 +166,7 @@ export const CategoryHeader = ({
                 </button>
                 <button
                   onClick={() => onViewModeChange("communities")}
-                  className={`relative z-10 flex-1 py-2 text-sm font-medium rounded-full transition-colors duration-200 flex items-center justify-center lg:w-[110px] lg:flex-initial ${
+                  className={`relative z-10 flex-1 py-2 px-3 text-sm font-medium rounded-full transition-colors duration-200 flex items-center justify-center ${
                     viewMode === "communities" 
                       ? "text-gray-900" 
                       : "text-gray-500 hover:text-gray-700"
