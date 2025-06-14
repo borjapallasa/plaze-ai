@@ -118,11 +118,11 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
         {/* Mobile Header */}
         <div className="flex md:hidden items-center justify-between h-full gap-3">
           <div className="flex-1">
-            <form onSubmit={(e) => handleSearch(e, true)} className={`flex items-center gap-1 px-3 ${isHomePage ? 'py-2.5' : 'py-1.5'} rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background`}>
+            <form onSubmit={(e) => handleSearch(e, true)} className={`flex items-center gap-2 px-4 ${isHomePage ? 'py-3' : 'py-2'} rounded-full bg-muted/30 border-2 border-border/20 shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-200 focus-within:border-primary/40 focus-within:shadow-md focus-within:bg-background`}>
               <div className="relative flex-1">
                 <Input
-                  className={`border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent ${isHomePage ? 'h-9 text-base' : 'h-7 text-sm'} flex-1`}
-                  placeholder={isHomePage ? "Search for products, experts, jobs..." : "Search..."}
+                  className={`border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-0 bg-transparent ${isHomePage ? 'h-6 text-base placeholder:text-muted-foreground/60' : 'h-5 text-sm placeholder:text-muted-foreground/60'} flex-1`}
+                  placeholder={isHomePage ? "Search for products, communities..." : "Search..."}
                   type="search"
                   value={mobileSearchQuery}
                   onChange={(e) => setMobileSearchQuery(e.target.value)}
@@ -132,13 +132,13 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
 
                 {/* Search History Dropdown (Mobile) */}
                 {showSearchHistory && searchHistory.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-background border rounded-md shadow-md z-10 search-history-dropdown">
-                    <div className="p-1 text-xs text-muted-foreground border-b">Recent searches</div>
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-background border-2 border-border/20 rounded-lg shadow-lg z-10 search-history-dropdown">
+                    <div className="p-2 text-xs text-muted-foreground border-b border-border/20">Recent searches</div>
                     <ul>
                       {searchHistory.map((item, index) => (
                         <li
                           key={index}
-                          className="px-3 py-2 hover:bg-muted cursor-pointer text-sm"
+                          className="px-3 py-2 hover:bg-muted/50 cursor-pointer text-sm transition-colors"
                           onClick={() => {
                             setMobileSearchQuery(item);
                             setShowSearchHistory(false);
@@ -150,7 +150,7 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                       ))}
                     </ul>
                     <div
-                      className="p-1 text-xs text-primary hover:underline cursor-pointer text-center border-t"
+                      className="p-2 text-xs text-primary hover:underline cursor-pointer text-center border-t border-border/20"
                       onClick={() => {
                         setSearchHistory([]);
                         setShowSearchHistory(false);
@@ -161,8 +161,8 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                   </div>
                 )}
               </div>
-              <Button type="submit" size="icon" variant="default" className={`rounded-full bg-primary hover:bg-primary/90 ${isHomePage ? 'h-9 w-9' : 'h-7 w-7'}`}>
-                <Search className={isHomePage ? "h-4.5 w-4.5" : "h-3.5 w-3.5"} />
+              <Button type="submit" size="icon" variant="default" className={`rounded-full bg-primary hover:bg-primary/90 transition-colors ${isHomePage ? 'h-8 w-8' : 'h-6 w-6'}`}>
+                <Search className={isHomePage ? "h-4 w-4" : "h-3 w-3"} />
               </Button>
             </form>
           </div>
@@ -211,17 +211,17 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
         </div>
 
         {/* Desktop Header */}
-        <div className="hidden md:flex items-center justify-between h-full gap-4">
+        <div className="hidden md:flex items-center justify-between h-full gap-6">
           <Link to="/" className="text-lg font-semibold w-[140px]">
             Logo
           </Link>
 
-          <div className={`flex-1 ${isHomePage ? 'max-w-3xl' : 'max-w-2xl'} mx-auto`}>
-            <form onSubmit={(e) => handleSearch(e, false)} className={`flex items-center gap-1 px-3 py-1.5 rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background ${isHomePage ? 'py-2.5' : ''}`}>
+          <div className={`flex-1 ${isHomePage ? 'max-w-4xl' : 'max-w-3xl'} mx-auto`}>
+            <form onSubmit={(e) => handleSearch(e, false)} className={`flex items-center gap-3 px-5 py-3 rounded-full bg-muted/20 border-2 border-border/20 shadow-sm hover:shadow-lg hover:border-primary/30 transition-all duration-300 focus-within:border-primary/50 focus-within:shadow-lg focus-within:bg-background ${isHomePage ? 'py-4' : ''}`}>
               <div className="flex-1 relative">
                 <Input
-                  className={`border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent ${isHomePage ? 'h-9 text-base' : 'h-7 text-sm'}`}
-                  placeholder={isHomePage ? "Search for products, experts, communities, jobs..." : "Search..."}
+                  className={`border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-0 bg-transparent ${isHomePage ? 'h-6 text-lg placeholder:text-muted-foreground/60' : 'h-5 text-base placeholder:text-muted-foreground/60'}`}
+                  placeholder={isHomePage ? "Search for products, communities..." : "Search..."}
                   type="search"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -231,13 +231,13 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
 
                 {/* Search History Dropdown */}
                 {showSearchHistory && searchHistory.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-background border rounded-md shadow-md z-10 search-history-dropdown">
-                    <div className="p-1 text-xs text-muted-foreground border-b">Recent searches</div>
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-background border-2 border-border/20 rounded-lg shadow-xl z-10 search-history-dropdown">
+                    <div className="p-2 text-xs text-muted-foreground border-b border-border/20">Recent searches</div>
                     <ul>
                       {searchHistory.map((item, index) => (
                         <li
                           key={index}
-                          className="px-3 py-2 hover:bg-muted cursor-pointer text-sm"
+                          className="px-3 py-2 hover:bg-muted/50 cursor-pointer text-sm transition-colors"
                           onClick={() => {
                             setSearchQuery(item);
                             setShowSearchHistory(false);
@@ -249,7 +249,7 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                       ))}
                     </ul>
                     <div
-                      className="p-1 text-xs text-primary hover:underline cursor-pointer text-center border-t"
+                      className="p-2 text-xs text-primary hover:underline cursor-pointer text-center border-t border-border/20"
                       onClick={() => {
                         setSearchHistory([]);
                         setShowSearchHistory(false);
@@ -260,9 +260,9 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                   </div>
                 )}
               </div>
-              <div className="flex items-center gap-1">
-                <Button type="submit" size="icon" variant="default" className={`rounded-full bg-primary hover:bg-primary/90 ${isHomePage ? 'h-9 w-9' : 'h-7 w-7'}`}>
-                  <Search className={isHomePage ? "h-4.5 w-4.5" : "h-3.5 w-3.5"} />
+              <div className="flex items-center gap-2">
+                <Button type="submit" size="icon" variant="default" className={`rounded-full bg-primary hover:bg-primary/90 transition-colors shadow-sm ${isHomePage ? 'h-10 w-10' : 'h-8 w-8'}`}>
+                  <Search className={isHomePage ? "h-5 w-5" : "h-4 w-4"} />
                 </Button>
                 {!isHomePage && (
                   <span className="text-xs text-muted-foreground hidden lg:inline-block ml-1">
