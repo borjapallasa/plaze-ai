@@ -148,9 +148,9 @@ const Index = () => {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
               {communities?.map((community) => (
-                <Link 
+                <a 
                   key={community.community_uuid} 
-                  to={`/community/${community.community_uuid}`}
+                  href={`https://plaze.ai/community/${community.community_uuid}`}
                 >
                   <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
                     {/* Community Image */}
@@ -186,7 +186,7 @@ const Index = () => {
                       </div>
                     </CardContent>
                   </Card>
-                </Link>
+                </a>
               ))}
             </div>
           )}

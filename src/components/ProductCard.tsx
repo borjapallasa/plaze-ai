@@ -3,7 +3,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, DollarSign, Percent } from "lucide-react";
-import { Link } from "react-router-dom";
 
 interface ProductCardProps {
   title: string;
@@ -34,16 +33,16 @@ export const ProductCard = ({
 }: ProductCardProps) => {
   const getHref = () => {
     if (id && slug) {
-      return `/product/${slug}/${id}`;
+      return `https://plaze.ai/product/${slug}/${id}`;
     } else if (id) {
-      return `/product/${id}`;
+      return `https://plaze.ai/product/${id}`;
     } else {
-      return '/product';
+      return 'https://plaze.ai/product';
     }
   };
 
   return (
-    <Link to={getHref()}>
+    <a href={getHref()}>
       <Card className="group relative flex flex-col p-4 lg:p-6 hover:bg-accent transition-colors cursor-pointer">
         <div className="flex items-start gap-3 lg:gap-4">
           <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg bg-accent flex items-center justify-center overflow-hidden flex-shrink-0">
@@ -101,6 +100,6 @@ export const ProductCard = ({
           </div>
         </div>
       </Card>
-    </Link>
+    </a>
   );
 };
