@@ -140,34 +140,40 @@ export const CategoryHeader = ({
             />
           </div>
 
-          {/* View Mode Toggle - Same row on desktop, below on mobile */}
+          {/* View Mode Toggle - Tag-style with modern toggle inside */}
           {onViewModeChange && (
             <div className="mt-4 lg:mt-0 lg:flex-shrink-0">
-              <div className="flex border border-gray-200 rounded-lg overflow-hidden lg:w-auto">
-                <button
-                  onClick={() => onViewModeChange("products")}
-                  className={`
-                    flex-1 lg:flex-initial px-6 py-2.5 text-sm font-medium transition-all
-                    ${viewMode === "products" 
-                      ? "bg-black text-white" 
-                      : "bg-white text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                    }
-                  `}
-                >
-                  Products
-                </button>
-                <button
-                  onClick={() => onViewModeChange("communities")}
-                  className={`
-                    flex-1 lg:flex-initial px-6 py-2.5 text-sm font-medium transition-all
-                    ${viewMode === "communities" 
-                      ? "bg-black text-white" 
-                      : "bg-white text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                    }
-                  `}
-                >
-                  Communities
-                </button>
+              <div className="h-9 px-4 rounded-full bg-white border border-gray-200 flex items-center gap-1 lg:w-auto">
+                <div className="flex bg-gray-100 rounded-full p-0.5 relative">
+                  {/* Background sliding indicator */}
+                  <div 
+                    className={`absolute top-0.5 left-0.5 bottom-0.5 w-16 bg-black rounded-full transition-transform duration-200 ease-out ${
+                      viewMode === "communities" ? "translate-x-16" : "translate-x-0"
+                    }`}
+                  />
+                  
+                  {/* Toggle buttons */}
+                  <button
+                    onClick={() => onViewModeChange("products")}
+                    className={`relative z-10 px-3 py-1 text-xs font-medium rounded-full transition-colors duration-200 w-16 ${
+                      viewMode === "products" 
+                        ? "text-white" 
+                        : "text-gray-600 hover:text-gray-900"
+                    }`}
+                  >
+                    Products
+                  </button>
+                  <button
+                    onClick={() => onViewModeChange("communities")}
+                    className={`relative z-10 px-3 py-1 text-xs font-medium rounded-full transition-colors duration-200 w-16 ${
+                      viewMode === "communities" 
+                        ? "text-white" 
+                        : "text-gray-600 hover:text-gray-900"
+                    }`}
+                  >
+                    Communities
+                  </button>
+                </div>
               </div>
             </div>
           )}
