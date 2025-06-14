@@ -1,4 +1,5 @@
 
+
 import { Separator } from "@/components/ui/separator";
 import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
@@ -130,7 +131,7 @@ export function Footer() {
         {/* Main Footer Content - Horizontal Layout */}
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8 min-h-[160px]">
           {/* Left side - Logo moved up */}
-          <div className="flex flex-col items-center lg:items-start lg:min-w-[200px] flex-shrink-0 pt-4">
+          <div className="flex flex-col items-center lg:items-start lg:min-w-[200px] flex-shrink-0 pt-8">
             <div className="flex flex-col items-center space-y-2">
               <img src="/lovable-uploads/80716e7b-7544-445b-b37e-00d4372310cd.png" alt="Plaze AI" className="h-12 w-12 rounded-lg" />
               <span className="text-xl font-bold text-center">Plaze AI</span>
@@ -181,3 +182,4 @@ export function Footer() {
       </div>
     </footer>;
 }
+
