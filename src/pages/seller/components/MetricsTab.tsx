@@ -95,6 +95,11 @@ export function MetricsTab() {
     return change >= 0 ? "text-green-600" : "text-red-600";
   };
 
+  // Responsive chart dimensions
+  const chartHeight = isMobile ? 200 : 300;
+  const pieOuterRadius = isMobile ? 50 : 80;
+  const barMarginLeft = isMobile ? 40 : 80;
+
   return (
     <div className="space-y-6">
       {/* KPI Cards - Responsive Grid */}
@@ -185,182 +190,334 @@ export function MetricsTab() {
         </Card>
       </div>
 
-      {/* Charts Section - Responsive */}
-      <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base sm:text-lg">Revenue & Sales Trend</CardTitle>
-            <CardDescription className="text-sm">Monthly revenue and sales over the last 6 months</CardDescription>
-          </CardHeader>
-          <CardContent className="p-3 sm:p-6">
-            <div className="w-full h-[250px] sm:h-[300px]">
-              <ChartContainer config={chartConfig}>
-                <LineChart data={revenueData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" fontSize={isMobile ? 10 : 12} />
-                  <YAxis fontSize={isMobile ? 10 : 12} />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Line 
-                    type="monotone" 
-                    dataKey="revenue" 
-                    stroke="#3b82f6" 
-                    strokeWidth={2}
-                    name="Revenue ($)"
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="sales" 
-                    stroke="#10b981" 
-                    strokeWidth={2}
-                    name="Sales"
-                  />
-                </LineChart>
-              </ChartContainer>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Charts Section - Mobile First Layout */}
+      {isMobile ? (
+        // Mobile Layout - Single Column
+        <div className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Revenue & Sales Trend</CardTitle>
+              <CardDescription className="text-sm">Monthly revenue and sales over the last 6 months</CardDescription>
+            </CardHeader>
+            <CardContent className="p-4">
+              <div className="w-full" style={{ height: chartHeight }}>
+                <ChartContainer config={chartConfig} className="w-full h-full">
+                  <LineChart data={revenueData} margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" fontSize={10} />
+                    <YAxis fontSize={10} />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Line 
+                      type="monotone" 
+                      dataKey="revenue" 
+                      stroke="#3b82f6" 
+                      strokeWidth={2}
+                      name="Revenue ($)"
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="sales" 
+                      stroke="#10b981" 
+                      strokeWidth={2}
+                      name="Sales"
+                    />
+                  </LineChart>
+                </ChartContainer>
+              </div>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base sm:text-lg">MRR Evolution</CardTitle>
-            <CardDescription className="text-sm">Monthly recurring revenue growth over time</CardDescription>
-          </CardHeader>
-          <CardContent className="p-3 sm:p-6">
-            <div className="w-full h-[250px] sm:h-[300px]">
-              <ChartContainer config={chartConfig}>
-                <LineChart data={mrrData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" fontSize={isMobile ? 10 : 12} />
-                  <YAxis fontSize={isMobile ? 10 : 12} />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Line 
-                    type="monotone" 
-                    dataKey="mrr" 
-                    stroke="#8b5cf6" 
-                    strokeWidth={3}
-                    name="MRR ($)"
-                  />
-                </LineChart>
-              </ChartContainer>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">MRR Evolution</CardTitle>
+              <CardDescription className="text-sm">Monthly recurring revenue growth</CardDescription>
+            </CardHeader>
+            <CardContent className="p-4">
+              <div className="w-full" style={{ height: chartHeight }}>
+                <ChartContainer config={chartConfig} className="w-full h-full">
+                  <LineChart data={mrrData} margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" fontSize={10} />
+                    <YAxis fontSize={10} />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Line 
+                      type="monotone" 
+                      dataKey="mrr" 
+                      stroke="#8b5cf6" 
+                      strokeWidth={3}
+                      name="MRR ($)"
+                    />
+                  </LineChart>
+                </ChartContainer>
+              </div>
+            </CardContent>
+          </Card>
 
-      <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base sm:text-lg">Traffic Sources</CardTitle>
-            <CardDescription className="text-sm">Distribution of traffic sources this month</CardDescription>
-          </CardHeader>
-          <CardContent className="p-3 sm:p-6">
-            <div className="w-full h-[250px] sm:h-[300px]">
-              <ChartContainer config={chartConfig}>
-                <PieChart>
-                  <Pie
-                    data={trafficData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                    outerRadius={isMobile ? 60 : 80}
-                    fill="#8884d8"
-                    dataKey="value"
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Product Sales</CardTitle>
+              <CardDescription className="text-sm">Sales performance by product</CardDescription>
+            </CardHeader>
+            <CardContent className="p-4">
+              <div className="w-full" style={{ height: chartHeight }}>
+                <ChartContainer config={chartConfig} className="w-full h-full">
+                  <BarChart 
+                    data={productSalesData} 
+                    layout="horizontal" 
+                    margin={{ top: 10, right: 10, left: barMarginLeft, bottom: 10 }}
                   >
-                    {trafficData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                </PieChart>
-              </ChartContainer>
-            </div>
-          </CardContent>
-        </Card>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis type="number" fontSize={10} />
+                    <YAxis dataKey="name" type="category" width={35} fontSize={8} />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Bar dataKey="sales" fill="#3b82f6" name="Sales" />
+                  </BarChart>
+                </ChartContainer>
+              </div>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base sm:text-lg">Product Sales Distribution</CardTitle>
-            <CardDescription className="text-sm">Sales performance by product</CardDescription>
-          </CardHeader>
-          <CardContent className="p-3 sm:p-6">
-            <div className="w-full h-[250px] sm:h-[300px]">
-              <ChartContainer config={chartConfig}>
-                <BarChart 
-                  data={productSalesData} 
-                  layout="horizontal" 
-                  margin={{ top: 5, right: 10, left: isMobile ? 60 : 80, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" fontSize={isMobile ? 10 : 12} />
-                  <YAxis dataKey="name" type="category" width={isMobile ? 50 : 70} fontSize={isMobile ? 8 : 10} />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="sales" fill="#3b82f6" name="Sales" />
-                </BarChart>
-              </ChartContainer>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Traffic Sources</CardTitle>
+              <CardDescription className="text-sm">Traffic distribution</CardDescription>
+            </CardHeader>
+            <CardContent className="p-4">
+              <div className="w-full flex justify-center" style={{ height: chartHeight }}>
+                <ChartContainer config={chartConfig} className="w-full h-full">
+                  <PieChart>
+                    <Pie
+                      data={trafficData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      outerRadius={pieOuterRadius}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {trafficData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                  </PieChart>
+                </ChartContainer>
+              </div>
+            </CardContent>
+          </Card>
 
-      <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base sm:text-lg">Product Revenue Distribution</CardTitle>
-            <CardDescription className="text-sm">Revenue breakdown by product</CardDescription>
-          </CardHeader>
-          <CardContent className="p-3 sm:p-6">
-            <div className="w-full h-[250px] sm:h-[300px]">
-              <ChartContainer config={chartConfig}>
-                <PieChart>
-                  <Pie
-                    data={productSalesData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, value }) => `${name}: ${value}`}
-                    outerRadius={isMobile ? 60 : 80}
-                    fill="#8884d8"
-                    dataKey="revenue"
-                  >
-                    {productSalesData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                </PieChart>
-              </ChartContainer>
-            </div>
-          </CardContent>
-        </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Revenue Distribution</CardTitle>
+              <CardDescription className="text-sm">Revenue by product</CardDescription>
+            </CardHeader>
+            <CardContent className="p-4">
+              <div className="w-full flex justify-center" style={{ height: chartHeight }}>
+                <ChartContainer config={chartConfig} className="w-full h-full">
+                  <PieChart>
+                    <Pie
+                      data={productSalesData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, value }) => `${name}: ${value}`}
+                      outerRadius={pieOuterRadius}
+                      fill="#8884d8"
+                      dataKey="revenue"
+                    >
+                      {productSalesData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                  </PieChart>
+                </ChartContainer>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      ) : (
+        // Desktop Layout - Grid
+        <>
+          <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base sm:text-lg">Revenue & Sales Trend</CardTitle>
+                <CardDescription className="text-sm">Monthly revenue and sales over the last 6 months</CardDescription>
+              </CardHeader>
+              <CardContent className="p-3 sm:p-6">
+                <div className="w-full" style={{ height: chartHeight }}>
+                  <ChartContainer config={chartConfig} className="w-full h-full">
+                    <LineChart data={revenueData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" fontSize={12} />
+                      <YAxis fontSize={12} />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Line 
+                        type="monotone" 
+                        dataKey="revenue" 
+                        stroke="#3b82f6" 
+                        strokeWidth={2}
+                        name="Revenue ($)"
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="sales" 
+                        stroke="#10b981" 
+                        strokeWidth={2}
+                        name="Sales"
+                      />
+                    </LineChart>
+                  </ChartContainer>
+                </div>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base sm:text-lg">Recent Performance</CardTitle>
-            <CardDescription className="text-sm">Your performance over the last 30 days</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Product Views</span>
-                <Badge variant="secondary">+8.7%</Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Sales Conversion</span>
-                <Badge variant="secondary">+2.1%</Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Customer Satisfaction</span>
-                <Badge variant="secondary">4.9/5</Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">MRR Growth</span>
-                <Badge variant="secondary">+18.3%</Badge>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base sm:text-lg">MRR Evolution</CardTitle>
+                <CardDescription className="text-sm">Monthly recurring revenue growth over time</CardDescription>
+              </CardHeader>
+              <CardContent className="p-3 sm:p-6">
+                <div className="w-full" style={{ height: chartHeight }}>
+                  <ChartContainer config={chartConfig} className="w-full h-full">
+                    <LineChart data={mrrData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" fontSize={12} />
+                      <YAxis fontSize={12} />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Line 
+                        type="monotone" 
+                        dataKey="mrr" 
+                        stroke="#8b5cf6" 
+                        strokeWidth={3}
+                        name="MRR ($)"
+                      />
+                    </LineChart>
+                  </ChartContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base sm:text-lg">Traffic Sources</CardTitle>
+                <CardDescription className="text-sm">Distribution of traffic sources this month</CardDescription>
+              </CardHeader>
+              <CardContent className="p-3 sm:p-6">
+                <div className="w-full" style={{ height: chartHeight }}>
+                  <ChartContainer config={chartConfig} className="w-full h-full">
+                    <PieChart>
+                      <Pie
+                        data={trafficData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        outerRadius={pieOuterRadius}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        {trafficData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                    </PieChart>
+                  </ChartContainer>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base sm:text-lg">Product Sales Distribution</CardTitle>
+                <CardDescription className="text-sm">Sales performance by product</CardDescription>
+              </CardHeader>
+              <CardContent className="p-3 sm:p-6">
+                <div className="w-full" style={{ height: chartHeight }}>
+                  <ChartContainer config={chartConfig} className="w-full h-full">
+                    <BarChart 
+                      data={productSalesData} 
+                      layout="horizontal" 
+                      margin={{ top: 5, right: 10, left: barMarginLeft, bottom: 5 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis type="number" fontSize={12} />
+                      <YAxis dataKey="name" type="category" width={70} fontSize={10} />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Bar dataKey="sales" fill="#3b82f6" name="Sales" />
+                    </BarChart>
+                  </ChartContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base sm:text-lg">Product Revenue Distribution</CardTitle>
+                <CardDescription className="text-sm">Revenue breakdown by product</CardDescription>
+              </CardHeader>
+              <CardContent className="p-3 sm:p-6">
+                <div className="w-full" style={{ height: chartHeight }}>
+                  <ChartContainer config={chartConfig} className="w-full h-full">
+                    <PieChart>
+                      <Pie
+                        data={productSalesData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, value }) => `${name}: ${value}`}
+                        outerRadius={pieOuterRadius}
+                        fill="#8884d8"
+                        dataKey="revenue"
+                      >
+                        {productSalesData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                    </PieChart>
+                  </ChartContainer>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* ... keep existing code (Recent Performance card) */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base sm:text-lg">Recent Performance</CardTitle>
+                <CardDescription className="text-sm">Your performance over the last 30 days</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Product Views</span>
+                    <Badge variant="secondary">+8.7%</Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Sales Conversion</span>
+                    <Badge variant="secondary">+2.1%</Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Customer Satisfaction</span>
+                    <Badge variant="secondary">4.9/5</Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">MRR Growth</span>
+                    <Badge variant="secondary">+18.3%</Badge>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </>
+      )}
 
       <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
         <Card>
