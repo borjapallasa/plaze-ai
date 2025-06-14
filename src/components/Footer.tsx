@@ -96,8 +96,9 @@ export function Footer() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 flex-1 lg:max-w-4xl">
             <FooterSection title="Shop" links={shopLinks} />
             <FooterSection title="Sell" links={sellLinks} />
+            <FooterSection title="About" links={aboutLinks} />
             <div className="space-y-6">
-              <FooterSection title="About" links={aboutLinks} />
+              <FooterSection title="Help" links={helpLinks} />
               
               {/* Social Links without "Follow Us" text */}
               <div className="space-y-3">
@@ -121,7 +122,6 @@ export function Footer() {
                 </div>
               </div>
             </div>
-            <FooterSection title="Help" links={helpLinks} />
           </div>
         </div>
 
