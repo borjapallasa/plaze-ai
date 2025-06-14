@@ -1,4 +1,3 @@
-
 import { Separator } from "@/components/ui/separator";
 import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
@@ -128,12 +127,12 @@ export function Footer() {
   return <footer className="mt-auto bg-background border-t">
       <div className="container max-w-6xl mx-auto px-4 py-8">
         {/* Main Footer Content - Horizontal Layout */}
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 min-h-[200px]">
-          {/* Left side - Logo centered vertically */}
-          <div className="flex flex-col items-center lg:items-start justify-center lg:min-w-[200px] flex-shrink-0">
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8 min-h-[160px]">
+          {/* Left side - Logo moved up */}
+          <div className="flex flex-col items-center lg:items-start lg:min-w-[200px] flex-shrink-0 pt-4">
             <div className="flex flex-col items-center lg:items-start space-y-2">
               <img src="/lovable-uploads/80716e7b-7544-445b-b37e-00d4372310cd.png" alt="Plaze AI" className="h-12 w-12 rounded-lg" />
-              <span className="text-xl font-bold">Plaze AI</span>
+              <span className="text-xl font-bold text-center">Plaze AI</span>
             </div>
           </div>
 
@@ -145,9 +144,8 @@ export function Footer() {
             <div className="space-y-6">
               <FooterSection title="Help" links={helpLinks} />
               
-              {/* Social Links moved below Help */}
+              {/* Social Links without "Follow Us" text */}
               <div className="space-y-3">
-                <h3 className="font-semibold text-[16px] text-foreground">Follow Us</h3>
                 <div className="flex gap-4">
                   <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors p-2 hover:bg-accent rounded-md" aria-label="Follow us on Instagram">
                     <Instagram className="h-5 w-5" />
