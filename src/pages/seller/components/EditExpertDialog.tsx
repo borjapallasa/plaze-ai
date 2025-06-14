@@ -13,9 +13,10 @@ import type { Expert } from "@/types/expert";
 interface EditExpertDialogProps {
   expert: Expert;
   onUpdate: (updatedExpert: Expert) => void;
+  trigger?: React.ReactNode;
 }
 
-export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
+export function EditExpertDialog({ expert, onUpdate, trigger }: EditExpertDialogProps) {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -101,13 +102,17 @@ export function EditExpertDialog({ expert, onUpdate }: EditExpertDialogProps) {
     }
   };
 
+  const defaultTrigger = (
+    <Button variant="outline" size="sm" className="ml-2">
+      <Pencil className="h-4 w-4 mr-1" />
+      Edit Profile
+    </Button>
+  );
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="ml-2">
-          <Pencil className="h-4 w-4 mr-1" />
-          Edit Profile
-        </Button>
+        {trigger || defaultTrigger}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
