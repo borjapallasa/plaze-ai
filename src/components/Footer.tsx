@@ -1,5 +1,4 @@
 
-
 import { Separator } from "@/components/ui/separator";
 import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
@@ -35,20 +34,8 @@ export function Footer() {
     label: "Products",
     href: "/products"
   }, {
-    label: "Templates",
-    href: "/products/templates"
-  }, {
     label: "Communities",
     href: "/communities"
-  }, {
-    label: "Experts",
-    href: "/experts"
-  }, {
-    label: "Gift Cards",
-    href: "/gift-cards"
-  }, {
-    label: "Registry",
-    href: "/registry"
   }, {
     label: "Sitemap",
     href: "/sitemap"
@@ -58,72 +45,31 @@ export function Footer() {
   }];
 
   const sellLinks = [{
-    label: "Start Selling",
+    label: "Sell on Plaze",
     href: "/sell"
   }, {
-    label: "Seller Dashboard",
-    href: "/seller"
+    label: "Plaze University",
+    href: "/university"
   }, {
-    label: "Seller Guidelines",
-    href: "/seller-guidelines"
-  }, {
-    label: "Commission Structure",
-    href: "/commission"
-  }, {
-    label: "Teams",
-    href: "/teams"
-  }, {
-    label: "Forums",
-    href: "/forums"
-  }, {
-    label: "Affiliates & Creators",
+    label: "Affiliates",
     href: "/affiliates"
   }];
 
   const aboutLinks = [{
-    label: "About Us",
+    label: "About Plaze",
     href: "/about"
-  }, {
-    label: "Plaze AI, Inc.",
-    href: "/company"
-  }, {
-    label: "Policies",
-    href: "/policies"
-  }, {
-    label: "Investors",
-    href: "/investors"
   }, {
     label: "Careers",
     href: "/careers"
   }, {
-    label: "Press",
-    href: "/press"
-  }, {
-    label: "Impact",
-    href: "/impact"
-  }, {
-    label: "Legal imprint",
-    href: "/legal"
-  }];
-
-  const helpLinks = [{
-    label: "Help Center",
-    href: "/help"
-  }, {
-    label: "Privacy settings",
-    href: "/privacy-settings"
-  }, {
-    label: "Contact Support",
-    href: "/contact"
-  }, {
-    label: "FAQ",
-    href: "/faq"
-  }, {
-    label: "Terms of Service",
-    href: "/terms"
+    label: "Investors",
+    href: "/investors"
   }, {
     label: "Privacy Policy",
     href: "/privacy"
+  }, {
+    label: "Terms of Service",
+    href: "/terms"
   }];
 
   return <footer className="mt-auto bg-background border-t">
@@ -139,12 +85,11 @@ export function Footer() {
           </div>
 
           {/* Center - Links Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 flex-1 lg:max-w-4xl">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 flex-1 lg:max-w-4xl">
             <FooterSection title="Shop" links={shopLinks} />
             <FooterSection title="Sell" links={sellLinks} />
-            <FooterSection title="About" links={aboutLinks} />
             <div className="space-y-6">
-              <FooterSection title="Help" links={helpLinks} />
+              <FooterSection title="About" links={aboutLinks} />
               
               {/* Social Links without "Follow Us" text */}
               <div className="space-y-3">
@@ -182,4 +127,3 @@ export function Footer() {
       </div>
     </footer>;
 }
-
