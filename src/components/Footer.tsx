@@ -1,4 +1,3 @@
-
 import { Separator } from "@/components/ui/separator";
 import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
@@ -96,10 +95,7 @@ export function Footer() {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 pt-4">
             {/* Logo */}
             <div className="flex flex-col items-center md:items-start">
-              <div className="flex flex-col items-center space-y-2">
-                <img src="/lovable-uploads/84b87a79-21ab-4d4e-b6fe-3af1f7e0464d.png" alt="Plaze AI" className="h-12 w-auto" />
-                <span className="text-xl font-bold text-center">Plaze AI</span>
-              </div>
+              <img src="/lovable-uploads/84b87a79-21ab-4d4e-b6fe-3af1f7e0464d.png" alt="Plaze AI" className="h-5 w-auto" />
             </div>
 
             {/* Social Links */}
