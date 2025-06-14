@@ -143,26 +143,31 @@ export const CategoryHeader = ({
           {/* View Mode Toggle - Same row on desktop, below on mobile */}
           {onViewModeChange && (
             <div className="mt-4 lg:mt-0 lg:flex-shrink-0">
-              <div className="w-full bg-gray-100 rounded-lg p-1 border border-gray-200 lg:w-auto">
-                <ToggleGroup 
-                  type="single" 
-                  value={viewMode} 
-                  onValueChange={(value) => value && onViewModeChange(value as "products" | "communities")}
-                  className="gap-0 w-full lg:w-auto"
+              <div className="flex border border-gray-200 rounded-lg overflow-hidden lg:w-auto">
+                <button
+                  onClick={() => onViewModeChange("products")}
+                  className={`
+                    flex-1 lg:flex-initial px-6 py-2.5 text-sm font-medium transition-all
+                    ${viewMode === "products" 
+                      ? "bg-black text-white" 
+                      : "bg-white text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    }
+                  `}
                 >
-                  <ToggleGroupItem 
-                    value="products" 
-                    className="flex-1 lg:flex-initial px-6 py-2 text-sm font-medium rounded-md transition-all data-[state=on]:bg-white data-[state=on]:text-black data-[state=on]:shadow-sm data-[state=off]:text-gray-600 data-[state=off]:hover:text-gray-900"
-                  >
-                    Products
-                  </ToggleGroupItem>
-                  <ToggleGroupItem 
-                    value="communities" 
-                    className="flex-1 lg:flex-initial px-6 py-2 text-sm font-medium rounded-md transition-all data-[state=on]:bg-white data-[state=on]:text-black data-[state=on]:shadow-sm data-[state=off]:text-gray-600 data-[state=off]:hover:text-gray-900"
-                  >
-                    Communities
-                  </ToggleGroupItem>
-                </ToggleGroup>
+                  Products
+                </button>
+                <button
+                  onClick={() => onViewModeChange("communities")}
+                  className={`
+                    flex-1 lg:flex-initial px-6 py-2.5 text-sm font-medium transition-all
+                    ${viewMode === "communities" 
+                      ? "bg-black text-white" 
+                      : "bg-white text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    }
+                  `}
+                >
+                  Communities
+                </button>
               </div>
             </div>
           )}
