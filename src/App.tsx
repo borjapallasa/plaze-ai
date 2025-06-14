@@ -5,8 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./components/AuthProvider";
 import IndexPage from "./pages/index";
 import ProductPage from "./pages/Product";
-import SignInPage from "./pages/sign-in";
-import SignUpPage from "./pages/sign-up";
+import AuthPage from "./pages/auth";
 import SignInCommunityPage from "./pages/sign-in-community";
 import SignUpCommunityPage from "./pages/sign-up-community";
 import ProductsPage from "./pages/Products";
@@ -50,8 +49,9 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/" element={<IndexPage />} />
-          <Route path="/sign-in" element={<SignInPage />} />
-          <Route path="/sign-up" element={<SignUpPage />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/sign-in" element={<AuthPage />} />
+          <Route path="/sign-up" element={<AuthPage />} />
           <Route path="/sign-in/community/:id" element={<SignInCommunityPage />} />
           <Route path="/sign-up/community/:id" element={<SignUpCommunityPage />} />
           <Route path="/product/:id" element={<ProductPage />} />

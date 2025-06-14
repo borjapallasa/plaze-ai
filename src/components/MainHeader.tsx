@@ -1,3 +1,4 @@
+
 import React, { useState, FormEvent, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, Menu, User, ChevronDown, LogOut, Home, UserCircle, Users, Store, HelpCircle } from "lucide-react";
@@ -195,13 +196,13 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                 )}
                 {!user && (
                   <>
-                    <Link to="/sign-in">
+                    <Link to="/auth">
                       <DropdownMenuItem>
                         <User className="mr-2 h-4 w-4" />
                         Sign In
                       </DropdownMenuItem>
                     </Link>
-                    <Link to="/sign-up">
+                    <Link to="/auth">
                       <DropdownMenuItem>
                         <User className="mr-2 h-4 w-4" />
                         Sign Up
@@ -310,7 +311,6 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
           <div className="flex items-center gap-3 w-[140px] justify-end">
             <CartDrawerTrigger />
             
-            {/* Hide "Sell on Plaze" button when user is authenticated */}
             {!user && (
               <Button
                 variant="ghost"
@@ -349,13 +349,13 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                 )}
                 {!user && (
                   <>
-                    <Link to="/sign-in">
+                    <Link to="/auth">
                       <DropdownMenuItem>
                         <User className="mr-2 h-4 w-4" />
                         Sign In
                       </DropdownMenuItem>
                     </Link>
-                    <Link to="/sign-up">
+                    <Link to="/auth">
                       <DropdownMenuItem>
                         <User className="mr-2 h-4 w-4" />
                         Sign Up
