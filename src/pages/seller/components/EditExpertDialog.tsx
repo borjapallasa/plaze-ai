@@ -22,6 +22,7 @@ export function EditExpertDialog({ expert, onUpdate, trigger }: EditExpertDialog
   const [formData, setFormData] = useState({
     name: expert.name || "",
     title: expert.title || "",
+    location: expert.location || "",
     description: expert.description || ""
   });
 
@@ -38,6 +39,7 @@ export function EditExpertDialog({ expert, onUpdate, trigger }: EditExpertDialog
       const updatePayload = {
         name: formData.name,
         title: formData.title,
+        location: formData.location,
         description: formData.description,
       };
 
@@ -87,6 +89,7 @@ export function EditExpertDialog({ expert, onUpdate, trigger }: EditExpertDialog
         ...expert,
         name: formData.name,
         title: formData.title,
+        location: formData.location,
         description: formData.description
       };
 
@@ -140,6 +143,16 @@ export function EditExpertDialog({ expert, onUpdate, trigger }: EditExpertDialog
               value={formData.title}
               onChange={handleChange}
               placeholder="Professional title"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="location">Location</Label>
+            <Input
+              id="location"
+              name="location"
+              value={formData.location}
+              onChange={handleChange}
+              placeholder="Your location"
             />
           </div>
           <div className="space-y-2">
