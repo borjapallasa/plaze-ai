@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Separator } from "@/components/ui/separator";
 import { MapPin, Star, Briefcase, Package, Users, Edit2 } from "lucide-react";
 import { EditExpertDialog } from "./EditExpertDialog";
 import type { Expert } from "@/types/expert";
@@ -90,24 +91,28 @@ export function SellerHeader({
               </div>
             </div>
 
-            {/* Right Section: Stats */}
+            {/* Right Section: Stats with vertical separators */}
             <div className="flex-shrink-0">
-              <div className="flex flex-col gap-3 text-right">
-                <div className="flex items-center gap-2 justify-end">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
                   <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                   <span className="text-sm font-semibold">
                     {seller.client_satisfaction}% satisfaction
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2 justify-end">
+                <Separator orientation="vertical" className="h-6" />
+
+                <div className="flex items-center gap-2">
                   <Briefcase className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm font-semibold">
                     {seller.completed_projects} projects
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2 justify-end">
+                <Separator orientation="vertical" className="h-6" />
+
+                <div className="flex items-center gap-2">
                   <Package className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm font-semibold">
                     {productsCount} products
@@ -115,12 +120,15 @@ export function SellerHeader({
                 </div>
 
                 {communitiesCount > 0 && (
-                  <div className="flex items-center gap-2 justify-end">
-                    <Users className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm font-semibold">
-                      {communitiesCount} communities
-                    </span>
-                  </div>
+                  <>
+                    <Separator orientation="vertical" className="h-6" />
+                    <div className="flex items-center gap-2">
+                      <Users className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm font-semibold">
+                        {communitiesCount} communities
+                      </span>
+                    </div>
+                  </>
                 )}
               </div>
             </div>
@@ -169,8 +177,8 @@ export function SellerHeader({
               </p>
             )}
 
-            {/* Stats Row */}
-            <div className="flex items-center gap-4 overflow-x-auto pb-2 mb-4">
+            {/* Stats Row with separators for mobile */}
+            <div className="flex items-center gap-3 overflow-x-auto pb-2 mb-4">
               <div className="flex items-center gap-2 flex-shrink-0">
                 <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                 <span className="text-sm font-semibold">
@@ -178,12 +186,16 @@ export function SellerHeader({
                 </span>
               </div>
 
+              <Separator orientation="vertical" className="h-4" />
+
               <div className="flex items-center gap-2 flex-shrink-0">
                 <Briefcase className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm font-semibold">
                   {seller.completed_projects}
                 </span>
               </div>
+
+              <Separator orientation="vertical" className="h-4" />
 
               <div className="flex items-center gap-2 flex-shrink-0">
                 <Package className="h-4 w-4 text-muted-foreground" />
@@ -193,12 +205,15 @@ export function SellerHeader({
               </div>
 
               {communitiesCount > 0 && (
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-semibold">
-                    {communitiesCount}
-                  </span>
-                </div>
+                <>
+                  <Separator orientation="vertical" className="h-4" />
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-semibold">
+                      {communitiesCount}
+                    </span>
+                  </div>
+                </>
               )}
             </div>
 
