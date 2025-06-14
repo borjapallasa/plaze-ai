@@ -31,23 +31,23 @@ export function SellerHeader({ seller, productsCount, onSellerUpdate }: SellerHe
 
   return (
     <div className="mb-8">
-      <Card className="border-0 shadow-lg bg-gradient-to-br from-background via-background to-muted/20">
-        <CardContent className="p-8">
-          <div className="flex flex-col lg:flex-row gap-8 items-start">
+      <Card className="border shadow-sm bg-card">
+        <CardContent className="p-6">
+          <div className="flex flex-col lg:flex-row gap-6 items-start">
             {/* Avatar Section */}
             <div className="flex-shrink-0">
               <div className="relative">
-                <Avatar className="h-32 w-32 border-4 border-background shadow-xl">
+                <Avatar className="h-20 w-20 border-2 border-border">
                   <AvatarImage 
                     src={avatarUrl}
                     className="object-cover"
                   />
-                  <AvatarFallback className="text-2xl font-semibold bg-primary/10">
+                  <AvatarFallback className="text-xl font-semibold">
                     {seller.name?.[0] || 'S'}
                   </AvatarFallback>
                 </Avatar>
-                <div className="absolute -bottom-2 -right-2">
-                  <UIBadge className="bg-primary text-primary-foreground shadow-lg px-3 py-1">
+                <div className="absolute -bottom-1 -right-1">
+                  <UIBadge className="bg-primary text-primary-foreground text-xs px-2 py-0.5">
                     <Badge className="w-3 h-3 mr-1" />
                     Pro
                   </UIBadge>
@@ -56,14 +56,14 @@ export function SellerHeader({ seller, productsCount, onSellerUpdate }: SellerHe
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 space-y-6">
+            <div className="flex-1 space-y-4">
               {/* Name and Title */}
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <div className="flex flex-wrap items-center gap-3">
-                  <h1 className="text-3xl lg:text-4xl font-bold text-foreground">
+                  <h1 className="text-2xl lg:text-3xl font-bold text-foreground">
                     {seller?.name || "Expert"}
                   </h1>
-                  <UIBadge variant="outline" className="border-primary/20 text-primary">
+                  <UIBadge variant="outline" className="text-xs">
                     Verified Expert
                   </UIBadge>
                   {isCurrentUserExpert && (
@@ -75,38 +75,35 @@ export function SellerHeader({ seller, productsCount, onSellerUpdate }: SellerHe
                     </EditExpertDialog>
                   )}
                 </div>
-                <p className="text-lg text-muted-foreground font-medium">
+                <p className="text-muted-foreground">
                   {seller?.title || "Expert in UI/UX Design & Development"}
                 </p>
               </div>
 
               {/* Stats Row */}
-              <div className="flex flex-wrap items-center gap-6 text-sm">
-                <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-1.5">
                   <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                  <span className="font-semibold">4.9</span>
-                  <span className="text-muted-foreground">rating</span>
+                  <span className="font-medium text-foreground">4.9</span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                   <ShoppingBag className="w-4 h-4 text-blue-500" />
-                  <span className="font-semibold">{productsCount}</span>
-                  <span className="text-muted-foreground">products</span>
+                  <span className="font-medium text-foreground">{productsCount}</span>
+                  <span>products</span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                   <Users className="w-4 h-4 text-green-500" />
-                  <span className="font-semibold">250+</span>
-                  <span className="text-muted-foreground">clients</span>
+                  <span className="font-medium text-foreground">250+</span>
+                  <span>clients</span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                   <Calendar className="w-4 h-4 text-purple-500" />
-                  <span className="text-muted-foreground">
-                    Member since {new Date(seller.created_at || '').getFullYear()}
-                  </span>
+                  <span>Member since {new Date(seller.created_at || '').getFullYear()}</span>
                 </div>
               </div>
 
               {/* Description */}
-              <p className="text-muted-foreground leading-relaxed max-w-3xl">
+              <p className="text-muted-foreground text-sm leading-relaxed max-w-2xl">
                 {seller?.description || "Passionate designer and developer with over 8 years of experience creating beautiful, functional digital experiences. Specializing in user interface design, web applications, and design systems that scale."}
               </p>
             </div>
