@@ -1,4 +1,3 @@
-
 import React, { useState, FormEvent, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, Menu, User, ChevronDown, LogOut } from "lucide-react";
@@ -116,13 +115,13 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
     <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-background border-b">
       <div className="container mx-auto px-4 h-full">
         {/* Mobile Header */}
-        <div className="flex md:hidden items-center justify-between h-full gap-3">
-          <div className="flex-1">
+        <div className="flex md:hidden items-center justify-between h-full gap-2">
+          <div className="flex-1 max-w-[calc(100%-120px)]">
             <form onSubmit={(e) => handleSearch(e, true)} className={`flex items-center gap-1 px-3 ${isHomePage ? 'py-1.5' : 'py-1.5'} rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background`}>
               <div className="relative flex-1">
                 <Input
                   className={`border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent ${isHomePage ? 'h-8 text-sm' : 'h-7 text-sm'} flex-1`}
-                  placeholder={isHomePage ? "Search for products, experts, jobs..." : "Search..."}
+                  placeholder={isHomePage ? "Search..." : "Search..."}
                   type="search"
                   value={mobileSearchQuery}
                   onChange={(e) => setMobileSearchQuery(e.target.value)}
@@ -167,47 +166,49 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
             </form>
           </div>
           
-          <CartDrawerTrigger className="mr-2" />
-          
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                className="rounded-full px-2.5 py-1.5 h-8 border-2 hover:border-primary/20 transition-colors"
-              >
-                <Menu className="h-3.5 w-3.5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <Link to="/">
-                <DropdownMenuItem>
-                  Home
-                </DropdownMenuItem>
-              </Link>
-              {user ? (
-                <>
-                  <DropdownMenuItem onClick={handleSignOut}>Sign Out</DropdownMenuItem>
-                </>
-              ) : (
-                <>
-                  <Link to="/sign-in">
-                    <DropdownMenuItem>Sign In</DropdownMenuItem>
-                  </Link>
-                  <Link to="/sign-up">
-                    <DropdownMenuItem>Sign Up</DropdownMenuItem>
-                  </Link>
-                </>
-              )}
-              <DropdownMenuSeparator />
-              <Link to="/affiliates">
-                <DropdownMenuItem>Affiliates</DropdownMenuItem>
-              </Link>
-              <Link to="/sell">
-                <DropdownMenuItem>Sell on Plaze</DropdownMenuItem>
-              </Link>
-              <DropdownMenuItem>Help Center</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex items-center gap-2">
+            <CartDrawerTrigger />
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="rounded-full px-2.5 py-1.5 h-8 border-2 hover:border-primary/20 transition-colors"
+                >
+                  <Menu className="h-3.5 w-3.5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <Link to="/">
+                  <DropdownMenuItem>
+                    Home
+                  </DropdownMenuItem>
+                </Link>
+                {user ? (
+                  <>
+                    <DropdownMenuItem onClick={handleSignOut}>Sign Out</DropdownMenuItem>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/sign-in">
+                      <DropdownMenuItem>Sign In</DropdownMenuItem>
+                    </Link>
+                    <Link to="/sign-up">
+                      <DropdownMenuItem>Sign Up</DropdownMenuItem>
+                    </Link>
+                  </>
+                )}
+                <DropdownMenuSeparator />
+                <Link to="/affiliates">
+                  <DropdownMenuItem>Affiliates</DropdownMenuItem>
+                </Link>
+                <Link to="/sell">
+                  <DropdownMenuItem>Sell on Plaze</DropdownMenuItem>
+                </Link>
+                <DropdownMenuItem>Help Center</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
 
         {/* Desktop Header */}
@@ -216,7 +217,7 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
             Logo
           </Link>
 
-          <div className={`flex-1 ${isHomePage ? 'max-w-3xl' : 'max-w-2xl'} mx-auto`}>
+          <div className={`flex-1 ${isHomePage ? 'max-w-2xl' : 'max-w-xl'} mx-auto`}>
             <form onSubmit={(e) => handleSearch(e, false)} className={`flex items-center gap-1 px-3 py-1.5 rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background ${isHomePage ? 'py-1.5' : ''}`}>
               <div className="flex-1 relative">
                 <Input
@@ -275,7 +276,7 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
           </div>
 
           <div className="flex items-center gap-3 w-[140px] justify-end">
-            <CartDrawerTrigger className="mr-2" />
+            <CartDrawerTrigger />
             
             <Button
               variant="ghost"
