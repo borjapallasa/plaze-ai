@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, Users, ShoppingBag, DollarSign, Eye, Repeat } from "lucide-react";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, BarChart, Bar, PieChart, Pie, Cell } from "recharts";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 export function MetricsTab() {
@@ -194,7 +194,7 @@ export function MetricsTab() {
           </CardHeader>
           <CardContent className="p-3 sm:p-6">
             <div className="w-full h-[250px] sm:h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
+              <ChartContainer config={chartConfig}>
                 <LineChart data={revenueData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" fontSize={isMobile ? 10 : 12} />
@@ -215,7 +215,7 @@ export function MetricsTab() {
                     name="Sales"
                   />
                 </LineChart>
-              </ResponsiveContainer>
+              </ChartContainer>
             </div>
           </CardContent>
         </Card>
@@ -227,7 +227,7 @@ export function MetricsTab() {
           </CardHeader>
           <CardContent className="p-3 sm:p-6">
             <div className="w-full h-[250px] sm:h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
+              <ChartContainer config={chartConfig}>
                 <LineChart data={mrrData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" fontSize={isMobile ? 10 : 12} />
@@ -241,7 +241,7 @@ export function MetricsTab() {
                     name="MRR ($)"
                   />
                 </LineChart>
-              </ResponsiveContainer>
+              </ChartContainer>
             </div>
           </CardContent>
         </Card>
@@ -254,8 +254,8 @@ export function MetricsTab() {
             <CardDescription className="text-sm">Distribution of traffic sources this month</CardDescription>
           </CardHeader>
           <CardContent className="p-3 sm:p-6">
-            <div className="w-full h-[250px] sm:h-[300px] flex items-center justify-center">
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="w-full h-[250px] sm:h-[300px]">
+              <ChartContainer config={chartConfig}>
                 <PieChart>
                   <Pie
                     data={trafficData}
@@ -273,7 +273,7 @@ export function MetricsTab() {
                   </Pie>
                   <ChartTooltip content={<ChartTooltipContent />} />
                 </PieChart>
-              </ResponsiveContainer>
+              </ChartContainer>
             </div>
           </CardContent>
         </Card>
@@ -285,7 +285,7 @@ export function MetricsTab() {
           </CardHeader>
           <CardContent className="p-3 sm:p-6">
             <div className="w-full h-[250px] sm:h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
+              <ChartContainer config={chartConfig}>
                 <BarChart 
                   data={productSalesData} 
                   layout="horizontal" 
@@ -297,7 +297,7 @@ export function MetricsTab() {
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Bar dataKey="sales" fill="#3b82f6" name="Sales" />
                 </BarChart>
-              </ResponsiveContainer>
+              </ChartContainer>
             </div>
           </CardContent>
         </Card>
@@ -310,8 +310,8 @@ export function MetricsTab() {
             <CardDescription className="text-sm">Revenue breakdown by product</CardDescription>
           </CardHeader>
           <CardContent className="p-3 sm:p-6">
-            <div className="w-full h-[250px] sm:h-[300px] flex items-center justify-center">
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="w-full h-[250px] sm:h-[300px]">
+              <ChartContainer config={chartConfig}>
                 <PieChart>
                   <Pie
                     data={productSalesData}
@@ -329,7 +329,7 @@ export function MetricsTab() {
                   </Pie>
                   <ChartTooltip content={<ChartTooltipContent />} />
                 </PieChart>
-              </ResponsiveContainer>
+              </ChartContainer>
             </div>
           </CardContent>
         </Card>
