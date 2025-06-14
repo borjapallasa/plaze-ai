@@ -1,3 +1,4 @@
+
 import { Separator } from "@/components/ui/separator";
 import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
@@ -130,7 +131,7 @@ export function Footer() {
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 min-h-[200px]">
           {/* Left side - Logo centered vertically */}
           <div className="flex flex-col items-center lg:items-start justify-center lg:min-w-[200px] flex-shrink-0">
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-col items-center lg:items-start space-y-2">
               <img src="/lovable-uploads/80716e7b-7544-445b-b37e-00d4372310cd.png" alt="Plaze AI" className="h-12 w-12 rounded-lg" />
               <span className="text-xl font-bold">Plaze AI</span>
             </div>
