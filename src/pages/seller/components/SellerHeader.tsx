@@ -31,69 +31,72 @@ export function SellerHeader({
           <div className="flex flex-col lg:flex-row lg:items-start gap-8 lg:gap-12">
             
             {/* Group A (Left): Profile Information */}
-            <div className="flex items-start gap-4 flex-1">
-              {/* Avatar */}
-              <div className="w-16 h-16 md:w-20 md:h-20 flex-shrink-0">
-                <AspectRatio ratio={1} className="overflow-hidden rounded-full">
-                  <Avatar className="h-full w-full">
-                    <AvatarImage 
-                      src={seller.thumbnail} 
-                      alt={seller.name}
-                      className="object-cover"
-                    />
-                    <AvatarFallback className="text-lg font-semibold">
-                      {seller.name?.split(' ').map(n => n[0]).join('') || 'UN'}
-                    </AvatarFallback>
-                  </Avatar>
-                </AspectRatio>
-              </div>
-              
-              {/* Profile Text Block */}
-              <div className="flex-1 min-w-0">
-                {/* Name and Edit Button Row */}
-                <div className="flex items-center gap-3 mb-1">
-                  <h1 className="text-2xl md:text-3xl font-bold text-foreground leading-tight">
-                    {seller.name}
-                  </h1>
-                  <EditExpertDialog
-                    expert={seller}
-                    onUpdate={onSellerUpdate}
-                    trigger={
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="flex items-center gap-2 whitespace-nowrap"
-                      >
-                        <Edit2 className="h-4 w-4" aria-hidden="true" />
-                        Edit Profile
-                      </Button>
-                    }
-                  />
+            <div className="flex-1">
+              {/* Top row: Avatar and Name/Title/Location */}
+              <div className="flex items-start gap-4 mb-4">
+                {/* Avatar */}
+                <div className="w-16 h-16 md:w-20 md:h-20 flex-shrink-0">
+                  <AspectRatio ratio={1} className="overflow-hidden rounded-full">
+                    <Avatar className="h-full w-full">
+                      <AvatarImage 
+                        src={seller.thumbnail} 
+                        alt={seller.name}
+                        className="object-cover"
+                      />
+                      <AvatarFallback className="text-lg font-semibold">
+                        {seller.name?.split(' ').map(n => n[0]).join('') || 'UN'}
+                      </AvatarFallback>
+                    </Avatar>
+                  </AspectRatio>
                 </div>
                 
-                {/* Role & Location Line */}
-                <div className="flex items-center gap-3 mb-2 text-sm font-medium text-muted-foreground">
-                  {seller.title && (
-                    <span>{seller.title}</span>
-                  )}
-                  {seller.title && seller.location && (
-                    <span className="text-muted-foreground/60">•</span>
-                  )}
-                  {seller.location && (
-                    <div className="flex items-center gap-1">
-                      <MapPin className="h-3 w-3" aria-hidden="true" />
-                      <span>{seller.location}</span>
-                    </div>
-                  )}
+                {/* Name, Title, Location Block */}
+                <div className="flex-1 min-w-0">
+                  {/* Name and Edit Button Row */}
+                  <div className="flex items-center gap-3 mb-1">
+                    <h1 className="text-2xl md:text-3xl font-bold text-foreground leading-tight">
+                      {seller.name}
+                    </h1>
+                    <EditExpertDialog
+                      expert={seller}
+                      onUpdate={onSellerUpdate}
+                      trigger={
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="flex items-center gap-2 whitespace-nowrap"
+                        >
+                          <Edit2 className="h-4 w-4" aria-hidden="true" />
+                          Edit Profile
+                        </Button>
+                      }
+                    />
+                  </div>
+                  
+                  {/* Role & Location Line */}
+                  <div className="flex items-center gap-3 text-sm font-medium text-muted-foreground">
+                    {seller.title && (
+                      <span>{seller.title}</span>
+                    )}
+                    {seller.title && seller.location && (
+                      <span className="text-muted-foreground/60">•</span>
+                    )}
+                    {seller.location && (
+                      <div className="flex items-center gap-1">
+                        <MapPin className="h-3 w-3" aria-hidden="true" />
+                        <span>{seller.location}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-
-                {/* Description */}
-                {seller.description && (
-                  <p className="text-base font-medium text-muted-foreground leading-relaxed max-w-2xl">
-                    {seller.description}
-                  </p>
-                )}
               </div>
+
+              {/* Description - Now below the avatar and name section */}
+              {seller.description && (
+                <p className="text-base font-medium text-muted-foreground leading-relaxed max-w-2xl">
+                  {seller.description}
+                </p>
+              )}
             </div>
 
             {/* Vertical Divider - Hidden on small screens, shown on lg+ */}
