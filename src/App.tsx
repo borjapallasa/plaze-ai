@@ -9,21 +9,16 @@ import SignInPage from "./pages/sign-in";
 import SignUpPage from "./pages/sign-up";
 import SignInCommunityPage from "./pages/sign-in-community";
 import SignUpCommunityPage from "./pages/sign-up-community";
-import ExpertsPage from "./pages/Experts";
-import ExpertPage from "./pages/Expert";
 import ProductsPage from "./pages/Products";
 import NewProductPage from "./pages/seller/NewProduct";
 import NewServicePage from "./pages/seller/NewServicePage";
 import NewCommunityPage from "./pages/seller/NewCommunityPage";
 import EditProductPage from "./pages/EditProduct";
-import EditServicePage from "./pages/EditService";
 import EditCommunityPage from "./pages/EditCommunity";
 import CommunitiesPage from "./pages/Communities";
 import CommunityPage from "./pages/Community";
 import ClassroomPage from "./pages/Classroom";
 import ChatsPage from "./pages/Chats";
-import JobsPage from "./pages/Jobs";
-import JobPage from "./pages/Job";
 import BlogPage from "./pages/Blog";
 import CartPage from "./pages/Cart";
 import PersonalAreaPage from "./pages/PersonalArea";
@@ -60,8 +55,6 @@ function App() {
           <Route path="/sign-in/community/:id" element={<SignInCommunityPage />} />
           <Route path="/sign-up/community/:id" element={<SignUpCommunityPage />} />
           <Route path="/product/:id" element={<ProductPage />} />
-          <Route path="/experts" element={<ExpertsPage />} />
-          <Route path="/expert/:expert_uuid" element={<ExpertPage />} />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/product/:slug/:id" element={<ProductPage />} />
           <Route path="/sell" element={<SellPage />} />
@@ -71,15 +64,12 @@ function App() {
           <Route path="/seller/:id" element={<SellerPage />} />
           <Route path="/product/:id/edit" element={<EditProductPage />} />
           <Route path="/product/:slug/:id/edit" element={<EditProductPage />} />
-          <Route path="/service/:id/edit" element={<EditServicePage />} />
           <Route path="/community/:id/edit" element={<EditCommunityPage />} />
           <Route path="/community/:id/products/new" element={<NewCommunityProductPage />} />
           <Route path="/communities" element={<CommunitiesPage />} />
           <Route path="/community/:id" element={<CommunityPage />} />
           <Route path="/classroom/:id" element={<ClassroomPage />} />
           <Route path="/chats" element={<ChatsPage />} />
-          <Route path="/jobs" element={<JobsPage />} />
-          <Route path="/job/:id" element={<JobPage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/account" element={<PersonalAreaPage />} />
