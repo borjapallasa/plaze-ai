@@ -1,4 +1,3 @@
-
 import { Separator } from "@/components/ui/separator";
 import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
@@ -125,7 +124,7 @@ export function Footer() {
     href: "/privacy"
   }];
 
-  return <footer className="mt-auto bg-background border-t">
+  return <footer className="mt-auto bg-gray-50 border-t">
       <div className="w-full max-w-6xl mx-auto px-4 py-8">
         {/* Main Footer Content - Horizontal Layout */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 min-h-[200px]">
