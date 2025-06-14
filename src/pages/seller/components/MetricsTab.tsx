@@ -192,31 +192,31 @@ export function MetricsTab() {
             <CardTitle className="text-base sm:text-lg">Revenue & Sales Trend</CardTitle>
             <CardDescription className="text-sm">Monthly revenue and sales over the last 6 months</CardDescription>
           </CardHeader>
-          <CardContent className="p-6">
-            <ChartContainer config={chartConfig} className="h-[250px] sm:h-[300px] w-full">
+          <CardContent className="p-3 sm:p-6">
+            <div className="w-full h-[250px] sm:h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={revenueData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                <LineChart data={revenueData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" fontSize={12} />
-                  <YAxis fontSize={12} />
+                  <XAxis dataKey="month" fontSize={isMobile ? 10 : 12} />
+                  <YAxis fontSize={isMobile ? 10 : 12} />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Line 
                     type="monotone" 
                     dataKey="revenue" 
-                    stroke="var(--color-revenue)" 
+                    stroke="#3b82f6" 
                     strokeWidth={2}
                     name="Revenue ($)"
                   />
                   <Line 
                     type="monotone" 
                     dataKey="sales" 
-                    stroke="var(--color-sales)" 
+                    stroke="#10b981" 
                     strokeWidth={2}
                     name="Sales"
                   />
                 </LineChart>
               </ResponsiveContainer>
-            </ChartContainer>
+            </div>
           </CardContent>
         </Card>
 
@@ -225,24 +225,24 @@ export function MetricsTab() {
             <CardTitle className="text-base sm:text-lg">MRR Evolution</CardTitle>
             <CardDescription className="text-sm">Monthly recurring revenue growth over time</CardDescription>
           </CardHeader>
-          <CardContent className="p-6">
-            <ChartContainer config={chartConfig} className="h-[250px] sm:h-[300px] w-full">
+          <CardContent className="p-3 sm:p-6">
+            <div className="w-full h-[250px] sm:h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={mrrData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                <LineChart data={mrrData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" fontSize={12} />
-                  <YAxis fontSize={12} />
+                  <XAxis dataKey="month" fontSize={isMobile ? 10 : 12} />
+                  <YAxis fontSize={isMobile ? 10 : 12} />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Line 
                     type="monotone" 
                     dataKey="mrr" 
-                    stroke="var(--color-mrr)" 
+                    stroke="#8b5cf6" 
                     strokeWidth={3}
                     name="MRR ($)"
                   />
                 </LineChart>
               </ResponsiveContainer>
-            </ChartContainer>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -253,8 +253,8 @@ export function MetricsTab() {
             <CardTitle className="text-base sm:text-lg">Traffic Sources</CardTitle>
             <CardDescription className="text-sm">Distribution of traffic sources this month</CardDescription>
           </CardHeader>
-          <CardContent className="p-6 flex justify-center items-center">
-            <ChartContainer config={chartConfig} className="h-[250px] sm:h-[300px] w-full">
+          <CardContent className="p-3 sm:p-6">
+            <div className="w-full h-[250px] sm:h-[300px] flex items-center justify-center">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -263,7 +263,7 @@ export function MetricsTab() {
                     cy="50%"
                     labelLine={false}
                     label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                    outerRadius={isMobile ? 70 : 90}
+                    outerRadius={isMobile ? 60 : 80}
                     fill="#8884d8"
                     dataKey="value"
                   >
@@ -274,7 +274,7 @@ export function MetricsTab() {
                   <ChartTooltip content={<ChartTooltipContent />} />
                 </PieChart>
               </ResponsiveContainer>
-            </ChartContainer>
+            </div>
           </CardContent>
         </Card>
 
@@ -283,22 +283,22 @@ export function MetricsTab() {
             <CardTitle className="text-base sm:text-lg">Product Sales Distribution</CardTitle>
             <CardDescription className="text-sm">Sales performance by product</CardDescription>
           </CardHeader>
-          <CardContent className="p-6">
-            <ChartContainer config={chartConfig} className="h-[250px] sm:h-[300px] w-full">
+          <CardContent className="p-3 sm:p-6">
+            <div className="w-full h-[250px] sm:h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart 
                   data={productSalesData} 
                   layout="horizontal" 
-                  margin={{ top: 5, right: 30, left: 80, bottom: 5 }}
+                  margin={{ top: 5, right: 10, left: isMobile ? 60 : 80, bottom: 5 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" fontSize={12} />
-                  <YAxis dataKey="name" type="category" width={70} fontSize={10} />
+                  <XAxis type="number" fontSize={isMobile ? 10 : 12} />
+                  <YAxis dataKey="name" type="category" width={isMobile ? 50 : 70} fontSize={isMobile ? 8 : 10} />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Bar dataKey="sales" fill="#3b82f6" name="Sales" />
                 </BarChart>
               </ResponsiveContainer>
-            </ChartContainer>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -309,8 +309,8 @@ export function MetricsTab() {
             <CardTitle className="text-base sm:text-lg">Product Revenue Distribution</CardTitle>
             <CardDescription className="text-sm">Revenue breakdown by product</CardDescription>
           </CardHeader>
-          <CardContent className="p-6 flex justify-center items-center">
-            <ChartContainer config={chartConfig} className="h-[250px] sm:h-[300px] w-full">
+          <CardContent className="p-3 sm:p-6">
+            <div className="w-full h-[250px] sm:h-[300px] flex items-center justify-center">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -319,7 +319,7 @@ export function MetricsTab() {
                     cy="50%"
                     labelLine={false}
                     label={({ name, value }) => `${name}: ${value}`}
-                    outerRadius={isMobile ? 70 : 90}
+                    outerRadius={isMobile ? 60 : 80}
                     fill="#8884d8"
                     dataKey="revenue"
                   >
@@ -330,7 +330,7 @@ export function MetricsTab() {
                   <ChartTooltip content={<ChartTooltipContent />} />
                 </PieChart>
               </ResponsiveContainer>
-            </ChartContainer>
+            </div>
           </CardContent>
         </Card>
 
