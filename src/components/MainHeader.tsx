@@ -217,12 +217,12 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
             Logo
           </Link>
 
-          <div className={`flex-1 ${isHomePage ? 'max-w-2xl' : 'max-w-xl'} mx-auto`}>
-            <form onSubmit={(e) => handleSearch(e, false)} className={`flex items-center gap-1 px-3 py-1.5 rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background ${isHomePage ? 'py-1.5' : ''}`}>
+          <div className={`flex-1 ${isHomePage ? 'max-w-lg' : 'max-w-md'} mx-auto`}>
+            <form onSubmit={(e) => handleSearch(e, false)} className={`flex items-center gap-1 px-3 py-1.5 rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background`}>
               <div className="flex-1 relative">
                 <Input
-                  className={`border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent ${isHomePage ? 'h-8 text-sm' : 'h-7 text-sm'}`}
-                  placeholder={isHomePage ? "Search for products, experts, communities, jobs..." : "Search..."}
+                  className={`border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent h-8 text-sm`}
+                  placeholder={isHomePage ? "Search for products, experts, communities..." : "Search..."}
                   type="search"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -262,8 +262,8 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                 )}
               </div>
               <div className="flex items-center gap-1">
-                <Button type="submit" size="icon" variant="default" className={`rounded-full bg-primary hover:bg-primary/90 ${isHomePage ? 'h-8 w-8' : 'h-7 w-7'}`}>
-                  <Search className={isHomePage ? "h-4 w-4" : "h-3.5 w-3.5"} />
+                <Button type="submit" size="icon" variant="default" className="rounded-full bg-primary hover:bg-primary/90 h-8 w-8">
+                  <Search className="h-4 w-4" />
                 </Button>
                 {!isHomePage && (
                   <span className="text-xs text-muted-foreground hidden lg:inline-block ml-1">
@@ -278,10 +278,11 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
           <div className="flex items-center gap-3 w-[140px] justify-end">
             <CartDrawerTrigger />
             
+            {/* Hide "Sell on Plaze" button on tablet (md), show only on large screens (lg+) */}
             <Button
               variant="ghost"
               size="sm"
-              className="font-medium text-primary hover:text-primary/90 hover:bg-primary/10 h-8"
+              className="font-medium text-primary hover:text-primary/90 hover:bg-primary/10 h-8 hidden lg:flex"
             >
               <Link to="/sell">
                 Sell on Plaze
