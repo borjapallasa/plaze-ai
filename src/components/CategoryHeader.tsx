@@ -60,25 +60,27 @@ export const CategoryHeader = ({
 
           {/* View Mode Toggle */}
           {onViewModeChange && (
-            <ToggleGroup 
-              type="single" 
-              value={viewMode} 
-              onValueChange={(value) => value && onViewModeChange(value as "products" | "communities")}
-              className="border rounded-lg p-1 bg-gray-50"
-            >
-              <ToggleGroupItem 
-                value="products" 
-                className="px-4 py-2 text-sm font-medium rounded-md data-[state=on]:bg-white data-[state=on]:shadow-sm"
+            <div className="bg-gray-100 rounded-lg p-1 border border-gray-200">
+              <ToggleGroup 
+                type="single" 
+                value={viewMode} 
+                onValueChange={(value) => value && onViewModeChange(value as "products" | "communities")}
+                className="gap-0"
               >
-                Products
-              </ToggleGroupItem>
-              <ToggleGroupItem 
-                value="communities" 
-                className="px-4 py-2 text-sm font-medium rounded-md data-[state=on]:bg-white data-[state=on]:shadow-sm"
-              >
-                Communities
-              </ToggleGroupItem>
-            </ToggleGroup>
+                <ToggleGroupItem 
+                  value="products" 
+                  className="px-6 py-2 text-sm font-medium rounded-md transition-all data-[state=on]:bg-white data-[state=on]:text-black data-[state=on]:shadow-sm data-[state=off]:text-gray-600 data-[state=off]:hover:text-gray-900"
+                >
+                  Products
+                </ToggleGroupItem>
+                <ToggleGroupItem 
+                  value="communities" 
+                  className="px-6 py-2 text-sm font-medium rounded-md transition-all data-[state=on]:bg-white data-[state=on]:text-black data-[state=on]:shadow-sm data-[state=off]:text-gray-600 data-[state=off]:hover:text-gray-900"
+                >
+                  Communities
+                </ToggleGroupItem>
+              </ToggleGroup>
+            </div>
           )}
         </div>
       </div>
