@@ -14,12 +14,37 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { CartDrawerTrigger } from "@/components/cart/CartDrawerTrigger";
+import { useQuery } from "@tanstack/react-query";
 
 export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
+
+  // Query to check if user is an expert
+  const { data: userData } = useQuery({
+    queryKey: ['user-data', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      
+      const { data, error } = await supabase
+        .from('users')
+        .select('is_expert')
+        .eq('user_uuid', user.id)
+        .single();
+
+      if (error) {
+        console.error('Error fetching user data:', error);
+        return null;
+      }
+
+      return data;
+    },
+    enabled: !!user?.id
+  });
+
+  const isExpert = userData?.is_expert || false;
 
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileSearchQuery, setMobileSearchQuery] = useState("");
@@ -215,12 +240,14 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                     Affiliates
                   </DropdownMenuItem>
                 </Link>
-                <Link to="/sell">
-                  <DropdownMenuItem>
-                    <Store className="mr-2 h-4 w-4" />
-                    Sell on Plaze
-                  </DropdownMenuItem>
-                </Link>
+                {!isExpert && (
+                  <Link to="/sell">
+                    <DropdownMenuItem>
+                      <Store className="mr-2 h-4 w-4" />
+                      Sell on Plaze
+                    </DropdownMenuItem>
+                  </Link>
+                )}
                 <DropdownMenuItem>
                   <HelpCircle className="mr-2 h-4 w-4" />
                   Help Center
@@ -310,7 +337,7 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
           <div className="flex items-center gap-3 w-[140px] justify-end">
             <CartDrawerTrigger />
             
-            {!user && (
+            {!user && !isExpert && (
               <Button
                 variant="ghost"
                 size="sm"
@@ -369,12 +396,14 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                     Affiliates
                   </DropdownMenuItem>
                 </Link>
-                <Link to="/sell">
-                  <DropdownMenuItem>
-                    <Store className="mr-2 h-4 w-4" />
-                    Sell on Plaze
-                  </DropdownMenuItem>
-                </Link>
+                {!isExpert && (
+                  <Link to="/sell">
+                    <DropdownMenuItem>
+                      <Store className="mr-2 h-4 w-4" />
+                      Sell on Plaze
+                    </DropdownMenuItem>
+                  </Link>
+                )}
                 <DropdownMenuItem>
                   <HelpCircle className="mr-2 h-4 w-4" />
                   Help Center
