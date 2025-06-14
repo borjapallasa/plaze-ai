@@ -6,9 +6,10 @@ import { useExpertCommunities } from "@/hooks/expert/useExpertCommunities";
 import { SellerHeader } from "./components/SellerHeader";
 import { SellerLoadingState } from "./components/SellerLoadingState";
 import { SellerErrorState } from "./components/SellerErrorState";
-import { SellerContent } from "./components/SellerContent";
+import { SellerTabs } from "./components/SellerTabs";
 import { useSellerData } from "@/hooks/seller/useSellerData";
 import { useSellerProducts } from "@/hooks/seller/useSellerProducts";
+import { useSellerServices } from "@/hooks/seller/useSellerServices";
 import type { Expert } from "@/types/expert";
 import { toast } from "sonner";
 
@@ -39,6 +40,12 @@ export default function SellerPage() {
     data: products = [], 
     isLoading: productsLoading 
   } = useSellerProducts(currentSeller?.expert_uuid);
+
+  // Fetch services data
+  const { 
+    services = [], 
+    isLoading: servicesLoading 
+  } = useSellerServices(currentSeller?.expert_uuid);
 
   // Fetch communities data
   const { 
@@ -75,14 +82,15 @@ export default function SellerPage() {
         <SellerHeader 
           seller={currentSeller} 
           productsCount={products?.length || 0}
-          communitiesCount={communities?.length || 0}
           onSellerUpdate={handleSellerUpdate}
         />
 
-        <SellerContent
+        <SellerTabs
           products={products}
+          services={services}
           communities={communities}
           productsLoading={productsLoading}
+          servicesLoading={servicesLoading}
           communitiesLoading={communitiesLoading}
         />
       </main>

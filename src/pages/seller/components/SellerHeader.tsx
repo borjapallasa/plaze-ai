@@ -2,7 +2,7 @@
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge as UIBadge } from "@/components/ui/badge";
-import { Star, ShoppingBag, Users, Calendar } from "lucide-react";
+import { Badge, Star, ShoppingBag, Users } from "lucide-react";
 import type { Expert } from "@/types/expert";
 import { useAuth } from "@/lib/auth";
 import { EditExpertDialog } from "./EditExpertDialog";
@@ -10,13 +10,19 @@ import { EditExpertDialog } from "./EditExpertDialog";
 interface SellerHeaderProps {
   seller: Expert;
   productsCount: number;
-  communitiesCount: number;
   onSellerUpdate?: (updatedSeller: Expert) => void;
 }
 
-export function SellerHeader({ seller, productsCount, communitiesCount, onSellerUpdate }: SellerHeaderProps) {
+export function SellerHeader({ seller, productsCount, onSellerUpdate }: SellerHeaderProps) {
   const { user } = useAuth();
   const isCurrentUserExpert = user?.id === seller.user_uuid;
+  
+  const stats = [
+    { icon: Star, label: "Rating", value: "4.9", color: "text-yellow-500" },
+    { icon: ShoppingBag, label: "Products", value: productsCount.toString(), color: "text-blue-500" },
+    { icon: Users, label: "Clients", value: "250+", color: "text-green-500" },
+    { icon: Badge, label: "Member Since", value: new Date(seller.created_at || '').getFullYear().toString(), color: "text-purple-500" },
+  ];
 
   const handleExpertUpdate = (updatedExpert: Expert) => {
     if (onSellerUpdate) {
@@ -26,44 +32,35 @@ export function SellerHeader({ seller, productsCount, communitiesCount, onSeller
 
   const avatarUrl = seller.thumbnail || 
     (seller.user_uuid ? `https://api.dicebear.com/7.x/avataaars/svg?seed=${seller.user_uuid}` : 
-    "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05");
-
-  const memberSince = new Date(seller.created_at || '').getFullYear();
+    "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e");
 
   return (
-    <div className="relative mb-8 overflow-hidden rounded-2xl">
-      {/* Cover Image */}
-      <div className="absolute inset-0">
-        <img 
-          src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1200&h=300"
-          alt="Cover"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/70" />
-      </div>
+    <div className="relative mb-8 overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-muted/50 to-background rounded-xl" />
       
-      <div className="relative px-6 py-12 sm:px-10 sm:py-16">
-        <div className="flex flex-col sm:flex-row items-start gap-6 max-w-6xl mx-auto">
+      <div className="relative px-6 py-10 sm:px-10 sm:py-12">
+        <div className="flex flex-col sm:flex-row items-start gap-10 max-w-6xl mx-auto">
           <div className="relative flex-shrink-0">
-            <Avatar className="h-24 w-24 sm:h-32 sm:w-32 rounded-full ring-4 ring-white/20 shadow-2xl border-2 border-white/30">
+            <Avatar className="h-32 w-32 sm:h-40 sm:w-40 rounded-full ring-4 ring-background shadow-xl border-2 border-primary/10">
               <AvatarImage 
                 src={avatarUrl}
                 className="object-cover"
               />
-              <AvatarFallback className="text-2xl bg-white/90 text-gray-800">{seller.name?.[0] || 'S'}</AvatarFallback>
+              <AvatarFallback className="text-3xl">{seller.name?.[0] || 'S'}</AvatarFallback>
             </Avatar>
-            <div className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground text-xs font-semibold px-2 py-1 rounded-full shadow-lg">
-              Pro
+            <div className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full shadow-lg">
+              Pro Seller
             </div>
           </div>
 
-          <div className="flex-1 space-y-4 text-white">
-            <div className="space-y-2">
+          <div className="flex-1 space-y-8">
+            <div className="space-y-3">
               <div className="flex flex-wrap items-center gap-3">
-                <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
+                <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                   {seller?.name || "Expert"}
                 </h1>
-                <UIBadge variant="secondary" className="font-semibold px-3 py-1 bg-white/10 text-white border-white/20">
+                <UIBadge variant="secondary" className="font-semibold px-3 py-1">
+                  <Badge className="w-4 h-4 mr-1" />
                   Verified Expert
                 </UIBadge>
                 
@@ -71,36 +68,30 @@ export function SellerHeader({ seller, productsCount, communitiesCount, onSeller
                   <EditExpertDialog expert={seller} onUpdate={handleExpertUpdate} />
                 )}
               </div>
-              <p className="text-lg sm:text-xl text-white/90 font-medium">
+              <p className="text-xl text-muted-foreground font-medium">
                 {seller?.title || "Expert in UI/UX Design & Development"}
               </p>
             </div>
 
-            <p className="text-sm sm:text-base text-white/80 leading-relaxed max-w-2xl">
-              {seller?.description || "Passionate designer and developer with over 8 years of experience creating beautiful, functional digital experiences."}
+            <p className="text-base text-muted-foreground leading-relaxed max-w-3xl">
+              {seller?.description || "Passionate designer and developer with over 8 years of experience creating beautiful, functional digital experiences. Specializing in user interface design, web applications, and design systems that scale."}
             </p>
 
-            {/* Inline Stats */}
-            <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm sm:text-base">
-              <div className="flex items-center gap-2">
-                <Star className="h-5 w-5 text-yellow-400 fill-yellow-400" />
-                <span className="text-lg font-bold text-yellow-400">4.9</span>
-              </div>
-              <div className="w-px h-6 bg-white/20" />
-              <div className="flex items-center gap-2">
-                <ShoppingBag className="h-4 w-4 text-primary" />
-                <span className="font-semibold">{productsCount} Products</span>
-              </div>
-              <div className="w-px h-6 bg-white/20" />
-              <div className="flex items-center gap-2">
-                <Users className="h-4 w-4 text-green-400" />
-                <span className="font-semibold">250+ Clients</span>
-              </div>
-              <div className="w-px h-6 bg-white/20" />
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-white/70" />
-                <span className="text-white/70">Since {memberSince}</span>
-              </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              {stats.map((stat) => (
+                <div 
+                  key={stat.label}
+                  className="bg-card rounded-xl px-4 py-4 shadow-lg border border-border/20 hover:border-border/40 transition-colors"
+                >
+                  <div className="flex items-center gap-2 text-muted-foreground mb-2">
+                    <stat.icon className={`h-5 w-5 ${stat.color}`} />
+                    <span className="text-sm font-medium">{stat.label}</span>
+                  </div>
+                  <p className="text-2xl font-bold tracking-tight">
+                    {stat.value}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
