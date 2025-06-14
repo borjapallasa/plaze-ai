@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ServiceType, CategoryType } from "@/constants/service-categories";
 import { SellLayout } from "@/components/sell/SellLayout";
 import { ChooseTypeStep } from "@/components/sell/ChooseTypeStep";
 import { BasicInfoStep } from "@/components/sell/BasicInfoStep";
@@ -9,7 +8,6 @@ import { ConfirmationStep } from "@/components/sell/ConfirmationStep";
 import { NavigationButtons } from "@/components/sell/NavigationButtons";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
-import { supabase } from "@/integrations/supabase/client";
 
 const SellPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -19,10 +17,6 @@ const SellPage = () => {
     name: "",
     description: "",
     contactEmail: "",
-    servicePrice: "",
-    serviceType: "one time" as ServiceType,
-    category: "" as CategoryType | "",
-    selectedSubcategories: [] as string[],
     intro: "",
     type: "free",
     price: "",
@@ -49,20 +43,7 @@ const SellPage = () => {
   const handleNext = () => {
     if (currentStep === 3) {
       // The authentication is now handled in NavigationButtons
-      if (selectedOption === "services") {
-        navigate("/seller/services/new", { 
-          state: { 
-            name: formData.name,
-            description: formData.description,
-            price: formData.servicePrice,
-            type: formData.serviceType,
-            category: formData.category ? { value: formData.category } : null,
-            subcategory: formData.selectedSubcategories.length > 0 
-              ? formData.selectedSubcategories.map(sub => ({ value: sub })) 
-              : null
-          } 
-        });
-      } else if (selectedOption === "products") {
+      if (selectedOption === "products") {
         navigate("/seller/products/new", {
           state: {
             name: formData.name,
@@ -107,34 +88,6 @@ const SellPage = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleCategoryChange = (value: CategoryType) => {
-    setFormData(prev => ({ 
-      ...prev, 
-      category: value,
-      selectedSubcategories: []
-    }));
-  };
-
-  const handleSubcategoriesChange = (value: string) => {
-    if (!formData.selectedSubcategories.includes(value)) {
-      setFormData(prev => ({
-        ...prev,
-        selectedSubcategories: [...prev.selectedSubcategories, value]
-      }));
-    }
-  };
-
-  const handleRemoveSubcategory = (value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      selectedSubcategories: prev.selectedSubcategories.filter(item => item !== value)
-    }));
-  };
-
-  const handleServiceTypeChange = (value: ServiceType) => {
-    setFormData(prev => ({ ...prev, serviceType: value }));
-  };
-
   const handleCommunityTypeChange = (value: string) => {
     setFormData(prev => ({ ...prev, type: value }));
   };
@@ -161,10 +114,6 @@ const SellPage = () => {
             selectedOption={selectedOption}
             formData={formData}
             handleInputChange={handleInputChange}
-            handleCategoryChange={handleCategoryChange}
-            handleSubcategoriesChange={handleSubcategoriesChange}
-            handleRemoveSubcategory={handleRemoveSubcategory}
-            handleServiceTypeChange={handleServiceTypeChange}
             handleCommunityTypeChange={handleCommunityTypeChange}
             handleFileSelect={handleFileSelect}
             setFormData={setFormData}
