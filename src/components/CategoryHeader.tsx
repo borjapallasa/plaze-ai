@@ -71,77 +71,77 @@ export const CategoryHeader = ({
   const showScrollArrows = typeof window !== 'undefined' && window.innerWidth < 1024;
 
   return (
-    <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 w-full overflow-hidden">
-      <div className="container mx-auto px-4 py-4 max-w-full">
-        <div className="flex items-center justify-between gap-4 w-full">
-          {/* Category Filters with horizontal scroll */}
-          <div className="flex-1 relative overflow-hidden min-w-0">
-            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-background via-background/80 to-transparent z-10 pointer-events-none lg:hidden"
-              style={{ opacity: showScrollArrows && showLeftArrow ? 1 : 0, transition: 'opacity 0.2s' }}
-            />
-            {showScrollArrows && showLeftArrow && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute left-1 top-1/2 -translate-y-1/2 z-20 h-8 w-8 rounded-full bg-background/90 backdrop-blur-sm shadow-sm lg:hidden"
-                onClick={() => scroll('left')}
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-            )}
-            
-            <div 
-              ref={scrollContainerRef}
-              className="flex items-center gap-2 overflow-x-auto scrollbar-hide lg:flex-wrap lg:overflow-x-visible w-full"
-              style={{
-                scrollbarWidth: 'none',
-                msOverflowStyle: 'none',
-                WebkitOverflowScrolling: 'touch'
-              }}
+    <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container mx-auto px-4 py-4">
+        {/* Category Filters with horizontal scroll */}
+        <div className="relative overflow-hidden">
+          <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-background via-background/80 to-transparent z-10 pointer-events-none lg:hidden"
+            style={{ opacity: showScrollArrows && showLeftArrow ? 1 : 0, transition: 'opacity 0.2s' }}
+          />
+          {showScrollArrows && showLeftArrow && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute left-1 top-1/2 -translate-y-1/2 z-20 h-8 w-8 rounded-full bg-background/90 backdrop-blur-sm shadow-sm lg:hidden"
+              onClick={() => scroll('left')}
             >
-              {categoryOptions.map((category) => {
-                const Icon = category.icon;
-                const isSelected = selectedCategory === category.id;
-                
-                return (
-                  <Button
-                    key={category.id}
-                    variant={isSelected ? "default" : "outline"}
-                    size="sm"
-                    className={`
-                      h-9 px-4 rounded-full font-medium transition-all whitespace-nowrap flex-shrink-0
-                      ${isSelected 
-                        ? "bg-black text-white hover:bg-black/90" 
-                        : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
-                      }
-                    `}
-                    onClick={() => onCategoryChange(isSelected ? null : category.id)}
-                  >
-                    <Icon className="h-4 w-4 mr-2" />
-                    {category.label}
-                  </Button>
-                );
-              })}
-            </div>
-
-            {showScrollArrows && showRightArrow && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute right-1 top-1/2 -translate-y-1/2 z-20 h-8 w-8 rounded-full bg-background/90 backdrop-blur-sm shadow-sm lg:hidden"
-                onClick={() => scroll('right')}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            )}
-            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background via-background/80 to-transparent z-10 pointer-events-none lg:hidden"
-              style={{ opacity: showScrollArrows && showRightArrow ? 1 : 0, transition: 'opacity 0.2s' }}
-            />
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+          )}
+          
+          <div 
+            ref={scrollContainerRef}
+            className="flex items-center gap-2 overflow-x-auto scrollbar-hide lg:flex-wrap lg:overflow-x-visible"
+            style={{
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+              WebkitOverflowScrolling: 'touch'
+            }}
+          >
+            {categoryOptions.map((category) => {
+              const Icon = category.icon;
+              const isSelected = selectedCategory === category.id;
+              
+              return (
+                <Button
+                  key={category.id}
+                  variant={isSelected ? "default" : "outline"}
+                  size="sm"
+                  className={`
+                    h-9 px-4 rounded-full font-medium transition-all whitespace-nowrap flex-shrink-0
+                    ${isSelected 
+                      ? "bg-black text-white hover:bg-black/90" 
+                      : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
+                    }
+                  `}
+                  onClick={() => onCategoryChange(isSelected ? null : category.id)}
+                >
+                  <Icon className="h-4 w-4 mr-2" />
+                  {category.label}
+                </Button>
+              );
+            })}
           </div>
 
-          {/* View Mode Toggle */}
-          {onViewModeChange && (
-            <div className="bg-gray-100 rounded-lg p-1 border border-gray-200 flex-shrink-0">
+          {showScrollArrows && showRightArrow && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute right-1 top-1/2 -translate-y-1/2 z-20 h-8 w-8 rounded-full bg-background/90 backdrop-blur-sm shadow-sm lg:hidden"
+              onClick={() => scroll('right')}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          )}
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background via-background/80 to-transparent z-10 pointer-events-none lg:hidden"
+            style={{ opacity: showScrollArrows && showRightArrow ? 1 : 0, transition: 'opacity 0.2s' }}
+          />
+        </div>
+
+        {/* View Mode Toggle - Now below the category filters */}
+        {onViewModeChange && (
+          <div className="flex justify-center mt-4">
+            <div className="bg-gray-100 rounded-lg p-1 border border-gray-200">
               <ToggleGroup 
                 type="single" 
                 value={viewMode} 
@@ -162,8 +162,8 @@ export const CategoryHeader = ({
                 </ToggleGroupItem>
               </ToggleGroup>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
