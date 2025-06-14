@@ -140,13 +140,13 @@ export const CategoryHeader = ({
             />
           </div>
 
-          {/* View Mode Toggle - Full width on mobile/tablet, auto width on desktop */}
+          {/* View Mode Toggle - Full width on mobile, compact on tablet, auto width on desktop */}
           {onViewModeChange && (
-            <div className="mt-4 lg:mt-0 lg:flex-shrink-0 w-full lg:w-auto">
-              <div className="relative flex bg-gray-100 rounded-full p-1 w-full lg:w-auto lg:inline-flex">
+            <div className="mt-4 lg:mt-0 lg:flex-shrink-0 w-full sm:w-auto sm:mx-auto lg:w-auto lg:mx-0">
+              <div className="relative flex bg-gray-100 rounded-full p-1 w-full sm:w-[280px] lg:w-auto lg:inline-flex">
                 {/* Sliding background indicator */}
                 <div 
-                  className={`absolute top-1 bottom-1 bg-white rounded-full shadow-sm transition-transform duration-200 ease-out lg:w-[84px] lg:first:w-[110px] ${
+                  className={`absolute top-1 bottom-1 bg-white rounded-full shadow-sm transition-transform duration-200 ease-out ${
                     viewMode === "communities" 
                       ? "w-1/2 translate-x-full lg:w-[110px] lg:translate-x-[84px]" 
                       : "w-1/2 translate-x-0 lg:w-[84px] lg:translate-x-0"
