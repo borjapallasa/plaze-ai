@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -140,10 +139,10 @@ export const CategoryHeader = ({
             />
           </div>
 
-          {/* View Mode Toggle - Full width on mobile/tablet, auto width on desktop */}
+          {/* View Mode Toggle - Full width on mobile/tablet, fixed width on desktop */}
           {onViewModeChange && (
             <div className="mt-4 lg:mt-0 lg:flex-shrink-0 w-full lg:w-auto">
-              <div className="relative bg-gray-100 rounded-full p-1 w-full lg:w-auto lg:inline-flex overflow-hidden">
+              <div className="relative bg-gray-100 rounded-full p-1 w-full lg:w-[200px] overflow-hidden">
                 {/* Sliding background indicator - precise positioning */}
                 <div 
                   className={`absolute top-1 bottom-1 bg-white rounded-full shadow-sm transition-all duration-200 ease-out ${
