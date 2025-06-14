@@ -71,11 +71,11 @@ export const CategoryHeader = ({
   const showScrollArrows = typeof window !== 'undefined' && window.innerWidth < 1024;
 
   return (
-    <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between gap-4">
+    <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 w-full overflow-hidden">
+      <div className="container mx-auto px-4 py-4 max-w-full">
+        <div className="flex items-center justify-between gap-4 w-full">
           {/* Category Filters with horizontal scroll */}
-          <div className="flex-1 relative">
+          <div className="flex-1 relative overflow-hidden min-w-0">
             <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-background via-background/80 to-transparent z-10 pointer-events-none lg:hidden"
               style={{ opacity: showScrollArrows && showLeftArrow ? 1 : 0, transition: 'opacity 0.2s' }}
             />
@@ -92,7 +92,7 @@ export const CategoryHeader = ({
             
             <div 
               ref={scrollContainerRef}
-              className="flex items-center gap-2 overflow-x-auto scrollbar-hide lg:flex-wrap lg:overflow-x-visible"
+              className="flex items-center gap-2 overflow-x-auto scrollbar-hide lg:flex-wrap lg:overflow-x-visible w-full"
               style={{
                 scrollbarWidth: 'none',
                 msOverflowStyle: 'none',
