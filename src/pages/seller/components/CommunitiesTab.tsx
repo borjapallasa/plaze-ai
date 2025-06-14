@@ -15,7 +15,7 @@ interface Community {
   member_count: number;
   thumbnail: string;
   last_activity: string;
-  status: string;
+  status?: string; // Make status optional since it might not always be present
   product_count?: number;
   classroom_count?: number;
   post_count?: number;
@@ -43,6 +43,8 @@ export function CommunitiesTab({ communities, isLoading }: CommunitiesTabProps) 
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
 
+  console.log("CommunitiesTab rendered with:", { communities, isLoading });
+
   // Function to handle clicking on the card
   const handleCardClick = (communityId: string) => {
     navigate(`/community/${communityId}/edit`);
@@ -59,11 +61,28 @@ export function CommunitiesTab({ communities, isLoading }: CommunitiesTabProps) 
     navigate("/seller/communities/new");
   };
 
-  // Filter communities based on search query
-  const filteredCommunities = communities.filter(community => 
-    community.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (community.description && community.description.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  // Safely filter communities based on search query
+  const filteredCommunities = React.useMemo(() => {
+    if (!communities || !Array.isArray(communities)) {
+      console.log("Communities is not an array:", communities);
+      return [];
+    }
+
+    return communities.filter(community => {
+      if (!community || typeof community !== 'object') {
+        console.log("Invalid community object:", community);
+        return false;
+      }
+
+      const name = community.name || '';
+      const description = community.description || '';
+      const query = searchQuery.toLowerCase();
+      
+      return name.toLowerCase().includes(query) || description.toLowerCase().includes(query);
+    });
+  }, [communities, searchQuery]);
+
+  console.log("Filtered communities:", filteredCommunities);
 
   if (isLoading) {
     return (
@@ -144,89 +163,101 @@ export function CommunitiesTab({ communities, isLoading }: CommunitiesTabProps) 
           </CardContent>
         </Card>
       ) : (
-        filteredCommunities.map((community) => (
-          <Card 
-            key={community.community_uuid} 
-            className="w-full border border-border/40 hover:border-border/80 transition-colors cursor-pointer"
-            onClick={() => handleCardClick(community.community_uuid)}
-          >
-            <CardContent className="p-6">
-              <div className="space-y-4">
-                {/* Header with Title, Last Activity, and View Button */}
-                <div className="flex justify-between items-start">
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <h3 className="text-xl font-semibold">{community.name}</h3>
-                      <Badge variant={community.status === 'active' ? 'default' : 'secondary'}>
-                        {community.status === 'active' ? 'Active' : 'Draft'}
-                      </Badge>
-                      <div className="flex items-center gap-1.5 ml-2">
-                        <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-                        <span className="text-sm text-muted-foreground">
-                          Last activity: {community.last_activity ? new Date(community.last_activity).toLocaleDateString() : 'No activity'}
-                        </span>
+        filteredCommunities.map((community) => {
+          // Safely access community properties with fallbacks
+          const communityName = community.name || 'Untitled Community';
+          const communityDescription = community.description || "A community for sharing knowledge and connecting with others.";
+          const communityStatus = community.status || 'active'; // Default to active if status is missing
+          const memberCount = community.member_count || 0;
+          const classroomCount = community.classroom_count || 0;
+          const postCount = community.post_count || 0;
+          const productCount = community.product_count || 0;
+          const lastActivity = community.last_activity;
+          
+          return (
+            <Card 
+              key={community.community_uuid} 
+              className="w-full border border-border/40 hover:border-border/80 transition-colors cursor-pointer"
+              onClick={() => handleCardClick(community.community_uuid)}
+            >
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  {/* Header with Title, Last Activity, and View Button */}
+                  <div className="flex justify-between items-start">
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <h3 className="text-xl font-semibold">{communityName}</h3>
+                        <Badge variant={communityStatus === 'active' ? 'default' : 'secondary'}>
+                          {communityStatus === 'active' ? 'Active' : 'Draft'}
+                        </Badge>
+                        <div className="flex items-center gap-1.5 ml-2">
+                          <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+                          <span className="text-sm text-muted-foreground">
+                            Last activity: {lastActivity ? new Date(lastActivity).toLocaleDateString() : 'No activity'}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <div className="flex items-center gap-1.5">
+                          <Globe className="w-3.5 h-3.5 text-muted-foreground" />
+                          <span className="text-sm text-muted-foreground">Public Community</span>
+                        </div>
+                        <Badge variant="secondary" className="text-xs px-2 py-0.5">
+                          {community.type === 'paid' ? `$${community.price}/month` : 'Free Access'}
+                        </Badge>
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-3 flex-wrap">
-                      <div className="flex items-center gap-1.5">
-                        <Globe className="w-3.5 h-3.5 text-muted-foreground" />
-                        <span className="text-sm text-muted-foreground">Public Community</span>
-                      </div>
-                      <Badge variant="secondary" className="text-xs px-2 py-0.5">
-                        {community.type === 'paid' ? `$${community.price}/month` : 'Free Access'}
-                      </Badge>
-                    </div>
+                    <Button 
+                      size="sm" 
+                      onClick={(e) => handleViewCommunity(e, community.community_uuid)}
+                    >
+                      View Community
+                    </Button>
                   </div>
                   
-                  <Button 
-                    size="sm" 
-                    onClick={(e) => handleViewCommunity(e, community.community_uuid)}
-                  >
-                    View Community
-                  </Button>
+                  {/* Description */}
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    {communityDescription}
+                  </p>
+                  
+                  {/* Stats Cards */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
+                    <Card className="p-3 space-y-1">
+                      <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                        <Users className="w-4 h-4" />
+                        <span className="text-xs font-medium uppercase">Members</span>
+                      </div>
+                      <p className="text-2xl font-bold">{formatNumber(memberCount)}</p>
+                    </Card>
+                    <Card className="p-3 space-y-1">
+                      <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                        <GraduationCap className="w-4 h-4" />
+                        <span className="text-xs font-medium uppercase">Classrooms</span>
+                      </div>
+                      <p className="text-2xl font-bold">{formatNumber(classroomCount)}</p>
+                    </Card>
+                    <Card className="p-3 space-y-1">
+                      <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                        <MessageSquare className="w-4 h-4" />
+                        <span className="text-xs font-medium uppercase">Posts</span>
+                      </div>
+                      <p className="text-2xl font-bold">{formatNumber(postCount)}</p>
+                    </Card>
+                    <Card className="p-3 space-y-1">
+                      <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                        <Package2 className="w-4 h-4" />
+                        <span className="text-xs font-medium uppercase">Products</span>
+                      </div>
+                      <p className="text-2xl font-bold">{formatNumber(productCount)}</p>
+                    </Card>
+                  </div>
                 </div>
-                
-                {/* Description */}
-                <p className="text-sm leading-relaxed text-muted-foreground">
-                  {community.description || "A community for sharing knowledge and connecting with others."}
-                </p>
-                
-                {/* Stats Cards */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
-                  <Card className="p-3 space-y-1">
-                    <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                      <Users className="w-4 h-4" />
-                      <span className="text-xs font-medium uppercase">Members</span>
-                    </div>
-                    <p className="text-2xl font-bold">{formatNumber(community.member_count)}</p>
-                  </Card>
-                  <Card className="p-3 space-y-1">
-                    <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                      <GraduationCap className="w-4 h-4" />
-                      <span className="text-xs font-medium uppercase">Classrooms</span>
-                    </div>
-                    <p className="text-2xl font-bold">{formatNumber(community.classroom_count)}</p>
-                  </Card>
-                  <Card className="p-3 space-y-1">
-                    <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                      <MessageSquare className="w-4 h-4" />
-                      <span className="text-xs font-medium uppercase">Posts</span>
-                    </div>
-                    <p className="text-2xl font-bold">{formatNumber(community.post_count)}</p>
-                  </Card>
-                  <Card className="p-3 space-y-1">
-                    <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                      <Package2 className="w-4 h-4" />
-                      <span className="text-xs font-medium uppercase">Products</span>
-                    </div>
-                    <p className="text-2xl font-bold">{formatNumber(community.product_count)}</p>
-                  </Card>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))
+              </CardContent>
+            </Card>
+          );
+        })
       )}
     </div>
   );
