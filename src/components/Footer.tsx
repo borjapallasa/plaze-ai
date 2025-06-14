@@ -97,7 +97,7 @@ export function Footer() {
             {/* Logo */}
             <div className="flex flex-col items-center md:items-start">
               <div className="flex flex-col items-center space-y-2">
-                <img src="/og-image.png" alt="Plaze AI" className="h-12 w-auto" />
+                <img src="/lovable-uploads/84b87a79-21ab-4d4e-b6fe-3af1f7e0464d.png" alt="Plaze AI" className="h-12 w-auto" />
                 <span className="text-xl font-bold text-center">Plaze AI</span>
               </div>
             </div>
