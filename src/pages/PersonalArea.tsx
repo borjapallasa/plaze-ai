@@ -4,7 +4,6 @@ import { Card } from "@/components/ui/card";
 import { 
   ArrowDownCircle,
   Star,
-  Briefcase,
   ShoppingBag,
   Users,
   CircleDollarSign,
@@ -47,18 +46,6 @@ const menuItems = [
     title: "Explore Communities",
     description: "Explore and join all communities of NoCodeClick!",
     to: "/community"
-  },
-  {
-    icon: <Briefcase className="w-8 h-8" />,
-    title: "Job Board",
-    description: "See all job requests and post new jobs!",
-    to: "/jobs"
-  },
-  {
-    icon: <ShoppingBag className="w-8 h-8" />,
-    title: "Job Applications",
-    description: "All your applications to jobs.",
-    to: "/jobs"
   },
   {
     icon: <Users className="w-8 h-8" />,

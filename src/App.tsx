@@ -72,7 +72,7 @@ function App() {
           <Route path="/chats" element={<ChatsPage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/cart" element={<CartPage />} />
-          <Route path="/account" element={<PersonalAreaPage />} />
+          <Route path="/personal-area" element={<PersonalAreaPage />} />
           <Route path="/account/settings" element={<AccountSettingsPage />} />
           <Route path="/account/subscriptions" element={<ManageSubscriptionsPage />} />
           <Route path="/account/communities" element={<MyCommunitiesPage />} />
