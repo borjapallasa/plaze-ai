@@ -184,7 +184,7 @@ const Communities = () => {
       <div className="min-h-screen bg-background">
         <div className="pt-16">
           <MainHeader />
-          <div className="container mx-auto flex justify-center items-center pt-20">
+          <div className="container mx-auto flex justify-center items-center pt-16">
             <Loader2 className="h-10 w-10 animate-spin text-primary mr-2" />
             <span>Loading communities...</span>
           </div>
@@ -198,7 +198,7 @@ const Communities = () => {
       <div className="pt-16">
         <MainHeader />
         
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-4">
           {/* Categories */}
           <ScrollArea className="w-full whitespace-nowrap">
             <div className="flex space-x-3 pb-4">
@@ -223,7 +223,7 @@ const Communities = () => {
           </ScrollArea>
 
           {/* Communities Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
             {filteredCommunities.map((community) => (
               <Card 
                 key={community.id} 
