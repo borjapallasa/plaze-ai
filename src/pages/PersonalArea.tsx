@@ -12,6 +12,9 @@ import {
   DollarSign
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/lib/auth";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 interface MenuItemProps {
   icon: React.ReactNode;
@@ -34,64 +37,88 @@ const MenuItem = ({ icon, title, description, to }: MenuItemProps) => (
   </Link>
 );
 
-const menuItems = [
-  {
-    icon: <ArrowDownCircle className="w-8 h-8" />,
-    title: "Browse All Templates",
-    description: "Check all templates available in the platform!",
-    to: "/product"
-  },
-  {
-    icon: <Star className="w-8 h-8" />,
-    title: "Explore Communities",
-    description: "Explore and join all communities of NoCodeClick!",
-    to: "/community"
-  },
-  {
-    icon: <Users className="w-8 h-8" />,
-    title: "My Communities",
-    description: "See all the communities that you're part of.",
-    to: "/community"
-  },
-  {
-    icon: <CircleDollarSign className="w-8 h-8" />,
-    title: "Manage Subscriptions",
-    description: "Manage the subscriptions to communities.",
-    to: "/manage-subscriptions"
-  },
-  {
-    icon: <DollarSign className="w-8 h-8" />,
-    title: "Affiliate Program",
-    description: "Track the performance of your affiliates.",
-    to: "/affiliates"
-  },
-  {
-    icon: <ShoppingBag className="w-8 h-8" />,
-    title: "My Purchases",
-    description: "The area where you can access all your purchased templates.",
-    to: "/product"
-  },
-  {
-    icon: <MessageCircle className="w-8 h-8" />,
-    title: "Inbox",
-    description: "Access to all messages and conversations.",
-    to: "/inbox"
-  },
-  {
-    icon: <UserCog className="w-8 h-8" />,
-    title: "Account Settings",
-    description: "Change account details and password.",
-    to: "/settings"
-  },
-  {
-    icon: <DollarSign className="w-8 h-8" />,
-    title: "Seller Area",
-    description: "Track all your sales and insights of your NCC sales.",
-    to: "/seller"
-  }
-];
-
 export default function PersonalArea() {
+  const { user } = useAuth();
+
+  // Fetch expert UUID for the authenticated user
+  const { data: expertData } = useQuery({
+    queryKey: ['expert-by-email', user?.email],
+    queryFn: async () => {
+      if (!user?.email) return null;
+      
+      const { data, error } = await supabase
+        .from('experts')
+        .select('expert_uuid')
+        .eq('email', user.email)
+        .maybeSingle();
+      
+      if (error) {
+        console.error('Error fetching expert:', error);
+        return null;
+      }
+      
+      return data;
+    },
+    enabled: !!user?.email,
+  });
+
+  const menuItems = [
+    {
+      icon: <ArrowDownCircle className="w-8 h-8" />,
+      title: "Browse All Templates",
+      description: "Check all templates available in the platform!",
+      to: "/product"
+    },
+    {
+      icon: <Star className="w-8 h-8" />,
+      title: "Explore Communities",
+      description: "Explore and join all communities of NoCodeClick!",
+      to: "/community"
+    },
+    {
+      icon: <Users className="w-8 h-8" />,
+      title: "My Communities",
+      description: "See all the communities that you're part of.",
+      to: "/community"
+    },
+    {
+      icon: <CircleDollarSign className="w-8 h-8" />,
+      title: "Manage Subscriptions",
+      description: "Manage the subscriptions to communities.",
+      to: "/manage-subscriptions"
+    },
+    {
+      icon: <DollarSign className="w-8 h-8" />,
+      title: "Affiliate Program",
+      description: "Track the performance of your affiliates.",
+      to: "/affiliates"
+    },
+    {
+      icon: <ShoppingBag className="w-8 h-8" />,
+      title: "My Purchases",
+      description: "The area where you can access all your purchased templates.",
+      to: "/product"
+    },
+    {
+      icon: <MessageCircle className="w-8 h-8" />,
+      title: "Inbox",
+      description: "Access to all messages and conversations.",
+      to: "/inbox"
+    },
+    {
+      icon: <UserCog className="w-8 h-8" />,
+      title: "Account Settings",
+      description: "Change account details and password.",
+      to: "/settings"
+    },
+    {
+      icon: <DollarSign className="w-8 h-8" />,
+      title: "Seller Area",
+      description: "Track all your sales and insights of your NCC sales.",
+      to: expertData?.expert_uuid ? `/seller/${expertData.expert_uuid}` : "/sell"
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       <MainHeader />
