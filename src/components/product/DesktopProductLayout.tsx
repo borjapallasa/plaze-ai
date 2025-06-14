@@ -97,6 +97,7 @@ export function DesktopProductLayout({
           embedUrl={embedUrl}
           reviews={reviews}
           expert_uuid={product.expert_uuid}
+          productUuid={product.product_uuid}
         />
       </div>
     </>
