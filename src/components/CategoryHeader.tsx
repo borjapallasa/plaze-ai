@@ -138,25 +138,25 @@ export const CategoryHeader = ({
           />
         </div>
 
-        {/* View Mode Toggle - Now below the category filters */}
+        {/* View Mode Toggle - Full width on mobile, centered on desktop */}
         {onViewModeChange && (
-          <div className="flex justify-center mt-4">
-            <div className="bg-gray-100 rounded-lg p-1 border border-gray-200">
+          <div className="mt-4">
+            <div className="w-full bg-gray-100 rounded-lg p-1 border border-gray-200 lg:max-w-xs lg:mx-auto">
               <ToggleGroup 
                 type="single" 
                 value={viewMode} 
                 onValueChange={(value) => value && onViewModeChange(value as "products" | "communities")}
-                className="gap-0"
+                className="gap-0 w-full"
               >
                 <ToggleGroupItem 
                   value="products" 
-                  className="px-6 py-2 text-sm font-medium rounded-md transition-all data-[state=on]:bg-white data-[state=on]:text-black data-[state=on]:shadow-sm data-[state=off]:text-gray-600 data-[state=off]:hover:text-gray-900"
+                  className="flex-1 px-6 py-2 text-sm font-medium rounded-md transition-all data-[state=on]:bg-white data-[state=on]:text-black data-[state=on]:shadow-sm data-[state=off]:text-gray-600 data-[state=off]:hover:text-gray-900"
                 >
                   Products
                 </ToggleGroupItem>
                 <ToggleGroupItem 
                   value="communities" 
-                  className="px-6 py-2 text-sm font-medium rounded-md transition-all data-[state=on]:bg-white data-[state=on]:text-black data-[state=on]:shadow-sm data-[state=off]:text-gray-600 data-[state=off]:hover:text-gray-900"
+                  className="flex-1 px-6 py-2 text-sm font-medium rounded-md transition-all data-[state=on]:bg-white data-[state=on]:text-black data-[state=on]:shadow-sm data-[state=off]:text-gray-600 data-[state=off]:hover:text-gray-900"
                 >
                   Communities
                 </ToggleGroupItem>
