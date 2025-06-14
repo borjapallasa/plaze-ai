@@ -89,10 +89,6 @@ const Index = () => {
     [selectedCategory, products]
   );
 
-  const handleCommunityClick = (communityId: string) => {
-    navigate(`/community/${communityId}`);
-  };
-
   if (isLoading) {
     return (
       <div className="min-h-screen">
@@ -152,44 +148,45 @@ const Index = () => {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
               {communities?.map((community) => (
-                <Card 
+                <Link 
                   key={community.community_uuid} 
-                  className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
-                  onClick={() => handleCommunityClick(community.community_uuid)}
+                  to={`/community/${community.community_uuid}`}
                 >
-                  {/* Community Image */}
-                  <div className="aspect-video relative overflow-hidden">
-                    <img
-                      src={community.thumbnail || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f"}
-                      alt={community.name || 'Community'}
-                      className="object-cover w-full h-full"
-                    />
-                  </div>
-                  
-                  <CardContent className="p-4 space-y-3">
-                    {/* Community Name */}
-                    <h3 className="font-semibold text-lg line-clamp-2">{community.name}</h3>
-                    
-                    {/* Community Description */}
-                    <p className="text-sm text-muted-foreground line-clamp-2">{community.description}</p>
-                    
-                    {/* Community Stats */}
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-1 text-muted-foreground">
-                        <Users className="h-4 w-4" />
-                        <span>{community.member_count || 0} members</span>
-                      </div>
-                      
-                      <div className="font-medium">
-                        {community.price && community.price > 0 ? (
-                          <span className="text-primary">${community.price}/mo</span>
-                        ) : (
-                          <span className="text-green-600">Free</span>
-                        )}
-                      </div>
+                  <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+                    {/* Community Image */}
+                    <div className="aspect-video relative overflow-hidden">
+                      <img
+                        src={community.thumbnail || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f"}
+                        alt={community.name || 'Community'}
+                        className="object-cover w-full h-full"
+                      />
                     </div>
-                  </CardContent>
-                </Card>
+                    
+                    <CardContent className="p-4 space-y-3">
+                      {/* Community Name */}
+                      <h3 className="font-semibold text-lg line-clamp-2">{community.name}</h3>
+                      
+                      {/* Community Description */}
+                      <p className="text-sm text-muted-foreground line-clamp-2">{community.description}</p>
+                      
+                      {/* Community Stats */}
+                      <div className="flex items-center justify-between text-sm">
+                        <div className="flex items-center gap-1 text-muted-foreground">
+                          <Users className="h-4 w-4" />
+                          <span>{community.member_count || 0} members</span>
+                        </div>
+                        
+                        <div className="font-medium">
+                          {community.price && community.price > 0 ? (
+                            <span className="text-primary">${community.price}/mo</span>
+                          ) : (
+                            <span className="text-green-600">Free</span>
+                          )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
               ))}
             </div>
           )}
