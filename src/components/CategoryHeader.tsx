@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -143,13 +144,13 @@ export const CategoryHeader = ({
           {onViewModeChange && (
             <div className="mt-4 lg:mt-0 lg:flex-shrink-0 w-full lg:w-auto">
               <div className="relative bg-gray-100 rounded-full p-1 w-full lg:w-[200px] overflow-hidden">
-                {/* Sliding background indicator - precise positioning */}
+                {/* Sliding background indicator - different positioning for mobile vs desktop */}
                 <div 
-                  className={`absolute top-1 bottom-1 w-1/2 bg-white rounded-full shadow-sm transition-all duration-200 ease-out ${
-                    viewMode === "communities" 
-                      ? "left-1/2" 
-                      : "left-1"
-                  }`}
+                  className={`absolute top-1 bottom-1 bg-white rounded-full shadow-sm transition-all duration-200 ease-out
+                    ${viewMode === "communities" 
+                      ? "w-1/2 left-1/2 lg:w-[96px] lg:left-[100px]" 
+                      : "w-1/2 left-1 lg:w-[96px] lg:left-1"
+                    }`}
                 />
                 
                 {/* Toggle buttons container */}
