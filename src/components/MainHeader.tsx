@@ -1,3 +1,4 @@
+
 import React, { useState, FormEvent, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, Menu, User, ChevronDown, LogOut, Home, UserCircle, Users, Store, HelpCircle } from "lucide-react";
@@ -307,6 +308,7 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                 variant="ghost"
                 size="sm"
                 className="font-medium text-primary hover:text-primary/90 hover:bg-primary/10 h-8 hidden lg:flex"
+                asChild
               >
                 <Link to="/sell">
                   Sell on Plaze
@@ -352,10 +354,12 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                     Affiliates
                   </DropdownMenuItem>
                 </Link>
-                <DropdownMenuItem>
-                  <Store className="mr-2 h-4 w-4" />
-                  Sell on Plaze
-                </DropdownMenuItem>
+                <Link to="/sell">
+                  <DropdownMenuItem>
+                    <Store className="mr-2 h-4 w-4" />
+                    Sell on Plaze
+                  </DropdownMenuItem>
+                </Link>
                 <DropdownMenuItem>
                   <HelpCircle className="mr-2 h-4 w-4" />
                   Help Center
