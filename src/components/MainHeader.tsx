@@ -213,8 +213,12 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
 
         {/* Desktop Header */}
         <div className="hidden md:flex items-center justify-between h-full gap-4">
-          <Link to="/" className="text-lg font-semibold w-[140px]">
-            Logo
+          <Link to="/" className="w-[140px] flex items-center">
+            <img 
+              src="/lovable-uploads/84b87a79-21ab-4d4e-b6fe-3af1f7e0464d.png" 
+              alt="Plaze.ai" 
+              className="h-8 w-auto"
+            />
           </Link>
 
           <div className={`flex-1 ${isHomePage ? 'max-w-lg' : 'max-w-md'} mx-auto`}>
