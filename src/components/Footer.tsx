@@ -1,6 +1,7 @@
 import { Separator } from "@/components/ui/separator";
 import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+
 const FooterSection = ({
   title,
   links
@@ -20,11 +21,14 @@ const FooterSection = ({
         </li>)}
     </ul>
   </div>;
+
 export function Footer() {
   const location = useLocation();
+  
   if (location.pathname.includes('/community') || location.pathname.includes('/classroom')) {
     return null;
   }
+
   const shopLinks = [{
     label: "Products",
     href: "/products"
@@ -50,6 +54,7 @@ export function Footer() {
     label: "Blog",
     href: "/blog"
   }];
+
   const sellLinks = [{
     label: "Start Selling",
     href: "/sell"
@@ -72,6 +77,7 @@ export function Footer() {
     label: "Affiliates & Creators",
     href: "/affiliates"
   }];
+
   const aboutLinks = [{
     label: "About Us",
     href: "/about"
@@ -97,6 +103,7 @@ export function Footer() {
     label: "Legal imprint",
     href: "/legal"
   }];
+
   const helpLinks = [{
     label: "Help Center",
     href: "/help"
@@ -116,12 +123,18 @@ export function Footer() {
     label: "Privacy Policy",
     href: "/privacy"
   }];
+
   return <footer className="mt-auto bg-background border-t">
       <div className="container max-w-6xl mx-auto px-4 py-8">
         {/* Main Footer Content - Horizontal Layout */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 min-h-[200px]">
           {/* Left side - Logo centered vertically */}
-          
+          <div className="flex flex-col items-center lg:items-start justify-center lg:min-w-[200px] flex-shrink-0">
+            <div className="flex items-center space-x-2">
+              <img src="/lovable-uploads/80716e7b-7544-445b-b37e-00d4372310cd.png" alt="Plaze AI" className="h-12 w-12 rounded-lg" />
+              <span className="text-xl font-bold">Plaze AI</span>
+            </div>
+          </div>
 
           {/* Center - Links Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 flex-1 lg:max-w-4xl">
