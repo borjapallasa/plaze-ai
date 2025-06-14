@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -9,7 +8,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Users } from "lucide-react";
 import { MainHeader } from "@/components/MainHeader";
 import { Footer } from "@/components/Footer";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
 const Index = () => {
@@ -181,17 +179,6 @@ const Index = () => {
                         )}
                       </div>
                     </div>
-                    
-                    {/* Open Community Button */}
-                    <Button 
-                      asChild 
-                      className="w-full"
-                      size="sm"
-                    >
-                      <Link to={`/community/${community.community_uuid}`}>
-                        Open Community
-                      </Link>
-                    </Button>
                   </CardContent>
                 </Card>
               ))}
