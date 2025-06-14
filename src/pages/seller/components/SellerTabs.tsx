@@ -1,12 +1,14 @@
 
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { ShoppingBag, BriefcaseIcon, UsersRound, AppWindow } from "lucide-react";
+import { ShoppingBag, BriefcaseIcon, UsersRound, AppWindow, BarChart3, Star } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { ProductsTab } from "./ProductsTab";
 import { ServicesTab } from "./ServicesTab";
 import { CommunitiesTab } from "./CommunitiesTab";
 import { ApplicationsTab } from "./ApplicationsTab";
+import { MetricsTab } from "./MetricsTab";
+import { ReviewsTab } from "./ReviewsTab";
 import type { Service } from "@/components/expert/types";
 
 interface SellerTabsProps {
@@ -32,9 +34,9 @@ export function SellerTabs({
   const [activeTab, setActiveTab] = useState(() => {
     const hash = window.location.hash.replace('#', '');
     const availableTabs = isSellerPage 
-      ? ['products', 'communities'] 
-      : ['products', 'services', 'communities', 'applications'];
-    return availableTabs.includes(hash) ? hash : 'products';
+      ? ['metrics', 'products', 'communities', 'reviews'] 
+      : ['metrics', 'products', 'services', 'communities', 'applications', 'reviews'];
+    return availableTabs.includes(hash) ? hash : 'metrics';
   });
 
   // Load hash from URL on page load
@@ -42,8 +44,8 @@ export function SellerTabs({
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '');
       const availableTabs = isSellerPage 
-        ? ['products', 'communities'] 
-        : ['products', 'services', 'communities', 'applications'];
+        ? ['metrics', 'products', 'communities', 'reviews'] 
+        : ['metrics', 'products', 'services', 'communities', 'applications', 'reviews'];
       if (availableTabs.includes(hash)) {
         setActiveTab(hash);
       }
@@ -51,8 +53,8 @@ export function SellerTabs({
 
     // Set hash if it doesn't exist or if current hash is not available
     const availableTabs = isSellerPage 
-      ? ['products', 'communities'] 
-      : ['products', 'services', 'communities', 'applications'];
+      ? ['metrics', 'products', 'communities', 'reviews'] 
+      : ['metrics', 'products', 'services', 'communities', 'applications', 'reviews'];
     
     if (!window.location.hash || !availableTabs.includes(window.location.hash.replace('#', ''))) {
       window.location.hash = activeTab;
@@ -74,7 +76,11 @@ export function SellerTabs({
       onValueChange={handleTabChange}
       className="animate-fade-in"
     >
-      <TabsList className={`grid ${isSellerPage ? 'grid-cols-2' : 'grid-cols-4'} h-12 items-center bg-muted/50 mb-6`}>
+      <TabsList className={`grid ${isSellerPage ? 'grid-cols-4' : 'grid-cols-6'} h-12 items-center bg-muted/50 mb-6`}>
+        <TabsTrigger value="metrics" className="data-[state=active]:bg-background">
+          <BarChart3 className="h-4 w-4 mr-2" />
+          Metrics
+        </TabsTrigger>
         <TabsTrigger value="products" className="data-[state=active]:bg-background">
           <ShoppingBag className="h-4 w-4 mr-2" />
           Products
@@ -98,7 +104,15 @@ export function SellerTabs({
             Applications
           </TabsTrigger>
         )}
+        <TabsTrigger value="reviews" className="data-[state=active]:bg-background">
+          <Star className="h-4 w-4 mr-2" />
+          Reviews
+        </TabsTrigger>
       </TabsList>
+
+      <TabsContent value="metrics" className="mt-0">
+        <MetricsTab />
+      </TabsContent>
 
       <TabsContent value="products" className="mt-0">
         <ProductsTab products={products} isLoading={productsLoading} />
@@ -125,6 +139,10 @@ export function SellerTabs({
           <ApplicationsTab />
         </TabsContent>
       )}
+
+      <TabsContent value="reviews" className="mt-0">
+        <ReviewsTab />
+      </TabsContent>
     </Tabs>
   );
 }
