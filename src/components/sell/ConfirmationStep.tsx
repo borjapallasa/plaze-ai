@@ -1,22 +1,21 @@
 
 import React from "react";
-import { CATEGORIES } from "@/constants/service-categories";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Shield } from "lucide-react";
 
 interface ConfirmationStepProps {
   selectedOption: string | null;
   formData: {
     name: string;
     description: string;
-    servicePrice: string;
-    serviceType: string;
-    category: string;
     type: string;
     price: string;
     productPrice: string;
     filesLink: string;
     contactEmail: string;
+    captchaConfirmed: boolean;
   };
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
@@ -69,25 +68,6 @@ export function ConfirmationStep({
               </>
             )}
             
-            {selectedOption === "services" && (
-              <>
-                <div className="flex justify-between">
-                  <span className="text-gray-700">Price:</span>
-                  <span className="font-medium">${formData.servicePrice}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-700">Service Type:</span>
-                  <span className="font-medium">{formData.serviceType}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-700">Category:</span>
-                  <span className="font-medium">
-                    {CATEGORIES.find(c => c.value === formData.category)?.label}
-                  </span>
-                </div>
-              </>
-            )}
-            
             {selectedOption === "community" && (
               <>
                 <div className="flex justify-between">
@@ -125,6 +105,43 @@ export function ConfirmationStep({
         <p className="text-sm text-gray-500">
           We'll use this to set up your account and send you a magic link for future logins.
         </p>
+      </div>
+
+      <div className="border-t pt-4">
+        <div className="flex items-start space-x-3 p-4 bg-blue-50 rounded-lg">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="captchaConfirmed"
+              name="captchaConfirmed"
+              checked={formData.captchaConfirmed}
+              onCheckedChange={(checked) => {
+                const event = {
+                  target: {
+                    name: 'captchaConfirmed',
+                    type: 'checkbox',
+                    checked: checked === true
+                  }
+                } as React.ChangeEvent<HTMLInputElement>;
+                handleInputChange(event);
+              }}
+              className="mt-1"
+            />
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center space-x-2 mb-1">
+              <Shield className="h-4 w-4 text-blue-600" />
+              <Label 
+                htmlFor="captchaConfirmed" 
+                className="text-sm font-medium text-blue-900 cursor-pointer"
+              >
+                Human Verification
+              </Label>
+            </div>
+            <p className="text-sm text-blue-700">
+              Please confirm that you are not a robot by checking this box. This helps us prevent spam and automated submissions.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

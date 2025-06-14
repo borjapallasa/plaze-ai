@@ -1,10 +1,10 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { CreationLoadingState } from "./CreationLoadingState";
-import { ServiceType } from "@/constants/service-categories";
 
 interface NavigationButtonsProps {
   currentStep: number;
@@ -12,14 +12,12 @@ interface NavigationButtonsProps {
   formData: {
     name: string;
     description: string;
-    servicePrice: string;
-    serviceType: ServiceType;
-    category: string;
     type: string;
     price: string;
     productPrice: string;
     thumbnail: string;
     contactEmail: string;
+    captchaConfirmed: boolean;
   };
   onNext: () => void;
   onBack: () => void;
@@ -44,15 +42,12 @@ export function NavigationButtons({
       if (selectedOption === "products" && (!formData.name || !formData.description || !formData.productPrice)) {
         return true;
       }
-      if (selectedOption === "services" && (!formData.name || !formData.description || !formData.servicePrice || !formData.category)) {
-        return true;
-      }
       if (selectedOption === "community" && (!formData.name || !formData.description || (formData.type === "paid" && !formData.price))) {
         return true;
       }
     }
 
-    if (currentStep === 3 && !formData.contactEmail) {
+    if (currentStep === 3 && (!formData.contactEmail || !formData.captchaConfirmed)) {
       return true;
     }
     
@@ -63,6 +58,11 @@ export function NavigationButtons({
     if (currentStep === 3) {
       if (!formData.contactEmail) {
         toast.error("Please provide an email address");
+        return;
+      }
+
+      if (!formData.captchaConfirmed) {
+        toast.error("Please confirm that you are not a robot");
         return;
       }
 
@@ -190,26 +190,7 @@ export function NavigationButtons({
         }
 
         // Create the appropriate resource based on selection
-        if (selectedOption === "services") {
-          const serviceTypeValue = formData.serviceType === "one time" ? "one time" : "monthly";
-          
-          const { error: serviceError } = await supabase
-            .from('services')
-            .insert({
-              user_uuid: userId,
-              expert_uuid: expertId,
-              name: formData.name,
-              description: formData.description,
-              price: parseFloat(formData.servicePrice),
-              type: serviceTypeValue,
-              main_category: { value: formData.category },
-              status: 'draft'
-            });
-
-          if (serviceError) {
-            throw new Error(`Failed to create service: ${serviceError.message}`);
-          }
-        } else if (selectedOption === "products") {
+        if (selectedOption === "products") {
           const { error: productError } = await supabase
             .from('products')
             .insert({

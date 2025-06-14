@@ -23,7 +23,8 @@ const SellPage = () => {
     thumbnail: "",
     videoUrl: "",
     productPrice: "",
-    filesLink: ""
+    filesLink: "",
+    captchaConfirmed: false
   });
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -42,6 +43,12 @@ const SellPage = () => {
 
   const handleNext = () => {
     if (currentStep === 3) {
+      // Check captcha confirmation
+      if (!formData.captchaConfirmed) {
+        toast.error("Please confirm that you are not a robot");
+        return;
+      }
+
       // The authentication is now handled in NavigationButtons
       if (selectedOption === "products") {
         navigate("/seller/products/new", {
@@ -84,8 +91,14 @@ const SellPage = () => {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+    
+    if (type === 'checkbox') {
+      const checked = (e.target as HTMLInputElement).checked;
+      setFormData(prev => ({ ...prev, [name]: checked }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleCommunityTypeChange = (value: string) => {
