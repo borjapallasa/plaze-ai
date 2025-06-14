@@ -1,3 +1,4 @@
+
 import React, { useState, FormEvent, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, Menu, User, ChevronDown, LogOut } from "lucide-react";
@@ -287,16 +288,18 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
           <div className="flex items-center gap-3 w-[140px] justify-end">
             <CartDrawerTrigger />
             
-            {/* Hide "Sell on Plaze" button on tablet (md), show only on large screens (lg+) */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="font-medium text-primary hover:text-primary/90 hover:bg-primary/10 h-8 hidden lg:flex"
-            >
-              <Link to="/sell">
-                Sell on Plaze
-              </Link>
-            </Button>
+            {/* Hide "Sell on Plaze" button when user is authenticated */}
+            {!user && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="font-medium text-primary hover:text-primary/90 hover:bg-primary/10 h-8 hidden lg:flex"
+              >
+                <Link to="/sell">
+                  Sell on Plaze
+                </Link>
+              </Button>
+            )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
