@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -143,12 +144,12 @@ export const CategoryHeader = ({
           {onViewModeChange && (
             <div className="mt-4 lg:mt-0 lg:flex-shrink-0 w-full lg:w-auto">
               <div className="relative bg-gray-100 rounded-full p-1 w-full lg:w-auto lg:inline-flex">
-                {/* Sliding background indicator - properly sized and positioned */}
+                {/* Sliding background indicator - fixed positioning */}
                 <div 
-                  className={`absolute top-1 bottom-1 left-1 bg-white rounded-full shadow-sm transition-all duration-200 ease-out ${
+                  className={`absolute top-1 bottom-1 w-1/2 bg-white rounded-full shadow-sm transition-all duration-200 ease-out ${
                     viewMode === "communities" 
-                      ? "right-1" 
-                      : "right-1/2"
+                      ? "left-1/2" 
+                      : "left-1"
                   }`}
                 />
                 
@@ -156,7 +157,7 @@ export const CategoryHeader = ({
                 <div className="relative z-10 flex w-full">
                   <button
                     onClick={() => onViewModeChange("products")}
-                    className={`flex-1 py-2 px-3 text-sm font-medium rounded-full transition-colors duration-200 flex items-center justify-center ${
+                    className={`flex-1 py-2 px-3 text-sm font-medium transition-colors duration-200 flex items-center justify-center ${
                       viewMode === "products" 
                         ? "text-gray-900" 
                         : "text-gray-500 hover:text-gray-700"
@@ -166,7 +167,7 @@ export const CategoryHeader = ({
                   </button>
                   <button
                     onClick={() => onViewModeChange("communities")}
-                    className={`flex-1 py-2 px-3 text-sm font-medium rounded-full transition-colors duration-200 flex items-center justify-center ${
+                    className={`flex-1 py-2 px-3 text-sm font-medium transition-colors duration-200 flex items-center justify-center ${
                       viewMode === "communities" 
                         ? "text-gray-900" 
                         : "text-gray-500 hover:text-gray-700"
