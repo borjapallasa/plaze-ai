@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 import { MainHeader } from "@/components/MainHeader";
+import { Footer } from "@/components/Footer";
 
 const Index = () => {
   const isMobile = useIsMobile();
@@ -66,6 +67,7 @@ const Index = () => {
         <div className="pt-24 flex justify-center">
           <Loader2 className="h-8 w-8 animate-spin" />
         </div>
+        <Footer />
       </div>
     );
   }
@@ -79,6 +81,7 @@ const Index = () => {
             Error loading products. Please try again later.
           </div>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -125,6 +128,8 @@ const Index = () => {
           )}
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 };
