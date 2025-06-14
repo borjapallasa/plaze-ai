@@ -72,6 +72,14 @@ export function Footer() {
     href: "/terms"
   }];
 
+  const helpLinks = [{
+    label: "Help Center",
+    href: "/help"
+  }, {
+    label: "FAQ",
+    href: "/faq"
+  }];
+
   return <footer className="mt-auto bg-background border-t">
       <div className="container max-w-6xl mx-auto px-4 py-8">
         {/* Main Footer Content - Horizontal Layout */}
@@ -85,7 +93,7 @@ export function Footer() {
           </div>
 
           {/* Center - Links Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 flex-1 lg:max-w-4xl">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 flex-1 lg:max-w-4xl">
             <FooterSection title="Shop" links={shopLinks} />
             <FooterSection title="Sell" links={sellLinks} />
             <div className="space-y-6">
@@ -113,6 +121,7 @@ export function Footer() {
                 </div>
               </div>
             </div>
+            <FooterSection title="Help" links={helpLinks} />
           </div>
         </div>
 
