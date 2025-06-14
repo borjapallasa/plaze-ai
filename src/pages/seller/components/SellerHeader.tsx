@@ -4,7 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MapPin, Star, Calendar, Edit2, Users, DollarSign } from "lucide-react";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { MapPin, Star, Calendar, Edit2, Users, DollarSign, Package, Briefcase } from "lucide-react";
 import { EditExpertDialog } from "./EditExpertDialog";
 import type { Expert } from "@/types/expert";
 
@@ -39,23 +40,25 @@ export function SellerHeader({
         <div className="flex flex-col md:flex-row gap-6">
           {/* Avatar and basic info */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <Avatar className="h-24 w-24 ring-2 ring-muted">
-              <AvatarImage src={seller.thumbnail} alt={seller.name} />
-              <AvatarFallback className="text-lg">
-                {seller.name?.split(' ').map(n => n[0]).join('') || 'UN'}
-              </AvatarFallback>
-            </Avatar>
+            <div className="w-24">
+              <AspectRatio ratio={1} className="overflow-hidden rounded-full ring-2 ring-muted">
+                <Avatar className="h-full w-full">
+                  <AvatarImage 
+                    src={seller.thumbnail} 
+                    alt={seller.name}
+                    className="object-cover"
+                  />
+                  <AvatarFallback className="text-lg">
+                    {seller.name?.split(' ').map(n => n[0]).join('') || 'UN'}
+                  </AvatarFallback>
+                </Avatar>
+              </AspectRatio>
+            </div>
             
             <div className="space-y-2">
               <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-2xl font-bold">{seller.name}</h1>
                 <div className="flex gap-2">
-                  {communitiesCount > 0 && (
-                    <Badge variant="secondary" className="flex items-center gap-1">
-                      <Users className="h-3 w-3" />
-                      {communitiesCount} communities
-                    </Badge>
-                  )}
                   {totalEarnings > 0 && (
                     <Badge variant="secondary" className="flex items-center gap-1">
                       <DollarSign className="h-3 w-3" />
@@ -85,19 +88,28 @@ export function SellerHeader({
 
           {/* Stats and actions */}
           <div className="flex-1 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 min-w-0">
-            <div className="flex items-center gap-6 text-sm">
+            <div className="flex items-center gap-6 text-sm flex-wrap">
               <div className="flex items-center gap-1">
                 <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                 <span className="font-medium">{seller.client_satisfaction}%</span>
               </div>
               
-              <div className="text-muted-foreground">
-                {seller.completed_projects} projects completed
+              <div className="flex items-center gap-1 text-muted-foreground">
+                <Briefcase className="h-4 w-4" />
+                <span>{seller.completed_projects} projects</span>
               </div>
               
-              <div className="text-muted-foreground">
-                {productsCount} products
+              <div className="flex items-center gap-1 text-muted-foreground">
+                <Package className="h-4 w-4" />
+                <span>{productsCount} products</span>
               </div>
+
+              {communitiesCount > 0 && (
+                <div className="flex items-center gap-1 text-muted-foreground">
+                  <Users className="h-4 w-4" />
+                  <span>{communitiesCount} communities</span>
+                </div>
+              )}
             </div>
 
             <EditExpertDialog
