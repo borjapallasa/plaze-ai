@@ -154,7 +154,7 @@ export const CategoryHeader = ({
                 {/* Toggle buttons */}
                 <button
                   onClick={() => onViewModeChange("products")}
-                  className={`relative z-10 px-4 py-2 text-sm font-medium rounded-full transition-colors duration-200 ${
+                  className={`relative z-10 px-5 py-2 text-sm font-medium rounded-full transition-colors duration-200 text-center ${
                     viewMode === "products" 
                       ? "text-gray-900" 
                       : "text-gray-500 hover:text-gray-700"
@@ -164,7 +164,7 @@ export const CategoryHeader = ({
                 </button>
                 <button
                   onClick={() => onViewModeChange("communities")}
-                  className={`relative z-10 px-4 py-2 text-sm font-medium rounded-full transition-colors duration-200 ${
+                  className={`relative z-10 px-6 py-2 text-sm font-medium rounded-full transition-colors duration-200 text-center ${
                     viewMode === "communities" 
                       ? "text-gray-900" 
                       : "text-gray-500 hover:text-gray-700"
