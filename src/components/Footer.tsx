@@ -1,4 +1,3 @@
-
 import { Separator } from "@/components/ui/separator";
 import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
@@ -121,7 +120,7 @@ export function Footer() {
                   </a>
                   <a href="https://tiktok.com/@nocodeclick" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors p-2 hover:bg-accent rounded-md" aria-label="Follow us on TikTok">
                     <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M19.321 5.562a5.122 5.122 0 0 1-.443-.258 6.228 6.228 0 0 1-1.137-.966c-.849-.849-1.348-1.958-1.348-3.338H13.93v11.286c0 1.348-.527 2.637-1.455 3.565a5.122 5.122 0 0 1-3.565 1.455c-2.697 0-4.89-2.193-4.89-4.89 0-2.697 2.193-4.89 4.89-4.89.443 0 .876.061 1.288.183v-2.463c-.402-.071-.814-.107-1.228-.107C3.578 5.14 0 8.719 0 13.11s3.578 7.971 7.971 7.971 7.971-3.578 7.971-7.971V9.664a8.617 8.617 0 0 0 5.379 1.848V8.719c-1.348 0-2.577-.527-3.505-1.455-.849-.849-1.348-1.958-1.348-3.338-.001-.663-.105-1.308-.147-1.364z"/>
+                      <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/>
                     </svg>
                   </a>
                 </div>
