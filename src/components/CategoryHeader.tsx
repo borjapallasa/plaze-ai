@@ -71,7 +71,7 @@ export const CategoryHeader = ({
   const showScrollArrows = typeof window !== 'undefined' && window.innerWidth < 1024;
 
   return (
-    <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 py-4">
         {/* Desktop: Category Filters and Toggle on same row, Mobile: Stack vertically */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between lg:gap-4">
