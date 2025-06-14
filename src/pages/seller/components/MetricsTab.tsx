@@ -1,9 +1,10 @@
+
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, Users, ShoppingBag, DollarSign, Eye, Repeat } from "lucide-react";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, BarChart, Bar, PieChart, Pie, Cell } from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 export function MetricsTab() {
@@ -95,11 +96,6 @@ export function MetricsTab() {
     return change >= 0 ? "text-green-600" : "text-red-600";
   };
 
-  // Responsive chart dimensions
-  const chartHeight = isMobile ? 200 : 300;
-  const pieOuterRadius = isMobile ? 50 : 80;
-  const barMarginLeft = isMobile ? 40 : 80;
-
   return (
     <div className="space-y-6">
       {/* KPI Cards - Responsive Grid */}
@@ -190,101 +186,80 @@ export function MetricsTab() {
         </Card>
       </div>
 
-      {/* Charts Section - Mobile First Layout */}
-      {isMobile ? (
-        // Mobile Layout - Single Column
-        <div className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Revenue & Sales Trend</CardTitle>
-              <CardDescription className="text-sm">Monthly revenue and sales over the last 6 months</CardDescription>
-            </CardHeader>
-            <CardContent className="p-4">
-              <div className="w-full" style={{ height: chartHeight }}>
-                <ChartContainer config={chartConfig} className="w-full h-full">
-                  <LineChart data={revenueData} margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" fontSize={10} />
-                    <YAxis fontSize={10} />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Line 
-                      type="monotone" 
-                      dataKey="revenue" 
-                      stroke="#3b82f6" 
-                      strokeWidth={2}
-                      name="Revenue ($)"
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="sales" 
-                      stroke="#10b981" 
-                      strokeWidth={2}
-                      name="Sales"
-                    />
-                  </LineChart>
-                </ChartContainer>
-              </div>
-            </CardContent>
-          </Card>
+      {/* Charts Section */}
+      <div className="space-y-6">
+        {/* Revenue & Sales Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Revenue & Sales Trend</CardTitle>
+            <CardDescription>Monthly revenue and sales over the last 6 months</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer config={chartConfig} className="h-[300px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={revenueData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Line 
+                    type="monotone" 
+                    dataKey="revenue" 
+                    stroke="#3b82f6" 
+                    strokeWidth={2}
+                    name="Revenue ($)"
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="sales" 
+                    stroke="#10b981" 
+                    strokeWidth={2}
+                    name="Sales"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </ChartContainer>
+          </CardContent>
+        </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">MRR Evolution</CardTitle>
-              <CardDescription className="text-sm">Monthly recurring revenue growth</CardDescription>
-            </CardHeader>
-            <CardContent className="p-4">
-              <div className="w-full" style={{ height: chartHeight }}>
-                <ChartContainer config={chartConfig} className="w-full h-full">
-                  <LineChart data={mrrData} margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" fontSize={10} />
-                    <YAxis fontSize={10} />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Line 
-                      type="monotone" 
-                      dataKey="mrr" 
-                      stroke="#8b5cf6" 
-                      strokeWidth={3}
-                      name="MRR ($)"
-                    />
-                  </LineChart>
-                </ChartContainer>
-              </div>
-            </CardContent>
-          </Card>
+        {/* MRR Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle>MRR Evolution</CardTitle>
+            <CardDescription>Monthly recurring revenue growth over time</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer config={chartConfig} className="h-[300px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={mrrData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Line 
+                    type="monotone" 
+                    dataKey="mrr" 
+                    stroke="#8b5cf6" 
+                    strokeWidth={3}
+                    name="MRR ($)"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </ChartContainer>
+          </CardContent>
+        </Card>
 
+        {/* Two Column Layout for Desktop, Single Column for Mobile */}
+        <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
+          {/* Traffic Sources */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Product Sales</CardTitle>
-              <CardDescription className="text-sm">Sales performance by product</CardDescription>
+              <CardTitle>Traffic Sources</CardTitle>
+              <CardDescription>Distribution of traffic sources this month</CardDescription>
             </CardHeader>
-            <CardContent className="p-4">
-              <div className="w-full" style={{ height: chartHeight }}>
-                <ChartContainer config={chartConfig} className="w-full h-full">
-                  <BarChart 
-                    data={productSalesData} 
-                    layout="horizontal" 
-                    margin={{ top: 10, right: 10, left: barMarginLeft, bottom: 10 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" fontSize={10} />
-                    <YAxis dataKey="name" type="category" width={35} fontSize={8} />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Bar dataKey="sales" fill="#3b82f6" name="Sales" />
-                  </BarChart>
-                </ChartContainer>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Traffic Sources</CardTitle>
-              <CardDescription className="text-sm">Traffic distribution</CardDescription>
-            </CardHeader>
-            <CardContent className="p-4">
-              <div className="w-full flex justify-center" style={{ height: chartHeight }}>
-                <ChartContainer config={chartConfig} className="w-full h-full">
+            <CardContent>
+              <ChartContainer config={chartConfig} className="h-[300px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
                       data={trafficData}
@@ -292,7 +267,7 @@ export function MetricsTab() {
                       cy="50%"
                       labelLine={false}
                       label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                      outerRadius={pieOuterRadius}
+                      outerRadius={isMobile ? 60 : 80}
                       fill="#8884d8"
                       dataKey="value"
                     >
@@ -302,19 +277,48 @@ export function MetricsTab() {
                     </Pie>
                     <ChartTooltip content={<ChartTooltipContent />} />
                   </PieChart>
-                </ChartContainer>
-              </div>
+                </ResponsiveContainer>
+              </ChartContainer>
             </CardContent>
           </Card>
 
+          {/* Product Sales */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Revenue Distribution</CardTitle>
-              <CardDescription className="text-sm">Revenue by product</CardDescription>
+              <CardTitle>Product Sales Distribution</CardTitle>
+              <CardDescription>Sales performance by product</CardDescription>
             </CardHeader>
-            <CardContent className="p-4">
-              <div className="w-full flex justify-center" style={{ height: chartHeight }}>
-                <ChartContainer config={chartConfig} className="w-full h-full">
+            <CardContent>
+              <ChartContainer config={chartConfig} className="h-[300px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart 
+                    data={productSalesData} 
+                    layout="horizontal" 
+                    margin={{ top: 5, right: 30, left: isMobile ? 60 : 80, bottom: 5 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis type="number" />
+                    <YAxis dataKey="name" type="category" width={isMobile ? 50 : 70} fontSize={isMobile ? 10 : 12} />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Bar dataKey="sales" fill="#3b82f6" name="Sales" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Bottom Section */}
+        <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
+          {/* Revenue Distribution */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Product Revenue Distribution</CardTitle>
+              <CardDescription>Revenue breakdown by product</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer config={chartConfig} className="h-[300px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
                       data={productSalesData}
@@ -322,7 +326,7 @@ export function MetricsTab() {
                       cy="50%"
                       labelLine={false}
                       label={({ name, value }) => `${name}: ${value}`}
-                      outerRadius={pieOuterRadius}
+                      outerRadius={isMobile ? 60 : 80}
                       fill="#8884d8"
                       dataKey="revenue"
                     >
@@ -332,237 +336,86 @@ export function MetricsTab() {
                     </Pie>
                     <ChartTooltip content={<ChartTooltipContent />} />
                   </PieChart>
-                </ChartContainer>
+                </ResponsiveContainer>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+
+          {/* Recent Performance */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Performance</CardTitle>
+              <CardDescription>Your performance over the last 30 days</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Product Views</span>
+                  <Badge variant="secondary">+8.7%</Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Sales Conversion</span>
+                  <Badge variant="secondary">+2.1%</Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Customer Satisfaction</span>
+                  <Badge variant="secondary">4.9/5</Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">MRR Growth</span>
+                  <Badge variant="secondary">+18.3%</Badge>
+                </div>
               </div>
             </CardContent>
           </Card>
         </div>
-      ) : (
-        // Desktop Layout - Grid
-        <>
-          <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base sm:text-lg">Revenue & Sales Trend</CardTitle>
-                <CardDescription className="text-sm">Monthly revenue and sales over the last 6 months</CardDescription>
-              </CardHeader>
-              <CardContent className="p-3 sm:p-6">
-                <div className="w-full" style={{ height: chartHeight }}>
-                  <ChartContainer config={chartConfig} className="w-full h-full">
-                    <LineChart data={revenueData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" fontSize={12} />
-                      <YAxis fontSize={12} />
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                      <Line 
-                        type="monotone" 
-                        dataKey="revenue" 
-                        stroke="#3b82f6" 
-                        strokeWidth={2}
-                        name="Revenue ($)"
-                      />
-                      <Line 
-                        type="monotone" 
-                        dataKey="sales" 
-                        stroke="#10b981" 
-                        strokeWidth={2}
-                        name="Sales"
-                      />
-                    </LineChart>
-                  </ChartContainer>
-                </div>
-              </CardContent>
-            </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base sm:text-lg">MRR Evolution</CardTitle>
-                <CardDescription className="text-sm">Monthly recurring revenue growth over time</CardDescription>
-              </CardHeader>
-              <CardContent className="p-3 sm:p-6">
-                <div className="w-full" style={{ height: chartHeight }}>
-                  <ChartContainer config={chartConfig} className="w-full h-full">
-                    <LineChart data={mrrData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" fontSize={12} />
-                      <YAxis fontSize={12} />
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                      <Line 
-                        type="monotone" 
-                        dataKey="mrr" 
-                        stroke="#8b5cf6" 
-                        strokeWidth={3}
-                        name="MRR ($)"
-                      />
-                    </LineChart>
-                  </ChartContainer>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base sm:text-lg">Traffic Sources</CardTitle>
-                <CardDescription className="text-sm">Distribution of traffic sources this month</CardDescription>
-              </CardHeader>
-              <CardContent className="p-3 sm:p-6">
-                <div className="w-full" style={{ height: chartHeight }}>
-                  <ChartContainer config={chartConfig} className="w-full h-full">
-                    <PieChart>
-                      <Pie
-                        data={trafficData}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                        outerRadius={pieOuterRadius}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {trafficData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                    </PieChart>
-                  </ChartContainer>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base sm:text-lg">Product Sales Distribution</CardTitle>
-                <CardDescription className="text-sm">Sales performance by product</CardDescription>
-              </CardHeader>
-              <CardContent className="p-3 sm:p-6">
-                <div className="w-full" style={{ height: chartHeight }}>
-                  <ChartContainer config={chartConfig} className="w-full h-full">
-                    <BarChart 
-                      data={productSalesData} 
-                      layout="horizontal" 
-                      margin={{ top: 5, right: 10, left: barMarginLeft, bottom: 5 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis type="number" fontSize={12} />
-                      <YAxis dataKey="name" type="category" width={70} fontSize={10} />
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                      <Bar dataKey="sales" fill="#3b82f6" name="Sales" />
-                    </BarChart>
-                  </ChartContainer>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base sm:text-lg">Product Revenue Distribution</CardTitle>
-                <CardDescription className="text-sm">Revenue breakdown by product</CardDescription>
-              </CardHeader>
-              <CardContent className="p-3 sm:p-6">
-                <div className="w-full" style={{ height: chartHeight }}>
-                  <ChartContainer config={chartConfig} className="w-full h-full">
-                    <PieChart>
-                      <Pie
-                        data={productSalesData}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ name, value }) => `${name}: ${value}`}
-                        outerRadius={pieOuterRadius}
-                        fill="#8884d8"
-                        dataKey="revenue"
-                      >
-                        {productSalesData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                    </PieChart>
-                  </ChartContainer>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* ... keep existing code (Recent Performance card) */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base sm:text-lg">Recent Performance</CardTitle>
-                <CardDescription className="text-sm">Your performance over the last 30 days</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Product Views</span>
-                    <Badge variant="secondary">+8.7%</Badge>
+        {/* Bottom Cards */}
+        <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardTitle>Top Performing Products</CardTitle>
+              <CardDescription>Your best selling products this month</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {productSalesData.slice(0, 3).map((product, index) => (
+                  <div key={index} className="flex items-center justify-between">
+                    <span className="text-sm font-medium truncate mr-2">{product.name}</span>
+                    <span className="text-sm text-muted-foreground flex-shrink-0">{product.sales} sales</span>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Sales Conversion</span>
-                    <Badge variant="secondary">+2.1%</Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Customer Satisfaction</span>
-                    <Badge variant="secondary">4.9/5</Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">MRR Growth</span>
-                    <Badge variant="secondary">+18.3%</Badge>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </>
-      )}
+                ))}
+              </div>
+            </CardContent>
+          </Card>
 
-      <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base sm:text-lg">Top Performing Products</CardTitle>
-            <CardDescription className="text-sm">Your best selling products this month</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {productSalesData.slice(0, 3).map((product, index) => (
-                <div key={index} className="flex items-center justify-between">
-                  <span className="text-sm font-medium truncate mr-2">{product.name}</span>
-                  <span className="text-sm text-muted-foreground flex-shrink-0">{product.sales} sales</span>
+          <Card>
+            <CardHeader>
+              <CardTitle>Community Insights</CardTitle>
+              <CardDescription>Key metrics from your communities</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Total Communities</span>
+                  <span className="text-sm font-bold">2</span>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base sm:text-lg">Community Insights</CardTitle>
-            <CardDescription className="text-sm">Key metrics from your communities</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Total Communities</span>
-                <span className="text-sm font-bold">2</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Total Members</span>
+                  <span className="text-sm font-bold">413</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Paid Members</span>
+                  <span className="text-sm font-bold">219</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Community MRR</span>
+                  <span className="text-sm font-bold">{formatCurrency(metrics.monthlyRecurringRevenue)}</span>
+                </div>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Total Members</span>
-                <span className="text-sm font-bold">413</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Paid Members</span>
-                <span className="text-sm font-bold">219</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Community MRR</span>
-                <span className="text-sm font-bold">{formatCurrency(metrics.monthlyRecurringRevenue)}</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
