@@ -1,7 +1,6 @@
 import { Separator } from "@/components/ui/separator";
 import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-
 const FooterSection = ({
   title,
   links
@@ -21,13 +20,11 @@ const FooterSection = ({
         </li>)}
     </ul>
   </div>;
-
 export function Footer() {
   const location = useLocation();
   if (location.pathname.includes('/community') || location.pathname.includes('/classroom')) {
     return null;
   }
-
   const shopLinks = [{
     label: "Products",
     href: "/products"
@@ -53,7 +50,6 @@ export function Footer() {
     label: "Blog",
     href: "/blog"
   }];
-
   const sellLinks = [{
     label: "Start Selling",
     href: "/sell"
@@ -76,7 +72,6 @@ export function Footer() {
     label: "Affiliates & Creators",
     href: "/affiliates"
   }];
-
   const aboutLinks = [{
     label: "About Us",
     href: "/about"
@@ -102,7 +97,6 @@ export function Footer() {
     label: "Legal imprint",
     href: "/legal"
   }];
-
   const helpLinks = [{
     label: "Help Center",
     href: "/help"
@@ -122,7 +116,6 @@ export function Footer() {
     label: "Privacy Policy",
     href: "/privacy"
   }];
-
   return <footer className="mt-auto bg-background border-t">
       <div className="container max-w-6xl mx-auto px-4 py-8">
         {/* Main Footer Content - Horizontal Layout */}
@@ -145,7 +138,7 @@ export function Footer() {
               
               {/* Social Links moved below Help */}
               <div className="space-y-3">
-                <h3 className="font-semibold text-[16px] text-foreground">Follow Us</h3>
+                
                 <div className="flex gap-4">
                   <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors p-2 hover:bg-accent rounded-md" aria-label="Follow us on Instagram">
                     <Instagram className="h-5 w-5" />
