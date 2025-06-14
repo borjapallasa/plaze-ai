@@ -30,7 +30,7 @@ export function SellerHeader({
         <div className="max-w-6xl mx-auto">
           {/* Desktop Layout */}
           <div className="hidden lg:flex items-start gap-6">
-            {/* Left Section: Avatar + Info */}
+            {/* Main Content Section */}
             <div className="flex items-start gap-4 flex-1">
               {/* Avatar */}
               <div className="w-16 h-16 flex-shrink-0">
@@ -91,9 +91,12 @@ export function SellerHeader({
               </div>
             </div>
 
-            {/* Right Section: Stats with vertical separators */}
+            {/* Vertical Divider */}
+            <Separator orientation="vertical" className="h-32" />
+
+            {/* Stats Section - Stacked Vertically */}
             <div className="flex-shrink-0">
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col gap-4 text-left">
                 <div className="flex items-center gap-2">
                   <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                   <span className="text-sm font-semibold">
@@ -101,16 +104,12 @@ export function SellerHeader({
                   </span>
                 </div>
 
-                <Separator orientation="vertical" className="h-6" />
-
                 <div className="flex items-center gap-2">
                   <Briefcase className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm font-semibold">
                     {seller.completed_projects} projects
                   </span>
                 </div>
-
-                <Separator orientation="vertical" className="h-6" />
 
                 <div className="flex items-center gap-2">
                   <Package className="h-4 w-4 text-muted-foreground" />
@@ -120,15 +119,12 @@ export function SellerHeader({
                 </div>
 
                 {communitiesCount > 0 && (
-                  <>
-                    <Separator orientation="vertical" className="h-6" />
-                    <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm font-semibold">
-                        {communitiesCount} communities
-                      </span>
-                    </div>
-                  </>
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-semibold">
+                      {communitiesCount} communities
+                    </span>
+                  </div>
                 )}
               </div>
             </div>
