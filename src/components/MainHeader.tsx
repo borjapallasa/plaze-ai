@@ -1,7 +1,6 @@
-
 import React, { useState, FormEvent, useEffect } from "react";
 import { Input } from "@/components/ui/input";
-import { Search, Menu, User, ChevronDown, LogOut, Home, UserCircle, Users, Store, HelpCircle } from "lucide-react";
+import { Search, Menu, User, ChevronDown, LogOut, Home, UserCircle, Users, Store, HelpCircle, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
@@ -187,12 +186,20 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                   </DropdownMenuItem>
                 </Link>
                 {user && (
-                  <Link to="/personal-area">
-                    <DropdownMenuItem>
-                      <UserCircle className="mr-2 h-4 w-4" />
-                      Personal Area
-                    </DropdownMenuItem>
-                  </Link>
+                  <>
+                    <Link to="/personal-area">
+                      <DropdownMenuItem>
+                        <UserCircle className="mr-2 h-4 w-4" />
+                        Personal Area
+                      </DropdownMenuItem>
+                    </Link>
+                    <Link to="/chats">
+                      <DropdownMenuItem>
+                        <MessageSquare className="mr-2 h-4 w-4" />
+                        Chats
+                      </DropdownMenuItem>
+                    </Link>
+                  </>
                 )}
                 {!user && (
                   <Link to="/auth">
@@ -333,12 +340,20 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                   </DropdownMenuItem>
                 </Link>
                 {user && (
-                  <Link to="/personal-area">
-                    <DropdownMenuItem>
-                      <UserCircle className="mr-2 h-4 w-4" />
-                      Personal Area
-                    </DropdownMenuItem>
-                  </Link>
+                  <>
+                    <Link to="/personal-area">
+                      <DropdownMenuItem>
+                        <UserCircle className="mr-2 h-4 w-4" />
+                        Personal Area
+                      </DropdownMenuItem>
+                    </Link>
+                    <Link to="/chats">
+                      <DropdownMenuItem>
+                        <MessageSquare className="mr-2 h-4 w-4" />
+                        Chats
+                      </DropdownMenuItem>
+                    </Link>
+                  </>
                 )}
                 {!user && (
                   <Link to="/auth">
