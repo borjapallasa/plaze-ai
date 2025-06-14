@@ -144,13 +144,13 @@ export const CategoryHeader = ({
           {onViewModeChange && (
             <div className="mt-4 lg:mt-0 lg:flex-shrink-0 w-full lg:w-auto">
               <div className="relative bg-gray-100 rounded-full p-1 w-full lg:w-auto lg:inline-flex overflow-hidden">
-                {/* Sliding background indicator - fixed desktop alignment */}
+                {/* Sliding background indicator - completely rewritten for desktop alignment */}
                 <div 
-                  className={`absolute top-1 bottom-1 bg-white rounded-full shadow-sm transition-all duration-200 ease-out ${
-                    viewMode === "communities" 
-                      ? "left-1/2 right-1" 
-                      : "left-1 w-1/2"
-                  }`}
+                  className="absolute top-1 bottom-1 bg-white rounded-full shadow-sm transition-all duration-200 ease-out"
+                  style={{
+                    left: viewMode === "communities" ? "50%" : "4px",
+                    right: viewMode === "communities" ? "4px" : "50%"
+                  }}
                 />
                 
                 {/* Toggle buttons container */}
