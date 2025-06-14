@@ -62,6 +62,11 @@ export default function SellerPage() {
     toast.success("Expert profile updated successfully");
   };
 
+  // Calculate total earnings from services
+  const totalEarnings = services.reduce((total, service) => {
+    return total + (service.revenue_amount || 0);
+  }, 0);
+
   // Show loading state
   if (sellerLoading) {
     return <SellerLoadingState />;
@@ -82,6 +87,8 @@ export default function SellerPage() {
         <SellerHeader 
           seller={currentSeller} 
           productsCount={products?.length || 0}
+          communitiesCount={communities?.length || 0}
+          totalEarnings={totalEarnings}
           onSellerUpdate={handleSellerUpdate}
         />
 

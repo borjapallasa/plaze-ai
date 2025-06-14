@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge as UIBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge, Star, ShoppingBag, Users, Calendar, Edit } from "lucide-react";
+import { Badge, Star, ShoppingBag, Users, Calendar, Edit, DollarSign, Globe } from "lucide-react";
 import type { Expert } from "@/types/expert";
 import { useAuth } from "@/lib/auth";
 import { EditExpertDialog } from "./EditExpertDialog";
@@ -12,10 +12,18 @@ import { EditExpertDialog } from "./EditExpertDialog";
 interface SellerHeaderProps {
   seller: Expert;
   productsCount: number;
+  communitiesCount?: number;
+  totalEarnings?: number;
   onSellerUpdate?: (updatedSeller: Expert) => void;
 }
 
-export function SellerHeader({ seller, productsCount, onSellerUpdate }: SellerHeaderProps) {
+export function SellerHeader({ 
+  seller, 
+  productsCount, 
+  communitiesCount = 0,
+  totalEarnings = 0,
+  onSellerUpdate 
+}: SellerHeaderProps) {
   const { user } = useAuth();
   const isCurrentUserExpert = user?.id === seller.user_uuid;
   
@@ -28,6 +36,14 @@ export function SellerHeader({ seller, productsCount, onSellerUpdate }: SellerHe
   const avatarUrl = seller.thumbnail || 
     (seller.user_uuid ? `https://api.dicebear.com/7.x/avataaars/svg?seed=${seller.user_uuid}` : 
     "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e");
+
+  // Format earnings
+  const formatEarnings = (amount: number) => {
+    if (amount >= 1000) {
+      return `$${(amount / 1000).toFixed(1)}k`;
+    }
+    return `$${amount.toFixed(0)}`;
+  };
 
   return (
     <div className="mb-8">
@@ -66,6 +82,23 @@ export function SellerHeader({ seller, productsCount, onSellerUpdate }: SellerHe
                   <UIBadge variant="outline" className="text-xs">
                     Verified Expert
                   </UIBadge>
+                  
+                  {/* Community Count Badge */}
+                  {communitiesCount > 0 && (
+                    <UIBadge variant="secondary" className="text-xs gap-1">
+                      <Globe className="w-3 h-3" />
+                      {communitiesCount} Communities
+                    </UIBadge>
+                  )}
+                  
+                  {/* Earnings Badge */}
+                  {totalEarnings > 0 && (
+                    <UIBadge variant="secondary" className="text-xs gap-1">
+                      <DollarSign className="w-3 h-3" />
+                      {formatEarnings(totalEarnings)} earned
+                    </UIBadge>
+                  )}
+                  
                   {isCurrentUserExpert && (
                     <EditExpertDialog expert={seller} onUpdate={handleExpertUpdate}>
                       <Button variant="outline" size="sm" className="ml-auto">
