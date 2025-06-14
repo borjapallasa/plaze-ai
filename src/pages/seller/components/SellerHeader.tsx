@@ -25,15 +25,15 @@ export function SellerHeader({
 }: SellerHeaderProps) {
   return (
     <Card className="mb-8 shadow-sm">
-      <CardContent className="p-8">
+      <CardContent className="p-6 md:p-8">
         <div className="max-w-6xl mx-auto">
           {/* Main container with two sections */}
-          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-12">
+          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8 lg:gap-12">
             
             {/* Group A (Left): Profile Information */}
             <div className="flex items-start gap-4 flex-1">
               {/* Avatar */}
-              <div className="w-20 h-20 flex-shrink-0">
+              <div className="w-16 h-16 md:w-20 md:h-20 flex-shrink-0">
                 <AspectRatio ratio={1} className="overflow-hidden rounded-full">
                   <Avatar className="h-full w-full">
                     <AvatarImage 
@@ -51,7 +51,7 @@ export function SellerHeader({
               {/* Profile Text Block */}
               <div className="flex-1 min-w-0">
                 {/* Name */}
-                <h1 className="text-3xl font-bold text-foreground mb-2 leading-tight">
+                <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-1 leading-tight">
                   {seller.name}
                 </h1>
                 
@@ -80,11 +80,11 @@ export function SellerHeader({
               </div>
             </div>
 
-            {/* Group B (Right): Stats & CTA */}
-            <div className="flex flex-col lg:flex-row lg:items-center gap-6">
+            {/* Group B (Right): Stats & CTA - Hidden on small screens, shown on lg+ */}
+            <div className="hidden lg:flex lg:flex-col lg:items-end gap-4">
               
               {/* Inline Stats Row */}
-              <div className="flex flex-wrap lg:flex-nowrap items-center gap-6 md:gap-8">
+              <div className="flex items-center gap-6">
                 
                 {/* Client Satisfaction */}
                 <div className="flex items-center gap-2">
@@ -143,8 +143,8 @@ export function SellerHeader({
             </div>
           </div>
 
-          {/* Responsive Layout for Mobile */}
-          <div className="block md:hidden mt-6">
+          {/* Mobile/Tablet Layout - Shown on screens smaller than lg */}
+          <div className="lg:hidden mt-6">
             {/* Stats Row - Horizontally Scrollable on Mobile */}
             <div className="flex items-center gap-6 overflow-x-auto pb-2 mb-4 scrollbar-hide">
               <div className="flex items-center gap-2 flex-shrink-0">
@@ -178,7 +178,7 @@ export function SellerHeader({
               )}
             </div>
 
-            {/* Full-width Edit Button on Mobile */}
+            {/* Edit Button - Full width on mobile, auto on tablet */}
             <EditExpertDialog
               expert={seller}
               onUpdate={onSellerUpdate}
@@ -186,7 +186,7 @@ export function SellerHeader({
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="w-full flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2"
                 >
                   <Edit2 className="h-4 w-4" aria-hidden="true" />
                   Edit Profile
