@@ -25,166 +25,184 @@ export function SellerHeader({
 }: SellerHeaderProps) {
   return (
     <Card className="mb-8 shadow-sm">
-      <CardContent className="p-6 md:p-8">
+      <CardContent className="p-6">
         <div className="max-w-6xl mx-auto">
-          {/* Main container with two sections */}
-          <div className="flex flex-col lg:flex-row lg:items-start gap-8 lg:gap-12">
-            
-            {/* Group A (Left): Profile Information */}
-            <div className="flex-1">
-              {/* Top row: Avatar and Name/Title/Location */}
-              <div className="flex items-start gap-4 mb-4">
-                {/* Avatar - Made smaller */}
-                <div className="w-12 h-12 md:w-14 md:h-14 flex-shrink-0">
-                  <AspectRatio ratio={1} className="overflow-hidden rounded-full">
-                    <Avatar className="h-full w-full">
-                      <AvatarImage 
-                        src={seller.thumbnail} 
-                        alt={seller.name}
-                        className="object-cover"
-                      />
-                      <AvatarFallback className="text-sm font-semibold">
-                        {seller.name?.split(' ').map(n => n[0]).join('') || 'UN'}
-                      </AvatarFallback>
-                    </Avatar>
-                  </AspectRatio>
+          {/* Desktop Layout */}
+          <div className="hidden lg:flex items-start gap-6">
+            {/* Left Section: Avatar + Info */}
+            <div className="flex items-start gap-4 flex-1">
+              {/* Avatar */}
+              <div className="w-16 h-16 flex-shrink-0">
+                <AspectRatio ratio={1} className="overflow-hidden rounded-full">
+                  <Avatar className="h-full w-full">
+                    <AvatarImage 
+                      src={seller.thumbnail} 
+                      alt={seller.name}
+                      className="object-cover"
+                    />
+                    <AvatarFallback className="text-lg font-semibold">
+                      {seller.name?.split(' ').map(n => n[0]).join('') || 'UN'}
+                    </AvatarFallback>
+                  </Avatar>
+                </AspectRatio>
+              </div>
+              
+              {/* Name, Title, Location, Description */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between mb-2">
+                  <h1 className="text-3xl font-bold text-foreground leading-tight">
+                    {seller.name}
+                  </h1>
+                  <EditExpertDialog
+                    expert={seller}
+                    onUpdate={onSellerUpdate}
+                    trigger={
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex items-center gap-2"
+                      >
+                        <Edit2 className="h-4 w-4" />
+                        Edit Profile
+                      </Button>
+                    }
+                  />
                 </div>
                 
-                {/* Name, Title, Location Block */}
-                <div className="flex-1 min-w-0">
-                  {/* Name and Edit Button Row */}
-                  <div className="flex items-center gap-3 mb-1">
-                    <h1 className="text-2xl md:text-3xl font-bold text-foreground leading-tight">
-                      {seller.name}
-                    </h1>
-                    <EditExpertDialog
-                      expert={seller}
-                      onUpdate={onSellerUpdate}
-                      trigger={
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="flex items-center gap-2 whitespace-nowrap"
-                        >
-                          <Edit2 className="h-4 w-4" aria-hidden="true" />
-                          Edit Profile
-                        </Button>
-                      }
-                    />
-                  </div>
-                  
-                  {/* Role & Location Line */}
-                  <div className="flex items-center gap-3 text-sm font-medium text-muted-foreground">
-                    {seller.title && (
-                      <span>{seller.title}</span>
-                    )}
-                    {seller.title && seller.location && (
-                      <span className="text-muted-foreground/60">•</span>
-                    )}
-                    {seller.location && (
-                      <div className="flex items-center gap-1">
-                        <MapPin className="h-3 w-3" aria-hidden="true" />
-                        <span>{seller.location}</span>
-                      </div>
-                    )}
-                  </div>
+                {/* Role & Location */}
+                <div className="flex items-center gap-3 text-sm text-muted-foreground mb-3">
+                  {seller.title && <span className="font-medium">{seller.title}</span>}
+                  {seller.title && seller.location && <span>•</span>}
+                  {seller.location && (
+                    <div className="flex items-center gap-1">
+                      <MapPin className="h-3 w-3" />
+                      <span>{seller.location}</span>
+                    </div>
+                  )}
                 </div>
+                
+                {/* Description */}
+                {seller.description && (
+                  <p className="text-base text-muted-foreground leading-relaxed">
+                    {seller.description}
+                  </p>
+                )}
               </div>
-
-              {/* Description - Now below the avatar and name section */}
-              {seller.description && (
-                <p className="text-base font-medium text-muted-foreground leading-relaxed max-w-2xl">
-                  {seller.description}
-                </p>
-              )}
             </div>
 
-            {/* Vertical Divider - Hidden on small screens, shown on lg+ */}
-            <div className="hidden lg:block w-px bg-border h-40 flex-shrink-0"></div>
-
-            {/* Group B (Right): Stats - Hidden on small screens, shown on lg+ */}
-            <div className="hidden lg:flex lg:flex-col gap-4">
-              
-              {/* Stacked Stats Column */}
-              <div className="flex flex-col gap-3 text-left">
-                
-                {/* Client Satisfaction */}
-                <div className="flex items-center gap-2">
-                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" aria-hidden="true" />
-                  <span className="text-sm font-semibold text-foreground">
+            {/* Right Section: Stats */}
+            <div className="flex-shrink-0">
+              <div className="flex flex-col gap-3 text-right">
+                <div className="flex items-center gap-2 justify-end">
+                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  <span className="text-sm font-semibold">
                     {seller.client_satisfaction}% satisfaction
                   </span>
-                  <span className="sr-only">client satisfaction rate</span>
                 </div>
 
-                {/* Completed Projects */}
-                <div className="flex items-center gap-2">
-                  <Briefcase className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-                  <span className="text-sm font-semibold text-foreground">
+                <div className="flex items-center gap-2 justify-end">
+                  <Briefcase className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-semibold">
                     {seller.completed_projects} projects
                   </span>
-                  <span className="sr-only">completed projects</span>
                 </div>
 
-                {/* Products Count */}
-                <div className="flex items-center gap-2">
-                  <Package className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-                  <span className="text-sm font-semibold text-foreground">
+                <div className="flex items-center gap-2 justify-end">
+                  <Package className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-semibold">
                     {productsCount} products
                   </span>
-                  <span className="sr-only">products</span>
                 </div>
 
-                {/* Communities Count */}
                 {communitiesCount > 0 && (
-                  <div className="flex items-center gap-2">
-                    <Users className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-                    <span className="text-sm font-semibold text-foreground">
+                  <div className="flex items-center gap-2 justify-end">
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-semibold">
                       {communitiesCount} communities
                     </span>
-                    <span className="sr-only">communities</span>
                   </div>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Mobile/Tablet Layout - Shown on screens smaller than lg */}
-          <div className="lg:hidden mt-6">
-            {/* Stats Row - Horizontally Scrollable on Mobile */}
-            <div className="flex items-center gap-6 overflow-x-auto pb-2 mb-4 scrollbar-hide">
+          {/* Mobile/Tablet Layout */}
+          <div className="lg:hidden">
+            {/* Avatar and Name Row */}
+            <div className="flex items-start gap-4 mb-4">
+              <div className="w-14 h-14 flex-shrink-0">
+                <AspectRatio ratio={1} className="overflow-hidden rounded-full">
+                  <Avatar className="h-full w-full">
+                    <AvatarImage 
+                      src={seller.thumbnail} 
+                      alt={seller.name}
+                      className="object-cover"
+                    />
+                    <AvatarFallback className="text-sm font-semibold">
+                      {seller.name?.split(' ').map(n => n[0]).join('') || 'UN'}
+                    </AvatarFallback>
+                  </Avatar>
+                </AspectRatio>
+              </div>
+              
+              <div className="flex-1 min-w-0">
+                <h1 className="text-2xl font-bold text-foreground leading-tight mb-1">
+                  {seller.name}
+                </h1>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  {seller.title && <span className="font-medium">{seller.title}</span>}
+                  {seller.title && seller.location && <span>•</span>}
+                  {seller.location && (
+                    <div className="flex items-center gap-1">
+                      <MapPin className="h-3 w-3" />
+                      <span>{seller.location}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Description */}
+            {seller.description && (
+              <p className="text-base text-muted-foreground leading-relaxed mb-4">
+                {seller.description}
+              </p>
+            )}
+
+            {/* Stats Row */}
+            <div className="flex items-center gap-4 overflow-x-auto pb-2 mb-4">
               <div className="flex items-center gap-2 flex-shrink-0">
-                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" aria-hidden="true" />
-                <span className="text-sm font-semibold text-foreground">
+                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                <span className="text-sm font-semibold">
                   {seller.client_satisfaction}%
                 </span>
               </div>
 
               <div className="flex items-center gap-2 flex-shrink-0">
-                <Briefcase className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-                <span className="text-sm font-semibold text-foreground">
+                <Briefcase className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-semibold">
                   {seller.completed_projects}
                 </span>
               </div>
 
               <div className="flex items-center gap-2 flex-shrink-0">
-                <Package className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-                <span className="text-sm font-semibold text-foreground">
+                <Package className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-semibold">
                   {productsCount}
                 </span>
               </div>
 
               {communitiesCount > 0 && (
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  <Users className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-                  <span className="text-sm font-semibold text-foreground">
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-semibold">
                     {communitiesCount}
                   </span>
                 </div>
               )}
             </div>
 
-            {/* Edit Button - Full width on mobile, auto on tablet */}
+            {/* Edit Button */}
             <EditExpertDialog
               expert={seller}
               onUpdate={onSellerUpdate}
@@ -192,9 +210,9 @@ export function SellerHeader({
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="w-full sm:w-auto flex items-center justify-center gap-2"
+                  className="w-full flex items-center justify-center gap-2"
                 >
-                  <Edit2 className="h-4 w-4" aria-hidden="true" />
+                  <Edit2 className="h-4 w-4" />
                   Edit Profile
                 </Button>
               }
