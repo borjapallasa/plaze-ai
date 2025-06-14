@@ -67,13 +67,13 @@ export default function PersonalArea() {
       icon: <ArrowDownCircle className="w-8 h-8" />,
       title: "Browse All Templates",
       description: "Check all templates available in the platform!",
-      to: "/product"
+      to: "/#products"
     },
     {
       icon: <Star className="w-8 h-8" />,
       title: "Explore Communities",
       description: "Explore and join all communities of NoCodeClick!",
-      to: "/community"
+      to: "/#communities"
     },
     {
       icon: <Users className="w-8 h-8" />,
