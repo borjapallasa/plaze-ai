@@ -140,40 +140,38 @@ export const CategoryHeader = ({
             />
           </div>
 
-          {/* View Mode Toggle - Tag-style with modern toggle inside */}
+          {/* View Mode Toggle - Pill style with sliding background */}
           {onViewModeChange && (
             <div className="mt-4 lg:mt-0 lg:flex-shrink-0">
-              <div className="h-9 px-4 rounded-full bg-white border border-gray-200 flex items-center gap-1 lg:w-auto">
-                <div className="flex bg-gray-100 rounded-full p-0.5 relative">
-                  {/* Background sliding indicator */}
-                  <div 
-                    className={`absolute top-0.5 left-0.5 bottom-0.5 w-16 bg-black rounded-full transition-transform duration-200 ease-out ${
-                      viewMode === "communities" ? "translate-x-16" : "translate-x-0"
-                    }`}
-                  />
-                  
-                  {/* Toggle buttons */}
-                  <button
-                    onClick={() => onViewModeChange("products")}
-                    className={`relative z-10 px-3 py-1 text-xs font-medium rounded-full transition-colors duration-200 w-16 ${
-                      viewMode === "products" 
-                        ? "text-white" 
-                        : "text-gray-600 hover:text-gray-900"
-                    }`}
-                  >
-                    Products
-                  </button>
-                  <button
-                    onClick={() => onViewModeChange("communities")}
-                    className={`relative z-10 px-3 py-1 text-xs font-medium rounded-full transition-colors duration-200 w-16 ${
-                      viewMode === "communities" 
-                        ? "text-white" 
-                        : "text-gray-600 hover:text-gray-900"
-                    }`}
-                  >
-                    Communities
-                  </button>
-                </div>
+              <div className="relative inline-flex bg-gray-100 rounded-full p-1">
+                {/* Sliding background indicator */}
+                <div 
+                  className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-white rounded-full shadow-sm transition-transform duration-200 ease-out ${
+                    viewMode === "communities" ? "translate-x-[calc(100%+8px)]" : "translate-x-0"
+                  }`}
+                />
+                
+                {/* Toggle buttons */}
+                <button
+                  onClick={() => onViewModeChange("products")}
+                  className={`relative z-10 px-4 py-2 text-sm font-medium rounded-full transition-colors duration-200 ${
+                    viewMode === "products" 
+                      ? "text-gray-900" 
+                      : "text-gray-500 hover:text-gray-700"
+                  }`}
+                >
+                  Products
+                </button>
+                <button
+                  onClick={() => onViewModeChange("communities")}
+                  className={`relative z-10 px-4 py-2 text-sm font-medium rounded-full transition-colors duration-200 ${
+                    viewMode === "communities" 
+                      ? "text-gray-900" 
+                      : "text-gray-500 hover:text-gray-700"
+                  }`}
+                >
+                  Communities
+                </button>
               </div>
             </div>
           )}
