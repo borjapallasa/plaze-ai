@@ -126,7 +126,7 @@ const Index = () => {
           onViewModeChange={setViewMode}
         />
 
-        <div className="w-full max-w-[1400px] mx-auto px-4 py-2">
+        <div className="w-full max-w-[1400px] mx-auto px-4 py-2 pb-12">
           {viewMode === "products" ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
               {filteredProducts?.map((product) => (
