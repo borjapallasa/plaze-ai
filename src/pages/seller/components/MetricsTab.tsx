@@ -1,8 +1,7 @@
-
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, TrendingDown, Users, ShoppingBag, DollarSign, Eye } from "lucide-react";
+import { TrendingUp, TrendingDown, Users, ShoppingBag, DollarSign, Eye, Repeat } from "lucide-react";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from "recharts";
 
@@ -13,10 +12,12 @@ export function MetricsTab() {
     totalSales: 127,
     totalViews: 3542,
     conversionRate: 3.6,
+    monthlyRecurringRevenue: 8750,
     revenueChange: 12.5,
     salesChange: -4.2,
     viewsChange: 8.7,
-    conversionChange: 2.1
+    conversionChange: 2.1,
+    mrrChange: 18.3
   };
 
   // Chart data
@@ -27,6 +28,15 @@ export function MetricsTab() {
     { month: 'Apr', revenue: 14300, sales: 78 },
     { month: 'May', revenue: 11900, sales: 63 },
     { month: 'Jun', revenue: 15420, sales: 85 }
+  ];
+
+  const mrrData = [
+    { month: 'Jan', mrr: 6200 },
+    { month: 'Feb', mrr: 6800 },
+    { month: 'Mar', mrr: 7100 },
+    { month: 'Apr', mrr: 7650 },
+    { month: 'May', mrr: 8200 },
+    { month: 'Jun', mrr: 8750 }
   ];
 
   const trafficData = [
@@ -52,6 +62,10 @@ export function MetricsTab() {
     sales: {
       label: "Sales",
       color: "#10b981",
+    },
+    mrr: {
+      label: "MRR",
+      color: "#8b5cf6",
     },
   };
 
@@ -81,7 +95,7 @@ export function MetricsTab() {
   return (
     <div className="space-y-6">
       {/* KPI Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
@@ -93,6 +107,23 @@ export function MetricsTab() {
               {getTrendIcon(metrics.revenueChange)}
               <span className={`ml-1 ${getTrendColor(metrics.revenueChange)}`}>
                 {metrics.revenueChange > 0 ? '+' : ''}{metrics.revenueChange}%
+              </span>
+              <span className="ml-1">from last month</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Monthly Recurring Revenue</CardTitle>
+            <Repeat className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{formatCurrency(metrics.monthlyRecurringRevenue)}</div>
+            <div className="flex items-center text-xs text-muted-foreground">
+              {getTrendIcon(metrics.mrrChange)}
+              <span className={`ml-1 ${getTrendColor(metrics.mrrChange)}`}>
+                {metrics.mrrChange > 0 ? '+' : ''}{metrics.mrrChange}%
               </span>
               <span className="ml-1">from last month</span>
             </div>
@@ -186,6 +217,32 @@ export function MetricsTab() {
 
         <Card>
           <CardHeader>
+            <CardTitle>MRR Evolution</CardTitle>
+            <CardDescription>Monthly recurring revenue growth over time</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer config={chartConfig} className="h-[300px]">
+              <LineChart data={mrrData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Line 
+                  type="monotone" 
+                  dataKey="mrr" 
+                  stroke="var(--color-mrr)" 
+                  strokeWidth={3}
+                  name="MRR ($)"
+                />
+              </LineChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader>
             <CardTitle>Traffic Sources</CardTitle>
             <CardDescription>Distribution of traffic sources this month</CardDescription>
           </CardHeader>
@@ -211,10 +268,7 @@ export function MetricsTab() {
             </ChartContainer>
           </CardContent>
         </Card>
-      </div>
 
-      {/* Product Sales Distribution */}
-      <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>Product Sales Distribution</CardTitle>
@@ -232,7 +286,9 @@ export function MetricsTab() {
             </ChartContainer>
           </CardContent>
         </Card>
+      </div>
 
+      <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>Product Revenue Distribution</CardTitle>
@@ -260,9 +316,7 @@ export function MetricsTab() {
             </ChartContainer>
           </CardContent>
         </Card>
-      </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>Recent Performance</CardTitle>
@@ -282,10 +336,16 @@ export function MetricsTab() {
                 <span className="text-sm font-medium">Customer Satisfaction</span>
                 <Badge variant="secondary">4.9/5</Badge>
               </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">MRR Growth</span>
+                <Badge variant="secondary">+18.3%</Badge>
+              </div>
             </div>
           </CardContent>
         </Card>
+      </div>
 
+      <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>Top Performing Products</CardTitle>
@@ -299,6 +359,33 @@ export function MetricsTab() {
                   <span className="text-sm text-muted-foreground">{product.sales} sales</span>
                 </div>
               ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Community Insights</CardTitle>
+            <CardDescription>Key metrics from your communities</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Total Communities</span>
+                <span className="text-sm font-bold">2</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Total Members</span>
+                <span className="text-sm font-bold">413</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Paid Members</span>
+                <span className="text-sm font-bold">219</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Community MRR</span>
+                <span className="text-sm font-bold">{formatCurrency(metrics.monthlyRecurringRevenue)}</span>
+              </div>
             </div>
           </CardContent>
         </Card>
