@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { TrendingUp, Sparkles, Trophy, ThumbsUp, Star, Heart, ChevronLeft, ChevronRight } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface CategoryHeaderProps {
   selectedCategory: string | null;
@@ -30,6 +31,8 @@ export const CategoryHeader = ({
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
   const [showLeftArrow, setShowLeftArrow] = React.useState(false);
   const [showRightArrow, setShowRightArrow] = React.useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const checkScroll = React.useCallback(() => {
     const el = scrollContainerRef.current;
@@ -69,6 +72,16 @@ export const CategoryHeader = ({
   };
 
   const showScrollArrows = typeof window !== 'undefined' && window.innerWidth < 1024;
+
+  const handleViewModeChange = (mode: "products" | "communities") => {
+    if (onViewModeChange) {
+      onViewModeChange(mode);
+    }
+    
+    // Update URL hash
+    const newHash = mode === "products" ? "#products" : "#communities";
+    navigate(location.pathname + location.search + newHash, { replace: true });
+  };
 
   return (
     <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -156,7 +169,7 @@ export const CategoryHeader = ({
                 {/* Toggle buttons container */}
                 <div className="relative z-10 flex w-full">
                   <button
-                    onClick={() => onViewModeChange("products")}
+                    onClick={() => handleViewModeChange("products")}
                     className={`flex-1 py-2 px-4 text-sm font-medium transition-colors duration-200 flex items-center justify-center ${
                       viewMode === "products" 
                         ? "text-gray-900" 
@@ -166,7 +179,7 @@ export const CategoryHeader = ({
                     Products
                   </button>
                   <button
-                    onClick={() => onViewModeChange("communities")}
+                    onClick={() => handleViewModeChange("communities")}
                     className={`flex-1 py-2 px-4 text-sm font-medium transition-colors duration-200 flex items-center justify-center ${
                       viewMode === "communities" 
                         ? "text-gray-900" 

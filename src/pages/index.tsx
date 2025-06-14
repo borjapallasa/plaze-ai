@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { CategoryHeader } from "@/components/CategoryHeader";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,8 +13,36 @@ import { Footer } from "@/components/Footer";
 const Index = () => {
   const isMobile = useIsMobile();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<"products" | "communities">("products");
+  const location = useLocation();
   const navigate = useNavigate();
+  
+  // Initialize view mode based on URL hash
+  const getInitialViewMode = (): "products" | "communities" => {
+    const hash = location.hash;
+    if (hash === "#communities") return "communities";
+    return "products";
+  };
+  
+  const [viewMode, setViewMode] = useState<"products" | "communities">(getInitialViewMode);
+
+  // Update view mode when URL hash changes
+  useEffect(() => {
+    const hash = location.hash;
+    if (hash === "#communities" && viewMode !== "communities") {
+      setViewMode("communities");
+    } else if (hash === "#products" && viewMode !== "products") {
+      setViewMode("products");
+    } else if (!hash && viewMode !== "products") {
+      setViewMode("products");
+    }
+  }, [location.hash, viewMode]);
+
+  // Set initial hash if none exists
+  useEffect(() => {
+    if (!location.hash) {
+      navigate(location.pathname + location.search + "#products", { replace: true });
+    }
+  }, [location.pathname, location.search, location.hash, navigate]);
 
   const { data: products, isLoading, error } = useQuery({
     queryKey: ['products'],
