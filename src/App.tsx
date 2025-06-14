@@ -8,7 +8,6 @@ import ProductPage from "./pages/Product";
 import AuthPage from "./pages/auth";
 import SignInCommunityPage from "./pages/sign-in-community";
 import SignUpCommunityPage from "./pages/sign-up-community";
-import ProductsPage from "./pages/Products";
 import NewProductPage from "./pages/seller/NewProduct";
 import NewCommunityPage from "./pages/seller/NewCommunityPage";
 import EditProductPage from "./pages/EditProduct";
@@ -53,7 +52,6 @@ function App() {
           <Route path="/sign-in/community/:id" element={<SignInCommunityPage />} />
           <Route path="/sign-up/community/:id" element={<SignUpCommunityPage />} />
           <Route path="/product/:id" element={<ProductPage />} />
-          <Route path="/products" element={<ProductsPage />} />
           <Route path="/product/:slug/:id" element={<ProductPage />} />
           <Route path="/sell" element={<SellPage />} />
           <Route path="/seller/products/new" element={<NewProductPage />} />
