@@ -1,4 +1,3 @@
-
 import { Separator } from "@/components/ui/separator";
 import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
@@ -80,7 +79,7 @@ export function Footer() {
     href: "/faq"
   }];
 
-  return <footer className="mt-auto bg-background border-t pt-8">
+  return <footer className="mt-auto bg-background border-t">
       <div className="container max-w-6xl mx-auto px-4 py-8">
         {/* Main Footer Content */}
         <div className="flex flex-col gap-8">
@@ -128,7 +127,7 @@ export function Footer() {
           </div>
         </div>
 
-        <Separator className="my-6" />
+        <Separator className="my-6 mt-8" />
 
         {/* Bottom Footer */}
         <div className="text-center">
