@@ -145,10 +145,10 @@ export const CategoryHeader = ({
               <div className="relative bg-gray-100 rounded-full p-1 w-full lg:w-[200px] overflow-hidden">
                 {/* Sliding background indicator - precise positioning */}
                 <div 
-                  className={`absolute top-1 bottom-1 bg-white rounded-full shadow-sm transition-all duration-200 ease-out ${
+                  className={`absolute top-1 bottom-1 w-1/2 bg-white rounded-full shadow-sm transition-all duration-200 ease-out ${
                     viewMode === "communities" 
-                      ? "left-1/2 right-1" 
-                      : "left-1 right-1/2"
+                      ? "left-1/2" 
+                      : "left-1"
                   }`}
                 />
                 
