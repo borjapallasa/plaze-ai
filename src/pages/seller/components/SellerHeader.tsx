@@ -34,8 +34,8 @@ export function SellerHeader({
             <div className="flex-1">
               {/* Top row: Avatar and Name/Title/Location */}
               <div className="flex items-start gap-4 mb-4">
-                {/* Avatar */}
-                <div className="w-16 h-16 md:w-20 md:h-20 flex-shrink-0">
+                {/* Avatar - Made smaller */}
+                <div className="w-12 h-12 md:w-14 md:h-14 flex-shrink-0">
                   <AspectRatio ratio={1} className="overflow-hidden rounded-full">
                     <Avatar className="h-full w-full">
                       <AvatarImage 
@@ -43,7 +43,7 @@ export function SellerHeader({
                         alt={seller.name}
                         className="object-cover"
                       />
-                      <AvatarFallback className="text-lg font-semibold">
+                      <AvatarFallback className="text-sm font-semibold">
                         {seller.name?.split(' ').map(n => n[0]).join('') || 'UN'}
                       </AvatarFallback>
                     </Avatar>
@@ -100,13 +100,13 @@ export function SellerHeader({
             </div>
 
             {/* Vertical Divider - Hidden on small screens, shown on lg+ */}
-            <div className="hidden lg:block w-px bg-border h-32 flex-shrink-0"></div>
+            <div className="hidden lg:block w-px bg-border h-40 flex-shrink-0"></div>
 
             {/* Group B (Right): Stats - Hidden on small screens, shown on lg+ */}
             <div className="hidden lg:flex lg:flex-col gap-4">
               
               {/* Stacked Stats Column */}
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-3 text-left">
                 
                 {/* Client Satisfaction */}
                 <div className="flex items-center gap-2">
