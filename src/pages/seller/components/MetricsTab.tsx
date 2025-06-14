@@ -36,6 +36,14 @@ export function MetricsTab() {
     { source: 'Referral', value: 15, color: '#ef4444' }
   ];
 
+  const productSalesData = [
+    { name: 'UI Kit Pro', sales: 45, revenue: 4500, color: '#3b82f6' },
+    { name: 'Design System', sales: 32, revenue: 3200, color: '#10b981' },
+    { name: 'Landing Templates', sales: 28, revenue: 2800, color: '#f59e0b' },
+    { name: 'React Components', sales: 22, revenue: 2200, color: '#ef4444' },
+    { name: 'Icon Pack', sales: 18, revenue: 1800, color: '#8b5cf6' }
+  ];
+
   const chartConfig = {
     revenue: {
       label: "Revenue",
@@ -72,6 +80,7 @@ export function MetricsTab() {
 
   return (
     <div className="space-y-6">
+      {/* KPI Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -204,6 +213,55 @@ export function MetricsTab() {
         </Card>
       </div>
 
+      {/* Product Sales Distribution */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Product Sales Distribution</CardTitle>
+            <CardDescription>Sales performance by product</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer config={chartConfig} className="h-[300px]">
+              <BarChart data={productSalesData} layout="horizontal">
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis type="number" />
+                <YAxis dataKey="name" type="category" width={100} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Bar dataKey="sales" fill="#3b82f6" name="Sales" />
+              </BarChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Product Revenue Distribution</CardTitle>
+            <CardDescription>Revenue breakdown by product</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer config={chartConfig} className="h-[300px]">
+              <PieChart>
+                <Pie
+                  data={productSalesData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, value }) => `${name}: ${value}`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="revenue"
+                >
+                  {productSalesData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <ChartTooltip content={<ChartTooltipContent />} />
+              </PieChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+      </div>
+
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
@@ -235,18 +293,12 @@ export function MetricsTab() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">UI Kit Pro</span>
-                <span className="text-sm text-muted-foreground">45 sales</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Design System</span>
-                <span className="text-sm text-muted-foreground">32 sales</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Landing Templates</span>
-                <span className="text-sm text-muted-foreground">28 sales</span>
-              </div>
+              {productSalesData.slice(0, 3).map((product, index) => (
+                <div key={index} className="flex items-center justify-between">
+                  <span className="text-sm font-medium">{product.name}</span>
+                  <span className="text-sm text-muted-foreground">{product.sales} sales</span>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
