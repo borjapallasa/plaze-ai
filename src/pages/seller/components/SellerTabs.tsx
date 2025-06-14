@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ShoppingBag, BriefcaseIcon, UsersRound, AppWindow, BarChart3, Star } from "lucide-react";
@@ -76,39 +75,41 @@ export function SellerTabs({
       onValueChange={handleTabChange}
       className="animate-fade-in"
     >
-      <TabsList className={`grid ${isSellerPage ? 'grid-cols-4' : 'grid-cols-6'} h-12 items-center bg-muted/50 mb-6`}>
-        <TabsTrigger value="metrics" className="data-[state=active]:bg-background">
-          <BarChart3 className="h-4 w-4 mr-2" />
-          Metrics
-        </TabsTrigger>
-        <TabsTrigger value="products" className="data-[state=active]:bg-background">
-          <ShoppingBag className="h-4 w-4 mr-2" />
-          Products
-          {productsLoading && <span className="ml-2 text-xs">Loading...</span>}
-        </TabsTrigger>
-        {!isSellerPage && (
-          <TabsTrigger value="services" className="data-[state=active]:bg-background">
-            <BriefcaseIcon className="h-4 w-4 mr-2" />
-            Services
-            {servicesLoading && <span className="ml-2 text-xs">Loading...</span>}
+      <div className="w-full mb-6">
+        <TabsList className="h-12 items-center bg-muted/50 w-full justify-start overflow-x-auto scrollbar-hide">
+          <TabsTrigger value="metrics" className="data-[state=active]:bg-background whitespace-nowrap flex-shrink-0">
+            <BarChart3 className="h-4 w-4 mr-2" />
+            Metrics
           </TabsTrigger>
-        )}
-        <TabsTrigger value="communities" className="data-[state=active]:bg-background">
-          <UsersRound className="h-4 w-4 mr-2" />
-          Communities
-          {communitiesLoading && <span className="ml-2 text-xs">Loading...</span>}
-        </TabsTrigger>
-        {!isSellerPage && (
-          <TabsTrigger value="applications" className="data-[state=active]:bg-background">
-            <AppWindow className="h-4 w-4 mr-2" />
-            Applications
+          <TabsTrigger value="products" className="data-[state=active]:bg-background whitespace-nowrap flex-shrink-0">
+            <ShoppingBag className="h-4 w-4 mr-2" />
+            Products
+            {productsLoading && <span className="ml-2 text-xs">Loading...</span>}
           </TabsTrigger>
-        )}
-        <TabsTrigger value="reviews" className="data-[state=active]:bg-background">
-          <Star className="h-4 w-4 mr-2" />
-          Reviews
-        </TabsTrigger>
-      </TabsList>
+          {!isSellerPage && (
+            <TabsTrigger value="services" className="data-[state=active]:bg-background whitespace-nowrap flex-shrink-0">
+              <BriefcaseIcon className="h-4 w-4 mr-2" />
+              Services
+              {servicesLoading && <span className="ml-2 text-xs">Loading...</span>}
+            </TabsTrigger>
+          )}
+          <TabsTrigger value="communities" className="data-[state=active]:bg-background whitespace-nowrap flex-shrink-0">
+            <UsersRound className="h-4 w-4 mr-2" />
+            Communities
+            {communitiesLoading && <span className="ml-2 text-xs">Loading...</span>}
+          </TabsTrigger>
+          {!isSellerPage && (
+            <TabsTrigger value="applications" className="data-[state=active]:bg-background whitespace-nowrap flex-shrink-0">
+              <AppWindow className="h-4 w-4 mr-2" />
+              Applications
+            </TabsTrigger>
+          )}
+          <TabsTrigger value="reviews" className="data-[state=active]:bg-background whitespace-nowrap flex-shrink-0">
+            <Star className="h-4 w-4 mr-2" />
+            Reviews
+          </TabsTrigger>
+        </TabsList>
+      </div>
 
       <TabsContent value="metrics" className="mt-0">
         <MetricsTab />
