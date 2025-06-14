@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -88,6 +89,10 @@ const Index = () => {
     [selectedCategory, products]
   );
 
+  const handleCommunityClick = (communityId: string) => {
+    navigate(`/community/${communityId}`);
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen">
@@ -147,7 +152,11 @@ const Index = () => {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
               {communities?.map((community) => (
-                <Card key={community.community_uuid} className="overflow-hidden hover:shadow-lg transition-shadow">
+                <Card 
+                  key={community.community_uuid} 
+                  className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+                  onClick={() => handleCommunityClick(community.community_uuid)}
+                >
                   {/* Community Image */}
                   <div className="aspect-video relative overflow-hidden">
                     <img
