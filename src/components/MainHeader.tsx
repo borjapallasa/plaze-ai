@@ -184,6 +184,11 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                     Home
                   </DropdownMenuItem>
                 </Link>
+                {user && (
+                  <Link to="/personal-area">
+                    <DropdownMenuItem>Personal Area</DropdownMenuItem>
+                  </Link>
+                )}
                 {user ? (
                   <>
                     <DropdownMenuItem onClick={handleSignOut}>Sign Out</DropdownMenuItem>
@@ -282,6 +287,19 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
           <div className="flex items-center gap-3 w-[140px] justify-end">
             <CartDrawerTrigger />
             
+            {/* Show Personal Area link when user is authenticated */}
+            {user && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="font-medium text-foreground hover:text-primary hover:bg-primary/10 h-8 hidden lg:flex"
+              >
+                <Link to="/personal-area">
+                  Personal Area
+                </Link>
+              </Button>
+            )}
+            
             {/* Hide "Sell on Plaze" button on tablet (md), show only on large screens (lg+) */}
             <Button
               variant="ghost"
@@ -308,6 +326,11 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                     Home
                   </DropdownMenuItem>
                 </Link>
+                {user && (
+                  <Link to="/personal-area">
+                    <DropdownMenuItem>Personal Area</DropdownMenuItem>
+                  </Link>
+                )}
                 {user ? (
                   <>
                     <DropdownMenuItem onClick={handleSignOut}>
