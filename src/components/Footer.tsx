@@ -127,7 +127,7 @@ export function Footer() {
           </div>
         </div>
 
-        <Separator className="my-6 mt-8" />
+        <Separator className="my-6 mt-12" />
 
         {/* Bottom Footer */}
         <div className="text-center">
