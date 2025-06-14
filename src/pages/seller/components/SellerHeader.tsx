@@ -50,10 +50,26 @@ export function SellerHeader({
               
               {/* Profile Text Block */}
               <div className="flex-1 min-w-0">
-                {/* Name */}
-                <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-1 leading-tight">
-                  {seller.name}
-                </h1>
+                {/* Name and Edit Button Row */}
+                <div className="flex items-center gap-3 mb-1">
+                  <h1 className="text-2xl md:text-3xl font-bold text-foreground leading-tight">
+                    {seller.name}
+                  </h1>
+                  <EditExpertDialog
+                    expert={seller}
+                    onUpdate={onSellerUpdate}
+                    trigger={
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex items-center gap-2 whitespace-nowrap"
+                      >
+                        <Edit2 className="h-4 w-4" aria-hidden="true" />
+                        Edit Profile
+                      </Button>
+                    }
+                  />
+                </div>
                 
                 {/* Role & Location Line */}
                 <div className="flex items-center gap-3 mb-2 text-sm font-medium text-muted-foreground">
@@ -81,16 +97,16 @@ export function SellerHeader({
             </div>
 
             {/* Vertical Divider - Hidden on small screens, shown on lg+ */}
-            <div className="hidden lg:block w-px bg-border h-24 flex-shrink-0"></div>
+            <div className="hidden lg:block w-px bg-border h-32 flex-shrink-0"></div>
 
-            {/* Group B (Right): Stats & CTA - Hidden on small screens, shown on lg+ */}
-            <div className="hidden lg:flex lg:flex-col lg:items-end gap-4">
+            {/* Group B (Right): Stats - Hidden on small screens, shown on lg+ */}
+            <div className="hidden lg:flex lg:flex-col gap-4">
               
               {/* Stacked Stats Column */}
               <div className="flex flex-col gap-3">
                 
                 {/* Client Satisfaction */}
-                <div className="flex items-center gap-2 justify-end">
+                <div className="flex items-center gap-2">
                   <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" aria-hidden="true" />
                   <span className="text-sm font-semibold text-foreground">
                     {seller.client_satisfaction}% satisfaction
@@ -99,7 +115,7 @@ export function SellerHeader({
                 </div>
 
                 {/* Completed Projects */}
-                <div className="flex items-center gap-2 justify-end">
+                <div className="flex items-center gap-2">
                   <Briefcase className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
                   <span className="text-sm font-semibold text-foreground">
                     {seller.completed_projects} projects
@@ -108,7 +124,7 @@ export function SellerHeader({
                 </div>
 
                 {/* Products Count */}
-                <div className="flex items-center gap-2 justify-end">
+                <div className="flex items-center gap-2">
                   <Package className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
                   <span className="text-sm font-semibold text-foreground">
                     {productsCount} products
@@ -118,7 +134,7 @@ export function SellerHeader({
 
                 {/* Communities Count */}
                 {communitiesCount > 0 && (
-                  <div className="flex items-center gap-2 justify-end">
+                  <div className="flex items-center gap-2">
                     <Users className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
                     <span className="text-sm font-semibold text-foreground">
                       {communitiesCount} communities
@@ -127,22 +143,6 @@ export function SellerHeader({
                   </div>
                 )}
               </div>
-
-              {/* Edit Profile Button */}
-              <EditExpertDialog
-                expert={seller}
-                onUpdate={onSellerUpdate}
-                trigger={
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="flex items-center gap-2 whitespace-nowrap"
-                  >
-                    <Edit2 className="h-4 w-4" aria-hidden="true" />
-                    Edit Profile
-                  </Button>
-                }
-              />
             </div>
           </div>
 
