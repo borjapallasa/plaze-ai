@@ -1,7 +1,6 @@
-
 import React, { useState, FormEvent, useEffect } from "react";
 import { Input } from "@/components/ui/input";
-import { Search, Menu, User, ChevronDown, LogOut } from "lucide-react";
+import { Search, Menu, User, ChevronDown, LogOut, Home, UserCircle, Users, Store, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
@@ -182,36 +181,59 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
               <DropdownMenuContent align="end" className="w-56">
                 <Link to="/">
                   <DropdownMenuItem>
+                    <Home className="mr-2 h-4 w-4" />
                     Home
                   </DropdownMenuItem>
                 </Link>
                 {user && (
                   <Link to="/personal-area">
-                    <DropdownMenuItem>Personal Area</DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <UserCircle className="mr-2 h-4 w-4" />
+                      Personal Area
+                    </DropdownMenuItem>
                   </Link>
                 )}
-                {user ? (
-                  <>
-                    <DropdownMenuItem onClick={handleSignOut}>Sign Out</DropdownMenuItem>
-                  </>
-                ) : (
+                {!user && (
                   <>
                     <Link to="/sign-in">
-                      <DropdownMenuItem>Sign In</DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <User className="mr-2 h-4 w-4" />
+                        Sign In
+                      </DropdownMenuItem>
                     </Link>
                     <Link to="/sign-up">
-                      <DropdownMenuItem>Sign Up</DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <User className="mr-2 h-4 w-4" />
+                        Sign Up
+                      </DropdownMenuItem>
                     </Link>
                   </>
                 )}
-                <DropdownMenuSeparator />
                 <Link to="/affiliates">
-                  <DropdownMenuItem>Affiliates</DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Users className="mr-2 h-4 w-4" />
+                    Affiliates
+                  </DropdownMenuItem>
                 </Link>
                 <Link to="/sell">
-                  <DropdownMenuItem>Sell on Plaze</DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Store className="mr-2 h-4 w-4" />
+                    Sell on Plaze
+                  </DropdownMenuItem>
                 </Link>
-                <DropdownMenuItem>Help Center</DropdownMenuItem>
+                <DropdownMenuItem>
+                  <HelpCircle className="mr-2 h-4 w-4" />
+                  Help Center
+                </DropdownMenuItem>
+                {user && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleSignOut}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Sign Out
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -313,37 +335,57 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
               <DropdownMenuContent align="end" className="w-56">
                 <Link to="/">
                   <DropdownMenuItem>
+                    <Home className="mr-2 h-4 w-4" />
                     Home
                   </DropdownMenuItem>
                 </Link>
                 {user && (
                   <Link to="/personal-area">
-                    <DropdownMenuItem>Personal Area</DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <UserCircle className="mr-2 h-4 w-4" />
+                      Personal Area
+                    </DropdownMenuItem>
                   </Link>
                 )}
-                {user ? (
+                {!user && (
                   <>
+                    <Link to="/sign-in">
+                      <DropdownMenuItem>
+                        <User className="mr-2 h-4 w-4" />
+                        Sign In
+                      </DropdownMenuItem>
+                    </Link>
+                    <Link to="/sign-up">
+                      <DropdownMenuItem>
+                        <User className="mr-2 h-4 w-4" />
+                        Sign Up
+                      </DropdownMenuItem>
+                    </Link>
+                  </>
+                )}
+                <Link to="/affiliates">
+                  <DropdownMenuItem>
+                    <Users className="mr-2 h-4 w-4" />
+                    Affiliates
+                  </DropdownMenuItem>
+                </Link>
+                <DropdownMenuItem>
+                  <Store className="mr-2 h-4 w-4" />
+                  Sell on Plaze
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <HelpCircle className="mr-2 h-4 w-4" />
+                  Help Center
+                </DropdownMenuItem>
+                {user && (
+                  <>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleSignOut}>
                       <LogOut className="mr-2 h-4 w-4" />
                       Sign Out
                     </DropdownMenuItem>
                   </>
-                ) : (
-                  <>
-                    <Link to="/sign-in">
-                      <DropdownMenuItem>Sign In</DropdownMenuItem>
-                    </Link>
-                    <Link to="/sign-up">
-                      <DropdownMenuItem>Sign Up</DropdownMenuItem>
-                    </Link>
-                  </>
                 )}
-                <DropdownMenuSeparator />
-                <Link to="/affiliates">
-                  <DropdownMenuItem>Affiliates</DropdownMenuItem>
-                </Link>
-                <DropdownMenuItem>Sell on Plaze</DropdownMenuItem>
-                <DropdownMenuItem>Help Center</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
