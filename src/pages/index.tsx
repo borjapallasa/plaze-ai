@@ -2,20 +2,12 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { useIsMobile } from "@/hooks/use-mobile";
-import Typewriter from 'typewriter-effect';
 import { Link, useNavigate } from "react-router-dom";
 import { CategoryHeader } from "@/components/CategoryHeader";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 import { MainHeader } from "@/components/MainHeader";
-
-const typewriterStrings = [
-  "Products To Scale",
-  "Experts To Hire",
-  "Jobs To Earn",
-  "Communities To Learn"
-];
 
 const Index = () => {
   const isMobile = useIsMobile();
@@ -75,25 +67,7 @@ const Index = () => {
     <div className="min-h-screen">
       <MainHeader />
 
-      <main className="pt-24">
-        {/* Hero Section */}
-        <div className="container mx-auto px-4 py-8 text-center">
-          <div className="text-[1.5rem] md:text-[2rem] leading-relaxed font-bold whitespace-nowrap flex items-center justify-center flex-wrap">
-            <span>The Best AI & Automation</span>
-            <span className="text-muted-foreground ml-1">
-              <Typewriter
-                options={{
-                  strings: typewriterStrings,
-                  autoStart: true,
-                  loop: true,
-                  delay: 50,
-                  deleteSpeed: 30,
-                }}
-              />
-            </span>
-          </div>
-        </div>
-
+      <main className="pt-20">
         <CategoryHeader
           selectedCategory={selectedCategory}
           onCategoryChange={setSelectedCategory}
