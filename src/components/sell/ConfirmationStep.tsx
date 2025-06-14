@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Shield } from "lucide-react";
+import { useAuth } from "@/lib/auth";
 
 interface ConfirmationStepProps {
   selectedOption: string | null;
@@ -25,6 +26,8 @@ export function ConfirmationStep({
   formData,
   handleInputChange 
 }: ConfirmationStepProps) {
+  const { user } = useAuth();
+
   return (
     <div className="space-y-6">
       <div className="text-center space-y-2">
@@ -88,24 +91,41 @@ export function ConfirmationStep({
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="contactEmail" className="font-medium text-gray-700">
-          Email Address <span className="text-red-500">*</span>
-        </Label>
-        <Input
-          id="contactEmail"
-          name="contactEmail"
-          type="email"
-          value={formData.contactEmail}
-          onChange={handleInputChange}
-          placeholder="your@email.com"
-          required
-          className="w-full"
-        />
-        <p className="text-sm text-gray-500">
-          We'll use this to set up your account and send you a magic link for future logins.
-        </p>
-      </div>
+      {/* Only show email input if user is not authenticated */}
+      {!user && (
+        <div className="space-y-2">
+          <Label htmlFor="contactEmail" className="font-medium text-gray-700">
+            Email Address <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="contactEmail"
+            name="contactEmail"
+            type="email"
+            value={formData.contactEmail}
+            onChange={handleInputChange}
+            placeholder="your@email.com"
+            required
+            className="w-full"
+          />
+          <p className="text-sm text-gray-500">
+            We'll use this to set up your account and send you a magic link for future logins.
+          </p>
+        </div>
+      )}
+
+      {/* Show current user email if authenticated */}
+      {user && (
+        <div className="space-y-2">
+          <Label className="font-medium text-gray-700">
+            Account Email
+          </Label>
+          <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+            <p className="text-sm text-green-800">
+              You're signed in as: <span className="font-medium">{user.email}</span>
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="border-t pt-4">
         <div className="flex items-start space-x-3 p-4 bg-blue-50 rounded-lg">

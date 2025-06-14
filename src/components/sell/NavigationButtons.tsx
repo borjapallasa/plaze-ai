@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { CreationLoadingState } from "./CreationLoadingState";
+import { useAuth } from "@/lib/auth";
 
 interface NavigationButtonsProps {
   currentStep: number;
@@ -32,6 +33,7 @@ export function NavigationButtons({
 }: NavigationButtonsProps) {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+  const { user } = useAuth();
 
   const isNextDisabled = () => {
     if (currentStep === 1 && !selectedOption) {
@@ -47,8 +49,13 @@ export function NavigationButtons({
       }
     }
 
-    if (currentStep === 3 && (!formData.contactEmail || !formData.captchaConfirmed)) {
-      return true;
+    if (currentStep === 3) {
+      // If user is authenticated, only check captcha. If not authenticated, check both email and captcha
+      if (user) {
+        return !formData.captchaConfirmed;
+      } else {
+        return !formData.contactEmail || !formData.captchaConfirmed;
+      }
     }
     
     return false;
@@ -56,7 +63,10 @@ export function NavigationButtons({
 
   const handleNext = async () => {
     if (currentStep === 3) {
-      if (!formData.contactEmail) {
+      // Use authenticated user's email or the provided email
+      const emailToUse = user?.email || formData.contactEmail;
+      
+      if (!emailToUse) {
         toast.error("Please provide an email address");
         return;
       }
@@ -70,71 +80,77 @@ export function NavigationButtons({
       setIsCreating(true);
       
       try {
-        const tempPassword = Math.random().toString(36).slice(-12);
-        
-        // First, try to create or authenticate the user
         let userId;
         let isNewUser = false;
         
-        // Check if user exists
-        const { data: existingUserData } = await supabase
-          .from('users')
-          .select('user_uuid')
-          .eq('email', formData.contactEmail)
-          .maybeSingle();
-        
-        if (existingUserData) {
-          // User exists, get the UUID
-          userId = existingUserData.user_uuid;
-          console.log("Found existing user:", userId);
-          
-          // Send a magic link for authentication
-          const { error: signInError } = await supabase.auth.signInWithOtp({
-            email: formData.contactEmail,
-            options: {
-              emailRedirectTo: `${window.location.origin}/seller/dashboard`,
-            },
-          });
-          
-          if (signInError) {
-            throw new Error(`Failed to sign in: ${signInError.message}`);
-          }
+        if (user) {
+          // User is already authenticated, use their ID
+          userId = user.id;
+          console.log("Using authenticated user:", userId);
         } else {
-          // Create new user in Auth
-          const { data: authData, error: signUpError } = await supabase.auth.signUp({
-            email: formData.contactEmail,
-            password: tempPassword,
-            options: {
-              data: {
-                seller_type: selectedOption,
+          // User is not authenticated, create new account
+          const tempPassword = Math.random().toString(36).slice(-12);
+          
+          // Check if user exists
+          const { data: existingUserData } = await supabase
+            .from('users')
+            .select('user_uuid')
+            .eq('email', emailToUse)
+            .maybeSingle();
+          
+          if (existingUserData) {
+            // User exists, get the UUID
+            userId = existingUserData.user_uuid;
+            console.log("Found existing user:", userId);
+            
+            // Send a magic link for authentication
+            const { error: signInError } = await supabase.auth.signInWithOtp({
+              email: emailToUse,
+              options: {
+                emailRedirectTo: `${window.location.origin}/seller/dashboard`,
               },
+            });
+            
+            if (signInError) {
+              throw new Error(`Failed to sign in: ${signInError.message}`);
             }
-          });
+          } else {
+            // Create new user in Auth
+            const { data: authData, error: signUpError } = await supabase.auth.signUp({
+              email: emailToUse,
+              password: tempPassword,
+              options: {
+                data: {
+                  seller_type: selectedOption,
+                },
+              }
+            });
 
-          if (signUpError) {
-            throw new Error(`Failed to create account: ${signUpError.message}`);
-          }
-          
-          if (!authData.user) {
-            throw new Error("Failed to create user account");
-          }
-          
-          userId = authData.user.id;
-          isNewUser = true;
-          console.log("Created new user:", userId);
-          
-          // Sign in immediately to get a valid session
-          const { data: sessionData, error: sessionError } = await supabase.auth.signInWithPassword({
-            email: formData.contactEmail,
-            password: tempPassword,
-          });
-          
-          if (sessionError) {
-            throw new Error(`Failed to sign in after account creation: ${sessionError.message}`);
-          }
-          
-          if (!sessionData.session) {
-            throw new Error("No valid session after sign in");
+            if (signUpError) {
+              throw new Error(`Failed to create account: ${signUpError.message}`);
+            }
+            
+            if (!authData.user) {
+              throw new Error("Failed to create user account");
+            }
+            
+            userId = authData.user.id;
+            isNewUser = true;
+            console.log("Created new user:", userId);
+            
+            // Sign in immediately to get a valid session
+            const { data: sessionData, error: sessionError } = await supabase.auth.signInWithPassword({
+              email: emailToUse,
+              password: tempPassword,
+            });
+            
+            if (sessionError) {
+              throw new Error(`Failed to sign in after account creation: ${sessionError.message}`);
+            }
+            
+            if (!sessionData.session) {
+              throw new Error("No valid session after sign in");
+            }
           }
         }
         
@@ -159,7 +175,7 @@ export function NavigationButtons({
           console.log("Creating new expert profile for user:", userId);
           
           const { data: session } = await supabase.auth.getSession();
-          if (!session.session) {
+          if (!session.session && !user) {
             throw new Error("No active session to create expert profile");
           }
           
@@ -168,7 +184,7 @@ export function NavigationButtons({
             .from('experts')
             .insert({
               user_uuid: userId,
-              email: formData.contactEmail,
+              email: emailToUse,
               name: formData.name,
               description: formData.description,
               areas: [] // Initialize with empty areas array
@@ -226,15 +242,20 @@ export function NavigationButtons({
           }
         }
 
-        // Always send a magic link for future logins
-        await supabase.auth.signInWithOtp({
-          email: formData.contactEmail,
-          options: {
-            emailRedirectTo: `${window.location.origin}/seller/dashboard`,
-          },
-        });
+        // Send magic link for future logins only if user wasn't already authenticated
+        if (!user) {
+          await supabase.auth.signInWithOtp({
+            email: emailToUse,
+            options: {
+              emailRedirectTo: `${window.location.origin}/seller/dashboard`,
+            },
+          });
+          
+          toast.success("Account created! A magic link has been sent to your email for future logins");
+        } else {
+          toast.success(`${selectedOption === 'products' ? 'Product' : 'Community'} created successfully!`);
+        }
         
-        toast.success("Account created! A magic link has been sent to your email for future logins");
         onNext();
       } catch (error) {
         console.error("Creation error:", error);
@@ -271,7 +292,7 @@ export function NavigationButtons({
         {isAuthenticating ? (
           <>
             <Loader2 className="h-4 w-4 animate-spin mr-2" />
-            Authenticating...
+            {user ? "Creating..." : "Authenticating..."}
           </>
         ) : (
           <>
