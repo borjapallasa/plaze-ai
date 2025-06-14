@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, Users, ShoppingBag, DollarSign, Eye, Repeat } from "lucide-react";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, BarChart, Bar, PieChart, Pie, Cell } from "recharts";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 export function MetricsTab() {
@@ -24,7 +24,6 @@ export function MetricsTab() {
     mrrChange: 18.3
   };
 
-  // Chart data
   const revenueData = [
     { month: 'Jan', revenue: 8500, sales: 45 },
     { month: 'Feb', revenue: 12200, sales: 67 },
@@ -186,7 +185,7 @@ export function MetricsTab() {
         </Card>
       </div>
 
-      {/* Charts Section */}
+      {/* Charts Section - Updated to fill full width */}
       <div className="space-y-6">
         {/* Revenue & Sales Chart */}
         <Card>
@@ -195,29 +194,32 @@ export function MetricsTab() {
             <CardDescription>Monthly revenue and sales over the last 6 months</CardDescription>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={chartConfig} className="h-[300px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={revenueData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Line 
-                    type="monotone" 
-                    dataKey="revenue" 
-                    stroke="#3b82f6" 
-                    strokeWidth={2}
-                    name="Revenue ($)"
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="sales" 
-                    stroke="#10b981" 
-                    strokeWidth={2}
-                    name="Sales"
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+            <ChartContainer config={chartConfig} className="w-full h-[400px]">
+              <LineChart 
+                data={revenueData} 
+                width="100%" 
+                height="100%"
+                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Line 
+                  type="monotone" 
+                  dataKey="revenue" 
+                  stroke="#3b82f6" 
+                  strokeWidth={2}
+                  name="Revenue ($)"
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="sales" 
+                  stroke="#10b981" 
+                  strokeWidth={2}
+                  name="Sales"
+                />
+              </LineChart>
             </ChartContainer>
           </CardContent>
         </Card>
@@ -229,22 +231,25 @@ export function MetricsTab() {
             <CardDescription>Monthly recurring revenue growth over time</CardDescription>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={chartConfig} className="h-[300px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={mrrData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Line 
-                    type="monotone" 
-                    dataKey="mrr" 
-                    stroke="#8b5cf6" 
-                    strokeWidth={3}
-                    name="MRR ($)"
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+            <ChartContainer config={chartConfig} className="w-full h-[400px]">
+              <LineChart 
+                data={mrrData} 
+                width="100%" 
+                height="100%"
+                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Line 
+                  type="monotone" 
+                  dataKey="mrr" 
+                  stroke="#8b5cf6" 
+                  strokeWidth={3}
+                  name="MRR ($)"
+                />
+              </LineChart>
             </ChartContainer>
           </CardContent>
         </Card>
@@ -258,26 +263,24 @@ export function MetricsTab() {
               <CardDescription>Distribution of traffic sources this month</CardDescription>
             </CardHeader>
             <CardContent>
-              <ChartContainer config={chartConfig} className="h-[300px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={trafficData}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                      outerRadius={isMobile ? 60 : 80}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {trafficData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                  </PieChart>
-                </ResponsiveContainer>
+              <ChartContainer config={chartConfig} className="w-full h-[350px]">
+                <PieChart width="100%" height="100%">
+                  <Pie
+                    data={trafficData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    outerRadius={isMobile ? 80 : 100}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {trafficData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                </PieChart>
               </ChartContainer>
             </CardContent>
           </Card>
@@ -289,20 +292,25 @@ export function MetricsTab() {
               <CardDescription>Sales performance by product</CardDescription>
             </CardHeader>
             <CardContent>
-              <ChartContainer config={chartConfig} className="h-[300px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart 
-                    data={productSalesData} 
-                    layout="horizontal" 
-                    margin={{ top: 5, right: 30, left: isMobile ? 60 : 80, bottom: 5 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" />
-                    <YAxis dataKey="name" type="category" width={isMobile ? 50 : 70} fontSize={isMobile ? 10 : 12} />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Bar dataKey="sales" fill="#3b82f6" name="Sales" />
-                  </BarChart>
-                </ResponsiveContainer>
+              <ChartContainer config={chartConfig} className="w-full h-[350px]">
+                <BarChart 
+                  data={productSalesData} 
+                  layout="horizontal" 
+                  width="100%" 
+                  height="100%"
+                  margin={{ top: 20, right: 30, left: isMobile ? 80 : 100, bottom: 20 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis type="number" />
+                  <YAxis 
+                    dataKey="name" 
+                    type="category" 
+                    width={isMobile ? 70 : 90} 
+                    fontSize={isMobile ? 10 : 12} 
+                  />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Bar dataKey="sales" fill="#3b82f6" name="Sales" />
+                </BarChart>
               </ChartContainer>
             </CardContent>
           </Card>
@@ -317,26 +325,24 @@ export function MetricsTab() {
               <CardDescription>Revenue breakdown by product</CardDescription>
             </CardHeader>
             <CardContent>
-              <ChartContainer config={chartConfig} className="h-[300px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={productSalesData}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ name, value }) => `${name}: ${value}`}
-                      outerRadius={isMobile ? 60 : 80}
-                      fill="#8884d8"
-                      dataKey="revenue"
-                    >
-                      {productSalesData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                  </PieChart>
-                </ResponsiveContainer>
+              <ChartContainer config={chartConfig} className="w-full h-[350px]">
+                <PieChart width="100%" height="100%">
+                  <Pie
+                    data={productSalesData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, value }) => `${name}: ${value}`}
+                    outerRadius={isMobile ? 80 : 100}
+                    fill="#8884d8"
+                    dataKey="revenue"
+                  >
+                    {productSalesData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                </PieChart>
               </ChartContainer>
             </CardContent>
           </Card>
