@@ -124,8 +124,8 @@ export function Footer() {
     href: "/privacy"
   }];
 
-  return <footer className="mt-auto bg-gray-50 border-t">
-      <div className="w-full max-w-6xl mx-auto px-4 py-8">
+  return <footer className="mt-auto bg-background border-t">
+      <div className="container max-w-6xl mx-auto px-4 py-8">
         {/* Main Footer Content - Horizontal Layout */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 min-h-[200px]">
           {/* Left side - Logo centered vertically */}
