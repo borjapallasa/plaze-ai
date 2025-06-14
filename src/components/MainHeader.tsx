@@ -217,7 +217,7 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
             <img 
               src="/lovable-uploads/84b87a79-21ab-4d4e-b6fe-3af1f7e0464d.png" 
               alt="Plaze.ai" 
-              className="h-8 w-auto"
+              className="h-6 w-auto"
             />
           </Link>
 
