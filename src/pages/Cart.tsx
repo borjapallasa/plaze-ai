@@ -4,12 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Trash2, ShoppingCart, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { useCart } from "@/context/CartContext";
 
 export default function Cart() {
   const { cart, isLoading, fetchCart, removeFromCart, cleanupCart } = useCart();
-  const { toast } = useToast();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [removingItems, setRemovingItems] = useState<string[]>([]);
 
@@ -23,11 +22,7 @@ export default function Cart() {
         await cleanupCart();
       } catch (error) {
         console.error('Error refreshing cart:', error);
-        toast({
-          title: "Error",
-          description: "Failed to load your cart. Please try again.",
-          variant: "destructive"
-        });
+        toast.error("Failed to load your cart. Please try again.");
       } finally {
         setIsRefreshing(false);
       }
@@ -39,11 +34,7 @@ export default function Cart() {
   const handleRemoveItem = async (variantId: string) => {
     console.log('Cart page: Removing item', variantId);
     if (!cart) {
-      toast({
-        title: "Error",
-        description: "No active cart found",
-        variant: "destructive"
-      });
+      toast.error("No active cart found");
       return;
     }
     
@@ -185,8 +176,7 @@ export default function Cart() {
                       size="lg"
                       className="w-full bg-primary hover:bg-primary/90 transition-colors"
                       onClick={() => {
-                        toast({
-                          title: "Payment processing",
+                        toast.success("Payment processing", {
                           description: "This is where the payment processing would begin."
                         });
                       }}

@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { v4 as uuidv4 } from 'uuid';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { CartTransaction, CartItem } from '@/types/cart';
 import { 
   fetchCartData, 
@@ -38,7 +38,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CartTransaction | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [guestSessionId, setGuestSessionId] = useState<string>('');
-  const { toast } = useToast();
   const [lastFetchTime, setLastFetchTime] = useState<number>(0);
 
   useEffect(() => {
@@ -96,15 +95,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       return cartData;
     } catch (error) {
       console.error('Failed to fetch cart:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load your cart. Please try again.",
-        variant: "destructive"
-      });
+      toast.error("Failed to load your cart. Please try again.");
       setIsLoading(false);
       return null;
     }
-  }, [cart, lastFetchTime, toast]);
+  }, [cart, lastFetchTime]);
 
   const addToCart = async (
     product: any,
@@ -166,11 +161,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       );
 
       if (!result.success) {
-        toast({
-          title: "Error",
-          description: result.message || "Failed to add item to cart",
-          variant: "destructive"
-        });
+        toast.error(result.message || "Failed to add item to cart");
         setIsLoading(false);
         return null;
       }
@@ -227,10 +218,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         await fetchCart(userId);
       }
 
-      toast({
-        title: "Added to cart",
-        description: `${product.name} has been added to your cart.`
-      });
+      toast.success(`${product.name} has been added to your cart.`);
 
       setIsLoading(false);
       return {
@@ -239,11 +227,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       };
     } catch (error) {
       console.error('Failed to add to cart:', error);
-      toast({
-        title: "Error",
-        description: "Failed to add item to cart. Please try again.",
-        variant: "destructive"
-      });
+      toast.error("Failed to add item to cart. Please try again.");
       setIsLoading(false);
       return null;
     }
@@ -254,11 +238,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     console.log('Current cart state:', cart);
     
     if (!cart || !cart.transaction_uuid) {
-      toast({
-        title: "Error",
-        description: "No active cart found",
-        variant: "destructive"
-      });
+      toast.error("No active cart found");
       return false;
     }
 
@@ -296,10 +276,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           await fetchCart(userId);
         }, 500);
 
-        toast({
-          title: "Success",
-          description: "Item removed from cart"
-        });
+        toast.success("Item removed from cart");
 
         setIsLoading(false);
         return true;
@@ -307,21 +284,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         // If the API call fails, revert to the previous state
         setCart(cart);
         
-        toast({
-          title: "Error",
-          description: result.message || "Failed to remove item from cart",
-          variant: "destructive"
-        });
+        toast.error(result.message || "Failed to remove item from cart");
         setIsLoading(false);
         return false;
       }
     } catch (error) {
       console.error('Failed to remove from cart:', error);
-      toast({
-        title: "Error",
-        description: "Failed to remove item from cart. Please try again.",
-        variant: "destructive"
-      });
+      toast.error("Failed to remove item from cart. Please try again.");
       setIsLoading(false);
       return false;
     }
