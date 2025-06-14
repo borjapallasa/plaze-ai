@@ -10,7 +10,6 @@ import SignInCommunityPage from "./pages/sign-in-community";
 import SignUpCommunityPage from "./pages/sign-up-community";
 import ProductsPage from "./pages/Products";
 import NewProductPage from "./pages/seller/NewProduct";
-import NewServicePage from "./pages/seller/NewServicePage";
 import NewCommunityPage from "./pages/seller/NewCommunityPage";
 import EditProductPage from "./pages/EditProduct";
 import EditCommunityPage from "./pages/EditCommunity";
@@ -59,7 +58,6 @@ function App() {
           <Route path="/product/:slug/:id" element={<ProductPage />} />
           <Route path="/sell" element={<SellPage />} />
           <Route path="/seller/products/new" element={<NewProductPage />} />
-          <Route path="/seller/services/new" element={<NewServicePage />} />
           <Route path="/seller/communities/new" element={<NewCommunityPage />} />
           <Route path="/seller/:id" element={<SellerPage />} />
           <Route path="/product/:id/edit" element={<EditProductPage />} />
