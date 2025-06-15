@@ -36,6 +36,9 @@ export function useProductVariants(productUuid?: string) {
         features: Array.isArray(variant.tags)
           ? variant.tags.map(tag => String(tag))
           : ["Core Features", "Basic Support"],
+        tags: Array.isArray(variant.tags)
+          ? variant.tags.map(tag => String(tag))
+          : [],
         filesLink: variant.files_link || undefined,
         additionalDetails: variant.additional_details || undefined
       }));

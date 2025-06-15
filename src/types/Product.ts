@@ -1,3 +1,4 @@
+
 export interface RelatedProduct {
   product_uuid: string;
   name: string;
@@ -67,6 +68,7 @@ export interface ProductVariant {
   label?: string;
   highlight?: boolean;
   features?: string[];
+  tags?: string[];
   filesLink?: string;
   additionalDetails?: string;
 }
