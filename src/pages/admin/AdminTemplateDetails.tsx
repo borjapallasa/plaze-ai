@@ -97,18 +97,19 @@ export default function AdminTemplateDetails() {
           
           <TemplateStatusCard status={product.status || "active"} />
           
-          <TemplateInfoCard 
-            expertUuid={product.expert_uuid || undefined}
-            type={product.type || undefined}
-            createdAt={product.created_at}
-            projectFiles={product.product_files || undefined}
-          />
-
           <TemplateOrganization 
             team={product.team}
             industries={product.industries}
             platform={product.platform}
             useCase={product.use_case}
+          />
+
+          {/* Template Information moved to bottom on mobile/tablet */}
+          <TemplateInfoCard 
+            expertUuid={product.expert_uuid || undefined}
+            type={product.type || undefined}
+            createdAt={product.created_at}
+            projectFiles={product.product_files || undefined}
           />
         </div>
 
@@ -142,13 +143,6 @@ export default function AdminTemplateDetails() {
           <div className="lg:col-span-4 space-y-6">
             <TemplateStatusCard status={product.status || "active"} />
             
-            <TemplateInfoCard 
-              expertUuid={product.expert_uuid || undefined}
-              type={product.type || undefined}
-              createdAt={product.created_at}
-              projectFiles={product.product_files || undefined}
-            />
-
             <TemplateOrganization 
               team={product.team}
               industries={product.industries}
@@ -157,6 +151,14 @@ export default function AdminTemplateDetails() {
             />
 
             <TemplateDemoCard demo={product.demo} />
+
+            {/* Template Information moved below Demo & Resources on desktop */}
+            <TemplateInfoCard 
+              expertUuid={product.expert_uuid || undefined}
+              type={product.type || undefined}
+              createdAt={product.created_at}
+              projectFiles={product.product_files || undefined}
+            />
           </div>
         </div>
       </div>
