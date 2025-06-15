@@ -1,4 +1,3 @@
-
 import { FileText, Link as LinkIcon, Copy, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,6 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { toast } from "sonner";
 import { useTransactionItems } from "@/hooks/use-transaction-items";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toStartCase } from "@/lib/utils";
 
 interface TransactionFilesProps {
   transactionId: string;
@@ -99,7 +99,7 @@ export function TransactionFiles({ transactionId, filesUrl, guidesUrl, customReq
                             {item.product_name || 'Unknown Product'}
                           </div>
                           <div className="text-xs text-[#8E9196]">
-                            Status: {item.status || 'N/A'}
+                            Status: {toStartCase(item.status || 'N/A')}
                           </div>
                         </div>
                       </div>
