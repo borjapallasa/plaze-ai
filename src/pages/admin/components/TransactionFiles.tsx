@@ -1,4 +1,3 @@
-
 import { FileText, Link as LinkIcon, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -35,7 +34,7 @@ export function TransactionFiles({ filesUrl, guidesUrl, customRequest }: Transac
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">Files & Links</CardTitle>
+        <CardTitle className="text-lg">Transaction Items</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div 
