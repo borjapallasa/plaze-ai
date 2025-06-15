@@ -37,7 +37,8 @@ export function ProductCreateHeader({
         </Link>
         
         <div className="flex-1 min-w-0">
-          <div className="flex flex-col">
+          {/* Title and subtitle */}
+          <div className="mb-4 sm:mb-0">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between sm:gap-3">
               <div className="flex-1 min-w-0">
                 <h1 className="text-xl sm:text-2xl font-semibold">Create New Product</h1>
@@ -65,28 +66,28 @@ export function ProductCreateHeader({
                 </Button>
               </div>
             </div>
+          </div>
+          
+          {/* Mobile controls - below title/subtitle, full width */}
+          <div className="sm:hidden space-y-3">
+            <Select value={productStatus} onValueChange={onStatusChange}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="draft">Draft</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+              </SelectContent>
+            </Select>
             
-            {/* Mobile controls - below title/subtitle */}
-            <div className="flex sm:hidden flex-col gap-3 mt-4">
-              <Select value={productStatus} onValueChange={onStatusChange}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="draft">Draft</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                </SelectContent>
-              </Select>
-              
-              <Button
-                onClick={onSave}
-                disabled={isSaving || !isValid}
-                className="w-full"
-              >
-                {isSaving ? "Creating..." : "Create product"}
-              </Button>
-            </div>
+            <Button
+              onClick={onSave}
+              disabled={isSaving || !isValid}
+              className="w-full"
+            >
+              {isSaving ? "Creating..." : "Create product"}
+            </Button>
           </div>
         </div>
       </div>
