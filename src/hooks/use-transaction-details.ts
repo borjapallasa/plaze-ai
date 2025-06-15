@@ -32,23 +32,43 @@ export function useTransactionDetails(transactionId: string) {
     queryFn: async (): Promise<TransactionDetails | null> => {
       console.log('Fetching transaction details for:', transactionId);
       
-      // Fetch from products_transactions with buyer and seller information
+      // First, let's check if the transaction exists at all
+      const { data: transactionCheck, error: checkError } = await supabase
+        .from('products_transactions')
+        .select('*')
+        .eq('product_transaction_uuid', transactionId)
+        .maybeSingle();
+
+      console.log('Transaction check result:', transactionCheck);
+      console.log('Transaction check error:', checkError);
+
+      if (checkError) {
+        console.error('Error checking transaction:', checkError);
+        throw checkError;
+      }
+
+      if (!transactionCheck) {
+        console.log('No transaction found with ID:', transactionId);
+        return null;
+      }
+
+      // Now fetch with proper joins
       const { data: transaction, error: transactionError } = await supabase
         .from('products_transactions')
         .select(`
           *,
-          buyer:users!products_transactions_user_uuid_fkey(first_name, last_name, email),
-          seller:experts!products_transactions_expert_uuid_fkey(name, email)
+          users!products_transactions_user_uuid_fkey(first_name, last_name, email),
+          experts!products_transactions_expert_uuid_fkey(name, email)
         `)
         .eq('product_transaction_uuid', transactionId)
         .maybeSingle();
 
       if (transactionError) {
-        console.error('Error fetching transaction:', transactionError);
+        console.error('Error fetching transaction with joins:', transactionError);
         throw transactionError;
       }
 
-      console.log('Transaction found:', transaction);
+      console.log('Transaction with joins found:', transaction);
 
       if (!transaction) {
         return null;
@@ -86,17 +106,17 @@ export function useTransactionDetails(transactionId: string) {
       let buyerUser = undefined;
       let sellerUser = undefined;
 
-      if (transaction?.buyer) {
+      if (transaction?.users) {
         buyerUser = {
-          name: `${transaction.buyer.first_name || ''} ${transaction.buyer.last_name || ''}`.trim() || 'Unknown User',
-          email: transaction.buyer.email || ''
+          name: `${transaction.users.first_name || ''} ${transaction.users.last_name || ''}`.trim() || 'Unknown User',
+          email: transaction.users.email || ''
         };
       }
 
-      if (transaction?.seller) {
+      if (transaction?.experts) {
         sellerUser = {
-          name: transaction.seller.name || 'Unknown Expert',
-          email: transaction.seller.email || ''
+          name: transaction.experts.name || 'Unknown Expert',
+          email: transaction.experts.email || ''
         };
       }
 
