@@ -32,7 +32,7 @@ export function useTransactionDetails(transactionId: string) {
     queryFn: async (): Promise<TransactionDetails | null> => {
       console.log('Fetching transaction details for:', transactionId);
       
-      // Fetch from products_transactions using the correct field name
+      // Fetch from products_transactions with buyer and seller information
       const { data: transaction, error: transactionError } = await supabase
         .from('products_transactions')
         .select(`
@@ -54,13 +54,13 @@ export function useTransactionDetails(transactionId: string) {
         return null;
       }
 
-      // Fetch transaction items
+      // Fetch transaction items with proper joins
       const { data: items, error: itemsError } = await supabase
         .from('products_transaction_items')
         .select(`
           *,
           products(name),
-          variants(name)
+          variants(name, files_link)
         `)
         .eq('product_transaction_uuid', transactionId);
 
@@ -82,7 +82,7 @@ export function useTransactionDetails(transactionId: string) {
         files_link: item.variants?.files_link || '',
       })) || [];
 
-      // Construct buyer and seller info from the actual transaction record
+      // Construct buyer and seller info from the joined data
       let buyerUser = undefined;
       let sellerUser = undefined;
 
