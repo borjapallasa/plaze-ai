@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -87,7 +86,7 @@ export function TemplateVariables({
                   <div className="flex justify-between items-start mb-2">
                     <h4 className="font-medium text-sm">{variant.name}</h4>
                     <div className="flex items-center gap-2">
-                      <div className="text-right">
+                      <div className="flex items-center gap-2 text-right">
                         <p className="text-sm font-medium">${variant.price}</p>
                         {variant.comparePrice && variant.comparePrice > variant.price && (
                           <p className="text-xs text-gray-500 line-through">${variant.comparePrice}</p>
