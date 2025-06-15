@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { MainHeader } from "@/components/MainHeader";
 import { ArrowLeft, Copy } from "lucide-react";
@@ -29,24 +28,22 @@ const mockData = {
   rating: 5,
   customRequest: "Custom requirements for the template setup"
 };
-
 export default function AdminTransactionDetails() {
   const params = useParams();
   const transactionId = params.id;
-  
   console.log('URL params:', params);
   console.log('Transaction ID from params:', transactionId);
-  
-  const { data: transaction, isLoading, error } = useTransactionDetails(transactionId || '');
-
+  const {
+    data: transaction,
+    isLoading,
+    error
+  } = useTransactionDetails(transactionId || '');
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     toast.success(`${label} copied to clipboard`);
   };
-
   if (isLoading) {
-    return (
-      <>
+    return <>
         <MainHeader />
         <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16">
           <Skeleton className="h-6 w-48 mb-6" />
@@ -63,19 +60,13 @@ export default function AdminTransactionDetails() {
             </CardContent>
           </Card>
         </div>
-      </>
-    );
+      </>;
   }
-
   if (error || !transaction) {
-    return (
-      <>
+    return <>
         <MainHeader />
         <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16">
-          <Link 
-            to="/a/admin/transactions"
-            className="inline-flex items-center gap-2 text-[#8E9196] hover:text-[#1A1F2C] mb-6"
-          >
+          <Link to="/a/admin/transactions" className="inline-flex items-center gap-2 text-[#8E9196] hover:text-[#1A1F2C] mb-6">
             <ArrowLeft className="h-4 w-4" />
             Back to Transactions
           </Link>
@@ -87,22 +78,16 @@ export default function AdminTransactionDetails() {
             </CardContent>
           </Card>
         </div>
-      </>
-    );
+      </>;
   }
 
   // Get the first item's files link for the main files section
   const filesUrl = transaction.items[0]?.files_link || '';
-
-  return (
-    <>
+  return <>
       <MainHeader />
       <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16">
         {/* Back Button */}
-        <Link 
-          to="/a/admin/transactions"
-          className="inline-flex items-center gap-2 text-[#8E9196] hover:text-[#1A1F2C] mb-6"
-        >
+        <Link to="/a/admin/transactions" className="inline-flex items-center gap-2 text-[#8E9196] hover:text-[#1A1F2C] mb-6">
           <ArrowLeft className="h-4 w-4" />
           Back to Transactions
         </Link>
@@ -111,20 +96,13 @@ export default function AdminTransactionDetails() {
           <CardHeader>
             <div className="flex flex-col gap-4">
               <CardTitle className="text-2xl font-semibold">Transaction Details</CardTitle>
-              <CardDescription className="text-lg text-[#1A1F2C] break-words">
-                {transaction.items[0]?.product_name || mockData.title}
-              </CardDescription>
+              
               
               {/* Transaction ID near the top */}
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 text-sm bg-gray-50 p-3 rounded-lg">
                 <span className="text-[#8E9196] whitespace-nowrap">Transaction ID:</span>
                 <span className="font-medium flex-1 break-all">{transaction.transaction_uuid}</span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-[#8E9196] hover:text-[#1A1F2C] ml-auto"
-                  onClick={() => copyToClipboard(transaction.transaction_uuid, "Transaction ID")}
-                >
+                <Button variant="ghost" size="sm" className="text-[#8E9196] hover:text-[#1A1F2C] ml-auto" onClick={() => copyToClipboard(transaction.transaction_uuid, "Transaction ID")}>
                   <Copy className="h-4 w-4" />
                 </Button>
               </div>
@@ -132,41 +110,19 @@ export default function AdminTransactionDetails() {
           </CardHeader>
 
           <CardContent className="space-y-8">
-            <TransactionOverview
-              buyerUser={transaction.buyer_user}
-              sellerUser={transaction.seller_user}
-              transactionDate={new Date(transaction.created_at).toLocaleString()}
-            />
+            <TransactionOverview buyerUser={transaction.buyer_user} sellerUser={transaction.seller_user} transactionDate={new Date(transaction.created_at).toLocaleString()} />
 
             <Separator className="my-8" />
 
-            <TransactionFinancials
-              transactionAmount={transaction.total_amount}
-              transactionFees={mockData.transactionFees}
-              affiliateFees={mockData.affiliateFees}
-              stripeFees={mockData.stripeFees}
-              grossMargin={mockData.grossMargin}
-              netMargin={mockData.netMargin}
-            />
+            <TransactionFinancials transactionAmount={transaction.total_amount} transactionFees={mockData.transactionFees} affiliateFees={mockData.affiliateFees} stripeFees={mockData.stripeFees} grossMargin={mockData.grossMargin} netMargin={mockData.netMargin} />
 
             <Separator className="my-8" />
 
-            <TransactionFiles
-              transactionId={transactionId || ''}
-              filesUrl={filesUrl}
-              guidesUrl={mockData.guidesUrl}
-              customRequest={mockData.customRequest}
-            />
+            <TransactionFiles transactionId={transactionId || ''} filesUrl={filesUrl} guidesUrl={mockData.guidesUrl} customRequest={mockData.customRequest} />
 
-            {mockData.review && (
-              <TransactionReview
-                rating={mockData.rating}
-                review={mockData.review}
-              />
-            )}
+            {mockData.review && <TransactionReview rating={mockData.rating} review={mockData.review} />}
           </CardContent>
         </Card>
       </div>
-    </>
-  );
+    </>;
 }
