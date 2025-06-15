@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { MainHeader } from "@/components/MainHeader";
 import { ArrowLeft, Copy } from "lucide-react";
@@ -41,7 +40,7 @@ export default function AdminTransactionDetails() {
   return (
     <>
       <MainHeader />
-      <div className="container mx-auto px-4 py-8 max-w-[1200px] mt-16">
+      <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16">
         {/* Back Button */}
         <Link 
           to="/a/admin/transactions"
