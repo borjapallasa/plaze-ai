@@ -62,38 +62,31 @@ export function TransactionFinancials({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="space-y-4">
             <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-              <span className="text-[#8E9196] mr-2">Transaction Amount</span>
-              <span className="font-medium shrink-0">${transactionAmount.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
               <span className="text-[#8E9196] mr-2">Amount</span>
               <span className="font-medium shrink-0">${financials.amount.toFixed(2)}</span>
             </div>
-          </div>
-
-          <div className="space-y-4">
             <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
               <span className="text-[#8E9196] mr-2">Transaction Fees</span>
               <span className="font-medium shrink-0">${financials.transaction_fees.toFixed(2)}</span>
             </div>
+          </div>
+
+          <div className="space-y-4">
             <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
               <span className="text-[#8E9196] mr-2">Affiliate Fees</span>
               <span className="font-medium shrink-0">${financials.afiliate_fees.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+              <span className="text-[#8E9196] mr-2">Stripe Fees</span>
+              <span className="font-medium shrink-0">${financials.stripe_fees.toFixed(2)}</span>
             </div>
           </div>
 
           <div className="space-y-4">
             <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-              <span className="text-[#8E9196] mr-2">Stripe Fees</span>
-              <span className="font-medium shrink-0">${financials.stripe_fees.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
               <span className="text-[#8E9196] mr-2">Amount Taxes</span>
               <span className="font-medium shrink-0">${financials.amount_taxes.toFixed(2)}</span>
             </div>
-          </div>
-
-          <div className="col-span-1 sm:col-span-2 lg:col-span-1 space-y-4">
             <div className="flex justify-between items-center p-3 bg-[#F8F9FC] rounded-lg border-2 border-[#9b87f5]">
               <span className="font-medium text-lg text-[#1A1F2C] mr-2">Gross Margin</span>
               <span className="font-medium text-lg text-[#9b87f5] shrink-0">${financials.gross_margin.toFixed(2)}</span>
