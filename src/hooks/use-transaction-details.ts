@@ -32,7 +32,16 @@ export function useTransactionDetails(transactionId: string) {
     queryFn: async (): Promise<TransactionDetails | null> => {
       console.log('Fetching transaction details for:', transactionId);
       
-      // First, let's check if the transaction exists at all
+      // Let's first check what columns actually exist in the products_transactions table
+      const { data: allTransactions, error: allError } = await supabase
+        .from('products_transactions')
+        .select('*')
+        .limit(5);
+
+      console.log('Sample transactions from DB:', allTransactions);
+      console.log('Sample transactions error:', allError);
+
+      // Now let's try to find our specific transaction
       const { data: transactionCheck, error: checkError } = await supabase
         .from('products_transactions')
         .select('*')
@@ -49,6 +58,13 @@ export function useTransactionDetails(transactionId: string) {
 
       if (!transactionCheck) {
         console.log('No transaction found with ID:', transactionId);
+        // Let's also try a broader search to see if the ID exists anywhere
+        const { data: broadSearch } = await supabase
+          .from('products_transactions')
+          .select('product_transaction_uuid')
+          .ilike('product_transaction_uuid', `%${transactionId}%`);
+        
+        console.log('Broad search results:', broadSearch);
         return null;
       }
 
