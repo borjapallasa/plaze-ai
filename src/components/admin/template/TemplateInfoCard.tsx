@@ -1,6 +1,5 @@
 
-import { Play, Mail } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Mail } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -74,18 +73,6 @@ export function TemplateInfoCard({
             </div>
           </>
         )}
-
-        <Separator />
-
-        <div className="pt-4 space-y-3">
-          <Button className="w-full gap-2">
-            <Play className="h-4 w-4" />
-            Activate Template
-          </Button>
-          <Button variant="outline" className="w-full">
-            Edit Template
-          </Button>
-        </div>
       </CardContent>
     </Card>
   );
