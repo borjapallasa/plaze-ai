@@ -152,6 +152,7 @@ export default function AdminTransactionDetails() {
             <Separator className="my-8" />
 
             <TransactionFiles
+              transactionId={transactionId || ''}
               filesUrl={filesUrl}
               guidesUrl={mockData.guidesUrl}
               customRequest={mockData.customRequest}
