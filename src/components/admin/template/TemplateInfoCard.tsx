@@ -1,9 +1,10 @@
 
-import { Play } from "lucide-react";
+import { Play, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { useExpertQuery } from "@/hooks/expert/useExpertQuery";
 
 interface TemplateInfoCardProps {
   expertUuid?: string;
@@ -18,6 +19,8 @@ export function TemplateInfoCard({
   createdAt, 
   projectFiles 
 }: TemplateInfoCardProps) {
+  const { data: expert, isLoading: isLoadingExpert } = useExpertQuery(expertUuid);
+
   return (
     <Card>
       <CardHeader>
@@ -26,7 +29,26 @@ export function TemplateInfoCard({
       <CardContent className="space-y-6">
         <div className="space-y-2">
           <p className="text-sm text-[#8E9196]">Uploaded by</p>
-          <p className="text-sm font-medium">{expertUuid || "Unknown"}</p>
+          <div className="flex items-center gap-2">
+            {isLoadingExpert ? (
+              <p className="text-sm font-medium">Loading...</p>
+            ) : (
+              <>
+                <p className="text-sm font-medium">
+                  {expert?.name || "Unknown"}
+                </p>
+                {expert?.email && (
+                  <a
+                    href={`mailto:${expert.email}`}
+                    className="text-blue-600 hover:text-blue-800 transition-colors"
+                    title={`Send email to ${expert.email}`}
+                  >
+                    <Mail className="h-4 w-4" />
+                  </a>
+                )}
+              </>
+            )}
+          </div>
         </div>
 
         <div className="space-y-2">
