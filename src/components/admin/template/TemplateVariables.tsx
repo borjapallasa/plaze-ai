@@ -29,7 +29,7 @@ export function TemplateVariables({
   useCase,
   industries
 }: TemplateVariablesProps) {
-  const { data: variants = [], isLoading } = useProductVariants(productUuid);
+  const { data: variants = [], isLoading, refetch } = useProductVariants(productUuid);
   const [editingVariant, setEditingVariant] = useState<ProductVariant | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const queryClient = useQueryClient();
@@ -81,12 +81,16 @@ export function TemplateVariables({
         return;
       }
 
-      // Invalidate and refetch the variants query
-      queryClient.invalidateQueries({
+      // Force refetch of the variants data
+      await refetch();
+      
+      // Also invalidate the query cache as a backup
+      await queryClient.invalidateQueries({
         queryKey: ['variants', productUuid]
       });
 
       toast.success("Variant updated successfully");
+      console.log("Variant update completed successfully");
     } catch (error) {
       console.error("Error updating variant:", error);
       toast.error("Failed to update variant");
