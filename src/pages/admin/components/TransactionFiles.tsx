@@ -1,4 +1,4 @@
-import { FileText, Link as LinkIcon, Copy, Package, MoreHorizontal, ExternalLink, Check, AlertTriangle } from "lucide-react";
+import { FileText, Link as LinkIcon, Copy, Package, MoreHorizontal, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -128,13 +128,14 @@ export function TransactionFiles({ transactionId, filesUrl, guidesUrl, customReq
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[30%]">Product</TableHead>
-                  <TableHead className="w-[15%]">Variant</TableHead>
-                  <TableHead className="w-[10%] text-center">Qty</TableHead>
-                  <TableHead className="w-[12%] text-right">Price</TableHead>
-                  <TableHead className="w-[12%] text-right">Total</TableHead>
-                  <TableHead className="w-[12%]">Status</TableHead>
-                  <TableHead className="w-[9%] text-center">Actions</TableHead>
+                  <TableHead className="w-[25%]">Product</TableHead>
+                  <TableHead className="w-[12%]">Variant</TableHead>
+                  <TableHead className="w-[10%]">View Files</TableHead>
+                  <TableHead className="w-[8%] text-center">Qty</TableHead>
+                  <TableHead className="w-[10%] text-right">Price</TableHead>
+                  <TableHead className="w-[10%] text-right">Total</TableHead>
+                  <TableHead className="w-[10%]">Status</TableHead>
+                  <TableHead className="w-[8%] text-center">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -156,6 +157,16 @@ export function TransactionFiles({ transactionId, filesUrl, guidesUrl, customReq
                       <div className="text-sm">
                         {item.variant_name || 'No variant'}
                       </div>
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleViewFiles(item.variant_uuid)}
+                        className="text-[#9b87f5] hover:text-[#8b7ae5]"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                      </Button>
                     </TableCell>
                     <TableCell className="text-center">
                       <div className="text-sm font-medium">
@@ -189,16 +200,10 @@ export function TransactionFiles({ transactionId, filesUrl, guidesUrl, customReq
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-48">
-                          <DropdownMenuItem onClick={() => handleViewFiles(item.variant_uuid)}>
-                            <ExternalLink className="h-4 w-4 mr-2" />
-                            View Files
-                          </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleMarkCompleted(item.product_transaction_item_uuid)}>
-                            <Check className="h-4 w-4 mr-2" />
                             Mark as Completed
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleOpenDispute(item.product_transaction_item_uuid)}>
-                            <AlertTriangle className="h-4 w-4 mr-2" />
                             Open Dispute
                           </DropdownMenuItem>
                         </DropdownMenuContent>
