@@ -46,15 +46,15 @@ export function useProductVariants(productUuid?: string) {
           id: variant.variant_uuid,
           name: variant.name || "Lorem Ipsum Package",
           price: variant.price || 99.99,
-          comparePrice: variant.compare_price || 149.99,
+          comparePrice: variant.compare_price || 0, // Fixed: map compare_price correctly
           label: "Package",
           highlight: variant.highlighted || index === 1,
           features: parsedTags.length > 0 
             ? parsedTags 
             : ["Core Features", "Basic Support"],
           tags: parsedTags,
-          filesLink: variant.files_link || undefined,
-          additionalDetails: variant.additional_details || undefined
+          filesLink: variant.files_link || "", // Fixed: map files_link correctly  
+          additionalDetails: variant.additional_details || "" // Fixed: map additional_details correctly
         };
       });
     },
