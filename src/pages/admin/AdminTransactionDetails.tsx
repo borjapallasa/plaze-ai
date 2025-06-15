@@ -3,7 +3,7 @@ import { MainHeader } from "@/components/MainHeader";
 import { ArrowLeft, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { TransactionOverview } from "./components/TransactionOverview";
 import { TransactionFinancials } from "./components/TransactionFinancials";
@@ -30,6 +30,7 @@ const mockData = {
 };
 export default function AdminTransactionDetails() {
   const params = useParams();
+  const navigate = useNavigate();
   const transactionId = params.id;
   console.log('URL params:', params);
   console.log('Transaction ID from params:', transactionId);
@@ -42,6 +43,11 @@ export default function AdminTransactionDetails() {
     navigator.clipboard.writeText(text);
     toast.success(`${label} copied to clipboard`);
   };
+
+  const handleGoBack = () => {
+    navigate(-1);
+  };
+
   if (isLoading) {
     return <>
         <MainHeader />
@@ -66,10 +72,13 @@ export default function AdminTransactionDetails() {
     return <>
         <MainHeader />
         <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16">
-          <Link to="/a/admin/transactions" className="inline-flex items-center gap-2 text-[#8E9196] hover:text-[#1A1F2C] mb-6">
+          <button 
+            onClick={handleGoBack}
+            className="inline-flex items-center gap-2 text-[#8E9196] hover:text-[#1A1F2C] mb-6"
+          >
             <ArrowLeft className="h-4 w-4" />
-            Back to Transactions
-          </Link>
+            Back
+          </button>
           <Card className="shadow-lg">
             <CardContent className="p-8 text-center">
               <h2 className="text-xl font-semibold mb-2">Transaction Not Found</h2>
@@ -87,10 +96,13 @@ export default function AdminTransactionDetails() {
       <MainHeader />
       <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16">
         {/* Back Button */}
-        <Link to="/a/admin/transactions" className="inline-flex items-center gap-2 text-[#8E9196] hover:text-[#1A1F2C] mb-6">
+        <button 
+          onClick={handleGoBack}
+          className="inline-flex items-center gap-2 text-[#8E9196] hover:text-[#1A1F2C] mb-6"
+        >
           <ArrowLeft className="h-4 w-4" />
-          Back to Transactions
-        </Link>
+          Back
+        </button>
 
         <Card className="shadow-lg">
           <CardHeader>
