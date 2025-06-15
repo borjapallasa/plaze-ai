@@ -82,6 +82,7 @@ export default function AdminTemplateDetails() {
             />
             <TemplateDescription description={product.description} />
             <TemplateVariables 
+              productUuid={product.product_uuid}
               techStack={product.tech_stack}
               techStackPrice={product.tech_stack_price}
               productIncludes={product.product_includes}
