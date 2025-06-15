@@ -29,19 +29,23 @@ export function ProductCreateHeader({
 }: ProductCreateHeaderProps) {
   return (
     <div className="mb-6">
-      <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
-        <Link to="/">
-          <Button variant="ghost" size="icon" className="rounded-full flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 mt-1">
+      <div className="flex items-start gap-3 sm:gap-4">
+        <Link to="/" className="flex-shrink-0 mt-1">
+          <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 sm:h-10 sm:w-10">
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
-        <div className="w-full">
-          <h1 className="text-lg sm:text-xl md:text-2xl font-semibold break-words pr-2">Create New Product</h1>
-          <div className="flex items-center justify-between mt-2">
-            <p className="text-sm text-muted-foreground">Enter the details for your new product</p>
-            <div className="flex items-center gap-4">
+        
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl sm:text-2xl font-semibold">Create New Product</h1>
+              <p className="text-sm text-muted-foreground mt-1">Enter the details for your new product</p>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <Select value={productStatus} onValueChange={onStatusChange}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-full sm:w-[140px]">
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -50,9 +54,11 @@ export function ProductCreateHeader({
                   <SelectItem value="inactive">Inactive</SelectItem>
                 </SelectContent>
               </Select>
+              
               <Button
                 onClick={onSave}
                 disabled={isSaving || !isValid}
+                className="w-full sm:w-auto"
               >
                 {isSaving ? "Creating..." : "Create product"}
               </Button>
