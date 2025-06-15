@@ -1,3 +1,4 @@
+
 import { useParams } from "react-router-dom";
 import { MainHeader } from "@/components/MainHeader";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -65,7 +66,11 @@ export default function AdminTemplateDetails() {
         <TemplateHeader productName={product.name || ""} />
 
         {/* Mobile Status Card */}
-        <TemplateStatusCard status={product.status || "active"} isMobile />
+        <TemplateStatusCard 
+          status={product.status || "active"} 
+          productUuid={product.product_uuid}
+          isMobile 
+        />
 
         {/* Mobile Layout - Reordered for mobile */}
         <div className="block lg:hidden space-y-6">
@@ -94,7 +99,10 @@ export default function AdminTemplateDetails() {
           />
           <TemplateReviews productUuid={product.product_uuid} />
           
-          <TemplateStatusCard status={product.status || "active"} />
+          <TemplateStatusCard 
+            status={product.status || "active"}
+            productUuid={product.product_uuid}
+          />
           
           <TemplateOrganization 
             team={product.team}
@@ -135,7 +143,10 @@ export default function AdminTemplateDetails() {
 
           {/* Sidebar */}
           <div className="lg:col-span-4 space-y-6">
-            <TemplateStatusCard status={product.status || "active"} />
+            <TemplateStatusCard 
+              status={product.status || "active"}
+              productUuid={product.product_uuid}
+            />
             
             {/* Financial metrics moved under status card */}
             <TemplateFinancialMetrics 

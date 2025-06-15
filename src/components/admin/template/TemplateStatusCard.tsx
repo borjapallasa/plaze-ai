@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -8,14 +9,60 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface TemplateStatusCardProps {
   status: string;
+  productUuid: string;
   isMobile?: boolean;
 }
 
-export function TemplateStatusCard({ status, isMobile = false }: TemplateStatusCardProps) {
+export function TemplateStatusCard({ status, productUuid, isMobile = false }: TemplateStatusCardProps) {
+  const [currentStatus, setCurrentStatus] = useState(status);
+  const [isSaving, setIsSaving] = useState(false);
+  const { toast } = useToast();
+  
   const cardClass = isMobile ? "md:hidden" : "hidden md:block";
+
+  const handleStatusChange = (newStatus: string) => {
+    setCurrentStatus(newStatus);
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    
+    try {
+      const { error } = await supabase
+        .from('products')
+        .update({ status: currentStatus })
+        .eq('product_uuid', productUuid);
+
+      if (error) {
+        console.error('Error updating status:', error);
+        toast({
+          title: "Error",
+          description: "Failed to update template status.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      toast({
+        title: "Success",
+        description: "Template status updated successfully.",
+      });
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
   
   return (
     <div className={cardClass}>
@@ -26,7 +73,7 @@ export function TemplateStatusCard({ status, isMobile = false }: TemplateStatusC
         <CardContent className="space-y-6">
           <div className="flex items-center gap-4">
             <div className="flex-1">
-              <Select defaultValue={status || "active"}>
+              <Select value={currentStatus} onValueChange={handleStatusChange}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
@@ -37,7 +84,9 @@ export function TemplateStatusCard({ status, isMobile = false }: TemplateStatusC
                 </SelectContent>
               </Select>
             </div>
-            <Button>Save</Button>
+            <Button onClick={handleSave} disabled={isSaving}>
+              {isSaving ? "Saving..." : "Save"}
+            </Button>
           </div>
         </CardContent>
       </Card>
