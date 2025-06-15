@@ -37,15 +37,39 @@ export function ProductCreateHeader({
         </Link>
         
         <div className="flex-1 min-w-0">
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-            <div className="flex-1 min-w-0">
-              <h1 className="text-xl sm:text-2xl font-semibold">Create New Product</h1>
-              <p className="text-sm text-muted-foreground mt-1">Enter the details for your new product</p>
+          <div className="flex flex-col">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between sm:gap-3">
+              <div className="flex-1 min-w-0">
+                <h1 className="text-xl sm:text-2xl font-semibold">Create New Product</h1>
+                <p className="text-sm text-muted-foreground mt-1">Enter the details for your new product</p>
+              </div>
+              
+              {/* Desktop controls - hidden on mobile */}
+              <div className="hidden sm:flex sm:flex-row sm:items-center gap-3">
+                <Select value={productStatus} onValueChange={onStatusChange}>
+                  <SelectTrigger className="w-[140px]">
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="draft">Draft</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                  </SelectContent>
+                </Select>
+                
+                <Button
+                  onClick={onSave}
+                  disabled={isSaving || !isValid}
+                >
+                  {isSaving ? "Creating..." : "Create product"}
+                </Button>
+              </div>
             </div>
             
-            <div className="flex flex-col gap-3 w-full sm:w-auto sm:flex-row sm:items-center">
+            {/* Mobile controls - below title/subtitle */}
+            <div className="flex sm:hidden flex-col gap-3 mt-4">
               <Select value={productStatus} onValueChange={onStatusChange}>
-                <SelectTrigger className="w-full sm:w-[140px]">
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -58,7 +82,7 @@ export function ProductCreateHeader({
               <Button
                 onClick={onSave}
                 disabled={isSaving || !isValid}
-                className="w-full sm:w-auto"
+                className="w-full"
               >
                 {isSaving ? "Creating..." : "Create product"}
               </Button>
