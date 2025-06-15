@@ -31,8 +31,13 @@ const mockData = {
 };
 
 export default function AdminTransactionDetails() {
-  const { id } = useParams<{ id: string }>();
-  const { data: transaction, isLoading, error } = useTransactionDetails(id || '');
+  const params = useParams();
+  const transactionId = params.id;
+  
+  console.log('URL params:', params);
+  console.log('Transaction ID from params:', transactionId);
+  
+  const { data: transaction, isLoading, error } = useTransactionDetails(transactionId || '');
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
@@ -78,6 +83,7 @@ export default function AdminTransactionDetails() {
             <CardContent className="p-8 text-center">
               <h2 className="text-xl font-semibold mb-2">Transaction Not Found</h2>
               <p className="text-[#8E9196]">The transaction you're looking for doesn't exist or couldn't be loaded.</p>
+              <p className="text-sm text-[#8E9196] mt-2">Transaction ID: {transactionId}</p>
             </CardContent>
           </Card>
         </div>
