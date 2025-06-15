@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -83,11 +84,11 @@ export function TemplateVariables({
             <div className="space-y-3">
               {variants.map((variant) => (
                 <div key={variant.id} className="p-4 bg-gray-50 rounded-lg">
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="flex items-center gap-2 flex-1">
-                      <h4 className="font-medium text-sm">{variant.name}</h4>
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex-1">
+                      <h4 className="font-medium text-sm mb-2">{variant.name}</h4>
                       {variant.tags && variant.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-1">
+                        <div className="flex flex-wrap gap-1 mb-2">
                           {variant.tags.map((tag, index) => (
                             <Badge key={index} variant="outline" className="text-xs">
                               {tag}
@@ -96,8 +97,8 @@ export function TemplateVariables({
                         </div>
                       )}
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-2 text-right">
+                    <div className="flex items-start gap-2">
+                      <div className="text-right">
                         <p className="text-sm font-medium">${variant.price}</p>
                         {variant.comparePrice && variant.comparePrice > variant.price && (
                           <p className="text-xs text-gray-500 line-through">${variant.comparePrice}</p>
@@ -121,16 +122,6 @@ export function TemplateVariables({
                       </Button>
                     </div>
                   </div>
-                  
-                  {variant.features && variant.features.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mt-2 mb-3">
-                      {variant.features.map((feature, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {feature}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
 
                   {/* Files Link Section */}
                   <div className="mt-3 p-3 bg-white rounded border">
