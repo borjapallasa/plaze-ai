@@ -8,7 +8,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import { ProductVariant } from "@/types/Product";
-import { toast } from "sonner";
 
 interface EditVariantDialogProps {
   variant: ProductVariant | null;
@@ -62,15 +61,6 @@ export function EditVariantDialog({ variant, isOpen, onClose, onSave }: EditVari
   const handleSave = () => {
     if (!variant) return;
 
-    // Database field mapping:
-    // Frontend -> Database
-    // name -> name
-    // price -> price
-    // comparePrice -> compare_price
-    // filesLink -> files_link
-    // additionalDetails -> additional_details
-    // tags -> tags (JSONB array)
-
     const updatedData: Partial<ProductVariant> = {
       name: formData.name,
       price: parseFloat(formData.price) || 0,
@@ -81,7 +71,6 @@ export function EditVariantDialog({ variant, isOpen, onClose, onSave }: EditVari
     };
 
     onSave(variant.id, updatedData);
-    toast.success("Variant updated successfully");
     onClose();
   };
 
