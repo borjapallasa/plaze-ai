@@ -1,7 +1,9 @@
+
 import { FileText, Link as LinkIcon, Copy, Package, MoreHorizontal, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -125,94 +127,98 @@ export function TransactionFiles({ transactionId, filesUrl, guidesUrl, customReq
       <CardContent className="space-y-4">
         {transactionItems && transactionItems.length > 0 ? (
           <div className="border rounded-lg overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[25%]">Product</TableHead>
-                  <TableHead className="w-[12%]">Variant</TableHead>
-                  <TableHead className="w-[10%]">View Files</TableHead>
-                  <TableHead className="w-[8%] text-center">Qty</TableHead>
-                  <TableHead className="w-[10%] text-right">Price</TableHead>
-                  <TableHead className="w-[10%] text-right">Total</TableHead>
-                  <TableHead className="w-[10%]">Status</TableHead>
-                  <TableHead className="w-[8%] text-center">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {transactionItems.map((item) => (
-                  <TableRow key={item.product_transaction_item_uuid}>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <div className="bg-gray-50 p-2 rounded-full shrink-0">
-                          <Package className="h-4 w-4 text-[#9b87f5]" />
-                        </div>
-                        <div className="min-w-0">
-                          <div className="font-medium text-sm">
-                            {item.product_name || 'Unknown Product'}
+            <ScrollArea className="w-full">
+              <div className="min-w-[800px]">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[25%]">Product</TableHead>
+                      <TableHead className="w-[12%]">Variant</TableHead>
+                      <TableHead className="w-[10%]">View Files</TableHead>
+                      <TableHead className="w-[8%] text-center">Qty</TableHead>
+                      <TableHead className="w-[10%] text-right">Price</TableHead>
+                      <TableHead className="w-[10%] text-right">Total</TableHead>
+                      <TableHead className="w-[10%]">Status</TableHead>
+                      <TableHead className="w-[8%] text-center">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {transactionItems.map((item) => (
+                      <TableRow key={item.product_transaction_item_uuid}>
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <div className="bg-gray-50 p-2 rounded-full shrink-0">
+                              <Package className="h-4 w-4 text-[#9b87f5]" />
+                            </div>
+                            <div className="min-w-0">
+                              <div className="font-medium text-sm">
+                                {item.product_name || 'Unknown Product'}
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        {item.variant_name || 'No variant'}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleViewFiles(item.variant_uuid)}
-                        className="text-[#9b87f5] hover:text-[#8b7ae5]"
-                      >
-                        <ExternalLink className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <div className="text-sm font-medium">
-                        {item.quantity || 'N/A'}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="text-sm font-medium">
-                        ${item.price?.toFixed(2) || 'N/A'}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="text-sm font-semibold">
-                        ${item.total_price?.toFixed(2) || 'N/A'}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        {toStartCase(item.status || 'N/A')}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-sm">
+                            {item.variant_name || 'No variant'}
+                          </div>
+                        </TableCell>
+                        <TableCell>
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-8 w-8 p-0 text-[#8E9196] hover:text-[#1A1F2C]"
+                            onClick={() => handleViewFiles(item.variant_uuid)}
+                            className="text-[#9b87f5] hover:text-[#8b7ae5]"
                           >
-                            <MoreHorizontal className="h-4 w-4" />
+                            <ExternalLink className="h-4 w-4" />
                           </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48">
-                          <DropdownMenuItem onClick={() => handleMarkCompleted(item.product_transaction_item_uuid)}>
-                            Mark as Completed
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleOpenDispute(item.product_transaction_item_uuid)}>
-                            Open Dispute
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="text-sm font-medium">
+                            {item.quantity || 'N/A'}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="text-sm font-medium">
+                            ${item.price?.toFixed(2) || 'N/A'}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="text-sm font-semibold">
+                            ${item.total_price?.toFixed(2) || 'N/A'}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-sm">
+                            {toStartCase(item.status || 'N/A')}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0 text-[#8E9196] hover:text-[#1A1F2C]"
+                              >
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-48">
+                              <DropdownMenuItem onClick={() => handleMarkCompleted(item.product_transaction_item_uuid)}>
+                                Mark as Completed
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleOpenDispute(item.product_transaction_item_uuid)}>
+                                Open Dispute
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </ScrollArea>
           </div>
         ) : (
           <div className="text-center py-8">
