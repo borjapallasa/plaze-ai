@@ -20,7 +20,7 @@ export function TemplateFinancialMetrics({
         <CardTitle className="text-lg">Financial Metrics</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1">
             <p className="text-sm text-[#8E9196]">Times Sold</p>
             <p className="text-xl font-semibold">{salesCount || 35}</p>
