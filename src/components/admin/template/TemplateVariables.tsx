@@ -41,7 +41,7 @@ export function TemplateVariables({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">Variables</CardTitle>
+        <CardTitle className="text-lg">Variants</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {techStack && (
