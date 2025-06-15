@@ -1,4 +1,3 @@
-
 import { useParams } from "react-router-dom";
 import { MainHeader } from "@/components/MainHeader";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -84,14 +83,13 @@ export default function AdminTemplateDetails() {
             <TemplateVariables 
               productUuid={product.product_uuid}
               techStack={product.tech_stack}
-              techStackPrice={product.tech_stack_price}
               productIncludes={product.product_includes}
               platform={product.platform}
               team={product.team}
               useCase={product.use_case}
               industries={product.industries}
             />
-            <TemplateReviews reviewCount={product.review_count || undefined} />
+            <TemplateReviews productUuid={product.product_uuid} />
           </div>
 
           {/* Sidebar */}
