@@ -14,20 +14,14 @@ export function TemplateHeader({ productName }: TemplateHeaderProps) {
   };
 
   return (
-    <>
-      {/* Breadcrumb */}
+    <div className="flex items-center gap-3">
       <button
         onClick={handleBack}
-        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        className="text-muted-foreground hover:text-foreground transition-colors"
       >
-        <ArrowLeft className="h-4 w-4" />
-        Back
+        <ArrowLeft className="h-5 w-5" />
       </button>
-
-      {/* Header */}
-      <div className="space-y-1">
-        <h1 className="text-2xl font-semibold text-[#1A1F2C]">{productName}</h1>
-      </div>
-    </>
+      <h1 className="text-2xl font-semibold text-[#1A1F2C]">{productName}</h1>
+    </div>
   );
 }
