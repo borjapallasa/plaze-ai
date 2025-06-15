@@ -1,3 +1,4 @@
+
 import { useParams } from "react-router-dom";
 import { MainHeader } from "@/components/MainHeader";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -67,7 +68,52 @@ export default function AdminTemplateDetails() {
         {/* Mobile Status Card */}
         <TemplateStatusCard status={product.status || "active"} isMobile />
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Mobile Layout - Reordered for mobile */}
+        <div className="block lg:hidden space-y-6">
+          <TemplateHeroImage 
+            thumbnail={product.thumbnail} 
+            productName={product.name || ""} 
+          />
+          <TemplateFinancialMetrics 
+            salesCount={product.sales_count || undefined}
+            salesAmount={product.sales_amount || undefined}
+            priceFrom={product.price_from || undefined}
+          />
+          <TemplateDescription description={product.description} />
+          
+          {/* Demo and Resources moved below description on mobile */}
+          <TemplateDemoCard demo={product.demo} />
+          
+          <TemplateVariables 
+            productUuid={product.product_uuid}
+            techStack={product.tech_stack}
+            productIncludes={product.product_includes}
+            platform={product.platform}
+            team={product.team}
+            useCase={product.use_case}
+            industries={product.industries}
+          />
+          <TemplateReviews productUuid={product.product_uuid} />
+          
+          <TemplateStatusCard status={product.status || "active"} />
+          
+          <TemplateInfoCard 
+            expertUuid={product.expert_uuid || undefined}
+            type={product.type || undefined}
+            createdAt={product.created_at}
+            projectFiles={product.product_files || undefined}
+          />
+
+          <TemplateOrganization 
+            team={product.team}
+            industries={product.industries}
+            platform={product.platform}
+            useCase={product.use_case}
+          />
+        </div>
+
+        {/* Desktop Layout - Original grid layout */}
+        <div className="hidden lg:grid lg:grid-cols-12 gap-6">
           {/* Main Content */}
           <div className="lg:col-span-8 space-y-6">
             <TemplateHeroImage 
