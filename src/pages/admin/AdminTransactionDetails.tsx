@@ -126,7 +126,10 @@ export default function AdminTransactionDetails() {
 
             <Separator className="my-8" />
 
-            <TransactionFinancials transactionAmount={transaction.total_amount} transactionFees={mockData.transactionFees} affiliateFees={mockData.affiliateFees} stripeFees={mockData.stripeFees} grossMargin={mockData.grossMargin} netMargin={mockData.netMargin} />
+            <TransactionFinancials 
+              transactionAmount={transaction.total_amount} 
+              productsTransactionUuid={transaction.transaction_uuid}
+            />
 
             <Separator className="my-8" />
 

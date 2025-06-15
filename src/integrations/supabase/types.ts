@@ -2199,30 +2199,48 @@ export type Database = {
       }
       transactions: {
         Row: {
+          afiliate_fees: number | null
           amount: number | null
+          amount_taxes: number | null
           buyer_user_uuid: string | null
           created_at: string
           expert_uuid: string | null
+          gross_margin: number | null
           id: number
-          seller_user_uuid: string | null
+          products_transactions_uuid: string | null
+          review_uuid: string | null
+          stripe_fees: number | null
+          transaction_fees: number | null
           transaction_uuid: string
         }
         Insert: {
+          afiliate_fees?: number | null
           amount?: number | null
+          amount_taxes?: number | null
           buyer_user_uuid?: string | null
           created_at?: string
           expert_uuid?: string | null
+          gross_margin?: number | null
           id?: number
-          seller_user_uuid?: string | null
-          transaction_uuid: string
+          products_transactions_uuid?: string | null
+          review_uuid?: string | null
+          stripe_fees?: number | null
+          transaction_fees?: number | null
+          transaction_uuid?: string
         }
         Update: {
+          afiliate_fees?: number | null
           amount?: number | null
+          amount_taxes?: number | null
           buyer_user_uuid?: string | null
           created_at?: string
           expert_uuid?: string | null
+          gross_margin?: number | null
           id?: number
-          seller_user_uuid?: string | null
+          products_transactions_uuid?: string | null
+          review_uuid?: string | null
+          stripe_fees?: number | null
+          transaction_fees?: number | null
           transaction_uuid?: string
         }
         Relationships: [
@@ -2241,11 +2259,18 @@ export type Database = {
             referencedColumns: ["expert_uuid"]
           },
           {
-            foreignKeyName: "transactions_seller_user_uuid_fkey"
-            columns: ["seller_user_uuid"]
+            foreignKeyName: "transactions_products_transactions_uuid_fkey"
+            columns: ["products_transactions_uuid"]
             isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["user_uuid"]
+            referencedRelation: "products_transactions"
+            referencedColumns: ["product_transaction_uuid"]
+          },
+          {
+            foreignKeyName: "transactions_review_uuid_fkey"
+            columns: ["review_uuid"]
+            isOneToOne: false
+            referencedRelation: "reviews"
+            referencedColumns: ["review_uuid"]
           },
         ]
       }
