@@ -1,4 +1,4 @@
-import { FileText, Link as LinkIcon, Copy, Package, MoreHorizontal, ExternalLink } from "lucide-react";
+import { FileText, Link as LinkIcon, Copy, Package, MoreHorizontal, ExternalLink, Check, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -194,9 +194,11 @@ export function TransactionFiles({ transactionId, filesUrl, guidesUrl, customReq
                             View Files
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleMarkCompleted(item.product_transaction_item_uuid)}>
+                            <Check className="h-4 w-4 mr-2" />
                             Mark as Completed
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleOpenDispute(item.product_transaction_item_uuid)}>
+                            <AlertTriangle className="h-4 w-4 mr-2" />
                             Open Dispute
                           </DropdownMenuItem>
                         </DropdownMenuContent>
