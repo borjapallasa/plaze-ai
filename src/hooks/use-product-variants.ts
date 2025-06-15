@@ -26,22 +26,37 @@ export function useProductVariants(productUuid?: string) {
 
       console.log("Variants found:", data.length);
 
-      return data.map((variant, index) => ({
-        id: variant.variant_uuid,
-        name: variant.name || "Lorem Ipsum Package",
-        price: variant.price || 99.99,
-        comparePrice: variant.compare_price || 149.99,
-        label: "Package",
-        highlight: variant.highlighted || index === 1,
-        features: Array.isArray(variant.tags)
-          ? variant.tags.map(tag => String(tag))
-          : ["Core Features", "Basic Support"],
-        tags: Array.isArray(variant.tags)
-          ? variant.tags.map(tag => String(tag))
-          : [],
-        filesLink: variant.files_link || undefined,
-        additionalDetails: variant.additional_details || undefined
-      }));
+      return data.map((variant, index) => {
+        // Handle JSONB tags field properly
+        let parsedTags: string[] = [];
+        if (variant.tags) {
+          if (typeof variant.tags === 'string') {
+            try {
+              parsedTags = JSON.parse(variant.tags);
+            } catch (e) {
+              console.error('Error parsing tags JSON:', e);
+              parsedTags = [];
+            }
+          } else if (Array.isArray(variant.tags)) {
+            parsedTags = variant.tags.map(tag => String(tag));
+          }
+        }
+
+        return {
+          id: variant.variant_uuid,
+          name: variant.name || "Lorem Ipsum Package",
+          price: variant.price || 99.99,
+          comparePrice: variant.compare_price || 149.99,
+          label: "Package",
+          highlight: variant.highlighted || index === 1,
+          features: parsedTags.length > 0 
+            ? parsedTags 
+            : ["Core Features", "Basic Support"],
+          tags: parsedTags,
+          filesLink: variant.files_link || undefined,
+          additionalDetails: variant.additional_details || undefined
+        };
+      });
     },
     enabled: !!productUuid
   });
