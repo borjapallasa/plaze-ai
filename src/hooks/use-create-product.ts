@@ -136,6 +136,7 @@ export function useCreateProduct(initialData?: ProductInitialData) {
           user_uuid: currentUser.id,
           created_at: variant.createdAt,
           files_link: variant.filesLink,
+          additional_details: variant.additionalDetails,
         }));
 
         const { error: variantsError } = await supabase

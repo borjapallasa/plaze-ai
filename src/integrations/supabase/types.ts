@@ -2371,6 +2371,7 @@ export type Database = {
       }
       variants: {
         Row: {
+          additional_details: string | null
           compare_price: number | null
           created_at: string
           files_link: string | null
@@ -2384,6 +2385,7 @@ export type Database = {
           variant_uuid: string
         }
         Insert: {
+          additional_details?: string | null
           compare_price?: number | null
           created_at?: string
           files_link?: string | null
@@ -2397,6 +2399,7 @@ export type Database = {
           variant_uuid?: string
         }
         Update: {
+          additional_details?: string | null
           compare_price?: number | null
           created_at?: string
           files_link?: string | null

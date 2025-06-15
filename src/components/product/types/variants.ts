@@ -11,6 +11,7 @@ export interface Variant {
   hidden?: boolean;
   createdAt?: string;
   filesLink?: string;
+  additionalDetails?: string;
 }
 
 export interface ProductVariantsEditorProps {

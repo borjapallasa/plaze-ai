@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 import { X } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Variant } from "./types/variants";
@@ -87,6 +88,17 @@ export function VariantCard({
             value={variant.filesLink || ""}
             onChange={(e) => onUpdate(variant.id, "filesLink", e.target.value)}
             className="w-full"
+          />
+        </div>
+
+        <div>
+          <Label htmlFor={`additional-details-${variant.id}`}>Additional details for buyer</Label>
+          <Textarea
+            id={`additional-details-${variant.id}`}
+            placeholder="Enter additional details for the buyer..."
+            value={variant.additionalDetails || ""}
+            onChange={(e) => onUpdate(variant.id, "additionalDetails", e.target.value)}
+            className="w-full min-h-[100px]"
           />
         </div>
 
