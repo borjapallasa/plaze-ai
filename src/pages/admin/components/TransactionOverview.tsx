@@ -1,9 +1,15 @@
 
-import { User, Calendar } from "lucide-react";
+import { User, Calendar, Mail } from "lucide-react";
 
 interface TransactionOverviewProps {
-  buyerUser: string;
-  sellerUser: string;
+  buyerUser?: {
+    name: string;
+    email: string;
+  };
+  sellerUser?: {
+    name: string;
+    email: string;
+  };
   transactionDate: string;
 }
 
@@ -18,7 +24,20 @@ export function TransactionOverview({ buyerUser, sellerUser, transactionDate }: 
           </div>
           <span>Buyer User</span>
         </div>
-        <div className="font-medium pl-10 break-all">{buyerUser}</div>
+        <div className="pl-10 space-y-1">
+          <div className="font-medium break-all">
+            {buyerUser?.name || 'Unknown User'}
+          </div>
+          {buyerUser?.email && (
+            <a 
+              href={`mailto:${buyerUser.email}`}
+              className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 break-all"
+            >
+              <Mail className="h-3 w-3 shrink-0" />
+              {buyerUser.email}
+            </a>
+          )}
+        </div>
       </div>
 
       {/* Seller Info */}
@@ -29,7 +48,20 @@ export function TransactionOverview({ buyerUser, sellerUser, transactionDate }: 
           </div>
           <span>Seller User</span>
         </div>
-        <div className="font-medium pl-10 break-all">{sellerUser}</div>
+        <div className="pl-10 space-y-1">
+          <div className="font-medium break-all">
+            {sellerUser?.name || 'Unknown Expert'}
+          </div>
+          {sellerUser?.email && (
+            <a 
+              href={`mailto:${sellerUser.email}`}
+              className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 break-all"
+            >
+              <Mail className="h-3 w-3 shrink-0" />
+              {sellerUser.email}
+            </a>
+          )}
+        </div>
       </div>
 
       {/* Date/Time */}

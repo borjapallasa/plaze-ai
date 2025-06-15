@@ -1580,6 +1580,7 @@ export type Database = {
       products_transactions: {
         Row: {
           created_at: string
+          expert_uuid: string | null
           id: number
           item_count: number | null
           payment_link: string | null
@@ -1598,6 +1599,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          expert_uuid?: string | null
           id?: number
           item_count?: number | null
           payment_link?: string | null
@@ -1616,6 +1618,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          expert_uuid?: string | null
           id?: number
           item_count?: number | null
           payment_link?: string | null
@@ -1633,6 +1636,13 @@ export type Database = {
           user_uuid?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "products_transactions_expert_uuid_fkey"
+            columns: ["expert_uuid"]
+            isOneToOne: false
+            referencedRelation: "experts"
+            referencedColumns: ["expert_uuid"]
+          },
           {
             foreignKeyName: "products_transactions_user_uuid_fkey"
             columns: ["user_uuid"]

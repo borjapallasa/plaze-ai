@@ -133,8 +133,8 @@ export default function AdminTransactionDetails() {
 
           <CardContent className="space-y-8">
             <TransactionOverview
-              buyerUser={mockData.buyerUser}
-              sellerUser={mockData.sellerUser}
+              buyerUser={transaction.buyer_user}
+              sellerUser={transaction.seller_user}
               transactionDate={new Date(transaction.created_at).toLocaleString()}
             />
 
