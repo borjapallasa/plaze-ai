@@ -1,4 +1,3 @@
-
 export interface RelatedProduct {
   product_uuid: string;
   name: string;
@@ -53,6 +52,7 @@ export interface Product {
   utm_source: null;
   utm_term: null;
   variant_count: null;
+  product_files: null | string;
 }
 
 // Type for the product data from the API
