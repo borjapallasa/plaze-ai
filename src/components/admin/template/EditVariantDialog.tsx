@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,17 +19,17 @@ interface EditVariantDialogProps {
 
 export function EditVariantDialog({ variant, isOpen, onClose, onSave }: EditVariantDialogProps) {
   const [formData, setFormData] = useState({
-    name: variant?.name || "",
-    price: variant?.price?.toString() || "",
-    comparePrice: variant?.comparePrice?.toString() || "",
-    filesLink: variant?.filesLink || "",
-    additionalDetails: variant?.additionalDetails || "",
-    tags: variant?.tags || []
+    name: "",
+    price: "",
+    comparePrice: "",
+    filesLink: "",
+    additionalDetails: "",
+    tags: [] as string[]
   });
   const [newTag, setNewTag] = useState("");
 
   // Reset form data when variant changes
-  useState(() => {
+  useEffect(() => {
     if (variant) {
       setFormData({
         name: variant.name || "",
@@ -61,6 +61,15 @@ export function EditVariantDialog({ variant, isOpen, onClose, onSave }: EditVari
 
   const handleSave = () => {
     if (!variant) return;
+
+    // Database field mapping:
+    // Frontend -> Database
+    // name -> name
+    // price -> price
+    // comparePrice -> compare_price
+    // filesLink -> files_link
+    // additionalDetails -> additional_details
+    // tags -> tags (JSONB array)
 
     const updatedData: Partial<ProductVariant> = {
       name: formData.name,
