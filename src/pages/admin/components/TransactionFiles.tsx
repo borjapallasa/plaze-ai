@@ -1,4 +1,4 @@
-import { FileText, Link as LinkIcon, Copy, Package, MoreHorizontal } from "lucide-react";
+import { FileText, Link as LinkIcon, Copy, Package, MoreHorizontal, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { useTransactionItems } from "@/hooks/use-transaction-items";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toStartCase } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 
 interface TransactionFilesProps {
   transactionId: string;
@@ -54,6 +55,37 @@ export function TransactionFiles({ transactionId, filesUrl, guidesUrl, customReq
     // TODO: Implement open dispute functionality
     toast.success("Dispute opened");
     console.log("Open dispute:", itemId);
+  };
+
+  const handleViewFiles = async (variantUuid: string | null) => {
+    if (!variantUuid) {
+      toast.error("No variant found for this item");
+      return;
+    }
+
+    try {
+      const { data: variant, error } = await supabase
+        .from('variants')
+        .select('files_link')
+        .eq('variant_uuid', variantUuid)
+        .single();
+
+      if (error) {
+        console.error('Error fetching variant files:', error);
+        toast.error("Error fetching files link");
+        return;
+      }
+
+      if (variant?.files_link) {
+        window.open(variant.files_link, '_blank');
+        toast.success("Opening files in new tab");
+      } else {
+        toast.error("No files link available for this variant");
+      }
+    } catch (error) {
+      console.error('Error opening files:', error);
+      toast.error("Error opening files");
+    }
   };
 
   if (isLoading) {
@@ -157,6 +189,10 @@ export function TransactionFiles({ transactionId, filesUrl, guidesUrl, customReq
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-48">
+                          <DropdownMenuItem onClick={() => handleViewFiles(item.variant_uuid)}>
+                            <ExternalLink className="h-4 w-4 mr-2" />
+                            View Files
+                          </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleMarkCompleted(item.product_transaction_item_uuid)}>
                             Mark as Completed
                           </DropdownMenuItem>
