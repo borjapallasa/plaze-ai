@@ -62,7 +62,7 @@ export default function AdminTemplateDetails() {
   return (
     <>
       <MainHeader />
-      <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16 space-y-6">
+      <div className="container mx-auto px-4 py-8 max-w-[1600px] mt-16 space-y-6">
         <TemplateHeader productName={product.name || ""} />
 
         {/* Mobile Status Card */}
@@ -77,7 +77,7 @@ export default function AdminTemplateDetails() {
           <TemplateFinancialMetrics 
             salesCount={product.sales_count || undefined}
             salesAmount={product.sales_amount || undefined}
-            priceFrom={product.price_from || undefined}
+            feesAmount={product.fees_amount || undefined}
           />
           <TemplateDescription description={product.description} />
           
@@ -142,7 +142,7 @@ export default function AdminTemplateDetails() {
             <TemplateFinancialMetrics 
               salesCount={product.sales_count || undefined}
               salesAmount={product.sales_amount || undefined}
-              priceFrom={product.price_from || undefined}
+              feesAmount={product.fees_amount || undefined}
             />
             
             <TemplateOrganization 
