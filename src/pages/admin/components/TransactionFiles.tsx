@@ -2,6 +2,7 @@
 import { FileText, Link as LinkIcon, Copy, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
 import { useTransactionItems } from "@/hooks/use-transaction-items";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -73,40 +74,71 @@ export function TransactionFiles({ transactionId, filesUrl, guidesUrl, customReq
       </CardHeader>
       <CardContent className="space-y-4">
         {transactionItems && transactionItems.length > 0 ? (
-          transactionItems.map((item) => (
-            <div 
-              key={item.product_transaction_item_uuid}
-              className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-gray-50 rounded-lg gap-4"
-            >
-              <div className="flex items-center gap-3 flex-1">
-                <div className="bg-white p-2 rounded-full shrink-0">
-                  <Package className="h-5 w-5 text-[#9b87f5]" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="font-medium">
-                    {item.product_name || 'Unknown Product'}
-                  </div>
-                  <div className="text-sm text-[#8E9196] space-y-1">
-                    <div>Variant: {item.variant_name || 'No variant'}</div>
-                    <div>Quantity: {item.quantity || 'N/A'}</div>
-                    <div>Price: ${item.price?.toFixed(2) || 'N/A'}</div>
-                    {item.total_price && (
-                      <div>Total: ${item.total_price.toFixed(2)}</div>
-                    )}
-                    <div>Status: {item.status || 'N/A'}</div>
-                  </div>
-                </div>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-[#8E9196] hover:text-[#1A1F2C] shrink-0"
-                onClick={() => copyToClipboard(item.product_transaction_item_uuid, "Item ID")}
-              >
-                <Copy className="h-4 w-4" />
-              </Button>
-            </div>
-          ))
+          <div className="border rounded-lg overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[40%]">Product</TableHead>
+                  <TableHead className="w-[20%]">Variant</TableHead>
+                  <TableHead className="w-[10%] text-center">Qty</TableHead>
+                  <TableHead className="w-[12%] text-right">Price</TableHead>
+                  <TableHead className="w-[12%] text-right">Total</TableHead>
+                  <TableHead className="w-[6%] text-center">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {transactionItems.map((item) => (
+                  <TableRow key={item.product_transaction_item_uuid}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <div className="bg-gray-50 p-2 rounded-full shrink-0">
+                          <Package className="h-4 w-4 text-[#9b87f5]" />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="font-medium text-sm">
+                            {item.product_name || 'Unknown Product'}
+                          </div>
+                          <div className="text-xs text-[#8E9196]">
+                            Status: {item.status || 'N/A'}
+                          </div>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm">
+                        {item.variant_name || 'No variant'}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <div className="text-sm font-medium">
+                        {item.quantity || 'N/A'}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="text-sm font-medium">
+                        ${item.price?.toFixed(2) || 'N/A'}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="text-sm font-semibold">
+                        ${item.total_price?.toFixed(2) || 'N/A'}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0 text-[#8E9196] hover:text-[#1A1F2C]"
+                        onClick={() => copyToClipboard(item.product_transaction_item_uuid, "Item ID")}
+                      >
+                        <Copy className="h-3 w-3" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         ) : (
           <div className="text-center py-8">
             <p className="text-[#8E9196]">No transaction items found</p>
