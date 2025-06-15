@@ -28,10 +28,10 @@ export function ProductCreateHeader({
   isValid
 }: ProductCreateHeaderProps) {
   return (
-    <div className="mb-6">
-      <div className="flex flex-col gap-3 sm:gap-4">
+    <div className="mb-4 sm:mb-6">
+      <div className="flex flex-col gap-2 sm:gap-4">
         {/* Top row with back button and title */}
-        <div className="flex items-center gap-3 sm:gap-4">
+        <div className="flex items-center gap-3">
           <Link to="/">
             <Button variant="ghost" size="icon" className="rounded-full flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10">
               <ArrowLeft className="h-4 w-4" />
@@ -42,14 +42,16 @@ export function ProductCreateHeader({
           </div>
         </div>
         
-        {/* Second row with description and controls */}
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 pl-11 sm:pl-14">
-          <p className="text-sm text-muted-foreground flex-1 min-w-0 pr-4">
+        {/* Description */}
+        <div className="pl-11 sm:pl-14">
+          <p className="text-sm text-muted-foreground mb-3 sm:mb-4">
             Enter the details for your new product
           </p>
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 flex-shrink-0">
+          
+          {/* Controls row */}
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:items-center">
             <Select value={productStatus} onValueChange={onStatusChange}>
-              <SelectTrigger className="w-full sm:w-[140px] md:w-[160px] lg:w-[180px]">
+              <SelectTrigger className="w-full sm:w-[140px] md:w-[160px]">
                 <SelectValue placeholder="Select status" />
               </SelectTrigger>
               <SelectContent>
@@ -61,7 +63,8 @@ export function ProductCreateHeader({
             <Button
               onClick={onSave}
               disabled={isSaving || !isValid}
-              className="w-full sm:w-auto whitespace-nowrap"
+              className="w-full sm:w-auto"
+              size="default"
             >
               {isSaving ? "Creating..." : "Create product"}
             </Button>
