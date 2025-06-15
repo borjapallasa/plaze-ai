@@ -8,6 +8,7 @@ import { TemplateStatusCard } from "@/components/admin/template/TemplateStatusCa
 import { TemplateHeroImage } from "@/components/admin/template/TemplateHeroImage";
 import { TemplateFinancialMetrics } from "@/components/admin/template/TemplateFinancialMetrics";
 import { TemplateDescription } from "@/components/admin/template/TemplateDescription";
+import { TemplateVariables } from "@/components/admin/template/TemplateVariables";
 import { TemplateReviews } from "@/components/admin/template/TemplateReviews";
 import { TemplateInfoCard } from "@/components/admin/template/TemplateInfoCard";
 import { TemplateOrganization } from "@/components/admin/template/TemplateOrganization";
@@ -80,6 +81,15 @@ export default function AdminTemplateDetails() {
               priceFrom={product.price_from || undefined}
             />
             <TemplateDescription description={product.description} />
+            <TemplateVariables 
+              techStack={product.tech_stack}
+              techStackPrice={product.tech_stack_price}
+              productIncludes={product.product_includes}
+              platform={product.platform}
+              team={product.team}
+              useCase={product.use_case}
+              industries={product.industries}
+            />
             <TemplateReviews reviewCount={product.review_count || undefined} />
           </div>
 

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { ProductData } from '@/types/Product';
@@ -52,6 +51,7 @@ const mapProductData = (data: any): ProductData => {
     industries: data.industries || null,
     expert_uuid: data.expert_uuid || null,
     user_uuid: data.user_uuid || null,
+    product_files: data.product_files || null,
   };
 };
 

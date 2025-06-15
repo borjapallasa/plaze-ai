@@ -1373,7 +1373,6 @@ export type Database = {
           name: string | null
           platform: Json | null
           price_from: number | null
-          product_files: string | null
           product_includes: string | null
           product_uuid: string
           public_link: string | null
@@ -1420,7 +1419,6 @@ export type Database = {
           name?: string | null
           platform?: Json | null
           price_from?: number | null
-          product_files?: string | null
           product_includes?: string | null
           product_uuid?: string
           public_link?: string | null
@@ -1467,7 +1465,6 @@ export type Database = {
           name?: string | null
           platform?: Json | null
           price_from?: number | null
-          product_files?: string | null
           product_includes?: string | null
           product_uuid?: string
           public_link?: string | null

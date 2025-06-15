@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { TransactionFiles } from "@/pages/admin/components/TransactionFiles";
 
 interface TemplateInfoCardProps {
   expertUuid?: string;
@@ -44,12 +43,17 @@ export function TemplateInfoCard({
           </p>
         </div>
 
-        <Separator />
+        {projectFiles && (
+          <>
+            <Separator />
+            <div className="space-y-2">
+              <p className="text-sm text-[#8E9196]">Project Files</p>
+              <p className="text-sm font-medium break-all">{projectFiles}</p>
+            </div>
+          </>
+        )}
 
-        <TransactionFiles
-          filesUrl={projectFiles || ""}
-          guidesUrl=""
-        />
+        <Separator />
 
         <div className="pt-4 space-y-3">
           <Button className="w-full gap-2">
