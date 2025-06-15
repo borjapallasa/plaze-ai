@@ -1,3 +1,4 @@
+
 import { FileText, Link as LinkIcon, Copy, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -78,12 +79,13 @@ export function TransactionFiles({ transactionId, filesUrl, guidesUrl, customReq
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[40%]">Product</TableHead>
-                  <TableHead className="w-[20%]">Variant</TableHead>
+                  <TableHead className="w-[30%]">Product</TableHead>
+                  <TableHead className="w-[15%]">Variant</TableHead>
                   <TableHead className="w-[10%] text-center">Qty</TableHead>
                   <TableHead className="w-[12%] text-right">Price</TableHead>
                   <TableHead className="w-[12%] text-right">Total</TableHead>
-                  <TableHead className="w-[6%] text-center">Actions</TableHead>
+                  <TableHead className="w-[12%]">Status</TableHead>
+                  <TableHead className="w-[9%] text-center">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -97,9 +99,6 @@ export function TransactionFiles({ transactionId, filesUrl, guidesUrl, customReq
                         <div className="min-w-0">
                           <div className="font-medium text-sm">
                             {item.product_name || 'Unknown Product'}
-                          </div>
-                          <div className="text-xs text-[#8E9196]">
-                            Status: {toStartCase(item.status || 'N/A')}
                           </div>
                         </div>
                       </div>
@@ -122,6 +121,11 @@ export function TransactionFiles({ transactionId, filesUrl, guidesUrl, customReq
                     <TableCell className="text-right">
                       <div className="text-sm font-semibold">
                         ${item.total_price?.toFixed(2) || 'N/A'}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm">
+                        {toStartCase(item.status || 'N/A')}
                       </div>
                     </TableCell>
                     <TableCell className="text-center">
