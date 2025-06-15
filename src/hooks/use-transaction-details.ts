@@ -24,7 +24,7 @@ export function useTransactionDetails(transactionId: string) {
     queryFn: async (): Promise<TransactionDetails | null> => {
       console.log('Fetching transaction details for:', transactionId);
       
-      // Fetch only from products_transactions
+      // Fetch from products_transactions using the correct field name
       const { data: transaction, error: transactionError } = await supabase
         .from('products_transactions')
         .select('*')
@@ -40,6 +40,8 @@ export function useTransactionDetails(transactionId: string) {
         console.log('No transaction found with UUID:', transactionId);
         return null;
       }
+
+      console.log('Found transaction:', transaction);
 
       // Mock items data if none exists
       const mockItems = [
