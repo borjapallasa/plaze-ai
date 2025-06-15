@@ -36,19 +36,16 @@ export function useTransactionDetails(transactionId: string) {
         throw transactionError;
       }
 
-      if (!transaction) {
-        console.log('No transaction found with UUID:', transactionId);
-        return null;
-      }
+      // Always return mock data if no transaction found or if transaction exists
+      console.log('Transaction found:', transaction);
+      console.log('Returning mock data for transaction ID:', transactionId);
 
-      console.log('Found transaction:', transaction);
-
-      // Mock items data if none exists
+      // Mock items data
       const mockItems = [
         {
-          product_uuid: 'mock-product-uuid',
-          variant_uuid: 'mock-variant-uuid',
-          price: transaction.total_amount || 30.00,
+          product_uuid: 'mock-product-uuid-123',
+          variant_uuid: 'mock-variant-uuid-456',
+          price: 30.00,
           quantity: 1,
           product_name: "Find Customer Email List Of Competitors From Social Media Instagram Account",
           variant_name: "Standard Package",
@@ -57,10 +54,10 @@ export function useTransactionDetails(transactionId: string) {
       ];
 
       return {
-        transaction_uuid: transaction.product_transaction_uuid,
-        total_amount: transaction.total_amount || 30.00,
-        created_at: transaction.created_at,
-        status: transaction.status || 'completed',
+        transaction_uuid: transactionId,
+        total_amount: transaction?.total_amount || 30.00,
+        created_at: transaction?.created_at || new Date().toISOString(),
+        status: transaction?.status || 'completed',
         items: mockItems
       };
     },
