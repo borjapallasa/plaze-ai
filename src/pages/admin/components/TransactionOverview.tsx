@@ -48,16 +48,16 @@ export function TransactionOverview({ buyerUser, sellerUser, transactionDate }: 
       {/* Main Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Buyer Column */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 mb-3">
-            <User className="h-4 w-4 text-[#8E9196]" />
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <User className="h-4 w-4 text-[#9b87f5]" />
             <span className="text-xs font-semibold text-[#8E9196] uppercase tracking-wide">Buyer</span>
           </div>
           
           <div className="flex items-center gap-3">
             <Avatar className="h-8 w-8">
               <AvatarImage src={buyerUser?.avatar} alt={buyerUser?.name} />
-              <AvatarFallback className="text-xs font-medium bg-blue-100 text-blue-700">
+              <AvatarFallback className="text-xs font-medium bg-[#9b87f5]/10 text-[#9b87f5]">
                 {buyerUser?.name ? getInitials(buyerUser.name) : 'BU'}
               </AvatarFallback>
             </Avatar>
@@ -73,7 +73,7 @@ export function TransactionOverview({ buyerUser, sellerUser, transactionDate }: 
                       <TooltipTrigger asChild>
                         <a
                           href={`mailto:${buyerUser.email}`}
-                          className="inline-flex items-center justify-center w-5 h-5 rounded-full text-blue-600 hover:bg-blue-50 transition-colors"
+                          className="inline-flex items-center justify-center w-5 h-5 rounded-full text-[#9b87f5] hover:bg-[#9b87f5]/10 transition-colors"
                           aria-label={`Email ${buyerUser.name || 'buyer'}`}
                         >
                           <Mail className="h-3 w-3" />
@@ -91,16 +91,16 @@ export function TransactionOverview({ buyerUser, sellerUser, transactionDate }: 
         </div>
 
         {/* Seller Column */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 mb-3">
-            <User className="h-4 w-4 text-[#8E9196]" />
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <User className="h-4 w-4 text-[#9b87f5]" />
             <span className="text-xs font-semibold text-[#8E9196] uppercase tracking-wide">Seller</span>
           </div>
           
           <div className="flex items-center gap-3">
             <Avatar className="h-8 w-8">
               <AvatarImage src={sellerUser?.avatar} alt={sellerUser?.name} />
-              <AvatarFallback className="text-xs font-medium bg-green-100 text-green-700">
+              <AvatarFallback className="text-xs font-medium bg-[#9b87f5]/10 text-[#9b87f5]">
                 {sellerUser?.name ? getInitials(sellerUser.name) : 'SE'}
               </AvatarFallback>
             </Avatar>
@@ -116,7 +116,7 @@ export function TransactionOverview({ buyerUser, sellerUser, transactionDate }: 
                       <TooltipTrigger asChild>
                         <a
                           href={`mailto:${sellerUser.email}`}
-                          className="inline-flex items-center justify-center w-5 h-5 rounded-full text-green-600 hover:bg-green-50 transition-colors"
+                          className="inline-flex items-center justify-center w-5 h-5 rounded-full text-[#9b87f5] hover:bg-[#9b87f5]/10 transition-colors"
                           aria-label={`Email ${sellerUser.name || 'seller'}`}
                         >
                           <Mail className="h-3 w-3" />
@@ -134,9 +134,9 @@ export function TransactionOverview({ buyerUser, sellerUser, transactionDate }: 
         </div>
 
         {/* Date Column */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 mb-3">
-            <Calendar className="h-4 w-4 text-[#8E9196]" />
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <Calendar className="h-4 w-4 text-[#9b87f5]" />
             <span className="text-xs font-semibold text-[#8E9196] uppercase tracking-wide">Transaction Date</span>
           </div>
           
