@@ -50,20 +50,39 @@ export function useTransactionDetails(transactionId: string) {
 
       console.log('Transaction found:', transaction);
 
-      // Mock items data for now
-      const mockItems = [
-        {
-          product_uuid: 'mock-product-uuid-123',
-          variant_uuid: 'mock-variant-uuid-456',
-          price: 30.00,
-          quantity: 1,
-          product_name: "Find Customer Email List Of Competitors From Social Media Instagram Account",
-          variant_name: "Standard Package",
-          files_link: "https://docs.google.com/document/d/1Tu4aBhms9OvovbPHGj7yVA7DX7r99X3Beupqm77HoNc/edit?usp=sharing",
-        }
-      ];
+      if (!transaction) {
+        return null;
+      }
 
-      // Construct buyer and seller info
+      // Fetch transaction items
+      const { data: items, error: itemsError } = await supabase
+        .from('products_transaction_items')
+        .select(`
+          *,
+          products(name),
+          variants(name)
+        `)
+        .eq('product_transaction_uuid', transactionId);
+
+      if (itemsError) {
+        console.error('Error fetching transaction items:', itemsError);
+        throw itemsError;
+      }
+
+      console.log('Transaction items found:', items);
+
+      // Map the items to match our interface
+      const transactionItems = items?.map(item => ({
+        product_uuid: item.product_uuid || '',
+        variant_uuid: item.variant_uuid || '',
+        price: item.price || 0,
+        quantity: item.quantity || 1,
+        product_name: item.products?.name || 'Unknown Product',
+        variant_name: item.variants?.name || 'Unknown Variant',
+        files_link: item.variants?.files_link || '',
+      })) || [];
+
+      // Construct buyer and seller info from the actual transaction record
       let buyerUser = undefined;
       let sellerUser = undefined;
 
@@ -83,12 +102,12 @@ export function useTransactionDetails(transactionId: string) {
 
       return {
         transaction_uuid: transactionId,
-        total_amount: transaction?.total_amount || 30.00,
-        created_at: transaction?.created_at || new Date().toISOString(),
-        status: transaction?.status || 'completed',
+        total_amount: transaction.total_amount || 0,
+        created_at: transaction.created_at || new Date().toISOString(),
+        status: transaction.status || 'unknown',
         buyer_user: buyerUser,
         seller_user: sellerUser,
-        items: mockItems
+        items: transactionItems
       };
     },
     enabled: !!transactionId,
