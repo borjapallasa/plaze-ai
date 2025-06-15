@@ -68,6 +68,7 @@ export interface ProductVariant {
   highlight?: boolean;
   features?: string[];
   filesLink?: string;
+  additionalDetails?: string;
 }
 
 // Type for the product review

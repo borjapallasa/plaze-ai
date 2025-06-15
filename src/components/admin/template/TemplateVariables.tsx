@@ -9,7 +9,6 @@ import { toast } from "sonner";
 interface TemplateVariablesProps {
   productUuid: string;
   techStack?: string;
-  techStackPrice?: string;
   productIncludes?: string;
   platform?: any[];
   team?: any[];
@@ -125,7 +124,7 @@ export function TemplateVariables({
 
                   {/* Files Link Section */}
                   <div className="mt-3 p-3 bg-white rounded border">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between mb-2">
                       <div className="flex-1 min-w-0">
                         <p className="text-xs text-[#8E9196] mb-1">Files Link</p>
                         <p className="text-sm font-mono text-gray-700 truncate">
@@ -155,6 +154,16 @@ export function TemplateVariables({
                         </div>
                       )}
                     </div>
+                    
+                    {/* Additional Details */}
+                    {variant.additionalDetails && (
+                      <div className="mt-2 pt-2 border-t">
+                        <p className="text-xs text-[#8E9196] mb-1">Additional Details</p>
+                        <p className="text-sm text-gray-700">
+                          {variant.additionalDetails}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
