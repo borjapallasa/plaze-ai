@@ -37,7 +37,7 @@ export function TemplateInfoCard({
                 <p className="text-sm font-medium">
                   {expert?.name || "Unknown"}
                 </p>
-                {expert?.email && (
+                {expert && 'email' in expert && expert.email && (
                   <a
                     href={`mailto:${expert.email}`}
                     className="text-blue-600 hover:text-blue-800 transition-colors"

@@ -24,7 +24,7 @@ export default function AdminTemplateDetails() {
     return (
       <>
         <MainHeader />
-        <div className="container mx-auto px-4 py-8 max-w-[1200px] mt-16 space-y-6">
+        <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16 space-y-6">
           <Skeleton className="h-6 w-48" />
           <div className="space-y-1">
             <Skeleton className="h-8 w-full" />
@@ -48,7 +48,7 @@ export default function AdminTemplateDetails() {
     return (
       <>
         <MainHeader />
-        <div className="container mx-auto px-4 py-8 max-w-[1200px] mt-16">
+        <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16">
           <div className="text-center py-12">
             <h2 className="text-2xl font-semibold text-gray-900 mb-2">Template Not Found</h2>
             <p className="text-gray-600 mb-4">The template you're looking for doesn't exist or couldn't be loaded.</p>
@@ -62,7 +62,7 @@ export default function AdminTemplateDetails() {
   return (
     <>
       <MainHeader />
-      <div className="container mx-auto px-4 py-8 max-w-[1200px] mt-16 space-y-6">
+      <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16 space-y-6">
         <TemplateHeader productName={product.name || ""} />
 
         {/* Mobile Status Card */}
@@ -113,18 +113,13 @@ export default function AdminTemplateDetails() {
           />
         </div>
 
-        {/* Desktop Layout - Original grid layout */}
+        {/* Desktop Layout - Updated with financial metrics under status */}
         <div className="hidden lg:grid lg:grid-cols-12 gap-6">
           {/* Main Content */}
           <div className="lg:col-span-8 space-y-6">
             <TemplateHeroImage 
               thumbnail={product.thumbnail} 
               productName={product.name || ""} 
-            />
-            <TemplateFinancialMetrics 
-              salesCount={product.sales_count || undefined}
-              salesAmount={product.sales_amount || undefined}
-              priceFrom={product.price_from || undefined}
             />
             <TemplateDescription description={product.description} />
             <TemplateVariables 
@@ -143,6 +138,13 @@ export default function AdminTemplateDetails() {
           <div className="lg:col-span-4 space-y-6">
             <TemplateStatusCard status={product.status || "active"} />
             
+            {/* Financial metrics moved under status card */}
+            <TemplateFinancialMetrics 
+              salesCount={product.sales_count || undefined}
+              salesAmount={product.sales_amount || undefined}
+              priceFrom={product.price_from || undefined}
+            />
+            
             <TemplateOrganization 
               team={product.team}
               industries={product.industries}
@@ -152,7 +154,7 @@ export default function AdminTemplateDetails() {
 
             <TemplateDemoCard demo={product.demo} />
 
-            {/* Template Information moved below Demo & Resources on desktop */}
+            {/* Template Information at the bottom */}
             <TemplateInfoCard 
               expertUuid={product.expert_uuid || undefined}
               type={product.type || undefined}
