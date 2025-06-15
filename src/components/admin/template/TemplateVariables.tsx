@@ -87,13 +87,6 @@ export function TemplateVariables({
           </div>
         )}
 
-        {techStackPrice && (
-          <div className="space-y-2">
-            <p className="text-sm text-[#8E9196]">Tech Stack Price</p>
-            <p className="text-sm font-medium">${techStackPrice}</p>
-          </div>
-        )}
-
         {productIncludes && (
           <div className="space-y-2">
             <p className="text-sm text-[#8E9196]">Product Includes</p>
