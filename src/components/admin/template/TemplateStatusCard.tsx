@@ -18,14 +18,16 @@ interface TemplateStatusCardProps {
   isMobile?: boolean;
 }
 
+type StatusType = "active" | "inactive" | "draft";
+
 export function TemplateStatusCard({ status, productUuid, isMobile = false }: TemplateStatusCardProps) {
-  const [currentStatus, setCurrentStatus] = useState(status);
+  const [currentStatus, setCurrentStatus] = useState<StatusType>(status as StatusType);
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
   
   const cardClass = isMobile ? "md:hidden" : "hidden md:block";
 
-  const handleStatusChange = (newStatus: string) => {
+  const handleStatusChange = (newStatus: StatusType) => {
     setCurrentStatus(newStatus);
   };
 

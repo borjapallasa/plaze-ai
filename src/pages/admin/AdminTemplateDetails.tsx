@@ -63,7 +63,10 @@ export default function AdminTemplateDetails() {
     <>
       <MainHeader />
       <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16 space-y-6">
-        <TemplateHeader productName={product.name || ""} />
+        <TemplateHeader 
+          productName={product.name || ""} 
+          publicLink={product.public_link || undefined}
+        />
 
         {/* Mobile Status Card */}
         <TemplateStatusCard 
