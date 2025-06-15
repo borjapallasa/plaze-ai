@@ -1,8 +1,13 @@
-
-import { FileText, Link as LinkIcon, Copy, Package } from "lucide-react";
+import { FileText, Link as LinkIcon, Copy, Package, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { useTransactionItems } from "@/hooks/use-transaction-items";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -37,6 +42,18 @@ export function TransactionFiles({ transactionId, filesUrl, guidesUrl, customReq
     } else {
       toast.error("No project guides URL available");
     }
+  };
+
+  const handleMarkCompleted = (itemId: string) => {
+    // TODO: Implement mark as completed functionality
+    toast.success("Item marked as completed");
+    console.log("Mark as completed:", itemId);
+  };
+
+  const handleOpenDispute = (itemId: string) => {
+    // TODO: Implement open dispute functionality
+    toast.success("Dispute opened");
+    console.log("Open dispute:", itemId);
   };
 
   if (isLoading) {
@@ -129,14 +146,25 @@ export function TransactionFiles({ transactionId, filesUrl, guidesUrl, customReq
                       </div>
                     </TableCell>
                     <TableCell className="text-center">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0 text-[#8E9196] hover:text-[#1A1F2C]"
-                        onClick={() => copyToClipboard(item.product_transaction_item_uuid, "Item ID")}
-                      >
-                        <Copy className="h-3 w-3" />
-                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 text-[#8E9196] hover:text-[#1A1F2C]"
+                          >
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48">
+                          <DropdownMenuItem onClick={() => handleMarkCompleted(item.product_transaction_item_uuid)}>
+                            Mark as Completed
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleOpenDispute(item.product_transaction_item_uuid)}>
+                            Open Dispute
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 ))}

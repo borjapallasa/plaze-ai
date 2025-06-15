@@ -2530,6 +2530,7 @@ export type Database = {
         | "pending"
         | "processing"
         | "completed"
+        | "disputed"
         | "failed"
         | "cancelled"
         | "expired"
@@ -2733,6 +2734,7 @@ export const Constants = {
         "pending",
         "processing",
         "completed",
+        "disputed",
         "failed",
         "cancelled",
         "expired",
