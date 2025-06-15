@@ -71,7 +71,7 @@ export function ProductCreateHeader({
       </div>
       
       {/* Mobile controls - completely separate from the flex container above */}
-      <div className="sm:hidden space-y-3 mt-4">
+      <div className="sm:hidden space-y-3 mt-2">
         <Select value={productStatus} onValueChange={onStatusChange}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select status" />
