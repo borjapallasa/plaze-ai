@@ -67,29 +67,29 @@ export function ProductCreateHeader({
               </div>
             </div>
           </div>
-          
-          {/* Mobile controls - below title/subtitle, full width */}
-          <div className="sm:hidden space-y-3">
-            <Select value={productStatus} onValueChange={onStatusChange}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="draft">Draft</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
-              </SelectContent>
-            </Select>
-            
-            <Button
-              onClick={onSave}
-              disabled={isSaving || !isValid}
-              className="w-full"
-            >
-              {isSaving ? "Creating..." : "Create product"}
-            </Button>
-          </div>
         </div>
+      </div>
+      
+      {/* Mobile controls - completely separate from the flex container above */}
+      <div className="sm:hidden space-y-3 mt-4">
+        <Select value={productStatus} onValueChange={onStatusChange}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="draft">Draft</SelectItem>
+            <SelectItem value="active">Active</SelectItem>
+            <SelectItem value="inactive">Inactive</SelectItem>
+          </SelectContent>
+        </Select>
+        
+        <Button
+          onClick={onSave}
+          disabled={isSaving || !isValid}
+          className="w-full"
+        >
+          {isSaving ? "Creating..." : "Create product"}
+        </Button>
       </div>
     </div>
   );
