@@ -1,83 +1,158 @@
 
 import { User, Calendar, Mail } from "lucide-react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface TransactionOverviewProps {
   buyerUser?: {
     name: string;
     email: string;
+    avatar?: string;
   };
   sellerUser?: {
     name: string;
     email: string;
+    avatar?: string;
   };
   transactionDate: string;
 }
 
 export function TransactionOverview({ buyerUser, sellerUser, transactionDate }: TransactionOverviewProps) {
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word.charAt(0))
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  const formatEmail = (email: string) => {
+    if (email.length > 25) {
+      const [local, domain] = email.split('@');
+      if (local.length > 15) {
+        return `${local.slice(0, 12)}...@${domain}`;
+      }
+    }
+    return email;
+  };
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-      {/* Buyer Info */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-3 text-sm font-medium text-[#8E9196]">
-          <div className="bg-[#F8F9FC] p-2.5 rounded-lg">
-            <User className="h-4 w-4 text-[#6B7280]" />
-          </div>
-          <span>Buyer User</span>
-        </div>
-        <div className="ml-12">
-          <div className="flex items-center gap-2 text-[#1A1F2C] font-medium">
-            <span className="break-all">
-              {buyerUser?.name || 'Unknown User'}
-            </span>
-            {buyerUser?.email && (
-              <a 
-                href={`mailto:${buyerUser.email}`}
-                className="text-blue-600 hover:text-blue-800 transition-colors shrink-0"
-                title={buyerUser.email}
-              >
-                <Mail className="h-4 w-4" />
-              </a>
-            )}
-          </div>
-        </div>
+    <div className="space-y-6">
+      {/* Section Title */}
+      <div>
+        <h3 className="text-lg font-semibold text-[#1A1F2C] mb-1">Transaction Overview</h3>
+        <p className="text-sm text-[#8E9196]">Buyer and seller information for this transaction</p>
       </div>
 
-      {/* Seller Info */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-3 text-sm font-medium text-[#8E9196]">
-          <div className="bg-[#F8F9FC] p-2.5 rounded-lg">
-            <User className="h-4 w-4 text-[#6B7280]" />
+      {/* Main Grid */}
+      <div className="bg-[#FAFAFA] rounded-lg p-6 border border-[#E5E7EB]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Buyer Column */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="bg-white p-2 rounded-lg shadow-sm border border-[#E5E7EB]">
+                <User className="h-4 w-4 text-[#6B7280]" />
+              </div>
+              <span className="text-xs font-semibold text-[#6B7280] uppercase tracking-wide">Buyer</span>
+            </div>
+            
+            <div className="flex items-center gap-3 pl-1">
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={buyerUser?.avatar} alt={buyerUser?.name} />
+                <AvatarFallback className="text-xs font-medium bg-blue-100 text-blue-700">
+                  {buyerUser?.name ? getInitials(buyerUser.name) : 'BU'}
+                </AvatarFallback>
+              </Avatar>
+              
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="font-medium text-[#1A1F2C] text-sm truncate">
+                    {buyerUser?.name || 'John Doe'}
+                  </span>
+                  {buyerUser?.email && (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <a
+                            href={`mailto:${buyerUser.email}`}
+                            className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700 transition-colors"
+                            aria-label={`Email ${buyerUser.name || 'buyer'}`}
+                          >
+                            <Mail className="h-3 w-3" />
+                          </a>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="text-xs">{formatEmail(buyerUser.email)}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
-          <span>Seller User</span>
-        </div>
-        <div className="ml-12">
-          <div className="flex items-center gap-2 text-[#1A1F2C] font-medium">
-            <span className="break-all">
-              {sellerUser?.name || 'Unknown Expert'}
-            </span>
-            {sellerUser?.email && (
-              <a 
-                href={`mailto:${sellerUser.email}`}
-                className="text-blue-600 hover:text-blue-800 transition-colors shrink-0"
-                title={sellerUser.email}
-              >
-                <Mail className="h-4 w-4" />
-              </a>
-            )}
-          </div>
-        </div>
-      </div>
 
-      {/* Date/Time */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-3 text-sm font-medium text-[#8E9196]">
-          <div className="bg-[#F8F9FC] p-2.5 rounded-lg">
-            <Calendar className="h-4 w-4 text-[#6B7280]" />
+          {/* Seller Column */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="bg-white p-2 rounded-lg shadow-sm border border-[#E5E7EB]">
+                <User className="h-4 w-4 text-[#6B7280]" />
+              </div>
+              <span className="text-xs font-semibold text-[#6B7280] uppercase tracking-wide">Seller</span>
+            </div>
+            
+            <div className="flex items-center gap-3 pl-1">
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={sellerUser?.avatar} alt={sellerUser?.name} />
+                <AvatarFallback className="text-xs font-medium bg-green-100 text-green-700">
+                  {sellerUser?.name ? getInitials(sellerUser.name) : 'SE'}
+                </AvatarFallback>
+              </Avatar>
+              
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="font-medium text-[#1A1F2C] text-sm truncate">
+                    {sellerUser?.name || 'Expert Name'}
+                  </span>
+                  {sellerUser?.email && (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <a
+                            href={`mailto:${sellerUser.email}`}
+                            className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-50 text-green-600 hover:bg-green-100 hover:text-green-700 transition-colors"
+                            aria-label={`Email ${sellerUser.name || 'seller'}`}
+                          >
+                            <Mail className="h-3 w-3" />
+                          </a>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="text-xs">{formatEmail(sellerUser.email)}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
-          <span>Transaction Date</span>
-        </div>
-        <div className="ml-12 text-[#1A1F2C] font-medium">
-          {transactionDate}
+
+          {/* Date Column */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="bg-white p-2 rounded-lg shadow-sm border border-[#E5E7EB]">
+                <Calendar className="h-4 w-4 text-[#6B7280]" />
+              </div>
+              <span className="text-xs font-semibold text-[#6B7280] uppercase tracking-wide">Transaction Date</span>
+            </div>
+            
+            <div className="pl-1">
+              <span className="font-medium text-[#1A1F2C] text-sm">
+                {transactionDate}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
