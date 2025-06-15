@@ -43,7 +43,7 @@ export function ProductCreateHeader({
               <p className="text-sm text-muted-foreground mt-1">Enter the details for your new product</p>
             </div>
             
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <div className="flex flex-col gap-3 w-full sm:w-auto sm:flex-row sm:items-center">
               <Select value={productStatus} onValueChange={onStatusChange}>
                 <SelectTrigger className="w-full sm:w-[140px]">
                   <SelectValue placeholder="Select status" />
