@@ -10,14 +10,14 @@ interface TemplateInfoCardProps {
   expertUuid?: string;
   type?: string;
   createdAt: string;
-  publicLink?: string;
+  projectFiles?: string;
 }
 
 export function TemplateInfoCard({ 
   expertUuid, 
   type, 
   createdAt, 
-  publicLink 
+  projectFiles 
 }: TemplateInfoCardProps) {
   return (
     <Card>
@@ -47,7 +47,7 @@ export function TemplateInfoCard({
         <Separator />
 
         <TransactionFiles
-          filesUrl={publicLink || ""}
+          filesUrl={projectFiles || ""}
           guidesUrl=""
         />
 

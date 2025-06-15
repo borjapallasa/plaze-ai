@@ -91,7 +91,7 @@ export default function AdminTemplateDetails() {
               expertUuid={product.expert_uuid || undefined}
               type={product.type || undefined}
               createdAt={product.created_at}
-              publicLink={product.public_link || undefined}
+              projectFiles={product.product_files || undefined}
             />
 
             <TemplateOrganization 
