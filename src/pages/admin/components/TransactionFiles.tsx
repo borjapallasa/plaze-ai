@@ -84,9 +84,10 @@ export function TransactionFiles({ transactionId, filesUrl, guidesUrl, customReq
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="font-medium">
-                    {item.product_type || 'Product Item'}
+                    {item.product_name || 'Unknown Product'}
                   </div>
                   <div className="text-sm text-[#8E9196] space-y-1">
+                    <div>Variant: {item.variant_name || 'No variant'}</div>
                     <div>Quantity: {item.quantity || 'N/A'}</div>
                     <div>Price: ${item.price?.toFixed(2) || 'N/A'}</div>
                     {item.total_price && (
