@@ -7,6 +7,8 @@ import { Edit, Trash2, Copy, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { ProductVariant } from "@/types/Product";
 import { EditVariantDialog } from "./EditVariantDialog";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface TemplateVariablesProps {
   productUuid: string;
@@ -30,6 +32,7 @@ export function TemplateVariables({
   const { data: variants = [], isLoading } = useProductVariants(productUuid);
   const [editingVariant, setEditingVariant] = useState<ProductVariant | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   const handleCopyFilesLink = (filesLink: string) => {
     if (filesLink) {
@@ -53,10 +56,41 @@ export function TemplateVariables({
     setIsEditDialogOpen(true);
   };
 
-  const handleSaveVariant = (variantId: string, updatedData: Partial<ProductVariant>) => {
-    // TODO: Implement API call to update variant
-    console.log("Updating variant:", variantId, updatedData);
-    toast.success("Variant updated successfully");
+  const handleSaveVariant = async (variantId: string, updatedData: Partial<ProductVariant>) => {
+    try {
+      console.log("Updating variant:", variantId, updatedData);
+
+      // Map frontend fields to database fields
+      const dbUpdateData = {
+        name: updatedData.name,
+        price: updatedData.price,
+        compare_price: updatedData.comparePrice,
+        files_link: updatedData.filesLink,
+        additional_details: updatedData.additionalDetails,
+        tags: updatedData.tags
+      };
+
+      const { error } = await supabase
+        .from('variants')
+        .update(dbUpdateData)
+        .eq('variant_uuid', variantId);
+
+      if (error) {
+        console.error("Error updating variant:", error);
+        toast.error("Failed to update variant");
+        return;
+      }
+
+      // Invalidate and refetch the variants query
+      queryClient.invalidateQueries({
+        queryKey: ['variants', productUuid]
+      });
+
+      toast.success("Variant updated successfully");
+    } catch (error) {
+      console.error("Error updating variant:", error);
+      toast.error("Failed to update variant");
+    }
   };
 
   const handleDeleteVariant = (variantId: string) => {
