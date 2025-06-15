@@ -35,7 +35,8 @@ export function useProductVariants(productUuid?: string) {
         highlight: variant.highlighted || index === 1,
         features: Array.isArray(variant.tags)
           ? variant.tags.map(tag => String(tag))
-          : ["Core Features", "Basic Support"]
+          : ["Core Features", "Basic Support"],
+        filesLink: variant.files_link || undefined
       }));
     },
     enabled: !!productUuid
