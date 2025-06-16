@@ -143,6 +143,7 @@ export default function AdminTransactionDetails() {
               transactionType={transaction.type}
               transactionStatus={transaction.status}
               paymentProvider={transaction.payment_provider}
+              paymentReferenceId={transaction.payment_reference_id}
             />
 
             <Separator className="my-8" />

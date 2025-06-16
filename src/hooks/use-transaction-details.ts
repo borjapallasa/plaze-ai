@@ -9,6 +9,7 @@ export interface TransactionDetails {
   status: string;
   type?: string;
   payment_provider?: string;
+  payment_reference_id?: string;
   buyer_user?: {
     name: string;
     email: string;
@@ -145,6 +146,7 @@ export function useTransactionDetails(transactionId: string) {
         status: transaction.status || 'unknown',
         type: transaction.type || undefined,
         payment_provider: transaction.payment_provider || undefined,
+        payment_reference_id: transaction.payment_reference_id || undefined,
         buyer_user: buyerUser,
         seller_user: sellerUser,
         items: transactionItems

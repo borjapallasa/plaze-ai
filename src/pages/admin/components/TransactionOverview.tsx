@@ -18,6 +18,7 @@ interface TransactionOverviewProps {
   transactionType?: string;
   transactionStatus?: string;
   paymentProvider?: string;
+  paymentReferenceId?: string;
 }
 
 export function TransactionOverview({ 
@@ -26,7 +27,8 @@ export function TransactionOverview({
   transactionDate,
   transactionType,
   transactionStatus,
-  paymentProvider
+  paymentProvider,
+  paymentReferenceId
 }: TransactionOverviewProps) {
   const formatEmail = (email: string) => {
     if (email.length > 25) {
@@ -136,10 +138,10 @@ export function TransactionOverview({
       </div>
 
       {/* Additional Information section */}
-      {(transactionType || transactionStatus || paymentProvider) && (
+      {(transactionType || transactionStatus || paymentProvider || paymentReferenceId) && (
         <div className="border-t pt-4 mt-6">
           <h4 className="font-medium mb-3">Additional Information</h4>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {transactionType && (
               <div className="flex flex-col p-3 bg-gray-50 rounded-lg">
                 <span className="text-xs font-semibold text-[#8E9196] uppercase tracking-wide mb-1">Type</span>
@@ -158,6 +160,13 @@ export function TransactionOverview({
               <div className="flex flex-col p-3 bg-gray-50 rounded-lg">
                 <span className="text-xs font-semibold text-[#8E9196] uppercase tracking-wide mb-1">Payment Provider</span>
                 <span className="font-medium text-[#1A1F2C]">{toStartCase(paymentProvider)}</span>
+              </div>
+            )}
+
+            {paymentReferenceId && (
+              <div className="flex flex-col p-3 bg-gray-50 rounded-lg">
+                <span className="text-xs font-semibold text-[#8E9196] uppercase tracking-wide mb-1">Payment Reference ID</span>
+                <span className="font-medium text-[#1A1F2C] font-mono text-xs break-all">{paymentReferenceId}</span>
               </div>
             )}
           </div>
