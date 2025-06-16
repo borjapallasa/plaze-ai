@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MainHeader } from "@/components/MainHeader";
 import { Separator } from "@/components/ui/separator";
 
@@ -31,6 +32,7 @@ interface Transaction {
   checkoutId: string;
   rating: number;
   review: string;
+  type: 'product' | 'community';
 }
 
 const transactions: Transaction[] = [
@@ -49,7 +51,8 @@ const transactions: Transaction[] = [
     templateId: "TEMP123",
     checkoutId: "CHK456",
     rating: 5,
-    review: "Excellent service!"
+    review: "Excellent service!",
+    type: 'product'
   },
   {
     templateName: "IG Lead Qualification Chatbot With Manychat Poll",
@@ -66,24 +69,26 @@ const transactions: Transaction[] = [
     templateId: "TEMP456",
     checkoutId: "CHK789",
     rating: 0,
-    review: ""
+    review: "",
+    type: 'product'
   },
   {
-    templateName: "Automated Onboarding (Contract, Payments & Channels) Process to Discord",
+    templateName: "Dev Masters Community",
     createdAt: "2/16/2025, 3:48 AM",
     buyerEmail: "freekrai@gmail.com",
-    deliverables: "Automated onboarding process",
-    amount: 399,
-    marketplaceFees: 39.9,
-    sellerReceives: 359.1,
+    deliverables: "Monthly community access",
+    amount: 15,
+    marketplaceFees: 1.5,
+    sellerReceives: 13.5,
     sellerUser: "seller3@example.com",
-    affiliateFees: 20,
+    affiliateFees: 0,
     status: "completed",
     completedAt: "2/17/2025, 3:48 AM",
-    templateId: "TEMP789",
+    templateId: "COMM123",
     checkoutId: "CHK101",
     rating: 4,
-    review: "Good automation!"
+    review: "Great community!",
+    type: 'community'
   },
   {
     templateName: "Automated SEO Article Writer to Shopify And Wordpress With Airtable Interface",
@@ -100,24 +105,26 @@ const transactions: Transaction[] = [
     templateId: "TEMP101",
     checkoutId: "CHK121",
     rating: 0,
-    review: ""
+    review: "",
+    type: 'product'
   },
   {
-    templateName: "Automated YouTube Faceless Channel Video Creation",
+    templateName: "Web Dev Hub Community",
     createdAt: "1/24/2025, 9:49 AM",
     buyerEmail: "alexrob350@gmail.com",
-    deliverables: "YouTube video creation",
-    amount: 599,
-    marketplaceFees: 59.9,
-    sellerReceives: 539.1,
+    deliverables: "Monthly community access",
+    amount: 10,
+    marketplaceFees: 1.0,
+    sellerReceives: 9.0,
     sellerUser: "seller5@example.com",
-    affiliateFees: 40,
+    affiliateFees: 0,
     status: "completed",
     completedAt: "1/25/2025, 9:49 AM",
-    templateId: "TEMP121",
+    templateId: "COMM456",
     checkoutId: "CHK131",
     rating: 5,
-    review: "Amazing videos!"
+    review: "Amazing community!",
+    type: 'community'
   },
   {
     templateName: "Automated YouTube Faceless Channel Video Creation",
@@ -134,24 +141,26 @@ const transactions: Transaction[] = [
     templateId: "TEMP121",
     checkoutId: "CHK132",
     rating: 5,
-    review: "Great content!"
+    review: "Great content!",
+    type: 'product'
   },
   {
-    templateName: "Automated YouTube Faceless Channel Video Creation",
+    templateName: "Design Masters Community",
     createdAt: "1/8/2025, 2:41 PM",
     buyerEmail: "philryan84@outlook.com",
-    deliverables: "YouTube video creation",
-    amount: 599,
-    marketplaceFees: 59.9,
-    sellerReceives: 539.1,
-    sellerUser: "seller5@example.com",
-    affiliateFees: 40,
+    deliverables: "Monthly community access",
+    amount: 25,
+    marketplaceFees: 2.5,
+    sellerReceives: 22.5,
+    sellerUser: "seller6@example.com",
+    affiliateFees: 0,
     status: "completed",
     completedAt: "1/9/2025, 2:41 PM",
-    templateId: "TEMP121",
+    templateId: "COMM789",
     checkoutId: "CHK133",
     rating: 4,
-    review: "Good videos!"
+    review: "Good community!",
+    type: 'community'
   },
   {
     templateName: "Find Customer Email List Of Competitors From Social Media Instagram Account",
@@ -168,7 +177,8 @@ const transactions: Transaction[] = [
     templateId: "TEMP131",
     checkoutId: "CHK141",
     rating: 3,
-    review: "Useful service!"
+    review: "Useful service!",
+    type: 'product'
   },
   {
     templateName: "Automated Onboarding (Contract, Payments & Channels) Process to Discord",
@@ -185,7 +195,8 @@ const transactions: Transaction[] = [
     templateId: "TEMP789",
     checkoutId: "CHK104",
     rating: 5,
-    review: "Excellent automation!"
+    review: "Excellent automation!",
+    type: 'product'
   },
   {
     templateName: "Automated Onboarding (Contract, Payments & Channels) Process to Discord",
@@ -202,7 +213,8 @@ const transactions: Transaction[] = [
     templateId: "TEMP789",
     checkoutId: "CHK105",
     rating: 5,
-    review: "Incredible automation!"
+    review: "Incredible automation!",
+    type: 'product'
   }
 ];
 
@@ -212,6 +224,7 @@ export default function AdminTransactions() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortField, setSortField] = useState<keyof Transaction>("createdAt");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+  const [activeTab, setActiveTab] = useState("all");
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -242,28 +255,185 @@ export default function AdminTransactions() {
       <ArrowDown className="h-4 w-4" />;
   };
 
-  const filteredTransactions = transactions
-    .filter(transaction => {
-      const matchesSearch = transaction.templateName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          transaction.buyerEmail.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesStatus = statusFilter === "all" || transaction.status.toLowerCase() === statusFilter.toLowerCase();
-      return matchesSearch && matchesStatus;
-    })
-    .sort((a, b) => {
-      const aValue = a[sortField];
-      const bValue = b[sortField];
-      const multiplier = sortDirection === "asc" ? 1 : -1;
-      
-      if (typeof aValue === "string" && typeof bValue === "string") {
-        return aValue.localeCompare(bValue) * multiplier;
-      }
-      
-      if (typeof aValue === "number" && typeof bValue === "number") {
-        return (aValue - bValue) * multiplier;
-      }
-      
-      return 0;
-    });
+  const getFilteredTransactions = (type?: 'product' | 'community') => {
+    return transactions
+      .filter(transaction => {
+        const matchesSearch = transaction.templateName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            transaction.buyerEmail.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesStatus = statusFilter === "all" || transaction.status.toLowerCase() === statusFilter.toLowerCase();
+        const matchesType = !type || transaction.type === type;
+        return matchesSearch && matchesStatus && matchesType;
+      })
+      .sort((a, b) => {
+        const aValue = a[sortField];
+        const bValue = b[sortField];
+        const multiplier = sortDirection === "asc" ? 1 : -1;
+        
+        if (typeof aValue === "string" && typeof bValue === "string") {
+          return aValue.localeCompare(bValue) * multiplier;
+        }
+        
+        if (typeof aValue === "number" && typeof bValue === "number") {
+          return (aValue - bValue) * multiplier;
+        }
+        
+        return 0;
+      });
+  };
+
+  const renderTransactionTable = (filteredTransactions: Transaction[]) => (
+    <div className="rounded-lg border border-[#E5E7EB] bg-white">
+      <ScrollArea className="h-[600px] w-full" type="always">
+        <div className="min-w-[2800px]">
+          <div className="grid grid-cols-[2fr,1.5fr,2fr,1.5fr,1.2fr,1.5fr,1.5fr,2fr,1.2fr,1fr,1.5fr,1.2fr,1.2fr,0.8fr,1.5fr] gap-4 p-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
+            <button 
+              onClick={() => handleSort("templateName")}
+              className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
+            >
+              Template Name {getSortIcon("templateName")}
+            </button>
+            <button 
+              onClick={() => handleSort("createdAt")}
+              className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+            >
+              Created @ {getSortIcon("createdAt")}
+            </button>
+            <button 
+              onClick={() => handleSort("buyerEmail")}
+              className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+            >
+              Buyer User {getSortIcon("buyerEmail")}
+            </button>
+            <div className="font-medium text-sm text-[#8E9196] whitespace-nowrap">Deliverables</div>
+            <button 
+              onClick={() => handleSort("amount")}
+              className="flex items-center justify-end gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+            >
+              Amount {getSortIcon("amount")}
+            </button>
+            <button 
+              onClick={() => handleSort("marketplaceFees")}
+              className="flex items-center justify-end gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+            >
+              Marketplace Fees {getSortIcon("marketplaceFees")}
+            </button>
+            <button 
+              onClick={() => handleSort("sellerReceives")}
+              className="flex items-center justify-end gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+            >
+              Seller Receives {getSortIcon("sellerReceives")}
+            </button>
+            <button 
+              onClick={() => handleSort("sellerUser")}
+              className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+            >
+              Seller User {getSortIcon("sellerUser")}
+            </button>
+            <button 
+              onClick={() => handleSort("affiliateFees")}
+              className="flex items-center justify-end gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+            >
+              Affiliate Fees {getSortIcon("affiliateFees")}
+            </button>
+            <div className="font-medium text-sm text-[#8E9196]">Status</div>
+            <button 
+              onClick={() => handleSort("completedAt")}
+              className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+            >
+              Completed @ {getSortIcon("completedAt")}
+            </button>
+            <button 
+              onClick={() => handleSort("templateId")}
+              className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+            >
+              Template ID {getSortIcon("templateId")}
+            </button>
+            <button 
+              onClick={() => handleSort("checkoutId")}
+              className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+            >
+              Checkout ID {getSortIcon("checkoutId")}
+            </button>
+            <button 
+              onClick={() => handleSort("rating")}
+              className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+            >
+              Rating {getSortIcon("rating")}
+            </button>
+            <div className="font-medium text-sm text-[#8E9196]">Review</div>
+          </div>
+
+          <div className="divide-y divide-[#E5E7EB]">
+            {filteredTransactions.length === 0 ? (
+              <div className="p-8 text-center text-[#8E9196]">
+                No transactions found matching your criteria
+              </div>
+            ) : (
+              filteredTransactions.map((transaction, index) => (
+                <div
+                  key={index}
+                  onClick={() => navigate(`/a/admin/transactions/${transaction.checkoutId}`)}
+                  className="grid grid-cols-[2fr,1.5fr,2fr,1.5fr,1.2fr,1.5fr,1.5fr,2fr,1.2fr,1fr,1.5fr,1.2fr,1.2fr,0.8fr,1.5fr] gap-4 p-4 hover:bg-[#F8F9FC] cursor-pointer transition-colors duration-200 group"
+                >
+                  <div className="text-sm text-[#1A1F2C] truncate" title={transaction.templateName}>
+                    {transaction.templateName}
+                  </div>
+                  <div className="text-sm text-[#8E9196] whitespace-nowrap">
+                    {transaction.createdAt}
+                  </div>
+                  <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.buyerEmail}>
+                    {transaction.buyerEmail}
+                  </div>
+                  <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.deliverables}>
+                    {transaction.deliverables}
+                  </div>
+                  <div className="text-sm text-[#8E9196] text-right whitespace-nowrap">
+                    ${transaction.amount.toFixed(2)}
+                  </div>
+                  <div className="text-sm text-[#8E9196] text-right whitespace-nowrap">
+                    ${transaction.marketplaceFees.toFixed(2)}
+                  </div>
+                  <div className="text-sm text-[#8E9196] text-right whitespace-nowrap">
+                    ${transaction.sellerReceives.toFixed(2)}
+                  </div>
+                  <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.sellerUser}>
+                    {transaction.sellerUser}
+                  </div>
+                  <div className="text-sm text-[#8E9196] text-right whitespace-nowrap">
+                    ${transaction.affiliateFees.toFixed(2)}
+                  </div>
+                  <div>
+                    <Badge 
+                      variant="secondary" 
+                      className={`${getStatusColor(transaction.status)} capitalize whitespace-nowrap`}
+                    >
+                      {transaction.status}
+                    </Badge>
+                  </div>
+                  <div className="text-sm text-[#8E9196] whitespace-nowrap">
+                    {transaction.completedAt}
+                  </div>
+                  <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.templateId}>
+                    {transaction.templateId}
+                  </div>
+                  <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.checkoutId}>
+                    {transaction.checkoutId}
+                  </div>
+                  <div className="text-sm text-[#8E9196] text-right whitespace-nowrap">
+                    {transaction.rating > 0 ? transaction.rating : '-'}
+                  </div>
+                  <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.review}>
+                    {transaction.review || '-'}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
+    </div>
+  );
 
   return (
     <>
@@ -297,159 +467,27 @@ export default function AdminTransactions() {
           </Select>
         </div>
 
-        <div className="rounded-lg border border-[#E5E7EB] bg-white">
-          <ScrollArea className="h-[600px] w-full" type="always">
-            <div className="min-w-[2800px]">
-              <div className="grid grid-cols-[2fr,1.5fr,2fr,1.5fr,1.2fr,1.5fr,1.5fr,2fr,1.2fr,1fr,1.5fr,1.2fr,1.2fr,0.8fr,1.5fr] gap-4 p-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
-                <button 
-                  onClick={() => handleSort("templateName")}
-                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
-                >
-                  Template Name {getSortIcon("templateName")}
-                </button>
-                <button 
-                  onClick={() => handleSort("createdAt")}
-                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
-                >
-                  Created @ {getSortIcon("createdAt")}
-                </button>
-                <button 
-                  onClick={() => handleSort("buyerEmail")}
-                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
-                >
-                  Buyer User {getSortIcon("buyerEmail")}
-                </button>
-                <div className="font-medium text-sm text-[#8E9196] whitespace-nowrap">Deliverables</div>
-                <button 
-                  onClick={() => handleSort("amount")}
-                  className="flex items-center justify-end gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
-                >
-                  Amount {getSortIcon("amount")}
-                </button>
-                <button 
-                  onClick={() => handleSort("marketplaceFees")}
-                  className="flex items-center justify-end gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
-                >
-                  Marketplace Fees {getSortIcon("marketplaceFees")}
-                </button>
-                <button 
-                  onClick={() => handleSort("sellerReceives")}
-                  className="flex items-center justify-end gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
-                >
-                  Seller Receives {getSortIcon("sellerReceives")}
-                </button>
-                <button 
-                  onClick={() => handleSort("sellerUser")}
-                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
-                >
-                  Seller User {getSortIcon("sellerUser")}
-                </button>
-                <button 
-                  onClick={() => handleSort("affiliateFees")}
-                  className="flex items-center justify-end gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
-                >
-                  Affiliate Fees {getSortIcon("affiliateFees")}
-                </button>
-                <div className="font-medium text-sm text-[#8E9196]">Status</div>
-                <button 
-                  onClick={() => handleSort("completedAt")}
-                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
-                >
-                  Completed @ {getSortIcon("completedAt")}
-                </button>
-                <button 
-                  onClick={() => handleSort("templateId")}
-                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
-                >
-                  Template ID {getSortIcon("templateId")}
-                </button>
-                <button 
-                  onClick={() => handleSort("checkoutId")}
-                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
-                >
-                  Checkout ID {getSortIcon("checkoutId")}
-                </button>
-                <button 
-                  onClick={() => handleSort("rating")}
-                  className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
-                >
-                  Rating {getSortIcon("rating")}
-                </button>
-                <div className="font-medium text-sm text-[#8E9196]">Review</div>
-              </div>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="all">All Transactions</TabsTrigger>
+            <TabsTrigger value="products">Products</TabsTrigger>
+            <TabsTrigger value="communities">Communities</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="all" className="space-y-4">
+            {renderTransactionTable(getFilteredTransactions())}
+          </TabsContent>
+          
+          <TabsContent value="products" className="space-y-4">
+            {renderTransactionTable(getFilteredTransactions('product'))}
+          </TabsContent>
+          
+          <TabsContent value="communities" className="space-y-4">
+            {renderTransactionTable(getFilteredTransactions('community'))}
+          </TabsContent>
+        </Tabs>
 
-              <div className="divide-y divide-[#E5E7EB]">
-                {filteredTransactions.length === 0 ? (
-                  <div className="p-8 text-center text-[#8E9196]">
-                    No transactions found matching your criteria
-                  </div>
-                ) : (
-                  filteredTransactions.map((transaction, index) => (
-                    <div
-                      key={index}
-                      onClick={() => navigate(`/a/admin/transactions/${transaction.checkoutId}`)}
-                      className="grid grid-cols-[2fr,1.5fr,2fr,1.5fr,1.2fr,1.5fr,1.5fr,2fr,1.2fr,1fr,1.5fr,1.2fr,1.2fr,0.8fr,1.5fr] gap-4 p-4 hover:bg-[#F8F9FC] cursor-pointer transition-colors duration-200 group"
-                    >
-                      <div className="text-sm text-[#1A1F2C] truncate" title={transaction.templateName}>
-                        {transaction.templateName}
-                      </div>
-                      <div className="text-sm text-[#8E9196] whitespace-nowrap">
-                        {transaction.createdAt}
-                      </div>
-                      <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.buyerEmail}>
-                        {transaction.buyerEmail}
-                      </div>
-                      <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.deliverables}>
-                        {transaction.deliverables}
-                      </div>
-                      <div className="text-sm text-[#8E9196] text-right whitespace-nowrap">
-                        ${transaction.amount.toFixed(2)}
-                      </div>
-                      <div className="text-sm text-[#8E9196] text-right whitespace-nowrap">
-                        ${transaction.marketplaceFees.toFixed(2)}
-                      </div>
-                      <div className="text-sm text-[#8E9196] text-right whitespace-nowrap">
-                        ${transaction.sellerReceives.toFixed(2)}
-                      </div>
-                      <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.sellerUser}>
-                        {transaction.sellerUser}
-                      </div>
-                      <div className="text-sm text-[#8E9196] text-right whitespace-nowrap">
-                        ${transaction.affiliateFees.toFixed(2)}
-                      </div>
-                      <div>
-                        <Badge 
-                          variant="secondary" 
-                          className={`${getStatusColor(transaction.status)} capitalize whitespace-nowrap`}
-                        >
-                          {transaction.status}
-                        </Badge>
-                      </div>
-                      <div className="text-sm text-[#8E9196] whitespace-nowrap">
-                        {transaction.completedAt}
-                      </div>
-                      <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.templateId}>
-                        {transaction.templateId}
-                      </div>
-                      <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.checkoutId}>
-                        {transaction.checkoutId}
-                      </div>
-                      <div className="text-sm text-[#8E9196] text-right whitespace-nowrap">
-                        {transaction.rating > 0 ? transaction.rating : '-'}
-                      </div>
-                      <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.review}>
-                        {transaction.review || '-'}
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-            <ScrollBar orientation="horizontal" />
-          </ScrollArea>
-        </div>
-
-        {filteredTransactions.length > 0 && (
+        {getFilteredTransactions().length > 0 && (
           <>
             <Separator className="my-6" />
             <div className="flex justify-center">
