@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface Template {
   id: string;
@@ -140,56 +140,67 @@ export default function DraftTemplates() {
               <p className="text-[#8E9196]">No draft templates found matching your criteria.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredTemplates.map((template) => (
-                <Card 
-                  key={template.id} 
-                  className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
-                  onClick={() => handleTemplateClick(template.id)}
-                >
-                  <div className="p-6 space-y-4">
-                    <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
-                      <img
-                        src={template.image}
-                        alt={template.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    
-                    <div className="space-y-4">
-                      <div className="flex items-start justify-between gap-4">
-                        <h3 className="text-xl font-semibold">{template.title}</h3>
+            <div className="border rounded-lg">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[60px]"></TableHead>
+                    <TableHead>Template</TableHead>
+                    <TableHead className="w-[150px]">
+                      <div className="flex items-center gap-1.5">
+                        <User className="h-3.5 w-3.5 text-[#8E9196]" />
+                        <span>Uploaded by</span>
                       </div>
-                      
-                      <p className="text-[#8E9196] line-clamp-3">{template.description}</p>
-                      
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                          <div className="flex items-center gap-1.5 mb-1">
-                            <User className="h-3.5 w-3.5 text-[#8E9196]" />
-                            <p className="text-sm text-[#8E9196]">Uploaded by</p>
-                          </div>
-                          <p className="text-sm font-medium truncate">{template.uploadedBy}</p>
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-1.5 mb-1">
-                            <DollarSign className="h-3.5 w-3.5 text-[#8E9196]" />
-                            <p className="text-sm text-[#8E9196]">Price</p>
-                          </div>
-                          <p className="text-sm font-medium">{template.price}</p>
-                        </div>
-                        <div className="sm:col-span-2">
-                          <div className="flex items-center gap-1.5 mb-1">
-                            <Calendar className="h-3.5 w-3.5 text-[#8E9196]" />
-                            <p className="text-sm text-[#8E9196]">Created @</p>
-                          </div>
-                          <p className="text-sm font-medium">{template.createdAt}</p>
-                        </div>
+                    </TableHead>
+                    <TableHead className="w-[120px]">
+                      <div className="flex items-center gap-1.5">
+                        <DollarSign className="h-3.5 w-3.5 text-[#8E9196]" />
+                        <span>Price</span>
                       </div>
-                    </div>
-                  </div>
-                </Card>
-              ))}
+                    </TableHead>
+                    <TableHead className="w-[150px]">
+                      <div className="flex items-center gap-1.5">
+                        <Calendar className="h-3.5 w-3.5 text-[#8E9196]" />
+                        <span>Created @</span>
+                      </div>
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredTemplates.map((template) => (
+                    <TableRow 
+                      key={template.id}
+                      className="cursor-pointer hover:bg-accent/50"
+                      onClick={() => handleTemplateClick(template.id)}
+                    >
+                      <TableCell>
+                        <div className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100">
+                          <img
+                            src={template.image}
+                            alt={template.title}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="space-y-1">
+                          <h3 className="font-semibold text-sm">{template.title}</h3>
+                          <p className="text-xs text-[#8E9196] line-clamp-2">{template.description}</p>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-sm font-medium truncate">{template.uploadedBy}</span>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-sm font-medium">{template.price}</span>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-sm font-medium">{template.createdAt}</span>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
           )}
         </div>
