@@ -166,7 +166,7 @@ export default function DraftTemplates() {
               <p className="text-[#8E9196]">No draft templates found matching your criteria.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredTemplates.map((template) => (
                 <Card key={template.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="p-6 space-y-4">
@@ -183,9 +183,9 @@ export default function DraftTemplates() {
                         <h3 className="text-xl font-semibold">{template.title}</h3>
                         <Badge 
                           variant="secondary" 
-                          className={`${
+                          className={
                             categories.find(c => c.name === template.category)?.color || "bg-gray-100 text-gray-700"
-                          }`}
+                          }
                         >
                           {template.category}
                         </Badge>
