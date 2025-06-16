@@ -1,4 +1,3 @@
-
 import { Search } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -6,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 interface Template {
@@ -177,29 +175,6 @@ export default function DraftTemplates() {
                           <p className="text-sm text-[#8E9196]">Created @</p>
                           <p className="text-sm font-medium">{template.createdAt}</p>
                         </div>
-                      </div>
-                      
-                      <div className="flex flex-col gap-3 pt-4">
-                        <Button 
-                          className="w-full" 
-                          variant="default"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            // Add activation logic here
-                          }}
-                        >
-                          Activate Template
-                        </Button>
-                        <Button 
-                          className="w-full" 
-                          variant="outline"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            // Add request changes logic here
-                          }}
-                        >
-                          Request Changes
-                        </Button>
                       </div>
                     </div>
                   </div>
