@@ -79,8 +79,8 @@ export default function DraftTemplates() {
         uploadedBy: product.experts?.email || 'Unknown',
         price: product.price_from ? `From $${product.price_from}` : 'Free',
         priceValue: product.price_from || 0,
-        createdAt: new Date(product.created_at).toLocaleString(),
-        submittedAt: product.submitted_at ? new Date(product.submitted_at).toLocaleString() : undefined
+        createdAt: product.created_at,
+        submittedAt: product.submitted_at
       })) || [];
     }
   });
@@ -90,12 +90,15 @@ export default function DraftTemplates() {
   };
 
   const handleSortChange = (value: string) => {
+    console.log('Sort change:', value);
     const [field, order] = value.split('_') as [SortField, SortOrder];
     setSortField(field);
     setSortOrder(order);
   };
 
   const getSortedTemplates = (templates: Template[]) => {
+    console.log('Sorting templates:', { sortField, sortOrder, templatesCount: templates.length });
+    
     return [...templates].sort((a, b) => {
       let aValue: any;
       let bValue: any;
@@ -106,6 +109,7 @@ export default function DraftTemplates() {
           bValue = new Date(b.createdAt).getTime();
           break;
         case 'submitted_at':
+          // Handle null/undefined submitted_at values
           aValue = a.submittedAt ? new Date(a.submittedAt).getTime() : 0;
           bValue = b.submittedAt ? new Date(b.submittedAt).getTime() : 0;
           break;
@@ -129,11 +133,31 @@ export default function DraftTemplates() {
     });
   };
 
-  const filteredTemplates = getSortedTemplates(templates.filter(template => {
-    const matchesSearch = template.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         template.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesSearch;
-  }));
+  const getFilteredAndSortedTemplates = () => {
+    console.log('Filtering templates with query:', searchQuery);
+    
+    // First filter by search query
+    const filtered = templates.filter(template => {
+      if (!searchQuery.trim()) return true;
+      
+      const searchLower = searchQuery.toLowerCase();
+      const matchesTitle = template.title.toLowerCase().includes(searchLower);
+      const matchesDescription = template.description.toLowerCase().includes(searchLower);
+      const matchesUploadedBy = template.uploadedBy.toLowerCase().includes(searchLower);
+      
+      return matchesTitle || matchesDescription || matchesUploadedBy;
+    });
+
+    console.log('Filtered templates count:', filtered.length);
+    
+    // Then sort the filtered results
+    const sortedAndFiltered = getSortedTemplates(filtered);
+    
+    console.log('Final templates count after sort:', sortedAndFiltered.length);
+    return sortedAndFiltered;
+  };
+
+  const filteredTemplates = getFilteredAndSortedTemplates();
 
   if (isLoading) {
     return (
@@ -207,7 +231,7 @@ export default function DraftTemplates() {
                 <div className="flex items-center gap-2">
                   <Calendar className="h-3 w-3 text-[#8E9196]" />
                   <span className="text-[#8E9196]">Created:</span>
-                  <span className="font-medium text-xs">{template.createdAt}</span>
+                  <span className="font-medium text-xs">{new Date(template.createdAt).toLocaleString()}</span>
                 </div>
               </div>
             </div>
@@ -222,21 +246,21 @@ export default function DraftTemplates() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[80px]"></TableHead>
-            <TableHead>Template</TableHead>
-            <TableHead className="w-[200px]">
+            <TableHead className="w-[120px]"></TableHead>
+            <TableHead className="w-[300px]">Template</TableHead>
+            <TableHead className="w-[250px]">
               <div className="flex items-center gap-1.5">
                 <User className="h-3.5 w-3.5 text-[#8E9196]" />
                 <span>Uploaded by</span>
               </div>
             </TableHead>
-            <TableHead className="w-[140px]">
+            <TableHead className="w-[150px]">
               <div className="flex items-center gap-1.5">
                 <DollarSign className="h-3.5 w-3.5 text-[#8E9196]" />
                 <span>Price</span>
               </div>
             </TableHead>
-            <TableHead className="w-[180px]">
+            <TableHead className="w-[200px]">
               <div className="flex items-center gap-1.5">
                 <Calendar className="h-3.5 w-3.5 text-[#8E9196]" />
                 <span>Created @</span>
@@ -252,7 +276,7 @@ export default function DraftTemplates() {
               onClick={() => handleTemplateClick(template.id)}
             >
               <TableCell>
-                <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100">
+                <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100">
                   <img
                     src={template.image}
                     alt={template.title}
@@ -273,7 +297,7 @@ export default function DraftTemplates() {
                 <span className="text-sm font-medium">{template.price}</span>
               </TableCell>
               <TableCell>
-                <span className="text-sm font-medium">{template.createdAt}</span>
+                <span className="text-sm font-medium">{new Date(template.createdAt).toLocaleString()}</span>
               </TableCell>
             </TableRow>
           ))}
@@ -322,7 +346,7 @@ export default function DraftTemplates() {
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-[#8E9196]" />
                     <span className="text-[#8E9196]">Created:</span>
-                    <span className="font-medium">{template.createdAt}</span>
+                    <span className="font-medium">{new Date(template.createdAt).toLocaleString()}</span>
                   </div>
                 </div>
               </div>
@@ -402,7 +426,9 @@ export default function DraftTemplates() {
 
           {filteredTemplates.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-[#8E9196]">No draft templates found matching your criteria.</p>
+              <p className="text-[#8E9196]">
+                {searchQuery ? 'No draft templates found matching your search criteria.' : 'No draft templates found.'}
+              </p>
             </div>
           ) : (
             <>
