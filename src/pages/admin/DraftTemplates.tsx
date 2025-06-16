@@ -1,4 +1,4 @@
-import { Search, User, DollarSign, Calendar, LayoutGrid, LayoutList, Grid3X3 } from "lucide-react";
+import { Search, User, DollarSign, Calendar, LayoutGrid, LayoutList, Grid3X3, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface Template {
   id: string;
@@ -18,17 +19,23 @@ interface Template {
   uploadedBy: string;
   customRequest?: string;
   price: string;
+  priceValue: number;
   guides?: string;
   offerInstallation?: boolean;
   templateFiles?: boolean;
   createdAt: string;
+  submittedAt?: string;
 }
 
 type LayoutType = 'gallery' | 'grid' | 'list';
+type SortField = 'created_at' | 'submitted_at' | 'name' | 'price_from';
+type SortOrder = 'asc' | 'desc';
 
 export default function DraftTemplates() {
   const [searchQuery, setSearchQuery] = useState("");
   const [layout, setLayout] = useState<LayoutType>('grid');
+  const [sortField, setSortField] = useState<SortField>('created_at');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
   const navigate = useNavigate();
 
   const { data: templates = [], isLoading, error } = useQuery({
@@ -46,6 +53,7 @@ export default function DraftTemplates() {
           expert_uuid,
           price_from,
           created_at,
+          submitted_at,
           experts!inner(
             name,
             email
@@ -70,7 +78,9 @@ export default function DraftTemplates() {
           : 'Automation',
         uploadedBy: product.experts?.email || 'Unknown',
         price: product.price_from ? `From $${product.price_from}` : 'Free',
-        createdAt: new Date(product.created_at).toLocaleString()
+        priceValue: product.price_from || 0,
+        createdAt: new Date(product.created_at).toLocaleString(),
+        submittedAt: product.submitted_at ? new Date(product.submitted_at).toLocaleString() : undefined
       })) || [];
     }
   });
@@ -79,11 +89,51 @@ export default function DraftTemplates() {
     navigate(`/admin/product/${templateId}`);
   };
 
-  const filteredTemplates = templates.filter(template => {
+  const handleSortChange = (value: string) => {
+    const [field, order] = value.split('_') as [SortField, SortOrder];
+    setSortField(field);
+    setSortOrder(order);
+  };
+
+  const getSortedTemplates = (templates: Template[]) => {
+    return [...templates].sort((a, b) => {
+      let aValue: any;
+      let bValue: any;
+
+      switch (sortField) {
+        case 'created_at':
+          aValue = new Date(a.createdAt).getTime();
+          bValue = new Date(b.createdAt).getTime();
+          break;
+        case 'submitted_at':
+          aValue = a.submittedAt ? new Date(a.submittedAt).getTime() : 0;
+          bValue = b.submittedAt ? new Date(b.submittedAt).getTime() : 0;
+          break;
+        case 'name':
+          aValue = a.title.toLowerCase();
+          bValue = b.title.toLowerCase();
+          break;
+        case 'price_from':
+          aValue = a.priceValue;
+          bValue = b.priceValue;
+          break;
+        default:
+          return 0;
+      }
+
+      if (sortOrder === 'asc') {
+        return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+      } else {
+        return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+      }
+    });
+  };
+
+  const filteredTemplates = getSortedTemplates(templates.filter(template => {
     const matchesSearch = template.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          template.description.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesSearch;
-  });
+  }));
 
   if (isLoading) {
     return (
@@ -304,31 +354,49 @@ export default function DraftTemplates() {
               />
             </div>
             
-            <div className="flex gap-2">
-              <Button
-                variant={layout === 'gallery' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setLayout('gallery')}
-                className="p-2"
-              >
-                <LayoutGrid className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={layout === 'grid' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setLayout('grid')}
-                className="p-2"
-              >
-                <Grid3X3 className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={layout === 'list' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setLayout('list')}
-                className="p-2"
-              >
-                <LayoutList className="h-4 w-4" />
-              </Button>
+            <div className="flex gap-2 items-center">
+              <Select value={`${sortField}_${sortOrder}`} onValueChange={handleSortChange}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="created_at_desc">Created (Newest)</SelectItem>
+                  <SelectItem value="created_at_asc">Created (Oldest)</SelectItem>
+                  <SelectItem value="submitted_at_desc">Submitted (Newest)</SelectItem>
+                  <SelectItem value="submitted_at_asc">Submitted (Oldest)</SelectItem>
+                  <SelectItem value="name_asc">Name (A-Z)</SelectItem>
+                  <SelectItem value="name_desc">Name (Z-A)</SelectItem>
+                  <SelectItem value="price_from_desc">Price (High-Low)</SelectItem>
+                  <SelectItem value="price_from_asc">Price (Low-High)</SelectItem>
+                </SelectContent>
+              </Select>
+              
+              <div className="flex gap-2">
+                <Button
+                  variant={layout === 'gallery' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setLayout('gallery')}
+                  className="p-2"
+                >
+                  <LayoutGrid className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={layout === 'grid' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setLayout('grid')}
+                  className="p-2"
+                >
+                  <Grid3X3 className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={layout === 'list' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setLayout('list')}
+                  className="p-2"
+                >
+                  <LayoutList className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
 
