@@ -1,4 +1,3 @@
-
 import { User, Calendar, Mail, Package, CheckCircle, CreditCard, Hash } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { toStartCase } from "@/lib/utils";
@@ -177,7 +176,7 @@ export function TransactionOverview({
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <CreditCard className="h-4 w-4 text-[#9b87f5]" />
-                  <span className="text-xs font-semibold text-[#8E9196] uppercase tracking-wide">Payment Provider</span>
+                  <span className="text-xs font-semibold text-[#8E9196] uppercase tracking-wide">Processor</span>
                 </div>
                 <div>
                   <span className="font-medium text-[#1A1F2C] text-sm">
