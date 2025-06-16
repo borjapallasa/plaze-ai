@@ -136,38 +136,38 @@ export default function AdminTransactions() {
             <div className="grid grid-cols-[2fr,1fr,1.5fr,1fr,1.2fr,1.5fr,1.5fr] gap-4 p-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
               <button 
                 onClick={() => handleSort("concept")}
-                className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
+                className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-start"
               >
                 Concept {getSortIcon("concept")}
               </button>
               <button 
                 onClick={() => handleSort("type")}
-                className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
+                className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-start"
               >
                 Type {getSortIcon("type")}
               </button>
               <button 
                 onClick={() => handleSort("createdAt")}
-                className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+                className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap justify-start"
               >
                 Created @ {getSortIcon("createdAt")}
               </button>
-              <div className="font-medium text-sm text-[#8E9196]">Status</div>
+              <div className="font-medium text-sm text-[#8E9196] text-left">Status</div>
               <button 
                 onClick={() => handleSort("amount")}
-                className="flex items-center justify-end gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
+                className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-start"
               >
                 Amount {getSortIcon("amount")}
               </button>
               <button 
                 onClick={() => handleSort("seller")}
-                className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
+                className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-start"
               >
                 Seller {getSortIcon("seller")}
               </button>
               <button 
                 onClick={() => handleSort("user")}
-                className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
+                className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-start"
               >
                 User {getSortIcon("user")}
               </button>
@@ -185,16 +185,16 @@ export default function AdminTransactions() {
                     onClick={() => navigate(`/a/admin/transactions/${transaction.checkoutId}`)}
                     className="grid grid-cols-[2fr,1fr,1.5fr,1fr,1.2fr,1.5fr,1.5fr] gap-4 p-4 hover:bg-[#F8F9FC] cursor-pointer transition-colors duration-200 group"
                   >
-                    <div className="text-sm text-[#1A1F2C] truncate" title={transaction.concept}>
+                    <div className="text-sm text-[#1A1F2C] truncate text-left" title={transaction.concept}>
                       {transaction.concept}
                     </div>
-                    <div className="text-sm text-[#8E9196] capitalize">
+                    <div className="text-sm text-[#8E9196] capitalize text-left">
                       {transaction.type}
                     </div>
-                    <div className="text-sm text-[#8E9196] whitespace-nowrap">
+                    <div className="text-sm text-[#8E9196] whitespace-nowrap text-left">
                       {transaction.createdAt}
                     </div>
-                    <div>
+                    <div className="text-left">
                       <Badge 
                         variant="secondary" 
                         className={`${getStatusColor(transaction.status)} capitalize whitespace-nowrap`}
@@ -202,13 +202,13 @@ export default function AdminTransactions() {
                         {transaction.status}
                       </Badge>
                     </div>
-                    <div className="text-sm text-[#8E9196] text-right whitespace-nowrap">
+                    <div className="text-sm text-[#8E9196] whitespace-nowrap text-left">
                       ${transaction.amount.toFixed(2)}
                     </div>
-                    <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.seller}>
+                    <div className="text-sm text-[#8E9196] whitespace-nowrap text-left" title={transaction.seller}>
                       {transaction.seller}
                     </div>
-                    <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.user}>
+                    <div className="text-sm text-[#8E9196] whitespace-nowrap text-left" title={transaction.user}>
                       {transaction.user}
                     </div>
                   </div>

@@ -17,59 +17,49 @@ export function useAdminTransactions() {
   return useQuery({
     queryKey: ['admin-transactions'],
     queryFn: async (): Promise<AdminTransaction[]> => {
-      console.log('Fetching admin transactions...');
+      console.log('Fetching admin transactions from transactions table...');
       
-      // Fetch products transactions with related data
-      const { data: productsTransactions, error: productsError } = await supabase
-        .from('products_transactions')
+      // Fetch from transactions table with related data
+      const { data: transactionData, error } = await supabase
+        .from('transactions')
         .select(`
-          product_transaction_uuid,
-          total_amount,
+          transaction_uuid,
+          amount,
           created_at,
-          status,
-          payment_reference_id,
-          users!products_transactions_user_uuid_fkey(first_name, last_name, email),
-          experts!products_transactions_expert_uuid_fkey(name, email),
-          products_transaction_items(
-            product_uuid,
-            price,
-            quantity,
-            products(name),
-            variants(name, files_link)
-          )
+          type,
+          transaction_fees,
+          gross_margin,
+          experts!transactions_expert_uuid_fkey(name, email),
+          users!transactions_buyer_user_uuid_fkey(first_name, last_name, email)
         `)
         .order('created_at', { ascending: false });
 
-      if (productsError) {
-        console.error('Error fetching products transactions:', productsError);
-        throw productsError;
+      if (error) {
+        console.error('Error fetching transactions:', error);
+        throw error;
       }
 
-      console.log('Products transactions found:', productsTransactions);
+      console.log('Transactions found:', transactionData);
 
       // Transform the data to match the AdminTransaction interface
-      const transformedTransactions: AdminTransaction[] = productsTransactions?.map(transaction => {
-        const firstItem = transaction.products_transaction_items?.[0];
-        const productName = firstItem?.products?.name || 'Unknown Product';
-        const variantName = firstItem?.variants?.name || '';
-        const concept = variantName ? `${productName} - ${variantName}` : productName;
-        
+      const transformedTransactions: AdminTransaction[] = transactionData?.map(transaction => {
         const buyerName = transaction.users 
           ? `${transaction.users.first_name || ''} ${transaction.users.last_name || ''}`.trim()
           : 'Unknown User';
         
         const sellerName = transaction.experts?.name || 'Unknown Expert';
-        const amount = transaction.total_amount || 0;
+        const amount = transaction.amount || 0;
+        const concept = `Transaction ${transaction.transaction_uuid.slice(0, 8)}`;
 
         return {
           concept,
-          type: 'product' as const,
+          type: transaction.type === 'product' ? 'product' : 'community',
           createdAt: new Date(transaction.created_at).toLocaleString(),
-          status: transaction.status || 'unknown',
+          status: 'paid', // Transactions table doesn't have status, assuming paid
           amount,
           seller: sellerName,
           user: buyerName,
-          checkoutId: transaction.product_transaction_uuid,
+          checkoutId: transaction.transaction_uuid,
         };
       }) || [];
 
