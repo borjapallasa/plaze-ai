@@ -2215,6 +2215,7 @@ export type Database = {
           stripe_fees: number | null
           transaction_fees: number | null
           transaction_uuid: string
+          type: Database["public"]["Enums"]["transaction_type"] | null
         }
         Insert: {
           afiliate_fees?: number | null
@@ -2230,6 +2231,7 @@ export type Database = {
           stripe_fees?: number | null
           transaction_fees?: number | null
           transaction_uuid?: string
+          type?: Database["public"]["Enums"]["transaction_type"] | null
         }
         Update: {
           afiliate_fees?: number | null
@@ -2245,6 +2247,7 @@ export type Database = {
           stripe_fees?: number | null
           transaction_fees?: number | null
           transaction_uuid?: string
+          type?: Database["public"]["Enums"]["transaction_type"] | null
         }
         Relationships: [
           {
