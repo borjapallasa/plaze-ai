@@ -15,7 +15,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MainHeader } from "@/components/MainHeader";
 import { Separator } from "@/components/ui/separator";
-import { useAdminTransactions, type AdminTransaction } from "@/hooks/use-admin-transactions";
+import { useAdminTransactions, useAdminProductTransactions, type AdminTransaction } from "@/hooks/use-admin-transactions";
 
 export default function AdminTransactions() {
   const navigate = useNavigate();
@@ -26,6 +26,7 @@ export default function AdminTransactions() {
   const [activeTab, setActiveTab] = useState("all");
 
   const { data: transactions = [], isLoading, error } = useAdminTransactions();
+  const { data: productTransactions = [], isLoading: isLoadingProducts, error: productError } = useAdminProductTransactions();
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -102,6 +103,45 @@ export default function AdminTransactions() {
       });
   };
 
+  const getFilteredProductTransactions = () => {
+    return productTransactions
+      .filter(transaction => {
+        const matchesSearch = transaction.concept.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            transaction.user.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesStatus = statusFilter === "all" || transaction.status.toLowerCase() === statusFilter.toLowerCase();
+        return matchesSearch && matchesStatus;
+      })
+      .sort((a, b) => {
+        const aValue = a[sortField];
+        const bValue = b[sortField];
+        const multiplier = sortDirection === "asc" ? 1 : -1;
+        
+        // Special handling for created_at field - parse dates for proper comparison
+        if (sortField === "createdAt") {
+          const aDate = new Date(aValue as string);
+          const bDate = new Date(bValue as string);
+          return (aDate.getTime() - bDate.getTime()) * multiplier;
+        }
+        
+        // Handle amount field as numbers
+        if (sortField === "amount") {
+          return ((aValue as number) - (bValue as number)) * multiplier;
+        }
+        
+        // Handle string fields
+        if (typeof aValue === "string" && typeof bValue === "string") {
+          return aValue.localeCompare(bValue) * multiplier;
+        }
+        
+        // Handle numeric fields
+        if (typeof aValue === "number" && typeof bValue === "number") {
+          return (aValue - bValue) * multiplier;
+        }
+        
+        return 0;
+      });
+  };
+
   const renderSearchAndFilter = () => (
     <div className="flex flex-col sm:flex-row gap-4 mb-4">
       <div className="relative flex-1">
@@ -138,8 +178,8 @@ export default function AdminTransactions() {
     </div>
   );
 
-  const renderTransactionTable = (filteredTransactions: AdminTransaction[]) => {
-    if (isLoading) {
+  const renderTransactionTable = (filteredTransactions: AdminTransaction[], loading: boolean, errorState: any) => {
+    if (loading) {
       return (
         <div className="rounded-lg border border-[#E5E7EB] bg-white">
           <div className="p-8 text-center text-[#8E9196]">
@@ -149,11 +189,11 @@ export default function AdminTransactions() {
       );
     }
 
-    if (error) {
+    if (errorState) {
       return (
         <div className="rounded-lg border border-[#E5E7EB] bg-white">
           <div className="p-8 text-center text-red-600">
-            Error loading transactions: {error.message}
+            Error loading transactions: {errorState.message}
           </div>
         </div>
       );
@@ -308,21 +348,23 @@ export default function AdminTransactions() {
           
           <TabsContent value="all" className="space-y-0">
             {renderSearchAndFilter()}
-            {renderTransactionTable(getFilteredTransactions())}
+            {renderTransactionTable(getFilteredTransactions(), isLoading, error)}
           </TabsContent>
           
           <TabsContent value="products" className="space-y-0">
             {renderSearchAndFilter()}
-            {renderTransactionTable(getFilteredTransactions('product'))}
+            {renderTransactionTable(getFilteredProductTransactions(), isLoadingProducts, productError)}
           </TabsContent>
           
           <TabsContent value="communities" className="space-y-0">
             {renderSearchAndFilter()}
-            {renderTransactionTable(getFilteredTransactions('community'))}
+            {renderTransactionTable(getFilteredTransactions('community'), isLoading, error)}
           </TabsContent>
         </Tabs>
 
-        {getFilteredTransactions().length > 0 && (
+        {((activeTab === "all" && getFilteredTransactions().length > 0) ||
+          (activeTab === "products" && getFilteredProductTransactions().length > 0) ||
+          (activeTab === "communities" && getFilteredTransactions('community').length > 0)) && (
           <>
             <Separator className="my-6" />
             <div className="flex justify-center">

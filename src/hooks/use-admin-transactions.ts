@@ -71,3 +71,58 @@ export function useAdminTransactions() {
     },
   });
 }
+
+export function useAdminProductTransactions() {
+  return useQuery({
+    queryKey: ['admin-product-transactions'],
+    queryFn: async (): Promise<AdminTransaction[]> => {
+      console.log('Fetching admin product transactions from products_transactions table...');
+      
+      // Fetch from products_transactions table with related data
+      const { data: productTransactionData, error } = await supabase
+        .from('products_transactions')
+        .select(`
+          product_transaction_uuid,
+          total_amount,
+          created_at,
+          status,
+          payment_reference_id,
+          experts!products_transactions_expert_uuid_fkey(name, email),
+          users!products_transactions_user_uuid_fkey(first_name, last_name, email)
+        `)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching product transactions:', error);
+        throw error;
+      }
+
+      console.log('Product transactions found:', productTransactionData);
+
+      // Transform the data to match the AdminTransaction interface
+      const transformedTransactions: AdminTransaction[] = productTransactionData?.map(transaction => {
+        const buyerName = transaction.users 
+          ? `${transaction.users.first_name || ''} ${transaction.users.last_name || ''}`.trim()
+          : 'Unknown User';
+        
+        const sellerName = transaction.experts?.name || 'Unknown Expert';
+        const amount = transaction.total_amount || 0;
+
+        return {
+          concept: transaction.product_transaction_uuid,
+          type: 'product' as const,
+          createdAt: new Date(transaction.created_at).toLocaleString(),
+          status: transaction.status || 'unknown',
+          amount,
+          seller: sellerName,
+          user: buyerName,
+          checkoutId: transaction.payment_reference_id || transaction.product_transaction_uuid,
+          transactionUuid: transaction.product_transaction_uuid,
+        };
+      }) || [];
+
+      console.log('Transformed product transactions:', transformedTransactions);
+      return transformedTransactions;
+    },
+  });
+}
