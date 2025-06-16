@@ -1,6 +1,5 @@
 
 import { User, Calendar, Mail } from "lucide-react";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface TransactionOverviewProps {
@@ -18,15 +17,6 @@ interface TransactionOverviewProps {
 }
 
 export function TransactionOverview({ buyerUser, sellerUser, transactionDate }: TransactionOverviewProps) {
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(word => word.charAt(0))
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
-
   const formatEmail = (email: string) => {
     if (email.length > 25) {
       const [local, domain] = email.split('@');
@@ -55,13 +45,6 @@ export function TransactionOverview({ buyerUser, sellerUser, transactionDate }: 
           </div>
           
           <div className="flex items-center gap-3">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src={buyerUser?.avatar} alt={buyerUser?.name} />
-              <AvatarFallback className="text-xs font-medium bg-[#9b87f5]/10 text-[#9b87f5]">
-                {buyerUser?.name ? getInitials(buyerUser.name) : 'BU'}
-              </AvatarFallback>
-            </Avatar>
-            
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <span className="font-medium text-[#1A1F2C] text-sm truncate">
@@ -98,13 +81,6 @@ export function TransactionOverview({ buyerUser, sellerUser, transactionDate }: 
           </div>
           
           <div className="flex items-center gap-3">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src={sellerUser?.avatar} alt={sellerUser?.name} />
-              <AvatarFallback className="text-xs font-medium bg-[#9b87f5]/10 text-[#9b87f5]">
-                {sellerUser?.name ? getInitials(sellerUser.name) : 'SE'}
-              </AvatarFallback>
-            </Avatar>
-            
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <span className="font-medium text-[#1A1F2C] text-sm truncate">
