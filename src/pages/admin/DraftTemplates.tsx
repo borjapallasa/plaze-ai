@@ -1,5 +1,5 @@
 import { Search, User, DollarSign, Calendar, LayoutGrid, LayoutList, Grid3X3, ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Template {
   id: string;
@@ -37,6 +38,14 @@ export default function DraftTemplates() {
   const [sortField, setSortField] = useState<SortField>('created_at');
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
+
+  // Switch to grid view if currently on list view and on mobile
+  useEffect(() => {
+    if (isMobile && layout === 'list') {
+      setLayout('grid');
+    }
+  }, [isMobile, layout]);
 
   const { data: templates = [], isLoading, error } = useQuery({
     queryKey: ['draftTemplates'],
@@ -374,7 +383,7 @@ export default function DraftTemplates() {
 
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center">
-            <div className="relative w-full sm:flex-1 sm:mr-4">
+            <div className="relative w-full sm:flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
               <Input
                 placeholder="Search by template name, description, or uploaded by..."
@@ -384,7 +393,7 @@ export default function DraftTemplates() {
               />
             </div>
             
-            <div className="flex gap-2 items-center w-full sm:w-auto mt-4 sm:mt-0">
+            <div className="flex gap-2 items-center w-full sm:w-auto mt-4 sm:mt-0 sm:ml-4">
               <Select value={`${sortField}_${sortOrder}`} onValueChange={handleSortChange}>
                 <SelectTrigger className="w-full sm:w-[200px]">
                   <SelectValue placeholder="Sort by" />
