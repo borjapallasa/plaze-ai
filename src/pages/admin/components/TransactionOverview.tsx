@@ -144,7 +144,7 @@ export function TransactionOverview({
             <h3 className="text-lg font-semibold text-[#1A1F2C] mb-1">Additional Information</h3>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {transactionType && (
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
