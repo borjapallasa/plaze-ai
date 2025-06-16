@@ -2527,7 +2527,7 @@ export type Database = {
       payment_provider: "stripe"
       payout_status: "requested" | "paid out"
       product_free_or_paid: "free" | "paid"
-      product_status: "active" | "draft" | "inactive"
+      product_status: "active" | "draft" | "inactive" | "review"
       product_transaction_status:
         | "pending"
         | "processing"
@@ -2727,7 +2727,7 @@ export const Constants = {
       payment_provider: ["stripe"],
       payout_status: ["requested", "paid out"],
       product_free_or_paid: ["free", "paid"],
-      product_status: ["active", "draft", "inactive"],
+      product_status: ["active", "draft", "inactive", "review"],
       product_transaction_status: [
         "pending",
         "processing",

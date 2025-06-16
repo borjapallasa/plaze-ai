@@ -39,7 +39,7 @@ export default function DraftTemplates() {
   const { data: templates = [], isLoading, error } = useQuery({
     queryKey: ['draftTemplates'],
     queryFn: async () => {
-      console.log('Fetching draft templates with status = review');
+      console.log('Fetching draft templates with status = draft');
       const { data, error } = await supabase
         .from('products')
         .select(`
@@ -56,7 +56,7 @@ export default function DraftTemplates() {
             email
           )
         `)
-        .eq('status', 'review');
+        .eq('status', 'draft');
 
       if (error) {
         console.error('Error fetching draft templates:', error);
@@ -193,7 +193,7 @@ export default function DraftTemplates() {
                       
                       <p className="text-[#8E9196] line-clamp-3">{template.description}</p>
                       
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <p className="text-sm text-[#8E9196]">Uploaded By</p>
                           <p className="text-sm font-medium truncate">{template.uploadedBy}</p>
@@ -202,17 +202,17 @@ export default function DraftTemplates() {
                           <p className="text-sm text-[#8E9196]">Price</p>
                           <p className="text-sm font-medium">{template.price}</p>
                         </div>
-                        <div>
+                        <div className="sm:col-span-2">
                           <p className="text-sm text-[#8E9196]">Created @</p>
                           <p className="text-sm font-medium">{template.createdAt}</p>
                         </div>
                       </div>
                       
-                      <div className="flex gap-4 pt-4">
-                        <Button className="flex-1" variant="default">
+                      <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                        <Button className="flex-1 w-full" variant="default">
                           Activate Template
                         </Button>
-                        <Button className="flex-1" variant="outline">
+                        <Button className="flex-1 w-full" variant="outline">
                           Request Changes
                         </Button>
                       </div>
