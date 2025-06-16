@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -221,9 +220,7 @@ export function TemplateVariables({
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <p>No variants yet for this product</p>
-                </div>
+                <p className="text-sm text-[#8E9196]">No variants yet for this product.</p>
               )}
             </div>
           )}
