@@ -139,34 +139,61 @@ export function TransactionOverview({
 
       {/* Additional Information section */}
       {(transactionType || transactionStatus || paymentProvider || paymentReferenceId) && (
-        <div className="border-t pt-4 mt-6">
-          <h4 className="font-medium mb-3">Additional Information</h4>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="space-y-6 mt-8">
+          <div>
+            <h3 className="text-lg font-semibold text-[#1A1F2C] mb-1">Additional Information</h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {transactionType && (
-              <div className="flex flex-col p-3 bg-gray-50 rounded-lg">
-                <span className="text-xs font-semibold text-[#8E9196] uppercase tracking-wide mb-1">Type</span>
-                <span className="font-medium text-[#1A1F2C]">{toStartCase(transactionType)}</span>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-semibold text-[#8E9196] uppercase tracking-wide">Type</span>
+                </div>
+                <div>
+                  <span className="font-medium text-[#1A1F2C] text-sm">
+                    {toStartCase(transactionType)}
+                  </span>
+                </div>
               </div>
             )}
             
             {transactionStatus && (
-              <div className="flex flex-col p-3 bg-gray-50 rounded-lg">
-                <span className="text-xs font-semibold text-[#8E9196] uppercase tracking-wide mb-1">Status</span>
-                <span className="font-medium text-[#1A1F2C]">{toStartCase(transactionStatus)}</span>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-semibold text-[#8E9196] uppercase tracking-wide">Status</span>
+                </div>
+                <div>
+                  <span className="font-medium text-[#1A1F2C] text-sm">
+                    {toStartCase(transactionStatus)}
+                  </span>
+                </div>
               </div>
             )}
             
             {paymentProvider && (
-              <div className="flex flex-col p-3 bg-gray-50 rounded-lg">
-                <span className="text-xs font-semibold text-[#8E9196] uppercase tracking-wide mb-1">Payment Provider</span>
-                <span className="font-medium text-[#1A1F2C]">{toStartCase(paymentProvider)}</span>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-semibold text-[#8E9196] uppercase tracking-wide">Payment Provider</span>
+                </div>
+                <div>
+                  <span className="font-medium text-[#1A1F2C] text-sm">
+                    {toStartCase(paymentProvider)}
+                  </span>
+                </div>
               </div>
             )}
 
             {paymentReferenceId && (
-              <div className="flex flex-col p-3 bg-gray-50 rounded-lg">
-                <span className="text-xs font-semibold text-[#8E9196] uppercase tracking-wide mb-1">Payment Reference ID</span>
-                <span className="font-medium text-[#1A1F2C] font-mono text-xs break-all">{paymentReferenceId}</span>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-semibold text-[#8E9196] uppercase tracking-wide">Payment Reference ID</span>
+                </div>
+                <div>
+                  <span className="font-medium text-[#1A1F2C] text-sm font-mono break-all">
+                    {paymentReferenceId}
+                  </span>
+                </div>
               </div>
             )}
           </div>
