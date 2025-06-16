@@ -138,7 +138,7 @@ export default function AdminTransactions() {
                 onClick={() => handleSort("concept")}
                 className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-start"
               >
-                Concept {getSortIcon("concept")}
+                ID {getSortIcon("concept")}
               </button>
               <button 
                 onClick={() => handleSort("type")}
