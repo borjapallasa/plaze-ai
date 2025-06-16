@@ -1,4 +1,3 @@
-
 import { Search } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -71,7 +70,7 @@ export default function DraftTemplates() {
         description: product.description || 'No description available',
         image: product.thumbnail || '/lovable-uploads/f5087b2b-e030-4e42-8106-ca8be6835f5f.png',
         category: Array.isArray(product.platform) && product.platform.length > 0 
-          ? product.platform[0] 
+          ? String(product.platform[0])
           : 'Automation',
         uploadedBy: product.experts?.email || 'Unknown',
         price: product.price_from ? `From $${product.price_from}` : 'Free',
@@ -208,11 +207,11 @@ export default function DraftTemplates() {
                         </div>
                       </div>
                       
-                      <div className="flex flex-col sm:flex-row gap-3 pt-4">
-                        <Button className="flex-1 w-full" variant="default">
+                      <div className="flex flex-col gap-3 pt-4">
+                        <Button className="w-full" variant="default">
                           Activate Template
                         </Button>
-                        <Button className="flex-1 w-full" variant="outline">
+                        <Button className="w-full" variant="outline">
                           Request Changes
                         </Button>
                       </div>
