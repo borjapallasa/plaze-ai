@@ -103,7 +103,7 @@ export default function AdminTransactions() {
   };
 
   const renderSearchAndFilter = () => (
-    <div className="flex flex-col sm:flex-row gap-4 mb-6">
+    <div className="flex flex-col sm:flex-row gap-4 mb-4">
       <div className="relative flex-1">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
         <Input
@@ -294,13 +294,13 @@ export default function AdminTransactions() {
     <>
       <MainHeader />
       <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16">
-        <div className="mb-8">
+        <div className="mb-6">
           <h1 className="text-2xl font-semibold text-[#1A1F2C] mb-2">All Transactions</h1>
           <p className="text-[#8E9196]">Manage and review all your transaction records</p>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-6">
+          <TabsList className="grid w-full grid-cols-3 mb-4">
             <TabsTrigger value="all">All Transactions</TabsTrigger>
             <TabsTrigger value="products">Products</TabsTrigger>
             <TabsTrigger value="communities">Communities</TabsTrigger>
