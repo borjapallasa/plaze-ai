@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -208,7 +207,7 @@ export default function AdminTransactions() {
                             {transaction.concept}
                           </span>
                           <button
-                            onClick={() => navigate(`/admin/transactions/${transaction.checkoutId}`)}
+                            onClick={() => navigate(`/admin/transaction/${transaction.checkoutId}`)}
                             className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
                           >
                             <ExternalLink className="h-3 w-3 text-[#8E9196] hover:text-[#1A1F2C]" />
