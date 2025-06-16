@@ -257,25 +257,25 @@ export default function DraftTemplates() {
   );
 
   const renderGridLayout = () => (
-    <div className="border rounded-lg">
+    <div className="border rounded-lg overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[120px]"></TableHead>
-            <TableHead className="w-[300px]">Template</TableHead>
-            <TableHead className="w-[250px]">
+            <TableHead className="w-[80px] sm:w-[120px]"></TableHead>
+            <TableHead className="min-w-[200px] sm:w-[300px]">Template</TableHead>
+            <TableHead className="min-w-[150px] sm:w-[250px]">
               <div className="flex items-center gap-1.5">
                 <User className="h-3.5 w-3.5 text-[#8E9196]" />
                 <span>Uploaded by</span>
               </div>
             </TableHead>
-            <TableHead className="w-[150px]">
+            <TableHead className="w-[100px] sm:w-[150px]">
               <div className="flex items-center gap-1.5">
                 <DollarSign className="h-3.5 w-3.5 text-[#8E9196]" />
                 <span>Price</span>
               </div>
             </TableHead>
-            <TableHead className="w-[200px]">
+            <TableHead className="min-w-[140px] sm:w-[200px]">
               <div className="flex items-center gap-1.5">
                 <Calendar className="h-3.5 w-3.5 text-[#8E9196]" />
                 <span>Created @</span>
@@ -290,8 +290,8 @@ export default function DraftTemplates() {
               className="cursor-pointer hover:bg-accent/50"
               onClick={() => handleTemplateClick(template.id)}
             >
-              <TableCell>
-                <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100">
+              <TableCell className="p-2 sm:p-4">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden bg-gray-100">
                   <img
                     src={template.image}
                     alt={template.title}
@@ -299,20 +299,20 @@ export default function DraftTemplates() {
                   />
                 </div>
               </TableCell>
-              <TableCell>
+              <TableCell className="p-2 sm:p-4">
                 <div className="space-y-1">
-                  <h3 className="font-semibold text-sm">{template.title}</h3>
-                  <p className="text-xs text-[#8E9196] line-clamp-2">{template.description}</p>
+                  <h3 className="font-semibold text-xs sm:text-sm leading-tight">{template.title}</h3>
+                  <p className="text-xs text-[#8E9196] line-clamp-2 leading-tight">{template.description}</p>
                 </div>
               </TableCell>
-              <TableCell>
-                <span className="text-sm font-medium truncate">{template.uploadedBy}</span>
+              <TableCell className="p-2 sm:p-4">
+                <span className="text-xs sm:text-sm font-medium truncate block">{template.uploadedBy}</span>
               </TableCell>
-              <TableCell>
-                <span className="text-sm font-medium">{template.price}</span>
+              <TableCell className="p-2 sm:p-4">
+                <span className="text-xs sm:text-sm font-medium whitespace-nowrap">{template.price}</span>
               </TableCell>
-              <TableCell>
-                <span className="text-sm font-medium">{new Date(template.createdAt).toLocaleString()}</span>
+              <TableCell className="p-2 sm:p-4">
+                <span className="text-xs sm:text-sm font-medium whitespace-nowrap">{new Date(template.createdAt).toLocaleDateString()}</span>
               </TableCell>
             </TableRow>
           ))}
