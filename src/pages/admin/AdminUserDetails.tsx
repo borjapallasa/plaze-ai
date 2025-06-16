@@ -1,9 +1,10 @@
 
+
 import { MainHeader } from "@/components/MainHeader";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, DollarSign, ShoppingCart, Upload, LayoutGrid, User, Copy, Users, Wallet, ListChecks } from "lucide-react";
+import { Calendar, Clock, DollarSign, ShoppingCart, Upload, LayoutGrid, User, Copy, Users, Wallet } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
@@ -27,22 +28,6 @@ const userData = {
   referredBy: "admin@example.com",
   userId: "usr_123",
   stripeConnectId: "connect_123",
-  services: [
-    {
-      id: "1",
-      name: "UI/UX Design",
-      description: "Professional UI/UX design services for web and mobile applications",
-      status: "active",
-      dateAdded: "1/15/2025"
-    },
-    {
-      id: "2",
-      name: "Web Development",
-      description: "Full-stack web development and consulting",
-      status: "active",
-      dateAdded: "2/1/2025"
-    }
-  ],
   ownedCommunities: [
     {
       id: "1",
@@ -81,10 +66,12 @@ const userData = {
       posts: 45
     }
   ],
-  freelancer: {
-    totalEarnings: 8500.00,
-    thisMonth: 1200.00,
-    lastMonth: 1500.00,
+  earnings: {
+    total: 8500.00,
+    pending: 450.00,
+    products: 6200.00,
+    community: 1850.00,
+    mrr: 450.00,
     recentPayouts: [
       {
         id: "1",
@@ -269,40 +256,6 @@ export default function AdminUserDetails() {
           <Card className="shadow-sm">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg font-semibold">Services</CardTitle>
-                <Button variant="outline" size="sm">
-                  Add New Service
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {userData.services.map((service) => (
-                <div key={service.id} className="p-4 bg-gray-50 rounded-lg space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <ListChecks className="h-4 w-4 text-[#8E9196]" />
-                      <h4 className="font-medium">{service.name}</h4>
-                    </div>
-                    <Badge
-                      variant="secondary"
-                      className={service.status === "active" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}
-                    >
-                      {service.status}
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-[#8E9196]">{service.description}</p>
-                  <div className="text-xs text-[#8E9196] flex items-center gap-1">
-                    <Calendar className="h-3 w-3" />
-                    Added: {service.dateAdded}
-                  </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-sm">
-            <CardHeader>
-              <div className="flex items-center justify-between">
                 <CardTitle className="text-lg font-semibold">Communities</CardTitle>
                 <Button variant="outline" size="sm">
                   Add New Community
@@ -406,39 +359,57 @@ export default function AdminUserDetails() {
           <Card className="shadow-sm">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg font-semibold">Freelancer Earnings</CardTitle>
+                <CardTitle className="text-lg font-semibold">Earnings Details</CardTitle>
                 <Button variant="outline" size="sm">
                   Request Payout
                 </Button>
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                 <div className="p-4 bg-[#F8F9FC] rounded-lg border-2 border-[#9b87f5] space-y-2">
                   <div className="flex items-center gap-2 text-sm text-[#8E9196]">
                     <Wallet className="h-4 w-4" />
-                    <span>Total Earnings</span>
+                    <span>Total</span>
                   </div>
                   <div className="font-medium text-xl text-[#9b87f5]">
-                    ${userData.freelancer.totalEarnings.toFixed(2)}
+                    ${userData.earnings.total.toFixed(2)}
+                  </div>
+                </div>
+                <div className="p-4 bg-gray-50 rounded-lg space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-[#8E9196]">
+                    <Clock className="h-4 w-4" />
+                    <span>Pending</span>
+                  </div>
+                  <div className="font-medium text-lg">
+                    ${userData.earnings.pending.toFixed(2)}
+                  </div>
+                </div>
+                <div className="p-4 bg-gray-50 rounded-lg space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-[#8E9196]">
+                    <LayoutGrid className="h-4 w-4" />
+                    <span>Products</span>
+                  </div>
+                  <div className="font-medium text-lg">
+                    ${userData.earnings.products.toFixed(2)}
+                  </div>
+                </div>
+                <div className="p-4 bg-gray-50 rounded-lg space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-[#8E9196]">
+                    <Users className="h-4 w-4" />
+                    <span>Community</span>
+                  </div>
+                  <div className="font-medium text-lg">
+                    ${userData.earnings.community.toFixed(2)}
                   </div>
                 </div>
                 <div className="p-4 bg-gray-50 rounded-lg space-y-2">
                   <div className="flex items-center gap-2 text-sm text-[#8E9196]">
                     <DollarSign className="h-4 w-4" />
-                    <span>This Month</span>
+                    <span>MRR</span>
                   </div>
                   <div className="font-medium text-lg">
-                    ${userData.freelancer.thisMonth.toFixed(2)}
-                  </div>
-                </div>
-                <div className="p-4 bg-gray-50 rounded-lg space-y-2">
-                  <div className="flex items-center gap-2 text-sm text-[#8E9196]">
-                    <DollarSign className="h-4 w-4" />
-                    <span>Last Month</span>
-                  </div>
-                  <div className="font-medium text-lg">
-                    ${userData.freelancer.lastMonth.toFixed(2)}
+                    ${userData.earnings.mrr.toFixed(2)}
                   </div>
                 </div>
               </div>
@@ -446,7 +417,7 @@ export default function AdminUserDetails() {
               <div>
                 <h4 className="text-sm font-medium mb-3">Recent Payouts</h4>
                 <div className="space-y-2">
-                  {userData.freelancer.recentPayouts.map((payout) => (
+                  {userData.earnings.recentPayouts.map((payout) => (
                     <div key={payout.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                       <div className="flex items-center gap-2 text-sm text-[#8E9196]">
                         <Calendar className="h-4 w-4" />
@@ -464,3 +435,4 @@ export default function AdminUserDetails() {
     </>
   );
 }
+
