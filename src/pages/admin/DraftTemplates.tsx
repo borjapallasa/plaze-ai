@@ -374,7 +374,7 @@ export default function DraftTemplates() {
 
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center">
-            <div className="relative flex-1 mr-0 sm:mr-4">
+            <div className="relative w-full sm:flex-1 sm:mr-4">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
               <Input
                 placeholder="Search by template name, description, or uploaded by..."
