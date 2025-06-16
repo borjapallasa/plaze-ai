@@ -82,7 +82,7 @@ export default function DraftTemplates() {
   });
 
   const handleTemplateClick = (templateId: string) => {
-    navigate(`/admin/template/${templateId}`);
+    navigate(`/admin/product/${templateId}`);
   };
 
   const filteredTemplates = templates.filter(template => {
