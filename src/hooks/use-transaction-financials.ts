@@ -9,6 +9,7 @@ export interface TransactionFinancials {
   transaction_fees: number;
   stripe_fees: number;
   amount_taxes: number;
+  transaction_uuid: string; // Add the transaction_uuid
 }
 
 export function useTransactionFinancials(productsTransactionUuid: string) {
@@ -19,7 +20,7 @@ export function useTransactionFinancials(productsTransactionUuid: string) {
       
       const { data: transaction, error } = await supabase
         .from('transactions')
-        .select('amount, afiliate_fees, gross_margin, transaction_fees, stripe_fees, amount_taxes')
+        .select('amount, afiliate_fees, gross_margin, transaction_fees, stripe_fees, amount_taxes, transaction_uuid')
         .eq('products_transactions_uuid', productsTransactionUuid)
         .maybeSingle();
 
@@ -41,6 +42,7 @@ export function useTransactionFinancials(productsTransactionUuid: string) {
         transaction_fees: transaction.transaction_fees || 0,
         stripe_fees: transaction.stripe_fees || 0,
         amount_taxes: transaction.amount_taxes || 0,
+        transaction_uuid: transaction.transaction_uuid,
       };
     },
     enabled: !!productsTransactionUuid,

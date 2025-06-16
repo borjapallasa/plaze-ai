@@ -2,21 +2,31 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTransactionFinancials } from "@/hooks/use-transaction-financials";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useEffect } from "react";
 
 interface TransactionFinancialsProps {
   transactionAmount: number;
   productsTransactionUuid: string;
+  onTransactionUuidReceived?: (transactionUuid: string) => void;
 }
 
 export function TransactionFinancials({
   transactionAmount,
-  productsTransactionUuid
+  productsTransactionUuid,
+  onTransactionUuidReceived
 }: TransactionFinancialsProps) {
   const {
     data: financials,
     isLoading,
     error
   } = useTransactionFinancials(productsTransactionUuid);
+
+  // Pass the transaction_uuid back to parent when we receive it
+  useEffect(() => {
+    if (financials?.transaction_uuid && onTransactionUuidReceived) {
+      onTransactionUuidReceived(financials.transaction_uuid);
+    }
+  }, [financials?.transaction_uuid, onTransactionUuidReceived]);
 
   if (isLoading) {
     return (

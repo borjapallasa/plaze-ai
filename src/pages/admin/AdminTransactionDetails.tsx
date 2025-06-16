@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { MainHeader } from "@/components/MainHeader";
 import { ArrowLeft, Copy } from "lucide-react";
@@ -11,6 +12,7 @@ import { TransactionFiles } from "./components/TransactionFiles";
 import { TransactionReview } from "./components/TransactionReview";
 import { useTransactionDetails } from "@/hooks/use-transaction-details";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useState, useCallback } from "react";
 
 // Mock data for sections not yet connected to database
 const mockData = {
@@ -28,17 +30,27 @@ const mockData = {
   rating: 5,
   customRequest: "Custom requirements for the template setup"
 };
+
 export default function AdminTransactionDetails() {
   const params = useParams();
   const navigate = useNavigate();
   const transactionId = params.id;
+  const [actualTransactionUuid, setActualTransactionUuid] = useState<string>('');
+  
   console.log('URL params:', params);
   console.log('Transaction ID from params:', transactionId);
+  
   const {
     data: transaction,
     isLoading,
     error
   } = useTransactionDetails(transactionId || '');
+
+  const handleTransactionUuidReceived = useCallback((transactionUuid: string) => {
+    console.log('Received actual transaction_uuid from financials:', transactionUuid);
+    setActualTransactionUuid(transactionUuid);
+  }, []);
+
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     toast.success(`${label} copied to clipboard`);
@@ -68,6 +80,7 @@ export default function AdminTransactionDetails() {
         </div>
       </>;
   }
+  
   if (error || !transaction) {
     return <>
         <MainHeader />
@@ -92,6 +105,7 @@ export default function AdminTransactionDetails() {
 
   // Get the first item's files link for the main files section
   const filesUrl = transaction.items[0]?.files_link || '';
+  
   return <>
       <MainHeader />
       <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16">
@@ -129,13 +143,17 @@ export default function AdminTransactionDetails() {
             <TransactionFinancials 
               transactionAmount={transaction.total_amount} 
               productsTransactionUuid={transaction.transaction_uuid}
+              onTransactionUuidReceived={handleTransactionUuidReceived}
             />
 
             <Separator className="my-8" />
 
             <TransactionFiles transactionId={transactionId || ''} filesUrl={filesUrl} guidesUrl={mockData.guidesUrl} customRequest={mockData.customRequest} />
 
-            <TransactionReview transactionUuid={transaction.transaction_uuid} />
+            {/* Only render TransactionReview when we have the actual transaction_uuid */}
+            {actualTransactionUuid && (
+              <TransactionReview transactionUuid={actualTransactionUuid} />
+            )}
           </CardContent>
         </Card>
       </div>
