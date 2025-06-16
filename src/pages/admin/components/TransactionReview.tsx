@@ -10,7 +10,7 @@ interface TransactionReviewProps {
 
 export function TransactionReview({ transactionUuid }: TransactionReviewProps) {
   const {
-    data: review,
+    data: reviews,
     isLoading,
     error
   } = useTransactionReview(transactionUuid);
@@ -28,7 +28,7 @@ export function TransactionReview({ transactionUuid }: TransactionReviewProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Customer Review</CardTitle>
+          <CardTitle className="text-lg">Customer Reviews</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -40,17 +40,17 @@ export function TransactionReview({ transactionUuid }: TransactionReviewProps) {
     );
   }
 
-  if (error || !review) {
+  if (error || !reviews || reviews.length === 0) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Customer Review</CardTitle>
+          <CardTitle className="text-lg">Customer Reviews</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
-            <p className="text-[#8E9196]">No review found for this transaction</p>
+            <p className="text-[#8E9196]">No reviews found for this transaction</p>
             <p className="text-sm text-[#8E9196] mt-1">
-              {error ? 'Error loading review' : 'The customer has not left a review yet'}
+              {error ? 'Error loading reviews' : 'The customer has not left any reviews yet'}
             </p>
           </div>
         </CardContent>
@@ -61,29 +61,37 @@ export function TransactionReview({ transactionUuid }: TransactionReviewProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">Customer Review</CardTitle>
+        <CardTitle className="text-lg">
+          Customer Reviews ({reviews.length})
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="flex gap-1">
-              {renderStars(review.rating)}
+        <div className="space-y-6">
+          {reviews.map((review, index) => (
+            <div key={review.review_uuid} className={index > 0 ? "border-t pt-6" : ""}>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex gap-1">
+                    {renderStars(review.rating)}
+                  </div>
+                  <span className="text-[#8E9196]">({review.rating}/5)</span>
+                </div>
+                
+                {review.title && (
+                  <h3 className="font-medium text-[#1A1F2C]">{review.title}</h3>
+                )}
+                
+                <blockquote className="text-[#1A1F2C] italic border-l-4 border-[#9b87f5] pl-4 py-2 break-words">
+                  "{review.comments || 'No additional comments provided'}"
+                </blockquote>
+                
+                <div className="flex items-center justify-between text-sm text-[#8E9196]">
+                  <span>By {review.buyer_name}</span>
+                  <span>{new Date(review.created_at).toLocaleDateString()}</span>
+                </div>
+              </div>
             </div>
-            <span className="text-[#8E9196]">({review.rating}/5)</span>
-          </div>
-          
-          {review.title && (
-            <h3 className="font-medium text-[#1A1F2C]">{review.title}</h3>
-          )}
-          
-          <blockquote className="text-[#1A1F2C] italic border-l-4 border-[#9b87f5] pl-4 py-2 break-words">
-            "{review.comments || 'No additional comments provided'}"
-          </blockquote>
-          
-          <div className="flex items-center justify-between text-sm text-[#8E9196]">
-            <span>By {review.buyer_name}</span>
-            <span>{new Date(review.created_at).toLocaleDateString()}</span>
-          </div>
+          ))}
         </div>
       </CardContent>
     </Card>

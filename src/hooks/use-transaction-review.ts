@@ -14,23 +14,22 @@ export interface TransactionReview {
 export function useTransactionReview(transactionUuid: string) {
   return useQuery({
     queryKey: ['transaction-review', transactionUuid],
-    queryFn: async (): Promise<TransactionReview | null> => {
-      console.log('Fetching review for transaction:', transactionUuid);
+    queryFn: async (): Promise<TransactionReview[]> => {
+      console.log('Fetching reviews for transaction:', transactionUuid);
       
-      const { data: review, error } = await supabase
+      const { data: reviews, error } = await supabase
         .from('reviews')
         .select('review_uuid, rating, title, comments, buyer_name, created_at')
-        .eq('transaction_uuid', transactionUuid)
-        .maybeSingle();
+        .eq('transaction_uuid', transactionUuid);
 
       if (error) {
-        console.error('Error fetching transaction review:', error);
+        console.error('Error fetching transaction reviews:', error);
         throw error;
       }
 
-      console.log('Transaction review found:', review);
+      console.log('Transaction reviews found:', reviews);
 
-      return review;
+      return reviews || [];
     },
     enabled: !!transactionUuid,
   });
