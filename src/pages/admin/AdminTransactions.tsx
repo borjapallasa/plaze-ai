@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, ChevronDown, ArrowDown, ArrowUp } from "lucide-react";
+import { Search, ChevronDown, ArrowDown, ArrowUp, ExternalLink } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
@@ -182,11 +182,18 @@ export default function AdminTransactions() {
                 filteredTransactions.map((transaction, index) => (
                   <div
                     key={index}
-                    onClick={() => navigate(`/a/admin/transactions/${transaction.checkoutId}`)}
                     className="grid grid-cols-[2fr,1fr,1.5fr,1fr,1.2fr,1.5fr,1.5fr] gap-4 p-4 hover:bg-[#F8F9FC] cursor-pointer transition-colors duration-200 group"
                   >
-                    <div className="text-sm text-[#1A1F2C] truncate text-left" title={transaction.concept}>
-                      {transaction.concept}
+                    <div className="flex items-center gap-2 text-sm text-[#1A1F2C] text-left">
+                      <span className="truncate" title={transaction.concept}>
+                        {transaction.concept}
+                      </span>
+                      <button
+                        onClick={() => navigate(`/admin/transactions/${transaction.transactionUuid}`)}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <ExternalLink className="h-3 w-3 text-[#8E9196] hover:text-[#1A1F2C]" />
+                      </button>
                     </div>
                     <div className="text-sm text-[#8E9196] capitalize text-left">
                       {transaction.type}

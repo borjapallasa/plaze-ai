@@ -11,6 +11,7 @@ export interface AdminTransaction {
   seller: string;
   user: string;
   checkoutId: string;
+  transactionUuid: string;
 }
 
 export function useAdminTransactions() {
@@ -49,10 +50,9 @@ export function useAdminTransactions() {
         
         const sellerName = transaction.experts?.name || 'Unknown Expert';
         const amount = transaction.amount || 0;
-        const concept = `Transaction ${transaction.transaction_uuid.slice(0, 8)}`;
 
         return {
-          concept,
+          concept: transaction.transaction_uuid,
           type: transaction.type === 'product' ? 'product' : 'community',
           createdAt: new Date(transaction.created_at).toLocaleString(),
           status: 'paid', // Transactions table doesn't have status, assuming paid
@@ -60,6 +60,7 @@ export function useAdminTransactions() {
           seller: sellerName,
           user: buyerName,
           checkoutId: transaction.transaction_uuid,
+          transactionUuid: transaction.transaction_uuid,
         };
       }) || [];
 
