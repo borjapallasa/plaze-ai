@@ -88,7 +88,7 @@ export default function AdminTransactions() {
       <div className="relative flex-1">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
         <Input
-          placeholder="Search by concept or user"
+          placeholder="Search by ID or user"
           className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C]"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -130,101 +130,129 @@ export default function AdminTransactions() {
     }
 
     return (
-      <div className="rounded-lg border border-[#E5E7EB] bg-white">
-        <ScrollArea className="h-[600px] w-full" type="always">
-          <div className="min-w-[1000px]">
-            <div className="grid grid-cols-[2fr,1fr,1.5fr,1fr,1.2fr,1.5fr,1.5fr] gap-4 p-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
-              <button 
-                onClick={() => handleSort("concept")}
-                className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-start"
-              >
-                ID {getSortIcon("concept")}
-              </button>
-              <button 
-                onClick={() => handleSort("type")}
-                className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-start"
-              >
-                Type {getSortIcon("type")}
-              </button>
-              <button 
-                onClick={() => handleSort("createdAt")}
-                className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap justify-start"
-              >
-                Created @ {getSortIcon("createdAt")}
-              </button>
-              <div className="font-medium text-sm text-[#8E9196] text-left">Status</div>
-              <button 
-                onClick={() => handleSort("amount")}
-                className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-start"
-              >
-                Amount {getSortIcon("amount")}
-              </button>
-              <button 
-                onClick={() => handleSort("seller")}
-                className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-start"
-              >
-                Seller {getSortIcon("seller")}
-              </button>
-              <button 
-                onClick={() => handleSort("user")}
-                className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] justify-start"
-              >
-                User {getSortIcon("user")}
-              </button>
-            </div>
-
-            <div className="divide-y divide-[#E5E7EB]">
+      <div className="rounded-lg border border-[#E5E7EB] bg-white overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-[#F8F9FC] border-b border-[#E5E7EB]">
+              <tr>
+                <th className="px-6 py-4 text-left">
+                  <button 
+                    onClick={() => handleSort("concept")}
+                    className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
+                  >
+                    ID {getSortIcon("concept")}
+                  </button>
+                </th>
+                <th className="px-6 py-4 text-left">
+                  <button 
+                    onClick={() => handleSort("type")}
+                    className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
+                  >
+                    Type {getSortIcon("type")}
+                  </button>
+                </th>
+                <th className="px-6 py-4 text-left">
+                  <button 
+                    onClick={() => handleSort("createdAt")}
+                    className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
+                  >
+                    Created @ {getSortIcon("createdAt")}
+                  </button>
+                </th>
+                <th className="px-6 py-4 text-left">
+                  <span className="font-medium text-sm text-[#8E9196]">Status</span>
+                </th>
+                <th className="px-6 py-4 text-left">
+                  <button 
+                    onClick={() => handleSort("amount")}
+                    className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
+                  >
+                    Amount {getSortIcon("amount")}
+                  </button>
+                </th>
+                <th className="px-6 py-4 text-left">
+                  <button 
+                    onClick={() => handleSort("seller")}
+                    className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
+                  >
+                    Seller {getSortIcon("seller")}
+                  </button>
+                </th>
+                <th className="px-6 py-4 text-left">
+                  <button 
+                    onClick={() => handleSort("user")}
+                    className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
+                  >
+                    User {getSortIcon("user")}
+                  </button>
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#E5E7EB]">
               {filteredTransactions.length === 0 ? (
-                <div className="p-8 text-center text-[#8E9196]">
-                  No transactions found matching your criteria
-                </div>
+                <tr>
+                  <td colSpan={7} className="px-6 py-8 text-center text-[#8E9196]">
+                    No transactions found matching your criteria
+                  </td>
+                </tr>
               ) : (
                 filteredTransactions.map((transaction, index) => (
-                  <div
+                  <tr
                     key={index}
-                    className="grid grid-cols-[2fr,1fr,1.5fr,1fr,1.2fr,1.5fr,1.5fr] gap-4 p-4 hover:bg-[#F8F9FC] cursor-pointer transition-colors duration-200 group"
+                    className="hover:bg-[#F8F9FC] transition-colors duration-200 group"
                   >
-                    <div className="flex items-center gap-2 text-sm text-[#1A1F2C] text-left">
-                      <span className="truncate" title={transaction.concept}>
-                        {transaction.concept}
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-[#1A1F2C] font-medium">
+                          {transaction.concept}
+                        </span>
+                        <button
+                          onClick={() => navigate(`/admin/transactions/${transaction.transactionUuid}`)}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <ExternalLink className="h-3 w-3 text-[#8E9196] hover:text-[#1A1F2C]" />
+                        </button>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="text-sm text-[#8E9196] capitalize">
+                        {transaction.type}
                       </span>
-                      <button
-                        onClick={() => navigate(`/admin/transactions/${transaction.transactionUuid}`)}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <ExternalLink className="h-3 w-3 text-[#8E9196] hover:text-[#1A1F2C]" />
-                      </button>
-                    </div>
-                    <div className="text-sm text-[#8E9196] capitalize text-left">
-                      {transaction.type}
-                    </div>
-                    <div className="text-sm text-[#8E9196] whitespace-nowrap text-left">
-                      {transaction.createdAt}
-                    </div>
-                    <div className="text-left">
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="text-sm text-[#8E9196]">
+                        {transaction.createdAt}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
                       <Badge 
                         variant="secondary" 
-                        className={`${getStatusColor(transaction.status)} capitalize whitespace-nowrap`}
+                        className={`${getStatusColor(transaction.status)} capitalize`}
                       >
                         {transaction.status}
                       </Badge>
-                    </div>
-                    <div className="text-sm text-[#8E9196] whitespace-nowrap text-left">
-                      ${transaction.amount.toFixed(2)}
-                    </div>
-                    <div className="text-sm text-[#8E9196] whitespace-nowrap text-left" title={transaction.seller}>
-                      {transaction.seller}
-                    </div>
-                    <div className="text-sm text-[#8E9196] whitespace-nowrap text-left" title={transaction.user}>
-                      {transaction.user}
-                    </div>
-                  </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="text-sm text-[#1A1F2C] font-medium">
+                        ${transaction.amount.toFixed(2)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="text-sm text-[#8E9196]" title={transaction.seller}>
+                        {transaction.seller}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="text-sm text-[#8E9196]" title={transaction.user}>
+                        {transaction.user}
+                      </span>
+                    </td>
+                  </tr>
                 ))
               )}
-            </div>
-          </div>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   };
@@ -232,7 +260,7 @@ export default function AdminTransactions() {
   return (
     <>
       <MainHeader />
-      <div className="container mx-auto px-4 py-8 max-w-[1200px] mt-16">
+      <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16">
         <div className="mb-8">
           <h1 className="text-2xl font-semibold text-[#1A1F2C] mb-2">All Transactions</h1>
           <p className="text-[#8E9196]">Manage and review all your transaction records</p>
