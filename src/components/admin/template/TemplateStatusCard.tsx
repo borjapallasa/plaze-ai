@@ -18,7 +18,7 @@ interface TemplateStatusCardProps {
   isMobile?: boolean;
 }
 
-type StatusType = "active" | "inactive" | "draft";
+type StatusType = "active" | "inactive" | "draft" | "review";
 
 export function TemplateStatusCard({ status, productUuid, isMobile = false }: TemplateStatusCardProps) {
   const [currentStatus, setCurrentStatus] = useState<StatusType>(status as StatusType);
@@ -83,6 +83,7 @@ export function TemplateStatusCard({ status, productUuid, isMobile = false }: Te
                   <SelectItem value="active">Active</SelectItem>
                   <SelectItem value="inactive">Inactive</SelectItem>
                   <SelectItem value="draft">Draft</SelectItem>
+                  <SelectItem value="review">Review</SelectItem>
                 </SelectContent>
               </Select>
             </div>
