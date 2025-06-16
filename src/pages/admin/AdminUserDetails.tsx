@@ -367,7 +367,7 @@ export default function AdminUserDetails() {
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                 <div className="p-4 bg-[#F8F9FC] rounded-lg border-2 border-[#9b87f5] space-y-2">
                   <div className="flex items-center gap-2 text-sm text-[#8E9196]">
                     <Wallet className="h-4 w-4" />
@@ -375,15 +375,6 @@ export default function AdminUserDetails() {
                   </div>
                   <div className="font-medium text-xl text-[#9b87f5]">
                     ${userData.earnings.total.toFixed(2)}
-                  </div>
-                </div>
-                <div className="p-4 bg-gray-50 rounded-lg space-y-2">
-                  <div className="flex items-center gap-2 text-sm text-[#8E9196]">
-                    <DollarSign className="h-4 w-4" />
-                    <span>Total</span>
-                  </div>
-                  <div className="font-medium text-lg">
-                    ${totalPaidOut.toFixed(2)}
                   </div>
                 </div>
                 <div className="p-4 bg-gray-50 rounded-lg space-y-2">
@@ -436,6 +427,11 @@ export default function AdminUserDetails() {
                       <span className="font-medium">${payout.amount.toFixed(2)}</span>
                     </div>
                   ))}
+                </div>
+                
+                <div className="mt-3 flex items-center justify-between">
+                  <span className="text-sm text-[#8E9196]">Total Paid Out</span>
+                  <span className="font-medium">${totalPaidOut.toFixed(2)}</span>
                 </div>
               </div>
             </CardContent>
