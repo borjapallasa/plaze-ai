@@ -62,6 +62,10 @@ export function TransactionFinancials({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="space-y-4">
             <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+              <span className="text-[#8E9196] mr-2">Amount</span>
+              <span className="font-medium shrink-0">${financials.amount.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
               <span className="text-[#8E9196] mr-2">Transaction Fees</span>
               <span className="font-medium shrink-0">${financials.transaction_fees.toFixed(2)}</span>
             </div>
