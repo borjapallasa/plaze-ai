@@ -1,5 +1,3 @@
-
-
 import { MainHeader } from "@/components/MainHeader";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -94,6 +92,9 @@ export default function AdminUserDetails() {
     navigator.clipboard.writeText(text);
     toast.success(`${label} copied to clipboard`);
   };
+
+  // Calculate total paid out
+  const totalPaidOut = userData.earnings.recentPayouts.reduce((sum, payout) => sum + payout.amount, 0);
 
   return (
     <>
@@ -427,6 +428,13 @@ export default function AdminUserDetails() {
                     </div>
                   ))}
                 </div>
+                
+                <div className="mt-4 p-3 bg-[#F8F9FC] rounded-lg border border-[#9b87f5]">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-[#8E9196]">Total Paid Out</span>
+                    <span className="font-semibold text-lg text-[#9b87f5]">${totalPaidOut.toFixed(2)}</span>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -435,4 +443,3 @@ export default function AdminUserDetails() {
     </>
   );
 }
-
