@@ -25,7 +25,7 @@ export function TransactionFinancials({
           <CardTitle className="text-lg">Financial Breakdown</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-4">
             {Array.from({ length: 6 }).map((_, i) => (
               <Skeleton key={i} className="h-16 w-full" />
             ))}
@@ -59,7 +59,7 @@ export function TransactionFinancials({
         <CardTitle className="text-lg">Financial Breakdown</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-4">
           <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
             <span className="text-[#8E9196] mr-2">Amount</span>
             <span className="font-medium shrink-0">${financials.amount.toFixed(2)}</span>
