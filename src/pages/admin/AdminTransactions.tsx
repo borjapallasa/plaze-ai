@@ -122,12 +122,6 @@ export default function AdminTransactions() {
           <SelectItem value="createdAt-asc">Date (Oldest First)</SelectItem>
           <SelectItem value="amount-desc">Amount (High to Low)</SelectItem>
           <SelectItem value="amount-asc">Amount (Low to High)</SelectItem>
-          <SelectItem value="concept-asc">ID (A to Z)</SelectItem>
-          <SelectItem value="concept-desc">ID (Z to A)</SelectItem>
-          <SelectItem value="user-asc">User (A to Z)</SelectItem>
-          <SelectItem value="user-desc">User (Z to A)</SelectItem>
-          <SelectItem value="seller-asc">Seller (A to Z)</SelectItem>
-          <SelectItem value="seller-desc">Seller (Z to A)</SelectItem>
         </SelectContent>
       </Select>
       <Select value={statusFilter} onValueChange={setStatusFilter}>
