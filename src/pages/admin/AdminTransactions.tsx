@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -283,7 +282,7 @@ export default function AdminTransactions() {
   };
 
   const renderSearchAndFilter = () => (
-    <div className="flex flex-col sm:flex-row gap-4 mb-6">
+    <div className="flex flex-col sm:flex-row gap-4 mb-4">
       <div className="relative flex-1">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
         <Input
@@ -471,7 +470,7 @@ export default function AdminTransactions() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-6">
+          <TabsList className="grid w-full grid-cols-3 mb-8">
             <TabsTrigger value="all">All Transactions</TabsTrigger>
             <TabsTrigger value="products">Products</TabsTrigger>
             <TabsTrigger value="communities">Communities</TabsTrigger>
