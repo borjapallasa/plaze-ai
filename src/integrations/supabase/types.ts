@@ -2212,6 +2212,7 @@ export type Database = {
           id: number
           products_transactions_uuid: string | null
           review_uuid: string | null
+          status: Database["public"]["Enums"]["transaction_status"] | null
           stripe_fees: number | null
           transaction_fees: number | null
           transaction_uuid: string
@@ -2228,6 +2229,7 @@ export type Database = {
           id?: number
           products_transactions_uuid?: string | null
           review_uuid?: string | null
+          status?: Database["public"]["Enums"]["transaction_status"] | null
           stripe_fees?: number | null
           transaction_fees?: number | null
           transaction_uuid?: string
@@ -2244,6 +2246,7 @@ export type Database = {
           id?: number
           products_transactions_uuid?: string | null
           review_uuid?: string | null
+          status?: Database["public"]["Enums"]["transaction_status"] | null
           stripe_fees?: number | null
           transaction_fees?: number | null
           transaction_uuid?: string
@@ -2580,6 +2583,14 @@ export type Database = {
         | "chargeback"
         | "access revoked"
         | "failed fulfillment"
+      transaction_status:
+        | "paid"
+        | "not paid"
+        | "draft"
+        | "disputed"
+        | "refunded"
+        | "partially refunded"
+        | "chargeback"
       transaction_type:
         | "product"
         | "job"
@@ -2784,6 +2795,15 @@ export const Constants = {
         "chargeback",
         "access revoked",
         "failed fulfillment",
+      ],
+      transaction_status: [
+        "paid",
+        "not paid",
+        "draft",
+        "disputed",
+        "refunded",
+        "partially refunded",
+        "chargeback",
       ],
       transaction_type: [
         "product",

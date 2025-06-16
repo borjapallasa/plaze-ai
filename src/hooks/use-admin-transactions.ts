@@ -20,7 +20,7 @@ export function useAdminTransactions() {
     queryFn: async (): Promise<AdminTransaction[]> => {
       console.log('Fetching admin transactions from transactions table...');
       
-      // Fetch from transactions table with related data
+      // Fetch from transactions table with related data including status
       const { data: transactionData, error } = await supabase
         .from('transactions')
         .select(`
@@ -28,6 +28,7 @@ export function useAdminTransactions() {
           amount,
           created_at,
           type,
+          status,
           transaction_fees,
           gross_margin,
           products_transactions_uuid,
@@ -56,7 +57,7 @@ export function useAdminTransactions() {
           concept: transaction.transaction_uuid,
           type: transaction.type === 'product' ? 'product' : 'community',
           createdAt: new Date(transaction.created_at).toLocaleString(),
-          status: 'paid', // Transactions table doesn't have status, assuming paid
+          status: transaction.status || 'unknown',
           amount,
           seller: sellerName,
           user: buyerName,
