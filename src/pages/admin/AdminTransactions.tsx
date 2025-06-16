@@ -70,10 +70,24 @@ export default function AdminTransactions() {
         const bValue = b[sortField];
         const multiplier = sortDirection === "asc" ? 1 : -1;
         
+        // Special handling for created_at field - parse dates for proper comparison
+        if (sortField === "createdAt") {
+          const aDate = new Date(aValue as string);
+          const bDate = new Date(bValue as string);
+          return (aDate.getTime() - bDate.getTime()) * multiplier;
+        }
+        
+        // Handle amount field as numbers
+        if (sortField === "amount") {
+          return ((aValue as number) - (bValue as number)) * multiplier;
+        }
+        
+        // Handle string fields
         if (typeof aValue === "string" && typeof bValue === "string") {
           return aValue.localeCompare(bValue) * multiplier;
         }
         
+        // Handle numeric fields
         if (typeof aValue === "number" && typeof bValue === "number") {
           return (aValue - bValue) * multiplier;
         }
