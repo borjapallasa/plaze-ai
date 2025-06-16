@@ -1,7 +1,7 @@
-
 import { Search } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { MainHeader } from "@/components/MainHeader";
 import { Badge } from "@/components/ui/badge";
@@ -35,6 +35,7 @@ const categories = [
 export default function DraftTemplates() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
 
   const { data: templates = [], isLoading, error } = useQuery({
     queryKey: ['draftTemplates'],
@@ -79,6 +80,10 @@ export default function DraftTemplates() {
       })) || [];
     }
   });
+
+  const handleTemplateClick = (templateId: string) => {
+    navigate(`/admin/template/${templateId}`);
+  };
 
   const filteredTemplates = templates.filter(template => {
     const matchesCategory = selectedCategory ? template.category === selectedCategory : true;
@@ -168,7 +173,11 @@ export default function DraftTemplates() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredTemplates.map((template) => (
-                <Card key={template.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                <Card 
+                  key={template.id} 
+                  className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+                  onClick={() => handleTemplateClick(template.id)}
+                >
                   <div className="p-6 space-y-4">
                     <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
                       <img
@@ -209,10 +218,24 @@ export default function DraftTemplates() {
                       </div>
                       
                       <div className="flex flex-col gap-3 pt-4">
-                        <Button className="w-full" variant="default">
+                        <Button 
+                          className="w-full" 
+                          variant="default"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            // Add activation logic here
+                          }}
+                        >
                           Activate Template
                         </Button>
-                        <Button className="w-full" variant="outline">
+                        <Button 
+                          className="w-full" 
+                          variant="outline"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            // Add request changes logic here
+                          }}
+                        >
                           Request Changes
                         </Button>
                       </div>
