@@ -167,7 +167,7 @@ export default function DraftTemplates() {
                         <div>
                           <div className="flex items-center gap-1.5 mb-1">
                             <User className="h-3.5 w-3.5 text-[#8E9196]" />
-                            <p className="text-sm text-[#8E9196]">Uploaded By</p>
+                            <p className="text-sm text-[#8E9196]">Uploaded by</p>
                           </div>
                           <p className="text-sm font-medium truncate">{template.uploadedBy}</p>
                         </div>
