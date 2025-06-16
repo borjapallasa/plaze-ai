@@ -1,3 +1,4 @@
+
 import { Search } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -38,7 +39,7 @@ export default function DraftTemplates() {
   const { data: templates = [], isLoading, error } = useQuery({
     queryKey: ['draftTemplates'],
     queryFn: async () => {
-      console.log('Fetching draft templates with status = draft');
+      console.log('Fetching draft templates with status = review');
       const { data, error } = await supabase
         .from('products')
         .select(`
@@ -55,7 +56,7 @@ export default function DraftTemplates() {
             email
           )
         `)
-        .eq('status', 'draft');
+        .eq('status', 'review');
 
       if (error) {
         console.error('Error fetching draft templates:', error);
