@@ -30,7 +30,7 @@ export default function AdminTransactions() {
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case "completed":
+      case "paid":
         return "bg-green-100 text-green-800 hover:bg-green-100";
       case "pending":
         return "bg-yellow-100 text-yellow-800 hover:bg-yellow-100";
@@ -60,8 +60,8 @@ export default function AdminTransactions() {
   const getFilteredTransactions = (type?: 'product' | 'community') => {
     return transactions
       .filter(transaction => {
-        const matchesSearch = transaction.templateName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            transaction.buyerEmail.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesSearch = transaction.concept.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            transaction.user.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesStatus = statusFilter === "all" || transaction.status.toLowerCase() === statusFilter.toLowerCase();
         const matchesType = !type || transaction.type === type;
         return matchesSearch && matchesStatus && matchesType;
@@ -84,11 +84,11 @@ export default function AdminTransactions() {
   };
 
   const renderSearchAndFilter = () => (
-    <div className="flex flex-col sm:flex-row gap-4 mb-4">
+    <div className="flex flex-col sm:flex-row gap-4 mb-6">
       <div className="relative flex-1">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
         <Input
-          placeholder="Search by template name or buyer email"
+          placeholder="Search by concept or user"
           className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C]"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -100,7 +100,7 @@ export default function AdminTransactions() {
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">All Status</SelectItem>
-          <SelectItem value="completed">Completed</SelectItem>
+          <SelectItem value="paid">Paid</SelectItem>
           <SelectItem value="pending">Pending</SelectItem>
           <SelectItem value="failed">Failed</SelectItem>
         </SelectContent>
@@ -132,13 +132,19 @@ export default function AdminTransactions() {
     return (
       <div className="rounded-lg border border-[#E5E7EB] bg-white">
         <ScrollArea className="h-[600px] w-full" type="always">
-          <div className="min-w-[2800px]">
-            <div className="grid grid-cols-[2fr,1.5fr,2fr,1.5fr,1.2fr,1.5fr,1.5fr,2fr,1.2fr,1fr,1.5fr,1.2fr,1.2fr,0.8fr,1.5fr] gap-4 p-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
+          <div className="min-w-[1000px]">
+            <div className="grid grid-cols-[2fr,1fr,1.5fr,1fr,1.2fr,1.5fr,1.5fr] gap-4 p-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
               <button 
-                onClick={() => handleSort("templateName")}
+                onClick={() => handleSort("concept")}
                 className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
               >
-                Template Name {getSortIcon("templateName")}
+                Concept {getSortIcon("concept")}
+              </button>
+              <button 
+                onClick={() => handleSort("type")}
+                className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
+              >
+                Type {getSortIcon("type")}
               </button>
               <button 
                 onClick={() => handleSort("createdAt")}
@@ -146,69 +152,25 @@ export default function AdminTransactions() {
               >
                 Created @ {getSortIcon("createdAt")}
               </button>
-              <button 
-                onClick={() => handleSort("buyerEmail")}
-                className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
-              >
-                Buyer User {getSortIcon("buyerEmail")}
-              </button>
-              <div className="font-medium text-sm text-[#8E9196] whitespace-nowrap">Deliverables</div>
+              <div className="font-medium text-sm text-[#8E9196]">Status</div>
               <button 
                 onClick={() => handleSort("amount")}
-                className="flex items-center justify-end gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+                className="flex items-center justify-end gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
               >
                 Amount {getSortIcon("amount")}
               </button>
               <button 
-                onClick={() => handleSort("marketplaceFees")}
-                className="flex items-center justify-end gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+                onClick={() => handleSort("seller")}
+                className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
               >
-                Marketplace Fees {getSortIcon("marketplaceFees")}
+                Seller {getSortIcon("seller")}
               </button>
               <button 
-                onClick={() => handleSort("sellerReceives")}
-                className="flex items-center justify-end gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+                onClick={() => handleSort("user")}
+                className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C]"
               >
-                Seller Receives {getSortIcon("sellerReceives")}
+                User {getSortIcon("user")}
               </button>
-              <button 
-                onClick={() => handleSort("sellerUser")}
-                className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
-              >
-                Seller User {getSortIcon("sellerUser")}
-              </button>
-              <button 
-                onClick={() => handleSort("affiliateFees")}
-                className="flex items-center justify-end gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
-              >
-                Affiliate Fees {getSortIcon("affiliateFees")}
-              </button>
-              <div className="font-medium text-sm text-[#8E9196]">Status</div>
-              <button 
-                onClick={() => handleSort("completedAt")}
-                className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
-              >
-                Completed @ {getSortIcon("completedAt")}
-              </button>
-              <button 
-                onClick={() => handleSort("templateId")}
-                className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
-              >
-                Template ID {getSortIcon("templateId")}
-              </button>
-              <button 
-                onClick={() => handleSort("checkoutId")}
-                className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
-              >
-                Checkout ID {getSortIcon("checkoutId")}
-              </button>
-              <button 
-                onClick={() => handleSort("rating")}
-                className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
-              >
-                Rating {getSortIcon("rating")}
-              </button>
-              <div className="font-medium text-sm text-[#8E9196]">Review</div>
             </div>
 
             <div className="divide-y divide-[#E5E7EB]">
@@ -221,34 +183,16 @@ export default function AdminTransactions() {
                   <div
                     key={index}
                     onClick={() => navigate(`/a/admin/transactions/${transaction.checkoutId}`)}
-                    className="grid grid-cols-[2fr,1.5fr,2fr,1.5fr,1.2fr,1.5fr,1.5fr,2fr,1.2fr,1fr,1.5fr,1.2fr,1.2fr,0.8fr,1.5fr] gap-4 p-4 hover:bg-[#F8F9FC] cursor-pointer transition-colors duration-200 group"
+                    className="grid grid-cols-[2fr,1fr,1.5fr,1fr,1.2fr,1.5fr,1.5fr] gap-4 p-4 hover:bg-[#F8F9FC] cursor-pointer transition-colors duration-200 group"
                   >
-                    <div className="text-sm text-[#1A1F2C] truncate" title={transaction.templateName}>
-                      {transaction.templateName}
+                    <div className="text-sm text-[#1A1F2C] truncate" title={transaction.concept}>
+                      {transaction.concept}
+                    </div>
+                    <div className="text-sm text-[#8E9196] capitalize">
+                      {transaction.type}
                     </div>
                     <div className="text-sm text-[#8E9196] whitespace-nowrap">
                       {transaction.createdAt}
-                    </div>
-                    <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.buyerEmail}>
-                      {transaction.buyerEmail}
-                    </div>
-                    <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.deliverables}>
-                      {transaction.deliverables}
-                    </div>
-                    <div className="text-sm text-[#8E9196] text-right whitespace-nowrap">
-                      ${transaction.amount.toFixed(2)}
-                    </div>
-                    <div className="text-sm text-[#8E9196] text-right whitespace-nowrap">
-                      ${transaction.marketplaceFees.toFixed(2)}
-                    </div>
-                    <div className="text-sm text-[#8E9196] text-right whitespace-nowrap">
-                      ${transaction.sellerReceives.toFixed(2)}
-                    </div>
-                    <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.sellerUser}>
-                      {transaction.sellerUser}
-                    </div>
-                    <div className="text-sm text-[#8E9196] text-right whitespace-nowrap">
-                      ${transaction.affiliateFees.toFixed(2)}
                     </div>
                     <div>
                       <Badge 
@@ -258,20 +202,14 @@ export default function AdminTransactions() {
                         {transaction.status}
                       </Badge>
                     </div>
-                    <div className="text-sm text-[#8E9196] whitespace-nowrap">
-                      {transaction.completedAt}
-                    </div>
-                    <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.templateId}>
-                      {transaction.templateId}
-                    </div>
-                    <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.checkoutId}>
-                      {transaction.checkoutId}
-                    </div>
                     <div className="text-sm text-[#8E9196] text-right whitespace-nowrap">
-                      {transaction.rating > 0 ? transaction.rating : '-'}
+                      ${transaction.amount.toFixed(2)}
                     </div>
-                    <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.review}>
-                      {transaction.review || '-'}
+                    <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.seller}>
+                      {transaction.seller}
+                    </div>
+                    <div className="text-sm text-[#8E9196] whitespace-nowrap" title={transaction.user}>
+                      {transaction.user}
                     </div>
                   </div>
                 ))

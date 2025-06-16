@@ -3,22 +3,14 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export interface AdminTransaction {
-  templateName: string;
-  createdAt: string;
-  buyerEmail: string;
-  deliverables: string;
-  amount: number;
-  marketplaceFees: number;
-  sellerReceives: number;
-  sellerUser: string;
-  affiliateFees: number;
-  status: string;
-  completedAt: string;
-  templateId: string;
-  checkoutId: string;
-  rating: number;
-  review: string;
+  concept: string;
   type: 'product' | 'community';
+  createdAt: string;
+  status: string;
+  amount: number;
+  seller: string;
+  user: string;
+  checkoutId: string;
 }
 
 export function useAdminTransactions() {
@@ -60,37 +52,24 @@ export function useAdminTransactions() {
         const firstItem = transaction.products_transaction_items?.[0];
         const productName = firstItem?.products?.name || 'Unknown Product';
         const variantName = firstItem?.variants?.name || '';
-        const templateName = variantName ? `${productName} - ${variantName}` : productName;
+        const concept = variantName ? `${productName} - ${variantName}` : productName;
         
         const buyerName = transaction.users 
           ? `${transaction.users.first_name || ''} ${transaction.users.last_name || ''}`.trim()
           : 'Unknown User';
         
         const sellerName = transaction.experts?.name || 'Unknown Expert';
-        const sellerEmail = transaction.experts?.email || '';
-
         const amount = transaction.total_amount || 0;
-        const marketplaceFees = amount * 0.1; // 10% marketplace fee
-        const affiliateFees = 0; // Default to 0 for now
-        const sellerReceives = amount - marketplaceFees - affiliateFees;
 
         return {
-          templateName,
+          concept,
+          type: 'product' as const,
           createdAt: new Date(transaction.created_at).toLocaleString(),
-          buyerEmail: transaction.users?.email || 'unknown@email.com',
-          deliverables: firstItem?.variants?.files_link || 'Digital product delivery',
-          amount,
-          marketplaceFees,
-          sellerReceives,
-          sellerUser: sellerEmail,
-          affiliateFees,
           status: transaction.status || 'unknown',
-          completedAt: transaction.status === 'completed' ? new Date(transaction.created_at).toLocaleString() : '',
-          templateId: `TEMP${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
+          amount,
+          seller: sellerName,
+          user: buyerName,
           checkoutId: transaction.product_transaction_uuid,
-          rating: 0, // We'll need to fetch this from reviews table if needed
-          review: '',
-          type: 'product' as const
         };
       }) || [];
 
