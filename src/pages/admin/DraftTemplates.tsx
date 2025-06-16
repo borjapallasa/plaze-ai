@@ -422,7 +422,7 @@ export default function DraftTemplates() {
                   variant={layout === 'list' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setLayout('list')}
-                  className="p-2"
+                  className="p-2 hidden sm:flex"
                 >
                   <LayoutList className="h-4 w-4" />
                 </Button>
