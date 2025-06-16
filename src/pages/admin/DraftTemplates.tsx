@@ -374,19 +374,19 @@ export default function DraftTemplates() {
 
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <div className="relative flex-1 max-w-md">
+            <div className="relative flex-1 max-w-none sm:max-w-lg">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
               <Input
-                placeholder="Type here to search"
+                placeholder="Search by template name, description, or uploaded by..."
                 className="pl-9"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
             
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 items-center w-full sm:w-auto">
               <Select value={`${sortField}_${sortOrder}`} onValueChange={handleSortChange}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-full sm:w-[200px]">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
                 <SelectContent>
@@ -401,7 +401,7 @@ export default function DraftTemplates() {
                 </SelectContent>
               </Select>
               
-              <div className="flex gap-2">
+              <div className="flex gap-2 ml-2">
                 <Button
                   variant={layout === 'gallery' ? 'default' : 'outline'}
                   size="sm"
