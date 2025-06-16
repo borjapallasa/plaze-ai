@@ -15,9 +15,11 @@ import { TemplateOrganization } from "@/components/admin/template/TemplateOrgani
 import { TemplateDemoCard } from "@/components/admin/template/TemplateDemoCard";
 
 export default function AdminTemplateDetails() {
-  const params = useParams();
+  const { id } = useParams();
+  
+  // Pass the id parameter explicitly as productId to the useProduct hook
   const { product, isLoading, error } = useProduct({
-    productId: params.id
+    productId: id
   });
 
   if (isLoading) {

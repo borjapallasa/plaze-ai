@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { ProductData } from '@/types/Product';
@@ -81,8 +82,13 @@ export function useProduct({ productId, productSlug }: UseProductDataProps = {})
         
         let productQuery = supabase
           .from('products')
-          .select('*')
-          .eq('status', 'active')
+          .select('*');
+
+        // For admin pages, don't filter by status to show all products including drafts
+        const isAdminPage = window.location.pathname.includes('/admin/');
+        if (!isAdminPage) {
+          productQuery = productQuery.eq('status', 'active');
+        }
 
         if (effectiveProductId) {
           productQuery = productQuery.eq('product_uuid', effectiveProductId);
@@ -92,7 +98,7 @@ export function useProduct({ productId, productSlug }: UseProductDataProps = {})
           throw new Error("Either productId or productSlug must be provided.");
         }
 
-        const { data: productData, error: productError } = await productQuery.single();
+        const { data: productData, error: productError } = await productQuery.maybeSingle();
 
         if (productError) {
           console.error("Error fetching product:", productError);
@@ -102,6 +108,12 @@ export function useProduct({ productId, productSlug }: UseProductDataProps = {})
             description: "Failed to load product data.",
             variant: "destructive"
           });
+          return;
+        }
+
+        if (!productData) {
+          console.log("No product found");
+          setError(new Error("Product not found"));
           return;
         }
 
