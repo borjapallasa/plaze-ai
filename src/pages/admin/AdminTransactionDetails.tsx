@@ -135,7 +135,7 @@ export default function AdminTransactionDetails() {
 
             <TransactionFiles transactionId={transactionId || ''} filesUrl={filesUrl} guidesUrl={mockData.guidesUrl} customRequest={mockData.customRequest} />
 
-            {mockData.review && <TransactionReview rating={mockData.rating} review={mockData.review} />}
+            <TransactionReview transactionUuid={transaction.transaction_uuid} />
           </CardContent>
         </Card>
       </div>
