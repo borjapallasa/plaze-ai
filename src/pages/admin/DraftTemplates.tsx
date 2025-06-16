@@ -172,21 +172,21 @@ export default function DraftTemplates() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[60px]"></TableHead>
+            <TableHead className="w-[80px]"></TableHead>
             <TableHead>Template</TableHead>
-            <TableHead className="w-[150px]">
+            <TableHead className="w-[200px]">
               <div className="flex items-center gap-1.5">
                 <User className="h-3.5 w-3.5 text-[#8E9196]" />
                 <span>Uploaded by</span>
               </div>
             </TableHead>
-            <TableHead className="w-[120px]">
+            <TableHead className="w-[140px]">
               <div className="flex items-center gap-1.5">
                 <DollarSign className="h-3.5 w-3.5 text-[#8E9196]" />
                 <span>Price</span>
               </div>
             </TableHead>
-            <TableHead className="w-[150px]">
+            <TableHead className="w-[180px]">
               <div className="flex items-center gap-1.5">
                 <Calendar className="h-3.5 w-3.5 text-[#8E9196]" />
                 <span>Created @</span>
@@ -202,7 +202,7 @@ export default function DraftTemplates() {
               onClick={() => handleTemplateClick(template.id)}
             >
               <TableCell>
-                <div className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100">
+                <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100">
                   <img
                     src={template.image}
                     alt={template.title}
