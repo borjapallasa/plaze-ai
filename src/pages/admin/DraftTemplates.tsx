@@ -1,10 +1,10 @@
+
 import { Search } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { MainHeader } from "@/components/MainHeader";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -24,16 +24,7 @@ interface Template {
   createdAt: string;
 }
 
-const categories = [
-  { name: "Airtable", color: "bg-purple-100 text-purple-700 hover:bg-purple-100" },
-  { name: "Automation", color: "bg-pink-100 text-pink-700 hover:bg-pink-100" },
-  { name: "Chatbot", color: "bg-green-100 text-green-700 hover:bg-green-100" },
-  { name: "Mini SaaS", color: "bg-blue-100 text-blue-700 hover:bg-blue-100" },
-  { name: "Notion", color: "bg-yellow-100 text-yellow-700 hover:bg-yellow-100" }
-];
-
 export default function DraftTemplates() {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
@@ -86,10 +77,9 @@ export default function DraftTemplates() {
   };
 
   const filteredTemplates = templates.filter(template => {
-    const matchesCategory = selectedCategory ? template.category === selectedCategory : true;
     const matchesSearch = template.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          template.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+    return matchesSearch;
   });
 
   if (isLoading) {
@@ -146,26 +136,6 @@ export default function DraftTemplates() {
             />
           </div>
 
-          <div className="space-y-2">
-            <p className="text-sm text-[#8E9196] font-medium">By Category</p>
-            <div className="flex flex-wrap gap-2">
-              {categories.map((category) => (
-                <Badge
-                  key={category.name}
-                  variant="secondary"
-                  className={`cursor-pointer ${category.color} ${
-                    selectedCategory === category.name ? "ring-2 ring-black ring-opacity-5" : ""
-                  }`}
-                  onClick={() => setSelectedCategory(
-                    selectedCategory === category.name ? null : category.name
-                  )}
-                >
-                  {category.name}
-                </Badge>
-              ))}
-            </div>
-          </div>
-
           {filteredTemplates.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-[#8E9196]">No draft templates found matching your criteria.</p>
@@ -190,14 +160,6 @@ export default function DraftTemplates() {
                     <div className="space-y-4">
                       <div className="flex items-start justify-between gap-4">
                         <h3 className="text-xl font-semibold">{template.title}</h3>
-                        <Badge 
-                          variant="secondary" 
-                          className={
-                            categories.find(c => c.name === template.category)?.color || "bg-gray-100 text-gray-700"
-                          }
-                        >
-                          {template.category}
-                        </Badge>
                       </div>
                       
                       <p className="text-[#8E9196] line-clamp-3">{template.description}</p>
