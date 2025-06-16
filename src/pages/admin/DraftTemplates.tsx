@@ -1,4 +1,5 @@
-import { Search } from "lucide-react";
+
+import { Search, User, DollarSign, Calendar } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
@@ -164,15 +165,24 @@ export default function DraftTemplates() {
                       
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <p className="text-sm text-[#8E9196]">Uploaded By</p>
+                          <div className="flex items-center gap-1.5 mb-1">
+                            <User className="h-3.5 w-3.5 text-[#8E9196]" />
+                            <p className="text-sm text-[#8E9196]">Uploaded By</p>
+                          </div>
                           <p className="text-sm font-medium truncate">{template.uploadedBy}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-[#8E9196]">Price</p>
+                          <div className="flex items-center gap-1.5 mb-1">
+                            <DollarSign className="h-3.5 w-3.5 text-[#8E9196]" />
+                            <p className="text-sm text-[#8E9196]">Price</p>
+                          </div>
                           <p className="text-sm font-medium">{template.price}</p>
                         </div>
                         <div className="sm:col-span-2">
-                          <p className="text-sm text-[#8E9196]">Created @</p>
+                          <div className="flex items-center gap-1.5 mb-1">
+                            <Calendar className="h-3.5 w-3.5 text-[#8E9196]" />
+                            <p className="text-sm text-[#8E9196]">Created @</p>
+                          </div>
                           <p className="text-sm font-medium">{template.createdAt}</p>
                         </div>
                       </div>
