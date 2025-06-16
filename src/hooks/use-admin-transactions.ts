@@ -30,6 +30,7 @@ export function useAdminTransactions() {
           type,
           transaction_fees,
           gross_margin,
+          products_transactions_uuid,
           experts!transactions_expert_uuid_fkey(name, email),
           users!transactions_buyer_user_uuid_fkey(first_name, last_name, email)
         `)
@@ -59,7 +60,7 @@ export function useAdminTransactions() {
           amount,
           seller: sellerName,
           user: buyerName,
-          checkoutId: transaction.transaction_uuid,
+          checkoutId: transaction.products_transactions_uuid || transaction.transaction_uuid,
           transactionUuid: transaction.transaction_uuid,
         };
       }) || [];
