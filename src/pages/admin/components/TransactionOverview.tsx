@@ -1,5 +1,5 @@
 
-import { User, Calendar, Mail } from "lucide-react";
+import { User, Calendar, Mail, Package, CheckCircle, CreditCard, Hash } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { toStartCase } from "@/lib/utils";
 
@@ -148,6 +148,7 @@ export function TransactionOverview({
             {transactionType && (
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
+                  <Package className="h-4 w-4 text-[#9b87f5]" />
                   <span className="text-xs font-semibold text-[#8E9196] uppercase tracking-wide">Type</span>
                 </div>
                 <div>
@@ -161,6 +162,7 @@ export function TransactionOverview({
             {transactionStatus && (
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-[#9b87f5]" />
                   <span className="text-xs font-semibold text-[#8E9196] uppercase tracking-wide">Status</span>
                 </div>
                 <div>
@@ -174,6 +176,7 @@ export function TransactionOverview({
             {paymentProvider && (
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
+                  <CreditCard className="h-4 w-4 text-[#9b87f5]" />
                   <span className="text-xs font-semibold text-[#8E9196] uppercase tracking-wide">Payment Provider</span>
                 </div>
                 <div>
@@ -187,7 +190,8 @@ export function TransactionOverview({
             {paymentReferenceId && (
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-semibold text-[#8E9196] uppercase tracking-wide">Payment Reference ID</span>
+                  <Hash className="h-4 w-4 text-[#9b87f5]" />
+                  <span className="text-xs font-semibold text-[#8E9196] uppercase tracking-wide">ID</span>
                 </div>
                 <div>
                   <span className="font-medium text-[#1A1F2C] text-sm font-mono break-all">
