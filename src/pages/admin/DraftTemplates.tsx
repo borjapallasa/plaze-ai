@@ -91,7 +91,10 @@ export default function DraftTemplates() {
 
   const handleSortChange = (value: string) => {
     console.log('Sort change:', value);
-    const [field, order] = value.split('_') as [SortField, SortOrder];
+    const lastUnderscoreIndex = value.lastIndexOf('_');
+    const field = value.substring(0, lastUnderscoreIndex) as SortField;
+    const order = value.substring(lastUnderscoreIndex + 1) as SortOrder;
+    console.log('Parsed sort:', { field, order });
     setSortField(field);
     setSortOrder(order);
   };
