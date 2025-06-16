@@ -1,5 +1,5 @@
 
-import { Search, User, DollarSign, Calendar, LayoutGrid, LayoutList } from "lucide-react";
+import { Search, User, DollarSign, Calendar, LayoutGrid, LayoutList, Grid3X3 } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
@@ -25,11 +25,11 @@ interface Template {
   createdAt: string;
 }
 
-type LayoutType = 'grid' | 'list';
+type LayoutType = 'gallery' | 'grid' | 'list';
 
 export default function DraftTemplates() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [layout, setLayout] = useState<LayoutType>('list');
+  const [layout, setLayout] = useState<LayoutType>('grid');
   const navigate = useNavigate();
 
   const { data: templates = [], isLoading, error } = useQuery({
@@ -120,7 +120,7 @@ export default function DraftTemplates() {
     );
   }
 
-  const renderGridLayout = () => (
+  const renderGalleryLayout = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {filteredTemplates.map((template) => (
         <Card 
@@ -168,7 +168,7 @@ export default function DraftTemplates() {
     </div>
   );
 
-  const renderListLayout = () => (
+  const renderGridLayout = () => (
     <div className="border rounded-lg">
       <Table>
         <TableHeader>
@@ -233,6 +233,57 @@ export default function DraftTemplates() {
     </div>
   );
 
+  const renderListLayout = () => (
+    <div className="space-y-6">
+      {filteredTemplates.map((template) => (
+        <Card 
+          key={template.id}
+          className="cursor-pointer hover:shadow-md transition-shadow"
+          onClick={() => handleTemplateClick(template.id)}
+        >
+          <CardContent className="p-6">
+            <div className="flex gap-6">
+              <div className="w-32 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
+                <img
+                  src={template.image}
+                  alt={template.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              
+              <div className="flex-1 space-y-3">
+                <div>
+                  <h3 className="font-semibold text-xl mb-2">{template.title}</h3>
+                  <p className="text-[#8E9196] line-clamp-3">{template.description}</p>
+                </div>
+                
+                <div className="flex flex-wrap gap-6 text-sm">
+                  <div className="flex items-center gap-2">
+                    <User className="h-4 w-4 text-[#8E9196]" />
+                    <span className="text-[#8E9196]">Uploaded by:</span>
+                    <span className="font-medium">{template.uploadedBy}</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <DollarSign className="h-4 w-4 text-[#8E9196]" />
+                    <span className="text-[#8E9196]">Price:</span>
+                    <span className="font-medium">{template.price}</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-[#8E9196]" />
+                    <span className="text-[#8E9196]">Created:</span>
+                    <span className="font-medium">{template.createdAt}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+
   return (
     <>
       <MainHeader />
@@ -256,12 +307,21 @@ export default function DraftTemplates() {
             
             <div className="flex gap-2">
               <Button
+                variant={layout === 'gallery' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setLayout('gallery')}
+                className="flex items-center gap-2"
+              >
+                <LayoutGrid className="h-4 w-4" />
+                Gallery
+              </Button>
+              <Button
                 variant={layout === 'grid' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setLayout('grid')}
                 className="flex items-center gap-2"
               >
-                <LayoutGrid className="h-4 w-4" />
+                <Grid3X3 className="h-4 w-4" />
                 Grid
               </Button>
               <Button
@@ -281,7 +341,11 @@ export default function DraftTemplates() {
               <p className="text-[#8E9196]">No draft templates found matching your criteria.</p>
             </div>
           ) : (
-            layout === 'grid' ? renderGridLayout() : renderListLayout()
+            <>
+              {layout === 'gallery' && renderGalleryLayout()}
+              {layout === 'grid' && renderGridLayout()}
+              {layout === 'list' && renderListLayout()}
+            </>
           )}
         </div>
       </div>
