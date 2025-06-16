@@ -49,6 +49,12 @@ export default function AdminTransactions() {
     }
   };
 
+  const handleSortChange = (value: string) => {
+    const [field, direction] = value.split('-') as [keyof AdminTransaction, "asc" | "desc"];
+    setSortField(field);
+    setSortDirection(direction);
+  };
+
   const getSortIcon = (field: keyof AdminTransaction) => {
     if (sortField !== field) return null;
     return sortDirection === "asc" ? 
@@ -107,6 +113,23 @@ export default function AdminTransactions() {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
+      <Select value={`${sortField}-${sortDirection}`} onValueChange={handleSortChange}>
+        <SelectTrigger className="w-[200px] border-[#E5E7EB]">
+          <SelectValue placeholder="Sort By" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="createdAt-desc">Date (Newest First)</SelectItem>
+          <SelectItem value="createdAt-asc">Date (Oldest First)</SelectItem>
+          <SelectItem value="amount-desc">Amount (High to Low)</SelectItem>
+          <SelectItem value="amount-asc">Amount (Low to High)</SelectItem>
+          <SelectItem value="concept-asc">ID (A to Z)</SelectItem>
+          <SelectItem value="concept-desc">ID (Z to A)</SelectItem>
+          <SelectItem value="user-asc">User (A to Z)</SelectItem>
+          <SelectItem value="user-desc">User (Z to A)</SelectItem>
+          <SelectItem value="seller-asc">Seller (A to Z)</SelectItem>
+          <SelectItem value="seller-desc">Seller (Z to A)</SelectItem>
+        </SelectContent>
+      </Select>
       <Select value={statusFilter} onValueChange={setStatusFilter}>
         <SelectTrigger className="w-[180px] border-[#E5E7EB]">
           <SelectValue placeholder="Filter By Status" />
