@@ -1,5 +1,5 @@
 
-import { Search, User, DollarSign, Calendar } from "lucide-react";
+import { Search, User, DollarSign, Calendar, LayoutGrid, LayoutList } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface Template {
   id: string;
@@ -23,8 +25,11 @@ interface Template {
   createdAt: string;
 }
 
+type LayoutType = 'grid' | 'list';
+
 export default function DraftTemplates() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [layout, setLayout] = useState<LayoutType>('list');
   const navigate = useNavigate();
 
   const { data: templates = [], isLoading, error } = useQuery({
@@ -115,6 +120,119 @@ export default function DraftTemplates() {
     );
   }
 
+  const renderGridLayout = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {filteredTemplates.map((template) => (
+        <Card 
+          key={template.id}
+          className="cursor-pointer hover:shadow-lg transition-shadow"
+          onClick={() => handleTemplateClick(template.id)}
+        >
+          <CardContent className="p-0">
+            <div className="aspect-video w-full overflow-hidden rounded-t-lg bg-gray-100">
+              <img
+                src={template.image}
+                alt={template.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="p-4 space-y-3">
+              <div>
+                <h3 className="font-semibold text-lg line-clamp-1">{template.title}</h3>
+                <p className="text-sm text-[#8E9196] line-clamp-2">{template.description}</p>
+              </div>
+              
+              <div className="space-y-2 text-xs">
+                <div className="flex items-center gap-2">
+                  <User className="h-3 w-3 text-[#8E9196]" />
+                  <span className="text-[#8E9196]">Uploaded by:</span>
+                  <span className="font-medium truncate">{template.uploadedBy}</span>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <DollarSign className="h-3 w-3 text-[#8E9196]" />
+                  <span className="text-[#8E9196]">Price:</span>
+                  <span className="font-medium">{template.price}</span>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-3 w-3 text-[#8E9196]" />
+                  <span className="text-[#8E9196]">Created:</span>
+                  <span className="font-medium text-xs">{template.createdAt}</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+
+  const renderListLayout = () => (
+    <div className="border rounded-lg">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-[60px]"></TableHead>
+            <TableHead>Template</TableHead>
+            <TableHead className="w-[150px]">
+              <div className="flex items-center gap-1.5">
+                <User className="h-3.5 w-3.5 text-[#8E9196]" />
+                <span>Uploaded by</span>
+              </div>
+            </TableHead>
+            <TableHead className="w-[120px]">
+              <div className="flex items-center gap-1.5">
+                <DollarSign className="h-3.5 w-3.5 text-[#8E9196]" />
+                <span>Price</span>
+              </div>
+            </TableHead>
+            <TableHead className="w-[150px]">
+              <div className="flex items-center gap-1.5">
+                <Calendar className="h-3.5 w-3.5 text-[#8E9196]" />
+                <span>Created @</span>
+              </div>
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {filteredTemplates.map((template) => (
+            <TableRow 
+              key={template.id}
+              className="cursor-pointer hover:bg-accent/50"
+              onClick={() => handleTemplateClick(template.id)}
+            >
+              <TableCell>
+                <div className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100">
+                  <img
+                    src={template.image}
+                    alt={template.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="space-y-1">
+                  <h3 className="font-semibold text-sm">{template.title}</h3>
+                  <p className="text-xs text-[#8E9196] line-clamp-2">{template.description}</p>
+                </div>
+              </TableCell>
+              <TableCell>
+                <span className="text-sm font-medium truncate">{template.uploadedBy}</span>
+              </TableCell>
+              <TableCell>
+                <span className="text-sm font-medium">{template.price}</span>
+              </TableCell>
+              <TableCell>
+                <span className="text-sm font-medium">{template.createdAt}</span>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
+
   return (
     <>
       <MainHeader />
@@ -125,14 +243,37 @@ export default function DraftTemplates() {
         </div>
 
         <div className="space-y-6">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
-            <Input
-              placeholder="Type here to search"
-              className="pl-9"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
+              <Input
+                placeholder="Type here to search"
+                className="pl-9"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            
+            <div className="flex gap-2">
+              <Button
+                variant={layout === 'grid' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setLayout('grid')}
+                className="flex items-center gap-2"
+              >
+                <LayoutGrid className="h-4 w-4" />
+                Grid
+              </Button>
+              <Button
+                variant={layout === 'list' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setLayout('list')}
+                className="flex items-center gap-2"
+              >
+                <LayoutList className="h-4 w-4" />
+                List
+              </Button>
+            </div>
           </div>
 
           {filteredTemplates.length === 0 ? (
@@ -140,68 +281,7 @@ export default function DraftTemplates() {
               <p className="text-[#8E9196]">No draft templates found matching your criteria.</p>
             </div>
           ) : (
-            <div className="border rounded-lg">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[60px]"></TableHead>
-                    <TableHead>Template</TableHead>
-                    <TableHead className="w-[150px]">
-                      <div className="flex items-center gap-1.5">
-                        <User className="h-3.5 w-3.5 text-[#8E9196]" />
-                        <span>Uploaded by</span>
-                      </div>
-                    </TableHead>
-                    <TableHead className="w-[120px]">
-                      <div className="flex items-center gap-1.5">
-                        <DollarSign className="h-3.5 w-3.5 text-[#8E9196]" />
-                        <span>Price</span>
-                      </div>
-                    </TableHead>
-                    <TableHead className="w-[150px]">
-                      <div className="flex items-center gap-1.5">
-                        <Calendar className="h-3.5 w-3.5 text-[#8E9196]" />
-                        <span>Created @</span>
-                      </div>
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredTemplates.map((template) => (
-                    <TableRow 
-                      key={template.id}
-                      className="cursor-pointer hover:bg-accent/50"
-                      onClick={() => handleTemplateClick(template.id)}
-                    >
-                      <TableCell>
-                        <div className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100">
-                          <img
-                            src={template.image}
-                            alt={template.title}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="space-y-1">
-                          <h3 className="font-semibold text-sm">{template.title}</h3>
-                          <p className="text-xs text-[#8E9196] line-clamp-2">{template.description}</p>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-sm font-medium truncate">{template.uploadedBy}</span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-sm font-medium">{template.price}</span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-sm font-medium">{template.createdAt}</span>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+            layout === 'grid' ? renderGridLayout() : renderListLayout()
           )}
         </div>
       </div>
