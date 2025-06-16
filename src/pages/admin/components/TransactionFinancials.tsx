@@ -71,33 +71,33 @@ export function TransactionFinancials({
       <CardContent>
         <div className="grid grid-cols-2 gap-4">
           <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-            <span className="text-[#8E9196] mr-2">Amount</span>
-            <span className="font-medium shrink-0">${financials.amount.toFixed(2)}</span>
+            <span className="text-[#8E9196] text-sm sm:text-base">Amount</span>
+            <span className="font-medium text-sm sm:text-base shrink-0">${financials.amount.toFixed(2)}</span>
           </div>
           
           <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-            <span className="text-[#8E9196] mr-2">Stripe Fees</span>
-            <span className="font-medium shrink-0">${financials.stripe_fees.toFixed(2)}</span>
+            <span className="text-[#8E9196] text-sm sm:text-base">Stripe Fees</span>
+            <span className="font-medium text-sm sm:text-base shrink-0">${financials.stripe_fees.toFixed(2)}</span>
           </div>
           
           <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-            <span className="text-[#8E9196] mr-2">Transaction Fees</span>
-            <span className="font-medium shrink-0">${financials.transaction_fees.toFixed(2)}</span>
+            <span className="text-[#8E9196] text-sm sm:text-base">Transaction Fees</span>
+            <span className="font-medium text-sm sm:text-base shrink-0">${financials.transaction_fees.toFixed(2)}</span>
           </div>
           
           <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-            <span className="text-[#8E9196] mr-2">Amount Taxes</span>
-            <span className="font-medium shrink-0">${financials.amount_taxes.toFixed(2)}</span>
+            <span className="text-[#8E9196] text-sm sm:text-base">Taxes</span>
+            <span className="font-medium text-sm sm:text-base shrink-0">${financials.amount_taxes.toFixed(2)}</span>
           </div>
           
           <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-            <span className="text-[#8E9196] mr-2">Affiliate Fees</span>
-            <span className="font-medium shrink-0">${financials.afiliate_fees.toFixed(2)}</span>
+            <span className="text-[#8E9196] text-sm sm:text-base">Affiliate Fees</span>
+            <span className="font-medium text-sm sm:text-base shrink-0">${financials.afiliate_fees.toFixed(2)}</span>
           </div>
           
           <div className="flex justify-between items-center p-3 bg-[#F8F9FC] rounded-lg border-2 border-[#9b87f5]">
-            <span className="font-medium text-lg text-[#1A1F2C] mr-2">Gross Margin</span>
-            <span className="font-medium text-lg text-[#9b87f5] shrink-0">${financials.gross_margin.toFixed(2)}</span>
+            <span className="font-medium text-base sm:text-lg text-[#1A1F2C]">Gross Margin</span>
+            <span className="font-medium text-base sm:text-lg text-[#9b87f5] shrink-0">${financials.gross_margin.toFixed(2)}</span>
           </div>
         </div>
       </CardContent>
