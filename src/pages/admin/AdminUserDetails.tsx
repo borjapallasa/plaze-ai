@@ -429,11 +429,9 @@ export default function AdminUserDetails() {
                   ))}
                 </div>
                 
-                <div className="mt-4 p-3 bg-[#F8F9FC] rounded-lg border border-[#9b87f5]">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-[#8E9196]">Total Paid Out</span>
-                    <span className="font-semibold text-lg text-[#9b87f5]">${totalPaidOut.toFixed(2)}</span>
-                  </div>
+                <div className="mt-3 flex items-center justify-between">
+                  <span className="text-sm text-[#8E9196]">Total Paid Out</span>
+                  <span className="font-medium">${totalPaidOut.toFixed(2)}</span>
                 </div>
               </div>
             </CardContent>
