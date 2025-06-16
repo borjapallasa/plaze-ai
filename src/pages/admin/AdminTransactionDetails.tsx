@@ -136,7 +136,14 @@ export default function AdminTransactionDetails() {
           </CardHeader>
 
           <CardContent className="space-y-8">
-            <TransactionOverview buyerUser={transaction.buyer_user} sellerUser={transaction.seller_user} transactionDate={new Date(transaction.created_at).toLocaleString()} />
+            <TransactionOverview 
+              buyerUser={transaction.buyer_user} 
+              sellerUser={transaction.seller_user} 
+              transactionDate={new Date(transaction.created_at).toLocaleString()}
+              transactionType={transaction.type}
+              transactionStatus={transaction.status}
+              paymentProvider={transaction.payment_provider}
+            />
 
             <Separator className="my-8" />
 
@@ -153,9 +160,6 @@ export default function AdminTransactionDetails() {
               filesUrl={filesUrl} 
               guidesUrl={mockData.guidesUrl} 
               customRequest={mockData.customRequest}
-              transactionType={transaction.type}
-              transactionStatus={transaction.status}
-              paymentProvider={transaction.payment_provider}
             />
 
             {/* Only render TransactionReview when we have the actual transaction_uuid */}

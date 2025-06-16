@@ -1,6 +1,7 @@
 
 import { User, Calendar, Mail } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { toStartCase } from "@/lib/utils";
 
 interface TransactionOverviewProps {
   buyerUser?: {
@@ -14,9 +15,19 @@ interface TransactionOverviewProps {
     avatar?: string;
   };
   transactionDate: string;
+  transactionType?: string;
+  transactionStatus?: string;
+  paymentProvider?: string;
 }
 
-export function TransactionOverview({ buyerUser, sellerUser, transactionDate }: TransactionOverviewProps) {
+export function TransactionOverview({ 
+  buyerUser, 
+  sellerUser, 
+  transactionDate,
+  transactionType,
+  transactionStatus,
+  paymentProvider
+}: TransactionOverviewProps) {
   const formatEmail = (email: string) => {
     if (email.length > 25) {
       const [local, domain] = email.split('@');
@@ -123,6 +134,35 @@ export function TransactionOverview({ buyerUser, sellerUser, transactionDate }: 
           </div>
         </div>
       </div>
+
+      {/* Additional Information section */}
+      {(transactionType || transactionStatus || paymentProvider) && (
+        <div className="border-t pt-4 mt-6">
+          <h4 className="font-medium mb-3">Additional Information</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {transactionType && (
+              <div className="flex flex-col p-3 bg-gray-50 rounded-lg">
+                <span className="text-xs font-semibold text-[#8E9196] uppercase tracking-wide mb-1">Type</span>
+                <span className="font-medium text-[#1A1F2C]">{toStartCase(transactionType)}</span>
+              </div>
+            )}
+            
+            {transactionStatus && (
+              <div className="flex flex-col p-3 bg-gray-50 rounded-lg">
+                <span className="text-xs font-semibold text-[#8E9196] uppercase tracking-wide mb-1">Status</span>
+                <span className="font-medium text-[#1A1F2C]">{toStartCase(transactionStatus)}</span>
+              </div>
+            )}
+            
+            {paymentProvider && (
+              <div className="flex flex-col p-3 bg-gray-50 rounded-lg">
+                <span className="text-xs font-semibold text-[#8E9196] uppercase tracking-wide mb-1">Payment Provider</span>
+                <span className="font-medium text-[#1A1F2C]">{toStartCase(paymentProvider)}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
