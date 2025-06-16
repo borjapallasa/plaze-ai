@@ -109,17 +109,20 @@ export default function DraftTemplates() {
           bValue = new Date(b.createdAt).getTime();
           break;
         case 'submitted_at':
-          // Handle null/undefined submitted_at values
-          aValue = a.submittedAt ? new Date(a.submittedAt).getTime() : 0;
-          bValue = b.submittedAt ? new Date(b.submittedAt).getTime() : 0;
+          // Handle null/undefined submitted_at values - put them at the end for desc, beginning for asc
+          if (!a.submittedAt && !b.submittedAt) return 0;
+          if (!a.submittedAt) return sortOrder === 'desc' ? 1 : -1;
+          if (!b.submittedAt) return sortOrder === 'desc' ? -1 : 1;
+          aValue = new Date(a.submittedAt).getTime();
+          bValue = new Date(b.submittedAt).getTime();
           break;
         case 'name':
           aValue = a.title.toLowerCase();
           bValue = b.title.toLowerCase();
           break;
         case 'price_from':
-          aValue = a.priceValue;
-          bValue = b.priceValue;
+          aValue = Number(a.priceValue) || 0;
+          bValue = Number(b.priceValue) || 0;
           break;
         default:
           return 0;
