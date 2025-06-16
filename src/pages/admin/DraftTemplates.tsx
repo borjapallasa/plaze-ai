@@ -1,4 +1,3 @@
-
 import { Search } from "lucide-react";
 import { useState } from "react";
 import { MainHeader } from "@/components/MainHeader";
@@ -67,7 +66,7 @@ export default function DraftTemplates() {
   return (
     <>
       <MainHeader />
-      <div className="container mx-auto px-4 py-8 max-w-[1200px] mt-16">
+      <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16">
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-[#1A1F2C] mb-2">Draft Templates</h1>
           <p className="text-[#8E9196]">Manage and review all template drafts</p>
