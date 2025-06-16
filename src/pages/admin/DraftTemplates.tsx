@@ -40,10 +40,10 @@ export default function DraftTemplates() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
-  // Switch to grid view if currently on list view and on mobile
+  // Switch to gallery view if currently on list view and on mobile
   useEffect(() => {
     if (isMobile && layout === 'list') {
-      setLayout('grid');
+      setLayout('gallery');
     }
   }, [isMobile, layout]);
 
