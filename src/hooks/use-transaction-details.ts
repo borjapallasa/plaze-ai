@@ -7,6 +7,8 @@ export interface TransactionDetails {
   total_amount: number;
   created_at: string;
   status: string;
+  type?: string;
+  payment_provider?: string;
   buyer_user?: {
     name: string;
     email: string;
@@ -141,6 +143,8 @@ export function useTransactionDetails(transactionId: string) {
         total_amount: transaction.total_amount || 0,
         created_at: transaction.created_at || new Date().toISOString(),
         status: transaction.status || 'unknown',
+        type: transaction.type || undefined,
+        payment_provider: transaction.payment_provider || undefined,
         buyer_user: buyerUser,
         seller_user: sellerUser,
         items: transactionItems

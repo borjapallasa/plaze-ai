@@ -148,7 +148,15 @@ export default function AdminTransactionDetails() {
 
             <Separator className="my-8" />
 
-            <TransactionFiles transactionId={transactionId || ''} filesUrl={filesUrl} guidesUrl={mockData.guidesUrl} customRequest={mockData.customRequest} />
+            <TransactionFiles 
+              transactionId={transactionId || ''} 
+              filesUrl={filesUrl} 
+              guidesUrl={mockData.guidesUrl} 
+              customRequest={mockData.customRequest}
+              transactionType={transaction.type}
+              transactionStatus={transaction.status}
+              paymentProvider={transaction.payment_provider}
+            />
 
             {/* Only render TransactionReview when we have the actual transaction_uuid */}
             {actualTransactionUuid && (

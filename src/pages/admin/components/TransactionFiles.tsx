@@ -21,9 +21,20 @@ interface TransactionFilesProps {
   filesUrl?: string;
   guidesUrl?: string;
   customRequest?: string;
+  transactionType?: string;
+  transactionStatus?: string;
+  paymentProvider?: string;
 }
 
-export function TransactionFiles({ transactionId, filesUrl, guidesUrl, customRequest }: TransactionFilesProps) {
+export function TransactionFiles({ 
+  transactionId, 
+  filesUrl, 
+  guidesUrl, 
+  customRequest,
+  transactionType,
+  transactionStatus,
+  paymentProvider
+}: TransactionFilesProps) {
   const { data: transactionItems, isLoading, error } = useTransactionItems(transactionId);
 
   const copyToClipboard = (text: string, label: string) => {
@@ -225,70 +236,33 @@ export function TransactionFiles({ transactionId, filesUrl, guidesUrl, customReq
           </div>
         )}
 
-        {/* Legacy files and guides section */}
-        {(filesUrl || guidesUrl) && (
-          <>
-            <div className="border-t pt-4 mt-6">
-              <h4 className="font-medium mb-3">Additional Resources</h4>
-              <div className="space-y-4">
-                {filesUrl && (
-                  <div 
-                    className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors gap-4 cursor-pointer"
-                    onClick={handleFileClick}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="bg-white p-2 rounded-full shrink-0">
-                        <FileText className="h-5 w-5 text-[#9b87f5]" />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="font-medium">View Project Files</div>
-                        <div className="text-sm text-[#8E9196]">Access all project deliverables</div>
-                      </div>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-[#8E9196] hover:text-[#1A1F2C] shrink-0"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleFileClick();
-                      }}
-                    >
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                  </div>
-                )}
-
-                {guidesUrl && (
-                  <div 
-                    className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors gap-4 cursor-pointer"
-                    onClick={handleGuideClick}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="bg-white p-2 rounded-full shrink-0">
-                        <LinkIcon className="h-5 w-5 text-[#9b87f5]" />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="font-medium">View Project Guide</div>
-                        <div className="text-sm text-[#8E9196]">Access setup instructions</div>
-                      </div>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-[#8E9196] hover:text-[#1A1F2C] shrink-0"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleGuideClick();
-                      }}
-                    >
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                  </div>
-                )}
-              </div>
+        {/* Additional Information section */}
+        {(transactionType || transactionStatus || paymentProvider) && (
+          <div className="border-t pt-4 mt-6">
+            <h4 className="font-medium mb-3">Additional Information</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {transactionType && (
+                <div className="flex flex-col p-3 bg-gray-50 rounded-lg">
+                  <span className="text-xs font-semibold text-[#8E9196] uppercase tracking-wide mb-1">Type</span>
+                  <span className="font-medium text-[#1A1F2C]">{toStartCase(transactionType)}</span>
+                </div>
+              )}
+              
+              {transactionStatus && (
+                <div className="flex flex-col p-3 bg-gray-50 rounded-lg">
+                  <span className="text-xs font-semibold text-[#8E9196] uppercase tracking-wide mb-1">Status</span>
+                  <span className="font-medium text-[#1A1F2C]">{toStartCase(transactionStatus)}</span>
+                </div>
+              )}
+              
+              {paymentProvider && (
+                <div className="flex flex-col p-3 bg-gray-50 rounded-lg">
+                  <span className="text-xs font-semibold text-[#8E9196] uppercase tracking-wide mb-1">Payment Provider</span>
+                  <span className="font-medium text-[#1A1F2C]">{toStartCase(paymentProvider)}</span>
+                </div>
+              )}
             </div>
-          </>
+          </div>
         )}
 
         {customRequest && (
