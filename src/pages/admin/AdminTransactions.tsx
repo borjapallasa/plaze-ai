@@ -281,6 +281,31 @@ export default function AdminTransactions() {
       });
   };
 
+  const renderSearchAndFilter = () => (
+    <div className="flex flex-col sm:flex-row gap-4 mb-8">
+      <div className="relative flex-1">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
+        <Input
+          placeholder="Search by template name or buyer email"
+          className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C]"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
+      <Select value={statusFilter} onValueChange={setStatusFilter}>
+        <SelectTrigger className="w-[180px] border-[#E5E7EB]">
+          <SelectValue placeholder="Filter By Status" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">All Status</SelectItem>
+          <SelectItem value="completed">Completed</SelectItem>
+          <SelectItem value="pending">Pending</SelectItem>
+          <SelectItem value="failed">Failed</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  );
+
   const renderTransactionTable = (filteredTransactions: Transaction[]) => (
     <div className="rounded-lg border border-[#E5E7EB] bg-white">
       <ScrollArea className="h-[600px] w-full" type="always">
@@ -444,29 +469,6 @@ export default function AdminTransactions() {
           <p className="text-[#8E9196]">Manage and review all your transaction records</p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 mb-8">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
-            <Input
-              placeholder="Search by template name or buyer email"
-              className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C]"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[180px] border-[#E5E7EB]">
-              <SelectValue placeholder="Filter By Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="failed">Failed</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="all">All Transactions</TabsTrigger>
@@ -475,14 +477,17 @@ export default function AdminTransactions() {
           </TabsList>
           
           <TabsContent value="all" className="space-y-4">
+            {renderSearchAndFilter()}
             {renderTransactionTable(getFilteredTransactions())}
           </TabsContent>
           
           <TabsContent value="products" className="space-y-4">
+            {renderSearchAndFilter()}
             {renderTransactionTable(getFilteredTransactions('product'))}
           </TabsContent>
           
           <TabsContent value="communities" className="space-y-4">
+            {renderSearchAndFilter()}
             {renderTransactionTable(getFilteredTransactions('community'))}
           </TabsContent>
         </Tabs>
