@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { useExperts } from "@/hooks/admin/useExperts";
 import { ExpertsHeader } from "@/components/admin/experts/ExpertsHeader";
@@ -98,17 +97,17 @@ export default function AdminExperts() {
             />
           </div>
           
-          <div className="flex-1">
+          <div className="flex items-center gap-3 flex-shrink-0">
             <ExpertsSortSelector 
               sortValue={sortValue}
               onSortChange={handleSortChange}
             />
+            
+            <ExpertsLayoutSwitcher 
+              layout={layout}
+              setLayout={setLayout}
+            />
           </div>
-          
-          <ExpertsLayoutSwitcher 
-            layout={layout}
-            setLayout={setLayout}
-          />
         </div>
 
         {/* Mobile layout - filters first, then sort and layout on same line */}
