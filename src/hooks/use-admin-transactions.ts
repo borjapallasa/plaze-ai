@@ -1,4 +1,5 @@
 
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -136,15 +137,25 @@ export function useAdminCommunityTransactions() {
     queryFn: async (): Promise<AdminTransaction[]> => {
       console.log('Fetching admin community transactions from community_subscriptions_transactions table...');
       
-      // Fetch from community_subscriptions_transactions table with related data
+      // First, let's try a simple query without joins to see if we get any data
+      const { data: rawData, error: rawError } = await supabase
+        .from('community_subscriptions_transactions')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      console.log('Raw community transactions data:', rawData, 'Error:', rawError);
+
+      // Now try with joins using the correct column names
       const { data: communityTransactionData, error } = await supabase
         .from('community_subscriptions_transactions')
         .select(`
           community_subscription_transaction_uuid,
           amount,
           created_at,
-          communities(name),
-          users(first_name, last_name, email)
+          community_uuid,
+          user_uuid,
+          communities!community_subscriptions_transactions_community_uuid_fkey(name),
+          users!community_subscriptions_transactions_user_uuid_fkey(first_name, last_name, email)
         `)
         .order('created_at', { ascending: false });
 
@@ -182,3 +193,4 @@ export function useAdminCommunityTransactions() {
     },
   });
 }
+
