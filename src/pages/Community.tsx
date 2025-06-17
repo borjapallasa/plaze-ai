@@ -377,7 +377,7 @@ export default function CommunityPage() {
   return (
     <>
       <MainHeader />
-      <div className="container mx-auto px-4 py-8 max-w-[1200px] space-y-8 mt-16">
+      <div className="container mx-auto px-4 py-8 max-w-[1400px] space-y-8 mt-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-8">
             <Card className="p-6 space-y-6">
