@@ -53,18 +53,22 @@ export default function AdminExperts() {
           subtitle="Manage and review all expert profiles" 
         />
 
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-          <ExpertsFilters
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            statusFilter={statusFilter}
-            setStatusFilter={setStatusFilter}
-          />
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-6">
+          <div className="flex-1 w-full lg:w-auto">
+            <ExpertsFilters
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              statusFilter={statusFilter}
+              setStatusFilter={setStatusFilter}
+            />
+          </div>
           
-          <ExpertsLayoutSwitcher 
-            layout={layout}
-            setLayout={setLayout}
-          />
+          <div className="flex-shrink-0">
+            <ExpertsLayoutSwitcher 
+              layout={layout}
+              setLayout={setLayout}
+            />
+          </div>
         </div>
 
         {isLoading ? (

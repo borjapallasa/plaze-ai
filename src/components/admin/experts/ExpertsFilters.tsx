@@ -23,7 +23,7 @@ export function ExpertsFilters({
   setStatusFilter 
 }: ExpertsFiltersProps) {
   return (
-    <div className="flex flex-col sm:flex-row gap-4 mb-8">
+    <div className="flex flex-col sm:flex-row gap-4">
       <div className="relative flex-1">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
         <Input
@@ -34,7 +34,7 @@ export function ExpertsFilters({
         />
       </div>
       <Select value={statusFilter} onValueChange={setStatusFilter}>
-        <SelectTrigger className="w-[180px] border-[#E5E7EB]">
+        <SelectTrigger className="w-full sm:w-[180px] border-[#E5E7EB]">
           <SelectValue placeholder="Filter By Status" />
         </SelectTrigger>
         <SelectContent>
