@@ -1,3 +1,4 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { useExperts } from "@/hooks/admin/useExperts";
 import { ExpertsHeader } from "@/components/admin/experts/ExpertsHeader";
@@ -12,6 +13,15 @@ import { ExpertsLayoutSwitcher } from "@/components/admin/experts/ExpertsLayoutS
 import { ExpertsSortSelector } from "@/components/admin/experts/ExpertsSortSelector";
 import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type LayoutType = 'gallery' | 'grid' | 'list';
 
@@ -86,27 +96,42 @@ export default function AdminExperts() {
           </div>
         </div>
 
-        {/* Tablet layout - all controls in one line */}
-        <div className="hidden sm:flex lg:hidden items-center gap-3 mb-6">
-          <div className="flex-1">
-            <ExpertsFilters
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              statusFilter={statusFilter}
-              setStatusFilter={setStatusFilter}
+        {/* Tablet layout - search bar above, then filters, sort and layout on same line */}
+        <div className="hidden sm:flex lg:hidden flex-col gap-4 mb-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
+            <Input
+              placeholder="Search by email or name"
+              className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C]"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
           
-          <div className="flex items-center gap-3 flex-shrink-0">
-            <ExpertsSortSelector 
-              sortValue={sortValue}
-              onSortChange={handleSortChange}
-            />
+          <div className="flex items-center gap-3">
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-[180px] border-[#E5E7EB]">
+                <SelectValue placeholder="Filter By Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+              </SelectContent>
+            </Select>
             
-            <ExpertsLayoutSwitcher 
-              layout={layout}
-              setLayout={setLayout}
-            />
+            <div className="flex items-center gap-3 flex-shrink-0">
+              <ExpertsSortSelector 
+                sortValue={sortValue}
+                onSortChange={handleSortChange}
+              />
+              
+              <ExpertsLayoutSwitcher 
+                layout={layout}
+                setLayout={setLayout}
+              />
+            </div>
           </div>
         </div>
 
