@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { useExperts } from "@/hooks/admin/useExperts";
 import { ExpertsHeader } from "@/components/admin/experts/ExpertsHeader";
@@ -57,7 +56,7 @@ export default function AdminExperts() {
   return (
     <>
       <MainHeader />
-      <div className="container mx-auto px-4 py-8 max-w-[1200px] mt-16">
+      <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16">
         <ExpertsHeader 
           title="All Experts" 
           subtitle="Manage and review all expert profiles" 
