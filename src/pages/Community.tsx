@@ -62,7 +62,6 @@ export default function CommunityPage() {
   const [selectedThread, setSelectedThread] = useState<any>(null);
   const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
   const [showProductTemplateSelector, setShowProductTemplateSelector] = useState(false);
-  const [activeTab, setActiveTab] = useState("threads");
   const { user } = useAuth();
   const { images } = useCommunityImages(communityId);
 
@@ -297,7 +296,7 @@ export default function CommunityPage() {
   return (
     <>
       <MainHeader />
-      <div className="container mx-auto px-4 py-8 max-w-[1400px] space-y-8 mt-16">
+      <div className="container mx-auto px-4 py-8 max-w-[1200px] space-y-8 mt-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-8">
             <Card className="p-6 space-y-6">
@@ -405,58 +404,27 @@ export default function CommunityPage() {
           </div>
         </div>
 
-        <Tabs defaultValue="threads" value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <div className="mb-8">
-            <div className="border-b border-border bg-card/30 rounded-t-lg">
-              <nav className="flex space-x-8 overflow-x-auto scrollbar-hide px-6" aria-label="Tabs">
-                <button
-                  onClick={() => setActiveTab("threads")}
-                  className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 flex items-center gap-2 ${
-                    activeTab === "threads"
-                      ? "border-primary text-primary"
-                      : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
-                  }`}
-                >
+        <Tabs defaultValue="threads" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12">
+            <div className="lg:col-span-8 w-full overflow-x-auto">
+              <TabsList>
+                <TabsTrigger value="threads" className="flex items-center gap-2">
                   <MessageSquare className="w-4 h-4" />
-                  Threads ({threads?.length || 0})
-                </button>
-                
-                <button
-                  onClick={() => setActiveTab("classrooms")}
-                  className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 flex items-center gap-2 ${
-                    activeTab === "classrooms"
-                      ? "border-primary text-primary"
-                      : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
-                  }`}
-                >
+                  Threads
+                </TabsTrigger>
+                <TabsTrigger value="classrooms" className="flex items-center gap-2">
                   <BookOpen className="w-4 h-4" />
-                  Classrooms ({classrooms?.length || 0})
-                </button>
-                
-                <button
-                  onClick={() => setActiveTab("templates")}
-                  className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 flex items-center gap-2 ${
-                    activeTab === "templates"
-                      ? "border-primary text-primary"
-                      : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
-                  }`}
-                >
+                  Classrooms
+                </TabsTrigger>
+                <TabsTrigger value="templates" className="flex items-center gap-2">
                   <Users className="w-4 h-4" />
-                  Products ({communityProducts?.length || 0})
-                </button>
-                
-                <button
-                  onClick={() => setActiveTab("calendar")}
-                  className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 flex items-center gap-2 ${
-                    activeTab === "calendar"
-                      ? "border-primary text-primary"
-                      : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
-                  }`}
-                >
+                  Products
+                </TabsTrigger>
+                <TabsTrigger value="calendar" className="flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
                   Calendar
-                </button>
-              </nav>
+                </TabsTrigger>
+              </TabsList>
             </div>
           </div>
 
