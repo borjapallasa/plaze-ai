@@ -62,6 +62,7 @@ export default function CommunityPage() {
   const [selectedThread, setSelectedThread] = useState<any>(null);
   const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
   const [showProductTemplateSelector, setShowProductTemplateSelector] = useState(false);
+  const [activeTab, setActiveTab] = useState("threads");
   const { user } = useAuth();
   const { images } = useCommunityImages(communityId);
 
@@ -293,6 +294,13 @@ export default function CommunityPage() {
     return null;
   };
 
+  const tabs = [
+    { id: "threads", label: "Threads", icon: MessageSquare, count: threads?.length || 0 },
+    { id: "classrooms", label: "Classrooms", icon: BookOpen, count: classrooms?.length || 0 },
+    { id: "templates", label: "Products", icon: Users, count: communityProducts?.length || 0 },
+    { id: "calendar", label: "Calendar", icon: Calendar, count: null }
+  ];
+
   return (
     <>
       <MainHeader />
@@ -404,37 +412,27 @@ export default function CommunityPage() {
           </div>
         </div>
 
-        <Tabs defaultValue="threads" className="space-y-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <div className="border-b border-border">
             <nav className="flex space-x-6 overflow-x-auto scrollbar-hide px-6" aria-label="Tabs">
-              <TabsTrigger 
-                value="threads" 
-                className="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=inactive]:border-transparent data-[state=inactive]:text-muted-foreground hover:text-foreground hover:border-gray-300 bg-transparent shadow-none rounded-none flex items-center gap-2"
-              >
-                <MessageSquare className="w-4 h-4" />
-                Threads ({threads?.length || 0})
-              </TabsTrigger>
-              <TabsTrigger 
-                value="classrooms" 
-                className="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=inactive]:border-transparent data-[state=inactive]:text-muted-foreground hover:text-foreground hover:border-gray-300 bg-transparent shadow-none rounded-none flex items-center gap-2"
-              >
-                <BookOpen className="w-4 h-4" />
-                Classrooms ({classrooms?.length || 0})
-              </TabsTrigger>
-              <TabsTrigger 
-                value="templates" 
-                className="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=inactive]:border-transparent data-[state=inactive]:text-muted-foreground hover:text-foreground hover:border-gray-300 bg-transparent shadow-none rounded-none flex items-center gap-2"
-              >
-                <Users className="w-4 h-4" />
-                Products ({communityProducts?.length || 0})
-              </TabsTrigger>
-              <TabsTrigger 
-                value="calendar" 
-                className="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=inactive]:border-transparent data-[state=inactive]:text-muted-foreground hover:text-foreground hover:border-gray-300 bg-transparent shadow-none rounded-none flex items-center gap-2"
-              >
-                <Calendar className="w-4 h-4" />
-                Calendar
-              </TabsTrigger>
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 flex items-center gap-2 ${
+                      isActive
+                        ? "border-primary text-primary"
+                        : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    {tab.label} {tab.count !== null && `(${tab.count})`}
+                  </button>
+                );
+              })}
             </nav>
           </div>
 
