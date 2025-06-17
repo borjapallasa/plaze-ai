@@ -88,11 +88,15 @@ export default function AdminExperts() {
           </div>
         </div>
 
-        {/* Mobile sort selector */}
-        <div className="lg:hidden mb-4">
+        {/* Mobile sort selector and layout switcher on same line */}
+        <div className="lg:hidden mb-4 flex items-center justify-between gap-3">
           <ExpertsSortSelector 
             sortValue={sortValue}
             onSortChange={handleSortChange}
+          />
+          <ExpertsLayoutSwitcher 
+            layout={layout}
+            setLayout={setLayout}
           />
         </div>
 
