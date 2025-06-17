@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { useExperts } from "@/hooks/admin/useExperts";
 import { ExpertsHeader } from "@/components/admin/experts/ExpertsHeader";
@@ -63,8 +62,9 @@ export default function AdminExperts() {
           subtitle="Manage and review all expert profiles" 
         />
 
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-6">
-          <div className="flex-1 w-full lg:w-auto">
+        {/* Desktop layout - all controls in one line */}
+        <div className="hidden lg:flex items-center justify-between gap-4 mb-6">
+          <div className="flex-1">
             <ExpertsFilters
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
@@ -74,12 +74,10 @@ export default function AdminExperts() {
           </div>
           
           <div className="flex items-center gap-3 flex-shrink-0">
-            <div className="hidden lg:block">
-              <ExpertsSortSelector 
-                sortValue={sortValue}
-                onSortChange={handleSortChange}
-              />
-            </div>
+            <ExpertsSortSelector 
+              sortValue={sortValue}
+              onSortChange={handleSortChange}
+            />
             
             <ExpertsLayoutSwitcher 
               layout={layout}
@@ -88,16 +86,25 @@ export default function AdminExperts() {
           </div>
         </div>
 
-        {/* Mobile sort selector and layout switcher on same line */}
-        <div className="lg:hidden mb-4 flex items-center justify-between gap-3">
-          <ExpertsSortSelector 
-            sortValue={sortValue}
-            onSortChange={handleSortChange}
+        {/* Mobile layout - filters first, then sort and layout on same line */}
+        <div className="lg:hidden mb-6 space-y-4">
+          <ExpertsFilters
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
           />
-          <ExpertsLayoutSwitcher 
-            layout={layout}
-            setLayout={setLayout}
-          />
+          
+          <div className="flex items-center justify-between gap-3">
+            <ExpertsSortSelector 
+              sortValue={sortValue}
+              onSortChange={handleSortChange}
+            />
+            <ExpertsLayoutSwitcher 
+              layout={layout}
+              setLayout={setLayout}
+            />
+          </div>
         </div>
 
         {isLoading ? (
