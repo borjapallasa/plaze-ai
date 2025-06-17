@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -295,10 +296,10 @@ export default function CommunityPage() {
   };
 
   const tabs = [
-    { id: "threads", label: "Threads", icon: MessageSquare, count: threads?.length || 0 },
-    { id: "classrooms", label: "Classrooms", icon: BookOpen, count: classrooms?.length || 0 },
-    { id: "templates", label: "Products", icon: Users, count: communityProducts?.length || 0 },
-    { id: "calendar", label: "Calendar", icon: Calendar, count: null }
+    { id: "threads", label: "Threads", icon: MessageSquare },
+    { id: "classrooms", label: "Classrooms", icon: BookOpen },
+    { id: "templates", label: "Products", icon: Users },
+    { id: "calendar", label: "Calendar", icon: Calendar }
   ];
 
   return (
@@ -429,7 +430,7 @@ export default function CommunityPage() {
                     }`}
                   >
                     <Icon className="w-4 h-4" />
-                    {tab.label} {tab.count !== null && `(${tab.count})`}
+                    {tab.label}
                   </button>
                 );
               })}
