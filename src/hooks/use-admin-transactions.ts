@@ -139,7 +139,7 @@ export function useAdminCommunityTransactions() {
       const { data: communityTransactionData, error } = await supabase
         .from('community_subscriptions_transactions')
         .select(`
-          community_subscription_transactions_uuid,
+          community_subscription_transaction_uuid,
           amount,
           created_at,
           communities!community_subscriptions_transactions_community_uuid_fkey(name),
@@ -164,15 +164,15 @@ export function useAdminCommunityTransactions() {
         const amount = transaction.amount || 0;
 
         return {
-          concept: transaction.community_subscription_transactions_uuid,
+          concept: transaction.community_subscription_transaction_uuid,
           type: 'community' as const,
           createdAt: new Date(transaction.created_at).toLocaleString(),
           status: 'paid', // Community subscription transactions are typically paid
           amount,
           seller: communityName,
           user: buyerName,
-          checkoutId: transaction.community_subscription_transactions_uuid,
-          transactionUuid: transaction.community_subscription_transactions_uuid,
+          checkoutId: transaction.community_subscription_transaction_uuid,
+          transactionUuid: transaction.community_subscription_transaction_uuid,
         };
       }) || [];
 
