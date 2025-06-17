@@ -6,6 +6,8 @@ import { Calendar, Clock, DollarSign, ShoppingCart, Upload, LayoutGrid, User, Co
 import { Link, useParams } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import { ProductCard } from "@/components/ProductCard";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 const userData = {
   id: "1",
@@ -95,6 +97,58 @@ export default function AdminUserDetails() {
 
   // Calculate total paid out
   const totalPaidOut = userData.earnings.recentPayouts.reduce((sum, payout) => sum + payout.amount, 0);
+
+  // Mock products data for the user
+  const userProducts = [
+    {
+      title: "E-commerce Dashboard Template",
+      price: "$49.99",
+      image: "/placeholder.svg",
+      seller: userData.fullName,
+      description: "A comprehensive dashboard template for e-commerce applications with React and TypeScript.",
+      tags: ["React", "TypeScript", "Dashboard"],
+      category: "template",
+      split: "70%",
+      id: "1",
+      slug: "ecommerce-dashboard"
+    },
+    {
+      title: "Mobile App UI Kit",
+      price: "$29.99",
+      image: "/placeholder.svg",
+      seller: userData.fullName,
+      description: "Complete UI kit for mobile applications with modern design patterns.",
+      tags: ["Mobile", "UI Kit", "Design"],
+      category: "design",
+      split: "70%",
+      id: "2",
+      slug: "mobile-ui-kit"
+    },
+    {
+      title: "API Integration Package",
+      price: "$79.99",
+      image: "/placeholder.svg",
+      seller: userData.fullName,
+      description: "Ready-to-use API integration package with authentication and error handling.",
+      tags: ["API", "Integration", "Backend"],
+      category: "package",
+      split: "70%",
+      id: "3",
+      slug: "api-integration"
+    },
+    {
+      title: "Analytics Dashboard",
+      price: "$39.99",
+      image: "/placeholder.svg",
+      seller: userData.fullName,
+      description: "Beautiful analytics dashboard with charts and real-time data visualization.",
+      tags: ["Analytics", "Charts", "Dashboard"],
+      category: "template",
+      split: "70%",
+      id: "4",
+      slug: "analytics-dashboard"
+    }
+  ];
 
   return (
     <>
@@ -254,6 +308,46 @@ export default function AdminUserDetails() {
             </CardContent>
           </Card>
 
+          {/* Products Card */}
+          <Card className="shadow-sm">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg font-semibold">Products</CardTitle>
+                <Button variant="outline" size="sm">
+                  Add New Product
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {userProducts.length > 0 ? (
+                <ScrollArea className="w-full">
+                  <div className="flex gap-4 pb-4">
+                    {userProducts.map((product) => (
+                      <div key={product.id} className="w-[300px] flex-shrink-0">
+                        <ProductCard
+                          title={product.title}
+                          price={product.price}
+                          image={product.image}
+                          seller={product.seller}
+                          description={product.description}
+                          tags={product.tags}
+                          category={product.category}
+                          split={product.split}
+                          id={product.id}
+                          slug={product.slug}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  <ScrollBar orientation="horizontal" />
+                </ScrollArea>
+              ) : (
+                <p className="text-sm text-[#8E9196] text-center py-8">No products found</p>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Communities Card */}
           <Card className="shadow-sm">
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -357,6 +451,7 @@ export default function AdminUserDetails() {
             </CardContent>
           </Card>
 
+          {/* Earnings Details Card */}
           <Card className="shadow-sm">
             <CardHeader>
               <div className="flex items-center justify-between">
