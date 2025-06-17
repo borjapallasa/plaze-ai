@@ -186,7 +186,7 @@ export const SearchResults = () => {
               {/* Enhanced Tabs */}
               <div className="mb-8">
                 <div className="border-b border-border bg-card/30 rounded-t-lg">
-                  <nav className="flex space-x-0 overflow-x-auto scrollbar-hide px-6" aria-label="Tabs">
+                  <nav className="flex space-x-8 overflow-x-auto scrollbar-hide px-6" aria-label="Tabs">
                     <button
                       onClick={() => {
                         setActiveTab("All");
