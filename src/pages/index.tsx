@@ -129,7 +129,7 @@ const Index = () => {
 
         <div className="w-full max-w-[1400px] mx-auto px-4 py-2 pb-12">
           {viewMode === "products" ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 auto-rows-fr">
               {filteredProducts?.map((product) => (
                 <ProductCard
                   key={product.product_uuid}
@@ -146,15 +146,16 @@ const Index = () => {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 auto-rows-fr">
               {communities?.map((community) => (
                 <a 
                   key={community.community_uuid} 
                   href={`https://plaze.ai/community/${community.community_uuid}`}
+                  className="h-full"
                 >
-                  <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+                  <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer h-full flex flex-col">
                     {/* Community Image */}
-                    <div className="aspect-video relative overflow-hidden">
+                    <div className="aspect-video relative overflow-hidden flex-shrink-0">
                       <img
                         src={community.thumbnail || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f"}
                         alt={community.name || 'Community'}
@@ -162,15 +163,15 @@ const Index = () => {
                       />
                     </div>
                     
-                    <CardContent className="p-4 space-y-3">
+                    <CardContent className="p-4 space-y-3 flex-1 flex flex-col">
                       {/* Community Name */}
                       <h3 className="font-semibold text-lg line-clamp-2">{community.name}</h3>
                       
                       {/* Community Description */}
-                      <p className="text-sm text-muted-foreground line-clamp-2">{community.description}</p>
+                      <p className="text-sm text-muted-foreground line-clamp-2 flex-1">{community.description}</p>
                       
                       {/* Community Stats */}
-                      <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center justify-between text-sm mt-auto">
                         <div className="flex items-center gap-1 text-muted-foreground">
                           <Users className="h-4 w-4" />
                           <span>{community.member_count || 0} members</span>
