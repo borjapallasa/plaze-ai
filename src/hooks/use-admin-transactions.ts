@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -142,8 +143,8 @@ export function useAdminCommunityTransactions() {
           community_subscription_transaction_uuid,
           amount,
           created_at,
-          communities!community_subscriptions_transactions_community_uuid_fkey(name),
-          users!community_subscriptions_transactions_user_uuid_fkey(first_name, last_name, email)
+          communities(name),
+          users(first_name, last_name, email)
         `)
         .order('created_at', { ascending: false });
 
