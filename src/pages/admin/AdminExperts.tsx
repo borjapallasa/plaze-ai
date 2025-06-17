@@ -10,6 +10,7 @@ import { LoadMoreButton } from "@/components/admin/experts/LoadMoreButton";
 import { ExpertsLoadingState } from "@/components/admin/experts/ExpertsLoadingState";
 import { ExpertsErrorState } from "@/components/admin/experts/ExpertsErrorState";
 import { ExpertsLayoutSwitcher } from "@/components/admin/experts/ExpertsLayoutSwitcher";
+import { ExpertsSortSelector } from "@/components/admin/experts/ExpertsSortSelector";
 import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -30,6 +31,7 @@ export default function AdminExperts() {
   } = useExperts();
 
   const [layout, setLayout] = useState<LayoutType>('grid');
+  const [sortValue, setSortValue] = useState("created_at_desc");
   const isMobile = useIsMobile();
 
   // Switch to gallery view if currently on list view and on mobile
@@ -42,6 +44,14 @@ export default function AdminExperts() {
   const handleLoadMore = () => {
     // This would be implemented if pagination is added
     console.log("Load more experts");
+  };
+
+  const handleSortChange = (value: string) => {
+    setSortValue(value);
+    const [field, direction] = value.split('_');
+    const sortDir = direction === 'desc' ? 'desc' : 'asc';
+    handleSort(field as keyof typeof experts[0]);
+    console.log(`Sorting by ${field} in ${sortDir} order`);
   };
 
   return (
@@ -63,12 +73,27 @@ export default function AdminExperts() {
             />
           </div>
           
-          <div className="flex-shrink-0">
+          <div className="flex items-center gap-3 flex-shrink-0">
+            <div className="hidden lg:block">
+              <ExpertsSortSelector 
+                sortValue={sortValue}
+                onSortChange={handleSortChange}
+              />
+            </div>
+            
             <ExpertsLayoutSwitcher 
               layout={layout}
               setLayout={setLayout}
             />
           </div>
+        </div>
+
+        {/* Mobile sort selector */}
+        <div className="lg:hidden mb-4">
+          <ExpertsSortSelector 
+            sortValue={sortValue}
+            onSortChange={handleSortChange}
+          />
         </div>
 
         {isLoading ? (
