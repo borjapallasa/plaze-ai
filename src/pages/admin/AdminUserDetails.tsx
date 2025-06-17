@@ -1,3 +1,4 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -64,6 +65,14 @@ const userData = {
       joinDate: "1/15/2025",
       activityLevel: "Medium",
       posts: 45
+    },
+    {
+      id: "3",
+      name: "UI/UX Professionals",
+      role: "Member",
+      joinDate: "11/20/2024",
+      activityLevel: "High",
+      posts: 89
     }
   ],
   earnings: {
@@ -417,33 +426,38 @@ export default function AdminUserDetails() {
               <div>
                 <h4 className="text-sm font-medium mb-4">Joined Communities</h4>
                 {userData.joinedCommunities.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {userData.joinedCommunities.map((community) => (
-                      <div key={community.id} className="p-4 bg-gray-50 rounded-lg space-y-3">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Users className="h-4 w-4 text-[#8E9196]" />
-                            <h4 className="font-medium">{community.name}</h4>
+                  <ScrollArea className="w-full">
+                    <div className="flex gap-4 pb-4">
+                      {userData.joinedCommunities.map((community) => (
+                        <div key={community.id} className="w-[280px] flex-shrink-0">
+                          <div className="p-4 bg-gray-50 rounded-lg space-y-3">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <Users className="h-4 w-4 text-[#8E9196]" />
+                                <h4 className="font-medium">{community.name}</h4>
+                              </div>
+                              <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                                {community.role}
+                              </Badge>
+                            </div>
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-[#8E9196]">Activity Level:</span>
+                              <span className="font-medium">{community.activityLevel}</span>
+                            </div>
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-[#8E9196]">Total Posts:</span>
+                              <span className="font-medium">{community.posts}</span>
+                            </div>
+                            <div className="text-xs text-[#8E9196] flex items-center gap-1">
+                              <Calendar className="h-3 w-3" />
+                              Joined: {community.joinDate}
+                            </div>
                           </div>
-                          <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                            {community.role}
-                          </Badge>
                         </div>
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-[#8E9196]">Activity Level:</span>
-                          <span className="font-medium">{community.activityLevel}</span>
-                        </div>
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-[#8E9196]">Total Posts:</span>
-                          <span className="font-medium">{community.posts}</span>
-                        </div>
-                        <div className="text-xs text-[#8E9196] flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
-                          Joined: {community.joinDate}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                    <ScrollBar orientation="horizontal" />
+                  </ScrollArea>
                 ) : (
                   <p className="text-sm text-[#8E9196]">No joined communities</p>
                 )}
