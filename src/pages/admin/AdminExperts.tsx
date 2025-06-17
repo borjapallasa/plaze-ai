@@ -1,3 +1,4 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { useExperts } from "@/hooks/admin/useExperts";
 import { ExpertsHeader } from "@/components/admin/experts/ExpertsHeader";
@@ -86,8 +87,32 @@ export default function AdminExperts() {
           </div>
         </div>
 
+        {/* Tablet layout - all controls in one line */}
+        <div className="hidden sm:flex lg:hidden items-center gap-3 mb-6">
+          <div className="flex-1">
+            <ExpertsFilters
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              statusFilter={statusFilter}
+              setStatusFilter={setStatusFilter}
+            />
+          </div>
+          
+          <div className="flex-1">
+            <ExpertsSortSelector 
+              sortValue={sortValue}
+              onSortChange={handleSortChange}
+            />
+          </div>
+          
+          <ExpertsLayoutSwitcher 
+            layout={layout}
+            setLayout={setLayout}
+          />
+        </div>
+
         {/* Mobile layout - filters first, then sort and layout on same line */}
-        <div className="lg:hidden mb-6 space-y-4">
+        <div className="sm:hidden mb-6 space-y-4">
           <ExpertsFilters
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
