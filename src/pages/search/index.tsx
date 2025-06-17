@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -168,7 +167,7 @@ export const SearchResults = () => {
     <div className="min-h-screen bg-background">
       <MainHeader />
       <main className="container mx-auto px-4 pt-24">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-[1400px] mx-auto">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-foreground mb-2">
               Search Results for "{query}"
@@ -186,8 +185,8 @@ export const SearchResults = () => {
             <>
               {/* Enhanced Tabs */}
               <div className="mb-8">
-                <div className="border-b border-border">
-                  <nav className="flex space-x-8 overflow-x-auto scrollbar-hide" aria-label="Tabs">
+                <div className="border-b border-border bg-card/30 rounded-t-lg">
+                  <nav className="flex space-x-0 overflow-x-auto scrollbar-hide px-6" aria-label="Tabs">
                     <button
                       onClick={() => {
                         setActiveTab("All");
