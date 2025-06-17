@@ -12,6 +12,7 @@ export interface AdminTransaction {
   user: string;
   checkoutId: string;
   transactionUuid: string;
+  itemCount?: number;
 }
 
 export function useAdminTransactions() {
@@ -78,7 +79,7 @@ export function useAdminProductTransactions() {
     queryFn: async (): Promise<AdminTransaction[]> => {
       console.log('Fetching admin product transactions from products_transactions table...');
       
-      // Fetch from products_transactions table with related data
+      // Fetch from products_transactions table with related data including item_count
       const { data: productTransactionData, error } = await supabase
         .from('products_transactions')
         .select(`
@@ -87,6 +88,7 @@ export function useAdminProductTransactions() {
           created_at,
           status,
           payment_reference_id,
+          item_count,
           experts!products_transactions_expert_uuid_fkey(name, email),
           users!products_transactions_user_uuid_fkey(first_name, last_name, email)
         `)
@@ -118,6 +120,7 @@ export function useAdminProductTransactions() {
           user: buyerName,
           checkoutId: transaction.payment_reference_id || transaction.product_transaction_uuid,
           transactionUuid: transaction.product_transaction_uuid,
+          itemCount: transaction.item_count || 0,
         };
       }) || [];
 

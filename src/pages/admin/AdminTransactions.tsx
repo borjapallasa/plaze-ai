@@ -435,7 +435,7 @@ export default function AdminTransactions() {
                       </td>
                       <td className="px-6 py-4 min-w-[100px] w-[100px]">
                         <span className="text-sm text-[#8E9196] whitespace-nowrap">
-                          N/A
+                          {transaction.itemCount || 0}
                         </span>
                       </td>
                       <td className="px-6 py-4 min-w-[100px] w-[100px]">
