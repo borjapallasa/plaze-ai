@@ -4,9 +4,16 @@ import { useExperts } from "@/hooks/admin/useExperts";
 import { ExpertsHeader } from "@/components/admin/experts/ExpertsHeader";
 import { ExpertsFilters } from "@/components/admin/experts/ExpertsFilters";
 import { ExpertsTable } from "@/components/admin/experts/ExpertsTable";
+import { ExpertsGallery } from "@/components/admin/experts/ExpertsGallery";
+import { ExpertsList } from "@/components/admin/experts/ExpertsList";
 import { LoadMoreButton } from "@/components/admin/experts/LoadMoreButton";
 import { ExpertsLoadingState } from "@/components/admin/experts/ExpertsLoadingState";
 import { ExpertsErrorState } from "@/components/admin/experts/ExpertsErrorState";
+import { ExpertsLayoutSwitcher } from "@/components/admin/experts/ExpertsLayoutSwitcher";
+import { useState, useEffect } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
+
+type LayoutType = 'gallery' | 'grid' | 'list';
 
 export default function AdminExperts() {
   const {
@@ -22,6 +29,16 @@ export default function AdminExperts() {
     handleSort
   } = useExperts();
 
+  const [layout, setLayout] = useState<LayoutType>('grid');
+  const isMobile = useIsMobile();
+
+  // Switch to gallery view if currently on list view and on mobile
+  useEffect(() => {
+    if (isMobile && layout === 'list') {
+      setLayout('gallery');
+    }
+  }, [isMobile, layout]);
+
   const handleLoadMore = () => {
     // This would be implemented if pagination is added
     console.log("Load more experts");
@@ -36,12 +53,19 @@ export default function AdminExperts() {
           subtitle="Manage and review all expert profiles" 
         />
 
-        <ExpertsFilters
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          statusFilter={statusFilter}
-          setStatusFilter={setStatusFilter}
-        />
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+          <ExpertsFilters
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+          />
+          
+          <ExpertsLayoutSwitcher 
+            layout={layout}
+            setLayout={setLayout}
+          />
+        </div>
 
         {isLoading ? (
           <ExpertsLoadingState />
@@ -49,12 +73,32 @@ export default function AdminExperts() {
           <ExpertsErrorState />
         ) : (
           <>
-            <ExpertsTable
-              experts={experts}
-              sortField={sortField}
-              sortDirection={sortDirection}
-              onSort={handleSort}
-            />
+            {layout === 'gallery' && (
+              <ExpertsGallery
+                experts={experts}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onSort={handleSort}
+              />
+            )}
+            
+            {layout === 'grid' && (
+              <ExpertsTable
+                experts={experts}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onSort={handleSort}
+              />
+            )}
+            
+            {layout === 'list' && (
+              <ExpertsList
+                experts={experts}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onSort={handleSort}
+              />
+            )}
 
             <LoadMoreButton 
               onClick={handleLoadMore}
