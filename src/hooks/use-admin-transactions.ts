@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -125,6 +124,59 @@ export function useAdminProductTransactions() {
       }) || [];
 
       console.log('Transformed product transactions:', transformedTransactions);
+      return transformedTransactions;
+    },
+  });
+}
+
+export function useAdminCommunityTransactions() {
+  return useQuery({
+    queryKey: ['admin-community-transactions'],
+    queryFn: async (): Promise<AdminTransaction[]> => {
+      console.log('Fetching admin community transactions from community_subscriptions_transactions table...');
+      
+      // Fetch from community_subscriptions_transactions table with related data
+      const { data: communityTransactionData, error } = await supabase
+        .from('community_subscriptions_transactions')
+        .select(`
+          community_subscription_transactions_uuid,
+          amount,
+          created_at,
+          communities!community_subscriptions_transactions_community_uuid_fkey(name),
+          users!community_subscriptions_transactions_user_uuid_fkey(first_name, last_name, email)
+        `)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching community transactions:', error);
+        throw error;
+      }
+
+      console.log('Community transactions found:', communityTransactionData);
+
+      // Transform the data to match the AdminTransaction interface
+      const transformedTransactions: AdminTransaction[] = communityTransactionData?.map(transaction => {
+        const buyerName = transaction.users 
+          ? `${transaction.users.first_name || ''} ${transaction.users.last_name || ''}`.trim()
+          : 'Unknown User';
+        
+        const communityName = transaction.communities?.name || 'Unknown Community';
+        const amount = transaction.amount || 0;
+
+        return {
+          concept: transaction.community_subscription_transactions_uuid,
+          type: 'community' as const,
+          createdAt: new Date(transaction.created_at).toLocaleString(),
+          status: 'paid', // Community subscription transactions are typically paid
+          amount,
+          seller: communityName,
+          user: buyerName,
+          checkoutId: transaction.community_subscription_transactions_uuid,
+          transactionUuid: transaction.community_subscription_transactions_uuid,
+        };
+      }) || [];
+
+      console.log('Transformed community transactions:', transformedTransactions);
       return transformedTransactions;
     },
   });

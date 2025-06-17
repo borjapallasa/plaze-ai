@@ -748,6 +748,7 @@ export type Database = {
           created_at: string
           id: number
           stripe_id: string | null
+          user_uuid: string | null
         }
         Insert: {
           amount?: number | null
@@ -757,6 +758,7 @@ export type Database = {
           created_at?: string
           id?: number
           stripe_id?: string | null
+          user_uuid?: string | null
         }
         Update: {
           amount?: number | null
@@ -766,6 +768,7 @@ export type Database = {
           created_at?: string
           id?: number
           stripe_id?: string | null
+          user_uuid?: string | null
         }
         Relationships: [
           {
@@ -781,6 +784,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "communities"
             referencedColumns: ["community_uuid"]
+          },
+          {
+            foreignKeyName: "community_subscriptions_transactions_user_uuid_fkey"
+            columns: ["user_uuid"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["user_uuid"]
           },
         ]
       }

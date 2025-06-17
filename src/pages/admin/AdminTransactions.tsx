@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -16,7 +15,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MainHeader } from "@/components/MainHeader";
 import { Separator } from "@/components/ui/separator";
-import { useAdminTransactions, useAdminProductTransactions, type AdminTransaction } from "@/hooks/use-admin-transactions";
+import { useAdminTransactions, useAdminProductTransactions, useAdminCommunityTransactions, type AdminTransaction } from "@/hooks/use-admin-transactions";
 
 export default function AdminTransactions() {
   const navigate = useNavigate();
@@ -28,6 +27,7 @@ export default function AdminTransactions() {
 
   const { data: transactions = [], isLoading, error } = useAdminTransactions();
   const { data: productTransactions = [], isLoading: isLoadingProducts, error: productError } = useAdminProductTransactions();
+  const { data: communityTransactions = [], isLoading: isLoadingCommunities, error: communityError } = useAdminCommunityTransactions();
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -106,6 +106,45 @@ export default function AdminTransactions() {
 
   const getFilteredProductTransactions = () => {
     return productTransactions
+      .filter(transaction => {
+        const matchesSearch = transaction.concept.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            transaction.user.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesStatus = statusFilter === "all" || transaction.status.toLowerCase() === statusFilter.toLowerCase();
+        return matchesSearch && matchesStatus;
+      })
+      .sort((a, b) => {
+        const aValue = a[sortField];
+        const bValue = b[sortField];
+        const multiplier = sortDirection === "asc" ? 1 : -1;
+        
+        // Special handling for created_at field - parse dates for proper comparison
+        if (sortField === "createdAt") {
+          const aDate = new Date(aValue as string);
+          const bDate = new Date(bValue as string);
+          return (aDate.getTime() - bDate.getTime()) * multiplier;
+        }
+        
+        // Handle amount field as numbers
+        if (sortField === "amount") {
+          return ((aValue as number) - (bValue as number)) * multiplier;
+        }
+        
+        // Handle string fields
+        if (typeof aValue === "string" && typeof bValue === "string") {
+          return aValue.localeCompare(bValue) * multiplier;
+        }
+        
+        // Handle numeric fields
+        if (typeof aValue === "number" && typeof bValue === "number") {
+          return (aValue - bValue) * multiplier;
+        }
+        
+        return 0;
+      });
+  };
+
+  const getFilteredCommunityTransactions = () => {
+    return communityTransactions
       .filter(transaction => {
         const matchesSearch = transaction.concept.toLowerCase().includes(searchQuery.toLowerCase()) ||
                             transaction.user.toLowerCase().includes(searchQuery.toLowerCase());
@@ -478,6 +517,145 @@ export default function AdminTransactions() {
     );
   };
 
+  const renderCommunityTable = (filteredTransactions: AdminTransaction[], loading: boolean, errorState: any) => {
+    if (loading) {
+      return (
+        <div className="rounded-lg border border-[#E5E7EB] bg-white">
+          <div className="p-8 text-center text-[#8E9196]">
+            Loading transactions...
+          </div>
+        </div>
+      );
+    }
+
+    if (errorState) {
+      return (
+        <div className="rounded-lg border border-[#E5E7EB] bg-white">
+          <div className="p-8 text-center text-red-600">
+            Error loading transactions: {errorState.message}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="rounded-lg border border-[#E5E7EB] bg-white overflow-hidden">
+        <ScrollArea className="w-full">
+          <div className="min-w-[1000px]">
+            <table className="w-full">
+              <thead className="bg-[#F8F9FC] border-b border-[#E5E7EB]">
+                <tr>
+                  <th className="px-6 py-4 text-left min-w-[200px] w-[200px]">
+                    <button 
+                      onClick={() => handleSort("concept")}
+                      className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+                    >
+                      ID {getSortIcon("concept")}
+                    </button>
+                  </th>
+                  <th className="px-6 py-4 text-left min-w-[100px] w-[100px]">
+                    <button 
+                      onClick={() => handleSort("amount")}
+                      className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+                    >
+                      Amount {getSortIcon("amount")}
+                    </button>
+                  </th>
+                  <th className="px-6 py-4 text-left min-w-[150px] w-[150px]">
+                    <button 
+                      onClick={() => handleSort("createdAt")}
+                      className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+                    >
+                      Created @ {getSortIcon("createdAt")}
+                    </button>
+                  </th>
+                  <th className="px-6 py-4 text-left min-w-[100px] w-[100px]">
+                    <span className="font-medium text-sm text-[#8E9196] whitespace-nowrap">Status</span>
+                  </th>
+                  <th className="px-6 py-4 text-left min-w-[200px] w-[200px]">
+                    <button 
+                      onClick={() => handleSort("seller")}
+                      className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+                    >
+                      Community {getSortIcon("seller")}
+                    </button>
+                  </th>
+                  <th className="px-6 py-4 text-left min-w-[200px] w-[200px]">
+                    <button 
+                      onClick={() => handleSort("user")}
+                      className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+                    >
+                      User {getSortIcon("user")}
+                    </button>
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#E5E7EB]">
+                {filteredTransactions.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-8 text-center text-[#8E9196]">
+                      No transactions found matching your criteria
+                    </td>
+                  </tr>
+                ) : (
+                  filteredTransactions.map((transaction, index) => (
+                    <tr
+                      key={index}
+                      className="hover:bg-[#F8F9FC] transition-colors duration-200 group"
+                    >
+                      <td className="px-6 py-4 min-w-[200px] w-[200px]">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-[#1A1F2C] font-medium truncate">
+                            {transaction.concept}
+                          </span>
+                          <button
+                            onClick={() => navigate(`/admin/transaction/${transaction.concept}`)}
+                            className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+                          >
+                            <ExternalLink className="h-3 w-3 text-[#8E9196] hover:text-[#1A1F2C]" />
+                          </button>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 min-w-[100px] w-[100px]">
+                        <span className="text-sm text-[#1A1F2C] font-medium whitespace-nowrap">
+                          ${transaction.amount.toFixed(2)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 min-w-[150px] w-[150px]">
+                        <span className="text-sm text-[#8E9196] whitespace-nowrap">
+                          {transaction.createdAt}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 min-w-[100px] w-[100px]">
+                        <Badge 
+                          variant="secondary" 
+                          className={`${getStatusColor(transaction.status)} capitalize whitespace-nowrap`}
+                        >
+                          {transaction.status}
+                        </Badge>
+                      </td>
+                      <td className="px-6 py-4 min-w-[200px] w-[200px]">
+                        <span className="text-sm text-[#8E9196] truncate block" title={transaction.seller}>
+                          {transaction.seller}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 min-w-[200px] w-[200px]">
+                        <span className="text-sm text-[#8E9196] truncate block" title={transaction.user}>
+                          {transaction.user}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+      </div>
+    );
+  };
+
   return (
     <>
       <MainHeader />
@@ -506,13 +684,13 @@ export default function AdminTransactions() {
           
           <TabsContent value="communities" className="space-y-0">
             {renderSearchAndFilter()}
-            {renderTransactionTable(getFilteredTransactions('community'), isLoading, error)}
+            {renderCommunityTable(getFilteredCommunityTransactions(), isLoadingCommunities, communityError)}
           </TabsContent>
         </Tabs>
 
         {((activeTab === "all" && getFilteredTransactions().length > 0) ||
           (activeTab === "products" && getFilteredProductTransactions().length > 0) ||
-          (activeTab === "communities" && getFilteredTransactions('community').length > 0)) && (
+          (activeTab === "communities" && getFilteredCommunityTransactions().length > 0)) && (
           <>
             <Separator className="my-6" />
             <div className="flex justify-center">
