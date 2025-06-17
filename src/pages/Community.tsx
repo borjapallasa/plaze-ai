@@ -405,41 +405,37 @@ export default function CommunityPage() {
         </div>
 
         <Tabs defaultValue="threads" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12">
-            <div className="lg:col-span-8 w-full overflow-x-auto">
-              <div className="border-b border-border">
-                <nav className="flex space-x-6 overflow-x-auto scrollbar-hide px-6" aria-label="Tabs">
-                  <TabsTrigger 
-                    value="threads" 
-                    className="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=inactive]:border-transparent data-[state=inactive]:text-muted-foreground hover:text-foreground hover:border-gray-300 bg-transparent shadow-none rounded-none flex items-center gap-2"
-                  >
-                    <MessageSquare className="w-4 h-4" />
-                    Threads ({threads?.length || 0})
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="classrooms" 
-                    className="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=inactive]:border-transparent data-[state=inactive]:text-muted-foreground hover:text-foreground hover:border-gray-300 bg-transparent shadow-none rounded-none flex items-center gap-2"
-                  >
-                    <BookOpen className="w-4 h-4" />
-                    Classrooms ({classrooms?.length || 0})
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="templates" 
-                    className="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=inactive]:border-transparent data-[state=inactive]:text-muted-foreground hover:text-foreground hover:border-gray-300 bg-transparent shadow-none rounded-none flex items-center gap-2"
-                  >
-                    <Users className="w-4 h-4" />
-                    Products ({communityProducts?.length || 0})
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="calendar" 
-                    className="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=inactive]:border-transparent data-[state=inactive]:text-muted-foreground hover:text-foreground hover:border-gray-300 bg-transparent shadow-none rounded-none flex items-center gap-2"
-                  >
-                    <Calendar className="w-4 h-4" />
-                    Calendar
-                  </TabsTrigger>
-                </nav>
-              </div>
-            </div>
+          <div className="border-b border-border">
+            <nav className="flex space-x-6 overflow-x-auto scrollbar-hide px-6" aria-label="Tabs">
+              <TabsTrigger 
+                value="threads" 
+                className="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=inactive]:border-transparent data-[state=inactive]:text-muted-foreground hover:text-foreground hover:border-gray-300 bg-transparent shadow-none rounded-none flex items-center gap-2"
+              >
+                <MessageSquare className="w-4 h-4" />
+                Threads ({threads?.length || 0})
+              </TabsTrigger>
+              <TabsTrigger 
+                value="classrooms" 
+                className="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=inactive]:border-transparent data-[state=inactive]:text-muted-foreground hover:text-foreground hover:border-gray-300 bg-transparent shadow-none rounded-none flex items-center gap-2"
+              >
+                <BookOpen className="w-4 h-4" />
+                Classrooms ({classrooms?.length || 0})
+              </TabsTrigger>
+              <TabsTrigger 
+                value="templates" 
+                className="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=inactive]:border-transparent data-[state=inactive]:text-muted-foreground hover:text-foreground hover:border-gray-300 bg-transparent shadow-none rounded-none flex items-center gap-2"
+              >
+                <Users className="w-4 h-4" />
+                Products ({communityProducts?.length || 0})
+              </TabsTrigger>
+              <TabsTrigger 
+                value="calendar" 
+                className="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=inactive]:border-transparent data-[state=inactive]:text-muted-foreground hover:text-foreground hover:border-gray-300 bg-transparent shadow-none rounded-none flex items-center gap-2"
+              >
+                <Calendar className="w-4 h-4" />
+                Calendar
+              </TabsTrigger>
+            </nav>
           </div>
 
           <TabsContent value="threads" className="space-y-6">
