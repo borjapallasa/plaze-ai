@@ -42,8 +42,8 @@ export const ProductCard = ({
   };
 
   return (
-    <a href={getHref()}>
-      <Card className="group relative flex flex-col p-4 lg:p-6 hover:bg-accent transition-colors cursor-pointer">
+    <a href={getHref()} className="h-full">
+      <Card className="group relative flex flex-col p-4 lg:p-6 hover:bg-accent transition-colors cursor-pointer h-full">
         <div className="flex items-start gap-3 lg:gap-4">
           <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg bg-accent flex items-center justify-center overflow-hidden flex-shrink-0">
             <img
@@ -63,9 +63,9 @@ export const ProductCard = ({
           </div>
         </div>
 
-        <p className="text-base text-foreground line-clamp-2 mt-4 mb-6">{description}</p>
+        <p className="text-base text-foreground line-clamp-2 mt-4 mb-6 flex-1">{description}</p>
 
-        <div className="flex gap-2 flex-wrap mt-auto mb-4">
+        <div className="flex gap-2 flex-wrap mb-4">
           {tags.slice(0, 2).map((tag, index) => (
             <span
               key={index}
