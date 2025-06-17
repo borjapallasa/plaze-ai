@@ -16,7 +16,7 @@ interface ExpertsSortSelectorProps {
 export function ExpertsSortSelector({ sortValue, onSortChange }: ExpertsSortSelectorProps) {
   return (
     <Select value={sortValue} onValueChange={onSortChange}>
-      <SelectTrigger className="w-[180px] border-[#E5E7EB]">
+      <SelectTrigger className="w-full lg:w-[180px] border-[#E5E7EB]">
         <ArrowUpDown className="h-4 w-4 text-[#8E9196] mr-2" />
         <SelectValue placeholder="Sort by" />
       </SelectTrigger>

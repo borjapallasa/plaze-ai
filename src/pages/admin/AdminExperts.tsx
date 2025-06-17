@@ -95,11 +95,13 @@ export default function AdminExperts() {
             setStatusFilter={setStatusFilter}
           />
           
-          <div className="flex items-center justify-between gap-2">
-            <ExpertsSortSelector 
-              sortValue={sortValue}
-              onSortChange={handleSortChange}
-            />
+          <div className="flex items-center gap-2">
+            <div className="flex-1">
+              <ExpertsSortSelector 
+                sortValue={sortValue}
+                onSortChange={handleSortChange}
+              />
+            </div>
             <ExpertsLayoutSwitcher 
               layout={layout}
               setLayout={setLayout}
