@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -155,7 +154,7 @@ export default function CommunityPage() {
 
   const videoEmbedUrl = getVideoEmbedUrl(community?.intro);
   const links = parseLinks(community?.links);
-  
+
   if (isCommunityLoading) {
     return (
       <>
@@ -187,6 +186,79 @@ export default function CommunityPage() {
     );
   }
 
+  // Create gallery images - use community images if available, otherwise add placeholders
+  const createGalleryImages = (): ProductImage[] => {
+    const communityImages = images?.map(img => ({
+      id: img.id,
+      url: img.url,
+      storage_path: img.storage_path,
+      is_primary: img.is_primary,
+      file_name: img.file_name,
+      alt_text: img.alt_text || img.file_name
+    } as ProductImage)) || [];
+
+    // If we have community images, use them
+    if (communityImages.length > 0) {
+      return communityImages;
+    }
+
+    // Otherwise, create a mix of community thumbnail and placeholder images
+    const galleryImages: ProductImage[] = [];
+    
+    // Add community thumbnail as primary if it exists
+    if (community?.thumbnail) {
+      galleryImages.push({
+        id: 1,
+        url: community.thumbnail,
+        storage_path: 'community-thumbnail',
+        is_primary: true,
+        file_name: 'Community thumbnail',
+        alt_text: `${community.name} thumbnail`
+      });
+    }
+
+    // Add some placeholder images to create a gallery effect
+    const placeholderImages = [
+      {
+        id: 2,
+        url: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=80",
+        storage_path: 'placeholder-1',
+        is_primary: false,
+        file_name: 'Community workspace',
+        alt_text: 'Community workspace environment'
+      },
+      {
+        id: 3,
+        url: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80",
+        storage_path: 'placeholder-2',
+        is_primary: false,
+        file_name: 'Team collaboration',
+        alt_text: 'Team collaboration session'
+      },
+      {
+        id: 4,
+        url: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=800&q=80",
+        storage_path: 'placeholder-3',
+        is_primary: false,
+        file_name: 'Learning environment',
+        alt_text: 'Learning and development environment'
+      }
+    ];
+
+    // Add placeholder images if we don't have enough images
+    const remainingSlots = Math.max(0, 4 - galleryImages.length);
+    galleryImages.push(...placeholderImages.slice(0, remainingSlots));
+
+    // If no community thumbnail, make first placeholder primary
+    if (!community?.thumbnail && galleryImages.length > 0) {
+      galleryImages[0].is_primary = true;
+    }
+
+    return galleryImages;
+  };
+
+  const galleryImages = createGalleryImages();
+  
   const isOwner = user?.id === community?.expert?.user_uuid;
 
   const templates = [
@@ -309,29 +381,12 @@ export default function CommunityPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-8">
             <Card className="p-6 space-y-6">
-              {images && images.length > 0 ? (
-                <div>
-                  <ProductGallery 
-                    images={images.map(img => ({
-                      id: img.id,
-                      url: img.url,
-                      storage_path: img.storage_path,
-                      is_primary: img.is_primary,
-                      file_name: img.file_name,
-                      alt_text: img.alt_text || img.file_name
-                    } as ProductImage))}
-                    priority
-                  />
-                </div>
-              ) : (
-                <div className="aspect-video bg-muted rounded-lg overflow-hidden relative">
-                  <img 
-                    src={community?.thumbnail || "/lovable-uploads/890bbce9-6ca6-4a0e-958a-d7ba6f61bf73.png"}
-                    alt="Community thumbnail"
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-              )}
+              <div>
+                <ProductGallery 
+                  images={galleryImages}
+                  priority
+                />
+              </div>
 
               <div className="space-y-4">
                 <h1 className="text-2xl font-bold">{community?.name}</h1>
