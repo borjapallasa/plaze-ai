@@ -454,13 +454,19 @@ export default function CommunityPage() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <Avatar className="h-8 w-8 ring-1 ring-primary/10">
-                    <AvatarImage src={community?.expert_thumbnail || "https://github.com/shadcn.png"} />
-                    <AvatarFallback>EX</AvatarFallback>
+                  <Avatar className="h-10 w-10 flex-shrink-0">
+                    <AvatarImage 
+                      src={community?.expert_thumbnail || "https://github.com/shadcn.png"} 
+                      alt={`${community?.expert_name} avatar`}
+                      className="object-cover"
+                    />
+                    <AvatarFallback className="text-sm font-medium">
+                      {community?.expert_name?.substring(0, 2)?.toUpperCase() || "EX"}
+                    </AvatarFallback>
                   </Avatar>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
                     <span className="text-sm text-muted-foreground">Hosted by</span>
-                    <span className="font-medium">{community?.expert_name}</span>
+                    <span className="font-medium truncate">{community?.expert_name}</span>
                   </div>
                 </div>
               </div>
