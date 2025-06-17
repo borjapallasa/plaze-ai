@@ -1,3 +1,4 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { useExperts } from "@/hooks/admin/useExperts";
 import { ExpertsHeader } from "@/components/admin/experts/ExpertsHeader";
@@ -95,7 +96,7 @@ export default function AdminExperts() {
             setStatusFilter={setStatusFilter}
           />
           
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center justify-between gap-2">
             <ExpertsSortSelector 
               sortValue={sortValue}
               onSortChange={handleSortChange}
