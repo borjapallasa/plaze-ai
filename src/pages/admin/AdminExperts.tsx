@@ -1,4 +1,5 @@
 
+
 import { MainHeader } from "@/components/MainHeader";
 import { useExperts } from "@/hooks/admin/useExperts";
 import { ExpertsHeader } from "@/components/admin/experts/ExpertsHeader";
@@ -98,19 +99,19 @@ export default function AdminExperts() {
 
         {/* Tablet layout - search bar above, then filters, sort and layout on same line */}
         <div className="hidden sm:flex lg:hidden flex-col gap-4 mb-6">
-          <div className="relative">
+          <div className="relative w-full">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
             <Input
               placeholder="Search by email or name"
-              className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C]"
+              className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C] w-full"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
           
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 w-full">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[180px] border-[#E5E7EB]">
+              <SelectTrigger className="flex-1 border-[#E5E7EB]">
                 <SelectValue placeholder="Filter By Status" />
               </SelectTrigger>
               <SelectContent>
@@ -201,3 +202,4 @@ export default function AdminExperts() {
     </>
   );
 }
+
