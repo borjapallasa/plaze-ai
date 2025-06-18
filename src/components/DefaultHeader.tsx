@@ -39,17 +39,6 @@ export function DefaultHeader({
           <span className="text-sm">Back</span>
         </Button>
         
-        <div className="flex flex-col gap-1 flex-1">
-          <h1 className="text-xl sm:text-2xl font-semibold text-foreground">
-            {title}
-          </h1>
-          {subtitle && (
-            <p className="text-sm text-muted-foreground">
-              {subtitle}
-            </p>
-          )}
-        </div>
-        
         {action && (
           <div className="flex-shrink-0">
             {action}
