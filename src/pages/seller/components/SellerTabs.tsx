@@ -67,9 +67,9 @@ export function SellerTabs({
         value={activeTab}
         onValueChange={handleTabChange}
       >
-        <div className="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mb-6">
+        <div className="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mb-6 border-b border-border">
           <div className="max-w-[1400px] mx-auto px-4">
-            <TabsList className="h-auto items-center bg-transparent w-auto justify-start border-b border-border rounded-none p-0">
+            <TabsList className="h-auto items-center bg-transparent w-auto justify-start rounded-none p-0 border-0">
               <TabsTrigger 
                 value="metrics" 
                 className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-foreground whitespace-nowrap flex-shrink-0 rounded-none pb-3 px-4 border-b-2 border-transparent hover:border-muted-foreground/50 transition-colors"
