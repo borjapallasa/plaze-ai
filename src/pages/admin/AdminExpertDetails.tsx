@@ -1,4 +1,3 @@
-
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -158,6 +157,7 @@ export default function AdminExpertDetails() {
           productsLoading={productsLoading}
           servicesLoading={servicesLoading}
           communitiesLoading={communitiesLoading}
+          expertUuid={currentExpert.expert_uuid}
         />
       </main>
     </div>

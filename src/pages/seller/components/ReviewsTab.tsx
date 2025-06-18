@@ -3,62 +3,45 @@ import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star } from "lucide-react";
+import { Star, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useExpertReviews } from "@/hooks/expert/useExpertReviews";
 
-export function ReviewsTab() {
-  // Mock data - in a real app, this would come from props or API
-  const reviews = [
-    {
-      id: 1,
-      author: "Sarah Johnson",
-      rating: 5,
-      content: "Excellent work and fast delivery",
-      description: "The UI kit exceeded my expectations. Great attention to detail and very professional work. Will definitely work with this seller again.",
-      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
-      date: "2 days ago",
-      product: "UI Kit Pro"
-    },
-    {
-      id: 2,
-      author: "Michael Chen",
-      rating: 4,
-      content: "Great quality templates",
-      description: "Really impressed with the quality of the templates. They saved me hours of work. Minor issues with documentation but overall very satisfied.",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
-      date: "1 week ago",
-      product: "Landing Templates"
-    },
-    {
-      id: 3,
-      author: "Emily Rodriguez",
-      rating: 5,
-      content: "Perfect for my project",
-      description: "Exactly what I was looking for. The design system is well organized and easy to implement. Highly recommend!",
-      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
-      date: "2 weeks ago",
-      product: "Design System"
-    },
-    {
-      id: 4,
-      author: "David Wilson",
-      rating: 4,
-      content: "Good value for money",
-      description: "Solid work overall. The components are well crafted and the seller was responsive to questions.",
-      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e",
-      date: "3 weeks ago",
-      product: "UI Components"
-    }
-  ];
+interface ReviewsTabProps {
+  expertUuid?: string;
+}
 
-  const averageRating = reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length;
+export function ReviewsTab({ expertUuid }: ReviewsTabProps) {
+  const { data: reviews = [], isLoading, error } = useExpertReviews(expertUuid);
+
+  // Calculate stats from real data
   const totalReviews = reviews.length;
+  const averageRating = totalReviews > 0 
+    ? reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews 
+    : 0;
 
   const ratingDistribution = [5, 4, 3, 2, 1].map(rating => {
     const count = reviews.filter(r => r.rating === rating).length;
     const percentage = totalReviews > 0 ? (count / totalReviews) * 100 : 0;
     return { rating, count, percentage };
   });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <Loader2 className="h-8 w-8 animate-spin text-primary/70" />
+        <span className="ml-3 text-muted-foreground">Loading reviews...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-muted-foreground">Error loading reviews. Please try again.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -70,7 +53,9 @@ export function ReviewsTab() {
           </CardHeader>
           <CardContent>
             <div className="flex items-center space-x-2">
-              <span className="text-2xl font-bold">{averageRating.toFixed(1)}</span>
+              <span className="text-2xl font-bold">
+                {totalReviews > 0 ? averageRating.toFixed(1) : '0.0'}
+              </span>
               <div className="flex">
                 {Array(5).fill(0).map((_, i) => (
                   <Star
@@ -143,52 +128,62 @@ export function ReviewsTab() {
           <CardDescription>Latest feedback from your customers</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-6">
-            {reviews.map((review) => (
-              <div key={review.id} className="space-y-3">
-                <div className="flex items-start space-x-4">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage src={review.avatar} alt={review.author} />
-                    <AvatarFallback>
-                      {review.author.split(' ').map(n => n[0]).join('')}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-medium">{review.author}</h4>
-                        <div className="flex items-center space-x-2">
-                          <div className="flex">
-                            {Array(5).fill(0).map((_, i) => (
-                              <Star
-                                key={i}
-                                className={cn(
-                                  "h-3 w-3",
-                                  i < review.rating
-                                    ? "fill-yellow-400 text-yellow-400"
-                                    : "fill-gray-200 text-gray-200"
-                                )}
-                              />
-                            ))}
+          {totalReviews === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">No reviews found for this expert.</p>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {reviews.map((review) => (
+                <div key={review.id} className="space-y-3">
+                  <div className="flex items-start space-x-4">
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage src={review.avatar} alt={review.author} />
+                      <AvatarFallback>
+                        {review.author.split(' ').map(n => n[0]).join('')}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="font-medium">{review.author}</h4>
+                          <div className="flex items-center space-x-2">
+                            <div className="flex">
+                              {Array(5).fill(0).map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={cn(
+                                    "h-3 w-3",
+                                    i < review.rating
+                                      ? "fill-yellow-400 text-yellow-400"
+                                      : "fill-gray-200 text-gray-200"
+                                  )}
+                                />
+                              ))}
+                            </div>
+                            <span className="text-xs text-muted-foreground">{review.date}</span>
                           </div>
-                          <span className="text-xs text-muted-foreground">{review.date}</span>
                         </div>
+                        {review.type && (
+                          <Badge variant="outline" className="text-xs capitalize">
+                            {review.type}
+                          </Badge>
+                        )}
                       </div>
-                      <Badge variant="outline" className="text-xs">
-                        {review.product}
-                      </Badge>
-                    </div>
-                    <div>
-                      <h5 className="font-medium text-sm">{review.content}</h5>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {review.description}
-                      </p>
+                      <div>
+                        <h5 className="font-medium text-sm">{review.content}</h5>
+                        {review.description && (
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {review.description}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
