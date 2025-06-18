@@ -1,3 +1,4 @@
+
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -141,6 +142,28 @@ export default function AdminExpertDetails() {
           subtitle={currentExpert.title || 'No title provided'}
           backLink="/admin/experts"
         />
+
+        {/* Expert Status Card */}
+        <Card className="mb-6 shadow-sm">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Expert Status</h3>
+                <p className="text-sm text-muted-foreground">Current approval status of this expert</p>
+              </div>
+              <Badge 
+                variant={
+                  currentExpert.status === 'active' ? 'default' : 
+                  currentExpert.status === 'in review' ? 'secondary' :
+                  currentExpert.status === 'suspended' ? 'destructive' : 'outline'
+                }
+                className="text-sm px-3 py-1 capitalize"
+              >
+                {currentExpert.status || 'Unknown'}
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
 
         <SellerHeader 
           seller={currentExpert} 
