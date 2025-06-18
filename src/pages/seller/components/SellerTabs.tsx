@@ -1,11 +1,10 @@
+
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { ShoppingBag, BriefcaseIcon, UsersRound, AppWindow, BarChart3, Star } from "lucide-react";
+import { ShoppingBag, UsersRound, BarChart3, Star } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { ProductsTab } from "./ProductsTab";
-import { ServicesTab } from "./ServicesTab";
 import { CommunitiesTab } from "./CommunitiesTab";
-import { ApplicationsTab } from "./ApplicationsTab";
 import { MetricsTab } from "./MetricsTab";
 import { ReviewsTab } from "./ReviewsTab";
 import type { Service } from "@/components/expert/types";
@@ -28,13 +27,10 @@ export function SellerTabs({
   communitiesLoading
 }: SellerTabsProps) {
   const location = useLocation();
-  const isSellerPage = location.pathname.startsWith('/seller/');
   
   const [activeTab, setActiveTab] = useState(() => {
     const hash = window.location.hash.replace('#', '');
-    const availableTabs = isSellerPage 
-      ? ['metrics', 'products', 'communities', 'reviews'] 
-      : ['metrics', 'products', 'services', 'communities', 'applications', 'reviews'];
+    const availableTabs = ['metrics', 'products', 'communities', 'reviews'];
     return availableTabs.includes(hash) ? hash : 'metrics';
   });
 
@@ -42,18 +38,14 @@ export function SellerTabs({
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '');
-      const availableTabs = isSellerPage 
-        ? ['metrics', 'products', 'communities', 'reviews'] 
-        : ['metrics', 'products', 'services', 'communities', 'applications', 'reviews'];
+      const availableTabs = ['metrics', 'products', 'communities', 'reviews'];
       if (availableTabs.includes(hash)) {
         setActiveTab(hash);
       }
     };
 
     // Set hash if it doesn't exist or if current hash is not available
-    const availableTabs = isSellerPage 
-      ? ['metrics', 'products', 'communities', 'reviews'] 
-      : ['metrics', 'products', 'services', 'communities', 'applications', 'reviews'];
+    const availableTabs = ['metrics', 'products', 'communities', 'reviews'];
     
     if (!window.location.hash || !availableTabs.includes(window.location.hash.replace('#', ''))) {
       window.location.hash = activeTab;
@@ -61,7 +53,7 @@ export function SellerTabs({
 
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, [activeTab, isSellerPage]);
+  }, [activeTab]);
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -76,35 +68,34 @@ export function SellerTabs({
       className="animate-fade-in"
     >
       <div className="w-full mb-6">
-        <TabsList className="h-12 items-center bg-muted/50 w-full justify-start overflow-x-auto scrollbar-hide">
-          <TabsTrigger value="metrics" className="data-[state=active]:bg-background whitespace-nowrap flex-shrink-0">
+        <TabsList className="h-auto items-center bg-transparent w-full justify-start border-b border-border rounded-none p-0">
+          <TabsTrigger 
+            value="metrics" 
+            className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-foreground whitespace-nowrap flex-shrink-0 rounded-none pb-3 px-4 border-b-2 border-transparent hover:border-muted-foreground/50 transition-colors"
+          >
             <BarChart3 className="h-4 w-4 mr-2" />
             Metrics
           </TabsTrigger>
-          <TabsTrigger value="products" className="data-[state=active]:bg-background whitespace-nowrap flex-shrink-0">
+          <TabsTrigger 
+            value="products" 
+            className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-foreground whitespace-nowrap flex-shrink-0 rounded-none pb-3 px-4 border-b-2 border-transparent hover:border-muted-foreground/50 transition-colors"
+          >
             <ShoppingBag className="h-4 w-4 mr-2" />
             Products
             {productsLoading && <span className="ml-2 text-xs">Loading...</span>}
           </TabsTrigger>
-          {!isSellerPage && (
-            <TabsTrigger value="services" className="data-[state=active]:bg-background whitespace-nowrap flex-shrink-0">
-              <BriefcaseIcon className="h-4 w-4 mr-2" />
-              Services
-              {servicesLoading && <span className="ml-2 text-xs">Loading...</span>}
-            </TabsTrigger>
-          )}
-          <TabsTrigger value="communities" className="data-[state=active]:bg-background whitespace-nowrap flex-shrink-0">
+          <TabsTrigger 
+            value="communities" 
+            className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-foreground whitespace-nowrap flex-shrink-0 rounded-none pb-3 px-4 border-b-2 border-transparent hover:border-muted-foreground/50 transition-colors"
+          >
             <UsersRound className="h-4 w-4 mr-2" />
             Communities
             {communitiesLoading && <span className="ml-2 text-xs">Loading...</span>}
           </TabsTrigger>
-          {!isSellerPage && (
-            <TabsTrigger value="applications" className="data-[state=active]:bg-background whitespace-nowrap flex-shrink-0">
-              <AppWindow className="h-4 w-4 mr-2" />
-              Applications
-            </TabsTrigger>
-          )}
-          <TabsTrigger value="reviews" className="data-[state=active]:bg-background whitespace-nowrap flex-shrink-0">
+          <TabsTrigger 
+            value="reviews" 
+            className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-foreground whitespace-nowrap flex-shrink-0 rounded-none pb-3 px-4 border-b-2 border-transparent hover:border-muted-foreground/50 transition-colors"
+          >
             <Star className="h-4 w-4 mr-2" />
             Reviews
           </TabsTrigger>
@@ -119,12 +110,6 @@ export function SellerTabs({
         <ProductsTab products={products} isLoading={productsLoading} />
       </TabsContent>
 
-      {!isSellerPage && (
-        <TabsContent value="services" className="mt-0">
-          <ServicesTab services={services} isLoading={servicesLoading} />
-        </TabsContent>
-      )}
-
       <TabsContent value="communities" className="mt-0">
         <CommunitiesTab 
           communities={communities.map(community => ({
@@ -134,12 +119,6 @@ export function SellerTabs({
           isLoading={communitiesLoading} 
         />
       </TabsContent>
-
-      {!isSellerPage && (
-        <TabsContent value="applications" className="mt-0">
-          <ApplicationsTab />
-        </TabsContent>
-      )}
 
       <TabsContent value="reviews" className="mt-0">
         <ReviewsTab />
