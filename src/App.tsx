@@ -34,6 +34,7 @@ import AdminTransactionDetailsPage from "./pages/admin/AdminTransactionDetails";
 import DraftTemplatesPage from "./pages/admin/DraftTemplates";
 import AdminTemplateDetailsPage from "./pages/admin/AdminTemplateDetails";
 import AffiliatesPage from "./pages/Affiliates";
+import SellerPage from "./pages/seller/SellerPage";
 import SellPage from "./pages/Sell";
 import { SearchResults } from "./pages/search";
 import NewCommunityProductPage from "./pages/community/NewCommunityProductPage";
@@ -56,6 +57,7 @@ function App() {
           <Route path="/sell" element={<SellPage />} />
           <Route path="/seller/products/new" element={<NewProductPage />} />
           <Route path="/seller/communities/new" element={<NewCommunityPage />} />
+          <Route path="/seller/:id" element={<SellerPage />} />
           <Route path="/product/:id/edit" element={<EditProductPage />} />
           <Route path="/product/:slug/:id/edit" element={<EditProductPage />} />
           <Route path="/community/:id/edit" element={<EditCommunityPage />} />
