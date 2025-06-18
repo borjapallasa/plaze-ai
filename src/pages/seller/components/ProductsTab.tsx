@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -86,114 +85,116 @@ export function ProductsTab({ products, isLoading = false }: ProductsTabProps) {
             <span className="ml-3 text-muted-foreground">Loading products...</span>
           </div>
         ) : (
-          <ScrollArea className="w-full relative" type="always">
-            <div className="w-[calc(100vw-4rem)] sm:w-full min-w-[800px]">
-              <div className="rounded-lg border border-border">
-                <table className="w-full">
-                  <thead className="bg-muted/50">
-                    <tr>
-                      <th className="w-[72px] sticky left-0 bg-muted/50"></th>
-                      <th 
-                        className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
-                        onClick={() => handleSort('name')}
-                      >
-                        <span className="flex items-center">
-                          Product
-                          <SortIcon field="name" />
-                        </span>
-                      </th>
-                      <th 
-                        className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
-                        onClick={() => handleSort('status')}
-                      >
-                        <span className="flex items-center">
-                          Status
-                          <SortIcon field="status" />
-                        </span>
-                      </th>
-                      <th 
-                        className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
-                        onClick={() => handleSort('variant_count')}
-                      >
-                        <span className="flex items-center">
-                          Variants
-                          <SortIcon field="variant_count" />
-                        </span>
-                      </th>
-                      <th 
-                        className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
-                        onClick={() => handleSort('price_from')}
-                      >
-                        <span className="flex items-center">
-                          Price
-                          <SortIcon field="price_from" />
-                        </span>
-                      </th>
-                      <th 
-                        className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
-                        onClick={() => handleSort('created_at')}
-                      >
-                        <span className="flex items-center">
-                          Created
-                          <SortIcon field="created_at" />
-                        </span>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border">
-                    {sortedProducts.map((product) => (
-                      <tr 
-                        key={product.product_uuid} 
-                        className="hover:bg-muted/50 transition-colors cursor-pointer"
-                        onClick={() => handleProductClick(product.product_uuid)}
-                      >
-                        <td className="p-3 sticky left-0 bg-background">
-                          <div className="w-12 h-12 rounded bg-muted flex-shrink-0 overflow-hidden">
-                            {product.thumbnail && (
-                              <img 
-                                src={product.thumbnail} 
-                                alt={product.name}
-                                className="w-full h-full object-cover"
-                              />
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <h3 className="font-medium text-sm">{product.name}</h3>
-                        </td>
-                        <td className="px-4 py-3">
-                          <UIBadge 
-                            variant={product.status === 'active' ? 'default' : 'secondary'}
-                            className="capitalize"
-                          >
-                            {product.status || 'Draft'}
-                          </UIBadge>
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className="text-sm">{product.variant_count || 0}</span>
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className="text-sm">${product.price_from || '0.00'}</span>
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className="text-sm text-muted-foreground">
-                            {new Date(product.created_at).toLocaleDateString()}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                    {products.length === 0 && (
+          <div className="w-full overflow-hidden">
+            <ScrollArea className="w-full" orientation="horizontal">
+              <div className="min-w-[800px] w-full">
+                <div className="rounded-lg border border-border">
+                  <table className="w-full">
+                    <thead className="bg-muted/50">
                       <tr>
-                        <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
-                          No products found
-                        </td>
+                        <th className="w-[72px]"></th>
+                        <th 
+                          className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
+                          onClick={() => handleSort('name')}
+                        >
+                          <span className="flex items-center">
+                            Product
+                            <SortIcon field="name" />
+                          </span>
+                        </th>
+                        <th 
+                          className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
+                          onClick={() => handleSort('status')}
+                        >
+                          <span className="flex items-center">
+                            Status
+                            <SortIcon field="status" />
+                          </span>
+                        </th>
+                        <th 
+                          className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
+                          onClick={() => handleSort('variant_count')}
+                        >
+                          <span className="flex items-center">
+                            Variants
+                            <SortIcon field="variant_count" />
+                          </span>
+                        </th>
+                        <th 
+                          className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
+                          onClick={() => handleSort('price_from')}
+                        >
+                          <span className="flex items-center">
+                            Price
+                            <SortIcon field="price_from" />
+                          </span>
+                        </th>
+                        <th 
+                          className="px-4 py-2.5 text-left text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
+                          onClick={() => handleSort('created_at')}
+                        >
+                          <span className="flex items-center">
+                            Created
+                            <SortIcon field="created_at" />
+                          </span>
+                        </th>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      {sortedProducts.map((product) => (
+                        <tr 
+                          key={product.product_uuid} 
+                          className="hover:bg-muted/50 transition-colors cursor-pointer"
+                          onClick={() => handleProductClick(product.product_uuid)}
+                        >
+                          <td className="p-3">
+                            <div className="w-12 h-12 rounded bg-muted flex-shrink-0 overflow-hidden">
+                              {product.thumbnail && (
+                                <img 
+                                  src={product.thumbnail} 
+                                  alt={product.name}
+                                  className="w-full h-full object-cover"
+                                />
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <h3 className="font-medium text-sm">{product.name}</h3>
+                          </td>
+                          <td className="px-4 py-3">
+                            <UIBadge 
+                              variant={product.status === 'active' ? 'default' : 'secondary'}
+                              className="capitalize"
+                            >
+                              {product.status || 'Draft'}
+                            </UIBadge>
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className="text-sm">{product.variant_count || 0}</span>
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className="text-sm">${product.price_from || '0.00'}</span>
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className="text-sm text-muted-foreground">
+                              {new Date(product.created_at).toLocaleDateString()}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                      {products.length === 0 && (
+                        <tr>
+                          <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
+                            No products found
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
-          </ScrollArea>
+            </ScrollArea>
+          </div>
         )}
       </Card>
     </div>
