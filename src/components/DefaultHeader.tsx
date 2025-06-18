@@ -21,13 +21,7 @@ export function DefaultHeader({
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>}
-        <div className="w-full">
-          
-          <div className="flex items-center justify-between mt-4">
-            {subtitle}
-            {action && <div>{action}</div>}
-          </div>
-        </div>
+        
       </div>
     </div>;
 }
