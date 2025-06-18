@@ -28,7 +28,7 @@ export function DefaultHeader({
   };
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto px-2 xs:px-3 sm:px-6 lg:px-8 mb-8">
+    <div className="w-full max-w-[1400px] mx-auto px-2 xs:px-3 sm:px-6 lg:px-8 mb-4">
       <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
         <Button 
           variant="ghost" 
