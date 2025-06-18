@@ -1,11 +1,10 @@
+
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge as UIBadge } from "@/components/ui/badge";
-import { Plus, Search, ArrowUpDown, ArrowUp, ArrowDown, Loader2 } from "lucide-react";
+import { Search, ArrowUpDown, ArrowUp, ArrowDown, Loader2 } from "lucide-react";
 
 type SortField = 'name' | 'status' | 'variant_count' | 'price_from' | 'created_at';
 type SortDirection = 'asc' | 'desc';
@@ -26,12 +25,11 @@ interface ProductsTabProps {
 }
 
 export function ProductsTab({ products, isLoading = false }: ProductsTabProps) {
-  const navigate = useNavigate();
   const [sortField, setSortField] = useState<SortField>('created_at');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
   const handleProductClick = (productId: string) => {
-    navigate(`/admin/product/${productId}`);
+    window.location.href = `/admin/product/${productId}`;
   };
 
   const handleSort = (field: SortField) => {
@@ -79,12 +77,6 @@ export function ProductsTab({ products, isLoading = false }: ProductsTabProps) {
             className="pl-9"
           />
         </div>
-        <Button asChild className="sm:w-auto">
-          <Link to="/seller/products/new">
-            <Plus className="h-4 w-4 mr-2" />
-            Add product
-          </Link>
-        </Button>
       </div>
 
       <Card className="p-6">

@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, Clock, MessageSquare, GraduationCap, Package2, Globe, Plus, Search } from "lucide-react";
+import { Users, Clock, MessageSquare, GraduationCap, Package2, Globe, Search } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -54,11 +54,6 @@ export function CommunitiesTab({ communities, isLoading }: CommunitiesTabProps) 
   const handleViewCommunity = (e: React.MouseEvent, communityId: string) => {
     e.stopPropagation(); // Prevent the card click from triggering
     navigate(`/community/${communityId}`);
-  };
-
-  // Function to handle clicking on the Add Community button
-  const handleAddCommunity = () => {
-    navigate("/seller/communities/new");
   };
 
   // Safely filter communities based on search query
@@ -116,7 +111,7 @@ export function CommunitiesTab({ communities, isLoading }: CommunitiesTabProps) 
 
   return (
     <div className="space-y-6">
-      {/* Search and Add Community Section */}
+      {/* Search Section */}
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center mb-2">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -127,10 +122,6 @@ export function CommunitiesTab({ communities, isLoading }: CommunitiesTabProps) 
             className="pl-9 w-full"
           />
         </div>
-        <Button onClick={handleAddCommunity} className="gap-2 whitespace-nowrap w-full sm:w-auto">
-          <Plus className="h-4 w-4" />
-          Add Community
-        </Button>
       </div>
       
       {!filteredCommunities.length ? (
@@ -145,12 +136,6 @@ export function CommunitiesTab({ communities, isLoading }: CommunitiesTabProps) 
                 ? "Try a different search term or clear the search."
                 : "This seller hasn't created any communities yet."}
             </p>
-            {!searchQuery && (
-              <Button onClick={handleAddCommunity} className="mt-4 gap-2">
-                <Plus className="h-4 w-4" />
-                Create First Community
-              </Button>
-            )}
             {searchQuery && (
               <Button 
                 variant="outline" 
