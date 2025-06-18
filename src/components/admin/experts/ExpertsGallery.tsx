@@ -36,7 +36,7 @@ export function ExpertsGallery({ experts }: ExpertsGalleryProps) {
             className="cursor-pointer hover:shadow-lg transition-shadow"
           >
             <CardContent className="p-0">
-              <div className="aspect-video w-full overflow-hidden rounded-t-lg bg-gray-100 flex items-center justify-center">
+              <div className="aspect-video w-full overflow-hidden rounded-t-lg bg-gray-100 flex items-center justify-center relative">
                 {expert.thumbnail ? (
                   <img
                     src={expert.thumbnail}
@@ -46,6 +46,9 @@ export function ExpertsGallery({ experts }: ExpertsGalleryProps) {
                 ) : (
                   <User className="h-16 w-16 text-gray-400" />
                 )}
+                <div className="absolute top-2 right-2">
+                  {getStatusBadge(expert.status)}
+                </div>
               </div>
               <div className="p-4 space-y-3">
                 <div>
@@ -76,14 +79,6 @@ export function ExpertsGallery({ experts }: ExpertsGalleryProps) {
                     <Calendar className="h-3 w-3 text-[#8E9196]" />
                     <span className="text-[#8E9196]">Created:</span>
                     <span className="font-medium text-xs">{new Date(expert.created_at).toLocaleDateString()}</span>
-                  </div>
-                  
-                  <div className="flex items-center justify-between pt-2">
-                    {getStatusBadge(expert.status)}
-                    <div className="text-right text-xs">
-                      <div className="text-[#8E9196]">Templates: {expert.totalTemplates || 0}</div>
-                      <div className="text-[#8E9196]">Active: {expert.activeTemplates || 0}</div>
-                    </div>
                   </div>
                 </div>
               </div>
