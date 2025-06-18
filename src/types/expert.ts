@@ -13,7 +13,7 @@ export interface Expert {
   response_rate?: number;
   created_at: string;
   areas: string[];
-  status?: "active" | "inactive" | "pending";
+  status?: "active" | "inactive" | "in review" | "suspended";
   user_uuid?: string;
   activeTemplates?: number;
   totalTemplates?: number;

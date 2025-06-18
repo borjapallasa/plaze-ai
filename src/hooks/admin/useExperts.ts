@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -37,7 +38,7 @@ export function useExperts() {
               ? expert.areas
               : []
         ) : [],
-        status: "active", // Default status since it's missing in the original data
+        status: expert.status || "active", // Use the actual status from database or default to active
         activeTemplates: Math.floor(Math.random() * 5), // Placeholder for now
         totalTemplates: Math.floor(Math.random() * 10) + 5, // Placeholder for now
         email: expert.email || `${expert.slug || 'user'}@example.com` // Fallback if email is not present
@@ -63,7 +64,17 @@ export function useExperts() {
           const matchesSearch = 
             (expert.email?.toLowerCase().includes(searchQuery.toLowerCase()) || false) ||
             (expert.name?.toLowerCase().includes(searchQuery.toLowerCase()) || false);
-          const matchesStatus = statusFilter === "all" || expert.status === statusFilter;
+          
+          let matchesStatus = false;
+          if (statusFilter === "all") {
+            matchesStatus = true;
+          } else if (statusFilter === "pending") {
+            // Map "pending" filter to "in review" status
+            matchesStatus = expert.status === "in review";
+          } else {
+            matchesStatus = expert.status === statusFilter;
+          }
+          
           return matchesSearch && matchesStatus;
         })
         .sort((a, b) => {

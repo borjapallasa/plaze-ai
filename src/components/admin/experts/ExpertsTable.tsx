@@ -18,7 +18,8 @@ export function ExpertsTable({ experts, sortField, sortDirection, onSort }: Expe
     const badges = {
       active: <Badge variant="secondary" className="bg-green-100 text-green-800">Active</Badge>,
       inactive: <Badge variant="secondary" className="bg-red-100 text-red-800">Inactive</Badge>,
-      pending: <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">Pending</Badge>
+      "in review": <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">In review</Badge>,
+      suspended: <Badge variant="secondary" className="bg-gray-100 text-gray-800">Suspended</Badge>
     };
     return badges[status || "active"];
   };
