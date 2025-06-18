@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { useExperts } from "@/hooks/admin/useExperts";
 import { ExpertsHeader } from "@/components/admin/experts/ExpertsHeader";
@@ -73,10 +72,10 @@ export default function AdminExperts() {
   const statusCounts = getStatusCounts();
 
   const tabs = [
-    { id: "all", label: "All", count: statusCounts.all },
-    { id: "active", label: "Active", count: statusCounts.active },
-    { id: "inactive", label: "Inactive", count: statusCounts.inactive },
-    { id: "pending", label: "In review", count: statusCounts.pending }
+    { id: "all", label: "All" },
+    { id: "active", label: "Active" },
+    { id: "inactive", label: "Inactive" },
+    { id: "pending", label: "In review" }
   ];
 
   const renderExpertsContent = () => {
@@ -149,7 +148,7 @@ export default function AdminExperts() {
                       : 'text-[#8E9196] border-transparent hover:text-[#1A1F2C] hover:border-[#8E9196]'
                   }`}
                 >
-                  <span>{tab.label} ({tab.count})</span>
+                  <span>{tab.label}</span>
                 </button>
               );
             })}
