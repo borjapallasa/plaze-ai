@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ShoppingBag, UsersRound, BarChart3, Star } from "lucide-react";
@@ -68,7 +67,7 @@ export function SellerTabs({
       className="animate-fade-in"
     >
       <div className="w-full mb-6">
-        <TabsList className="h-auto items-center bg-transparent w-full justify-start border-b border-border rounded-none p-0">
+        <TabsList className="h-auto items-center bg-transparent w-auto justify-start border-b border-border rounded-none p-0">
           <TabsTrigger 
             value="metrics" 
             className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-foreground whitespace-nowrap flex-shrink-0 rounded-none pb-3 px-4 border-b-2 border-transparent hover:border-muted-foreground/50 transition-colors"
