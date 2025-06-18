@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
@@ -32,7 +31,7 @@ export function ProductsTab({ products, isLoading = false }: ProductsTabProps) {
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
   const handleProductClick = (productId: string) => {
-    navigate(`/product/${productId}/edit`);
+    navigate(`/admin/product/${productId}`);
   };
 
   const handleSort = (field: SortField) => {
