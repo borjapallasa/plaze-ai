@@ -13,9 +13,8 @@ import { ExpertsLayoutSwitcher } from "@/components/admin/experts/ExpertsLayoutS
 import { ExpertsSortSelector } from "@/components/admin/experts/ExpertsSortSelector";
 import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Search } from "lucide-react";
+import { Search, Users, CheckCircle, Clock, XCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 type LayoutType = 'gallery' | 'grid' | 'list';
 
@@ -57,9 +56,12 @@ export default function AdminExperts() {
     console.log(`Sorting by ${field} in ${sortDir} order`);
   };
 
-  const handleTabChange = (value: string) => {
-    setStatusFilter(value);
-  };
+  const tabs = [
+    { id: "all", label: "All", icon: Users },
+    { id: "active", label: "Active", icon: CheckCircle },
+    { id: "pending", label: "In review", icon: Clock },
+    { id: "inactive", label: "Inactive", icon: XCircle }
+  ];
 
   const renderExpertsContent = () => {
     if (isLoading) {
@@ -116,29 +118,69 @@ export default function AdminExperts() {
           subtitle="Manage and review all expert profiles" 
         />
 
-        <Tabs value={statusFilter} onValueChange={handleTabChange} className="w-full">
-          <div className="mb-6">
-            <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:flex">
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="active">Active</TabsTrigger>
-              <TabsTrigger value="pending">In review</TabsTrigger>
-              <TabsTrigger value="inactive">Inactive</TabsTrigger>
-            </TabsList>
+        {/* Custom styled tabs */}
+        <div className="mb-6">
+          <div className="flex items-center gap-8 border-b border-[#E5E7EB] overflow-x-auto scrollbar-hide">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = statusFilter === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setStatusFilter(tab.id)}
+                  className={`flex items-center gap-2 px-1 py-4 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                    isActive
+                      ? 'text-[#1A1F2C] border-[#1A1F2C]'
+                      : 'text-[#8E9196] border-transparent hover:text-[#1A1F2C] hover:border-[#8E9196]'
+                  }`}
+                >
+                  <Icon className="h-4 w-4" />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
           </div>
+        </div>
 
-          {/* Desktop layout - search and controls */}
-          <div className="hidden lg:flex items-center justify-between gap-4 mb-6">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
-              <Input
-                placeholder="Search by email or name"
-                className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C]"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
+        {/* Desktop layout - search and controls */}
+        <div className="hidden lg:flex items-center justify-between gap-4 mb-6">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
+            <Input
+              placeholder="Search by email or name"
+              className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C]"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          
+          <div className="flex items-center gap-3 flex-shrink-0">
+            <ExpertsSortSelector 
+              sortValue={sortValue}
+              onSortChange={handleSortChange}
+            />
             
-            <div className="flex items-center gap-3 flex-shrink-0">
+            <ExpertsLayoutSwitcher 
+              layout={layout}
+              setLayout={setLayout}
+            />
+          </div>
+        </div>
+
+        {/* Tablet layout - search bar above, then sort and layout on same line */}
+        <div className="hidden sm:flex lg:hidden flex-col gap-4 mb-6">
+          <div className="relative w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
+            <Input
+              placeholder="Search by email or name"
+              className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C] w-full"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          
+          <div className="flex items-center gap-3 w-full">
+            <div className="flex items-center gap-3 flex-1">
               <ExpertsSortSelector 
                 sortValue={sortValue}
                 onSortChange={handleSortChange}
@@ -150,76 +192,35 @@ export default function AdminExperts() {
               />
             </div>
           </div>
+        </div>
 
-          {/* Tablet layout - search bar above, then sort and layout on same line */}
-          <div className="hidden sm:flex lg:hidden flex-col gap-4 mb-6">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
-              <Input
-                placeholder="Search by email or name"
-                className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C] w-full"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            
-            <div className="flex items-center gap-3 w-full">
-              <div className="flex items-center gap-3 flex-1">
-                <ExpertsSortSelector 
-                  sortValue={sortValue}
-                  onSortChange={handleSortChange}
-                />
-                
-                <ExpertsLayoutSwitcher 
-                  layout={layout}
-                  setLayout={setLayout}
-                />
-              </div>
-            </div>
+        {/* Mobile layout - search first, then sort and layout on same line */}
+        <div className="sm:hidden mb-6 space-y-4">
+          <div className="relative w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
+            <Input
+              placeholder="Search by email or name"
+              className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C] w-full"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
-
-          {/* Mobile layout - search first, then sort and layout on same line */}
-          <div className="sm:hidden mb-6 space-y-4">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
-              <Input
-                placeholder="Search by email or name"
-                className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C] w-full"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+          
+          <div className="flex items-center gap-2">
+            <div className="flex-1">
+              <ExpertsSortSelector 
+                sortValue={sortValue}
+                onSortChange={handleSortChange}
               />
             </div>
-            
-            <div className="flex items-center gap-2">
-              <div className="flex-1">
-                <ExpertsSortSelector 
-                  sortValue={sortValue}
-                  onSortChange={handleSortChange}
-                />
-              </div>
-              <ExpertsLayoutSwitcher 
-                layout={layout}
-                setLayout={setLayout}
-              />
-            </div>
+            <ExpertsLayoutSwitcher 
+              layout={layout}
+              setLayout={setLayout}
+            />
           </div>
+        </div>
 
-          <TabsContent value="all" className="mt-0">
-            {renderExpertsContent()}
-          </TabsContent>
-
-          <TabsContent value="active" className="mt-0">
-            {renderExpertsContent()}
-          </TabsContent>
-
-          <TabsContent value="pending" className="mt-0">
-            {renderExpertsContent()}
-          </TabsContent>
-
-          <TabsContent value="inactive" className="mt-0">
-            {renderExpertsContent()}
-          </TabsContent>
-        </Tabs>
+        {renderExpertsContent()}
       </div>
     </>
   );
