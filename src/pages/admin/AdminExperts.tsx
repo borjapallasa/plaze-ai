@@ -1,3 +1,4 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { useExperts } from "@/hooks/admin/useExperts";
 import { ExpertsHeader } from "@/components/admin/experts/ExpertsHeader";
@@ -55,11 +56,27 @@ export default function AdminExperts() {
     console.log(`Sorting by ${field} in ${sortDir} order`);
   };
 
+  // Get counts for each status from the unfiltered experts data
+  const getStatusCounts = () => {
+    if (!experts) return { all: 0, active: 0, inactive: 0, pending: 0 };
+    
+    const counts = {
+      all: experts.length,
+      active: experts.filter(expert => expert.status === 'active').length,
+      inactive: experts.filter(expert => expert.status === 'inactive').length,
+      pending: experts.filter(expert => expert.status === 'in review').length
+    };
+    
+    return counts;
+  };
+
+  const statusCounts = getStatusCounts();
+
   const tabs = [
-    { id: "all", label: "All" },
-    { id: "active", label: "Active" },
-    { id: "pending", label: "In review" },
-    { id: "inactive", label: "Inactive" }
+    { id: "all", label: "All", count: statusCounts.all },
+    { id: "active", label: "Active", count: statusCounts.active },
+    { id: "inactive", label: "Inactive", count: statusCounts.inactive },
+    { id: "pending", label: "In review", count: statusCounts.pending }
   ];
 
   const renderExpertsContent = () => {
@@ -132,7 +149,7 @@ export default function AdminExperts() {
                       : 'text-[#8E9196] border-transparent hover:text-[#1A1F2C] hover:border-[#8E9196]'
                   }`}
                 >
-                  <span>{tab.label}</span>
+                  <span>{tab.label} ({tab.count})</span>
                 </button>
               );
             })}
