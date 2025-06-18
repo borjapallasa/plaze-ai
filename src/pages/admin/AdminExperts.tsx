@@ -1,5 +1,4 @@
 
-
 import { MainHeader } from "@/components/MainHeader";
 import { useExperts } from "@/hooks/admin/useExperts";
 import { ExpertsHeader } from "@/components/admin/experts/ExpertsHeader";
@@ -16,13 +15,7 @@ import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 type LayoutType = 'gallery' | 'grid' | 'list';
 
@@ -64,6 +57,56 @@ export default function AdminExperts() {
     console.log(`Sorting by ${field} in ${sortDir} order`);
   };
 
+  const handleTabChange = (value: string) => {
+    setStatusFilter(value);
+  };
+
+  const renderExpertsContent = () => {
+    if (isLoading) {
+      return <ExpertsLoadingState />;
+    }
+
+    if (error) {
+      return <ExpertsErrorState />;
+    }
+
+    return (
+      <>
+        {layout === 'gallery' && (
+          <ExpertsGallery
+            experts={experts}
+            sortField={sortField}
+            sortDirection={sortDirection}
+            onSort={handleSort}
+          />
+        )}
+        
+        {layout === 'grid' && (
+          <ExpertsTable
+            experts={experts}
+            sortField={sortField}
+            sortDirection={sortDirection}
+            onSort={handleSort}
+          />
+        )}
+        
+        {layout === 'list' && (
+          <ExpertsList
+            experts={experts}
+            sortField={sortField}
+            sortDirection={sortDirection}
+            onSort={handleSort}
+          />
+        )}
+
+        <LoadMoreButton 
+          onClick={handleLoadMore}
+          visible={experts.length > 0}
+        />
+      </>
+    );
+  };
+
   return (
     <>
       <MainHeader />
@@ -73,54 +116,27 @@ export default function AdminExperts() {
           subtitle="Manage and review all expert profiles" 
         />
 
-        {/* Desktop layout - all controls in one line */}
-        <div className="hidden lg:flex items-center justify-between gap-4 mb-6">
-          <div className="flex-1">
-            <ExpertsFilters
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              statusFilter={statusFilter}
-              setStatusFilter={setStatusFilter}
-            />
+        <Tabs value={statusFilter} onValueChange={handleTabChange} className="w-full">
+          <div className="mb-6">
+            <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:flex">
+              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="active">Active</TabsTrigger>
+              <TabsTrigger value="pending">In review</TabsTrigger>
+              <TabsTrigger value="inactive">Inactive</TabsTrigger>
+            </TabsList>
           </div>
-          
-          <div className="flex items-center gap-3 flex-shrink-0">
-            <ExpertsSortSelector 
-              sortValue={sortValue}
-              onSortChange={handleSortChange}
-            />
-            
-            <ExpertsLayoutSwitcher 
-              layout={layout}
-              setLayout={setLayout}
-            />
-          </div>
-        </div>
 
-        {/* Tablet layout - search bar above, then filters, sort and layout on same line */}
-        <div className="hidden sm:flex lg:hidden flex-col gap-4 mb-6">
-          <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
-            <Input
-              placeholder="Search by email or name"
-              className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C] w-full"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          
-          <div className="flex items-center gap-3 w-full">
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="flex-1 border-[#E5E7EB]">
-                <SelectValue placeholder="Filter By Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-              </SelectContent>
-            </Select>
+          {/* Desktop layout - search and controls */}
+          <div className="hidden lg:flex items-center justify-between gap-4 mb-6">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
+              <Input
+                placeholder="Search by email or name"
+                className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C]"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
             
             <div className="flex items-center gap-3 flex-shrink-0">
               <ExpertsSortSelector 
@@ -134,72 +150,77 @@ export default function AdminExperts() {
               />
             </div>
           </div>
-        </div>
 
-        {/* Mobile layout - filters first, then sort and layout on same line */}
-        <div className="sm:hidden mb-6 space-y-4">
-          <ExpertsFilters
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            statusFilter={statusFilter}
-            setStatusFilter={setStatusFilter}
-          />
-          
-          <div className="flex items-center gap-2">
-            <div className="flex-1">
-              <ExpertsSortSelector 
-                sortValue={sortValue}
-                onSortChange={handleSortChange}
+          {/* Tablet layout - search bar above, then sort and layout on same line */}
+          <div className="hidden sm:flex lg:hidden flex-col gap-4 mb-6">
+            <div className="relative w-full">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
+              <Input
+                placeholder="Search by email or name"
+                className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C] w-full"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <ExpertsLayoutSwitcher 
-              layout={layout}
-              setLayout={setLayout}
-            />
+            
+            <div className="flex items-center gap-3 w-full">
+              <div className="flex items-center gap-3 flex-1">
+                <ExpertsSortSelector 
+                  sortValue={sortValue}
+                  onSortChange={handleSortChange}
+                />
+                
+                <ExpertsLayoutSwitcher 
+                  layout={layout}
+                  setLayout={setLayout}
+                />
+              </div>
+            </div>
           </div>
-        </div>
 
-        {isLoading ? (
-          <ExpertsLoadingState />
-        ) : error ? (
-          <ExpertsErrorState />
-        ) : (
-          <>
-            {layout === 'gallery' && (
-              <ExpertsGallery
-                experts={experts}
-                sortField={sortField}
-                sortDirection={sortDirection}
-                onSort={handleSort}
+          {/* Mobile layout - search first, then sort and layout on same line */}
+          <div className="sm:hidden mb-6 space-y-4">
+            <div className="relative w-full">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
+              <Input
+                placeholder="Search by email or name"
+                className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C] w-full"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
-            )}
+            </div>
             
-            {layout === 'grid' && (
-              <ExpertsTable
-                experts={experts}
-                sortField={sortField}
-                sortDirection={sortDirection}
-                onSort={handleSort}
+            <div className="flex items-center gap-2">
+              <div className="flex-1">
+                <ExpertsSortSelector 
+                  sortValue={sortValue}
+                  onSortChange={handleSortChange}
+                />
+              </div>
+              <ExpertsLayoutSwitcher 
+                layout={layout}
+                setLayout={setLayout}
               />
-            )}
-            
-            {layout === 'list' && (
-              <ExpertsList
-                experts={experts}
-                sortField={sortField}
-                sortDirection={sortDirection}
-                onSort={handleSort}
-              />
-            )}
+            </div>
+          </div>
 
-            <LoadMoreButton 
-              onClick={handleLoadMore}
-              visible={experts.length > 0}
-            />
-          </>
-        )}
+          <TabsContent value="all" className="mt-0">
+            {renderExpertsContent()}
+          </TabsContent>
+
+          <TabsContent value="active" className="mt-0">
+            {renderExpertsContent()}
+          </TabsContent>
+
+          <TabsContent value="pending" className="mt-0">
+            {renderExpertsContent()}
+          </TabsContent>
+
+          <TabsContent value="inactive" className="mt-0">
+            {renderExpertsContent()}
+          </TabsContent>
+        </Tabs>
       </div>
     </>
   );
 }
-

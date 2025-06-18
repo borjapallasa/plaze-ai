@@ -974,6 +974,7 @@ export type Database = {
           response_rate: number | null
           sales_amount: number | null
           slug: string | null
+          status: Database["public"]["Enums"]["expert_status"] | null
           thumbnail: string | null
           title: string | null
           updated_at: string | null
@@ -994,6 +995,7 @@ export type Database = {
           response_rate?: number | null
           sales_amount?: number | null
           slug?: string | null
+          status?: Database["public"]["Enums"]["expert_status"] | null
           thumbnail?: string | null
           title?: string | null
           updated_at?: string | null
@@ -1014,6 +1016,7 @@ export type Database = {
           response_rate?: number | null
           sales_amount?: number | null
           slug?: string | null
+          status?: Database["public"]["Enums"]["expert_status"] | null
           thumbnail?: string | null
           title?: string | null
           updated_at?: string | null
@@ -2535,6 +2538,7 @@ export type Database = {
       community_visibility: "draft" | "private" | "public"
       conversation_source: "template" | "job request" | "information request"
       conversation_status: "open" | "closed" | "need attention"
+      expert_status: "active" | "in review" | "inactive" | "suspended"
       job_status:
         | "open"
         | "archived"
@@ -2742,6 +2746,7 @@ export const Constants = {
       community_visibility: ["draft", "private", "public"],
       conversation_source: ["template", "job request", "information request"],
       conversation_status: ["open", "closed", "need attention"],
+      expert_status: ["active", "in review", "inactive", "suspended"],
       job_status: [
         "open",
         "archived",
