@@ -31,59 +31,58 @@ export function ExpertsGallery({ experts }: ExpertsGalleryProps) {
         </div>
       ) : (
         experts.map((expert) => (
-          <Card 
+          <Link 
             key={expert.expert_uuid}
-            className="cursor-pointer hover:shadow-lg transition-shadow"
+            to={`/admin/experts/expert/${expert.expert_uuid}`}
           >
-            <CardContent className="p-0">
-              <div className="aspect-video w-full overflow-hidden rounded-t-lg bg-gray-100 flex items-center justify-center relative">
-                {expert.thumbnail ? (
-                  <img
-                    src={expert.thumbnail}
-                    alt={expert.name || 'Expert'}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <User className="h-16 w-16 text-gray-400" />
-                )}
-                <div className="absolute top-2 right-2">
-                  {getStatusBadge(expert.status)}
+            <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+              <CardContent className="p-0">
+                <div className="aspect-video w-full overflow-hidden rounded-t-lg bg-gray-100 flex items-center justify-center relative">
+                  {expert.thumbnail ? (
+                    <img
+                      src={expert.thumbnail}
+                      alt={expert.name || 'Expert'}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <User className="h-16 w-16 text-gray-400" />
+                  )}
+                  <div className="absolute top-2 right-2">
+                    {getStatusBadge(expert.status)}
+                  </div>
                 </div>
-              </div>
-              <div className="p-4 space-y-3">
-                <div>
-                  <h3 className="font-semibold text-lg line-clamp-1">{expert.name || 'Unnamed Expert'}</h3>
-                  <p className="text-sm text-[#8E9196] line-clamp-1">{expert.title || 'No title'}</p>
-                  <p className="text-xs text-[#8E9196] line-clamp-2 mt-1">{expert.description || 'No description available'}</p>
-                </div>
-                
-                <div className="space-y-2 text-xs">
-                  <div className="flex items-center gap-2">
-                    <User className="h-3 w-3 text-[#8E9196]" />
-                    <span className="text-[#8E9196]">Email:</span>
-                    <span className="font-medium truncate">{expert.email || 'No email'}</span>
+                <div className="p-4 space-y-3">
+                  <div>
+                    <h3 className="font-semibold text-lg line-clamp-1">{expert.name || 'Unnamed Expert'}</h3>
+                    <p className="text-sm text-[#8E9196] line-clamp-1">{expert.title || 'No title'}</p>
+                    <p className="text-xs text-[#8E9196] line-clamp-2 mt-1">{expert.description || 'No description available'}</p>
                   </div>
                   
-                  <div className="flex items-center gap-2">
-                    <LinkIcon className="h-3 w-3 text-[#8E9196]" />
-                    <span className="text-[#8E9196]">Profile:</span>
-                    <Link 
-                      to={`/expert/${expert.slug || expert.expert_uuid}`}
-                      className="text-blue-600 hover:text-blue-800 text-xs"
-                    >
-                      View Public Profile
-                    </Link>
-                  </div>
-                  
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-3 w-3 text-[#8E9196]" />
-                    <span className="text-[#8E9196]">Created:</span>
-                    <span className="font-medium text-xs">{new Date(expert.created_at).toLocaleDateString()}</span>
+                  <div className="space-y-2 text-xs">
+                    <div className="flex items-center gap-2">
+                      <User className="h-3 w-3 text-[#8E9196]" />
+                      <span className="text-[#8E9196]">Email:</span>
+                      <span className="font-medium truncate">{expert.email || 'No email'}</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      <LinkIcon className="h-3 w-3 text-[#8E9196]" />
+                      <span className="text-[#8E9196]">Profile:</span>
+                      <span className="text-blue-600 text-xs">
+                        View Public Profile
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-3 w-3 text-[#8E9196]" />
+                      <span className="text-[#8E9196]">Created:</span>
+                      <span className="font-medium text-xs">{new Date(expert.created_at).toLocaleDateString()}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </Link>
         ))
       )}
     </div>

@@ -164,7 +164,7 @@ export default function AdminExpertDetails() {
                   <div className="text-xs text-gray-500">Response Rate</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-orange-600">${expert.sales_amount || 0}</div>
+                  <div className="text-2xl font-bold text-orange-600">-</div>
                   <div className="text-xs text-gray-500">Sales Amount</div>
                 </div>
               </div>
