@@ -28,6 +28,7 @@ import AdminDashboardPage from "./pages/admin/AdminDashboard";
 import AdminUsersPage from "./pages/admin/AdminUsers";
 import AdminUserDetailsPage from "./pages/admin/AdminUserDetails";
 import AdminExpertsPage from "./pages/admin/AdminExperts";
+import AdminExpertDetailsPage from "./pages/admin/AdminExpertDetails";
 import AdminTransactionsPage from "./pages/admin/AdminTransactions";
 import AdminTransactionDetailsPage from "./pages/admin/AdminTransactionDetails";
 import DraftTemplatesPage from "./pages/admin/DraftTemplates";
@@ -77,6 +78,7 @@ function App() {
           <Route path="/admin/users" element={<AdminUsersPage />} />
           <Route path="/admin/user/:id" element={<AdminUserDetailsPage />} />
           <Route path="/admin/experts" element={<AdminExpertsPage />} />
+          <Route path="/admin/experts/expert/:id" element={<AdminExpertDetailsPage />} />
           <Route path="/admin/transactions" element={<AdminTransactionsPage />} />
           <Route path="/admin/transaction/:id" element={<AdminTransactionDetailsPage />} />
           <Route path="/admin/products/draft" element={<DraftTemplatesPage />} />
