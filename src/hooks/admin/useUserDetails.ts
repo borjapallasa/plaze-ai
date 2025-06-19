@@ -90,32 +90,45 @@ export function useUserDetails(userUuid: string) {
 
       // Only fetch affiliate data if user is an affiliate
       if (userData.is_affiliate) {
+        console.log('User is affiliate, searching for affiliate data...');
+        console.log('Searching by user_uuid:', userUuid);
+        console.log('Searching by email:', userData.email);
+        
         // First try to match by user_uuid
         const { data: affiliateData, error: affiliateError } = await supabase
           .from('affiliates')
-          .select('affiliate_uuid')
+          .select('affiliate_uuid, user_uuid, email')
           .eq('user_uuid', userUuid)
           .maybeSingle();
+
+        console.log('Affiliate query by user_uuid result:', { data: affiliateData, error: affiliateError });
 
         if (affiliateError) {
           console.error('Error fetching affiliate data by user_uuid:', affiliateError);
           
           // Fallback: try to match by email
+          console.log('Attempting fallback search by email...');
           const { data: affiliateDataByEmail, error: affiliateEmailError } = await supabase
             .from('affiliates')
-            .select('affiliate_uuid')
+            .select('affiliate_uuid, user_uuid, email')
             .eq('email', userData.email)
             .maybeSingle();
+
+          console.log('Affiliate query by email result:', { data: affiliateDataByEmail, error: affiliateEmailError });
 
           if (affiliateEmailError) {
             console.error('Error fetching affiliate data by email:', affiliateEmailError);
           } else if (affiliateDataByEmail) {
             result.affiliate_uuid = affiliateDataByEmail.affiliate_uuid;
             console.log('Affiliate data found by email:', affiliateDataByEmail);
+          } else {
+            console.log('No affiliate record found by email');
           }
         } else if (affiliateData) {
           result.affiliate_uuid = affiliateData.affiliate_uuid;
           console.log('Affiliate data found by user_uuid:', affiliateData);
+        } else {
+          console.log('No affiliate record found by user_uuid');
         }
       }
 
