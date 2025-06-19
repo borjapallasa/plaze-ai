@@ -7,13 +7,16 @@ import { Calendar, Clock, DollarSign, User, Copy, MapPin, ExternalLink } from "l
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { useUserDetails } from "@/hooks/admin/useUserDetails";
+import { useState } from "react";
 
 export default function AdminUserDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user, isLoading, error } = useUserDetails(id || '');
+  const [activeTab, setActiveTab] = useState("all");
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
@@ -136,6 +139,20 @@ export default function AdminUserDetails() {
     }
   ];
 
+  // Filter transactions based on active tab
+  const getFilteredTransactions = () => {
+    switch (activeTab) {
+      case "products":
+        return userTransactions.filter(t => t.type === "product");
+      case "communities":
+        return userTransactions.filter(t => t.type === "community");
+      default:
+        return userTransactions;
+    }
+  };
+
+  const filteredTransactions = getFilteredTransactions();
+
   return (
     <>
       <MainHeader />
@@ -179,6 +196,7 @@ export default function AdminUserDetails() {
             </CardHeader>
 
             <CardContent className="space-y-8">
+              {/* Basic Information */}
               <div>
                 <h3 className="text-lg font-semibold mb-4">Basic Information</h3>
                 <div className="grid grid-cols-1 gap-6">
@@ -205,6 +223,7 @@ export default function AdminUserDetails() {
 
               <Separator />
 
+              {/* Financial & Usage Statistics */}
               <div>
                 <h3 className="text-lg font-semibold mb-4">Financial & Usage Statistics</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -239,6 +258,7 @@ export default function AdminUserDetails() {
 
               <Separator />
 
+              {/* User Permissions */}
               <div>
                 <h3 className="text-lg font-semibold mb-4">User Permissions</h3>
                 <div className="space-y-6">
@@ -352,62 +372,71 @@ export default function AdminUserDetails() {
 
               <Separator />
 
-              {/* Transaction History */}
+              {/* Transaction History with Tabs */}
               <div>
                 <h4 className="text-md font-medium mb-4">Transaction History</h4>
-                <div className="rounded-md border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Concept</TableHead>
-                        <TableHead>Type</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Amount</TableHead>
-                        <TableHead>Seller</TableHead>
-                        <TableHead>Checkout ID</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {userTransactions.map((transaction) => (
-                        <TableRow key={transaction.id}>
-                          <TableCell className="font-medium max-w-[200px] truncate">
-                            {transaction.concept}
-                          </TableCell>
-                          <TableCell>
-                            <Badge 
-                              variant="secondary"
-                              className={transaction.type === 'product' 
-                                ? "bg-blue-100 text-blue-800" 
-                                : "bg-purple-100 text-purple-800"
-                              }
-                            >
-                              {transaction.type}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-sm">
-                            {transaction.createdAt}
-                          </TableCell>
-                          <TableCell>
-                            <Badge 
-                              variant="secondary"
-                              className="bg-green-100 text-green-800"
-                            >
-                              {transaction.status}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="font-medium">
-                            ${transaction.amount.toFixed(2)}
-                          </TableCell>
-                          <TableCell>{transaction.seller}</TableCell>
-                          <TableCell className="text-sm text-[#8E9196]">
-                            {transaction.checkoutId}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="all">All</TabsTrigger>
+                    <TabsTrigger value="products">Products</TabsTrigger>
+                    <TabsTrigger value="communities">Communities</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value={activeTab} className="mt-4">
+                    <div className="rounded-md border">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Concept</TableHead>
+                            <TableHead>Type</TableHead>
+                            <TableHead>Date</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Amount</TableHead>
+                            <TableHead>Seller</TableHead>
+                            <TableHead>Checkout ID</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {filteredTransactions.map((transaction) => (
+                            <TableRow key={transaction.id}>
+                              <TableCell className="font-medium max-w-[200px] truncate">
+                                {transaction.concept}
+                              </TableCell>
+                              <TableCell>
+                                <Badge 
+                                  variant="secondary"
+                                  className={transaction.type === 'product' 
+                                    ? "bg-blue-100 text-blue-800" 
+                                    : "bg-purple-100 text-purple-800"
+                                  }
+                                >
+                                  {transaction.type}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="text-sm">
+                                {transaction.createdAt}
+                              </TableCell>
+                              <TableCell>
+                                <Badge 
+                                  variant="secondary"
+                                  className="bg-green-100 text-green-800"
+                                >
+                                  {transaction.status}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="font-medium">
+                                ${transaction.amount.toFixed(2)}
+                              </TableCell>
+                              <TableCell>{transaction.seller}</TableCell>
+                              <TableCell className="text-sm text-[#8E9196]">
+                                {transaction.checkoutId}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </TabsContent>
+                </Tabs>
               </div>
             </CardContent>
           </Card>
