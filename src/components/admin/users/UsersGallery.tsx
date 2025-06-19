@@ -1,0 +1,103 @@
+
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
+import { User, Calendar, DollarSign } from "lucide-react";
+
+interface UserData {
+  user_uuid: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  created_at: string;
+  is_expert: boolean;
+  is_affiliate: boolean;
+  is_admin: boolean;
+  total_spent: number;
+  total_sales_amount: number;
+  user_thumbnail?: string;
+}
+
+interface UsersGalleryProps {
+  users: UserData[];
+  sortField: keyof UserData;
+  sortDirection: "asc" | "desc";
+  onSort: (field: keyof UserData) => void;
+}
+
+export function UsersGallery({ users }: UsersGalleryProps) {
+  const navigate = useNavigate();
+
+  const getUserRoleBadges = (user: UserData) => {
+    const badges = [];
+    if (user.is_admin) badges.push(<Badge key="admin" variant="secondary" className="bg-purple-100 text-purple-800">Admin</Badge>);
+    if (user.is_expert) badges.push(<Badge key="expert" variant="secondary" className="bg-blue-100 text-blue-800">Expert</Badge>);
+    if (user.is_affiliate) badges.push(<Badge key="affiliate" variant="secondary" className="bg-green-100 text-green-800">Affiliate</Badge>);
+    return badges;
+  };
+
+  const handleUserClick = (userUuid: string) => {
+    navigate(`/admin/users/user/${userUuid}`);
+  };
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {users.length === 0 ? (
+        <div className="col-span-full text-center py-8 text-[#8E9196]">
+          No users found matching your criteria
+        </div>
+      ) : (
+        users.map((user) => (
+          <Card 
+            key={user.user_uuid}
+            className="cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={() => handleUserClick(user.user_uuid)}
+          >
+            <CardContent className="p-0">
+              <div className="aspect-video w-full overflow-hidden rounded-t-lg bg-gray-100 flex items-center justify-center relative">
+                {user.user_thumbnail ? (
+                  <img
+                    src={user.user_thumbnail}
+                    alt={`${user.first_name} ${user.last_name}` || 'User'}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <User className="h-16 w-16 text-gray-400" />
+                )}
+                <div className="absolute top-2 right-2 flex gap-1 flex-wrap">
+                  {getUserRoleBadges(user)}
+                </div>
+              </div>
+              <div className="p-4 space-y-3">
+                <div>
+                  <h3 className="font-semibold text-lg line-clamp-1">{`${user.first_name} ${user.last_name}` || 'Unnamed User'}</h3>
+                  <p className="text-sm text-[#8E9196] line-clamp-1">{user.email || 'No email'}</p>
+                </div>
+                
+                <div className="space-y-2 text-xs">
+                  <div className="flex items-center gap-2">
+                    <DollarSign className="h-3 w-3 text-[#8E9196]" />
+                    <span className="text-[#8E9196]">Spent:</span>
+                    <span className="font-medium">${(user.total_spent || 0).toFixed(2)}</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <DollarSign className="h-3 w-3 text-[#8E9196]" />
+                    <span className="text-[#8E9196]">Sales:</span>
+                    <span className="font-medium">${(user.total_sales_amount || 0).toFixed(2)}</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-3 w-3 text-[#8E9196]" />
+                    <span className="text-[#8E9196]">Created:</span>
+                    <span className="font-medium text-xs">{new Date(user.created_at).toLocaleDateString()}</span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))
+      )}
+    </div>
+  );
+}
