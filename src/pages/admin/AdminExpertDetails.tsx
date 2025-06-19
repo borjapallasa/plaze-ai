@@ -143,28 +143,6 @@ export default function AdminExpertDetails() {
           backLink="/admin/experts"
         />
 
-        {/* Expert Status Card */}
-        <Card className="mb-6 shadow-sm">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Expert Status</h3>
-                <p className="text-sm text-muted-foreground">Current approval status of this expert</p>
-              </div>
-              <Badge 
-                variant={
-                  currentExpert.status === 'active' ? 'default' : 
-                  currentExpert.status === 'in review' ? 'secondary' :
-                  currentExpert.status === 'suspended' ? 'destructive' : 'outline'
-                }
-                className="text-sm px-3 py-1 capitalize"
-              >
-                {currentExpert.status || 'Unknown'}
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
-
         <SellerHeader 
           seller={currentExpert} 
           productsCount={products?.length || 0}

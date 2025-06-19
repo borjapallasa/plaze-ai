@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -86,7 +87,7 @@ export function ProductsTab({ products, isLoading = false }: ProductsTabProps) {
           </div>
         ) : (
           <div className="w-full overflow-hidden">
-            <ScrollArea className="w-full" orientation="horizontal">
+            <ScrollArea className="w-full">
               <div className="min-w-[800px] w-full">
                 <div className="rounded-lg border border-border">
                   <table className="w-full">

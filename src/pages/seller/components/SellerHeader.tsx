@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 import { MapPin, Star, Briefcase, Package, Users, Edit2 } from "lucide-react";
 import { EditExpertDialog } from "./EditExpertDialog";
 import type { Expert } from "@/types/expert";
@@ -51,9 +52,23 @@ export function SellerHeader({
               {/* Name, Title, Location, Description */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between mb-2">
-                  <h1 className="text-3xl font-bold text-foreground leading-tight">
-                    {seller.name}
-                  </h1>
+                  <div className="flex items-center gap-3">
+                    <h1 className="text-3xl font-bold text-foreground leading-tight">
+                      {seller.name}
+                    </h1>
+                    {seller.status && (
+                      <Badge 
+                        variant={
+                          seller.status === 'active' ? 'default' : 
+                          seller.status === 'in review' ? 'secondary' :
+                          seller.status === 'suspended' ? 'destructive' : 'outline'
+                        }
+                        className="text-xs px-2 py-1 capitalize"
+                      >
+                        {seller.status}
+                      </Badge>
+                    )}
+                  </div>
                   <EditExpertDialog
                     expert={seller}
                     onUpdate={onSellerUpdate}
@@ -150,9 +165,23 @@ export function SellerHeader({
               </div>
               
               <div className="flex-1 min-w-0">
-                <h1 className="text-2xl font-bold text-foreground leading-tight mb-1">
-                  {seller.name}
-                </h1>
+                <div className="flex items-center gap-2 mb-1">
+                  <h1 className="text-2xl font-bold text-foreground leading-tight">
+                    {seller.name}
+                  </h1>
+                  {seller.status && (
+                    <Badge 
+                      variant={
+                        seller.status === 'active' ? 'default' : 
+                        seller.status === 'in review' ? 'secondary' :
+                        seller.status === 'suspended' ? 'destructive' : 'outline'
+                      }
+                      className="text-xs px-2 py-1 capitalize"
+                    >
+                      {seller.status}
+                    </Badge>
+                  )}
+                </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   {seller.title && <span className="font-medium">{seller.title}</span>}
                   {seller.title && seller.location && <span>•</span>}
