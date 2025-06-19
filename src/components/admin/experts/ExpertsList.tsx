@@ -1,4 +1,3 @@
-
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
@@ -26,7 +25,7 @@ export function ExpertsList({ experts }: ExpertsListProps) {
   };
 
   const handleExpertClick = (expertUuid: string) => {
-    navigate(`/admin/experts/${expertUuid}`);
+    navigate(`/admin/experts/expert/${expertUuid}`);
   };
 
   return (
