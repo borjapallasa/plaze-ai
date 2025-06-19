@@ -2328,6 +2328,7 @@ export type Database = {
           requested_amount: number | null
           service_sales_amount: number | null
           service_transaction_amount_spent: number | null
+          source: string | null
           stripe_client_id: string | null
           subscription_amount_spent: number | null
           subscription_sales_amount: number | null
@@ -2375,6 +2376,7 @@ export type Database = {
           requested_amount?: number | null
           service_sales_amount?: number | null
           service_transaction_amount_spent?: number | null
+          source?: string | null
           stripe_client_id?: string | null
           subscription_amount_spent?: number | null
           subscription_sales_amount?: number | null
@@ -2422,6 +2424,7 @@ export type Database = {
           requested_amount?: number | null
           service_sales_amount?: number | null
           service_transaction_amount_spent?: number | null
+          source?: string | null
           stripe_client_id?: string | null
           subscription_amount_spent?: number | null
           subscription_sales_amount?: number | null

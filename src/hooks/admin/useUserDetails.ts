@@ -19,6 +19,7 @@ interface UserDetailsData {
   transaction_count?: number;
   referral_source?: string;
   stripe_client_id?: string;
+  source?: string;
 }
 
 export function useUserDetails(userUuid: string) {
@@ -44,7 +45,8 @@ export function useUserDetails(userUuid: string) {
           active_product_count,
           transaction_count,
           referral_source,
-          stripe_client_id
+          stripe_client_id,
+          source
         `)
         .eq('user_uuid', userUuid)
         .maybeSingle();
