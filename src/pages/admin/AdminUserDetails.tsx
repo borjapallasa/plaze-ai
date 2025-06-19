@@ -165,11 +165,11 @@ export default function AdminUserDetails() {
       <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16">
         {/* Breadcrumb Navigation */}
         <nav className="flex items-center gap-2 text-sm mb-6">
-          <Link to="/a/admin" className="text-[#8E9196] hover:text-[#1A1F2C]">
+          <Link to="/admin" className="text-[#8E9196] hover:text-[#1A1F2C]">
             Home
           </Link>
           <span className="text-[#8E9196]">/</span>
-          <Link to="/a/admin/users" className="text-[#8E9196] hover:text-[#1A1F2C]">
+          <Link to="/admin/users" className="text-[#8E9196] hover:text-[#1A1F2C]">
             Users
           </Link>
           <span className="text-[#8E9196]">/</span>

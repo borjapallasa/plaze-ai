@@ -76,7 +76,7 @@ function App() {
           <Route path="/recover-password" element={<RecoverPasswordPage />} />
           <Route path="/admin" element={<AdminDashboardPage />} />
           <Route path="/admin/users" element={<AdminUsersPage />} />
-          <Route path="/admin/user/:id" element={<AdminUserDetailsPage />} />
+          <Route path="/admin/users/user/:id" element={<AdminUserDetailsPage />} />
           <Route path="/admin/experts" element={<AdminExpertsPage />} />
           <Route path="/admin/experts/expert/:id" element={<AdminExpertDetailsPage />} />
           <Route path="/admin/transactions" element={<AdminTransactionsPage />} />
