@@ -1,10 +1,12 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, DollarSign, User, Copy, Wallet, MapPin, ExternalLink } from "lucide-react";
+import { Calendar, Clock, DollarSign, User, Copy, MapPin, ExternalLink } from "lucide-react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
 import { useUserDetails } from "@/hooks/admin/useUserDetails";
 
@@ -72,31 +74,67 @@ export default function AdminUserDetails() {
     ? `${user.first_name} ${user.last_name}` 
     : user.first_name || user.last_name || 'Unnamed User';
 
-  // Mock data for earnings
-  const userData = {
-    earnings: {
-      total: 8500.00,
-      pending: 450.00,
-      products: 6200.00,
-      community: 1850.00,
-      mrr: 450.00,
-      recentPayouts: [
-        {
-          id: "1",
-          date: "2/15/2025",
-          amount: 750.00
-        },
-        {
-          id: "2",
-          date: "2/1/2025",
-          amount: 450.00
-        }
-      ]
+  // Mock data for communities joined
+  const communitiesJoined = [
+    {
+      id: "1",
+      name: "AI & Machine Learning Hub",
+      joinedDate: "2024-01-15",
+      status: "active",
+      price: 29.99,
+      type: "monthly"
+    },
+    {
+      id: "2", 
+      name: "Web Development Masterclass",
+      joinedDate: "2024-02-20",
+      status: "active",
+      price: 49.99,
+      type: "monthly"
+    },
+    {
+      id: "3",
+      name: "Startup Founders Circle",
+      joinedDate: "2023-12-01",
+      status: "cancelled",
+      price: 99.99,
+      type: "monthly"
     }
-  };
+  ];
 
-  // Calculate total paid out
-  const totalPaidOut = userData.earnings.recentPayouts.reduce((sum, payout) => sum + payout.amount, 0);
+  // Mock data for user transactions
+  const userTransactions = [
+    {
+      id: "1",
+      concept: "AI Email Template Generator",
+      type: "product" as const,
+      createdAt: "2/15/2025, 2:41 PM",
+      status: "completed",
+      amount: 149.95,
+      seller: "John Smith",
+      checkoutId: "ch_1234567890"
+    },
+    {
+      id: "2",
+      concept: "Web Development Masterclass",
+      type: "community" as const,
+      createdAt: "2/1/2025, 1:20 PM", 
+      status: "completed",
+      amount: 49.99,
+      seller: "Sarah Johnson",
+      checkoutId: "ch_0987654321"
+    },
+    {
+      id: "3",
+      concept: "Marketing Automation Tool",
+      type: "product" as const,
+      createdAt: "1/28/2025, 3:15 PM",
+      status: "completed", 
+      amount: 299.00,
+      seller: "Mike Davis",
+      checkoutId: "ch_1122334455"
+    }
+  ];
 
   return (
     <>
@@ -279,82 +317,96 @@ export default function AdminUserDetails() {
             </CardContent>
           </Card>
 
-          {/* Earnings Details Card */}
+          {/* Communities & Activity Card */}
           <Card className="shadow-sm">
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-lg font-semibold">Earnings Details</CardTitle>
-                <Button variant="outline" size="sm">
-                  Request Payout
-                </Button>
-              </div>
+              <CardTitle className="text-lg font-semibold">Communities & Activity</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                <div className="p-4 bg-[#F8F9FC] rounded-lg border-2 border-[#9b87f5] space-y-2">
-                  <div className="flex items-center gap-2 text-sm text-[#8E9196]">
-                    <Wallet className="h-4 w-4" />
-                    <span>Total</span>
-                  </div>
-                  <div className="font-medium text-xl text-[#9b87f5]">
-                    ${userData.earnings.total.toFixed(2)}
-                  </div>
-                </div>
-                <div className="p-4 bg-gray-50 rounded-lg space-y-2">
-                  <div className="flex items-center gap-2 text-sm text-[#8E9196]">
-                    <Clock className="h-4 w-4" />
-                    <span>Pending</span>
-                  </div>
-                  <div className="font-medium text-lg">
-                    ${userData.earnings.pending.toFixed(2)}
-                  </div>
-                </div>
-                <div className="p-4 bg-gray-50 rounded-lg space-y-2">
-                  <div className="flex items-center gap-2 text-sm text-[#8E9196]">
-                    <DollarSign className="h-4 w-4" />
-                    <span>Products</span>
-                  </div>
-                  <div className="font-medium text-lg">
-                    ${userData.earnings.products.toFixed(2)}
-                  </div>
-                </div>
-                <div className="p-4 bg-gray-50 rounded-lg space-y-2">
-                  <div className="flex items-center gap-2 text-sm text-[#8E9196]">
-                    <User className="h-4 w-4" />
-                    <span>Community</span>
-                  </div>
-                  <div className="font-medium text-lg">
-                    ${userData.earnings.community.toFixed(2)}
-                  </div>
-                </div>
-                <div className="p-4 bg-gray-50 rounded-lg space-y-2">
-                  <div className="flex items-center gap-2 text-sm text-[#8E9196]">
-                    <DollarSign className="h-4 w-4" />
-                    <span>MRR</span>
-                  </div>
-                  <div className="font-medium text-lg">
-                    ${userData.earnings.mrr.toFixed(2)}
-                  </div>
-                </div>
-              </div>
-
+              {/* Communities Joined */}
               <div>
-                <h4 className="text-sm font-medium mb-3">Recent Payouts</h4>
-                <div className="space-y-2">
-                  {userData.earnings.recentPayouts.map((payout) => (
-                    <div key={payout.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <div className="flex items-center gap-2 text-sm text-[#8E9196]">
-                        <Calendar className="h-4 w-4" />
-                        {payout.date}
+                <h4 className="text-md font-medium mb-4">Communities Joined</h4>
+                <div className="space-y-3">
+                  {communitiesJoined.map((community) => (
+                    <div key={community.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div className="flex flex-col gap-1">
+                        <span className="font-medium">{community.name}</span>
+                        <span className="text-sm text-[#8E9196]">Joined: {new Date(community.joinedDate).toLocaleDateString()}</span>
                       </div>
-                      <span className="font-medium">${payout.amount.toFixed(2)}</span>
+                      <div className="flex items-center gap-3">
+                        <span className="font-medium">${community.price}/{community.type}</span>
+                        <Badge 
+                          variant="secondary" 
+                          className={community.status === 'active' 
+                            ? "bg-green-100 text-green-800" 
+                            : "bg-red-100 text-red-800"
+                          }
+                        >
+                          {community.status}
+                        </Badge>
+                      </div>
                     </div>
                   ))}
                 </div>
-                
-                <div className="mt-3 flex items-center justify-between">
-                  <span className="text-sm text-[#8E9196]">Total Paid Out</span>
-                  <span className="font-medium">${totalPaidOut.toFixed(2)}</span>
+              </div>
+
+              <Separator />
+
+              {/* Transaction History */}
+              <div>
+                <h4 className="text-md font-medium mb-4">Transaction History</h4>
+                <div className="rounded-md border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Concept</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Amount</TableHead>
+                        <TableHead>Seller</TableHead>
+                        <TableHead>Checkout ID</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {userTransactions.map((transaction) => (
+                        <TableRow key={transaction.id}>
+                          <TableCell className="font-medium max-w-[200px] truncate">
+                            {transaction.concept}
+                          </TableCell>
+                          <TableCell>
+                            <Badge 
+                              variant="secondary"
+                              className={transaction.type === 'product' 
+                                ? "bg-blue-100 text-blue-800" 
+                                : "bg-purple-100 text-purple-800"
+                              }
+                            >
+                              {transaction.type}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-sm">
+                            {transaction.createdAt}
+                          </TableCell>
+                          <TableCell>
+                            <Badge 
+                              variant="secondary"
+                              className="bg-green-100 text-green-800"
+                            >
+                              {transaction.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            ${transaction.amount.toFixed(2)}
+                          </TableCell>
+                          <TableCell>{transaction.seller}</TableCell>
+                          <TableCell className="text-sm text-[#8E9196]">
+                            {transaction.checkoutId}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </div>
               </div>
             </CardContent>
