@@ -126,7 +126,7 @@ export default function AdminUserDetails() {
               <div>
                 <h3 className="text-lg font-semibold mb-4">Basic Information</h3>
                 <div className="grid grid-cols-1 gap-6">
-                  <div className="flex flex-wrap items-center gap-6 text-sm">
+                  <div className="flex items-center gap-6 text-sm w-full">
                     <div className="flex items-center gap-2">
                       <User className="h-4 w-4 text-[#8E9196]" />
                       <span className="text-[#8E9196]">Full Name:</span>
