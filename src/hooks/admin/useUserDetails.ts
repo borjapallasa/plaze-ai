@@ -90,17 +90,32 @@ export function useUserDetails(userUuid: string) {
 
       // Only fetch affiliate data if user is an affiliate
       if (userData.is_affiliate) {
+        // First try to match by user_uuid
         const { data: affiliateData, error: affiliateError } = await supabase
           .from('affiliates')
           .select('affiliate_uuid')
-          .eq('email', userData.email)
+          .eq('user_uuid', userUuid)
           .maybeSingle();
 
         if (affiliateError) {
-          console.error('Error fetching affiliate data:', affiliateError);
+          console.error('Error fetching affiliate data by user_uuid:', affiliateError);
+          
+          // Fallback: try to match by email
+          const { data: affiliateDataByEmail, error: affiliateEmailError } = await supabase
+            .from('affiliates')
+            .select('affiliate_uuid')
+            .eq('email', userData.email)
+            .maybeSingle();
+
+          if (affiliateEmailError) {
+            console.error('Error fetching affiliate data by email:', affiliateEmailError);
+          } else if (affiliateDataByEmail) {
+            result.affiliate_uuid = affiliateDataByEmail.affiliate_uuid;
+            console.log('Affiliate data found by email:', affiliateDataByEmail);
+          }
         } else if (affiliateData) {
           result.affiliate_uuid = affiliateData.affiliate_uuid;
-          console.log('Affiliate data found:', affiliateData);
+          console.log('Affiliate data found by user_uuid:', affiliateData);
         }
       }
 
