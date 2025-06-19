@@ -7,32 +7,32 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { useUserDetails } from "@/hooks/admin/useUserDetails";
+
 export default function AdminUserDetails() {
-  const {
-    id
-  } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
-  const {
-    user,
-    isLoading,
-    error
-  } = useUserDetails(id || '');
+  const { user, isLoading, error } = useUserDetails(id || '');
+
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     toast.success(`${label} copied to clipboard`);
   };
+
   const handleViewExpertProfile = () => {
     if (user?.expert_uuid) {
       navigate(`/admin/experts/expert/${user.expert_uuid}`);
     }
   };
+
   const handleViewAffiliateProfile = () => {
     if (user?.affiliate_uuid) {
       navigate(`/admin/affiliates/affiliate/${user.affiliate_uuid}`);
     }
   };
+
   if (isLoading) {
-    return <>
+    return (
+      <>
         <MainHeader />
         <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16">
           <div className="flex items-center justify-center h-64">
@@ -42,10 +42,13 @@ export default function AdminUserDetails() {
             </div>
           </div>
         </div>
-      </>;
+      </>
+    );
   }
+
   if (error || !user) {
-    return <>
+    return (
+      <>
         <MainHeader />
         <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16">
           <div className="flex items-center justify-center h-64">
@@ -55,9 +58,13 @@ export default function AdminUserDetails() {
             </div>
           </div>
         </div>
-      </>;
+      </>
+    );
   }
-  const fullName = user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : user.first_name || user.last_name || 'Unnamed User';
+
+  const fullName = user.first_name && user.last_name 
+    ? `${user.first_name} ${user.last_name}` 
+    : user.first_name || user.last_name || 'Unnamed User';
 
   // Mock data for earnings
   const userData = {
@@ -67,21 +74,26 @@ export default function AdminUserDetails() {
       products: 6200.00,
       community: 1850.00,
       mrr: 450.00,
-      recentPayouts: [{
-        id: "1",
-        date: "2/15/2025",
-        amount: 750.00
-      }, {
-        id: "2",
-        date: "2/1/2025",
-        amount: 450.00
-      }]
+      recentPayouts: [
+        {
+          id: "1",
+          date: "2/15/2025",
+          amount: 750.00
+        },
+        {
+          id: "2",
+          date: "2/1/2025",
+          amount: 450.00
+        }
+      ]
     }
   };
 
   // Calculate total paid out
   const totalPaidOut = userData.earnings.recentPayouts.reduce((sum, payout) => sum + payout.amount, 0);
-  return <>
+
+  return (
+    <>
       <MainHeader />
       <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16">
         {/* Breadcrumb Navigation */}
@@ -110,7 +122,12 @@ export default function AdminUserDetails() {
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 text-sm bg-gray-50 p-3 rounded-lg">
                   <span className="text-[#8E9196] whitespace-nowrap">User ID:</span>
                   <span className="font-medium flex-1 break-all">{user.user_uuid}</span>
-                  <Button variant="ghost" size="sm" className="text-[#8E9196] hover:text-[#1A1F2C]" onClick={() => copyToClipboard(user.user_uuid, "User ID")}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-[#8E9196] hover:text-[#1A1F2C]"
+                    onClick={() => copyToClipboard(user.user_uuid, "User ID")}
+                  >
                     <Copy className="h-4 w-4" />
                   </Button>
                 </div>
@@ -134,7 +151,7 @@ export default function AdminUserDetails() {
                     </div>
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4 text-[#8E9196]" />
-                      
+                      <Clock className="h-4 w-4 text-[#8E9196]" />
                       <span className="text-[#8E9196]">Created @:</span>
                       <span className="font-medium">{new Date(user.created_at).toLocaleString()}</span>
                     </div>
@@ -167,7 +184,10 @@ export default function AdminUserDetails() {
                       <span>Avg Transaction</span>
                     </div>
                     <div className="font-medium text-lg">
-                      {user.transaction_count && user.transaction_count > 0 ? `$${((user.total_spent || 0) / user.transaction_count).toFixed(2)}` : '$0.00'}
+                      {user.transaction_count && user.transaction_count > 0 
+                        ? `$${((user.total_spent || 0) / user.transaction_count).toFixed(2)}`
+                        : '$0.00'
+                      }
                     </div>
                   </div>
                 </div>
@@ -182,24 +202,50 @@ export default function AdminUserDetails() {
                     <div className="p-4 bg-gray-50 rounded-lg flex items-center justify-between">
                       <span className="text-sm text-[#8E9196]">Expert</span>
                       <div className="flex items-center gap-2">
-                        {user.is_expert ? <Badge variant="secondary" className="bg-blue-100 text-blue-800">Yes</Badge> : <Badge variant="secondary" className="bg-gray-100 text-gray-800">No</Badge>}
-                        {user.is_expert && user.expert_uuid && <Button variant="ghost" size="sm" onClick={handleViewExpertProfile} className="text-blue-600 hover:text-blue-800 p-1 h-auto">
+                        {user.is_expert ? (
+                          <Badge variant="secondary" className="bg-blue-100 text-blue-800">Yes</Badge>
+                        ) : (
+                          <Badge variant="secondary" className="bg-gray-100 text-gray-800">No</Badge>
+                        )}
+                        {user.is_expert && user.expert_uuid && (
+                          <Button 
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleViewExpertProfile}
+                            className="text-blue-600 hover:text-blue-800 p-1 h-auto"
+                          >
                             <ExternalLink className="h-4 w-4" />
-                          </Button>}
+                          </Button>
+                        )}
                       </div>
                     </div>
                     <div className="p-4 bg-gray-50 rounded-lg flex items-center justify-between">
                       <span className="text-sm text-[#8E9196]">Affiliate</span>
                       <div className="flex items-center gap-2">
-                        {user.is_affiliate ? <Badge variant="secondary" className="bg-green-100 text-green-800">Yes</Badge> : <Badge variant="secondary" className="bg-gray-100 text-gray-800">No</Badge>}
-                        {user.is_affiliate && user.affiliate_uuid && <Button variant="ghost" size="sm" onClick={handleViewAffiliateProfile} className="text-green-600 hover:text-green-800 p-1 h-auto">
+                        {user.is_affiliate ? (
+                          <Badge variant="secondary" className="bg-green-100 text-green-800">Yes</Badge>
+                        ) : (
+                          <Badge variant="secondary" className="bg-gray-100 text-gray-800">No</Badge>
+                        )}
+                        {user.is_affiliate && user.affiliate_uuid && (
+                          <Button 
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleViewAffiliateProfile}
+                            className="text-green-600 hover:text-green-800 p-1 h-auto"
+                          >
                             <ExternalLink className="h-4 w-4" />
-                          </Button>}
+                          </Button>
+                        )}
                       </div>
                     </div>
                     <div className="p-4 bg-gray-50 rounded-lg flex items-center justify-between">
                       <span className="text-sm text-[#8E9196]">Admin</span>
-                      {user.is_admin ? <Badge variant="secondary" className="bg-purple-100 text-purple-800">Yes</Badge> : <Badge variant="secondary" className="bg-gray-100 text-gray-800">No</Badge>}
+                      {user.is_admin ? (
+                        <Badge variant="secondary" className="bg-purple-100 text-purple-800">Yes</Badge>
+                      ) : (
+                        <Badge variant="secondary" className="bg-gray-100 text-gray-800">No</Badge>
+                      )}
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-4">
@@ -277,13 +323,15 @@ export default function AdminUserDetails() {
               <div>
                 <h4 className="text-sm font-medium mb-3">Recent Payouts</h4>
                 <div className="space-y-2">
-                  {userData.earnings.recentPayouts.map(payout => <div key={payout.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  {userData.earnings.recentPayouts.map((payout) => (
+                    <div key={payout.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                       <div className="flex items-center gap-2 text-sm text-[#8E9196]">
                         <Calendar className="h-4 w-4" />
                         {payout.date}
                       </div>
                       <span className="font-medium">${payout.amount.toFixed(2)}</span>
-                    </div>)}
+                    </div>
+                  ))}
                 </div>
                 
                 <div className="mt-3 flex items-center justify-between">
@@ -295,5 +343,6 @@ export default function AdminUserDetails() {
           </Card>
         </div>
       </div>
-    </>;
+    </>
+  );
 }
