@@ -3,7 +3,7 @@ import { MainHeader } from "@/components/MainHeader";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, DollarSign, ShoppingCart, User, Copy, Wallet, MapPin } from "lucide-react";
+import { Calendar, Clock, DollarSign, User, Copy, Wallet, MapPin } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
@@ -53,10 +53,6 @@ export default function AdminUserDetails() {
   const fullName = user.first_name && user.last_name 
     ? `${user.first_name} ${user.last_name}` 
     : user.first_name || user.last_name || 'Unnamed User';
-
-  // Calculate account age
-  const accountAge = Math.floor((new Date().getTime() - new Date(user.created_at).getTime()) / (1000 * 60 * 60 * 24));
-  const accountAgeText = accountAge < 30 ? `${accountAge} days` : `${Math.floor(accountAge / 30)} months`;
 
   // Mock data for earnings
   const userData = {
@@ -129,29 +125,23 @@ export default function AdminUserDetails() {
             <CardContent className="space-y-8">
               <div>
                 <h3 className="text-lg font-semibold mb-4">Basic Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm text-[#8E9196]">
-                      <User className="h-4 w-4" />
-                      <span>Full Name</span>
+                <div className="grid grid-cols-1 gap-6">
+                  <div className="flex flex-wrap items-center gap-6 text-sm">
+                    <div className="flex items-center gap-2">
+                      <User className="h-4 w-4 text-[#8E9196]" />
+                      <span className="text-[#8E9196]">Full Name:</span>
+                      <span className="font-medium">{fullName}</span>
                     </div>
-                    <div className="font-medium pl-6">{fullName}</div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm text-[#8E9196]">
-                      <MapPin className="h-4 w-4" />
-                      <span>Source</span>
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-[#8E9196]" />
+                      <span className="text-[#8E9196]">Source:</span>
+                      <span className="font-medium">{user.source || 'Not specified'}</span>
                     </div>
-                    <div className="font-medium pl-6">{user.source || 'Not specified'}</div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm text-[#8E9196]">
-                      <Calendar className="h-4 w-4" />
-                      <Clock className="h-4 w-4" />
-                      <span>Created @</span>
-                    </div>
-                    <div className="font-medium pl-6">
-                      {new Date(user.created_at).toLocaleString()}
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-[#8E9196]" />
+                      <Clock className="h-4 w-4 text-[#8E9196]" />
+                      <span className="text-[#8E9196]">Created @:</span>
+                      <span className="font-medium">{new Date(user.created_at).toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
@@ -161,10 +151,10 @@ export default function AdminUserDetails() {
 
               <div>
                 <h3 className="text-lg font-semibold mb-4">Financial & Usage Statistics</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   <div className="p-4 bg-gray-50 rounded-lg space-y-2">
                     <div className="flex items-center gap-2 text-sm text-[#8E9196]">
-                      <ShoppingCart className="h-4 w-4" />
+                      <DollarSign className="h-4 w-4" />
                       <span>Total Spent</span>
                     </div>
                     <div className="font-medium text-lg">${(user.total_spent || 0).toFixed(2)}</div>
@@ -175,13 +165,6 @@ export default function AdminUserDetails() {
                       <span>Transaction Count</span>
                     </div>
                     <div className="font-medium text-lg">{user.transaction_count || 0}</div>
-                  </div>
-                  <div className="p-4 bg-gray-50 rounded-lg space-y-2">
-                    <div className="flex items-center gap-2 text-sm text-[#8E9196]">
-                      <Calendar className="h-4 w-4" />
-                      <span>Account Age</span>
-                    </div>
-                    <div className="font-medium text-lg">{accountAgeText}</div>
                   </div>
                   <div className="p-4 bg-gray-50 rounded-lg space-y-2">
                     <div className="flex items-center gap-2 text-sm text-[#8E9196]">
@@ -274,7 +257,7 @@ export default function AdminUserDetails() {
                 </div>
                 <div className="p-4 bg-gray-50 rounded-lg space-y-2">
                   <div className="flex items-center gap-2 text-sm text-[#8E9196]">
-                    <ShoppingCart className="h-4 w-4" />
+                    <DollarSign className="h-4 w-4" />
                     <span>Products</span>
                   </div>
                   <div className="font-medium text-lg">
