@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +21,12 @@ export default function AdminUserDetails() {
   const handleViewExpertProfile = () => {
     if (user?.expert_uuid) {
       navigate(`/admin/experts/expert/${user.expert_uuid}`);
+    }
+  };
+
+  const handleViewAffiliateProfile = () => {
+    if (user?.affiliate_uuid) {
+      navigate(`/admin/affiliates/affiliate/${user.affiliate_uuid}`);
     }
   };
 
@@ -216,11 +221,23 @@ export default function AdminUserDetails() {
                     </div>
                     <div className="p-4 bg-gray-50 rounded-lg flex items-center justify-between">
                       <span className="text-sm text-[#8E9196]">Affiliate</span>
-                      {user.is_affiliate ? (
-                        <Badge variant="secondary" className="bg-green-100 text-green-800">Yes</Badge>
-                      ) : (
-                        <Badge variant="secondary" className="bg-gray-100 text-gray-800">No</Badge>
-                      )}
+                      <div className="flex items-center gap-2">
+                        {user.is_affiliate ? (
+                          <Badge variant="secondary" className="bg-green-100 text-green-800">Yes</Badge>
+                        ) : (
+                          <Badge variant="secondary" className="bg-gray-100 text-gray-800">No</Badge>
+                        )}
+                        {user.is_affiliate && user.affiliate_uuid && (
+                          <Button 
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleViewAffiliateProfile}
+                            className="text-green-600 hover:text-green-800 p-1 h-auto"
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
                     </div>
                     <div className="p-4 bg-gray-50 rounded-lg flex items-center justify-between">
                       <span className="text-sm text-[#8E9196]">Admin</span>

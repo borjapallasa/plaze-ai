@@ -97,6 +97,7 @@ export type Database = {
           paypal: string | null
           status: Database["public"]["Enums"]["affiliate_status"] | null
           transaction_count: number | null
+          user_uuid: string | null
         }
         Insert: {
           affiliate_code?: string | null
@@ -111,6 +112,7 @@ export type Database = {
           paypal?: string | null
           status?: Database["public"]["Enums"]["affiliate_status"] | null
           transaction_count?: number | null
+          user_uuid?: string | null
         }
         Update: {
           affiliate_code?: string | null
@@ -125,8 +127,17 @@ export type Database = {
           paypal?: string | null
           status?: Database["public"]["Enums"]["affiliate_status"] | null
           transaction_count?: number | null
+          user_uuid?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "affiliates_user_uuid_fkey"
+            columns: ["user_uuid"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["user_uuid"]
+          },
+        ]
       }
       applications: {
         Row: {
