@@ -90,45 +90,34 @@ export function useUserDetails(userUuid: string) {
 
       // Only fetch affiliate data if user is an affiliate
       if (userData.is_affiliate) {
-        console.log('User is affiliate, searching for affiliate data...');
-        console.log('Searching by user_uuid:', userUuid);
-        console.log('Searching by email:', userData.email);
+        console.log('User is affiliate, fetching affiliate data for user_uuid:', userUuid);
         
-        // First try to match by user_uuid
         const { data: affiliateData, error: affiliateError } = await supabase
           .from('affiliates')
-          .select('affiliate_uuid, user_uuid, email')
+          .select('affiliate_uuid')
           .eq('user_uuid', userUuid)
-          .maybeSingle();
+          .single();
 
-        console.log('Affiliate query by user_uuid result:', { data: affiliateData, error: affiliateError });
+        console.log('Affiliate query result:', { data: affiliateData, error: affiliateError });
 
         if (affiliateError) {
-          console.error('Error fetching affiliate data by user_uuid:', affiliateError);
-          
-          // Fallback: try to match by email
-          console.log('Attempting fallback search by email...');
-          const { data: affiliateDataByEmail, error: affiliateEmailError } = await supabase
+          console.error('Error fetching affiliate data:', affiliateError);
+          // If single() fails, try maybeSingle() as fallback
+          const { data: affiliateDataFallback, error: affiliateErrorFallback } = await supabase
             .from('affiliates')
-            .select('affiliate_uuid, user_uuid, email')
-            .eq('email', userData.email)
+            .select('affiliate_uuid')
+            .eq('user_uuid', userUuid)
             .maybeSingle();
-
-          console.log('Affiliate query by email result:', { data: affiliateDataByEmail, error: affiliateEmailError });
-
-          if (affiliateEmailError) {
-            console.error('Error fetching affiliate data by email:', affiliateEmailError);
-          } else if (affiliateDataByEmail) {
-            result.affiliate_uuid = affiliateDataByEmail.affiliate_uuid;
-            console.log('Affiliate data found by email:', affiliateDataByEmail);
-          } else {
-            console.log('No affiliate record found by email');
+          
+          console.log('Affiliate fallback query result:', { data: affiliateDataFallback, error: affiliateErrorFallback });
+          
+          if (affiliateDataFallback && !affiliateErrorFallback) {
+            result.affiliate_uuid = affiliateDataFallback.affiliate_uuid;
+            console.log('Affiliate data found via fallback:', affiliateDataFallback);
           }
         } else if (affiliateData) {
           result.affiliate_uuid = affiliateData.affiliate_uuid;
-          console.log('Affiliate data found by user_uuid:', affiliateData);
-        } else {
-          console.log('No affiliate record found by user_uuid');
+          console.log('Affiliate data found:', affiliateData);
         }
       }
 
