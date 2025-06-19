@@ -96,28 +96,17 @@ export function useUserDetails(userUuid: string) {
           .from('affiliates')
           .select('affiliate_uuid')
           .eq('user_uuid', userUuid)
-          .single();
+          .maybeSingle();
 
         console.log('Affiliate query result:', { data: affiliateData, error: affiliateError });
 
         if (affiliateError) {
           console.error('Error fetching affiliate data:', affiliateError);
-          // If single() fails, try maybeSingle() as fallback
-          const { data: affiliateDataFallback, error: affiliateErrorFallback } = await supabase
-            .from('affiliates')
-            .select('affiliate_uuid')
-            .eq('user_uuid', userUuid)
-            .maybeSingle();
-          
-          console.log('Affiliate fallback query result:', { data: affiliateDataFallback, error: affiliateErrorFallback });
-          
-          if (affiliateDataFallback && !affiliateErrorFallback) {
-            result.affiliate_uuid = affiliateDataFallback.affiliate_uuid;
-            console.log('Affiliate data found via fallback:', affiliateDataFallback);
-          }
         } else if (affiliateData) {
           result.affiliate_uuid = affiliateData.affiliate_uuid;
           console.log('Affiliate data found:', affiliateData);
+        } else {
+          console.log('No affiliate record found for user_uuid:', userUuid);
         }
       }
 
