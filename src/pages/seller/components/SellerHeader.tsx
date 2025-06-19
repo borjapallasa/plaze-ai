@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Star, Briefcase, Package, Users, Edit2 } from "lucide-react";
 import { EditExpertDialog } from "./EditExpertDialog";
+import { EditExpertStatusDialog } from "./EditExpertStatusDialog";
 import type { Expert } from "@/types/expert";
 
 interface SellerHeaderProps {
@@ -16,6 +17,7 @@ interface SellerHeaderProps {
   communitiesCount: number;
   totalEarnings: number;
   onSellerUpdate: (updatedSeller: Expert) => void;
+  isAdminView?: boolean;
 }
 
 export function SellerHeader({ 
@@ -23,8 +25,22 @@ export function SellerHeader({
   productsCount, 
   communitiesCount, 
   totalEarnings, 
-  onSellerUpdate 
+  onSellerUpdate,
+  isAdminView = false
 }: SellerHeaderProps) {
+  const getBadgeVariant = (status: string) => {
+    switch (status) {
+      case 'active':
+        return 'default';
+      case 'in review':
+        return 'warning';
+      case 'suspended':
+        return 'destructive';
+      default:
+        return 'outline';
+    }
+  };
+
   return (
     <Card className="mb-8 shadow-sm">
       <CardContent className="p-6">
@@ -58,31 +74,44 @@ export function SellerHeader({
                     </h1>
                     {seller.status && (
                       <Badge 
-                        variant={
-                          seller.status === 'active' ? 'default' : 
-                          seller.status === 'in review' ? 'secondary' :
-                          seller.status === 'suspended' ? 'destructive' : 'outline'
-                        }
+                        variant={getBadgeVariant(seller.status)}
                         className="text-xs px-2 py-1 capitalize"
                       >
                         {seller.status}
                       </Badge>
                     )}
                   </div>
-                  <EditExpertDialog
-                    expert={seller}
-                    onUpdate={onSellerUpdate}
-                    trigger={
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="flex items-center gap-2"
-                      >
-                        <Edit2 className="h-4 w-4" />
-                        Edit Profile
-                      </Button>
-                    }
-                  />
+                  {isAdminView ? (
+                    <EditExpertStatusDialog
+                      expert={seller}
+                      onUpdate={onSellerUpdate}
+                      trigger={
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="flex items-center gap-2"
+                        >
+                          <Edit2 className="h-4 w-4" />
+                          Edit Status
+                        </Button>
+                      }
+                    />
+                  ) : (
+                    <EditExpertDialog
+                      expert={seller}
+                      onUpdate={onSellerUpdate}
+                      trigger={
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="flex items-center gap-2"
+                        >
+                          <Edit2 className="h-4 w-4" />
+                          Edit Profile
+                        </Button>
+                      }
+                    />
+                  )}
                 </div>
                 
                 {/* Role & Location */}
@@ -171,11 +200,7 @@ export function SellerHeader({
                   </h1>
                   {seller.status && (
                     <Badge 
-                      variant={
-                        seller.status === 'active' ? 'default' : 
-                        seller.status === 'in review' ? 'secondary' :
-                        seller.status === 'suspended' ? 'destructive' : 'outline'
-                      }
+                      variant={getBadgeVariant(seller.status)}
                       className="text-xs px-2 py-1 capitalize"
                     >
                       {seller.status}
@@ -243,20 +268,37 @@ export function SellerHeader({
             </div>
 
             {/* Edit Button */}
-            <EditExpertDialog
-              expert={seller}
-              onUpdate={onSellerUpdate}
-              trigger={
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="w-full flex items-center justify-center gap-2"
-                >
-                  <Edit2 className="h-4 w-4" />
-                  Edit Profile
-                </Button>
-              }
-            />
+            {isAdminView ? (
+              <EditExpertStatusDialog
+                expert={seller}
+                onUpdate={onSellerUpdate}
+                trigger={
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full flex items-center justify-center gap-2"
+                  >
+                    <Edit2 className="h-4 w-4" />
+                    Edit Status
+                  </Button>
+                }
+              />
+            ) : (
+              <EditExpertDialog
+                expert={seller}
+                onUpdate={onSellerUpdate}
+                trigger={
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full flex items-center justify-center gap-2"
+                  >
+                    <Edit2 className="h-4 w-4" />
+                    Edit Profile
+                  </Button>
+                }
+              />
+            )}
           </div>
         </div>
       </CardContent>

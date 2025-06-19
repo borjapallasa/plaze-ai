@@ -149,6 +149,7 @@ export default function AdminExpertDetails() {
           communitiesCount={communities?.length || 0}
           totalEarnings={totalEarnings}
           onSellerUpdate={handleExpertUpdate}
+          isAdminView={true}
         />
 
         <SellerTabs
