@@ -1,20 +1,28 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, DollarSign, User, Copy, Wallet, MapPin } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
+import { Calendar, Clock, DollarSign, User, Copy, Wallet, MapPin, ExternalLink } from "lucide-react";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { useUserDetails } from "@/hooks/admin/useUserDetails";
 
 export default function AdminUserDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { user, isLoading, error } = useUserDetails(id || '');
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     toast.success(`${label} copied to clipboard`);
+  };
+
+  const handleViewExpertProfile = () => {
+    if (user?.expert_uuid) {
+      navigate(`/admin/experts/expert/${user.expert_uuid}`);
+    }
   };
 
   if (isLoading) {
@@ -212,6 +220,16 @@ export default function AdminUserDetails() {
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-4">
+                    {user.is_expert && user.expert_uuid && (
+                      <Button 
+                        variant="outline"
+                        onClick={handleViewExpertProfile}
+                        className="flex items-center gap-2"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                        View Expert Profile
+                      </Button>
+                    )}
                     <Button variant="outline">
                       Edit Admin Permits
                     </Button>
