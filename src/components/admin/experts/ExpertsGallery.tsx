@@ -1,7 +1,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { User, Calendar, Link as LinkIcon } from "lucide-react";
 import { Expert } from "../../../types/expert";
 
@@ -13,6 +13,8 @@ interface ExpertsGalleryProps {
 }
 
 export function ExpertsGallery({ experts }: ExpertsGalleryProps) {
+  const navigate = useNavigate();
+
   const getStatusBadge = (status: Expert["status"]) => {
     const badges = {
       active: <Badge variant="secondary" className="bg-green-100 text-green-800">Active</Badge>,
@@ -21,6 +23,10 @@ export function ExpertsGallery({ experts }: ExpertsGalleryProps) {
       suspended: <Badge variant="secondary" className="bg-gray-100 text-gray-800">Suspended</Badge>
     };
     return badges[status || "active"];
+  };
+
+  const handleExpertClick = (expertUuid: string) => {
+    navigate(`/admin/experts/${expertUuid}`);
   };
 
   return (
@@ -34,6 +40,7 @@ export function ExpertsGallery({ experts }: ExpertsGalleryProps) {
           <Card 
             key={expert.expert_uuid}
             className="cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={() => handleExpertClick(expert.expert_uuid)}
           >
             <CardContent className="p-0">
               <div className="aspect-video w-full overflow-hidden rounded-t-lg bg-gray-100 flex items-center justify-center relative">
@@ -70,6 +77,7 @@ export function ExpertsGallery({ experts }: ExpertsGalleryProps) {
                     <Link 
                       to={`/expert/${expert.slug || expert.expert_uuid}`}
                       className="text-blue-600 hover:text-blue-800 text-xs"
+                      onClick={(e) => e.stopPropagation()}
                     >
                       View Public Profile
                     </Link>

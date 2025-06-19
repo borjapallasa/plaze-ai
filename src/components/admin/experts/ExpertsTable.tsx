@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowDown, ArrowUp, Link as LinkIcon } from "lucide-react";
 import { Expert } from "../../../types/expert";
 
@@ -14,6 +14,8 @@ interface ExpertsTableProps {
 }
 
 export function ExpertsTable({ experts, sortField, sortDirection, onSort }: ExpertsTableProps) {
+  const navigate = useNavigate();
+
   const getStatusBadge = (status: Expert["status"]) => {
     const badges = {
       active: <Badge variant="secondary" className="bg-green-100 text-green-800">Active</Badge>,
@@ -29,6 +31,10 @@ export function ExpertsTable({ experts, sortField, sortDirection, onSort }: Expe
     return sortDirection === "asc" ? 
       <ArrowUp className="h-4 w-4" /> : 
       <ArrowDown className="h-4 w-4" />;
+  };
+
+  const handleExpertClick = (expertUuid: string) => {
+    navigate(`/admin/experts/${expertUuid}`);
   };
 
   return (
@@ -71,7 +77,8 @@ export function ExpertsTable({ experts, sortField, sortDirection, onSort }: Expe
               experts.map((expert) => (
                 <div
                   key={expert.expert_uuid}
-                  className="grid grid-cols-[2fr,2fr,1.5fr,1fr,1.5fr,1.5fr,1fr,1fr] px-6 py-4 hover:bg-[#F8F9FC] transition-colors duration-200"
+                  className="grid grid-cols-[2fr,2fr,1.5fr,1fr,1.5fr,1.5fr,1fr,1fr] px-6 py-4 hover:bg-[#F8F9FC] transition-colors duration-200 cursor-pointer"
+                  onClick={() => handleExpertClick(expert.expert_uuid)}
                 >
                   <div className="text-sm text-[#1A1F2C] truncate pr-4">{expert.name || 'Unnamed Expert'}</div>
                   <div className="text-sm text-[#1A1F2C] truncate pr-4">{expert.email || 'No email'}</div>
@@ -80,6 +87,7 @@ export function ExpertsTable({ experts, sortField, sortDirection, onSort }: Expe
                     <Link 
                       to={`/expert/${expert.slug || expert.expert_uuid}`}
                       className="text-blue-600 hover:text-blue-800"
+                      onClick={(e) => e.stopPropagation()}
                     >
                       <LinkIcon className="h-4 w-4" />
                     </Link>
