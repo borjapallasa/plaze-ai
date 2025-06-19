@@ -12,7 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MainHeader } from "@/components/MainHeader";
 import { Separator } from "@/components/ui/separator";
 import { useAdminTransactions, useAdminProductTransactions, useAdminCommunityTransactions, type AdminTransaction } from "@/hooks/use-admin-transactions";
@@ -181,6 +180,12 @@ export default function AdminTransactions() {
         return 0;
       });
   };
+
+  const tabs = [
+    { id: "all", label: "All Transactions" },
+    { id: "products", label: "Products" },
+    { id: "communities", label: "Communities" }
+  ];
 
   const renderSearchAndFilter = () => (
     <div className="flex flex-col sm:flex-row gap-4 mb-4">
@@ -656,6 +661,30 @@ export default function AdminTransactions() {
     );
   };
 
+  const getCurrentData = () => {
+    switch (activeTab) {
+      case "products":
+        return { data: getFilteredProductTransactions(), loading: isLoadingProducts, error: productError };
+      case "communities":
+        return { data: getFilteredCommunityTransactions(), loading: isLoadingCommunities, error: communityError };
+      default:
+        return { data: getFilteredTransactions(), loading: isLoading, error };
+    }
+  };
+
+  const currentData = getCurrentData();
+
+  const renderCurrentTable = () => {
+    switch (activeTab) {
+      case "products":
+        return renderProductsTable(currentData.data, currentData.loading, currentData.error);
+      case "communities":
+        return renderCommunityTable(currentData.data, currentData.loading, currentData.error);
+      default:
+        return renderTransactionTable(currentData.data, currentData.loading, currentData.error);
+    }
+  };
+
   return (
     <>
       <MainHeader />
@@ -665,32 +694,32 @@ export default function AdminTransactions() {
           <p className="text-[#8E9196]">Manage and review all your transaction records</p>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-4">
-            <TabsTrigger value="all">All Transactions</TabsTrigger>
-            <TabsTrigger value="products">Products</TabsTrigger>
-            <TabsTrigger value="communities">Communities</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="all" className="space-y-0">
-            {renderSearchAndFilter()}
-            {renderTransactionTable(getFilteredTransactions(), isLoading, error)}
-          </TabsContent>
-          
-          <TabsContent value="products" className="space-y-0">
-            {renderSearchAndFilter()}
-            {renderProductsTable(getFilteredProductTransactions(), isLoadingProducts, productError)}
-          </TabsContent>
-          
-          <TabsContent value="communities" className="space-y-0">
-            {renderSearchAndFilter()}
-            {renderCommunityTable(getFilteredCommunityTransactions(), isLoadingCommunities, communityError)}
-          </TabsContent>
-        </Tabs>
+        {/* Custom styled tabs */}
+        <div className="mb-6">
+          <div className="flex items-center gap-8 border-b border-[#E5E7EB] overflow-x-auto scrollbar-hide">
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`px-1 py-4 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                    isActive
+                      ? 'text-[#1A1F2C] border-[#1A1F2C]'
+                      : 'text-[#8E9196] border-transparent hover:text-[#1A1F2C] hover:border-[#8E9196]'
+                  }`}
+                >
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
-        {((activeTab === "all" && getFilteredTransactions().length > 0) ||
-          (activeTab === "products" && getFilteredProductTransactions().length > 0) ||
-          (activeTab === "communities" && getFilteredCommunityTransactions().length > 0)) && (
+        {renderSearchAndFilter()}
+        {renderCurrentTable()}
+
+        {currentData.data.length > 0 && (
           <>
             <Separator className="my-6" />
             <div className="flex justify-center">
