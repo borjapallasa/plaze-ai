@@ -196,11 +196,23 @@ export default function AdminUserDetails() {
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="p-4 bg-gray-50 rounded-lg flex items-center justify-between">
                       <span className="text-sm text-[#8E9196]">Expert</span>
-                      {user.is_expert ? (
-                        <Badge variant="secondary" className="bg-blue-100 text-blue-800">Yes</Badge>
-                      ) : (
-                        <Badge variant="secondary" className="bg-gray-100 text-gray-800">No</Badge>
-                      )}
+                      <div className="flex items-center gap-2">
+                        {user.is_expert ? (
+                          <Badge variant="secondary" className="bg-blue-100 text-blue-800">Yes</Badge>
+                        ) : (
+                          <Badge variant="secondary" className="bg-gray-100 text-gray-800">No</Badge>
+                        )}
+                        {user.is_expert && user.expert_uuid && (
+                          <Button 
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleViewExpertProfile}
+                            className="text-blue-600 hover:text-blue-800 p-1 h-auto"
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
                     </div>
                     <div className="p-4 bg-gray-50 rounded-lg flex items-center justify-between">
                       <span className="text-sm text-[#8E9196]">Affiliate</span>
@@ -220,16 +232,6 @@ export default function AdminUserDetails() {
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-4">
-                    {user.is_expert && user.expert_uuid && (
-                      <Button 
-                        variant="outline"
-                        onClick={handleViewExpertProfile}
-                        className="flex items-center gap-2"
-                      >
-                        <ExternalLink className="h-4 w-4" />
-                        View Expert Profile
-                      </Button>
-                    )}
                     <Button variant="outline">
                       Edit Admin Permits
                     </Button>
