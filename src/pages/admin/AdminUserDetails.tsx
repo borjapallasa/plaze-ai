@@ -206,13 +206,8 @@ export default function AdminUserDetails() {
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="p-4 bg-gray-50 rounded-lg flex items-center justify-between">
-                      <span className="text-sm text-[#8E9196]">Expert</span>
                       <div className="flex items-center gap-2">
-                        {user.is_expert ? (
-                          <Badge variant="secondary" className="bg-blue-100 text-blue-800">Yes</Badge>
-                        ) : (
-                          <Badge variant="secondary" className="bg-gray-100 text-gray-800">No</Badge>
-                        )}
+                        <span className="text-sm text-[#8E9196]">Expert</span>
                         {user.is_expert && user.expert_uuid && (
                           <Button 
                             variant="ghost"
@@ -224,15 +219,15 @@ export default function AdminUserDetails() {
                           </Button>
                         )}
                       </div>
+                      {user.is_expert ? (
+                        <Badge variant="secondary" className="bg-blue-100 text-blue-800">Yes</Badge>
+                      ) : (
+                        <Badge variant="secondary" className="bg-gray-100 text-gray-800">No</Badge>
+                      )}
                     </div>
                     <div className="p-4 bg-gray-50 rounded-lg flex items-center justify-between">
-                      <span className="text-sm text-[#8E9196]">Affiliate</span>
                       <div className="flex items-center gap-2">
-                        {user.is_affiliate ? (
-                          <Badge variant="secondary" className="bg-green-100 text-green-800">Yes</Badge>
-                        ) : (
-                          <Badge variant="secondary" className="bg-gray-100 text-gray-800">No</Badge>
-                        )}
+                        <span className="text-sm text-[#8E9196]">Affiliate</span>
                         {user.is_affiliate && user.affiliate_uuid && (
                           <Button 
                             variant="ghost"
@@ -244,15 +239,15 @@ export default function AdminUserDetails() {
                           </Button>
                         )}
                       </div>
+                      {user.is_affiliate ? (
+                        <Badge variant="secondary" className="bg-green-100 text-green-800">Yes</Badge>
+                      ) : (
+                        <Badge variant="secondary" className="bg-gray-100 text-gray-800">No</Badge>
+                      )}
                     </div>
                     <div className="p-4 bg-gray-50 rounded-lg flex items-center justify-between">
-                      <span className="text-sm text-[#8E9196]">Admin</span>
                       <div className="flex items-center gap-2">
-                        {user.is_admin ? (
-                          <Badge variant="secondary" className="bg-purple-100 text-purple-800">Yes</Badge>
-                        ) : (
-                          <Badge variant="secondary" className="bg-gray-100 text-gray-800">No</Badge>
-                        )}
+                        <span className="text-sm text-[#8E9196]">Admin</span>
                         {user.is_admin && user.admin_uuid && (
                           <Button 
                             variant="ghost"
@@ -264,6 +259,11 @@ export default function AdminUserDetails() {
                           </Button>
                         )}
                       </div>
+                      {user.is_admin ? (
+                        <Badge variant="secondary" className="bg-purple-100 text-purple-800">Yes</Badge>
+                      ) : (
+                        <Badge variant="secondary" className="bg-gray-100 text-gray-800">No</Badge>
+                      )}
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-4">
