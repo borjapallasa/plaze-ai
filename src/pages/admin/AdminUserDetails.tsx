@@ -30,6 +30,12 @@ export default function AdminUserDetails() {
     }
   };
 
+  const handleViewAdminProfile = () => {
+    if (user?.admin_uuid) {
+      navigate(`/admin/admins/admin/${user.admin_uuid}`);
+    }
+  };
+
   if (isLoading) {
     return (
       <>
@@ -241,11 +247,23 @@ export default function AdminUserDetails() {
                     </div>
                     <div className="p-4 bg-gray-50 rounded-lg flex items-center justify-between">
                       <span className="text-sm text-[#8E9196]">Admin</span>
-                      {user.is_admin ? (
-                        <Badge variant="secondary" className="bg-purple-100 text-purple-800">Yes</Badge>
-                      ) : (
-                        <Badge variant="secondary" className="bg-gray-100 text-gray-800">No</Badge>
-                      )}
+                      <div className="flex items-center gap-2">
+                        {user.is_admin ? (
+                          <Badge variant="secondary" className="bg-purple-100 text-purple-800">Yes</Badge>
+                        ) : (
+                          <Badge variant="secondary" className="bg-gray-100 text-gray-800">No</Badge>
+                        )}
+                        {user.is_admin && user.admin_uuid && (
+                          <Button 
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleViewAdminProfile}
+                            className="text-purple-600 hover:text-purple-800 p-1 h-auto"
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-4">

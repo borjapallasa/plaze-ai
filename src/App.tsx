@@ -79,6 +79,7 @@ function App() {
           <Route path="/admin/users/user/:id" element={<AdminUserDetailsPage />} />
           <Route path="/admin/experts" element={<AdminExpertsPage />} />
           <Route path="/admin/experts/expert/:id" element={<AdminExpertDetailsPage />} />
+          <Route path="/admin/admins/admin/:id" element={<AdminUserDetailsPage />} />
           <Route path="/admin/transactions" element={<AdminTransactionsPage />} />
           <Route path="/admin/transaction/:id" element={<AdminTransactionDetailsPage />} />
           <Route path="/admin/products/draft" element={<DraftTemplatesPage />} />

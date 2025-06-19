@@ -139,17 +139,23 @@ export function useUserDetails(userUuid: string) {
 
       // Only fetch admin data if user is an admin
       if (userData.is_admin) {
+        console.log('User is admin, fetching admin data for user_uuid:', userUuid);
+        
         const { data: adminData, error: adminError } = await supabase
           .from('admins')
-          .select('admin_uuid')
+          .select('admin_uuid, user_uuid')
           .eq('user_uuid', userUuid)
           .maybeSingle();
+
+        console.log('Admin query result:', { data: adminData, error: adminError });
 
         if (adminError) {
           console.error('Error fetching admin data:', adminError);
         } else if (adminData) {
           result.admin_uuid = adminData.admin_uuid;
           console.log('Admin data found:', adminData);
+        } else {
+          console.log('No admin record found for user_uuid:', userUuid);
         }
       }
 
