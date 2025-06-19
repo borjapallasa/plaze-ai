@@ -13,10 +13,6 @@ interface UserData {
   is_expert: boolean;
   is_affiliate: boolean;
   is_admin: boolean;
-  total_spent: number;
-  total_sales_amount: number;
-  transaction_count: number;
-  product_count: number;
 }
 
 interface UsersTableProps {
@@ -43,8 +39,8 @@ export function UsersTable({ users, sortField, sortDirection, onSort }: UsersTab
   return (
     <div className="rounded-lg border border-[#E5E7EB] bg-white">
       <ScrollArea className="h-[600px] w-full" type="always">
-        <div className="min-w-[1400px]">
-          <div className="grid grid-cols-[2fr,2fr,1.5fr,1fr,1fr,1fr,1.5fr,1.5fr,1fr,1fr] px-6 py-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
+        <div className="min-w-[1000px]">
+          <div className="grid grid-cols-[2fr,2fr,1.5fr,1fr,1fr,1fr] px-6 py-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
             <button onClick={() => onSort("first_name")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
               <span className="truncate">Name</span> {getSortIcon("first_name")}
             </button>
@@ -63,18 +59,6 @@ export function UsersTable({ users, sortField, sortDirection, onSort }: UsersTab
             <button onClick={() => onSort("is_admin")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
               <span className="truncate">Admin</span> {getSortIcon("is_admin")}
             </button>
-            <button onClick={() => onSort("total_spent")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
-              <span className="truncate">Total Spent</span> {getSortIcon("total_spent")}
-            </button>
-            <button onClick={() => onSort("total_sales_amount")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
-              <span className="truncate">Total Sales</span> {getSortIcon("total_sales_amount")}
-            </button>
-            <button onClick={() => onSort("transaction_count")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
-              <span className="truncate">Transactions</span> {getSortIcon("transaction_count")}
-            </button>
-            <button onClick={() => onSort("product_count")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
-              <span className="truncate">Products</span> {getSortIcon("product_count")}
-            </button>
           </div>
 
           <div className="divide-y divide-[#E5E7EB]">
@@ -86,7 +70,7 @@ export function UsersTable({ users, sortField, sortDirection, onSort }: UsersTab
               users.map((user) => (
                 <div
                   key={user.user_uuid}
-                  className="grid grid-cols-[2fr,2fr,1.5fr,1fr,1fr,1fr,1.5fr,1.5fr,1fr,1fr] px-6 py-4 hover:bg-[#F8F9FC] transition-colors duration-200 cursor-pointer"
+                  className="grid grid-cols-[2fr,2fr,1.5fr,1fr,1fr,1fr] px-6 py-4 hover:bg-[#F8F9FC] transition-colors duration-200 cursor-pointer"
                   onClick={() => handleUserClick(user.user_uuid)}
                 >
                   <div className="text-sm text-[#1A1F2C] truncate pr-4">{`${user.first_name} ${user.last_name}` || 'Unnamed User'}</div>
@@ -103,10 +87,6 @@ export function UsersTable({ users, sortField, sortDirection, onSort }: UsersTab
                   <div className="text-sm flex items-center">
                     {user.is_admin && <Badge variant="secondary" className="bg-purple-100 text-purple-800">Yes</Badge>}
                   </div>
-                  <div className="text-sm text-[#8E9196] truncate pr-4">${(user.total_spent || 0).toFixed(2)}</div>
-                  <div className="text-sm text-[#8E9196] truncate pr-4">${(user.total_sales_amount || 0).toFixed(2)}</div>
-                  <div className="text-sm text-[#8E9196] truncate pr-4">{user.transaction_count || 0}</div>
-                  <div className="text-sm text-[#8E9196] truncate pr-4">{user.product_count || 0}</div>
                 </div>
               ))
             )}

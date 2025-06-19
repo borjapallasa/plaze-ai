@@ -2,7 +2,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
-import { User, Calendar, DollarSign } from "lucide-react";
+import { User, Calendar } from "lucide-react";
 
 interface UserData {
   user_uuid: string;
@@ -13,9 +13,6 @@ interface UserData {
   is_expert: boolean;
   is_affiliate: boolean;
   is_admin: boolean;
-  total_spent: number;
-  total_sales_amount: number;
-  user_thumbnail?: string;
 }
 
 interface UsersListProps {
@@ -56,15 +53,7 @@ export function UsersList({ users }: UsersListProps) {
             <CardContent className="p-6">
               <div className="flex gap-6">
                 <div className="w-32 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
-                  {user.user_thumbnail ? (
-                    <img
-                      src={user.user_thumbnail}
-                      alt={`${user.first_name} ${user.last_name}` || 'User'}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <User className="h-12 w-12 text-gray-400" />
-                  )}
+                  <User className="h-12 w-12 text-gray-400" />
                 </div>
                 
                 <div className="flex-1 space-y-3">
@@ -74,18 +63,6 @@ export function UsersList({ users }: UsersListProps) {
                   </div>
                   
                   <div className="flex flex-wrap gap-6 text-sm">
-                    <div className="flex items-center gap-2">
-                      <DollarSign className="h-4 w-4 text-[#8E9196]" />
-                      <span className="text-[#8E9196]">Spent:</span>
-                      <span className="font-medium">${(user.total_spent || 0).toFixed(2)}</span>
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                      <DollarSign className="h-4 w-4 text-[#8E9196]" />
-                      <span className="text-[#8E9196]">Sales:</span>
-                      <span className="font-medium">${(user.total_sales_amount || 0).toFixed(2)}</span>
-                    </div>
-                    
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4 text-[#8E9196]" />
                       <span className="text-[#8E9196]">Created:</span>

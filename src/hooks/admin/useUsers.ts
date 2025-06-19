@@ -12,11 +12,6 @@ interface UserData {
   is_expert: boolean;
   is_affiliate: boolean;
   is_admin: boolean;
-  total_spent: number;
-  total_sales_amount: number;
-  transaction_count: number;
-  product_count: number;
-  user_thumbnail?: string;
 }
 
 export function useUsers() {
@@ -32,7 +27,7 @@ export function useUsers() {
       console.log('Fetching users for admin panel...');
       const { data, error } = await supabase
         .from('users')
-        .select('*')
+        .select('user_uuid, email, first_name, last_name, created_at, is_expert, is_affiliate, is_admin')
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -51,12 +46,7 @@ export function useUsers() {
         created_at: user.created_at,
         is_expert: user.is_expert || false,
         is_affiliate: user.is_affiliate || false,
-        is_admin: user.is_admin || false,
-        total_spent: user.total_spent || 0,
-        total_sales_amount: user.total_sales_amount || 0,
-        transaction_count: user.transaction_count || 0,
-        product_count: user.product_count || 0,
-        user_thumbnail: user.user_thumbnail
+        is_admin: user.is_admin || false
       })) as UserData[];
       
       console.log('Transformed users:', transformedData);
