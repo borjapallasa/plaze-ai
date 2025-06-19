@@ -92,9 +92,22 @@ export function useUserDetails(userUuid: string) {
       if (userData.is_affiliate) {
         console.log('User is affiliate, fetching affiliate data for user_uuid:', userUuid);
         
+        // First, let's check what columns exist in the affiliates table
+        const { data: affiliateColumns, error: columnsError } = await supabase
+          .from('affiliates')
+          .select('*')
+          .limit(1);
+        
+        if (columnsError) {
+          console.error('Error checking affiliate table structure:', columnsError);
+        } else {
+          console.log('Affiliate table structure (first row):', affiliateColumns);
+        }
+        
+        // Try to fetch affiliate data by user_uuid
         const { data: affiliateData, error: affiliateError } = await supabase
           .from('affiliates')
-          .select('affiliate_uuid')
+          .select('affiliate_uuid, user_uuid')
           .eq('user_uuid', userUuid)
           .maybeSingle();
 
@@ -107,6 +120,20 @@ export function useUserDetails(userUuid: string) {
           console.log('Affiliate data found:', affiliateData);
         } else {
           console.log('No affiliate record found for user_uuid:', userUuid);
+          
+          // Let's also check if there are any affiliate records that might match by email
+          const { data: affiliateByEmail, error: emailError } = await supabase
+            .from('affiliates')
+            .select('affiliate_uuid, email, user_uuid')
+            .eq('email', userData.email)
+            .maybeSingle();
+          
+          console.log('Affiliate by email query result:', { data: affiliateByEmail, error: emailError });
+          
+          if (affiliateByEmail && !affiliateByEmail.user_uuid) {
+            console.log('Found affiliate record by email but missing user_uuid. This needs to be updated.');
+            result.affiliate_uuid = affiliateByEmail.affiliate_uuid;
+          }
         }
       }
 
