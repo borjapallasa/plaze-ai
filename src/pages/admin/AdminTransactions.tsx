@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Search, ChevronDown, ArrowDown, ArrowUp, ExternalLink } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import {
   Select,
   SelectContent,
@@ -313,50 +313,67 @@ export default function AdminTransactions() {
                       className="hover:bg-[#F8F9FC] transition-colors duration-200 group"
                     >
                       <td className="px-6 py-4 min-w-[200px] w-[200px]">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-[#1A1F2C] font-medium truncate">
-                            {transaction.concept}
-                          </span>
-                          <button
-                            onClick={() => navigate(`/admin/transaction/${transaction.checkoutId}`)}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
-                          >
-                            <ExternalLink className="h-3 w-3 text-[#8E9196] hover:text-[#1A1F2C]" />
-                          </button>
-                        </div>
+                        <Link 
+                          to={`/admin/transaction/${transaction.checkoutId}`}
+                          className="text-sm text-[#1A1F2C] font-medium truncate hover:underline"
+                        >
+                          {transaction.concept}
+                        </Link>
                       </td>
                       <td className="px-6 py-4 min-w-[100px] w-[100px]">
-                        <span className="text-sm text-[#8E9196] capitalize whitespace-nowrap">
+                        <Link 
+                          to={`/admin/transaction/${transaction.checkoutId}`}
+                          className="text-sm text-[#8E9196] capitalize whitespace-nowrap hover:underline"
+                        >
                           {transaction.type}
-                        </span>
+                        </Link>
                       </td>
                       <td className="px-6 py-4 min-w-[150px] w-[150px]">
-                        <span className="text-sm text-[#8E9196] whitespace-nowrap">
-                          {transaction.createdAt}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 min-w-[100px] w-[100px]">
-                        <Badge 
-                          variant="secondary" 
-                          className={`${getStatusColor(transaction.status)} capitalize whitespace-nowrap`}
+                        <Link 
+                          to={`/admin/transaction/${transaction.checkoutId}`}
+                          className="text-sm text-[#8E9196] whitespace-nowrap hover:underline"
                         >
-                          {transaction.status}
-                        </Badge>
+                          {transaction.createdAt}
+                        </Link>
                       </td>
                       <td className="px-6 py-4 min-w-[100px] w-[100px]">
-                        <span className="text-sm text-[#1A1F2C] font-medium whitespace-nowrap">
+                        <Link 
+                          to={`/admin/transaction/${transaction.checkoutId}`}
+                          className="hover:underline"
+                        >
+                          <Badge 
+                            variant="secondary" 
+                            className={`${getStatusColor(transaction.status)} capitalize whitespace-nowrap`}
+                          >
+                            {transaction.status}
+                          </Badge>
+                        </Link>
+                      </td>
+                      <td className="px-6 py-4 min-w-[100px] w-[100px]">
+                        <Link 
+                          to={`/admin/transaction/${transaction.checkoutId}`}
+                          className="text-sm text-[#1A1F2C] font-medium whitespace-nowrap hover:underline"
+                        >
                           ${transaction.amount.toFixed(2)}
-                        </span>
+                        </Link>
                       </td>
                       <td className="px-6 py-4 min-w-[200px] w-[200px]">
-                        <span className="text-sm text-[#8E9196] truncate block" title={transaction.seller}>
+                        <Link 
+                          to={`/admin/transaction/${transaction.checkoutId}`}
+                          className="text-sm text-[#8E9196] truncate block hover:underline"
+                          title={transaction.seller}
+                        >
                           {transaction.seller}
-                        </span>
+                        </Link>
                       </td>
                       <td className="px-6 py-4 min-w-[200px] w-[200px]">
-                        <span className="text-sm text-[#8E9196] truncate block" title={transaction.user}>
+                        <Link 
+                          to={`/admin/transaction/${transaction.checkoutId}`}
+                          className="text-sm text-[#8E9196] truncate block hover:underline"
+                          title={transaction.user}
+                        >
                           {transaction.user}
-                        </span>
+                        </Link>
                       </td>
                     </tr>
                   ))
@@ -460,50 +477,67 @@ export default function AdminTransactions() {
                       className="hover:bg-[#F8F9FC] transition-colors duration-200 group"
                     >
                       <td className="px-6 py-4 min-w-[200px] w-[200px]">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-[#1A1F2C] font-medium truncate">
-                            {transaction.concept}
-                          </span>
-                          <button
-                            onClick={() => navigate(`/admin/transaction/${transaction.concept}`)}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
-                          >
-                            <ExternalLink className="h-3 w-3 text-[#8E9196] hover:text-[#1A1F2C]" />
-                          </button>
-                        </div>
+                        <Link 
+                          to={`/admin/transaction/${transaction.concept}`}
+                          className="text-sm text-[#1A1F2C] font-medium truncate hover:underline"
+                        >
+                          {transaction.concept}
+                        </Link>
                       </td>
                       <td className="px-6 py-4 min-w-[100px] w-[100px]">
-                        <span className="text-sm text-[#8E9196] whitespace-nowrap">
+                        <Link 
+                          to={`/admin/transaction/${transaction.concept}`}
+                          className="text-sm text-[#8E9196] whitespace-nowrap hover:underline"
+                        >
                           {transaction.itemCount || 0}
-                        </span>
+                        </Link>
                       </td>
                       <td className="px-6 py-4 min-w-[100px] w-[100px]">
-                        <span className="text-sm text-[#1A1F2C] font-medium whitespace-nowrap">
+                        <Link 
+                          to={`/admin/transaction/${transaction.concept}`}
+                          className="text-sm text-[#1A1F2C] font-medium whitespace-nowrap hover:underline"
+                        >
                           ${transaction.amount.toFixed(2)}
-                        </span>
+                        </Link>
                       </td>
                       <td className="px-6 py-4 min-w-[150px] w-[150px]">
-                        <span className="text-sm text-[#8E9196] whitespace-nowrap">
+                        <Link 
+                          to={`/admin/transaction/${transaction.concept}`}
+                          className="text-sm text-[#8E9196] whitespace-nowrap hover:underline"
+                        >
                           {transaction.createdAt}
-                        </span>
+                        </Link>
                       </td>
                       <td className="px-6 py-4 min-w-[100px] w-[100px]">
-                        <Badge 
-                          variant="secondary" 
-                          className={`${getStatusColor(transaction.status)} capitalize whitespace-nowrap`}
+                        <Link 
+                          to={`/admin/transaction/${transaction.concept}`}
+                          className="hover:underline"
                         >
-                          {transaction.status}
-                        </Badge>
+                          <Badge 
+                            variant="secondary" 
+                            className={`${getStatusColor(transaction.status)} capitalize whitespace-nowrap`}
+                          >
+                            {transaction.status}
+                          </Badge>
+                        </Link>
                       </td>
                       <td className="px-6 py-4 min-w-[200px] w-[200px]">
-                        <span className="text-sm text-[#8E9196] truncate block" title={transaction.seller}>
+                        <Link 
+                          to={`/admin/transaction/${transaction.concept}`}
+                          className="text-sm text-[#8E9196] truncate block hover:underline"
+                          title={transaction.seller}
+                        >
                           {transaction.seller}
-                        </span>
+                        </Link>
                       </td>
                       <td className="px-6 py-4 min-w-[200px] w-[200px]">
-                        <span className="text-sm text-[#8E9196] truncate block" title={transaction.user}>
+                        <Link 
+                          to={`/admin/transaction/${transaction.concept}`}
+                          className="text-sm text-[#8E9196] truncate block hover:underline"
+                          title={transaction.user}
+                        >
                           {transaction.user}
-                        </span>
+                        </Link>
                       </td>
                     </tr>
                   ))
@@ -604,45 +638,59 @@ export default function AdminTransactions() {
                       className="hover:bg-[#F8F9FC] transition-colors duration-200 group"
                     >
                       <td className="px-6 py-4 min-w-[200px] w-[200px]">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-[#1A1F2C] font-medium truncate">
-                            {transaction.concept}
-                          </span>
-                          <button
-                            onClick={() => navigate(`/admin/transaction/${transaction.concept}`)}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
-                          >
-                            <ExternalLink className="h-3 w-3 text-[#8E9196] hover:text-[#1A1F2C]" />
-                          </button>
-                        </div>
+                        <Link 
+                          to={`/admin/transaction/${transaction.concept}`}
+                          className="text-sm text-[#1A1F2C] font-medium truncate hover:underline"
+                        >
+                          {transaction.concept}
+                        </Link>
                       </td>
                       <td className="px-6 py-4 min-w-[100px] w-[100px]">
-                        <span className="text-sm text-[#1A1F2C] font-medium whitespace-nowrap">
+                        <Link 
+                          to={`/admin/transaction/${transaction.concept}`}
+                          className="text-sm text-[#1A1F2C] font-medium whitespace-nowrap hover:underline"
+                        >
                           ${transaction.amount.toFixed(2)}
-                        </span>
+                        </Link>
                       </td>
                       <td className="px-6 py-4 min-w-[150px] w-[150px]">
-                        <span className="text-sm text-[#8E9196] whitespace-nowrap">
+                        <Link 
+                          to={`/admin/transaction/${transaction.concept}`}
+                          className="text-sm text-[#8E9196] whitespace-nowrap hover:underline"
+                        >
                           {transaction.createdAt}
-                        </span>
+                        </Link>
                       </td>
                       <td className="px-6 py-4 min-w-[100px] w-[100px]">
-                        <Badge 
-                          variant="secondary" 
-                          className={`${getStatusColor(transaction.status)} capitalize whitespace-nowrap`}
+                        <Link 
+                          to={`/admin/transaction/${transaction.concept}`}
+                          className="hover:underline"
                         >
-                          {transaction.status}
-                        </Badge>
+                          <Badge 
+                            variant="secondary" 
+                            className={`${getStatusColor(transaction.status)} capitalize whitespace-nowrap`}
+                          >
+                            {transaction.status}
+                          </Badge>
+                        </Link>
                       </td>
                       <td className="px-6 py-4 min-w-[200px] w-[200px]">
-                        <span className="text-sm text-[#8E9196] truncate block" title={transaction.seller}>
+                        <Link 
+                          to={`/admin/transaction/${transaction.concept}`}
+                          className="text-sm text-[#8E9196] truncate block hover:underline"
+                          title={transaction.seller}
+                        >
                           {transaction.seller}
-                        </span>
+                        </Link>
                       </td>
                       <td className="px-6 py-4 min-w-[200px] w-[200px]">
-                        <span className="text-sm text-[#8E9196] truncate block" title={transaction.user}>
+                        <Link 
+                          to={`/admin/transaction/${transaction.concept}`}
+                          className="text-sm text-[#8E9196] truncate block hover:underline"
+                          title={transaction.user}
+                        >
                           {transaction.user}
-                        </span>
+                        </Link>
                       </td>
                     </tr>
                   ))
