@@ -394,10 +394,13 @@ export default function AdminUserDetails() {
                           </TableRow>
                         ) : (
                           filteredTransactions.map((transaction) => {
-                            // Use products_transactions_uuid for product transactions, otherwise use transaction_uuid
-                            const linkId = transaction.type === 'product' && transaction.products_transactions_uuid
-                              ? transaction.products_transactions_uuid
-                              : transaction.transaction_uuid;
+                            // Determine the correct ID for navigation based on transaction type
+                            let linkId = transaction.transaction_uuid;
+                            if (transaction.type === 'product' && transaction.products_transactions_uuid) {
+                              linkId = transaction.products_transactions_uuid;
+                            } else if (transaction.type === 'community' && transaction.community_subscriptions_transactions_uuid) {
+                              linkId = transaction.community_subscriptions_transactions_uuid;
+                            }
                             
                             return (
                               <TableRow
