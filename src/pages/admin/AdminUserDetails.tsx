@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -405,30 +404,29 @@ export default function AdminUserDetails() {
                             }
                             
                             return (
-                              <TableRow key={transaction.transaction_uuid} asChild>
-                                <Link 
-                                  to={`/admin/transaction/${linkId}`}
-                                  className="cursor-pointer hover:bg-gray-50"
-                                >
-                                  <TableCell className="font-medium max-w-[200px] truncate">
-                                    {transaction.transaction_uuid}
-                                  </TableCell>
-                                  <TableCell className="font-medium">
-                                    ${transaction.amount.toFixed(2)}
-                                  </TableCell>
-                                  <TableCell>
-                                    <Badge
-                                      variant="secondary"
-                                      className={transaction.type === 'product' ? "bg-blue-100 text-blue-800" : "bg-purple-100 text-purple-800"}
-                                    >
-                                      {toStartCase(transaction.type)}
-                                    </Badge>
-                                  </TableCell>
-                                  <TableCell className="text-sm">
-                                    {new Date(transaction.created_at).toLocaleString()}
-                                  </TableCell>
-                                  <TableCell>{transaction.seller_name || 'Unknown'}</TableCell>
-                                </Link>
+                              <TableRow 
+                                key={transaction.transaction_uuid}
+                                className="cursor-pointer hover:bg-gray-50"
+                                onClick={() => navigate(`/admin/transaction/${linkId}`)}
+                              >
+                                <TableCell className="font-medium max-w-[200px] truncate">
+                                  {transaction.transaction_uuid}
+                                </TableCell>
+                                <TableCell className="font-medium">
+                                  ${transaction.amount.toFixed(2)}
+                                </TableCell>
+                                <TableCell>
+                                  <Badge
+                                    variant="secondary"
+                                    className={transaction.type === 'product' ? "bg-blue-100 text-blue-800" : "bg-purple-100 text-purple-800"}
+                                  >
+                                    {toStartCase(transaction.type)}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell className="text-sm">
+                                  {new Date(transaction.created_at).toLocaleString()}
+                                </TableCell>
+                                <TableCell>{transaction.seller_name || 'Unknown'}</TableCell>
                               </TableRow>
                             );
                           })
