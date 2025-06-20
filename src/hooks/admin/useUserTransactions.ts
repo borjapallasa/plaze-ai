@@ -9,6 +9,7 @@ interface UserTransaction {
   created_at: string;
   seller_name: string | null;
   products_transactions_uuid?: string | null;
+  community_transaction_uuid?: string | null;
 }
 
 export function useUserTransactions(userUuid: string) {
@@ -42,9 +43,12 @@ export function useUserTransactions(userUuid: string) {
 
       console.log('Raw transaction data:', data);
 
-      // Transform the data to match our interface
-      const transformedData: UserTransaction[] = (data || []).map(transaction => {
+      // For community transactions, we need to fetch the community_transaction_uuid separately
+      const transformedData: UserTransaction[] = [];
+      
+      for (const transaction of data || []) {
         let sellerName = null;
+        let communityTransactionUuid = null;
         
         // For product transactions, get seller name from products_transactions -> experts join
         if (transaction.type === 'product' && transaction.products_transactions?.experts_product_transactions?.name) {
@@ -55,15 +59,31 @@ export function useUserTransactions(userUuid: string) {
           sellerName = transaction.experts.name;
         }
 
-        return {
+        // For community transactions, fetch community_transaction_uuid
+        if (transaction.type === 'community') {
+          const { data: communityTransactionData, error: communityError } = await supabase
+            .from('community_subscriptions_transactions')
+            .select('community_subscription_transaction_uuid')
+            .eq('transaction_uuid', transaction.transaction_uuid)
+            .maybeSingle();
+
+          if (communityError) {
+            console.error('Error fetching community transaction:', communityError);
+          } else if (communityTransactionData) {
+            communityTransactionUuid = communityTransactionData.community_subscription_transaction_uuid;
+          }
+        }
+
+        transformedData.push({
           transaction_uuid: transaction.transaction_uuid,
           amount: transaction.amount || 0,
           type: transaction.type || 'unknown',
           created_at: transaction.created_at,
           seller_name: sellerName,
-          products_transactions_uuid: transaction.products_transactions_uuid
-        };
-      });
+          products_transactions_uuid: transaction.products_transactions_uuid,
+          community_transaction_uuid: communityTransactionUuid
+        });
+      }
 
       console.log('Transformed transaction data:', transformedData);
       return transformedData;
