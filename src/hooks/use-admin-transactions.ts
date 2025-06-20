@@ -1,5 +1,4 @@
 
-
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -14,6 +13,7 @@ export interface AdminTransaction {
   checkoutId: string;
   transactionUuid: string;
   itemCount?: number;
+  linkId: string; // This will be either checkoutId or community_transaction_uuid
 }
 
 export function useAdminTransactions() {
@@ -47,15 +47,34 @@ export function useAdminTransactions() {
       console.log('Transactions found:', transactionData);
 
       // Transform the data to match the AdminTransaction interface
-      const transformedTransactions: AdminTransaction[] = transactionData?.map(transaction => {
+      const transformedTransactions: AdminTransaction[] = [];
+      
+      for (const transaction of transactionData || []) {
         const buyerName = transaction.users 
           ? `${transaction.users.first_name || ''} ${transaction.users.last_name || ''}`.trim()
           : 'Unknown User';
         
         const sellerName = transaction.experts?.name || 'Unknown Expert';
         const amount = transaction.amount || 0;
+        
+        let linkId = transaction.products_transactions_uuid || transaction.transaction_uuid;
 
-        return {
+        // If it's a community transaction, fetch the community_transaction_uuid
+        if (transaction.type === 'community') {
+          const { data: communityTransactionData, error: communityError } = await supabase
+            .from('community_subscriptions_transactions')
+            .select('community_subscription_transaction_uuid')
+            .eq('transaction_uuid', transaction.transaction_uuid)
+            .maybeSingle();
+
+          if (communityError) {
+            console.error('Error fetching community transaction:', communityError);
+          } else if (communityTransactionData) {
+            linkId = communityTransactionData.community_subscription_transaction_uuid;
+          }
+        }
+
+        transformedTransactions.push({
           concept: transaction.transaction_uuid,
           type: transaction.type === 'product' ? 'product' : 'community',
           createdAt: new Date(transaction.created_at).toLocaleString(),
@@ -65,8 +84,9 @@ export function useAdminTransactions() {
           user: buyerName,
           checkoutId: transaction.products_transactions_uuid || transaction.transaction_uuid,
           transactionUuid: transaction.transaction_uuid,
-        };
-      }) || [];
+          linkId: linkId,
+        });
+      }
 
       console.log('Transformed transactions:', transformedTransactions);
       return transformedTransactions;

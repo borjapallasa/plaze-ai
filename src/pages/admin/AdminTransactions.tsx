@@ -314,7 +314,7 @@ export default function AdminTransactions() {
                     >
                       <td className="px-6 py-4 min-w-[200px] w-[200px]">
                         <Link 
-                          to={`/admin/transaction/${transaction.checkoutId}`}
+                          to={`/admin/transaction/${transaction.linkId}`}
                           className="text-sm text-[#1A1F2C] font-medium truncate hover:underline"
                         >
                           {transaction.concept}
@@ -322,7 +322,7 @@ export default function AdminTransactions() {
                       </td>
                       <td className="px-6 py-4 min-w-[100px] w-[100px]">
                         <Link 
-                          to={`/admin/transaction/${transaction.checkoutId}`}
+                          to={`/admin/transaction/${transaction.linkId}`}
                           className="text-sm text-[#8E9196] capitalize whitespace-nowrap hover:underline"
                         >
                           {transaction.type}
@@ -330,7 +330,7 @@ export default function AdminTransactions() {
                       </td>
                       <td className="px-6 py-4 min-w-[150px] w-[150px]">
                         <Link 
-                          to={`/admin/transaction/${transaction.checkoutId}`}
+                          to={`/admin/transaction/${transaction.linkId}`}
                           className="text-sm text-[#8E9196] whitespace-nowrap hover:underline"
                         >
                           {transaction.createdAt}
@@ -338,7 +338,7 @@ export default function AdminTransactions() {
                       </td>
                       <td className="px-6 py-4 min-w-[100px] w-[100px]">
                         <Link 
-                          to={`/admin/transaction/${transaction.checkoutId}`}
+                          to={`/admin/transaction/${transaction.linkId}`}
                           className="hover:underline"
                         >
                           <Badge 
@@ -351,7 +351,7 @@ export default function AdminTransactions() {
                       </td>
                       <td className="px-6 py-4 min-w-[100px] w-[100px]">
                         <Link 
-                          to={`/admin/transaction/${transaction.checkoutId}`}
+                          to={`/admin/transaction/${transaction.linkId}`}
                           className="text-sm text-[#1A1F2C] font-medium whitespace-nowrap hover:underline"
                         >
                           ${transaction.amount.toFixed(2)}
@@ -359,7 +359,7 @@ export default function AdminTransactions() {
                       </td>
                       <td className="px-6 py-4 min-w-[200px] w-[200px]">
                         <Link 
-                          to={`/admin/transaction/${transaction.checkoutId}`}
+                          to={`/admin/transaction/${transaction.linkId}`}
                           className="text-sm text-[#8E9196] truncate block hover:underline"
                           title={transaction.seller}
                         >
@@ -368,7 +368,7 @@ export default function AdminTransactions() {
                       </td>
                       <td className="px-6 py-4 min-w-[200px] w-[200px]">
                         <Link 
-                          to={`/admin/transaction/${transaction.checkoutId}`}
+                          to={`/admin/transaction/${transaction.linkId}`}
                           className="text-sm text-[#8E9196] truncate block hover:underline"
                           title={transaction.user}
                         >
