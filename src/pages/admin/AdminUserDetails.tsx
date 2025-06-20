@@ -11,43 +11,40 @@ import { useUserDetails } from "@/hooks/admin/useUserDetails";
 import { useUserTransactions } from "@/hooks/admin/useUserTransactions";
 import { useState } from "react";
 import { toStartCase } from "@/lib/utils";
+
 export default function AdminUserDetails() {
-  const {
-    id
-  } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
-  const {
-    user,
-    isLoading,
-    error
-  } = useUserDetails(id || '');
-  const {
-    transactions,
-    isLoading: isLoadingTransactions,
-    error: transactionsError
-  } = useUserTransactions(id || '');
+  const { user, isLoading, error } = useUserDetails(id || '');
+  const { transactions, isLoading: isLoadingTransactions, error: transactionsError } = useUserTransactions(id || '');
   const [activeTab, setActiveTab] = useState("all");
+
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     toast.success(`${label} copied to clipboard`);
   };
+
   const handleViewExpertProfile = () => {
     if (user?.expert_uuid) {
       navigate(`/admin/experts/expert/${user.expert_uuid}`);
     }
   };
+
   const handleViewAffiliateProfile = () => {
     if (user?.affiliate_uuid) {
       navigate(`/admin/affiliates/affiliate/${user.affiliate_uuid}`);
     }
   };
+
   const handleViewAdminProfile = () => {
     if (user?.admin_uuid) {
       navigate(`/admin/admins/admin/${user.admin_uuid}`);
     }
   };
+
   if (isLoading) {
-    return <>
+    return (
+      <>
         <MainHeader />
         <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16">
           <div className="flex items-center justify-center h-64">
@@ -57,10 +54,13 @@ export default function AdminUserDetails() {
             </div>
           </div>
         </div>
-      </>;
+      </>
+    );
   }
+
   if (error || !user) {
-    return <>
+    return (
+      <>
         <MainHeader />
         <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16">
           <div className="flex items-center justify-center h-64">
@@ -70,33 +70,39 @@ export default function AdminUserDetails() {
             </div>
           </div>
         </div>
-      </>;
+      </>
+    );
   }
+
   const fullName = user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : user.first_name || user.last_name || 'Unnamed User';
 
   // Mock data for communities joined
-  const communitiesJoined = [{
-    id: "1",
-    name: "AI & Machine Learning Hub",
-    joinedDate: "2024-01-15",
-    status: "active",
-    price: 29.99,
-    type: "monthly"
-  }, {
-    id: "2",
-    name: "Web Development Masterclass",
-    joinedDate: "2024-02-20",
-    status: "active",
-    price: 49.99,
-    type: "monthly"
-  }, {
-    id: "3",
-    name: "Startup Founders Circle",
-    joinedDate: "2023-12-01",
-    status: "cancelled",
-    price: 99.99,
-    type: "monthly"
-  }];
+  const communitiesJoined = [
+    {
+      id: "1",
+      name: "AI & Machine Learning Hub",
+      joinedDate: "2024-01-15",
+      status: "active",
+      price: 29.99,
+      type: "monthly"
+    },
+    {
+      id: "2",
+      name: "Web Development Masterclass",
+      joinedDate: "2024-02-20",
+      status: "active",
+      price: 49.99,
+      type: "monthly"
+    },
+    {
+      id: "3",
+      name: "Startup Founders Circle",
+      joinedDate: "2023-12-01",
+      status: "cancelled",
+      price: 99.99,
+      type: "monthly"
+    }
+  ];
 
   // Filter transactions based on active tab
   const getFilteredTransactions = () => {
@@ -109,18 +115,17 @@ export default function AdminUserDetails() {
         return transactions;
     }
   };
+
   const filteredTransactions = getFilteredTransactions();
-  const tabs = [{
-    id: "all",
-    label: "All"
-  }, {
-    id: "products",
-    label: "Products"
-  }, {
-    id: "communities",
-    label: "Communities"
-  }];
-  return <>
+
+  const tabs = [
+    { id: "all", label: "All" },
+    { id: "products", label: "Products" },
+    { id: "communities", label: "Communities" }
+  ];
+
+  return (
+    <>
       <MainHeader />
       <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16">
         {/* Breadcrumb Navigation */}
@@ -149,7 +154,12 @@ export default function AdminUserDetails() {
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 text-sm bg-gray-50 p-3 rounded-lg">
                   <span className="text-[#8E9196] whitespace-nowrap">User ID:</span>
                   <span className="font-medium flex-1 break-all">{user.user_uuid}</span>
-                  <Button variant="ghost" size="sm" className="text-[#8E9196] hover:text-[#1A1F2C]" onClick={() => copyToClipboard(user.user_uuid, "User ID")}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-[#8E9196] hover:text-[#1A1F2C]"
+                    onClick={() => copyToClipboard(user.user_uuid, "User ID")}
+                  >
                     <Copy className="h-4 w-4" />
                   </Button>
                 </div>
@@ -174,7 +184,6 @@ export default function AdminUserDetails() {
                     </div>
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4 text-[#8E9196]" />
-                      
                       <span className="text-[#8E9196]">Created @:</span>
                       <span className="font-medium">{new Date(user.created_at).toLocaleString()}</span>
                     </div>
@@ -208,7 +217,10 @@ export default function AdminUserDetails() {
                       <span>Avg Transaction</span>
                     </div>
                     <div className="font-medium text-lg">
-                      {user.transaction_count && user.transaction_count > 0 ? `$${((user.total_spent || 0) / user.transaction_count).toFixed(2)}` : '$0.00'}
+                      {user.transaction_count && user.transaction_count > 0 
+                        ? `$${((user.total_spent || 0) / user.transaction_count).toFixed(2)}` 
+                        : '$0.00'
+                      }
                     </div>
                   </div>
                 </div>
@@ -224,29 +236,62 @@ export default function AdminUserDetails() {
                     <div className="p-4 bg-gray-50 rounded-lg flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="text-sm text-[#8E9196]">Expert</span>
-                        {user.is_expert && user.expert_uuid && <Button variant="ghost" size="sm" onClick={handleViewExpertProfile} className="text-blue-600 hover:text-blue-800 p-1 h-auto">
+                        {user.is_expert && user.expert_uuid && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleViewExpertProfile}
+                            className="text-blue-600 hover:text-blue-800 p-1 h-auto"
+                          >
                             <ExternalLink className="h-4 w-4" />
-                          </Button>}
+                          </Button>
+                        )}
                       </div>
-                      {user.is_expert ? <Badge variant="secondary" className="bg-blue-100 text-blue-800">Yes</Badge> : <Badge variant="secondary" className="bg-gray-100 text-gray-800">No</Badge>}
+                      {user.is_expert ? (
+                        <Badge variant="secondary" className="bg-blue-100 text-blue-800">Yes</Badge>
+                      ) : (
+                        <Badge variant="secondary" className="bg-gray-100 text-gray-800">No</Badge>
+                      )}
                     </div>
                     <div className="p-4 bg-gray-50 rounded-lg flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="text-sm text-[#8E9196]">Affiliate</span>
-                        {user.is_affiliate && user.affiliate_uuid && <Button variant="ghost" size="sm" onClick={handleViewAffiliateProfile} className="text-green-600 hover:text-green-800 p-1 h-auto">
+                        {user.is_affiliate && user.affiliate_uuid && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleViewAffiliateProfile}
+                            className="text-green-600 hover:text-green-800 p-1 h-auto"
+                          >
                             <ExternalLink className="h-4 w-4" />
-                          </Button>}
+                          </Button>
+                        )}
                       </div>
-                      {user.is_affiliate ? <Badge variant="secondary" className="bg-green-100 text-green-800">Yes</Badge> : <Badge variant="secondary" className="bg-gray-100 text-gray-800">No</Badge>}
+                      {user.is_affiliate ? (
+                        <Badge variant="secondary" className="bg-green-100 text-green-800">Yes</Badge>
+                      ) : (
+                        <Badge variant="secondary" className="bg-gray-100 text-gray-800">No</Badge>
+                      )}
                     </div>
                     <div className="p-4 bg-gray-50 rounded-lg flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="text-sm text-[#8E9196]">Admin</span>
-                        {user.is_admin && user.admin_uuid && <Button variant="ghost" size="sm" onClick={handleViewAdminProfile} className="text-purple-600 hover:text-purple-800 p-1 h-auto">
+                        {user.is_admin && user.admin_uuid && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleViewAdminProfile}
+                            className="text-purple-600 hover:text-purple-800 p-1 h-auto"
+                          >
                             <ExternalLink className="h-4 w-4" />
-                          </Button>}
+                          </Button>
+                        )}
                       </div>
-                      {user.is_admin ? <Badge variant="secondary" className="bg-purple-100 text-purple-800">Yes</Badge> : <Badge variant="secondary" className="bg-gray-100 text-gray-800">No</Badge>}
+                      {user.is_admin ? (
+                        <Badge variant="secondary" className="bg-purple-100 text-purple-800">Yes</Badge>
+                      ) : (
+                        <Badge variant="secondary" className="bg-gray-100 text-gray-800">No</Badge>
+                      )}
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-4">
@@ -272,18 +317,23 @@ export default function AdminUserDetails() {
               <div>
                 <h4 className="text-md font-medium mb-4">Communities Joined</h4>
                 <div className="space-y-3">
-                  {communitiesJoined.map(community => <div key={community.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  {communitiesJoined.map((community) => (
+                    <div key={community.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                       <div className="flex flex-col gap-1">
                         <span className="font-medium">{community.name}</span>
                         <span className="text-sm text-[#8E9196]">Joined: {new Date(community.joinedDate).toLocaleDateString()}</span>
                       </div>
                       <div className="flex items-center gap-3">
                         <span className="font-medium">${community.price}/{community.type}</span>
-                        <Badge variant="secondary" className={community.status === 'active' ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}>
+                        <Badge
+                          variant="secondary"
+                          className={community.status === 'active' ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}
+                        >
                           {community.status}
                         </Badge>
                       </div>
-                    </div>)}
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -296,20 +346,35 @@ export default function AdminUserDetails() {
                 {/* Custom styled tabs */}
                 <div className="mb-4">
                   <div className="flex items-center gap-8 border-b border-[#E5E7EB] overflow-x-auto scrollbar-hide">
-                    {tabs.map(tab => {
-                    const isActive = activeTab === tab.id;
-                    return <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`px-1 py-4 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${isActive ? 'text-[#1A1F2C] border-[#1A1F2C]' : 'text-[#8E9196] border-transparent hover:text-[#1A1F2C] hover:border-[#8E9196]'}`}>
+                    {tabs.map((tab) => {
+                      const isActive = activeTab === tab.id;
+                      return (
+                        <button
+                          key={tab.id}
+                          onClick={() => setActiveTab(tab.id)}
+                          className={`px-1 py-4 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                            isActive
+                              ? 'text-[#1A1F2C] border-[#1A1F2C]'
+                              : 'text-[#8E9196] border-transparent hover:text-[#1A1F2C] hover:border-[#8E9196]'
+                          }`}
+                        >
                           <span>{tab.label}</span>
-                        </button>;
-                  })}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
-                {isLoadingTransactions ? <div className="rounded-md border p-8 text-center text-[#8E9196]">
+                {isLoadingTransactions ? (
+                  <div className="rounded-md border p-8 text-center text-[#8E9196]">
                     Loading transactions...
-                  </div> : transactionsError ? <div className="rounded-md border p-8 text-center text-red-600">
+                  </div>
+                ) : transactionsError ? (
+                  <div className="rounded-md border p-8 text-center text-red-600">
                     Error loading transactions: {transactionsError.message}
-                  </div> : <div className="rounded-md border">
+                  </div>
+                ) : (
+                  <div className="rounded-md border">
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -321,34 +386,56 @@ export default function AdminUserDetails() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {filteredTransactions.length === 0 ? <TableRow>
+                        {filteredTransactions.length === 0 ? (
+                          <TableRow>
                             <TableCell colSpan={5} className="text-center text-[#8E9196] py-8">
                               No transactions found
                             </TableCell>
-                          </TableRow> : filteredTransactions.map(transaction => <TableRow key={transaction.transaction_uuid} className="cursor-pointer hover:bg-gray-50" onClick={() => navigate(`/admin/transaction/${transaction.transaction_uuid}`)}>
-                              <TableCell className="font-medium max-w-[200px] truncate">
-                                {transaction.transaction_uuid}
-                              </TableCell>
-                              <TableCell className="font-medium">
-                                ${transaction.amount.toFixed(2)}
-                              </TableCell>
-                              <TableCell>
-                                <Badge variant="secondary" className={transaction.type === 'product' ? "bg-blue-100 text-blue-800" : "bg-purple-100 text-purple-800"}>
-                                  {toStartCase(transaction.type)}
-                                </Badge>
-                              </TableCell>
-                              <TableCell className="text-sm">
-                                {new Date(transaction.created_at).toLocaleString()}
-                              </TableCell>
-                              <TableCell>{transaction.seller_name || 'Unknown'}</TableCell>
-                            </TableRow>)}
+                          </TableRow>
+                        ) : (
+                          filteredTransactions.map((transaction) => {
+                            // Use products_transactions_uuid for product transactions, otherwise use transaction_uuid
+                            const linkId = transaction.type === 'product' && transaction.products_transactions_uuid
+                              ? transaction.products_transactions_uuid
+                              : transaction.transaction_uuid;
+                            
+                            return (
+                              <TableRow
+                                key={transaction.transaction_uuid}
+                                className="cursor-pointer hover:bg-gray-50"
+                                onClick={() => navigate(`/admin/transaction/${linkId}`)}
+                              >
+                                <TableCell className="font-medium max-w-[200px] truncate">
+                                  {transaction.transaction_uuid}
+                                </TableCell>
+                                <TableCell className="font-medium">
+                                  ${transaction.amount.toFixed(2)}
+                                </TableCell>
+                                <TableCell>
+                                  <Badge
+                                    variant="secondary"
+                                    className={transaction.type === 'product' ? "bg-blue-100 text-blue-800" : "bg-purple-100 text-purple-800"}
+                                  >
+                                    {toStartCase(transaction.type)}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell className="text-sm">
+                                  {new Date(transaction.created_at).toLocaleString()}
+                                </TableCell>
+                                <TableCell>{transaction.seller_name || 'Unknown'}</TableCell>
+                              </TableRow>
+                            );
+                          })
+                        )}
                       </TableBody>
                     </Table>
-                  </div>}
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
         </div>
       </div>
-    </>;
+    </>
+  );
 }

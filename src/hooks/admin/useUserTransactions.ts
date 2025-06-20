@@ -8,6 +8,7 @@ interface UserTransaction {
   type: string;
   created_at: string;
   seller_name: string | null;
+  products_transactions_uuid?: string | null;
 }
 
 export function useUserTransactions(userUuid: string) {
@@ -59,7 +60,8 @@ export function useUserTransactions(userUuid: string) {
           amount: transaction.amount || 0,
           type: transaction.type || 'unknown',
           created_at: transaction.created_at,
-          seller_name: sellerName
+          seller_name: sellerName,
+          products_transactions_uuid: transaction.products_transactions_uuid
         };
       });
 
