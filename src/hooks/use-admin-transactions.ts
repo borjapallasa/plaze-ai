@@ -142,6 +142,7 @@ export function useAdminProductTransactions() {
           checkoutId: transaction.payment_reference_id || transaction.product_transaction_uuid,
           transactionUuid: transaction.product_transaction_uuid,
           itemCount: transaction.item_count || 0,
+          linkId: transaction.product_transaction_uuid,
         };
       }) || [];
 
@@ -205,6 +206,7 @@ export function useAdminCommunityTransactions() {
           user: buyerName,
           checkoutId: transaction.community_subscription_transaction_uuid,
           transactionUuid: transaction.community_subscription_transaction_uuid,
+          linkId: transaction.community_subscription_transaction_uuid,
         };
       }) || [];
 
@@ -213,4 +215,3 @@ export function useAdminCommunityTransactions() {
     },
   });
 }
-
