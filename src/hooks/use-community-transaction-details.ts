@@ -41,6 +41,7 @@ export function useCommunityTransactionDetails(communityTransactionId: string) {
           community_uuid,
           user_uuid,
           transaction_uuid,
+          stripe_reference_id,
           communities!community_subscriptions_transactions_community_uuid_fkey(name),
           users!community_subscriptions_transactions_user_uuid_fkey(first_name, last_name, email)
         `)
@@ -96,7 +97,7 @@ export function useCommunityTransactionDetails(communityTransactionId: string) {
         seller_email: sellerEmail,
         status: 'paid', // Community subscriptions are typically paid
         payment_provider: 'stripe', // Assuming stripe for communities
-        payment_reference_id: communityTransaction.transaction_uuid,
+        payment_reference_id: communityTransaction.stripe_reference_id,
         type: 'community',
         total_amount: communityTransaction.amount || 0,
       };

@@ -758,7 +758,7 @@ export type Database = {
           community_uuid: string | null
           created_at: string
           id: number
-          stripe_id: string | null
+          stripe_reference_id: string | null
           transaction_uuid: string | null
           user_uuid: string | null
         }
@@ -769,7 +769,7 @@ export type Database = {
           community_uuid?: string | null
           created_at?: string
           id?: number
-          stripe_id?: string | null
+          stripe_reference_id?: string | null
           transaction_uuid?: string | null
           user_uuid?: string | null
         }
@@ -780,7 +780,7 @@ export type Database = {
           community_uuid?: string | null
           created_at?: string
           id?: number
-          stripe_id?: string | null
+          stripe_reference_id?: string | null
           transaction_uuid?: string | null
           user_uuid?: string | null
         }
