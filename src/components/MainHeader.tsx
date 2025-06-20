@@ -1,3 +1,4 @@
+
 import React, { useState, FormEvent, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, Menu, User, ChevronDown, LogOut, Home, UserCircle, Users, Store, HelpCircle, MessageSquare } from "lucide-react";
@@ -210,7 +211,7 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                     Home
                   </DropdownMenuItem>
                 </Link>
-                {user && (
+                {user ? (
                   <>
                     <Link to="/personal-area">
                       <DropdownMenuItem>
@@ -224,15 +225,18 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                         Chats
                       </DropdownMenuItem>
                     </Link>
+                    <DropdownMenuSeparator />
                   </>
-                )}
-                {!user && (
-                  <Link to="/auth">
-                    <DropdownMenuItem>
-                      <User className="mr-2 h-4 w-4" />
-                      Sign In
-                    </DropdownMenuItem>
-                  </Link>
+                ) : (
+                  <>
+                    <Link to="/auth">
+                      <DropdownMenuItem>
+                        <User className="mr-2 h-4 w-4" />
+                        Sign In
+                      </DropdownMenuItem>
+                    </Link>
+                    <DropdownMenuSeparator />
+                  </>
                 )}
                 <Link to="/affiliates">
                   <DropdownMenuItem>
@@ -366,7 +370,7 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                     Home
                   </DropdownMenuItem>
                 </Link>
-                {user && (
+                {user ? (
                   <>
                     <Link to="/personal-area">
                       <DropdownMenuItem>
@@ -380,15 +384,18 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                         Chats
                       </DropdownMenuItem>
                     </Link>
+                    <DropdownMenuSeparator />
                   </>
-                )}
-                {!user && (
-                  <Link to="/auth">
-                    <DropdownMenuItem>
-                      <User className="mr-2 h-4 w-4" />
-                      Sign In
-                    </DropdownMenuItem>
-                  </Link>
+                ) : (
+                  <>
+                    <Link to="/auth">
+                      <DropdownMenuItem>
+                        <User className="mr-2 h-4 w-4" />
+                        Sign In
+                      </DropdownMenuItem>
+                    </Link>
+                    <DropdownMenuSeparator />
+                  </>
                 )}
                 <Link to="/affiliates">
                   <DropdownMenuItem>
