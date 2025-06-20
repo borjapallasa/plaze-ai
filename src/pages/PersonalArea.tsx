@@ -122,7 +122,7 @@ export default function PersonalArea() {
   return (
     <div className="min-h-screen bg-background">
       <MainHeader />
-      <main className="container mx-auto px-4 py-8 pt-24 max-w-7xl">
+      <main className="container mx-auto px-4 py-8 pt-24 max-w-[1400px]">
         <div className="space-y-2 mb-8">
           <h1 className="text-4xl font-bold">Welcome back <span className="text-primary">Borja</span>!</h1>
           <p className="text-muted-foreground text-lg">What do you want today?</p>
