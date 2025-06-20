@@ -31,11 +31,12 @@ export function useUserTransactions(userUuid: string) {
           experts!inner(name),
           products_transactions!left(
             product_transaction_uuid,
-            experts_product_transactions:experts!inner(name)
+            experts!inner(name)
           ),
           community_subscriptions_transactions!left(
             community_subscription_transaction_uuid,
             community_subscriptions!inner(
+              community_uuid,
               communities!inner(name)
             )
           )
@@ -55,8 +56,8 @@ export function useUserTransactions(userUuid: string) {
         let sellerName = null;
         
         // For product transactions, get seller name from products_transactions -> experts join
-        if (transaction.type === 'product' && transaction.products_transactions?.experts_product_transactions?.name) {
-          sellerName = transaction.products_transactions.experts_product_transactions.name;
+        if (transaction.type === 'product' && transaction.products_transactions?.experts?.name) {
+          sellerName = transaction.products_transactions.experts.name;
         } 
         // For community transactions, get seller name from community_subscriptions_transactions -> community_subscriptions -> communities
         else if (transaction.type === 'community' && transaction.community_subscriptions_transactions?.community_subscriptions?.communities?.name) {
