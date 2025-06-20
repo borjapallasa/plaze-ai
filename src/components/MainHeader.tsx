@@ -1,4 +1,3 @@
-
 import React, { useState, FormEvent, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, Menu, User, ChevronDown, LogOut, Home, UserCircle, Users, Store, HelpCircle, MessageSquare } from "lucide-react";
@@ -46,6 +45,28 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
   });
 
   const isExpert = userData?.is_expert || false;
+
+  // Get expert UUID if user is an expert
+  const { data: expertData } = useQuery({
+    queryKey: ['expert-by-email', user?.email],
+    queryFn: async () => {
+      if (!user?.email || !isExpert) return null;
+      
+      const { data, error } = await supabase
+        .from('experts')
+        .select('expert_uuid')
+        .eq('email', user.email)
+        .maybeSingle();
+      
+      if (error) {
+        console.error('Error fetching expert:', error);
+        return null;
+      }
+      
+      return data;
+    },
+    enabled: !!user?.email && isExpert,
+  });
 
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileSearchQuery, setMobileSearchQuery] = useState("");
@@ -219,6 +240,14 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                         Personal Area
                       </DropdownMenuItem>
                     </Link>
+                    {isExpert && (
+                      <Link to={expertData?.expert_uuid ? `/seller/${expertData.expert_uuid}` : "/sell"}>
+                        <DropdownMenuItem>
+                          <Store className="mr-2 h-4 w-4" />
+                          Seller Area
+                        </DropdownMenuItem>
+                      </Link>
+                    )}
                     <Link to="/chats">
                       <DropdownMenuItem>
                         <MessageSquare className="mr-2 h-4 w-4" />
@@ -378,6 +407,14 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                         Personal Area
                       </DropdownMenuItem>
                     </Link>
+                    {isExpert && (
+                      <Link to={expertData?.expert_uuid ? `/seller/${expertData.expert_uuid}` : "/sell"}>
+                        <DropdownMenuItem>
+                          <Store className="mr-2 h-4 w-4" />
+                          Seller Area
+                        </DropdownMenuItem>
+                      </Link>
+                    )}
                     <Link to="/chats">
                       <DropdownMenuItem>
                         <MessageSquare className="mr-2 h-4 w-4" />
