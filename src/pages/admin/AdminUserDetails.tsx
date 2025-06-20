@@ -404,29 +404,52 @@ export default function AdminUserDetails() {
                             }
                             
                             return (
-                              <TableRow 
-                                key={transaction.transaction_uuid}
-                                className="cursor-pointer hover:bg-gray-50"
-                                onClick={() => navigate(`/admin/transaction/${linkId}`)}
-                              >
+                              <TableRow key={transaction.transaction_uuid} className="hover:bg-gray-50">
                                 <TableCell className="font-medium max-w-[200px] truncate">
-                                  {transaction.transaction_uuid}
+                                  <Link 
+                                    to={`/admin/transaction/${linkId}`}
+                                    className="text-inherit hover:underline"
+                                  >
+                                    {transaction.transaction_uuid}
+                                  </Link>
                                 </TableCell>
                                 <TableCell className="font-medium">
-                                  ${transaction.amount.toFixed(2)}
+                                  <Link 
+                                    to={`/admin/transaction/${linkId}`}
+                                    className="text-inherit hover:underline"
+                                  >
+                                    ${transaction.amount.toFixed(2)}
+                                  </Link>
                                 </TableCell>
                                 <TableCell>
-                                  <Badge
-                                    variant="secondary"
-                                    className={transaction.type === 'product' ? "bg-blue-100 text-blue-800" : "bg-purple-100 text-purple-800"}
+                                  <Link 
+                                    to={`/admin/transaction/${linkId}`}
+                                    className="text-inherit hover:underline"
                                   >
-                                    {toStartCase(transaction.type)}
-                                  </Badge>
+                                    <Badge
+                                      variant="secondary"
+                                      className={transaction.type === 'product' ? "bg-blue-100 text-blue-800" : "bg-purple-100 text-purple-800"}
+                                    >
+                                      {toStartCase(transaction.type)}
+                                    </Badge>
+                                  </Link>
                                 </TableCell>
                                 <TableCell className="text-sm">
-                                  {new Date(transaction.created_at).toLocaleString()}
+                                  <Link 
+                                    to={`/admin/transaction/${linkId}`}
+                                    className="text-inherit hover:underline"
+                                  >
+                                    {new Date(transaction.created_at).toLocaleString()}
+                                  </Link>
                                 </TableCell>
-                                <TableCell>{transaction.seller_name || 'Unknown'}</TableCell>
+                                <TableCell>
+                                  <Link 
+                                    to={`/admin/transaction/${linkId}`}
+                                    className="text-inherit hover:underline"
+                                  >
+                                    {transaction.seller_name || 'Unknown'}
+                                  </Link>
+                                </TableCell>
                               </TableRow>
                             );
                           })
