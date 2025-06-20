@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -758,7 +757,7 @@ export default function AdminTransactions() {
                   : "text-gray-500 hover:text-gray-700"
               }`}
             >
-              Active
+              Products
             </button>
             <button
               onClick={() => setActiveTab("communities")}
@@ -768,17 +767,7 @@ export default function AdminTransactions() {
                   : "text-gray-500 hover:text-gray-700"
               }`}
             >
-              Inactive
-            </button>
-            <button
-              onClick={() => setActiveTab("review")}
-              className={`pb-4 text-sm font-medium transition-colors relative ${
-                activeTab === "review"
-                  ? "text-black border-b-2 border-black"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              In review
+              Communities
             </button>
           </div>
         </div>
