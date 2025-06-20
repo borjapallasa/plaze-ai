@@ -759,7 +759,6 @@ export type Database = {
           created_at: string
           id: number
           stripe_id: string | null
-          transaction_uuid: string | null
           user_uuid: string | null
         }
         Insert: {
@@ -770,7 +769,6 @@ export type Database = {
           created_at?: string
           id?: number
           stripe_id?: string | null
-          transaction_uuid?: string | null
           user_uuid?: string | null
         }
         Update: {
@@ -781,7 +779,6 @@ export type Database = {
           created_at?: string
           id?: number
           stripe_id?: string | null
-          transaction_uuid?: string | null
           user_uuid?: string | null
         }
         Relationships: [
@@ -798,13 +795,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "communities"
             referencedColumns: ["community_uuid"]
-          },
-          {
-            foreignKeyName: "community_subscriptions_transactions_transaction_uuid_fkey"
-            columns: ["transaction_uuid"]
-            isOneToOne: false
-            referencedRelation: "transactions"
-            referencedColumns: ["transaction_uuid"]
           },
           {
             foreignKeyName: "community_subscriptions_transactions_user_uuid_fkey"
@@ -2240,7 +2230,6 @@ export type Database = {
           amount: number | null
           amount_taxes: number | null
           buyer_user_uuid: string | null
-          community_subscriptions_transactions_uuid: string | null
           created_at: string
           expert_uuid: string | null
           gross_margin: number | null
@@ -2258,7 +2247,6 @@ export type Database = {
           amount?: number | null
           amount_taxes?: number | null
           buyer_user_uuid?: string | null
-          community_subscriptions_transactions_uuid?: string | null
           created_at?: string
           expert_uuid?: string | null
           gross_margin?: number | null
@@ -2276,7 +2264,6 @@ export type Database = {
           amount?: number | null
           amount_taxes?: number | null
           buyer_user_uuid?: string | null
-          community_subscriptions_transactions_uuid?: string | null
           created_at?: string
           expert_uuid?: string | null
           gross_margin?: number | null
@@ -2296,13 +2283,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["user_uuid"]
-          },
-          {
-            foreignKeyName: "transactions_community_subscriptions_transactions_uuid_fkey"
-            columns: ["community_subscriptions_transactions_uuid"]
-            isOneToOne: false
-            referencedRelation: "community_subscriptions_transactions"
-            referencedColumns: ["community_subscription_transaction_uuid"]
           },
           {
             foreignKeyName: "transactions_expert_uuid_fkey"

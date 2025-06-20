@@ -9,7 +9,6 @@ interface UserTransaction {
   created_at: string;
   seller_name: string | null;
   products_transactions_uuid?: string | null;
-  community_subscriptions_transactions_uuid?: string | null;
 }
 
 export function useUserTransactions(userUuid: string) {
@@ -27,18 +26,10 @@ export function useUserTransactions(userUuid: string) {
           created_at,
           expert_uuid,
           products_transactions_uuid,
-          community_subscriptions_transactions_uuid,
           experts!inner(name),
           products_transactions!left(
-            product_transaction_uuid,
-            experts!inner(name)
-          ),
-          community_subscriptions_transactions!left(
-            community_subscription_transaction_uuid,
-            community_subscriptions!inner(
-              community_uuid,
-              communities!inner(name)
-            )
+            expert_uuid,
+            experts_product_transactions:experts!inner(name)
           )
         `)
         .eq('buyer_user_uuid', userUuid)
@@ -56,13 +47,9 @@ export function useUserTransactions(userUuid: string) {
         let sellerName = null;
         
         // For product transactions, get seller name from products_transactions -> experts join
-        if (transaction.type === 'product' && transaction.products_transactions?.experts?.name) {
-          sellerName = transaction.products_transactions.experts.name;
+        if (transaction.type === 'product' && transaction.products_transactions?.experts_product_transactions?.name) {
+          sellerName = transaction.products_transactions.experts_product_transactions.name;
         } 
-        // For community transactions, get seller name from community_subscriptions_transactions -> community_subscriptions -> communities
-        else if (transaction.type === 'community' && transaction.community_subscriptions_transactions?.community_subscriptions?.communities?.name) {
-          sellerName = transaction.community_subscriptions_transactions.community_subscriptions.communities.name;
-        }
         // For other transaction types, use the direct expert relationship
         else if (transaction.experts?.name) {
           sellerName = transaction.experts.name;
@@ -74,8 +61,7 @@ export function useUserTransactions(userUuid: string) {
           type: transaction.type || 'unknown',
           created_at: transaction.created_at,
           seller_name: sellerName,
-          products_transactions_uuid: transaction.products_transactions_uuid,
-          community_subscriptions_transactions_uuid: transaction.community_subscriptions_transactions_uuid
+          products_transactions_uuid: transaction.products_transactions_uuid
         };
       });
 
