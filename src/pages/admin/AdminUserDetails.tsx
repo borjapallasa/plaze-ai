@@ -1,3 +1,4 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -8,12 +9,14 @@ import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
 import { useUserDetails } from "@/hooks/admin/useUserDetails";
+import { useUserTransactions } from "@/hooks/admin/useUserTransactions";
 import { useState } from "react";
 
 export default function AdminUserDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user, isLoading, error } = useUserDetails(id || '');
+  const { transactions, isLoading: isLoadingTransactions, error: transactionsError } = useUserTransactions(id || '');
   const [activeTab, setActiveTab] = useState("all");
 
   const copyToClipboard = (text: string, label: string) => {
@@ -103,49 +106,15 @@ export default function AdminUserDetails() {
     }
   ];
 
-  // Mock data for user transactions
-  const userTransactions = [
-    {
-      id: "1",
-      concept: "AI Email Template Generator",
-      type: "product" as const,
-      createdAt: "2/15/2025, 2:41 PM",
-      status: "completed",
-      amount: 149.95,
-      seller: "John Smith",
-      checkoutId: "ch_1234567890"
-    },
-    {
-      id: "2",
-      concept: "Web Development Masterclass",
-      type: "community" as const,
-      createdAt: "2/1/2025, 1:20 PM", 
-      status: "completed",
-      amount: 49.99,
-      seller: "Sarah Johnson",
-      checkoutId: "ch_0987654321"
-    },
-    {
-      id: "3",
-      concept: "Marketing Automation Tool",
-      type: "product" as const,
-      createdAt: "1/28/2025, 3:15 PM",
-      status: "completed", 
-      amount: 299.00,
-      seller: "Mike Davis",
-      checkoutId: "ch_1122334455"
-    }
-  ];
-
   // Filter transactions based on active tab
   const getFilteredTransactions = () => {
     switch (activeTab) {
       case "products":
-        return userTransactions.filter(t => t.type === "product");
+        return transactions.filter(t => t.type === "product");
       case "communities":
-        return userTransactions.filter(t => t.type === "community");
+        return transactions.filter(t => t.type === "community");
       default:
-        return userTransactions;
+        return transactions;
     }
   };
 
@@ -402,59 +371,64 @@ export default function AdminUserDetails() {
                   </div>
                 </div>
 
-                <div className="rounded-md border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Concept</TableHead>
-                        <TableHead>Type</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Amount</TableHead>
-                        <TableHead>Seller</TableHead>
-                        <TableHead>Checkout ID</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredTransactions.map((transaction) => (
-                        <TableRow key={transaction.id}>
-                          <TableCell className="font-medium max-w-[200px] truncate">
-                            {transaction.concept}
-                          </TableCell>
-                          <TableCell>
-                            <Badge 
-                              variant="secondary"
-                              className={transaction.type === 'product' 
-                                ? "bg-blue-100 text-blue-800" 
-                                : "bg-purple-100 text-purple-800"
-                              }
-                            >
-                              {transaction.type}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-sm">
-                            {transaction.createdAt}
-                          </TableCell>
-                          <TableCell>
-                            <Badge 
-                              variant="secondary"
-                              className="bg-green-100 text-green-800"
-                            >
-                              {transaction.status}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="font-medium">
-                            ${transaction.amount.toFixed(2)}
-                          </TableCell>
-                          <TableCell>{transaction.seller}</TableCell>
-                          <TableCell className="text-sm text-[#8E9196]">
-                            {transaction.checkoutId}
-                          </TableCell>
+                {isLoadingTransactions ? (
+                  <div className="rounded-md border p-8 text-center text-[#8E9196]">
+                    Loading transactions...
+                  </div>
+                ) : transactionsError ? (
+                  <div className="rounded-md border p-8 text-center text-red-600">
+                    Error loading transactions: {transactionsError.message}
+                  </div>
+                ) : (
+                  <div className="rounded-md border">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>ID</TableHead>
+                          <TableHead>Amount</TableHead>
+                          <TableHead>Type</TableHead>
+                          <TableHead>Created @</TableHead>
+                          <TableHead>Seller</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredTransactions.length === 0 ? (
+                          <TableRow>
+                            <TableCell colSpan={5} className="text-center text-[#8E9196] py-8">
+                              No transactions found
+                            </TableCell>
+                          </TableRow>
+                        ) : (
+                          filteredTransactions.map((transaction) => (
+                            <TableRow key={transaction.transaction_uuid}>
+                              <TableCell className="font-medium max-w-[200px] truncate">
+                                {transaction.transaction_uuid}
+                              </TableCell>
+                              <TableCell className="font-medium">
+                                ${transaction.amount.toFixed(2)}
+                              </TableCell>
+                              <TableCell>
+                                <Badge 
+                                  variant="secondary"
+                                  className={transaction.type === 'product' 
+                                    ? "bg-blue-100 text-blue-800" 
+                                    : "bg-purple-100 text-purple-800"
+                                  }
+                                >
+                                  {transaction.type}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="text-sm">
+                                {new Date(transaction.created_at).toLocaleString()}
+                              </TableCell>
+                              <TableCell>{transaction.seller_name || 'Unknown'}</TableCell>
+                            </TableRow>
+                          ))
+                        )}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
