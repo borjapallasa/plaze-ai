@@ -1,3 +1,4 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -400,7 +401,11 @@ export default function AdminUserDetails() {
                           </TableRow>
                         ) : (
                           filteredTransactions.map((transaction) => (
-                            <TableRow key={transaction.transaction_uuid}>
+                            <TableRow 
+                              key={transaction.transaction_uuid}
+                              className="cursor-pointer hover:bg-gray-50"
+                              onClick={() => navigate(`/admin/transaction/${transaction.transaction_uuid}`)}
+                            >
                               <TableCell className="font-medium max-w-[200px] truncate">
                                 {transaction.transaction_uuid}
                               </TableCell>
