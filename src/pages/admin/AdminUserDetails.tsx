@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +10,7 @@ import { toast } from "sonner";
 import { useUserDetails } from "@/hooks/admin/useUserDetails";
 import { useUserTransactions } from "@/hooks/admin/useUserTransactions";
 import { useState } from "react";
+import { toStartCase } from "@/lib/utils";
 
 export default function AdminUserDetails() {
   const { id } = useParams();
@@ -415,7 +415,7 @@ export default function AdminUserDetails() {
                                     : "bg-purple-100 text-purple-800"
                                   }
                                 >
-                                  {transaction.type}
+                                  {toStartCase(transaction.type)}
                                 </Badge>
                               </TableCell>
                               <TableCell className="text-sm">
