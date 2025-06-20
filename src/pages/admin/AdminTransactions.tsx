@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MainHeader } from "@/components/MainHeader";
 import { Separator } from "@/components/ui/separator";
 import { useAdminTransactions, useAdminProductTransactions, useAdminCommunityTransactions, type AdminTransaction } from "@/hooks/use-admin-transactions";
@@ -737,28 +737,56 @@ export default function AdminTransactions() {
           <p className="text-[#8E9196]">Manage and review all your transaction records</p>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-4">
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="products">Products</TabsTrigger>
-            <TabsTrigger value="communities">Communities</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="all" className="space-y-0">
-            {renderSearchAndFilter()}
-            {renderTransactionTable(getFilteredTransactions(), isLoading, error)}
-          </TabsContent>
-          
-          <TabsContent value="products" className="space-y-0">
-            {renderSearchAndFilter()}
-            {renderProductsTable(getFilteredProductTransactions(), isLoadingProducts, productError)}
-          </TabsContent>
-          
-          <TabsContent value="communities" className="space-y-0">
-            {renderSearchAndFilter()}
-            {renderCommunityTable(getFilteredCommunityTransactions(), isLoadingCommunities, communityError)}
-          </TabsContent>
-        </Tabs>
+        {/* Custom tabs styling to match the screenshot */}
+        <div className="w-full mb-6">
+          <div className="flex space-x-8 border-b border-gray-200">
+            <button
+              onClick={() => setActiveTab("all")}
+              className={`pb-4 text-sm font-medium transition-colors relative ${
+                activeTab === "all"
+                  ? "text-black border-b-2 border-black"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              All
+            </button>
+            <button
+              onClick={() => setActiveTab("products")}
+              className={`pb-4 text-sm font-medium transition-colors relative ${
+                activeTab === "products"
+                  ? "text-black border-b-2 border-black"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              Active
+            </button>
+            <button
+              onClick={() => setActiveTab("communities")}
+              className={`pb-4 text-sm font-medium transition-colors relative ${
+                activeTab === "communities"
+                  ? "text-black border-b-2 border-black"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              Inactive
+            </button>
+            <button
+              onClick={() => setActiveTab("review")}
+              className={`pb-4 text-sm font-medium transition-colors relative ${
+                activeTab === "review"
+                  ? "text-black border-b-2 border-black"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              In review
+            </button>
+          </div>
+        </div>
+        
+        <div className="space-y-0">
+          {renderSearchAndFilter()}
+          {renderCurrentTable()}
+        </div>
 
         {currentData.data.length > 0 && (
           <>
