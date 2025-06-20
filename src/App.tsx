@@ -59,7 +59,6 @@ function App() {
           <Route path="/seller/communities/new" element={<NewCommunityPage />} />
           <Route path="/seller/:id" element={<SellerPage />} />
           <Route path="/product/:id/edit" element={<EditProductPage />} />
-          <Route path="/product/:slug/:id/edit" element={<EditProductPage />} />
           <Route path="/community/:id/edit" element={<EditCommunityPage />} />
           <Route path="/community/:id/products/new" element={<NewCommunityProductPage />} />
           <Route path="/community/:id" element={<CommunityPage />} />
