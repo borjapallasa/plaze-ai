@@ -24,7 +24,12 @@ export function useUserTransactions(userUuid: string) {
           type,
           created_at,
           expert_uuid,
-          experts!inner(name)
+          products_transactions_uuid,
+          experts!inner(name),
+          products_transactions!left(
+            expert_uuid,
+            experts_product_transactions:experts!inner(name)
+          )
         `)
         .eq('buyer_user_uuid', userUuid)
         .order('created_at', { ascending: false });
@@ -37,13 +42,26 @@ export function useUserTransactions(userUuid: string) {
       console.log('Raw transaction data:', data);
 
       // Transform the data to match our interface
-      const transformedData: UserTransaction[] = (data || []).map(transaction => ({
-        transaction_uuid: transaction.transaction_uuid,
-        amount: transaction.amount || 0,
-        type: transaction.type || 'unknown',
-        created_at: transaction.created_at,
-        seller_name: transaction.experts?.name || null
-      }));
+      const transformedData: UserTransaction[] = (data || []).map(transaction => {
+        let sellerName = null;
+        
+        // For product transactions, get seller name from products_transactions -> experts join
+        if (transaction.type === 'product' && transaction.products_transactions?.experts_product_transactions?.name) {
+          sellerName = transaction.products_transactions.experts_product_transactions.name;
+        } 
+        // For other transaction types, use the direct expert relationship
+        else if (transaction.experts?.name) {
+          sellerName = transaction.experts.name;
+        }
+
+        return {
+          transaction_uuid: transaction.transaction_uuid,
+          amount: transaction.amount || 0,
+          type: transaction.type || 'unknown',
+          created_at: transaction.created_at,
+          seller_name: sellerName
+        };
+      });
 
       console.log('Transformed transaction data:', transformedData);
       return transformedData;
