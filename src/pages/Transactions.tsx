@@ -56,7 +56,7 @@ export default function Transactions() {
         <MainHeader />
       </div>
       <div className="pt-24 [backface-visibility:hidden]">
-        <div className="container mx-auto px-4 py-8 max-w-[1000px]">
+        <div className="container mx-auto px-4 py-8 max-w-[1400px]">
           <h1 className="text-2xl font-semibold mb-6">All Your Purchases</h1>
           
           {/* Search and Filter Section */}
