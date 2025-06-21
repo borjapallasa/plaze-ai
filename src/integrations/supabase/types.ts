@@ -2239,7 +2239,6 @@ export type Database = {
           afiliate_fees: number | null
           amount: number | null
           amount_taxes: number | null
-          buyer_user_uuid: string | null
           community_subscriptions_transactions_uuid: string | null
           created_at: string
           expert_uuid: string | null
@@ -2252,12 +2251,12 @@ export type Database = {
           transaction_fees: number | null
           transaction_uuid: string
           type: Database["public"]["Enums"]["transaction_type"] | null
+          user_uuid: string | null
         }
         Insert: {
           afiliate_fees?: number | null
           amount?: number | null
           amount_taxes?: number | null
-          buyer_user_uuid?: string | null
           community_subscriptions_transactions_uuid?: string | null
           created_at?: string
           expert_uuid?: string | null
@@ -2270,12 +2269,12 @@ export type Database = {
           transaction_fees?: number | null
           transaction_uuid?: string
           type?: Database["public"]["Enums"]["transaction_type"] | null
+          user_uuid?: string | null
         }
         Update: {
           afiliate_fees?: number | null
           amount?: number | null
           amount_taxes?: number | null
-          buyer_user_uuid?: string | null
           community_subscriptions_transactions_uuid?: string | null
           created_at?: string
           expert_uuid?: string | null
@@ -2288,15 +2287,9 @@ export type Database = {
           transaction_fees?: number | null
           transaction_uuid?: string
           type?: Database["public"]["Enums"]["transaction_type"] | null
+          user_uuid?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "transactions_buyer_user_uuid_fkey"
-            columns: ["buyer_user_uuid"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["user_uuid"]
-          },
           {
             foreignKeyName: "transactions_community_subscriptions_transactions_uuid_fkey"
             columns: ["community_subscriptions_transactions_uuid"]
@@ -2324,6 +2317,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "reviews"
             referencedColumns: ["review_uuid"]
+          },
+          {
+            foreignKeyName: "transactions_user_uuid_fkey"
+            columns: ["user_uuid"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["user_uuid"]
           },
         ]
       }

@@ -56,7 +56,7 @@ export default function Transactions() {
           community_subscriptions_transactions_uuid,
           experts!transactions_expert_uuid_fkey(name)
         `)
-        .eq('buyer_user_uuid', user.id)
+        .eq('user_uuid', user.id)
         .order('created_at', { ascending: false });
 
       if (error) {
