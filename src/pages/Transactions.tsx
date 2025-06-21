@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
@@ -125,20 +124,20 @@ export default function Transactions() {
     enabled: !!user?.id,
   });
 
-  // Fetch user's community transactions
+  // Fetch user's community transactions from community_subscriptions_transactions table
   const { data: communityTransactions = [], isLoading: isLoadingCommunities } = useQuery({
     queryKey: ['user-community-transactions', user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
       
       const { data, error } = await supabase
-        .from('community_subscriptions')
+        .from('community_subscriptions_transactions')
         .select(`
-          community_subscription_uuid,
+          community_subscription_transaction_uuid,
           created_at,
-          total_amount,
-          status,
-          communities (
+          amount,
+          community_uuid,
+          communities!community_subscriptions_transactions_community_uuid_fkey (
             name,
             experts (
               name
@@ -153,15 +152,15 @@ export default function Transactions() {
         return [];
       }
 
-      return data?.map(subscription => ({
-        id: subscription.community_subscription_uuid,
-        concept: subscription.community_subscription_uuid,
+      return data?.map(transaction => ({
+        id: transaction.community_subscription_transaction_uuid,
+        concept: transaction.community_subscription_transaction_uuid,
         type: 'community' as const,
-        createdAt: new Date(subscription.created_at).toLocaleDateString(),
-        amount: subscription.total_amount || 0,
-        status: subscription.status || 'unknown',
-        seller: subscription.communities?.experts?.name || subscription.communities?.name || 'Unknown',
-        linkId: subscription.community_subscription_uuid
+        createdAt: new Date(transaction.created_at).toLocaleDateString(),
+        amount: transaction.amount || 0,
+        status: 'paid', // Community subscription transactions are typically paid
+        seller: transaction.communities?.experts?.name || transaction.communities?.name || 'Unknown',
+        linkId: transaction.community_subscription_transaction_uuid
       })) || [];
     },
     enabled: !!user?.id,
