@@ -38,6 +38,46 @@ export default function Transactions() {
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
   const [activeTab, setActiveTab] = useState("all");
 
+  // Fetch all user's transactions from the transactions table
+  const { data: allTransactions = [], isLoading: isLoadingAll } = useQuery({
+    queryKey: ['user-all-transactions', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      
+      const { data, error } = await supabase
+        .from('transactions')
+        .select(`
+          transaction_uuid,
+          created_at,
+          amount,
+          status,
+          type,
+          products_transactions_uuid,
+          community_subscriptions_transactions_uuid,
+          experts!transactions_expert_uuid_fkey(name)
+        `)
+        .eq('buyer_user_uuid', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching all transactions:', error);
+        return [];
+      }
+
+      return data?.map(transaction => ({
+        id: transaction.transaction_uuid,
+        concept: transaction.transaction_uuid,
+        type: transaction.type as 'product' | 'community',
+        createdAt: new Date(transaction.created_at).toLocaleDateString(),
+        amount: transaction.amount || 0,
+        status: transaction.status || 'unknown',
+        seller: transaction.experts?.name || 'Unknown',
+        linkId: transaction.products_transactions_uuid || transaction.community_subscriptions_transactions_uuid || transaction.transaction_uuid
+      })) || [];
+    },
+    enabled: !!user?.id,
+  });
+
   // Fetch user's product transactions
   const { data: productTransactions = [], isLoading: isLoadingProducts } = useQuery({
     queryKey: ['user-product-transactions', user?.id],
@@ -127,9 +167,6 @@ export default function Transactions() {
     enabled: !!user?.id,
   });
 
-  // Combine all transactions
-  const allTransactions = [...productTransactions, ...communityTransactions];
-
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "paid":
@@ -168,13 +205,22 @@ export default function Transactions() {
   };
 
   const getFilteredTransactions = (type?: 'product' | 'community') => {
-    return allTransactions
+    let transactions: UserTransaction[] = [];
+    
+    if (type === 'product') {
+      transactions = productTransactions;
+    } else if (type === 'community') {
+      transactions = communityTransactions;
+    } else {
+      transactions = allTransactions;
+    }
+
+    return transactions
       .filter(transaction => {
         const matchesSearch = transaction.concept.toLowerCase().includes(searchQuery.toLowerCase()) ||
                             transaction.seller.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesStatus = statusFilter === "all" || transaction.status.toLowerCase() === statusFilter.toLowerCase();
-        const matchesType = !type || transaction.type === type;
-        return matchesSearch && matchesStatus && matchesType;
+        return matchesSearch && matchesStatus;
       })
       .sort((a, b) => {
         const aValue = a[sortField];
@@ -381,7 +427,7 @@ export default function Transactions() {
       case "communities":
         return { data: getFilteredTransactions('community'), loading: isLoadingCommunities };
       default:
-        return { data: getFilteredTransactions(), loading: isLoadingProducts || isLoadingCommunities };
+        return { data: getFilteredTransactions(), loading: isLoadingAll };
     }
   };
 
