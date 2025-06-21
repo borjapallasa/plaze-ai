@@ -138,10 +138,7 @@ export default function Transactions() {
           amount,
           community_uuid,
           communities!community_subscriptions_transactions_community_uuid_fkey (
-            name,
-            experts (
-              name
-            )
+            name
           )
         `)
         .eq('user_uuid', user.id)
@@ -159,7 +156,7 @@ export default function Transactions() {
         createdAt: new Date(transaction.created_at).toLocaleDateString(),
         amount: transaction.amount || 0,
         status: 'paid', // Community subscription transactions are typically paid
-        seller: transaction.communities?.experts?.name || transaction.communities?.name || 'Unknown',
+        seller: transaction.communities?.name || 'Unknown Community',
         linkId: transaction.community_subscription_transaction_uuid
       })) || [];
     },
@@ -253,7 +250,7 @@ export default function Transactions() {
       <div className="relative flex-1">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
         <Input
-          placeholder="Search by ID or seller"
+          placeholder={activeTab === "communities" ? "Search by ID or community" : "Search by ID or seller"}
           className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C]"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -344,7 +341,7 @@ export default function Transactions() {
                       onClick={() => handleSort("seller")}
                       className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
                     >
-                      Seller {getSortIcon("seller")}
+                      {activeTab === "communities" ? "Community" : "Seller"} {getSortIcon("seller")}
                     </button>
                   </th>
                   {activeTab === "products" && (
