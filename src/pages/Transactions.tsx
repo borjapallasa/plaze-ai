@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
@@ -32,6 +31,7 @@ interface UserTransaction {
 
 export default function Transactions() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortField, setSortField] = useState<keyof UserTransaction>("createdAt");
@@ -246,6 +246,10 @@ export default function Transactions() {
       });
   };
 
+  const handleRowClick = (transaction: UserTransaction) => {
+    navigate(`/account/transactions/transaction/${transaction.linkId}`);
+  };
+
   const renderSearchAndFilter = () => (
     <div className="flex flex-col sm:flex-row gap-4 mb-4">
       <div className="relative flex-1">
@@ -397,7 +401,8 @@ export default function Transactions() {
                   filteredTransactions.map((transaction, index) => (
                     <tr
                       key={index}
-                      className="hover:bg-[#F8F9FC] transition-colors duration-200 group"
+                      onClick={() => handleRowClick(transaction)}
+                      className="hover:bg-[#F8F9FC] transition-colors duration-200 group cursor-pointer"
                     >
                       <td className="px-6 py-4 min-w-[200px] w-[200px]">
                         <div className="text-sm text-[#1A1F2C] font-medium truncate">
