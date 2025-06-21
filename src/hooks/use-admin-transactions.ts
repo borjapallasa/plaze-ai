@@ -35,7 +35,7 @@ export function useAdminTransactions() {
           gross_margin,
           products_transactions_uuid,
           experts!transactions_expert_uuid_fkey(name, email),
-          users!transactions_buyer_user_uuid_fkey(first_name, last_name, email)
+          users!transactions_user_uuid_fkey(first_name, last_name, email)
         `)
         .order('created_at', { ascending: false });
 
@@ -50,8 +50,9 @@ export function useAdminTransactions() {
       const transformedTransactions: AdminTransaction[] = [];
       
       for (const transaction of transactionData || []) {
-        const buyerName = transaction.users 
-          ? `${transaction.users.first_name || ''} ${transaction.users.last_name || ''}`.trim()
+        const user = transaction.users;
+        const buyerName = user 
+          ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
           : 'Unknown User';
         
         const sellerName = transaction.experts?.name || 'Unknown Expert';
@@ -124,8 +125,9 @@ export function useAdminProductTransactions() {
 
       // Transform the data to match the AdminTransaction interface
       const transformedTransactions: AdminTransaction[] = productTransactionData?.map(transaction => {
-        const buyerName = transaction.users 
-          ? `${transaction.users.first_name || ''} ${transaction.users.last_name || ''}`.trim()
+        const user = transaction.users;
+        const buyerName = user 
+          ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
           : 'Unknown User';
         
         const sellerName = transaction.experts?.name || 'Unknown Expert';
@@ -189,8 +191,9 @@ export function useAdminCommunityTransactions() {
 
       // Transform the data to match the AdminTransaction interface
       const transformedTransactions: AdminTransaction[] = communityTransactionData?.map(transaction => {
-        const buyerName = transaction.users 
-          ? `${transaction.users.first_name || ''} ${transaction.users.last_name || ''}`.trim()
+        const user = transaction.users;
+        const buyerName = user 
+          ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
           : 'Unknown User';
         
         const communityName = transaction.communities?.name || 'Unknown Community';

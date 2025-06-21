@@ -15,7 +15,7 @@ interface UserTransaction {
 export function useUserTransactions(userUuid: string) {
   const { data: transactions = [], isLoading, error, refetch } = useQuery({
     queryKey: ['user-transactions', userUuid],
-    queryFn: async () => {
+    queryFn: async (): Promise<UserTransaction[]> => {
       console.log('Fetching transactions for user UUID:', userUuid);
       
       const { data, error } = await supabase
@@ -33,7 +33,7 @@ export function useUserTransactions(userUuid: string) {
             experts_product_transactions:experts!inner(name)
           )
         `)
-        .eq('buyer_user_uuid', userUuid)
+        .eq('user_uuid', userUuid)
         .order('created_at', { ascending: false });
 
       if (error) {
