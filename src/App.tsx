@@ -22,6 +22,7 @@ import AccountSettingsPage from "./pages/AccountSettings";
 import ManageSubscriptionsPage from "./pages/ManageSubscriptions";
 import MyCommunitiesPage from "./pages/MyCommunities";
 import TransactionsPage from "./pages/Transactions";
+import UserTransactionDetailsPage from "./pages/UserTransactionDetails";
 import ThankYouPage from "./pages/ThankYou";
 import RecoverPasswordPage from "./pages/RecoverPassword";
 import AdminDashboardPage from "./pages/admin/AdminDashboard";
@@ -71,6 +72,7 @@ function App() {
           <Route path="/account/subscriptions" element={<ManageSubscriptionsPage />} />
           <Route path="/account/communities" element={<MyCommunitiesPage />} />
           <Route path="/account/transactions" element={<TransactionsPage />} />
+          <Route path="/account/transactions/transaction/:id" element={<UserTransactionDetailsPage />} />
           <Route path="/thank-you" element={<ThankYouPage />} />
           <Route path="/recover-password" element={<RecoverPasswordPage />} />
           <Route path="/admin" element={<AdminDashboardPage />} />
