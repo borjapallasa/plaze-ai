@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
@@ -309,52 +310,86 @@ export default function Transactions() {
                       ID {getSortIcon("concept")}
                     </button>
                   </th>
-                  <th className="px-6 py-4 text-left min-w-[100px] w-[100px]">
-                    <button 
-                      onClick={() => handleSort("type")}
-                      className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
-                    >
-                      Type {getSortIcon("type")}
-                    </button>
-                  </th>
-                  <th className="px-6 py-4 text-left min-w-[150px] w-[150px]">
-                    <button 
-                      onClick={() => handleSort("createdAt")}
-                      className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
-                    >
-                      Created @ {getSortIcon("createdAt")}
-                    </button>
-                  </th>
-                  <th className="px-6 py-4 text-left min-w-[100px] w-[100px]">
-                    <span className="font-medium text-sm text-[#8E9196] whitespace-nowrap">Status</span>
-                  </th>
-                  <th className="px-6 py-4 text-left min-w-[100px] w-[100px]">
-                    <button 
-                      onClick={() => handleSort("amount")}
-                      className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
-                    >
-                      Amount {getSortIcon("amount")}
-                    </button>
-                  </th>
-                  <th className="px-6 py-4 text-left min-w-[200px] w-[200px]">
-                    <button 
-                      onClick={() => handleSort("seller")}
-                      className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
-                    >
-                      {activeTab === "communities" ? "Community" : "Seller"} {getSortIcon("seller")}
-                    </button>
-                  </th>
-                  {activeTab === "products" && (
-                    <th className="px-6 py-4 text-left min-w-[100px] w-[100px]">
-                      <span className="font-medium text-sm text-[#8E9196] whitespace-nowrap">Items</span>
-                    </th>
+                  {activeTab === "communities" ? (
+                    <>
+                      <th className="px-6 py-4 text-left min-w-[200px] w-[200px]">
+                        <button 
+                          onClick={() => handleSort("seller")}
+                          className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+                        >
+                          Community {getSortIcon("seller")}
+                        </button>
+                      </th>
+                      <th className="px-6 py-4 text-left min-w-[150px] w-[150px]">
+                        <button 
+                          onClick={() => handleSort("createdAt")}
+                          className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+                        >
+                          Created @ {getSortIcon("createdAt")}
+                        </button>
+                      </th>
+                      <th className="px-6 py-4 text-left min-w-[100px] w-[100px]">
+                        <button 
+                          onClick={() => handleSort("amount")}
+                          className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+                        >
+                          Amount {getSortIcon("amount")}
+                        </button>
+                      </th>
+                      <th className="px-6 py-4 text-left min-w-[100px] w-[100px]">
+                        <span className="font-medium text-sm text-[#8E9196] whitespace-nowrap">Status</span>
+                      </th>
+                    </>
+                  ) : (
+                    <>
+                      <th className="px-6 py-4 text-left min-w-[100px] w-[100px]">
+                        <button 
+                          onClick={() => handleSort("type")}
+                          className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+                        >
+                          Type {getSortIcon("type")}
+                        </button>
+                      </th>
+                      <th className="px-6 py-4 text-left min-w-[150px] w-[150px]">
+                        <button 
+                          onClick={() => handleSort("createdAt")}
+                          className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+                        >
+                          Created @ {getSortIcon("createdAt")}
+                        </button>
+                      </th>
+                      <th className="px-6 py-4 text-left min-w-[100px] w-[100px]">
+                        <span className="font-medium text-sm text-[#8E9196] whitespace-nowrap">Status</span>
+                      </th>
+                      <th className="px-6 py-4 text-left min-w-[100px] w-[100px]">
+                        <button 
+                          onClick={() => handleSort("amount")}
+                          className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+                        >
+                          Amount {getSortIcon("amount")}
+                        </button>
+                      </th>
+                      <th className="px-6 py-4 text-left min-w-[200px] w-[200px]">
+                        <button 
+                          onClick={() => handleSort("seller")}
+                          className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] whitespace-nowrap"
+                        >
+                          Seller {getSortIcon("seller")}
+                        </button>
+                      </th>
+                      {activeTab === "products" && (
+                        <th className="px-6 py-4 text-left min-w-[100px] w-[100px]">
+                          <span className="font-medium text-sm text-[#8E9196] whitespace-nowrap">Items</span>
+                        </th>
+                      )}
+                    </>
                   )}
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E5E7EB]">
                 {filteredTransactions.length === 0 ? (
                   <tr>
-                    <td colSpan={activeTab === "products" ? 7 : 6} className="px-6 py-8 text-center text-[#8E9196]">
+                    <td colSpan={activeTab === "communities" ? 5 : (activeTab === "products" ? 7 : 6)} className="px-6 py-8 text-center text-[#8E9196]">
                       No transactions found matching your criteria
                     </td>
                   </tr>
@@ -369,40 +404,70 @@ export default function Transactions() {
                           {transaction.concept}
                         </div>
                       </td>
-                      <td className="px-6 py-4 min-w-[100px] w-[100px]">
-                        <div className="text-sm text-[#8E9196] capitalize whitespace-nowrap">
-                          {transaction.type}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 min-w-[150px] w-[150px]">
-                        <div className="text-sm text-[#8E9196] whitespace-nowrap">
-                          {transaction.createdAt}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 min-w-[100px] w-[100px]">
-                        <Badge 
-                          variant="secondary" 
-                          className={`${getStatusColor(transaction.status)} capitalize whitespace-nowrap`}
-                        >
-                          {transaction.status}
-                        </Badge>
-                      </td>
-                      <td className="px-6 py-4 min-w-[100px] w-[100px]">
-                        <div className="text-sm text-[#1A1F2C] font-medium whitespace-nowrap">
-                          ${transaction.amount.toFixed(2)}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 min-w-[200px] w-[200px]">
-                        <div className="text-sm text-[#8E9196] truncate block" title={transaction.seller}>
-                          {transaction.seller}
-                        </div>
-                      </td>
-                      {activeTab === "products" && (
-                        <td className="px-6 py-4 min-w-[100px] w-[100px]">
-                          <div className="text-sm text-[#8E9196] whitespace-nowrap">
-                            {transaction.itemCount || 0}
-                          </div>
-                        </td>
+                      {activeTab === "communities" ? (
+                        <>
+                          <td className="px-6 py-4 min-w-[200px] w-[200px]">
+                            <div className="text-sm text-[#8E9196] truncate block" title={transaction.seller}>
+                              {transaction.seller}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 min-w-[150px] w-[150px]">
+                            <div className="text-sm text-[#8E9196] whitespace-nowrap">
+                              {transaction.createdAt}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 min-w-[100px] w-[100px]">
+                            <div className="text-sm text-[#1A1F2C] font-medium whitespace-nowrap">
+                              ${transaction.amount.toFixed(2)}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 min-w-[100px] w-[100px]">
+                            <Badge 
+                              variant="secondary" 
+                              className={`${getStatusColor(transaction.status)} capitalize whitespace-nowrap`}
+                            >
+                              {transaction.status}
+                            </Badge>
+                          </td>
+                        </>
+                      ) : (
+                        <>
+                          <td className="px-6 py-4 min-w-[100px] w-[100px]">
+                            <div className="text-sm text-[#8E9196] capitalize whitespace-nowrap">
+                              {transaction.type}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 min-w-[150px] w-[150px]">
+                            <div className="text-sm text-[#8E9196] whitespace-nowrap">
+                              {transaction.createdAt}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 min-w-[100px] w-[100px]">
+                            <Badge 
+                              variant="secondary" 
+                              className={`${getStatusColor(transaction.status)} capitalize whitespace-nowrap`}
+                            >
+                              {transaction.status}
+                            </Badge>
+                          </td>
+                          <td className="px-6 py-4 min-w-[100px] w-[100px]">
+                            <div className="text-sm text-[#1A1F2C] font-medium whitespace-nowrap">
+                              ${transaction.amount.toFixed(2)}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 min-w-[200px] w-[200px]">
+                            <div className="text-sm text-[#8E9196] truncate block" title={transaction.seller}>
+                              {transaction.seller}
+                            </div>
+                          </td>
+                          {activeTab === "products" && (
+                            <td className="px-6 py-4 min-w-[100px] w-[100px]">
+                              <div className="text-sm text-[#8E9196] whitespace-nowrap">
+                                {transaction.itemCount || 0}
+                              </div>
+                            </td>
+                          )}
+                        </>
                       )}
                     </tr>
                   ))
