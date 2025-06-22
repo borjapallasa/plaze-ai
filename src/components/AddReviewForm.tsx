@@ -43,10 +43,27 @@ export function AddReviewForm({ transactionUuid, sellerUserUuid, onReviewAdded }
     setIsSubmitting(true);
 
     try {
+      console.log('Attempting to insert review with transaction_uuid:', transactionUuid);
+      
+      // First, let's check if a transaction record exists in the transactions table
+      const { data: transactionRecord, error: transactionCheckError } = await supabase
+        .from('transactions')
+        .select('transaction_uuid')
+        .eq('products_transactions_uuid', transactionUuid)
+        .maybeSingle();
+
+      console.log('Transaction record found:', transactionRecord);
+      console.log('Transaction check error:', transactionCheckError);
+
+      // Use the actual transaction_uuid from the transactions table if it exists
+      const actualTransactionUuid = transactionRecord?.transaction_uuid || transactionUuid;
+      
+      console.log('Using transaction_uuid for review:', actualTransactionUuid);
+
       const { error } = await supabase
         .from('reviews')
         .insert({
-          transaction_uuid: transactionUuid,
+          transaction_uuid: actualTransactionUuid,
           seller_user_uuid: sellerUserUuid,
           rating,
           title: title.trim() || null,
