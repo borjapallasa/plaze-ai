@@ -267,21 +267,10 @@ export default function Transactions() {
         />
       </div>
       
-      {/* Filters and layout selector - responsive grid */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="flex flex-col sm:flex-row gap-3 flex-1">
-          <Select value={`${sortField}-${sortDirection}`} onValueChange={handleSortChange}>
-            <SelectTrigger className="border-[#E5E7EB]">
-              <SelectValue placeholder="Sort By" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="createdAt-desc">Date (Newest First)</SelectItem>
-              <SelectItem value="createdAt-asc">Date (Oldest First)</SelectItem>
-              <SelectItem value="amount-desc">Amount (High to Low)</SelectItem>
-              <SelectItem value="amount-asc">Amount (Low to High)</SelectItem>
-            </SelectContent>
-          </Select>
-          
+      {/* Filters - mobile first layout */}
+      <div className="space-y-3 sm:space-y-0">
+        {/* Status filter - full width on mobile, first row on desktop */}
+        <div className="flex flex-col sm:flex-row gap-3">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="border-[#E5E7EB]">
               <SelectValue placeholder="Filter By Status" />
@@ -297,8 +286,21 @@ export default function Transactions() {
           </Select>
         </div>
         
-        {/* Layout selector - separate on mobile, aligned right on desktop */}
-        <div className="flex justify-center sm:justify-end">
+        {/* Sort and Layout selector - sort takes most space, layout on the side */}
+        <div className="flex gap-3">
+          <Select value={`${sortField}-${sortDirection}`} onValueChange={handleSortChange}>
+            <SelectTrigger className="border-[#E5E7EB] flex-1">
+              <SelectValue placeholder="Sort By" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="createdAt-desc">Date (Newest First)</SelectItem>
+              <SelectItem value="createdAt-asc">Date (Oldest First)</SelectItem>
+              <SelectItem value="amount-desc">Amount (High to Low)</SelectItem>
+              <SelectItem value="amount-asc">Amount (Low to High)</SelectItem>
+            </SelectContent>
+          </Select>
+          
+          {/* Layout selector - on the side of sorting */}
           <LayoutSelector layout={layout} onLayoutChange={setLayout} />
         </div>
       </div>
