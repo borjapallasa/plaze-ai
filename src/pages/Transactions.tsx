@@ -256,22 +256,22 @@ export default function Transactions() {
 
   const renderSearchAndFilter = () => (
     <div className="space-y-4 mb-4">
-      {/* Search input - full width on mobile */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
-        <Input
-          placeholder={activeTab === "communities" ? "Search by ID or community" : "Search by ID or seller"}
-          className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C]"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-      </div>
-      
-      {/* Filters - one line on desktop/tablet, three lines on mobile */}
-      <div className="flex flex-col md:flex-row md:items-center gap-3">
-        {/* Status filter - separate line on mobile, first item on desktop */}
+      {/* Mobile layout - three lines */}
+      <div className="md:hidden space-y-3">
+        {/* Search input - full width on mobile */}
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
+          <Input
+            placeholder={activeTab === "communities" ? "Search by ID or community" : "Search by ID or seller"}
+            className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C]"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+        
+        {/* Status filter - separate line on mobile */}
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="border-[#E5E7EB] md:w-48">
+          <SelectTrigger className="border-[#E5E7EB]">
             <SelectValue placeholder="Filter By Status" />
           </SelectTrigger>
           <SelectContent>
@@ -284,9 +284,8 @@ export default function Transactions() {
           </SelectContent>
         </Select>
         
-        {/* Sort and Layout container - separate line on mobile, second part on desktop */}
-        <div className="flex gap-3 md:flex-1">
-          {/* Sort selector */}
+        {/* Sort and Layout container - third line on mobile */}
+        <div className="flex gap-3">
           <Select value={`${sortField}-${sortDirection}`} onValueChange={handleSortChange}>
             <SelectTrigger className="border-[#E5E7EB] flex-1">
               <SelectValue placeholder="Sort By" />
@@ -299,9 +298,53 @@ export default function Transactions() {
             </SelectContent>
           </Select>
           
-          {/* Layout selector - on same line as sorting */}
           <LayoutSelector layout={layout} onLayoutChange={setLayout} />
         </div>
+      </div>
+
+      {/* Desktop/Tablet layout - all in one line */}
+      <div className="hidden md:flex md:items-center gap-3">
+        {/* Search input */}
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
+          <Input
+            placeholder={activeTab === "communities" ? "Search by ID or community" : "Search by ID or seller"}
+            className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C]"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+        
+        {/* Status filter */}
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className="border-[#E5E7EB] w-48">
+            <SelectValue placeholder="Filter By Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Status</SelectItem>
+            <SelectItem value="paid">Paid</SelectItem>
+            <SelectItem value="active">Active</SelectItem>
+            <SelectItem value="pending">Pending</SelectItem>
+            <SelectItem value="failed">Failed</SelectItem>
+            <SelectItem value="cancelled">Cancelled</SelectItem>
+          </SelectContent>
+        </Select>
+        
+        {/* Sort selector */}
+        <Select value={`${sortField}-${sortDirection}`} onValueChange={handleSortChange}>
+          <SelectTrigger className="border-[#E5E7EB] w-48">
+            <SelectValue placeholder="Sort By" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="createdAt-desc">Date (Newest First)</SelectItem>
+            <SelectItem value="createdAt-asc">Date (Oldest First)</SelectItem>
+            <SelectItem value="amount-desc">Amount (High to Low)</SelectItem>
+            <SelectItem value="amount-asc">Amount (Low to High)</SelectItem>
+          </SelectContent>
+        </Select>
+        
+        {/* Layout selector */}
+        <LayoutSelector layout={layout} onLayoutChange={setLayout} />
       </div>
     </div>
   );
