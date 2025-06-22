@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
@@ -267,42 +266,38 @@ export default function Transactions() {
         />
       </div>
       
-      {/* Filters - mobile first layout */}
-      <div className="space-y-3 sm:space-y-0">
-        {/* Status filter - full width on mobile, first row on desktop */}
-        <div className="flex flex-col sm:flex-row gap-3">
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="border-[#E5E7EB]">
-              <SelectValue placeholder="Filter By Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="paid">Paid</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="failed">Failed</SelectItem>
-              <SelectItem value="cancelled">Cancelled</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+      {/* Filters - mobile stacked, desktop/tablet single line */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        {/* Status filter */}
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className="border-[#E5E7EB] sm:w-48">
+            <SelectValue placeholder="Filter By Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Status</SelectItem>
+            <SelectItem value="paid">Paid</SelectItem>
+            <SelectItem value="active">Active</SelectItem>
+            <SelectItem value="pending">Pending</SelectItem>
+            <SelectItem value="failed">Failed</SelectItem>
+            <SelectItem value="cancelled">Cancelled</SelectItem>
+          </SelectContent>
+        </Select>
         
-        {/* Sort and Layout selector - sort takes most space, layout on the side */}
-        <div className="flex gap-3">
-          <Select value={`${sortField}-${sortDirection}`} onValueChange={handleSortChange}>
-            <SelectTrigger className="border-[#E5E7EB] flex-1">
-              <SelectValue placeholder="Sort By" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="createdAt-desc">Date (Newest First)</SelectItem>
-              <SelectItem value="createdAt-asc">Date (Oldest First)</SelectItem>
-              <SelectItem value="amount-desc">Amount (High to Low)</SelectItem>
-              <SelectItem value="amount-asc">Amount (Low to High)</SelectItem>
-            </SelectContent>
-          </Select>
-          
-          {/* Layout selector - on the side of sorting */}
-          <LayoutSelector layout={layout} onLayoutChange={setLayout} />
-        </div>
+        {/* Sort selector */}
+        <Select value={`${sortField}-${sortDirection}`} onValueChange={handleSortChange}>
+          <SelectTrigger className="border-[#E5E7EB] sm:flex-1">
+            <SelectValue placeholder="Sort By" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="createdAt-desc">Date (Newest First)</SelectItem>
+            <SelectItem value="createdAt-asc">Date (Oldest First)</SelectItem>
+            <SelectItem value="amount-desc">Amount (High to Low)</SelectItem>
+            <SelectItem value="amount-asc">Amount (Low to High)</SelectItem>
+          </SelectContent>
+        </Select>
+        
+        {/* Layout selector */}
+        <LayoutSelector layout={layout} onLayoutChange={setLayout} />
       </div>
     </div>
   );
