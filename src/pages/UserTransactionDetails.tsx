@@ -8,9 +8,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { TransactionOverview } from "./admin/components/TransactionOverview";
 import { TransactionFiles } from "./admin/components/TransactionFiles";
+import { TransactionReview } from "./admin/components/TransactionReview";
 import { CommunityTransactionOverview } from "./admin/components/CommunityTransactionOverview";
 import { useTransactionDetails } from "@/hooks/use-transaction-details";
 import { useCommunityTransactionDetails } from "@/hooks/use-community-transaction-details";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function UserTransactionDetails() {
@@ -33,6 +36,31 @@ export default function UserTransactionDetails() {
     isLoading: isLoadingCommunity,
     error: communityError
   } = useCommunityTransactionDetails(transactionId || '');
+
+  // Fetch the actual transaction_uuid from the transactions table for product transactions
+  const { data: actualTransactionUuid } = useQuery({
+    queryKey: ['actual-transaction-uuid', transactionId],
+    queryFn: async () => {
+      if (!transactionId || !transaction) return null;
+      
+      console.log('Fetching actual transaction_uuid for products_transaction_uuid:', transactionId);
+      
+      const { data, error } = await supabase
+        .from('transactions')
+        .select('transaction_uuid')
+        .eq('products_transactions_uuid', transactionId)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Error fetching actual transaction_uuid:', error);
+        return null;
+      }
+
+      console.log('Found actual transaction_uuid:', data?.transaction_uuid);
+      return data?.transaction_uuid || null;
+    },
+    enabled: !!transactionId && !!transaction,
+  });
 
   const isLoading = isLoadingProduct || isLoadingCommunity;
   const error = productError || communityError;
@@ -234,6 +262,14 @@ export default function UserTransactionDetails() {
                   guidesUrl="" 
                   customRequest=""
                 />
+
+                {/* Reviews section - only show for product transactions when we have the actual transaction_uuid */}
+                {actualTransactionUuid && (
+                  <>
+                    <Separator className="my-8" />
+                    <TransactionReview transactionUuid={actualTransactionUuid} />
+                  </>
+                )}
               </>
             )}
           </CardContent>
