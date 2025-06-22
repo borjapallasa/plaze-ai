@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
@@ -254,8 +255,9 @@ export default function Transactions() {
   };
 
   const renderSearchAndFilter = () => (
-    <div className="flex flex-col sm:flex-row gap-4 mb-4">
-      <div className="relative flex-1">
+    <div className="space-y-4 mb-4">
+      {/* Search input - full width on mobile */}
+      <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
         <Input
           placeholder={activeTab === "communities" ? "Search by ID or community" : "Search by ID or seller"}
@@ -264,31 +266,42 @@ export default function Transactions() {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
-      <Select value={`${sortField}-${sortDirection}`} onValueChange={handleSortChange}>
-        <SelectTrigger className="w-[200px] border-[#E5E7EB]">
-          <SelectValue placeholder="Sort By" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="createdAt-desc">Date (Newest First)</SelectItem>
-          <SelectItem value="createdAt-asc">Date (Oldest First)</SelectItem>
-          <SelectItem value="amount-desc">Amount (High to Low)</SelectItem>
-          <SelectItem value="amount-asc">Amount (Low to High)</SelectItem>
-        </SelectContent>
-      </Select>
-      <Select value={statusFilter} onValueChange={setStatusFilter}>
-        <SelectTrigger className="w-[180px] border-[#E5E7EB]">
-          <SelectValue placeholder="Filter By Status" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All Status</SelectItem>
-          <SelectItem value="paid">Paid</SelectItem>
-          <SelectItem value="active">Active</SelectItem>
-          <SelectItem value="pending">Pending</SelectItem>
-          <SelectItem value="failed">Failed</SelectItem>
-          <SelectItem value="cancelled">Cancelled</SelectItem>
-        </SelectContent>
-      </Select>
-      <LayoutSelector layout={layout} onLayoutChange={setLayout} />
+      
+      {/* Filters and layout selector - responsive grid */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col sm:flex-row gap-3 flex-1">
+          <Select value={`${sortField}-${sortDirection}`} onValueChange={handleSortChange}>
+            <SelectTrigger className="border-[#E5E7EB]">
+              <SelectValue placeholder="Sort By" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="createdAt-desc">Date (Newest First)</SelectItem>
+              <SelectItem value="createdAt-asc">Date (Oldest First)</SelectItem>
+              <SelectItem value="amount-desc">Amount (High to Low)</SelectItem>
+              <SelectItem value="amount-asc">Amount (Low to High)</SelectItem>
+            </SelectContent>
+          </Select>
+          
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="border-[#E5E7EB]">
+              <SelectValue placeholder="Filter By Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="paid">Paid</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="failed">Failed</SelectItem>
+              <SelectItem value="cancelled">Cancelled</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        
+        {/* Layout selector - separate on mobile, aligned right on desktop */}
+        <div className="flex justify-center sm:justify-end">
+          <LayoutSelector layout={layout} onLayoutChange={setLayout} />
+        </div>
+      </div>
     </div>
   );
 
