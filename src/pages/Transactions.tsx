@@ -264,7 +264,6 @@ export default function Transactions() {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
-      <LayoutSelector layout={layout} onLayoutChange={setLayout} />
       <Select value={`${sortField}-${sortDirection}`} onValueChange={handleSortChange}>
         <SelectTrigger className="w-[200px] border-[#E5E7EB]">
           <SelectValue placeholder="Sort By" />
@@ -289,6 +288,7 @@ export default function Transactions() {
           <SelectItem value="cancelled">Cancelled</SelectItem>
         </SelectContent>
       </Select>
+      <LayoutSelector layout={layout} onLayoutChange={setLayout} />
     </div>
   );
 
