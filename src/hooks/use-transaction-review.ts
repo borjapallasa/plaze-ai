@@ -17,19 +17,34 @@ export function useTransactionReview(transactionUuid: string) {
     queryFn: async (): Promise<TransactionReview[]> => {
       console.log('Fetching reviews for transaction:', transactionUuid);
       
+      if (!transactionUuid) {
+        console.log('No transaction UUID provided');
+        return [];
+      }
+      
+      // First, let's see what reviews exist in the database
+      const { data: allReviews, error: allError } = await supabase
+        .from('reviews')
+        .select('*')
+        .limit(10);
+
+      console.log('Sample reviews in database:', allReviews);
+      console.log('Sample reviews error:', allError);
+
+      // Now try to fetch reviews for the specific transaction
       const { data: reviews, error } = await supabase
         .from('reviews')
-        .select('review_uuid, rating, title, comments, buyer_name, created_at')
-        .eq('transaction_uuid', transactionUuid);
+        .select('review_uuid, rating, title, comments, buyer_name, created_at');
 
       if (error) {
         console.error('Error fetching transaction reviews:', error);
         throw error;
       }
 
-      console.log('Transaction reviews found:', reviews);
+      console.log('All reviews found:', reviews);
 
-      return reviews || [];
+      // For now, return empty array since we need to establish the proper relationship
+      return [];
     },
     enabled: !!transactionUuid,
   });
