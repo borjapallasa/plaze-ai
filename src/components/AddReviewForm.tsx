@@ -56,7 +56,6 @@ export function AddReviewForm({ transactionUuid, sellerUserUuid, onReviewAdded }
       const { error } = await supabase
         .from('reviews')
         .insert({
-          transaction_uuid: transactionUuid,
           rating,
           title: title.trim() || null,
           comments: comments.trim(),
