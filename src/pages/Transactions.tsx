@@ -16,6 +16,8 @@ import {
 import { useAuth } from "@/lib/auth";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { LayoutSelector } from "@/components/transactions/LayoutSelector";
+import { TransactionListView } from "@/components/transactions/TransactionListView";
 
 interface UserTransaction {
   id: string;
@@ -37,6 +39,7 @@ export default function Transactions() {
   const [sortField, setSortField] = useState<keyof UserTransaction>("createdAt");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
   const [activeTab, setActiveTab] = useState("all");
+  const [layout, setLayout] = useState<"table" | "list">("table");
 
   // Fetch all user's transactions from the transactions table
   const { data: allTransactions = [], isLoading: isLoadingAll } = useQuery({
@@ -261,6 +264,7 @@ export default function Transactions() {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
+      <LayoutSelector layout={layout} onLayoutChange={setLayout} />
       <Select value={`${sortField}-${sortDirection}`} onValueChange={handleSortChange}>
         <SelectTrigger className="w-[200px] border-[#E5E7EB]">
           <SelectValue placeholder="Sort By" />
@@ -546,7 +550,16 @@ export default function Transactions() {
           
           <div className="space-y-0">
             {renderSearchAndFilter()}
-            {renderTransactionTable(currentData.data, currentData.loading)}
+            {layout === "list" ? (
+              <TransactionListView
+                transactions={currentData.data}
+                loading={currentData.loading}
+                onRowClick={handleRowClick}
+                activeTab={activeTab}
+              />
+            ) : (
+              renderTransactionTable(currentData.data, currentData.loading)
+            )}
           </div>
         </div>
       </div>
