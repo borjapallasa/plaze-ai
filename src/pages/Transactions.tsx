@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
@@ -266,11 +267,11 @@ export default function Transactions() {
         />
       </div>
       
-      {/* Filters - mobile stacked, desktop/tablet single line */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        {/* Status filter */}
+      {/* Filters - one line on desktop/tablet, three lines on mobile */}
+      <div className="flex flex-col md:flex-row md:items-center gap-3">
+        {/* Status filter - separate line on mobile, first item on desktop */}
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="border-[#E5E7EB] sm:w-48">
+          <SelectTrigger className="border-[#E5E7EB] md:w-48">
             <SelectValue placeholder="Filter By Status" />
           </SelectTrigger>
           <SelectContent>
@@ -283,21 +284,24 @@ export default function Transactions() {
           </SelectContent>
         </Select>
         
-        {/* Sort selector */}
-        <Select value={`${sortField}-${sortDirection}`} onValueChange={handleSortChange}>
-          <SelectTrigger className="border-[#E5E7EB] sm:flex-1">
-            <SelectValue placeholder="Sort By" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="createdAt-desc">Date (Newest First)</SelectItem>
-            <SelectItem value="createdAt-asc">Date (Oldest First)</SelectItem>
-            <SelectItem value="amount-desc">Amount (High to Low)</SelectItem>
-            <SelectItem value="amount-asc">Amount (Low to High)</SelectItem>
-          </SelectContent>
-        </Select>
-        
-        {/* Layout selector */}
-        <LayoutSelector layout={layout} onLayoutChange={setLayout} />
+        {/* Sort and Layout container - separate line on mobile, second part on desktop */}
+        <div className="flex gap-3 md:flex-1">
+          {/* Sort selector */}
+          <Select value={`${sortField}-${sortDirection}`} onValueChange={handleSortChange}>
+            <SelectTrigger className="border-[#E5E7EB] flex-1">
+              <SelectValue placeholder="Sort By" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="createdAt-desc">Date (Newest First)</SelectItem>
+              <SelectItem value="createdAt-asc">Date (Oldest First)</SelectItem>
+              <SelectItem value="amount-desc">Amount (High to Low)</SelectItem>
+              <SelectItem value="amount-asc">Amount (Low to High)</SelectItem>
+            </SelectContent>
+          </Select>
+          
+          {/* Layout selector - on same line as sorting */}
+          <LayoutSelector layout={layout} onLayoutChange={setLayout} />
+        </div>
       </div>
     </div>
   );
