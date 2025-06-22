@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MainHeader } from "@/components/MainHeader";
 import { ArrowLeft, Copy } from "lucide-react";
@@ -157,6 +156,11 @@ export default function UserTransactionDetails() {
   // Get the first item's files link for the main files section (only for product transactions)
   const filesUrl = !isCommunityTransaction && transaction ? transaction.items[0]?.files_link || '' : '';
   
+  // Get seller user UUID for reviews
+  const sellerUserUuid = !isCommunityTransaction && transaction ? 
+    (transaction.expert_uuid || transaction.seller_user || transaction.users?.user_uuid) : 
+    undefined;
+  
   return (
     <>
       <MainHeader />
@@ -265,7 +269,10 @@ export default function UserTransactionDetails() {
 
                 {/* Reviews section - show for product transactions, use transactionId if no actualTransactionUuid */}
                 <Separator className="my-8" />
-                <TransactionReview transactionUuid={actualTransactionUuid || transactionId || ''} />
+                <TransactionReview 
+                  transactionUuid={actualTransactionUuid || transactionId || ''} 
+                  sellerUserUuid={sellerUserUuid}
+                />
               </>
             )}
           </CardContent>

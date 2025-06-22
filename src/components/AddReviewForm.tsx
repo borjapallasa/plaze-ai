@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,10 +10,11 @@ import { useAuth } from "@/lib/auth";
 
 interface AddReviewFormProps {
   transactionUuid: string;
+  sellerUserUuid?: string;
   onReviewAdded?: () => void;
 }
 
-export function AddReviewForm({ transactionUuid, onReviewAdded }: AddReviewFormProps) {
+export function AddReviewForm({ transactionUuid, sellerUserUuid, onReviewAdded }: AddReviewFormProps) {
   const { user } = useAuth();
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
@@ -47,6 +47,7 @@ export function AddReviewForm({ transactionUuid, onReviewAdded }: AddReviewFormP
         .from('reviews')
         .insert({
           transaction_uuid: transactionUuid,
+          seller_user_uuid: sellerUserUuid,
           rating,
           title: title.trim() || null,
           comments: comments.trim(),

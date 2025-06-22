@@ -1,4 +1,3 @@
-
 import { Star } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTransactionReview } from "@/hooks/use-transaction-review";
@@ -7,9 +6,10 @@ import { AddReviewForm } from "@/components/AddReviewForm";
 
 interface TransactionReviewProps {
   transactionUuid: string;
+  sellerUserUuid?: string;
 }
 
-export function TransactionReview({ transactionUuid }: TransactionReviewProps) {
+export function TransactionReview({ transactionUuid, sellerUserUuid }: TransactionReviewProps) {
   const {
     data: reviews,
     isLoading,
@@ -62,7 +62,6 @@ export function TransactionReview({ transactionUuid }: TransactionReviewProps) {
     );
   }
 
-  // Show existing reviews if they exist
   if (reviews && reviews.length > 0) {
     return (
       <Card>
@@ -104,6 +103,11 @@ export function TransactionReview({ transactionUuid }: TransactionReviewProps) {
     );
   }
 
-  // Show add review form when no reviews exist
-  return <AddReviewForm transactionUuid={transactionUuid} onReviewAdded={handleReviewAdded} />;
+  return (
+    <AddReviewForm 
+      transactionUuid={transactionUuid} 
+      sellerUserUuid={sellerUserUuid}
+      onReviewAdded={handleReviewAdded} 
+    />
+  );
 }
