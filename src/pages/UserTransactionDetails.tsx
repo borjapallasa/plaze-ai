@@ -41,7 +41,7 @@ export default function UserTransactionDetails() {
   const { data: actualTransactionUuid } = useQuery({
     queryKey: ['actual-transaction-uuid', transactionId],
     queryFn: async () => {
-      if (!transactionId || !transaction) return null;
+      if (!transactionId) return null;
       
       console.log('Fetching actual transaction_uuid for products_transaction_uuid:', transactionId);
       
@@ -59,7 +59,7 @@ export default function UserTransactionDetails() {
       console.log('Found actual transaction_uuid:', data?.transaction_uuid);
       return data?.transaction_uuid || null;
     },
-    enabled: !!transactionId && !!transaction,
+    enabled: !!transactionId,
   });
 
   const isLoading = isLoadingProduct || isLoadingCommunity;
@@ -263,13 +263,9 @@ export default function UserTransactionDetails() {
                   customRequest=""
                 />
 
-                {/* Reviews section - only show for product transactions when we have the actual transaction_uuid */}
-                {actualTransactionUuid && (
-                  <>
-                    <Separator className="my-8" />
-                    <TransactionReview transactionUuid={actualTransactionUuid} />
-                  </>
-                )}
+                {/* Reviews section - show for product transactions, use transactionId if no actualTransactionUuid */}
+                <Separator className="my-8" />
+                <TransactionReview transactionUuid={actualTransactionUuid || transactionId || ''} />
               </>
             )}
           </CardContent>
