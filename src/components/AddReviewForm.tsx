@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -43,37 +44,16 @@ export function AddReviewForm({ transactionUuid, sellerUserUuid, onReviewAdded }
     setIsSubmitting(true);
 
     try {
-      console.log('Attempting to insert review with transaction_uuid:', transactionUuid);
-      
-      // First, let's check if a transaction record exists in the transactions table
-      const { data: transactionRecord, error: transactionCheckError } = await supabase
-        .from('transactions')
-        .select('transaction_uuid')
-        .eq('products_transactions_uuid', transactionUuid)
-        .maybeSingle();
-
-      console.log('Transaction record found:', transactionRecord);
-      console.log('Transaction check error:', transactionCheckError);
-
-      // Use the actual transaction_uuid from the transactions table if it exists
-      const actualTransactionUuid = transactionRecord?.transaction_uuid || transactionUuid;
-      
-      console.log('Using transaction_uuid for review:', actualTransactionUuid);
+      console.log('Attempting to insert review with rating:', rating);
+      console.log('Title:', title);
+      console.log('Comments:', comments);
 
       const { error } = await supabase
         .from('reviews')
         .insert({
-          transaction_uuid: actualTransactionUuid,
-          seller_user_uuid: sellerUserUuid,
           rating,
           title: title.trim() || null,
-          comments: comments.trim(),
-          buyer_name: `${user.user_metadata?.first_name || ''} ${user.user_metadata?.last_name || ''}`.trim() || user.email,
-          buyer_email: user.email,
-          type: 'product',
-          transaction_type: 'product',
-          status: 'published',
-          verified: true
+          comments: comments.trim()
         });
 
       if (error) {
