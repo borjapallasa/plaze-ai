@@ -48,12 +48,22 @@ export function AddReviewForm({ transactionUuid, sellerUserUuid, onReviewAdded }
       console.log('Title:', title);
       console.log('Comments:', comments);
 
+      // Get user's first and last name from user metadata or profiles
+      const firstName = user.user_metadata?.first_name || '';
+      const lastName = user.user_metadata?.last_name || '';
+      const buyerName = `${firstName} ${lastName}`.trim() || user.email;
+
       const { error } = await supabase
         .from('reviews')
         .insert({
+          transaction_uuid: transactionUuid,
           rating,
           title: title.trim() || null,
-          comments: comments.trim()
+          comments: comments.trim(),
+          type: 'product',
+          status: 'published',
+          buyer_name: buyerName,
+          buyer_email: user.email
         });
 
       if (error) {
