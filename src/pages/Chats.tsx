@@ -3,7 +3,7 @@ import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Check, Search, User, Settings, Video, MessageSquare, Image, SmilePlus, Send, ArrowLeft, Pin, Archive, UserPlus, Flag, MoreVertical, Edit2, X } from "lucide-react";
+import { Check, Search, User, Settings, Video, MessageSquare, Paperclip, Send, ArrowLeft, Pin, Archive, UserPlus, Flag, MoreVertical, Edit2, X } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -293,10 +293,7 @@ export default function Chats() {
                   )}
                   <div className="flex gap-2 items-center">
                     <Button variant="ghost" size="icon" className="flex-shrink-0 hover:bg-accent hidden md:inline-flex">
-                      <Image className="h-5 w-5" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="flex-shrink-0 hover:bg-accent hidden md:inline-flex">
-                      <SmilePlus className="h-5 w-5" />
+                      <Paperclip className="h-5 w-5" />
                     </Button>
                     <Input 
                       className="flex-1 bg-background" 
