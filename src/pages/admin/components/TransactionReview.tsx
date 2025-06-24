@@ -11,6 +11,9 @@ interface TransactionReviewProps {
 }
 
 export function TransactionReview({ transactionUuid, sellerUserUuid }: TransactionReviewProps) {
+  console.log('TransactionReview - transactionUuid:', transactionUuid);
+  console.log('TransactionReview - sellerUserUuid:', sellerUserUuid);
+  
   const {
     data: reviews,
     isLoading,

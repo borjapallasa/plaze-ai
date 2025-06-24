@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -47,28 +48,37 @@ export function AddReviewForm({ transactionUuid, sellerUserUuid, onReviewAdded }
       console.log('Title:', title);
       console.log('Comments:', comments);
       console.log('Product Transaction Item UUID:', transactionUuid);
-      console.log('Seller User UUID:', sellerUserUuid);
+      console.log('Seller User UUID (expert_uuid):', sellerUserUuid);
 
       // Get user's first and last name from user metadata
       const firstName = user.user_metadata?.first_name || '';
       const lastName = user.user_metadata?.last_name || '';
       const buyerName = `${firstName} ${lastName}`.trim() || user.email;
 
-      // Insert review with all required fields
+      // Insert review with all required fields, including seller_user_uuid
+      const reviewData = {
+        rating,
+        title: title.trim() || null,
+        comments: comments.trim(),
+        product_transaction_item_uuid: transactionUuid,
+        buyer_name: buyerName,
+        transaction_type: 'product' as const,
+        type: 'product' as const,
+        status: 'published' as const,
+        buyer_email: user.email
+      };
+
+      // Add seller_user_uuid if provided (this is the expert_uuid)
+      if (sellerUserUuid) {
+        (reviewData as any).seller_user_uuid = sellerUserUuid;
+        console.log('Including seller_user_uuid in review:', sellerUserUuid);
+      } else {
+        console.warn('No sellerUserUuid provided - review will be submitted without seller reference');
+      }
+
       const { error } = await supabase
         .from('reviews')
-        .insert({
-          rating,
-          title: title.trim() || null,
-          comments: comments.trim(),
-          product_transaction_item_uuid: transactionUuid, // Field 3: :id from URL
-          buyer_name: buyerName, // Field 4: first_name & last_name
-          transaction_type: 'product', // Field 6: 'product' in transaction_type
-          seller_user_uuid: sellerUserUuid, // Field 7: expert_uuid of seller
-          type: 'product',
-          status: 'published',
-          buyer_email: user.email
-        });
+        .insert(reviewData);
 
       if (error) {
         console.error('Error submitting review:', error);
