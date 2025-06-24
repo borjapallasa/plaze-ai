@@ -2,8 +2,9 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Calendar, Settings, ExternalLink } from "lucide-react";
+import { Calendar, ExternalLink } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { LeaveCommunityDialog } from "./LeaveCommunityDialog";
 
 interface CommunitySubscription {
   community_subscription_uuid: string;
@@ -37,6 +38,11 @@ export function CommunitySubscriptionCard({ subscription }: CommunitySubscriptio
     } else {
       console.error('No community UUID available for navigation');
     }
+  };
+
+  const handleLeaveCommunity = () => {
+    console.log('Leave community for:', subscription.community_subscription_uuid);
+    // TODO: Implement actual leave community functionality
   };
 
   return (
@@ -87,19 +93,11 @@ export function CommunitySubscriptionCard({ subscription }: CommunitySubscriptio
             Open Community
           </Button>
           
-          {/* Manage Membership Button - Secondary */}
-          <Button 
-            variant="outline" 
-            className="flex-1 text-xs h-8"
-            onClick={(e) => {
-              e.stopPropagation();
-              // TODO: Navigate to community membership management page
-              console.log('Manage membership for:', subscription.community_subscription_uuid);
-            }}
-          >
-            <Settings className="h-3 w-3 mr-1" />
-            Manage
-          </Button>
+          {/* Leave Community Dialog */}
+          <LeaveCommunityDialog 
+            communityName={subscription.community_name}
+            onConfirmLeave={handleLeaveCommunity}
+          />
         </div>
       </CardContent>
     </Card>

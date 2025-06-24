@@ -2,8 +2,9 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Calendar, Settings, ExternalLink } from "lucide-react";
+import { Calendar, ExternalLink } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { LeaveCommunityDialog } from "./LeaveCommunityDialog";
 
 interface CommunitySubscription {
   community_subscription_uuid: string;
@@ -56,6 +57,11 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
     } else {
       console.error('No community UUID available for navigation');
     }
+  };
+
+  const handleLeaveCommunity = (subscriptionUuid: string) => {
+    console.log('Leave community for:', subscriptionUuid);
+    // TODO: Implement actual leave community functionality
   };
 
   if (loading) {
@@ -150,17 +156,10 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
                 <ExternalLink className="h-3 w-3 mr-2" />
                 Open Community
               </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="flex-1 text-xs h-8"
-                onClick={() => {
-                  console.log('Manage membership for:', subscription.community_subscription_uuid);
-                }}
-              >
-                <Settings className="h-3 w-3 mr-2" />
-                Manage
-              </Button>
+              <LeaveCommunityDialog 
+                communityName={subscription.community_name}
+                onConfirmLeave={() => handleLeaveCommunity(subscription.community_subscription_uuid)}
+              />
             </div>
           </div>
 
@@ -224,17 +223,10 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
                 Open Community
               </Button>
 
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="text-xs h-8 px-4"
-                onClick={() => {
-                  console.log('Manage membership for:', subscription.community_subscription_uuid);
-                }}
-              >
-                <Settings className="h-3 w-3 mr-2" />
-                Manage
-              </Button>
+              <LeaveCommunityDialog 
+                communityName={subscription.community_name}
+                onConfirmLeave={() => handleLeaveCommunity(subscription.community_subscription_uuid)}
+              />
             </div>
           </div>
         </Card>
