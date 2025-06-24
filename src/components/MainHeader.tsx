@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { CartDrawerTrigger } from "@/components/cart/CartDrawerTrigger";
+import { ChatWidget } from "@/components/chat/ChatWidget";
 import { useQuery } from "@tanstack/react-query";
 
 export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
@@ -214,6 +215,7 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
           </div>
           
           <div className="flex items-center gap-2">
+            <ChatWidget />
             <CartDrawerTrigger />
             
             <DropdownMenu>
@@ -368,6 +370,7 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
           </div>
 
           <div className="flex items-center gap-3 w-[140px] justify-end">
+            <ChatWidget />
             <CartDrawerTrigger />
             
             {!user && !isExpert && (
