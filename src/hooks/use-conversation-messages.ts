@@ -26,7 +26,7 @@ export function useConversationMessages(conversationUuid: string | null) {
         .from('messages')
         .select('message_uuid, user_uuid, user_name, conversation_uuid, content, created_at')
         .eq('conversation_uuid', conversationUuid)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: true });
 
       if (error) {
         console.error('Error fetching conversation messages:', error);
