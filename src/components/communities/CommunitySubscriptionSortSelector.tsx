@@ -1,6 +1,6 @@
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowUp, DollarSign } from "lucide-react";
 
 interface SortOption {
   value: string;
@@ -33,6 +33,16 @@ export function CommunitySubscriptionSortSelector({ sortBy, onSortChange }: Comm
     {
       value: "date-desc",
       label: "Date (Newest)", 
+      icon: <ArrowDown className="h-3 w-3" />
+    },
+    {
+      value: "amount-asc",
+      label: "Amount (Low to High)",
+      icon: <ArrowUp className="h-3 w-3" />
+    },
+    {
+      value: "amount-desc",
+      label: "Amount (High to Low)",
       icon: <ArrowDown className="h-3 w-3" />
     }
   ];

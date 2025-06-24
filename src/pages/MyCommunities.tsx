@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
@@ -18,6 +17,7 @@ interface CommunitySubscription {
   community_subscription_uuid: string;
   status: string;
   created_at: string;
+  amount?: number;
   community_name?: string;
   community_thumbnail?: string;
   community_description?: string;
@@ -60,6 +60,7 @@ export default function MyCommunities() {
             community_subscription_uuid, 
             status, 
             created_at,
+            amount,
             communities (
               name,
               thumbnail,
@@ -81,6 +82,7 @@ export default function MyCommunities() {
           community_subscription_uuid: sub.community_subscription_uuid,
           status: sub.status,
           created_at: sub.created_at,
+          amount: sub.amount,
           community_name: sub.communities?.name,
           community_thumbnail: sub.communities?.thumbnail,
           community_description: sub.communities?.description
@@ -113,6 +115,10 @@ export default function MyCommunities() {
         return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
       case "date-desc":
         return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      case "amount-asc":
+        return (a.amount || 0) - (b.amount || 0);
+      case "amount-desc":
+        return (b.amount || 0) - (a.amount || 0);
       default:
         return 0;
     }
