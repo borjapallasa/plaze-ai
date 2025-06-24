@@ -31,6 +31,7 @@ export function useUpdateConversation() {
         throw error;
       }
 
+      console.log('Conversation updated successfully:', data);
       return data;
     },
     onSuccess: (data, variables) => {
