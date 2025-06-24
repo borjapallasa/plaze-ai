@@ -43,25 +43,13 @@ export default function UserTransactionDetails() {
     queryFn: async () => {
       if (!transactionId) return null;
       
-      console.log('Fetching actual transaction_uuid for product_transaction_uuid:', transactionId);
-      
-      // First, let's check what's in the transactions table
-      const { data: allTransactions, error: allError } = await supabase
-        .from('transactions')
-        .select('*')
-        .limit(5);
-      
-      console.log('Sample transactions in database:', allTransactions);
-      console.log('Sample transactions error:', allError);
+      console.log('Fetching actual transaction_uuid for products_transaction_uuid:', transactionId);
       
       const { data, error } = await supabase
         .from('transactions')
-        .select('transaction_uuid, products_transactions_uuid')
+        .select('transaction_uuid')
         .eq('products_transactions_uuid', transactionId)
         .maybeSingle();
-
-      console.log('Query result for products_transactions_uuid:', data);
-      console.log('Query error:', error);
 
       if (error) {
         console.error('Error fetching actual transaction_uuid:', error);
@@ -71,7 +59,7 @@ export default function UserTransactionDetails() {
       console.log('Found actual transaction_uuid:', data?.transaction_uuid);
       return data?.transaction_uuid || null;
     },
-    enabled: !!transactionId && !!transaction, // Only run if we have a product transaction
+    enabled: !!transactionId,
   });
 
   const isLoading = isLoadingProduct || isLoadingCommunity;
@@ -174,8 +162,6 @@ export default function UserTransactionDetails() {
     // Use the available properties from TransactionDetails interface
     (transaction.seller_user?.name ? 'seller_user_uuid_placeholder' : undefined) : 
     undefined;
-
-  console.log('Final actualTransactionUuid being passed to TransactionReview:', actualTransactionUuid);
   
   return (
     <>
@@ -283,10 +269,10 @@ export default function UserTransactionDetails() {
                   customRequest=""
                 />
 
-                {/* Reviews section - use the correct actualTransactionUuid */}
+                {/* Reviews section - use the correct transaction UUID */}
                 <Separator className="my-8" />
                 <TransactionReview 
-                  transactionUuid={actualTransactionUuid || ''} 
+                  transactionUuid={transactionId || ''} 
                   sellerUserUuid={sellerUserUuid}
                 />
               </>
