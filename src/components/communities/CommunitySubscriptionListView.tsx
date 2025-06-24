@@ -76,7 +76,7 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
         >
           <div className="flex items-stretch gap-6 min-h-[120px]">
             {/* Left: Community Thumbnail - Full Height */}
-            <div className="w-20 flex-shrink-0">
+            <div className="w-20 flex-shrink-0 h-full">
               <img 
                 src={subscription.community_thumbnail || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f"} 
                 alt={subscription.community_name || "Community"} 
