@@ -35,7 +35,8 @@ export default function UserTransactionItemDetails() {
             description,
             thumbnail,
             experts (
-              name
+              name,
+              expert_uuid
             )
           ),
           variants (
@@ -258,7 +259,7 @@ export default function UserTransactionItemDetails() {
             <Separator className="my-8" />
             <TransactionReview 
               transactionUuid={itemId || ''} 
-              sellerUserUuid={undefined}
+              sellerUserUuid={transactionItem?.products?.experts?.expert_uuid}
             />
           </CardContent>
         </Card>

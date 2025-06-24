@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -48,23 +49,25 @@ export function AddReviewForm({ transactionUuid, sellerUserUuid, onReviewAdded }
       console.log('Comments:', comments);
       console.log('Product Transaction Item UUID:', transactionUuid);
 
-      // Get user's first and last name from user metadata or profiles
+      // Get user's first and last name from user metadata
       const firstName = user.user_metadata?.first_name || '';
       const lastName = user.user_metadata?.last_name || '';
       const buyerName = `${firstName} ${lastName}`.trim() || user.email;
 
-      // For item-level reviews, we use the product_transaction_item_uuid
+      // Insert review with all required fields
       const { error } = await supabase
         .from('reviews')
         .insert({
           rating,
           title: title.trim() || null,
           comments: comments.trim(),
+          product_transaction_item_uuid: transactionUuid, // Field 3: :id from URL
+          buyer_name: buyerName, // Field 4: first_name & last_name
+          transaction_type: 'product', // Field 6: 'product' in transaction_type
+          seller_user_uuid: sellerUserUuid, // Field 7: expert_uuid of seller
           type: 'product',
           status: 'published',
-          buyer_name: buyerName,
-          buyer_email: user.email,
-          product_transaction_item_uuid: transactionUuid // This is the item UUID
+          buyer_email: user.email
         });
 
       if (error) {
