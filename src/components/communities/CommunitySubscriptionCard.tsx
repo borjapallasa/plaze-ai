@@ -1,5 +1,6 @@
 
 import { Card, CardContent } from "@/components/ui/card";
+import { Calendar } from "lucide-react";
 
 interface CommunitySubscription {
   community_subscription_uuid: string;
@@ -47,7 +48,8 @@ export function CommunitySubscriptionCard({ subscription }: CommunitySubscriptio
         
         {/* Bottom section with joined date and price */}
         <div className="flex items-center justify-between text-sm mt-auto">
-          <div className="text-muted-foreground">
+          <div className="flex items-center gap-1 text-muted-foreground">
+            <Calendar className="h-3 w-3" />
             <span>Joined {new Date(subscription.created_at).toLocaleDateString()}</span>
           </div>
           

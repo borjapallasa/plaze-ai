@@ -1,6 +1,7 @@
 
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Calendar } from "lucide-react";
 
 interface CommunitySubscription {
   community_subscription_uuid: string;
@@ -94,7 +95,10 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
                 )}
                 
                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                  <span>Joined {new Date(subscription.created_at).toLocaleDateString()}</span>
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-3 w-3" />
+                    <span>Joined {new Date(subscription.created_at).toLocaleDateString()}</span>
+                  </div>
                   <span>•</span>
                   <span className="break-all">
                     UUID: {subscription.community_subscription_uuid}
