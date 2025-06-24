@@ -1,5 +1,5 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ProductLayout } from "@/components/product/ProductLayout";
 import { ProductSkeleton } from "@/components/product/ProductSkeleton";
@@ -9,11 +9,12 @@ import { useProductData } from "@/hooks/use-product-data";
 import { useProductState } from "@/components/product/ProductState";
 import { Sheet } from "@/components/ui/sheet";
 import { CartDrawer } from "@/components/cart/CartDrawer";
+import { LeaveReviewDialog } from "@/components/product/LeaveReviewDialog";
 import { productVariantsToVariants } from "@/utils/product-utils";
-import { Variant } from "@/components/product/types/variants";
 
 export default function Product() {
   const params = useParams();
+  const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
   
   useEffect(() => {
     console.log("Product page params:", params);
@@ -46,8 +47,7 @@ export default function Product() {
 
   const handleLeaveReview = (variantId: string) => {
     console.log("Leave review for variant:", variantId);
-    // TODO: Open review dialog or navigate to review page
-    // For now, just log the action
+    setReviewDialogOpen(true);
   };
 
   if (isLoading) {
@@ -92,6 +92,13 @@ export default function Product() {
           onClose={closeCartDrawer} 
         />
       </Sheet>
+
+      <LeaveReviewDialog
+        open={reviewDialogOpen}
+        onOpenChange={setReviewDialogOpen}
+        productUuid={product.product_uuid}
+        variantId={selectedVariant || ''}
+      />
     </div>
   );
 }

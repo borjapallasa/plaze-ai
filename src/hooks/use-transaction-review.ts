@@ -12,10 +12,10 @@ export interface TransactionReview {
   created_at: string;
 }
 
-export function useTransactionReview(transactionUuid: string) {
+export function useTransactionReview(transactionUuid: string | undefined) {
   return useQuery({
     queryKey: ['transaction-review', transactionUuid],
-    queryFn: async (): Promise<TransactionReview[]> => {
+    queryFn: async () => {
       console.log('Fetching reviews for transaction:', transactionUuid);
       
       if (!transactionUuid) {
