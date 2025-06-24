@@ -1,4 +1,5 @@
 
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MainHeader } from "@/components/MainHeader";
 import { ArrowLeft, Copy } from "lucide-react";
@@ -226,15 +227,17 @@ export default function UserTransactionItemDetails() {
               </div>
             </div>
 
-            {/* Files Section */}
+            {/* Files and Instructions Section - Combined */}
             {transactionItem.variants?.files_link && (
               <>
                 <Separator className="my-8" />
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-[#1A1F2C]">Download Files</h3>
+                <div className="space-y-6">
+                  <h3 className="text-lg font-semibold text-[#1A1F2C]">Files & Instructions</h3>
+                  
+                  {/* Download Section */}
                   <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-[#8E9196]">Files are available for download</span>
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-sm font-medium text-[#1A1F2C]">Download Files</span>
                       <Button asChild>
                         <a 
                           href={transactionItem.variants.files_link} 
@@ -245,19 +248,16 @@ export default function UserTransactionItemDetails() {
                         </a>
                       </Button>
                     </div>
-                  </div>
-                </div>
-              </>
-            )}
-
-            {/* Variant Additional Details */}
-            {transactionItem.variants?.additional_details && (
-              <>
-                <Separator className="my-8" />
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-[#1A1F2C]">Variant Details</h3>
-                  <div className="prose prose-sm max-w-none">
-                    <p className="text-[#8E9196]">{transactionItem.variants.additional_details}</p>
+                    
+                    {/* Instructions for using the files */}
+                    {transactionItem.variants?.additional_details && (
+                      <div className="border-t pt-4 mt-4">
+                        <h4 className="text-sm font-medium text-[#1A1F2C] mb-2">Instructions for Use</h4>
+                        <div className="prose prose-sm max-w-none">
+                          <p className="text-[#8E9196] text-sm whitespace-pre-wrap">{transactionItem.variants.additional_details}</p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </>
@@ -288,3 +288,4 @@ export default function UserTransactionItemDetails() {
     </>
   );
 }
+
