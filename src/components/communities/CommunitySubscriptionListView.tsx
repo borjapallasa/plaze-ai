@@ -41,14 +41,13 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
       <div className="space-y-4">
         {[...Array(5)].map((_, index) => (
           <Card key={index} className="p-6 animate-pulse">
-            <div className="flex items-start gap-6">
-              <div className="h-20 w-20 bg-gray-200 rounded"></div>
-              <div className="flex-1 space-y-3">
+            <div className="flex items-stretch gap-6 h-24">
+              <div className="w-32 bg-gray-200 rounded flex-shrink-0"></div>
+              <div className="flex-1 space-y-3 py-2">
                 <div className="h-5 bg-gray-200 rounded w-1/3"></div>
                 <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                <div className="h-3 bg-gray-200 rounded w-1/4"></div>
               </div>
-              <div className="h-6 bg-gray-200 rounded w-16"></div>
+              <div className="h-6 bg-gray-200 rounded w-16 mt-2"></div>
             </div>
           </Card>
         ))}
@@ -69,25 +68,23 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
       {subscriptions.map((subscription) => (
         <Card 
           key={subscription.community_subscription_uuid}
-          className="p-6 hover:shadow-md transition-shadow duration-200"
+          className="p-0 hover:shadow-md transition-shadow duration-200 overflow-hidden"
         >
-          <div className="flex items-start gap-6">
-            {/* Larger Community Thumbnail */}
-            {subscription.community_thumbnail && (
+          <div className="flex items-stretch h-24">
+            {/* Full Height Community Thumbnail */}
+            <div className="w-32 flex-shrink-0">
               <img 
-                src={subscription.community_thumbnail} 
+                src={subscription.community_thumbnail || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f"} 
                 alt={subscription.community_name || "Community"} 
-                className="h-20 w-20 object-cover rounded-lg flex-shrink-0"
+                className="w-full h-full object-cover"
               />
-            )}
+            </div>
             
             {/* Main Content */}
-            <div className="flex-1 space-y-3">
-              <div className="flex items-center gap-3">
-                <h3 className="font-semibold text-lg text-foreground">
-                  {subscription.community_name || "Community Subscription"}
-                </h3>
-              </div>
+            <div className="flex-1 p-6 flex flex-col justify-center">
+              <h3 className="font-semibold text-lg text-foreground mb-2">
+                {subscription.community_name || "Community Subscription"}
+              </h3>
               
               {/* Community Description */}
               {subscription.community_description && (
@@ -95,24 +92,18 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
                   {subscription.community_description}
                 </p>
               )}
-              
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <div className="flex items-center gap-1">
-                  <Calendar className="h-3 w-3" />
-                  <span>Joined {new Date(subscription.created_at).toLocaleDateString()}</span>
-                </div>
-                <span>•</span>
-                <span className="break-all">
-                  UUID: {subscription.community_subscription_uuid}
-                </span>
-              </div>
             </div>
             
             {/* Vertical Separator */}
-            <Separator orientation="vertical" className="h-20" />
+            <Separator orientation="vertical" className="h-full" />
             
-            {/* Status Badge */}
-            <div className="flex items-center justify-center min-w-[80px]">
+            {/* Right Section with Joined Date and Status */}
+            <div className="p-6 flex flex-col justify-center items-center min-w-[160px] space-y-3">
+              <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                <Calendar className="h-3 w-3" />
+                <span>Joined {new Date(subscription.created_at).toLocaleDateString()}</span>
+              </div>
+              
               <Badge 
                 variant="secondary" 
                 className={`${getStatusColor(subscription.status)} capitalize`}
