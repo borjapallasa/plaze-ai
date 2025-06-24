@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { MessageCircle, Users, Clock, ArrowLeft, Send, User } from "lucide-react";
 import {
@@ -68,6 +67,19 @@ export function ChatDialog() {
     }
   };
 
+  // Helper function to check if we should show user info (name/avatar)
+  const shouldShowUserInfo = (currentMessage: any, previousMessage: any) => {
+    if (!previousMessage) return true;
+    if (currentMessage.user_uuid !== previousMessage.user_uuid) return true;
+    
+    // Check if there's more than 5 minutes between messages
+    const currentTime = new Date(currentMessage.created_at).getTime();
+    const previousTime = new Date(previousMessage.created_at).getTime();
+    const timeDiffMinutes = (currentTime - previousTime) / (1000 * 60);
+    
+    return timeDiffMinutes > 5;
+  };
+
   const selectedConversationData = conversations?.find(
     conv => conv.conversation_uuid === selectedConversation
   );
@@ -115,26 +127,34 @@ export function ChatDialog() {
                     <p>Loading messages...</p>
                   </div>
                 ) : messages && messages.length > 0 ? (
-                  <div className="space-y-4">
-                    {messages.map((message) => {
+                  <div className="space-y-1">
+                    {messages.map((message, index) => {
                       const isOutgoing = message.user_uuid === user?.id;
+                      const previousMessage = index > 0 ? messages[index - 1] : null;
+                      const showUserInfo = shouldShowUserInfo(message, previousMessage);
                       
                       return (
-                        <div key={message.message_uuid} className={`flex gap-3 ${isOutgoing ? 'flex-row-reverse' : ''}`}>
-                          <Avatar className="h-8 w-8 flex-shrink-0">
-                            <AvatarFallback>
-                              <User className="h-4 w-4" />
-                            </AvatarFallback>
-                          </Avatar>
+                        <div key={message.message_uuid} className={`flex gap-3 ${isOutgoing ? 'flex-row-reverse' : ''} ${showUserInfo ? 'mt-4' : 'mt-1'}`}>
+                          {showUserInfo ? (
+                            <Avatar className="h-8 w-8 flex-shrink-0">
+                              <AvatarFallback>
+                                <User className="h-4 w-4" />
+                              </AvatarFallback>
+                            </Avatar>
+                          ) : (
+                            <div className="h-8 w-8 flex-shrink-0" /> // Spacer for alignment
+                          )}
                           <div className={`flex flex-col ${isOutgoing ? 'items-end' : 'items-start'} max-w-[80%]`}>
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className={`text-sm font-medium ${isOutgoing ? 'order-2' : ''}`}>
-                                {message.user_name}
-                              </span>
-                              <span className="text-xs text-muted-foreground">
-                                {new Date(message.created_at).toLocaleTimeString()}
-                              </span>
-                            </div>
+                            {showUserInfo && (
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className={`text-sm font-medium ${isOutgoing ? 'order-2' : ''}`}>
+                                  {message.user_name}
+                                </span>
+                                <span className="text-xs text-muted-foreground">
+                                  {new Date(message.created_at).toLocaleTimeString()}
+                                </span>
+                              </div>
+                            )}
                             <div className={`rounded-2xl px-4 py-2.5 ${
                               isOutgoing 
                                 ? 'bg-primary text-primary-foreground rounded-br-sm' 
