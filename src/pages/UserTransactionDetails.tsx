@@ -43,7 +43,7 @@ export default function UserTransactionDetails() {
     queryFn: async () => {
       if (!transactionId) return null;
       
-      console.log('Fetching actual transaction_uuid for products_transaction_uuid:', transactionId);
+      console.log('Fetching actual transaction_uuid for product_transaction_uuid:', transactionId);
       
       const { data, error } = await supabase
         .from('transactions')
