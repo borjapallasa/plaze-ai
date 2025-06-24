@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MainHeader } from "@/components/MainHeader";
 import { ArrowLeft, Copy } from "lucide-react";
@@ -39,7 +40,8 @@ export default function UserTransactionItemDetails() {
           ),
           variants (
             name,
-            files_link
+            files_link,
+            additional_details
           ),
           products_transactions (
             product_transaction_uuid,
@@ -243,6 +245,19 @@ export default function UserTransactionItemDetails() {
                         </a>
                       </Button>
                     </div>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* Variant Additional Details */}
+            {transactionItem.variants?.additional_details && (
+              <>
+                <Separator className="my-8" />
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-[#1A1F2C]">Variant Details</h3>
+                  <div className="prose prose-sm max-w-none">
+                    <p className="text-[#8E9196]">{transactionItem.variants.additional_details}</p>
                   </div>
                 </div>
               </>
