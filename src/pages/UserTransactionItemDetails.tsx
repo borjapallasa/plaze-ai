@@ -259,7 +259,8 @@ export default function UserTransactionItemDetails() {
             <Separator className="my-8" />
             <TransactionReview 
               transactionUuid={itemId || ''} 
-              sellerUserUuid={transactionItem?.products?.experts?.user_uuid}
+              sellerUserUuid={transactionItem?.products?.experts?.expert_uuid}
+              productUuid={transactionItem?.product_uuid}
             />
           </CardContent>
         </Card>

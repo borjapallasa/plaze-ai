@@ -1,4 +1,3 @@
-
 import { Star } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTransactionItemReview } from "@/hooks/use-transaction-item-review";
@@ -8,11 +7,13 @@ import { AddReviewForm } from "@/components/AddReviewForm";
 interface TransactionReviewProps {
   transactionUuid: string;
   sellerUserUuid?: string;
+  productUuid?: string;
 }
 
-export function TransactionReview({ transactionUuid, sellerUserUuid }: TransactionReviewProps) {
+export function TransactionReview({ transactionUuid, sellerUserUuid, productUuid }: TransactionReviewProps) {
   console.log('TransactionReview - transactionUuid:', transactionUuid);
   console.log('TransactionReview - sellerUserUuid:', sellerUserUuid);
+  console.log('TransactionReview - productUuid:', productUuid);
   
   const {
     data: reviews,
@@ -111,6 +112,7 @@ export function TransactionReview({ transactionUuid, sellerUserUuid }: Transacti
     <AddReviewForm 
       transactionUuid={transactionUuid} 
       sellerUserUuid={sellerUserUuid}
+      productUuid={productUuid}
       onReviewAdded={handleReviewAdded} 
     />
   );

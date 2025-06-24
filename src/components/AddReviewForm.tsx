@@ -11,10 +11,11 @@ import { useAuth } from "@/lib/auth";
 interface AddReviewFormProps {
   transactionUuid: string;
   sellerUserUuid?: string;
+  productUuid?: string;
   onReviewAdded?: () => void;
 }
 
-export function AddReviewForm({ transactionUuid, sellerUserUuid, onReviewAdded }: AddReviewFormProps) {
+export function AddReviewForm({ transactionUuid, sellerUserUuid, productUuid, onReviewAdded }: AddReviewFormProps) {
   const { user } = useAuth();
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
@@ -48,13 +49,14 @@ export function AddReviewForm({ transactionUuid, sellerUserUuid, onReviewAdded }
       console.log('Comments:', comments);
       console.log('Product Transaction Item UUID:', transactionUuid);
       console.log('Seller User UUID (expert_uuid):', sellerUserUuid);
+      console.log('Product UUID:', productUuid);
 
       // Get user's first and last name from user metadata
       const firstName = user.user_metadata?.first_name || '';
       const lastName = user.user_metadata?.last_name || '';
       const buyerName = `${firstName} ${lastName}`.trim() || user.email;
 
-      // Insert review with all required fields, including seller_user_uuid
+      // Insert review with all required fields, including seller_user_uuid and product_uuid
       const reviewData = {
         rating,
         title: title.trim() || null,
@@ -73,6 +75,14 @@ export function AddReviewForm({ transactionUuid, sellerUserUuid, onReviewAdded }
         console.log('Including seller_user_uuid in review:', sellerUserUuid);
       } else {
         console.warn('No sellerUserUuid provided - review will be submitted without seller reference');
+      }
+
+      // Add product_uuid if provided
+      if (productUuid) {
+        (reviewData as any).product_uuid = productUuid;
+        console.log('Including product_uuid in review:', productUuid);
+      } else {
+        console.warn('No productUuid provided - review will be submitted without product reference');
       }
 
       const { error } = await supabase
