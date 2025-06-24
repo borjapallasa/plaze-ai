@@ -826,6 +826,7 @@ export type Database = {
           id: number
           message_count: number | null
           pinned: boolean | null
+          reported: boolean | null
           source: Database["public"]["Enums"]["conversation_source"] | null
           status: Database["public"]["Enums"]["conversation_status"] | null
           subject: string | null
@@ -841,6 +842,7 @@ export type Database = {
           id?: number
           message_count?: number | null
           pinned?: boolean | null
+          reported?: boolean | null
           source?: Database["public"]["Enums"]["conversation_source"] | null
           status?: Database["public"]["Enums"]["conversation_status"] | null
           subject?: string | null
@@ -856,6 +858,7 @@ export type Database = {
           id?: number
           message_count?: number | null
           pinned?: boolean | null
+          reported?: boolean | null
           source?: Database["public"]["Enums"]["conversation_source"] | null
           status?: Database["public"]["Enums"]["conversation_status"] | null
           subject?: string | null

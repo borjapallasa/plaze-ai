@@ -18,6 +18,7 @@ import { useUpdateMessage } from "@/hooks/use-update-message";
 import { useSendMessage } from "@/hooks/use-send-message";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { useAuth } from "@/lib/auth";
+import { useUpdateConversation } from "@/hooks/use-update-conversation";
 
 export default function Chats() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -42,6 +43,7 @@ export default function Chats() {
   const { data: userProfile } = useUserProfile();
   const updateMessage = useUpdateMessage();
   const sendMessage = useSendMessage();
+  const updateConversation = useUpdateConversation();
   const filteredChats = conversations?.filter(chat => chat.otherParticipantName.toLowerCase().includes(searchQuery.toLowerCase()) || chat.subject.toLowerCase().includes(searchQuery.toLowerCase())) || [];
 
   // Auto-scroll to bottom when messages change
@@ -83,11 +85,21 @@ export default function Chats() {
   };
 
   const handlePinChat = () => {
-    console.log('Pin chat action');
+    if (selectedChat) {
+      updateConversation.mutate({
+        conversationUuid: selectedChat.conversation_uuid,
+        updates: { pinned: true }
+      });
+    }
   };
 
   const handleArchiveChat = () => {
-    console.log('Archive chat action');
+    if (selectedChat) {
+      updateConversation.mutate({
+        conversationUuid: selectedChat.conversation_uuid,
+        updates: { archived: true }
+      });
+    }
   };
 
   const handleInviteUser = () => {
@@ -95,7 +107,12 @@ export default function Chats() {
   };
 
   const handleReportChat = () => {
-    console.log('Report chat action');
+    if (selectedChat) {
+      updateConversation.mutate({
+        conversationUuid: selectedChat.conversation_uuid,
+        updates: { reported: true }
+      });
+    }
   };
 
   const handleEditMessage = (messageId: string, currentContent: string) => {
@@ -254,11 +271,19 @@ export default function Chats() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-48 bg-background border shadow-md">
-                        <DropdownMenuItem onClick={handlePinChat} className="cursor-pointer">
+                        <DropdownMenuItem 
+                          onClick={handlePinChat} 
+                          className="cursor-pointer"
+                          disabled={updateConversation.isPending}
+                        >
                           <Pin className="mr-2 h-4 w-4" />
                           Pin
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={handleArchiveChat} className="cursor-pointer">
+                        <DropdownMenuItem 
+                          onClick={handleArchiveChat} 
+                          className="cursor-pointer"
+                          disabled={updateConversation.isPending}
+                        >
                           <Archive className="mr-2 h-4 w-4" />
                           Archive
                         </DropdownMenuItem>
@@ -268,7 +293,11 @@ export default function Chats() {
                           Invite User
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={handleReportChat} className="cursor-pointer text-red-600">
+                        <DropdownMenuItem 
+                          onClick={handleReportChat} 
+                          className="cursor-pointer text-red-600"
+                          disabled={updateConversation.isPending}
+                        >
                           <Flag className="mr-2 h-4 w-4" />
                           Report
                         </DropdownMenuItem>

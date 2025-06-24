@@ -35,7 +35,11 @@ export function useTransactionReview(transactionUuid: string) {
 
       console.log('Reviews found for transaction:', reviews);
 
-      return reviews?.map(review => ({
+      if (!reviews) {
+        return [];
+      }
+
+      return reviews.map(review => ({
         review_uuid: review.review_uuid,
         rating: review.rating,
         title: review.title,
@@ -43,7 +47,7 @@ export function useTransactionReview(transactionUuid: string) {
         buyer_name: review.buyer_name,
         buyer_email: review.buyer_email || '',
         created_at: review.created_at,
-      })) || [];
+      }));
     },
     enabled: !!transactionUuid,
   });
