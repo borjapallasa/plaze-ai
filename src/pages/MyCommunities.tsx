@@ -231,20 +231,6 @@ export default function MyCommunities() {
               </div>
             </>
           )}
-
-          {/* See More Button - Only show if we have subscriptions */}
-          {!loading && sortedSubscriptions.length > 0 && (
-            <div className="flex justify-center">
-              <Button 
-                variant="outline" 
-                size="lg" 
-                className="rounded-full"
-                onClick={() => navigate("/communities")}
-              >
-                Browse more communities
-              </Button>
-            </div>
-          )}
         </div>
       </main>
     </div>
