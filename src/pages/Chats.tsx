@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,7 @@ export default function Chats() {
   const [selectedChat, setSelectedChat] = useState<Conversation | null>(null);
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [messageInput, setMessageInput] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const {
     user,
@@ -42,6 +43,13 @@ export default function Chats() {
   const updateMessage = useUpdateMessage();
   const sendMessage = useSendMessage();
   const filteredChats = conversations?.filter(chat => chat.otherParticipantName.toLowerCase().includes(searchQuery.toLowerCase()) || chat.subject.toLowerCase().includes(searchQuery.toLowerCase())) || [];
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    if (messages && messages.length > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
 
   // Helper function to check if a message should show user info
   const shouldShowUserInfo = (currentIndex: number, messages: any[]) => {
@@ -273,14 +281,15 @@ export default function Chats() {
                 <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-1">
                   {messagesLoading ? <div className="flex items-center justify-center h-full">
                       <p>Loading messages...</p>
-                    </div> : messages && messages.length > 0 ? messages.map((message, index) => {
-                const isOutgoing = message.user_uuid === user.id;
-                const isBeingEdited = editingMessageId === message.message_uuid;
-                const showUserInfo = shouldShowUserInfo(index, messages);
-                const showTimestamp = shouldShowTimestamp(index, messages);
-                const showSentStatus = shouldShowSentStatus(index, messages);
-                
-                return <div key={message.message_uuid} className={`flex gap-3 ${isOutgoing ? 'flex-row-reverse' : ''} ${showUserInfo ? 'mt-6 first:mt-0' : 'mt-1'}`}>
+                    </div> : messages && messages.length > 0 ? <>
+                      {messages.map((message, index) => {
+                        const isOutgoing = message.user_uuid === user.id;
+                        const isBeingEdited = editingMessageId === message.message_uuid;
+                        const showUserInfo = shouldShowUserInfo(index, messages);
+                        const showTimestamp = shouldShowTimestamp(index, messages);
+                        const showSentStatus = shouldShowSentStatus(index, messages);
+                        
+                        return <div key={message.message_uuid} className={`flex gap-3 ${isOutgoing ? 'flex-row-reverse' : ''} ${showUserInfo ? 'mt-6 first:mt-0' : 'mt-1'}`}>
                           {showUserInfo && (
                             <Avatar className="h-8 w-8 flex-shrink-0 ring-2 ring-background">
                               <AvatarFallback>
@@ -323,7 +332,9 @@ export default function Chats() {
                               </div>}
                           </div>
                         </div>;
-              }) : <div className="flex items-center justify-center h-full text-muted-foreground">
+                      })}
+                      <div ref={messagesEndRef} />
+                    </> : <div className="flex items-center justify-center h-full text-muted-foreground">
                       <p>No messages in this conversation yet</p>
                     </div>}
                 </div>
