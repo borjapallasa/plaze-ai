@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { 
-  Search, Users, ArrowRight, Loader2
+  Search, Loader2
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
@@ -13,12 +13,12 @@ import { toast } from "sonner";
 
 export default function MyCommunities() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [communities, setCommunities] = useState([]);
+  const [subscriptions, setSubscriptions] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUserCommunities = async () => {
+    const fetchUserSubscriptions = async () => {
       try {
         setLoading(true);
         
@@ -39,71 +39,34 @@ export default function MyCommunities() {
         
         console.log("Authenticated user:", user.id);
         
-        // First, let's check if there are any community subscriptions for this user
-        const { data: allSubscriptions, error: checkError } = await supabase
+        // Fetch community subscriptions for the authenticated user
+        const { data: subscriptionsData, error: subscriptionsError } = await supabase
           .from('community_subscriptions')
-          .select('*')
+          .select('community_subscription_uuid, status, created_at')
           .eq('user_uuid', user.id);
-          
-        console.log("All subscriptions for user:", allSubscriptions);
-        
-        if (checkError) {
-          console.error("Error checking subscriptions:", checkError);
-        }
-        
-        // Fetch community subscriptions for the authenticated user with community details
-        const { data: subscriptions, error: subscriptionsError } = await supabase
-          .from('community_subscriptions')
-          .select(`
-            community_uuid,
-            status,
-            created_at,
-            communities (
-              community_uuid,
-              name,
-              description,
-              thumbnail,
-              member_count,
-              slug
-            )
-          `)
-          .eq('user_uuid', user.id)
-          .eq('status', 'active');
           
         if (subscriptionsError) {
           console.error("Error fetching community subscriptions:", subscriptionsError);
-          toast.error("Failed to load your communities");
+          toast.error("Failed to load your subscriptions");
           return;
         }
         
-        console.log("Community subscriptions data:", subscriptions);
-        
-        // Extract communities from subscriptions
-        const userCommunities = subscriptions
-          ?.filter(sub => sub.communities) // Filter out any null communities
-          .map(sub => sub.communities) || [];
-        
-        console.log("Processed communities:", userCommunities);
-        setCommunities(userCommunities);
+        console.log("Community subscriptions data:", subscriptionsData);
+        setSubscriptions(subscriptionsData || []);
       } catch (error) {
-        console.error("Error in fetchUserCommunities:", error);
+        console.error("Error in fetchUserSubscriptions:", error);
         toast.error("An unexpected error occurred");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUserCommunities();
+    fetchUserSubscriptions();
   }, []);
 
-  const filteredCommunities = communities.filter(community =>
-    community.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    community.description?.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredSubscriptions = subscriptions.filter(subscription =>
+    subscription.community_subscription_uuid?.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  const handleOpenCommunity = (community) => {
-    navigate(`/community/${community.slug || community.community_uuid}`);
-  };
 
   return (
     <div className="bg-background min-h-screen">
@@ -111,7 +74,7 @@ export default function MyCommunities() {
       <main className="container mx-auto px-4 py-4 pt-24">
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-semibold">My Communities</h1>
+            <h1 className="text-2xl font-semibold">My Community Subscriptions</h1>
             <Button variant="outline" size="sm" onClick={() => navigate("/communities")}>
               Browse Communities
             </Button>
@@ -121,7 +84,7 @@ export default function MyCommunities() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
-              placeholder="Type here to search"
+              placeholder="Type here to search by subscription UUID"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9"
@@ -132,66 +95,48 @@ export default function MyCommunities() {
           {loading && (
             <div className="flex justify-center items-center py-12">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <span className="ml-2 text-muted-foreground">Loading your communities...</span>
+              <span className="ml-2 text-muted-foreground">Loading your subscriptions...</span>
             </div>
           )}
 
           {/* Empty State */}
-          {!loading && communities.length === 0 && (
+          {!loading && subscriptions.length === 0 && (
             <div className="text-center py-12 border rounded-lg bg-muted/20">
-              <h3 className="text-lg font-medium mb-2">You haven't joined any communities yet</h3>
+              <h3 className="text-lg font-medium mb-2">You haven't subscribed to any communities yet</h3>
               <p className="text-muted-foreground mb-6">Browse communities to find the perfect ones for you.</p>
               <Button onClick={() => navigate("/communities")}>Browse Communities</Button>
             </div>
           )}
 
-          {/* Communities Grid */}
-          {!loading && communities.length > 0 && (
+          {/* Subscriptions List */}
+          {!loading && subscriptions.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredCommunities.map((community) => (
+              {filteredSubscriptions.map((subscription) => (
                 <Card
-                  key={community.community_uuid}
-                  className="group hover:shadow-md hover:bg-[#FAFAFA] transition-all duration-500 will-change-transform cursor-pointer"
-                  onClick={() => handleOpenCommunity(community)}
+                  key={subscription.community_subscription_uuid}
+                  className="p-4 space-y-4"
                 >
-                  <div className="relative aspect-video overflow-hidden rounded-t-lg">
-                    <img
-                      src={community.thumbnail || "https://images.unsplash.com/photo-1519389950473-47ba0277781c"}
-                      alt={community.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-4 space-y-4">
-                    <div>
-                      <h3 className="font-semibold text-lg leading-tight mb-2">
-                        {community.name}
-                      </h3>
-                      <p className="text-sm text-muted-foreground line-clamp-2">
-                        {community.description}
-                      </p>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                        <Users className="h-4 w-4" />
-                        <span>{community.member_count || 0} Members</span>
-                      </div>
-                      <div className="overflow-hidden">
-                        <div 
-                          className="flex items-center text-transparent group-hover:text-primary transform translate-x-8 group-hover:translate-x-0 transition-all duration-500 ease-out will-change-transform"
-                        >
-                          <span className="text-sm whitespace-nowrap">Open</span>
-                          <ArrowRight className="h-4 w-4 ml-1 flex-shrink-0" />
-                        </div>
-                      </div>
-                    </div>
+                  <div>
+                    <h3 className="font-semibold text-lg leading-tight mb-2">
+                      Subscription
+                    </h3>
+                    <p className="text-sm text-muted-foreground break-all">
+                      UUID: {subscription.community_subscription_uuid}
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      Status: {subscription.status}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Created: {new Date(subscription.created_at).toLocaleDateString()}
+                    </p>
                   </div>
                 </Card>
               ))}
             </div>
           )}
 
-          {/* See More Button - Only show if we have communities */}
-          {!loading && filteredCommunities.length > 0 && (
+          {/* See More Button - Only show if we have subscriptions */}
+          {!loading && filteredSubscriptions.length > 0 && (
             <div className="flex justify-center">
               <Button 
                 variant="outline" 
@@ -199,7 +144,7 @@ export default function MyCommunities() {
                 className="rounded-full"
                 onClick={() => navigate("/communities")}
               >
-                See more communities
+                Browse more communities
               </Button>
             </div>
           )}
