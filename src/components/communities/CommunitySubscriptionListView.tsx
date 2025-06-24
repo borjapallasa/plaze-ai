@@ -117,18 +117,18 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
                 {getStatusText(subscription.status)}
               </Badge>
 
-              {/* Manage Membership Button */}
+              {/* Manage Membership Button - More subtle */}
               <Button 
-                variant="outline" 
+                variant="ghost" 
                 size="sm" 
-                className="text-xs h-7 px-2 gap-1"
+                className="text-xs h-6 px-2 text-muted-foreground hover:text-foreground"
                 onClick={() => {
                   // TODO: Navigate to community membership management page
                   console.log('Manage membership for:', subscription.community_subscription_uuid);
                 }}
               >
-                <Settings className="h-3 w-3" />
-                Manage Membership
+                <Settings className="h-3 w-3 mr-1" />
+                Manage
               </Button>
             </div>
           </div>

@@ -1,7 +1,7 @@
-
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Calendar } from "lucide-react";
+import { Calendar, Settings } from "lucide-react";
 
 interface CommunitySubscription {
   community_subscription_uuid: string;
@@ -61,6 +61,21 @@ export function CommunitySubscriptionCard({ subscription }: CommunitySubscriptio
             <span>{getStatusText(subscription.status)}</span>
           </div>
         </div>
+
+        {/* Manage Membership Button */}
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="text-xs h-8 w-full mt-2"
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent card click if card is clickable
+            // TODO: Navigate to community membership management page
+            console.log('Manage membership for:', subscription.community_subscription_uuid);
+          }}
+        >
+          <Settings className="h-3 w-3 mr-1" />
+          Manage Membership
+        </Button>
       </CardContent>
     </Card>
   );
