@@ -1,4 +1,3 @@
-
 import { Route, Routes } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -23,6 +22,7 @@ import ManageSubscriptionsPage from "./pages/ManageSubscriptions";
 import MyCommunitiesPage from "./pages/MyCommunities";
 import TransactionsPage from "./pages/Transactions";
 import UserTransactionDetailsPage from "./pages/UserTransactionDetails";
+import UserTransactionItemDetails from "./pages/UserTransactionItemDetails";
 import ThankYouPage from "./pages/ThankYou";
 import RecoverPasswordPage from "./pages/RecoverPassword";
 import AdminDashboardPage from "./pages/admin/AdminDashboard";
@@ -73,6 +73,7 @@ function App() {
           <Route path="/account/communities" element={<MyCommunitiesPage />} />
           <Route path="/account/transactions" element={<TransactionsPage />} />
           <Route path="/account/transactions/transaction/:id" element={<UserTransactionDetailsPage />} />
+          <Route path="/account/transactions/transaction/item/:id" element={<UserTransactionItemDetails />} />
           <Route path="/thank-you" element={<ThankYouPage />} />
           <Route path="/recover-password" element={<RecoverPasswordPage />} />
           <Route path="/admin" element={<AdminDashboardPage />} />
