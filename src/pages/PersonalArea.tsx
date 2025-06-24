@@ -96,7 +96,7 @@ export default function PersonalArea() {
       icon: <MessageCircle className="w-8 h-8" />,
       title: "Inbox",
       description: "Access to all messages and conversations.",
-      to: "/inbox"
+      to: "/account/chats"
     },
     {
       icon: <UserCog className="w-8 h-8" />,
