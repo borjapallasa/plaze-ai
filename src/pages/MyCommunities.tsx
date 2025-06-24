@@ -71,8 +71,8 @@ export default function MyCommunities() {
   return (
     <div className="bg-background min-h-screen">
       <MainHeader />
-      <main className="container mx-auto px-4 py-4 pt-24">
-        <div className="max-w-7xl mx-auto space-y-6">
+      <main className="container mx-auto px-4 py-4 pt-24 max-w-[1400px]">
+        <div className="space-y-6">
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-semibold">My Community Subscriptions</h1>
             <Button variant="outline" size="sm" onClick={() => navigate("/communities")}>
