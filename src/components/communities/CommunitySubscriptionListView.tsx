@@ -72,20 +72,20 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
       {subscriptions.map((subscription) => (
         <Card 
           key={subscription.community_subscription_uuid}
-          className="p-6 hover:shadow-md transition-shadow duration-200"
+          className="p-0 hover:shadow-md transition-shadow duration-200 overflow-hidden"
         >
-          <div className="flex items-start gap-6">
-            {/* Left: Community Thumbnail */}
-            <div className="w-16 h-16 flex-shrink-0">
+          <div className="flex items-stretch min-h-[120px]">
+            {/* Left: Community Thumbnail - Full Height */}
+            <div className="w-24 flex-shrink-0">
               <img 
                 src={subscription.community_thumbnail || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f"} 
                 alt={subscription.community_name || "Community"} 
-                className="w-full h-full object-cover rounded-lg"
+                className="w-full h-full object-cover"
               />
             </div>
             
             {/* Center: Content Section */}
-            <div className="flex-1 min-w-0 space-y-3">
+            <div className="flex-1 min-w-0 p-6 space-y-3">
               {/* Community Name with Metadata */}
               <div className="space-y-2">
                 <div className="flex items-center gap-3 flex-wrap">
@@ -118,10 +118,10 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
             </div>
             
             {/* Vertical Separator */}
-            <Separator orientation="vertical" className="h-16 mx-2" />
+            <Separator orientation="vertical" className="h-auto mx-2" />
             
             {/* Right: Action Buttons Only */}
-            <div className="flex flex-col gap-2 min-w-[140px]">
+            <div className="flex flex-col gap-2 min-w-[140px] p-6 justify-center">
               {/* Open Community Button - Primary */}
               <Button 
                 size="sm" 
