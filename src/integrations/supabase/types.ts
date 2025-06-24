@@ -1800,8 +1800,8 @@ export type Database = {
             foreignKeyName: "reviews_seller_user_uuid_fkey"
             columns: ["seller_user_uuid"]
             isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["user_uuid"]
+            referencedRelation: "experts"
+            referencedColumns: ["expert_uuid"]
           },
         ]
       }

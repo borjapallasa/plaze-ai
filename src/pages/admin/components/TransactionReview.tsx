@@ -1,8 +1,12 @@
+
 import { Star } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTransactionItemReview } from "@/hooks/use-transaction-item-review";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AddReviewForm } from "@/components/AddReviewForm";
+import { EditReviewDialog } from "@/components/EditReviewDialog";
+import { DeleteReviewDialog } from "@/components/DeleteReviewDialog";
+import { useAuth } from "@/lib/auth";
 
 interface TransactionReviewProps {
   transactionUuid: string;
@@ -11,6 +15,7 @@ interface TransactionReviewProps {
 }
 
 export function TransactionReview({ transactionUuid, productUuid, expertUuid }: TransactionReviewProps) {
+  const { user } = useAuth();
   console.log('TransactionReview - transactionUuid:', transactionUuid);
   console.log('TransactionReview - productUuid:', productUuid);
   console.log('TransactionReview - expertUuid:', expertUuid);
@@ -31,9 +36,15 @@ export function TransactionReview({ transactionUuid, productUuid, expertUuid }: 
     ));
   };
 
-  const handleReviewAdded = () => {
+  const handleReviewUpdated = () => {
     refetch();
   };
+
+  // Check if current user has already reviewed this item
+  const userReview = reviews?.find(review => 
+    user && (review.buyer_email === user.email || 
+    review.buyer_name === `${user.user_metadata?.first_name || ''} ${user.user_metadata?.last_name || ''}`.trim())
+  );
 
   if (isLoading) {
     return (
@@ -77,31 +88,53 @@ export function TransactionReview({ transactionUuid, productUuid, expertUuid }: 
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
-            {reviews.map((review, index) => (
-              <div key={review.review_uuid} className={index > 0 ? "border-t pt-6" : ""}>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex gap-1">
-                      {renderStars(review.rating)}
+            {reviews.map((review, index) => {
+              const isUserReview = user && (
+                review.buyer_email === user.email || 
+                review.buyer_name === `${user.user_metadata?.first_name || ''} ${user.user_metadata?.last_name || ''}`.trim()
+              );
+
+              return (
+                <div key={review.review_uuid} className={index > 0 ? "border-t pt-6" : ""}>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="flex gap-1">
+                          {renderStars(review.rating)}
+                        </div>
+                        <span className="text-[#8E9196]">({review.rating}/5)</span>
+                      </div>
+                      
+                      {isUserReview && (
+                        <div className="flex gap-1">
+                          <EditReviewDialog 
+                            review={review} 
+                            onReviewUpdated={handleReviewUpdated} 
+                          />
+                          <DeleteReviewDialog 
+                            reviewUuid={review.review_uuid} 
+                            onReviewDeleted={handleReviewUpdated} 
+                          />
+                        </div>
+                      )}
                     </div>
-                    <span className="text-[#8E9196]">({review.rating}/5)</span>
-                  </div>
-                  
-                  {review.title && (
-                    <h3 className="font-medium text-[#1A1F2C]">{review.title}</h3>
-                  )}
-                  
-                  <blockquote className="text-[#1A1F2C] italic border-l-4 border-gray-300 pl-4 py-2 break-words">
-                    "{review.comments || 'No additional comments provided'}"
-                  </blockquote>
-                  
-                  <div className="flex items-center justify-between text-sm text-[#8E9196]">
-                    <span>By {review.buyer_name}</span>
-                    <span>{new Date(review.created_at).toLocaleDateString()}</span>
+                    
+                    {review.title && (
+                      <h3 className="font-medium text-[#1A1F2C]">{review.title}</h3>
+                    )}
+                    
+                    <blockquote className="text-[#1A1F2C] italic border-l-4 border-gray-300 pl-4 py-2 break-words">
+                      "{review.comments || 'No additional comments provided'}"
+                    </blockquote>
+                    
+                    <div className="flex items-center justify-between text-sm text-[#8E9196]">
+                      <span>By {review.buyer_name}</span>
+                      <span>{new Date(review.created_at).toLocaleDateString()}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </CardContent>
       </Card>
@@ -113,7 +146,7 @@ export function TransactionReview({ transactionUuid, productUuid, expertUuid }: 
       transactionUuid={transactionUuid} 
       productUuid={productUuid}
       expertUuid={expertUuid}
-      onReviewAdded={handleReviewAdded} 
+      onReviewAdded={handleReviewUpdated} 
     />
   );
 }
