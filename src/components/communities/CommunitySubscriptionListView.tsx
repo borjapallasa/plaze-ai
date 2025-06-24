@@ -41,13 +41,12 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
       <div className="space-y-4">
         {[...Array(5)].map((_, index) => (
           <Card key={index} className="p-6 animate-pulse">
-            <div className="flex justify-between items-start">
-              <div className="flex items-center gap-4 flex-1">
-                <div className="h-12 w-12 bg-gray-200 rounded"></div>
-                <div className="space-y-2 flex-1">
-                  <div className="h-4 bg-gray-200 rounded w-1/3"></div>
-                  <div className="h-3 bg-gray-200 rounded w-1/4"></div>
-                </div>
+            <div className="flex items-start gap-6">
+              <div className="h-20 w-20 bg-gray-200 rounded"></div>
+              <div className="flex-1 space-y-3">
+                <div className="h-5 bg-gray-200 rounded w-1/3"></div>
+                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                <div className="h-3 bg-gray-200 rounded w-1/4"></div>
               </div>
               <div className="h-6 bg-gray-200 rounded w-16"></div>
             </div>
@@ -72,46 +71,48 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
           key={subscription.community_subscription_uuid}
           className="p-6 hover:shadow-md transition-shadow duration-200"
         >
-          <div className="flex justify-between items-start">
-            <div className="flex items-center gap-4 flex-1">
-              {subscription.community_thumbnail && (
-                <img 
-                  src={subscription.community_thumbnail} 
-                  alt={subscription.community_name || "Community"} 
-                  className="h-12 w-12 object-cover rounded"
-                />
+          <div className="flex items-start gap-6">
+            {/* Larger Community Thumbnail */}
+            {subscription.community_thumbnail && (
+              <img 
+                src={subscription.community_thumbnail} 
+                alt={subscription.community_name || "Community"} 
+                className="h-20 w-20 object-cover rounded-lg flex-shrink-0"
+              />
+            )}
+            
+            {/* Main Content */}
+            <div className="flex-1 space-y-3">
+              <div className="flex items-center gap-3">
+                <h3 className="font-semibold text-lg text-foreground">
+                  {subscription.community_name || "Community Subscription"}
+                </h3>
+              </div>
+              
+              {/* Community Description */}
+              {subscription.community_description && (
+                <p className="text-sm text-muted-foreground line-clamp-2">
+                  {subscription.community_description}
+                </p>
               )}
-              <div className="space-y-2 flex-1">
-                <div className="flex items-center gap-3">
-                  <h3 className="font-medium text-foreground">
-                    {subscription.community_name || "Community Subscription"}
-                  </h3>
+              
+              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <Calendar className="h-3 w-3" />
+                  <span>Joined {new Date(subscription.created_at).toLocaleDateString()}</span>
                 </div>
-                
-                {/* Community Description */}
-                {subscription.community_description && (
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {subscription.community_description}
-                  </p>
-                )}
-                
-                {/* Separator */}
-                <Separator className="my-2" />
-                
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <Calendar className="h-3 w-3" />
-                    <span>Joined {new Date(subscription.created_at).toLocaleDateString()}</span>
-                  </div>
-                  <span>•</span>
-                  <span className="break-all">
-                    UUID: {subscription.community_subscription_uuid}
-                  </span>
-                </div>
+                <span>•</span>
+                <span className="break-all">
+                  UUID: {subscription.community_subscription_uuid}
+                </span>
               </div>
             </div>
             
-            <div className="flex items-center gap-3">
+            {/* Vertical Separator */}
+            <Separator orientation="vertical" className="h-20" />
+            
+            {/* Status Badge */}
+            <div className="flex items-center justify-center min-w-[80px]">
               <Badge 
                 variant="secondary" 
                 className={`${getStatusColor(subscription.status)} capitalize`}
