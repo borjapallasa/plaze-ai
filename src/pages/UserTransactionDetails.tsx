@@ -8,7 +8,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { TransactionOverview } from "./admin/components/TransactionOverview";
 import { TransactionFiles } from "./admin/components/TransactionFiles";
-import { TransactionReview } from "./admin/components/TransactionReview";
 import { CommunityTransactionOverview } from "./admin/components/CommunityTransactionOverview";
 import { useTransactionDetails } from "@/hooks/use-transaction-details";
 import { useCommunityTransactionDetails } from "@/hooks/use-community-transaction-details";
@@ -157,12 +156,6 @@ export default function UserTransactionDetails() {
   // Get the first item's files link for the main files section (only for product transactions)
   const filesUrl = !isCommunityTransaction && transaction ? transaction.items[0]?.files_link || '' : '';
   
-  // Get seller user UUID for reviews - fix the property access
-  const sellerUserUuid = !isCommunityTransaction && transaction ? 
-    // Use the available properties from TransactionDetails interface
-    (transaction.seller_user?.name ? 'seller_user_uuid_placeholder' : undefined) : 
-    undefined;
-  
   return (
     <>
       <MainHeader />
@@ -267,13 +260,6 @@ export default function UserTransactionDetails() {
                   filesUrl={filesUrl} 
                   guidesUrl="" 
                   customRequest=""
-                />
-
-                {/* Reviews section - use the correct transaction UUID */}
-                <Separator className="my-8" />
-                <TransactionReview 
-                  transactionUuid={transactionId || ''} 
-                  sellerUserUuid={sellerUserUuid}
                 />
               </>
             )}

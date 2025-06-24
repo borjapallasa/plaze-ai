@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MainHeader } from "@/components/MainHeader";
 import { ArrowLeft, Copy } from "lucide-react";
@@ -9,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { TransactionReview } from "./admin/components/TransactionReview";
 
 export default function UserTransactionItemDetails() {
   const params = useParams();
@@ -260,6 +260,13 @@ export default function UserTransactionItemDetails() {
                 </div>
               </>
             )}
+
+            {/* Reviews section - specific to this transaction item */}
+            <Separator className="my-8" />
+            <TransactionReview 
+              transactionUuid={itemId || ''} 
+              sellerUserUuid={undefined}
+            />
           </CardContent>
         </Card>
       </div>
