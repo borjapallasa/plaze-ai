@@ -1,10 +1,9 @@
-
 import { useState } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Check, Search, User, Settings, Video, MessageSquare, Image, SmilePlus, Send, ArrowLeft, Pin, Archive, UserPlus, Flag, MoreVertical } from "lucide-react";
+import { Check, Search, User, Settings, Video, MessageSquare, Image, SmilePlus, Send, ArrowLeft, Pin, Archive, UserPlus, Flag, MoreVertical, Edit2, X } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,14 +11,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Textarea } from "@/components/ui/textarea";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useConversations, type Conversation } from "@/hooks/use-conversations";
 import { useConversationMessages } from "@/hooks/use-conversation-messages";
+import { useUpdateMessage } from "@/hooks/use-update-message";
 import { useAuth } from "@/lib/auth";
 
 export default function Chats() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedChat, setSelectedChat] = useState<Conversation | null>(null);
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+  const [editContent, setEditContent] = useState("");
   const isMobile = useIsMobile();
   const {
     user,
@@ -34,6 +37,7 @@ export default function Chats() {
     data: messages,
     isLoading: messagesLoading
   } = useConversationMessages(selectedChat?.conversation_uuid || null);
+  const updateMessage = useUpdateMessage();
   const filteredChats = conversations?.filter(chat => chat.otherParticipantName.toLowerCase().includes(searchQuery.toLowerCase()) || chat.subject.toLowerCase().includes(searchQuery.toLowerCase())) || [];
 
   const handlePinChat = () => {
@@ -50,6 +54,27 @@ export default function Chats() {
 
   const handleReportChat = () => {
     console.log('Report chat action');
+  };
+
+  const handleEditMessage = (messageId: string, currentContent: string) => {
+    setEditingMessageId(messageId);
+    setEditContent(currentContent);
+  };
+
+  const handleSaveEdit = () => {
+    if (editingMessageId && editContent.trim()) {
+      updateMessage.mutate({
+        messageUuid: editingMessageId,
+        content: editContent.trim()
+      });
+      setEditingMessageId(null);
+      setEditContent("");
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingMessageId(null);
+    setEditContent("");
   };
 
   if (authLoading || isLoading) {
@@ -198,6 +223,8 @@ export default function Chats() {
                       <p>Loading messages...</p>
                     </div> : messages && messages.length > 0 ? messages.map(message => {
                 const isOutgoing = message.user_uuid === user.id;
+                const isEditing = editingMessageId === message.message_uuid;
+                
                 return <div key={message.message_uuid} className={`flex gap-3 ${isOutgoing ? 'flex-row-reverse' : ''}`}>
                           <Avatar className="h-8 w-8 flex-shrink-0 ring-2 ring-background">
                             <AvatarFallback>
@@ -213,12 +240,43 @@ export default function Chats() {
                                 {new Date(message.created_at).toLocaleString()}
                               </span>
                             </div>
-                            <div className={`rounded-2xl px-4 py-2.5 ${isOutgoing ? 'bg-primary text-primary-foreground rounded-br-none' : 'bg-accent rounded-bl-none'}`}>
-                              <p className="text-sm whitespace-pre-wrap break-words">
-                                {message.content || "No content available"}
-                              </p>
+                            <div className={`rounded-2xl px-4 py-2.5 ${isOutgoing ? 'bg-primary text-primary-foreground rounded-br-none' : 'bg-accent rounded-bl-none'} relative group`}>
+                              {isEditing ? (
+                                <div className="space-y-2">
+                                  <Textarea
+                                    value={editContent}
+                                    onChange={(e) => setEditContent(e.target.value)}
+                                    className="text-sm bg-transparent border-none p-0 resize-none focus:ring-0"
+                                    autoFocus
+                                  />
+                                  <div className="flex gap-2">
+                                    <Button size="sm" onClick={handleSaveEdit} disabled={updateMessage.isPending}>
+                                      Save
+                                    </Button>
+                                    <Button size="sm" variant="outline" onClick={handleCancelEdit}>
+                                      Cancel
+                                    </Button>
+                                  </div>
+                                </div>
+                              ) : (
+                                <>
+                                  <p className="text-sm whitespace-pre-wrap break-words">
+                                    {message.content || "No content available"}
+                                  </p>
+                                  {isOutgoing && (
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="absolute -top-8 right-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                      onClick={() => handleEditMessage(message.message_uuid, message.content || "")}
+                                    >
+                                      <Edit2 className="h-3 w-3" />
+                                    </Button>
+                                  )}
+                                </>
+                              )}
                             </div>
-                            {isOutgoing && <div className="flex items-center gap-1 mt-1">
+                            {isOutgoing && !isEditing && <div className="flex items-center gap-1 mt-1">
                                 <span className="text-xs text-muted-foreground">Sent</span>
                                 <Check className="h-3 w-3 text-muted-foreground" />
                               </div>}
