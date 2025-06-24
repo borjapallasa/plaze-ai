@@ -74,6 +74,7 @@ function App() {
           <Route path="/account/communities" element={<MyCommunitiesPage />} />
           <Route path="/account/transactions" element={<TransactionsPage />} />
           <Route path="/account/transactions/transaction/:id" element={<UserTransactionDetailsPage />} />
+          <Route path="/account/transactions/transaction/variant/:id" element={<UserVariantTransactionDetailsPage />} />
           <Route path="/thank-you" element={<ThankYouPage />} />
           <Route path="/recover-password" element={<RecoverPasswordPage />} />
           <Route path="/admin" element={<AdminDashboardPage />} />
