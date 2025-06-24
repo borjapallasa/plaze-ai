@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -7,6 +8,7 @@ interface CommunitySubscription {
   created_at: string;
   community_name?: string;
   community_thumbnail?: string;
+  community_description?: string;
 }
 
 interface CommunitySubscriptionListViewProps {
@@ -26,6 +28,10 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
       default:
         return "bg-gray-100 text-gray-800 hover:bg-gray-100";
     }
+  };
+
+  const getStatusText = (status: string) => {
+    return status.toLowerCase() === "active" ? "Free" : status;
   };
 
   if (loading) {
@@ -80,12 +86,19 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
                   </h3>
                 </div>
                 
+                {/* Community Description */}
+                {subscription.community_description && (
+                  <p className="text-sm text-muted-foreground line-clamp-2">
+                    {subscription.community_description}
+                  </p>
+                )}
+                
                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <span>Joined {new Date(subscription.created_at).toLocaleDateString()}</span>
+                  <span>•</span>
                   <span className="break-all">
                     UUID: {subscription.community_subscription_uuid}
                   </span>
-                  <span>•</span>
-                  <span>Joined {new Date(subscription.created_at).toLocaleDateString()}</span>
                 </div>
               </div>
             </div>
@@ -95,7 +108,7 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
                 variant="secondary" 
                 className={`${getStatusColor(subscription.status)} capitalize`}
               >
-                {subscription.status}
+                {getStatusText(subscription.status)}
               </Badge>
             </div>
           </div>

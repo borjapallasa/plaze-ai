@@ -1,6 +1,5 @@
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Users } from "lucide-react";
 
 interface CommunitySubscription {
   community_subscription_uuid: string;
@@ -41,21 +40,15 @@ export function CommunitySubscriptionCard({ subscription }: CommunitySubscriptio
         
         {/* Community Description */}
         {subscription.community_description && (
-          <p className="text-sm text-muted-foreground line-clamp-2">
+          <p className="text-sm text-muted-foreground line-clamp-3 flex-1">
             {subscription.community_description}
           </p>
         )}
         
-        {/* Joined Date */}
-        <p className="text-sm text-muted-foreground line-clamp-2 flex-1">
-          Joined on {new Date(subscription.created_at).toLocaleDateString()}
-        </p>
-        
-        {/* Community Stats */}
+        {/* Bottom section with joined date and price */}
         <div className="flex items-center justify-between text-sm mt-auto">
-          <div className="flex items-center gap-1 text-muted-foreground">
-            <Users className="h-4 w-4" />
-            <span>Member</span>
+          <div className="text-muted-foreground">
+            <span>Joined {new Date(subscription.created_at).toLocaleDateString()}</span>
           </div>
           
           <div className={`font-medium ${getStatusColor(subscription.status)}`}>
