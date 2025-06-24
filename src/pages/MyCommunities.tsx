@@ -101,7 +101,6 @@ export default function MyCommunities() {
   }, []);
 
   const filteredSubscriptions = subscriptions.filter(subscription =>
-    subscription.community_subscription_uuid?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     subscription.community_name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -144,7 +143,7 @@ export default function MyCommunities() {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
-                  placeholder="Type here to search by subscription UUID or community name"
+                  placeholder="Search by community name"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-9"
@@ -161,7 +160,7 @@ export default function MyCommunities() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
-                  placeholder="Type here to search by subscription UUID or community name"
+                  placeholder="Search by community name"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-9"
