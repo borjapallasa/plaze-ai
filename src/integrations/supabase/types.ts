@@ -1723,6 +1723,7 @@ export type Database = {
           comments: string | null
           created_at: string
           expert_uuid: string | null
+          product_transaction_item_uuid: string | null
           product_uuid: string | null
           rating: number | null
           review_uuid: string
@@ -1732,7 +1733,6 @@ export type Database = {
           transaction_type:
             | Database["public"]["Enums"]["transaction_type"]
             | null
-          transaction_uuid: string | null
           type: Database["public"]["Enums"]["review_type"] | null
           verified: boolean | null
         }
@@ -1742,6 +1742,7 @@ export type Database = {
           comments?: string | null
           created_at?: string
           expert_uuid?: string | null
+          product_transaction_item_uuid?: string | null
           product_uuid?: string | null
           rating?: number | null
           review_uuid?: string
@@ -1751,7 +1752,6 @@ export type Database = {
           transaction_type?:
             | Database["public"]["Enums"]["transaction_type"]
             | null
-          transaction_uuid?: string | null
           type?: Database["public"]["Enums"]["review_type"] | null
           verified?: boolean | null
         }
@@ -1761,6 +1761,7 @@ export type Database = {
           comments?: string | null
           created_at?: string
           expert_uuid?: string | null
+          product_transaction_item_uuid?: string | null
           product_uuid?: string | null
           rating?: number | null
           review_uuid?: string
@@ -1770,7 +1771,6 @@ export type Database = {
           transaction_type?:
             | Database["public"]["Enums"]["transaction_type"]
             | null
-          transaction_uuid?: string | null
           type?: Database["public"]["Enums"]["review_type"] | null
           verified?: boolean | null
         }
@@ -1781,6 +1781,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "experts"
             referencedColumns: ["expert_uuid"]
+          },
+          {
+            foreignKeyName: "reviews_product_transaction_item_uuid_fkey"
+            columns: ["product_transaction_item_uuid"]
+            isOneToOne: false
+            referencedRelation: "products_transaction_items"
+            referencedColumns: ["product_transaction_item_uuid"]
           },
           {
             foreignKeyName: "reviews_product_uuid_fkey"
@@ -1795,13 +1802,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["user_uuid"]
-          },
-          {
-            foreignKeyName: "reviews_transaction_uuid_fkey"
-            columns: ["transaction_uuid"]
-            isOneToOne: false
-            referencedRelation: "transactions"
-            referencedColumns: ["transaction_uuid"]
           },
         ]
       }

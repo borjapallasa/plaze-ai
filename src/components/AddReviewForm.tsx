@@ -46,14 +46,14 @@ export function AddReviewForm({ transactionUuid, sellerUserUuid, onReviewAdded }
       console.log('Attempting to insert review with rating:', rating);
       console.log('Title:', title);
       console.log('Comments:', comments);
-      console.log('Transaction UUID (item UUID):', transactionUuid);
+      console.log('Product Transaction Item UUID:', transactionUuid);
 
       // Get user's first and last name from user metadata or profiles
       const firstName = user.user_metadata?.first_name || '';
       const lastName = user.user_metadata?.last_name || '';
       const buyerName = `${firstName} ${lastName}`.trim() || user.email;
 
-      // For item-level reviews, we use the transaction item UUID as the transaction_uuid
+      // For item-level reviews, we use the product_transaction_item_uuid
       const { error } = await supabase
         .from('reviews')
         .insert({
@@ -64,7 +64,7 @@ export function AddReviewForm({ transactionUuid, sellerUserUuid, onReviewAdded }
           status: 'published',
           buyer_name: buyerName,
           buyer_email: user.email,
-          transaction_uuid: transactionUuid // This is now the item UUID
+          product_transaction_item_uuid: transactionUuid // This is the item UUID
         });
 
       if (error) {

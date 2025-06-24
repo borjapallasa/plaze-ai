@@ -1,6 +1,7 @@
+
 import { Star } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useTransactionReview } from "@/hooks/use-transaction-review";
+import { useTransactionItemReview } from "@/hooks/use-transaction-item-review";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AddReviewForm } from "@/components/AddReviewForm";
 
@@ -15,7 +16,7 @@ export function TransactionReview({ transactionUuid, sellerUserUuid }: Transacti
     isLoading,
     error,
     refetch
-  } = useTransactionReview(transactionUuid);
+  } = useTransactionItemReview(transactionUuid);
 
   const renderStars = (rating: number) => {
     return Array(5).fill(0).map((_, index) => (
@@ -86,7 +87,7 @@ export function TransactionReview({ transactionUuid, sellerUserUuid }: Transacti
                     <h3 className="font-medium text-[#1A1F2C]">{review.title}</h3>
                   )}
                   
-                  <blockquote className="text-[#1A1F2C] italic border-l-4 border-[#9b87f5] pl-4 py-2 break-words">
+                  <blockquote className="text-[#1A1F2C] italic border-l-4 border-gray-300 pl-4 py-2 break-words">
                     "{review.comments || 'No additional comments provided'}"
                   </blockquote>
                   
