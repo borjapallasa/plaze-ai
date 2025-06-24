@@ -162,7 +162,7 @@ export default function UserTransactionItemDetails() {
               <div className="space-y-6">
                 <h3 className="text-xl font-semibold text-[#1A1F2C]">Your Download</h3>
                 
-                <div className="bg-blue-50 border border-blue-200 p-6 rounded-lg">
+                <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
                     <div className="flex-1">
                       <h4 className="font-semibold text-[#1A1F2C] mb-1">{transactionItem.variants.name}</h4>
@@ -181,8 +181,8 @@ export default function UserTransactionItemDetails() {
                   
                   {/* Instructions for using the files */}
                   {transactionItem.variants?.additional_details && (
-                    <div className="border-t border-blue-200 pt-4">
-                      <h5 className="text-sm font-semibold text-[#1A1F2C] mb-2">Instructions</h5>
+                    <div className="border-t border-gray-200 pt-4">
+                      <h5 className="text-sm font-semibold text-[#1A1F2C] mb-2">Instructions for Use</h5>
                       <div className="prose prose-sm max-w-none">
                         <p className="text-[#8E9196] text-sm whitespace-pre-wrap">{transactionItem.variants.additional_details}</p>
                       </div>
