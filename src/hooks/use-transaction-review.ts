@@ -13,9 +13,9 @@ export interface TransactionReview {
 }
 
 export function useTransactionReview(transactionUuid: string) {
-  return useQuery({
+  return useQuery<TransactionReview[]>({
     queryKey: ['transaction-review', transactionUuid],
-    queryFn: async (): Promise<TransactionReview[]> => {
+    queryFn: async () => {
       console.log('Fetching reviews for transaction:', transactionUuid);
       
       if (!transactionUuid) {

@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { LayoutSelector } from "@/components/transactions/LayoutSelector";
 import { CommunitySubscriptionCard } from "@/components/communities/CommunitySubscriptionCard";
 import { CommunitySubscriptionListView } from "@/components/communities/CommunitySubscriptionListView";
+import { CommunitySubscriptionSortSelector } from "@/components/communities/CommunitySubscriptionSortSelector";
 
 interface CommunitySubscription {
   community_subscription_uuid: string;
@@ -27,6 +28,7 @@ export default function MyCommunities() {
   const [subscriptions, setSubscriptions] = useState<CommunitySubscription[]>([]);
   const [loading, setLoading] = useState(true);
   const [layout, setLayout] = useState<"table" | "list">("table");
+  const [sortBy, setSortBy] = useState("date-desc");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -101,6 +103,21 @@ export default function MyCommunities() {
     subscription.community_name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const sortedSubscriptions = [...filteredSubscriptions].sort((a, b) => {
+    switch (sortBy) {
+      case "name-asc":
+        return (a.community_name || "").localeCompare(b.community_name || "");
+      case "name-desc":
+        return (b.community_name || "").localeCompare(a.community_name || "");
+      case "date-asc":
+        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+      case "date-desc":
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      default:
+        return 0;
+    }
+  });
+
   return (
     <div className="bg-background min-h-screen">
       <MainHeader />
@@ -113,9 +130,9 @@ export default function MyCommunities() {
             </Button>
           </div>
 
-          {/* Search Bar and Layout Selector */}
+          {/* Search Bar, Sort Selector and Layout Selector */}
           <div className="space-y-4">
-            {/* Mobile layout - only search input */}
+            {/* Mobile layout - only search input and sort */}
             <div className="md:hidden space-y-3">
               {/* Search input - full width on mobile */}
               <div className="relative">
@@ -127,9 +144,14 @@ export default function MyCommunities() {
                   className="pl-9"
                 />
               </div>
+              
+              {/* Sort selector on mobile */}
+              <div className="flex justify-end">
+                <CommunitySubscriptionSortSelector sortBy={sortBy} onSortChange={setSortBy} />
+              </div>
             </div>
 
-            {/* Desktop/Tablet layout - search input and layout selector */}
+            {/* Desktop/Tablet layout - search input, sort selector and layout selector */}
             <div className="hidden md:flex md:items-center gap-3">
               {/* Search input */}
               <div className="relative flex-1">
@@ -141,6 +163,9 @@ export default function MyCommunities() {
                   className="pl-9"
                 />
               </div>
+              
+              {/* Sort selector */}
+              <CommunitySubscriptionSortSelector sortBy={sortBy} onSortChange={setSortBy} />
               
               {/* Layout selector - only on desktop */}
               <LayoutSelector layout={layout} onLayoutChange={setLayout} />
@@ -170,7 +195,7 @@ export default function MyCommunities() {
               {/* Mobile: Always show gallery layout */}
               <div className="md:hidden">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredSubscriptions.map((subscription) => (
+                  {sortedSubscriptions.map((subscription) => (
                     <CommunitySubscriptionCard
                       key={subscription.community_subscription_uuid}
                       subscription={subscription}
@@ -183,12 +208,12 @@ export default function MyCommunities() {
               <div className="hidden md:block">
                 {layout === "list" ? (
                   <CommunitySubscriptionListView
-                    subscriptions={filteredSubscriptions}
+                    subscriptions={sortedSubscriptions}
                     loading={loading}
                   />
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredSubscriptions.map((subscription) => (
+                    {sortedSubscriptions.map((subscription) => (
                       <CommunitySubscriptionCard
                         key={subscription.community_subscription_uuid}
                         subscription={subscription}
@@ -201,7 +226,7 @@ export default function MyCommunities() {
           )}
 
           {/* See More Button - Only show if we have subscriptions */}
-          {!loading && filteredSubscriptions.length > 0 && (
+          {!loading && sortedSubscriptions.length > 0 && (
             <div className="flex justify-center">
               <Button 
                 variant="outline" 
