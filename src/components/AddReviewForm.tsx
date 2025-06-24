@@ -41,12 +41,19 @@ export function AddReviewForm({ transactionUuid, sellerUserUuid, onReviewAdded }
       return;
     }
 
+    if (!transactionUuid) {
+      toast.error("Missing transaction information");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      console.log('Attempting to insert review with rating:', rating);
-      console.log('Title:', title);
-      console.log('Comments:', comments);
+      console.log('Attempting to insert review with:');
+      console.log('- transaction_uuid:', transactionUuid);
+      console.log('- rating:', rating);
+      console.log('- title:', title);
+      console.log('- comments:', comments);
 
       // Get user's first and last name from user metadata or profiles
       const firstName = user.user_metadata?.first_name || '';
@@ -56,6 +63,7 @@ export function AddReviewForm({ transactionUuid, sellerUserUuid, onReviewAdded }
       const { error } = await supabase
         .from('reviews')
         .insert({
+          transaction_uuid: transactionUuid,
           rating,
           title: title.trim() || null,
           comments: comments.trim(),
@@ -170,7 +178,7 @@ export function AddReviewForm({ transactionUuid, sellerUserUuid, onReviewAdded }
 
           <Button 
             type="submit" 
-            disabled={isSubmitting || rating === 0}
+            disabled={isSubmitting || rating === 0 || !transactionUuid}
             className="w-full"
           >
             {isSubmitting ? "Submitting..." : "Submit Review"}

@@ -269,10 +269,10 @@ export default function UserTransactionDetails() {
                   customRequest=""
                 />
 
-                {/* Reviews section - use the correct transaction UUID */}
+                {/* Reviews section - use the correct actualTransactionUuid */}
                 <Separator className="my-8" />
                 <TransactionReview 
-                  transactionUuid={transactionId || ''} 
+                  transactionUuid={actualTransactionUuid || ''} 
                   sellerUserUuid={sellerUserUuid}
                 />
               </>
