@@ -12,17 +12,19 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react";
+import { useLeaveCommunity } from "@/hooks/use-leave-community";
 
 interface LeaveCommunityDialogProps {
   communityName?: string;
-  onConfirmLeave: () => void;
+  subscriptionUuid: string;
 }
 
-export function LeaveCommunityDialog({ communityName, onConfirmLeave }: LeaveCommunityDialogProps) {
+export function LeaveCommunityDialog({ communityName, subscriptionUuid }: LeaveCommunityDialogProps) {
   const [open, setOpen] = useState(false);
+  const leaveCommunityMutation = useLeaveCommunity();
 
   const handleConfirm = () => {
-    onConfirmLeave();
+    leaveCommunityMutation.mutate(subscriptionUuid);
     setOpen(false);
   };
 
@@ -48,8 +50,12 @@ export function LeaveCommunityDialog({ communityName, onConfirmLeave }: LeaveCom
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirm} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Leave Community
+            <AlertDialogAction 
+              onClick={handleConfirm} 
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={leaveCommunityMutation.isPending}
+            >
+              {leaveCommunityMutation.isPending ? "Leaving..." : "Leave Community"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

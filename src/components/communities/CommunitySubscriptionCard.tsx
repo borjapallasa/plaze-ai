@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -38,11 +37,6 @@ export function CommunitySubscriptionCard({ subscription }: CommunitySubscriptio
     } else {
       console.error('No community UUID available for navigation');
     }
-  };
-
-  const handleLeaveCommunity = () => {
-    console.log('Leave community for:', subscription.community_subscription_uuid);
-    // TODO: Implement actual leave community functionality
   };
 
   return (
@@ -96,7 +90,7 @@ export function CommunitySubscriptionCard({ subscription }: CommunitySubscriptio
           {/* Leave Community Dialog */}
           <LeaveCommunityDialog 
             communityName={subscription.community_name}
-            onConfirmLeave={handleLeaveCommunity}
+            subscriptionUuid={subscription.community_subscription_uuid}
           />
         </div>
       </CardContent>

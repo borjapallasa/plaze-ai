@@ -158,7 +158,7 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
               </Button>
               <LeaveCommunityDialog 
                 communityName={subscription.community_name}
-                onConfirmLeave={() => handleLeaveCommunity(subscription.community_subscription_uuid)}
+                subscriptionUuid={subscription.community_subscription_uuid}
               />
             </div>
           </div>
@@ -225,7 +225,7 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
 
               <LeaveCommunityDialog 
                 communityName={subscription.community_name}
-                onConfirmLeave={() => handleLeaveCommunity(subscription.community_subscription_uuid)}
+                subscriptionUuid={subscription.community_subscription_uuid}
               />
             </div>
           </div>
