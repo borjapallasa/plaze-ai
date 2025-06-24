@@ -7,6 +7,7 @@ export interface ConversationMessage {
   user_uuid: string;
   user_name: string;
   conversation_uuid: string;
+  content: string;
   created_at: string;
 }
 
@@ -23,7 +24,7 @@ export function useConversationMessages(conversationUuid: string | null) {
       
       const { data: messages, error } = await supabase
         .from('messages')
-        .select('message_uuid, user_uuid, user_name, conversation_uuid, created_at')
+        .select('message_uuid, user_uuid, user_name, conversation_uuid, content, created_at')
         .eq('conversation_uuid', conversationUuid)
         .order('created_at', { ascending: false });
 

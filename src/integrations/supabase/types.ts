@@ -1170,6 +1170,7 @@ export type Database = {
       }
       messages: {
         Row: {
+          content: string | null
           conversation_uuid: string | null
           created_at: string
           id: number
@@ -1178,6 +1179,7 @@ export type Database = {
           user_uuid: string | null
         }
         Insert: {
+          content?: string | null
           conversation_uuid?: string | null
           created_at?: string
           id?: number
@@ -1186,6 +1188,7 @@ export type Database = {
           user_uuid?: string | null
         }
         Update: {
+          content?: string | null
           conversation_uuid?: string | null
           created_at?: string
           id?: number

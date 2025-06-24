@@ -222,7 +222,9 @@ export default function Chats() {
                                   : 'bg-accent rounded-bl-none'
                               }`}
                             >
-                              <p className="text-sm whitespace-pre-wrap break-words">Message content not available</p>
+                              <p className="text-sm whitespace-pre-wrap break-words">
+                                {message.content || "No content available"}
+                              </p>
                             </div>
                             {isOutgoing && (
                               <div className="flex items-center gap-1 mt-1">
