@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
@@ -66,6 +65,13 @@ export default function Chats() {
     const timeDifference = currentTime - previousTime;
     
     return timeDifference > 5 * 60 * 1000; // 5 minutes
+  };
+
+  // Helper function to check if a message should show "Sent" status
+  const shouldShowSentStatus = (currentIndex: number, messages: any[]) => {
+    if (currentIndex !== messages.length - 1) return false; // Only show for last message
+    const currentMessage = messages[currentIndex];
+    return currentMessage.user_uuid === user?.id; // Only show for outgoing messages
   };
 
   const handlePinChat = () => {
@@ -272,6 +278,7 @@ export default function Chats() {
                 const isBeingEdited = editingMessageId === message.message_uuid;
                 const showUserInfo = shouldShowUserInfo(index, messages);
                 const showTimestamp = shouldShowTimestamp(index, messages);
+                const showSentStatus = shouldShowSentStatus(index, messages);
                 
                 return <div key={message.message_uuid} className={`flex gap-3 ${isOutgoing ? 'flex-row-reverse' : ''} ${showUserInfo ? 'mt-6 first:mt-0' : 'mt-1'}`}>
                           {showUserInfo && (
@@ -310,7 +317,7 @@ export default function Chats() {
                                 </Button>
                               )}
                             </div>
-                            {isOutgoing && showUserInfo && <div className="flex items-center gap-1 mt-1">
+                            {isOutgoing && showSentStatus && <div className="flex items-center gap-1 mt-1">
                                 <span className="text-xs text-muted-foreground">Sent</span>
                                 <Check className="h-3 w-3 text-muted-foreground" />
                               </div>}
