@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MainHeader } from "@/components/MainHeader";
 import { ArrowLeft, Copy } from "lucide-react";
@@ -259,6 +260,7 @@ export default function UserTransactionItemDetails() {
             <Separator className="my-8" />
             <TransactionReview 
               transactionUuid={itemId || ''} 
+              productUuid={transactionItem.product_uuid}
             />
           </CardContent>
         </Card>

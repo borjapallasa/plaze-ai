@@ -11,10 +11,11 @@ import { useAuth } from "@/lib/auth";
 
 interface AddReviewFormProps {
   transactionUuid: string;
+  productUuid?: string;
   onReviewAdded?: () => void;
 }
 
-export function AddReviewForm({ transactionUuid, onReviewAdded }: AddReviewFormProps) {
+export function AddReviewForm({ transactionUuid, productUuid, onReviewAdded }: AddReviewFormProps) {
   const { user } = useAuth();
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
@@ -47,18 +48,20 @@ export function AddReviewForm({ transactionUuid, onReviewAdded }: AddReviewFormP
       console.log('Title:', title);
       console.log('Comments:', comments);
       console.log('Product Transaction Item UUID:', transactionUuid);
+      console.log('Product UUID:', productUuid);
 
       // Get user's first and last name from user metadata
       const firstName = user.user_metadata?.first_name || '';
       const lastName = user.user_metadata?.last_name || '';
       const buyerName = `${firstName} ${lastName}`.trim() || user.email;
 
-      // Insert review with basic required fields
+      // Insert review with basic required fields, including product_uuid
       const reviewData = {
         rating,
         title: title.trim() || null,
         comments: comments.trim(),
         product_transaction_item_uuid: transactionUuid,
+        product_uuid: productUuid,
         buyer_name: buyerName,
         transaction_type: 'product' as const,
         type: 'product' as const,

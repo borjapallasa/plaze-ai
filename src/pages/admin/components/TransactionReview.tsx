@@ -7,10 +7,12 @@ import { AddReviewForm } from "@/components/AddReviewForm";
 
 interface TransactionReviewProps {
   transactionUuid: string;
+  productUuid?: string;
 }
 
-export function TransactionReview({ transactionUuid }: TransactionReviewProps) {
+export function TransactionReview({ transactionUuid, productUuid }: TransactionReviewProps) {
   console.log('TransactionReview - transactionUuid:', transactionUuid);
+  console.log('TransactionReview - productUuid:', productUuid);
   
   const {
     data: reviews,
@@ -108,6 +110,7 @@ export function TransactionReview({ transactionUuid }: TransactionReviewProps) {
   return (
     <AddReviewForm 
       transactionUuid={transactionUuid} 
+      productUuid={productUuid}
       onReviewAdded={handleReviewAdded} 
     />
   );
