@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { 
   Search, Loader2
@@ -10,11 +9,21 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { LayoutSelector } from "@/components/transactions/LayoutSelector";
+import { CommunitySubscriptionCard } from "@/components/communities/CommunitySubscriptionCard";
+import { CommunitySubscriptionListView } from "@/components/communities/CommunitySubscriptionListView";
+
+interface CommunitySubscription {
+  community_subscription_uuid: string;
+  status: string;
+  created_at: string;
+}
 
 export default function MyCommunities() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [subscriptions, setSubscriptions] = useState([]);
+  const [subscriptions, setSubscriptions] = useState<CommunitySubscription[]>([]);
   const [loading, setLoading] = useState(true);
+  const [layout, setLayout] = useState<"table" | "list">("table");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -80,15 +89,43 @@ export default function MyCommunities() {
             </Button>
           </div>
 
-          {/* Search Bar */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              placeholder="Type here to search by subscription UUID"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
-            />
+          {/* Search Bar and Layout Selector */}
+          <div className="space-y-4">
+            {/* Mobile layout - three lines */}
+            <div className="md:hidden space-y-3">
+              {/* Search input - full width on mobile */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <Input
+                  placeholder="Type here to search by subscription UUID"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+              
+              {/* Layout selector - separate line on mobile */}
+              <div className="flex justify-end">
+                <LayoutSelector layout={layout} onLayoutChange={setLayout} />
+              </div>
+            </div>
+
+            {/* Desktop/Tablet layout - all in one line */}
+            <div className="hidden md:flex md:items-center gap-3">
+              {/* Search input */}
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <Input
+                  placeholder="Type here to search by subscription UUID"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+              
+              {/* Layout selector */}
+              <LayoutSelector layout={layout} onLayoutChange={setLayout} />
+            </div>
           </div>
 
           {/* Loading State */}
@@ -108,31 +145,25 @@ export default function MyCommunities() {
             </div>
           )}
 
-          {/* Subscriptions List */}
+          {/* Subscriptions Display */}
           {!loading && subscriptions.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredSubscriptions.map((subscription) => (
-                <Card
-                  key={subscription.community_subscription_uuid}
-                  className="p-4 space-y-4"
-                >
-                  <div>
-                    <h3 className="font-semibold text-lg leading-tight mb-2">
-                      Subscription
-                    </h3>
-                    <p className="text-sm text-muted-foreground break-all">
-                      UUID: {subscription.community_subscription_uuid}
-                    </p>
-                    <p className="text-sm text-muted-foreground mt-2">
-                      Status: {subscription.status}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      Created: {new Date(subscription.created_at).toLocaleDateString()}
-                    </p>
-                  </div>
-                </Card>
-              ))}
-            </div>
+            <>
+              {layout === "list" ? (
+                <CommunitySubscriptionListView
+                  subscriptions={filteredSubscriptions}
+                  loading={loading}
+                />
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredSubscriptions.map((subscription) => (
+                    <CommunitySubscriptionCard
+                      key={subscription.community_subscription_uuid}
+                      subscription={subscription}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
           )}
 
           {/* See More Button - Only show if we have subscriptions */}
