@@ -133,7 +133,7 @@ export default function MyCommunities() {
       <main className="container mx-auto px-4 py-4 pt-24 max-w-[1400px]">
         <div className="space-y-6">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-semibold">My Community Subscriptions</h1>
+            <h1 className="text-2xl font-semibold">My Communities</h1>
             <Button variant="outline" size="sm" onClick={() => navigate("/communities")}>
               Browse Communities
             </Button>
