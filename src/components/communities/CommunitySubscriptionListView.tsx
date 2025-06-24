@@ -2,6 +2,7 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { Calendar, Settings, ExternalLink } from "lucide-react";
 
 interface CommunitySubscription {
@@ -40,8 +41,8 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
     return (
       <div className="space-y-4">
         {[...Array(5)].map((_, index) => (
-          <Card key={index} className="p-6 animate-pulse">
-            <div className="flex justify-between items-start gap-4">
+          <Card key={index} className="p-4 animate-pulse">
+            <div className="flex items-center gap-4">
               <div className="w-16 h-16 bg-gray-200 rounded-lg flex-shrink-0"></div>
               <div className="flex-1 space-y-2">
                 <div className="h-5 bg-gray-200 rounded w-1/3"></div>
@@ -50,7 +51,6 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
               <div className="flex flex-col items-end gap-2">
                 <div className="h-3 bg-gray-200 rounded w-20"></div>
                 <div className="h-6 bg-gray-200 rounded w-12"></div>
-                <div className="h-8 bg-gray-200 rounded w-24"></div>
               </div>
             </div>
           </Card>
@@ -72,11 +72,10 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
       {subscriptions.map((subscription) => (
         <Card 
           key={subscription.community_subscription_uuid}
-          className="p-6 hover:shadow-md transition-all duration-200 hover:bg-slate-50/50"
+          className="p-4 hover:shadow-md transition-shadow duration-200"
         >
-          {/* 3-column flex layout */}
-          <div className="flex justify-between items-start gap-4 md:gap-6">
-            {/* Left: Avatar/Logo */}
+          <div className="flex items-center gap-4">
+            {/* Community Thumbnail - Fixed square size */}
             <div className="w-16 h-16 flex-shrink-0">
               <img 
                 src={subscription.community_thumbnail || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f"} 
@@ -85,113 +84,72 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
               />
             </div>
             
-            {/* Center: Title and Description */}
-            <div className="flex-1 min-w-0 space-y-2">
-              {/* Community Name */}
-              <h3 className="font-semibold text-lg text-foreground truncate">
+            {/* Main Content - Flex grow to take remaining space */}
+            <div className="flex-1 min-w-0">
+              {/* Community Name - Bold, larger */}
+              <h3 className="font-semibold text-lg text-foreground mb-1 truncate">
                 {subscription.community_name || "Community Subscription"}
               </h3>
               
-              {/* Community Description with proper line clamping */}
+              {/* Community Description - Limited to 2 lines with ellipsis */}
               {subscription.community_description && (
-                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2 overflow-hidden">
+                <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
                   {subscription.community_description}
                 </p>
               )}
             </div>
             
-            {/* Right: Meta + Buttons (vertically stacked) */}
-            <div className="flex flex-col items-end gap-3 min-w-[160px]">
-              {/* Meta section */}
-              <div className="flex flex-col items-end gap-2">
-                {/* Joined Date */}
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Calendar className="h-3 w-3" />
-                  <span>Joined {new Date(subscription.created_at).toLocaleDateString()}</span>
-                </div>
-                
-                {/* Status Badge with better spacing */}
-                <Badge 
-                  variant="secondary" 
-                  className={`${getStatusColor(subscription.status)} text-xs px-2 py-1 font-medium capitalize`}
-                >
-                  {getStatusText(subscription.status)}
-                </Badge>
+            {/* Vertical Separator */}
+            <Separator orientation="vertical" className="h-12 mx-2" />
+            
+            {/* Right Section - Date and Status */}
+            <div className="flex flex-col items-end justify-start gap-2 min-w-[160px]">
+              {/* Joined Date - Small gray text */}
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <Calendar className="h-3 w-3" />
+                <span>Joined {new Date(subscription.created_at).toLocaleDateString()}</span>
               </div>
               
-              {/* Action Buttons section with proper hierarchy */}
-              <div className="flex flex-col gap-2 w-full min-w-[140px]">
-                {/* Primary: Open Community Button */}
-                <Button 
-                  size="sm" 
-                  className="text-xs h-8 w-full bg-gray-900 hover:bg-gray-800 text-white font-medium"
-                  onClick={() => {
-                    // TODO: Navigate to community page
-                    console.log('Open community for:', subscription.community_subscription_uuid);
-                  }}
-                >
-                  <ExternalLink className="h-3 w-3 mr-1" />
-                  Open Community
-                </Button>
-
-                {/* Secondary: Manage Button */}
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="text-xs h-8 w-full border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900"
-                  onClick={() => {
-                    // TODO: Navigate to community membership management page
-                    console.log('Manage membership for:', subscription.community_subscription_uuid);
-                  }}
-                >
-                  <Settings className="h-3 w-3 mr-1" />
-                  Manage
-                </Button>
-              </div>
+              {/* Status Badge - Enhanced styling */}
+              <Badge 
+                variant="secondary" 
+                className={`${getStatusColor(subscription.status)} text-xs px-2 py-1 font-medium capitalize`}
+              >
+                {getStatusText(subscription.status)}
+              </Badge>
             </div>
-          </div>
-          
-          {/* Mobile responsive layout */}
-          <div className="md:hidden mt-4 pt-4 border-t border-gray-200">
-            <div className="flex flex-col gap-3">
-              {/* Meta section for mobile */}
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <div className="flex items-center gap-1">
-                  <Calendar className="h-3 w-3" />
-                  <span>Joined {new Date(subscription.created_at).toLocaleDateString()}</span>
-                </div>
-                <Badge 
-                  variant="secondary" 
-                  className={`${getStatusColor(subscription.status)} text-xs px-2 py-1 font-medium capitalize`}
-                >
-                  {getStatusText(subscription.status)}
-                </Badge>
-              </div>
-              
-              {/* Mobile buttons - horizontal layout */}
-              <div className="flex gap-2">
-                <Button 
-                  size="sm" 
-                  className="flex-1 text-xs h-8 bg-gray-900 hover:bg-gray-800 text-white font-medium"
-                  onClick={() => {
-                    console.log('Open community for:', subscription.community_subscription_uuid);
-                  }}
-                >
-                  <ExternalLink className="h-3 w-3 mr-1" />
-                  Open
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="flex-1 text-xs h-8 border-gray-300 text-gray-700 hover:bg-gray-50"
-                  onClick={() => {
-                    console.log('Manage membership for:', subscription.community_subscription_uuid);
-                  }}
-                >
-                  <Settings className="h-3 w-3 mr-1" />
-                  Manage
-                </Button>
-              </div>
+            
+            {/* Vertical Separator for Actions */}
+            <Separator orientation="vertical" className="h-12 mx-2" />
+            
+            {/* Action Buttons Section */}
+            <div className="flex flex-col gap-2 min-w-[140px]">
+              {/* Open Community Button - Primary */}
+              <Button 
+                size="sm" 
+                className="text-xs h-7 w-full"
+                onClick={() => {
+                  // TODO: Navigate to community page
+                  console.log('Open community for:', subscription.community_subscription_uuid);
+                }}
+              >
+                <ExternalLink className="h-3 w-3 mr-1" />
+                Open Community
+              </Button>
+
+              {/* Manage Membership Button - Secondary */}
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="text-xs h-7 w-full"
+                onClick={() => {
+                  // TODO: Navigate to community membership management page
+                  console.log('Manage membership for:', subscription.community_subscription_uuid);
+                }}
+              >
+                <Settings className="h-3 w-3 mr-1" />
+                Manage
+              </Button>
             </div>
           </div>
         </Card>
