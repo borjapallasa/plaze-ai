@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -48,7 +47,7 @@ export function AddReviewForm({ transactionUuid, sellerUserUuid, onReviewAdded }
       console.log('Title:', title);
       console.log('Comments:', comments);
       console.log('Product Transaction Item UUID:', transactionUuid);
-      console.log('Seller User UUID (expert_uuid):', sellerUserUuid);
+      console.log('Seller User UUID (user_uuid from expert):', sellerUserUuid);
 
       // Get user's first and last name from user metadata
       const firstName = user.user_metadata?.first_name || '';
@@ -68,7 +67,7 @@ export function AddReviewForm({ transactionUuid, sellerUserUuid, onReviewAdded }
         buyer_email: user.email
       };
 
-      // Add seller_user_uuid if provided (this is the expert_uuid)
+      // Add seller_user_uuid if provided (this is now the expert's user_uuid)
       if (sellerUserUuid) {
         (reviewData as any).seller_user_uuid = sellerUserUuid;
         console.log('Including seller_user_uuid in review:', sellerUserUuid);

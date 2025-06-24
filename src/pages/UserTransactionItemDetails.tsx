@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MainHeader } from "@/components/MainHeader";
 import { ArrowLeft, Copy } from "lucide-react";
@@ -36,7 +35,8 @@ export default function UserTransactionItemDetails() {
             thumbnail,
             experts (
               name,
-              expert_uuid
+              expert_uuid,
+              user_uuid
             )
           ),
           variants (
@@ -259,7 +259,7 @@ export default function UserTransactionItemDetails() {
             <Separator className="my-8" />
             <TransactionReview 
               transactionUuid={itemId || ''} 
-              sellerUserUuid={transactionItem?.products?.experts?.expert_uuid}
+              sellerUserUuid={transactionItem?.products?.experts?.user_uuid}
             />
           </CardContent>
         </Card>
