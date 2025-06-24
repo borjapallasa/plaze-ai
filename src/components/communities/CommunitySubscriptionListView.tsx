@@ -1,8 +1,9 @@
+
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Calendar, Settings } from "lucide-react";
+import { Calendar, Settings, ExternalLink } from "lucide-react";
 
 interface CommunitySubscription {
   community_subscription_uuid: string;
@@ -102,7 +103,7 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
             <Separator orientation="vertical" className="h-12 mx-2" />
             
             {/* Right Section - Date, Status, and Actions */}
-            <div className="flex flex-col items-end justify-start gap-2 min-w-[140px]">
+            <div className="flex flex-col items-end justify-start gap-2 min-w-[160px]">
               {/* Joined Date - Small gray text */}
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 <Calendar className="h-3 w-3" />
@@ -117,19 +118,35 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
                 {getStatusText(subscription.status)}
               </Badge>
 
-              {/* Manage Membership Button - More subtle */}
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="text-xs h-6 px-2 text-muted-foreground hover:text-foreground"
-                onClick={() => {
-                  // TODO: Navigate to community membership management page
-                  console.log('Manage membership for:', subscription.community_subscription_uuid);
-                }}
-              >
-                <Settings className="h-3 w-3 mr-1" />
-                Manage
-              </Button>
+              {/* Action Buttons - Horizontal layout */}
+              <div className="flex gap-1 mt-1">
+                {/* Open Community Button - Primary */}
+                <Button 
+                  size="sm" 
+                  className="text-xs h-7 px-3"
+                  onClick={() => {
+                    // TODO: Navigate to community page
+                    console.log('Open community for:', subscription.community_subscription_uuid);
+                  }}
+                >
+                  <ExternalLink className="h-3 w-3 mr-1" />
+                  Open
+                </Button>
+
+                {/* Manage Membership Button - Secondary */}
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-xs h-7 px-3 text-muted-foreground hover:text-foreground"
+                  onClick={() => {
+                    // TODO: Navigate to community membership management page
+                    console.log('Manage membership for:', subscription.community_subscription_uuid);
+                  }}
+                >
+                  <Settings className="h-3 w-3 mr-1" />
+                  Manage
+                </Button>
+              </div>
             </div>
           </div>
         </Card>
