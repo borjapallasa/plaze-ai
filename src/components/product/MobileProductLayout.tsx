@@ -23,6 +23,7 @@ interface MobileProductLayoutProps {
   handleContactSeller: () => void;
   reviews: any[];
   isLoading?: boolean;
+  onLeaveReview?: (variantId: string) => void;
 }
 
 export function MobileProductLayout({
@@ -37,7 +38,8 @@ export function MobileProductLayout({
   onAdditionalVariantToggle,
   handleContactSeller,
   reviews,
-  isLoading = false
+  isLoading = false,
+  onLeaveReview
 }: MobileProductLayoutProps) {
   const embedUrl = getVideoEmbedUrl(product.demo);
 
@@ -87,6 +89,8 @@ export function MobileProductLayout({
           reviews={reviews}
           expert_uuid={product.expert_uuid}
           productUuid={product.product_uuid}
+          selectedVariant={selectedVariant}
+          onLeaveReview={onLeaveReview}
         />
       </div>
     </div>

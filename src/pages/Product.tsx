@@ -44,6 +44,12 @@ export default function Product() {
     closeCartDrawer
   } = useProductState(variants);
 
+  const handleLeaveReview = (variantId: string) => {
+    console.log("Leave review for variant:", variantId);
+    // TODO: Open review dialog or navigate to review page
+    // For now, just log the action
+  };
+
   if (isLoading) {
     return <ProductSkeleton />;
   }
@@ -68,6 +74,7 @@ export default function Product() {
         onAdditionalVariantToggle={handleAdditionalVariantToggle}
         reviews={reviews}
         isLoading={isCartLoading}
+        onLeaveReview={handleLeaveReview}
       />
       <StickyATC
         variants={convertedVariants}

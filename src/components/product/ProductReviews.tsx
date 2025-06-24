@@ -1,5 +1,6 @@
 
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Star, MessageCircle } from "lucide-react";
 import { type Review } from "./types/review";
 import React from "react";
@@ -10,6 +11,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 interface ProductReviewsProps {
   reviews: Review[];
   className?: string;
+  selectedVariant?: string;
+  productUuid?: string;
+  onLeaveReview?: (variantId: string) => void;
 }
 
 const getTypeText = (type: string) => {
@@ -27,7 +31,19 @@ const getTypeText = (type: string) => {
   }
 };
 
-export function ProductReviews({ reviews, className }: ProductReviewsProps) {
+export function ProductReviews({ 
+  reviews, 
+  className, 
+  selectedVariant, 
+  productUuid, 
+  onLeaveReview 
+}: ProductReviewsProps) {
+  const handleLeaveReview = () => {
+    if (selectedVariant && onLeaveReview) {
+      onLeaveReview(selectedVariant);
+    }
+  };
+
   // If no reviews, show the empty state
   if (reviews.length === 0) {
     return (
@@ -57,6 +73,14 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
                 />
               ))}
             </div>
+            {selectedVariant && onLeaveReview && (
+              <Button 
+                onClick={handleLeaveReview}
+                className="mt-4"
+              >
+                Leave a Review
+              </Button>
+            )}
           </div>
         </Card>
       </div>
@@ -67,16 +91,27 @@ export function ProductReviews({ reviews, className }: ProductReviewsProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold tracking-tight">Reviews</h2>
-        <Select defaultValue="recent">
-          <SelectTrigger className="w-[180px] h-9 text-sm">
-            <SelectValue placeholder="Sort by" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="recent">Most Recent</SelectItem>
-            <SelectItem value="highest">Highest Rating</SelectItem>
-            <SelectItem value="lowest">Lowest Rating</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex items-center gap-4">
+          {selectedVariant && onLeaveReview && (
+            <Button 
+              onClick={handleLeaveReview}
+              variant="outline"
+              size="sm"
+            >
+              Leave a Review
+            </Button>
+          )}
+          <Select defaultValue="recent">
+            <SelectTrigger className="w-[180px] h-9 text-sm">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="recent">Most Recent</SelectItem>
+              <SelectItem value="highest">Highest Rating</SelectItem>
+              <SelectItem value="lowest">Lowest Rating</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       
       <Card className={cn("divide-y divide-gray-100", className)}>

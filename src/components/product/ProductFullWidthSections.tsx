@@ -11,18 +11,27 @@ interface ProductFullWidthSectionsProps {
   reviews: Review[];
   expert_uuid?: string;
   productUuid: string;
+  selectedVariant?: string;
+  onLeaveReview?: (variantId: string) => void;
 }
 
 export function ProductFullWidthSections({
   embedUrl,
   reviews,
   expert_uuid,
-  productUuid
+  productUuid,
+  selectedVariant,
+  onLeaveReview
 }: ProductFullWidthSectionsProps) {
   return (
     <>
       <ProductDemo embedUrl={embedUrl} />
-      <ProductReviews reviews={reviews} />
+      <ProductReviews 
+        reviews={reviews} 
+        selectedVariant={selectedVariant}
+        productUuid={productUuid}
+        onLeaveReview={onLeaveReview}
+      />
       <MoreFromSeller expert_uuid={expert_uuid} />
       <SimilarProducts />
     </>

@@ -18,8 +18,9 @@ export function ProductLayout({
   onAddToCart,
   onAdditionalVariantToggle,
   reviews,
-  isLoading = false
-}: ProductLayoutProps) {
+  isLoading = false,
+  onLeaveReview
+}: ProductLayoutProps & { onLeaveReview?: (variantId: string) => void }) {
   const isMobile = useIsMobile();
   const { images, isLoading: isLoadingImages } = useProductImages(product.product_uuid);
 
@@ -55,6 +56,7 @@ export function ProductLayout({
             handleContactSeller={handleContactSeller}
             reviews={reviews}
             isLoading={isLoading}
+            onLeaveReview={onLeaveReview}
           />
         ) : (
           <DesktopProductLayout
@@ -71,6 +73,7 @@ export function ProductLayout({
             isMobile={isMobile}
             reviews={reviews}
             isLoading={isLoading}
+            onLeaveReview={onLeaveReview}
           />
         )}
       </main>

@@ -25,6 +25,7 @@ interface DesktopProductLayoutProps {
   isMobile: boolean;
   reviews: any[];
   isLoading?: boolean;
+  onLeaveReview?: (variantId: string) => void;
 }
 
 export function DesktopProductLayout({
@@ -40,7 +41,8 @@ export function DesktopProductLayout({
   handleContactSeller,
   isMobile,
   reviews,
-  isLoading = false
+  isLoading = false,
+  onLeaveReview
 }: DesktopProductLayoutProps) {
   const embedUrl = getVideoEmbedUrl(product.demo);
 
@@ -98,6 +100,8 @@ export function DesktopProductLayout({
           reviews={reviews}
           expert_uuid={product.expert_uuid}
           productUuid={product.product_uuid}
+          selectedVariant={selectedVariant}
+          onLeaveReview={onLeaveReview}
         />
       </div>
     </>
