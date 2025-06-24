@@ -138,7 +138,7 @@ export default function MyCommunities() {
 
           {/* Search Bar, Sort Selector and Layout Selector */}
           <div className="space-y-4">
-            {/* Mobile layout - only search input and sort */}
+            {/* Mobile layout - search input and sort full width */}
             <div className="md:hidden space-y-3">
               {/* Search input - full width on mobile */}
               <div className="relative">
@@ -151,10 +151,8 @@ export default function MyCommunities() {
                 />
               </div>
               
-              {/* Sort selector on mobile */}
-              <div className="flex justify-end">
-                <CommunitySubscriptionSortSelector sortBy={sortBy} onSortChange={setSortBy} />
-              </div>
+              {/* Sort selector on mobile - full width */}
+              <CommunitySubscriptionSortSelector sortBy={sortBy} onSortChange={setSortBy} />
             </div>
 
             {/* Desktop/Tablet layout - search input, sort selector and layout selector */}

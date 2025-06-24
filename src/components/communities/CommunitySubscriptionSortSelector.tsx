@@ -41,7 +41,7 @@ export function CommunitySubscriptionSortSelector({ sortBy, onSortChange }: Comm
 
   return (
     <Select value={sortBy} onValueChange={onSortChange}>
-      <SelectTrigger className="w-[140px]">
+      <SelectTrigger className="w-full md:w-[140px]">
         <SelectValue placeholder="Sort by" />
       </SelectTrigger>
       <SelectContent>
