@@ -97,7 +97,7 @@ export default function PersonalArea() {
       icon: <ShoppingBag className="w-8 h-8" />,
       title: "My Purchases",
       description: "The area where you can access all your purchased templates.",
-      to: "/product"
+      to: "/account/transactions"
     },
     {
       icon: <MessageCircle className="w-8 h-8" />,
