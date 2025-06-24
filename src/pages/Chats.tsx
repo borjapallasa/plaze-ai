@@ -205,6 +205,9 @@ export default function Chats() {
                         <span className={`h-2 w-2 rounded-full ${selectedChat.online ? 'bg-green-500' : 'bg-muted-foreground'}`} />
                         {selectedChat.online ? "Active now" : "Offline"}
                       </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Total messages: {selectedChat.message_count}
+                      </p>
                     </div>
                   </div>
                   <div className="flex gap-2">
