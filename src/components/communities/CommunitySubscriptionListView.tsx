@@ -1,8 +1,8 @@
-
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Calendar } from "lucide-react";
+import { Calendar, Settings } from "lucide-react";
 
 interface CommunitySubscription {
   community_subscription_uuid: string;
@@ -101,8 +101,8 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
             {/* Vertical Separator */}
             <Separator orientation="vertical" className="h-12 mx-2" />
             
-            {/* Right Section - Date and Status aligned to top */}
-            <div className="flex flex-col items-end justify-start gap-2 min-w-[120px]">
+            {/* Right Section - Date, Status, and Actions */}
+            <div className="flex flex-col items-end justify-start gap-2 min-w-[140px]">
               {/* Joined Date - Small gray text */}
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 <Calendar className="h-3 w-3" />
@@ -116,6 +116,20 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
               >
                 {getStatusText(subscription.status)}
               </Badge>
+
+              {/* Manage Membership Button */}
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="text-xs h-7 px-2 gap-1"
+                onClick={() => {
+                  // TODO: Navigate to community membership management page
+                  console.log('Manage membership for:', subscription.community_subscription_uuid);
+                }}
+              >
+                <Settings className="h-3 w-3" />
+                Manage Membership
+              </Button>
             </div>
           </div>
         </Card>
