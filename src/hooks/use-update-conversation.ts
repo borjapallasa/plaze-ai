@@ -19,12 +19,30 @@ export function useUpdateConversation() {
     mutationFn: async ({ conversationUuid, updates }: UpdateConversationParams) => {
       console.log('Updating conversation:', { conversationUuid, updates });
       
+      // First check if the conversation exists
+      const { data: existingConversation, error: checkError } = await supabase
+        .from('conversations')
+        .select('conversation_uuid')
+        .eq('conversation_uuid', conversationUuid)
+        .maybeSingle();
+
+      if (checkError) {
+        console.error('Error checking conversation existence:', checkError);
+        throw checkError;
+      }
+
+      if (!existingConversation) {
+        console.error('Conversation not found:', conversationUuid);
+        throw new Error('Conversation not found');
+      }
+
+      // Now update the conversation
       const { data, error } = await supabase
         .from('conversations')
         .update(updates)
         .eq('conversation_uuid', conversationUuid)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error('Error updating conversation:', error);
