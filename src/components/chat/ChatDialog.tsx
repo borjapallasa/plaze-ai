@@ -1,12 +1,11 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { MessageCircle, Users, Clock, ArrowLeft, Send, User } from "lucide-react";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -85,8 +84,8 @@ export function ChatDialog() {
   );
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
         <Button 
           variant="ghost" 
           size="icon" 
@@ -98,24 +97,29 @@ export function ChatDialog() {
             <span className="absolute -top-1 -right-1 h-3 w-3 bg-primary rounded-full animate-pulse" />
           )}
         </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-md h-[600px] flex flex-col">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            {selectedConversation && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleBackToList}
-                className="h-6 w-6 -ml-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-            )}
-            <MessageCircle className="h-5 w-5" />
+      </PopoverTrigger>
+      <PopoverContent 
+        className="w-96 h-[600px] p-0 flex flex-col" 
+        align="end"
+        side="bottom"
+        sideOffset={8}
+      >
+        <div className="flex items-center gap-2 p-4 border-b">
+          {selectedConversation && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleBackToList}
+              className="h-6 w-6 -ml-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          )}
+          <MessageCircle className="h-5 w-5" />
+          <h3 className="font-semibold text-lg">
             {selectedConversation ? selectedConversationData?.subject || 'Conversation' : 'Conversations'}
-          </DialogTitle>
-        </DialogHeader>
+          </h3>
+        </div>
         
         <div className="flex-1 overflow-hidden">
           {selectedConversation ? (
@@ -290,7 +294,7 @@ export function ChatDialog() {
             </Button>
           </div>
         )}
-      </DialogContent>
-    </Dialog>
+      </PopoverContent>
+    </Popover>
   );
 }
