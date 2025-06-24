@@ -7,13 +7,11 @@ import { AddReviewForm } from "@/components/AddReviewForm";
 interface TransactionReviewProps {
   transactionUuid: string;
   sellerUserUuid?: string;
-  productUuid?: string;
 }
 
-export function TransactionReview({ transactionUuid, sellerUserUuid, productUuid }: TransactionReviewProps) {
+export function TransactionReview({ transactionUuid, sellerUserUuid }: TransactionReviewProps) {
   console.log('TransactionReview - transactionUuid:', transactionUuid);
   console.log('TransactionReview - sellerUserUuid:', sellerUserUuid);
-  console.log('TransactionReview - productUuid:', productUuid);
   
   const {
     data: reviews,
@@ -112,7 +110,6 @@ export function TransactionReview({ transactionUuid, sellerUserUuid, productUuid
     <AddReviewForm 
       transactionUuid={transactionUuid} 
       sellerUserUuid={sellerUserUuid}
-      productUuid={productUuid}
       onReviewAdded={handleReviewAdded} 
     />
   );
