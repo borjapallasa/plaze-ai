@@ -15,6 +15,8 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useConversations, type Conversation } from "@/hooks/use-conversations";
 import { useConversationMessages } from "@/hooks/use-conversation-messages";
 import { useUpdateMessage } from "@/hooks/use-update-message";
+import { useSendMessage } from "@/hooks/use-send-message";
+import { useUserProfile } from "@/hooks/use-user-profile";
 import { useAuth } from "@/lib/auth";
 
 export default function Chats() {
@@ -36,7 +38,9 @@ export default function Chats() {
     data: messages,
     isLoading: messagesLoading
   } = useConversationMessages(selectedChat?.conversation_uuid || null);
+  const { data: userProfile } = useUserProfile();
   const updateMessage = useUpdateMessage();
+  const sendMessage = useSendMessage();
   const filteredChats = conversations?.filter(chat => chat.otherParticipantName.toLowerCase().includes(searchQuery.toLowerCase()) || chat.subject.toLowerCase().includes(searchQuery.toLowerCase())) || [];
 
   const handlePinChat = () => {
@@ -79,9 +83,17 @@ export default function Chats() {
   const handleSendMessage = () => {
     if (editingMessageId) {
       handleSaveEdit();
-    } else {
-      // Handle new message sending logic here
-      console.log('Send new message:', messageInput);
+    } else if (messageInput.trim() && selectedChat && user && userProfile) {
+      // Send new message
+      const userName = `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() || 'Anonymous';
+      
+      sendMessage.mutate({
+        content: messageInput.trim(),
+        conversationUuid: selectedChat.conversation_uuid,
+        userUuid: user.id,
+        userName: userName,
+        email: user.email || ''
+      });
       setMessageInput("");
     }
   };
@@ -311,7 +323,7 @@ export default function Chats() {
                       size="icon" 
                       className="flex-shrink-0"
                       onClick={handleSendMessage}
-                      disabled={!messageInput.trim() || updateMessage.isPending}
+                      disabled={!messageInput.trim() || updateMessage.isPending || sendMessage.isPending}
                     >
                       <Send className="h-4 w-4" />
                     </Button>
