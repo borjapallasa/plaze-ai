@@ -1,6 +1,7 @@
 
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import { Calendar } from "lucide-react";
 
 interface CommunitySubscription {
@@ -93,6 +94,9 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
                     {subscription.community_description}
                   </p>
                 )}
+                
+                {/* Separator */}
+                <Separator className="my-2" />
                 
                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">

@@ -1,5 +1,6 @@
 
 import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { Calendar } from "lucide-react";
 
 interface CommunitySubscription {
@@ -45,6 +46,9 @@ export function CommunitySubscriptionCard({ subscription }: CommunitySubscriptio
             {subscription.community_description}
           </p>
         )}
+        
+        {/* Separator */}
+        <Separator className="my-2" />
         
         {/* Bottom section with joined date and price */}
         <div className="flex items-center justify-between text-sm mt-auto">
