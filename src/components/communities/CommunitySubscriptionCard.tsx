@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -76,11 +77,11 @@ export function CommunitySubscriptionCard({ subscription }: CommunitySubscriptio
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex gap-2 mt-3">
+        {/* Action Buttons - Stacked Vertically */}
+        <div className="flex flex-col gap-2 mt-3">
           {/* Open Community Button - Primary */}
           <Button 
-            className="flex-1 text-xs h-8"
+            className="w-full text-xs h-8"
             onClick={handleOpenCommunity}
           >
             <ExternalLink className="h-3 w-3 mr-1" />
