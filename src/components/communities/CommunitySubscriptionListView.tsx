@@ -41,11 +41,12 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
       <div className="space-y-4">
         {[...Array(5)].map((_, index) => (
           <Card key={index} className="p-6 animate-pulse">
-            <div className="flex items-stretch gap-6 h-24">
+            <div className="flex items-stretch gap-6 min-h-[120px]">
               <div className="w-32 bg-gray-200 rounded flex-shrink-0"></div>
               <div className="flex-1 space-y-3 py-2">
                 <div className="h-5 bg-gray-200 rounded w-1/3"></div>
                 <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
               </div>
               <div className="h-6 bg-gray-200 rounded w-16 mt-2"></div>
             </div>
@@ -70,7 +71,7 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
           key={subscription.community_subscription_uuid}
           className="p-0 hover:shadow-md transition-shadow duration-200 overflow-hidden"
         >
-          <div className="flex items-stretch h-24">
+          <div className="flex items-stretch min-h-[120px]">
             {/* Full Height Community Thumbnail */}
             <div className="w-32 flex-shrink-0">
               <img 
@@ -88,7 +89,7 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
               
               {/* Community Description */}
               {subscription.community_description && (
-                <p className="text-sm text-muted-foreground line-clamp-2">
+                <p className="text-sm text-muted-foreground">
                   {subscription.community_description}
                 </p>
               )}
