@@ -6,7 +6,6 @@ import {
   Star,
   ShoppingBag,
   Users,
-  CircleDollarSign,
   MessageCircle,
   UserCog,
   DollarSign
@@ -80,12 +79,6 @@ export default function PersonalArea() {
       title: "My Communities",
       description: "See all the communities that you're part of.",
       to: "/account/communities"
-    },
-    {
-      icon: <CircleDollarSign className="w-8 h-8" />,
-      title: "Manage Subscriptions",
-      description: "Manage the subscriptions to communities.",
-      to: "/manage-subscriptions"
     },
     {
       icon: <DollarSign className="w-8 h-8" />,
