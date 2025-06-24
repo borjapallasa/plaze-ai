@@ -15,7 +15,7 @@ export interface TransactionReview {
 export function useTransactionReview(transactionUuid: string) {
   return useQuery({
     queryKey: ['transaction-review', transactionUuid],
-    queryFn: async () => {
+    queryFn: async (): Promise<TransactionReview[]> => {
       console.log('Fetching reviews for transaction:', transactionUuid);
       
       if (!transactionUuid) {
@@ -37,9 +37,14 @@ export function useTransactionReview(transactionUuid: string) {
       console.log('Reviews found for transaction:', reviews);
 
       return (reviews || []).map(review => ({
-        ...review,
+        review_uuid: review.review_uuid,
+        rating: review.rating,
+        title: review.title,
+        comments: review.comments,
+        buyer_name: review.buyer_name,
         buyer_email: review.email || '',
-      })) as TransactionReview[];
+        created_at: review.created_at,
+      }));
     },
     enabled: !!transactionUuid,
   });

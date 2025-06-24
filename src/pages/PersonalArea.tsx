@@ -102,7 +102,7 @@ export default function PersonalArea() {
       icon: <UserCog className="w-8 h-8" />,
       title: "Account Settings",
       description: "Change account details and password.",
-      to: "/settings"
+      to: "/account/settings"
     },
     {
       icon: <DollarSign className="w-8 h-8" />,
