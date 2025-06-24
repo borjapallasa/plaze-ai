@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -76,11 +75,12 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
         >
           <div className="flex items-stretch min-h-[120px]">
             {/* Left: Community Thumbnail - Square that fills height */}
-            <div className="h-[120px] w-[120px] flex-shrink-0 overflow-hidden">
+            <div className="h-[120px] w-[120px] flex-shrink-0 overflow-hidden bg-gray-100">
               <img 
                 src={subscription.community_thumbnail || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f"} 
                 alt={subscription.community_name || "Community"} 
                 className="w-full h-full object-cover"
+                style={{ minHeight: '120px', minWidth: '120px' }}
               />
             </div>
             
