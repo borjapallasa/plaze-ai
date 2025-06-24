@@ -6,6 +6,8 @@ interface CommunitySubscription {
   community_subscription_uuid: string;
   status: string;
   created_at: string;
+  community_name?: string;
+  community_thumbnail?: string;
 }
 
 interface CommunitySubscriptionCardProps {
@@ -29,8 +31,17 @@ export function CommunitySubscriptionCard({ subscription }: CommunitySubscriptio
   return (
     <Card className="p-6 space-y-4 hover:shadow-md transition-shadow duration-200">
       <div>
+        {subscription.community_thumbnail && (
+          <div className="mb-4">
+            <img 
+              src={subscription.community_thumbnail} 
+              alt={subscription.community_name || "Community"} 
+              className="w-full h-32 object-cover rounded-lg"
+            />
+          </div>
+        )}
         <h3 className="font-semibold text-lg leading-tight mb-2">
-          Community Subscription
+          {subscription.community_name || "Community Subscription"}
         </h3>
         <p className="text-sm text-muted-foreground break-all">
           UUID: {subscription.community_subscription_uuid}

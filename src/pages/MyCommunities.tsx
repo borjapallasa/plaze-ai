@@ -17,6 +17,8 @@ interface CommunitySubscription {
   community_subscription_uuid: string;
   status: string;
   created_at: string;
+  community_name?: string;
+  community_thumbnail?: string;
 }
 
 export default function MyCommunities() {
@@ -48,10 +50,18 @@ export default function MyCommunities() {
         
         console.log("Authenticated user:", user.id);
         
-        // Fetch community subscriptions for the authenticated user
+        // Fetch community subscriptions with community details
         const { data: subscriptionsData, error: subscriptionsError } = await supabase
           .from('community_subscriptions')
-          .select('community_subscription_uuid, status, created_at')
+          .select(`
+            community_subscription_uuid, 
+            status, 
+            created_at,
+            communities (
+              name,
+              thumbnail
+            )
+          `)
           .eq('user_uuid', user.id);
           
         if (subscriptionsError) {
@@ -61,7 +71,17 @@ export default function MyCommunities() {
         }
         
         console.log("Community subscriptions data:", subscriptionsData);
-        setSubscriptions(subscriptionsData || []);
+        
+        // Transform the data to include community details
+        const transformedData = (subscriptionsData || []).map(sub => ({
+          community_subscription_uuid: sub.community_subscription_uuid,
+          status: sub.status,
+          created_at: sub.created_at,
+          community_name: sub.communities?.name,
+          community_thumbnail: sub.communities?.thumbnail
+        }));
+        
+        setSubscriptions(transformedData);
       } catch (error) {
         console.error("Error in fetchUserSubscriptions:", error);
         toast.error("An unexpected error occurred");
@@ -74,7 +94,8 @@ export default function MyCommunities() {
   }, []);
 
   const filteredSubscriptions = subscriptions.filter(subscription =>
-    subscription.community_subscription_uuid?.toLowerCase().includes(searchQuery.toLowerCase())
+    subscription.community_subscription_uuid?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    subscription.community_name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -97,7 +118,7 @@ export default function MyCommunities() {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
-                  placeholder="Type here to search by subscription UUID"
+                  placeholder="Type here to search by subscription UUID or community name"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-9"
@@ -116,7 +137,7 @@ export default function MyCommunities() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
-                  placeholder="Type here to search by subscription UUID"
+                  placeholder="Type here to search by subscription UUID or community name"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-9"

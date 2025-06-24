@@ -6,6 +6,8 @@ interface CommunitySubscription {
   community_subscription_uuid: string;
   status: string;
   created_at: string;
+  community_name?: string;
+  community_thumbnail?: string;
 }
 
 interface CommunitySubscriptionListViewProps {
@@ -33,9 +35,12 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
         {[...Array(5)].map((_, index) => (
           <Card key={index} className="p-6 animate-pulse">
             <div className="flex justify-between items-start">
-              <div className="space-y-2 flex-1">
-                <div className="h-4 bg-gray-200 rounded w-1/3"></div>
-                <div className="h-3 bg-gray-200 rounded w-1/4"></div>
+              <div className="flex items-center gap-4 flex-1">
+                <div className="h-12 w-12 bg-gray-200 rounded"></div>
+                <div className="space-y-2 flex-1">
+                  <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+                  <div className="h-3 bg-gray-200 rounded w-1/4"></div>
+                </div>
               </div>
               <div className="h-6 bg-gray-200 rounded w-16"></div>
             </div>
@@ -61,19 +66,28 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
           className="p-6 hover:shadow-md transition-shadow duration-200"
         >
           <div className="flex justify-between items-start">
-            <div className="space-y-2 flex-1">
-              <div className="flex items-center gap-3">
-                <h3 className="font-medium text-foreground">
-                  Community Subscription
-                </h3>
-              </div>
-              
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <span className="break-all">
-                  UUID: {subscription.community_subscription_uuid}
-                </span>
-                <span>•</span>
-                <span>{new Date(subscription.created_at).toLocaleDateString()}</span>
+            <div className="flex items-center gap-4 flex-1">
+              {subscription.community_thumbnail && (
+                <img 
+                  src={subscription.community_thumbnail} 
+                  alt={subscription.community_name || "Community"} 
+                  className="h-12 w-12 object-cover rounded"
+                />
+              )}
+              <div className="space-y-2 flex-1">
+                <div className="flex items-center gap-3">
+                  <h3 className="font-medium text-foreground">
+                    {subscription.community_name || "Community Subscription"}
+                  </h3>
+                </div>
+                
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <span className="break-all">
+                    UUID: {subscription.community_subscription_uuid}
+                  </span>
+                  <span>•</span>
+                  <span>{new Date(subscription.created_at).toLocaleDateString()}</span>
+                </div>
               </div>
             </div>
             
