@@ -1,6 +1,6 @@
 
-import React from "react";
-import { MessageCircle, Users, Clock } from "lucide-react";
+import React, { useState } from "react";
+import { MessageCircle, Users, Clock, ArrowLeft } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -18,13 +18,28 @@ import { useNavigate } from "react-router-dom";
 export function ChatDialog() {
   const navigate = useNavigate();
   const { data: conversations, isLoading } = useConversations();
+  const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
 
   const handleConversationClick = (conversationUuid: string) => {
-    navigate(`/chats?conversation=${conversationUuid}`);
+    setSelectedConversation(conversationUuid);
   };
 
+  const handleBackToList = () => {
+    setSelectedConversation(null);
+  };
+
+  const handleViewAllConversations = () => {
+    setOpen(false);
+    navigate('/chats');
+  };
+
+  const selectedConversationData = conversations?.find(
+    conv => conv.conversation_uuid === selectedConversation
+  );
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button 
           variant="ghost" 
@@ -41,13 +56,38 @@ export function ChatDialog() {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
+            {selectedConversation && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleBackToList}
+                className="h-6 w-6 -ml-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            )}
             <MessageCircle className="h-5 w-5" />
-            Conversations
+            {selectedConversation ? selectedConversationData?.subject || 'Conversation' : 'Conversations'}
           </DialogTitle>
         </DialogHeader>
         
         <ScrollArea className="h-[400px] w-full">
-          {isLoading ? (
+          {selectedConversation ? (
+            <div className="p-4 text-center text-muted-foreground">
+              <MessageCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p className="mb-4">Conversation view would be implemented here</p>
+              <Button 
+                onClick={() => {
+                  setOpen(false);
+                  navigate(`/chats?conversation=${selectedConversation}`);
+                }}
+                variant="outline"
+                size="sm"
+              >
+                Open Full Conversation
+              </Button>
+            </div>
+          ) : isLoading ? (
             <div className="flex items-center justify-center p-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             </div>
@@ -106,7 +146,10 @@ export function ChatDialog() {
                 Start a conversation with an expert or community member
               </p>
               <Button 
-                onClick={() => navigate('/experts')}
+                onClick={() => {
+                  setOpen(false);
+                  navigate('/experts');
+                }}
                 variant="outline"
                 size="sm"
               >
@@ -116,12 +159,12 @@ export function ChatDialog() {
           )}
         </ScrollArea>
         
-        {conversations && conversations.length > 0 && (
+        {conversations && conversations.length > 0 && !selectedConversation && (
           <div className="flex justify-center pt-4 border-t">
             <Button 
               variant="outline" 
               size="sm"
-              onClick={() => navigate('/chats')}
+              onClick={handleViewAllConversations}
               className="w-full"
             >
               View All Conversations
