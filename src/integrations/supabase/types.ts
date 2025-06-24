@@ -1722,6 +1722,7 @@ export type Database = {
           buyer_name: string | null
           comments: string | null
           created_at: string
+          email: string | null
           expert_uuid: string | null
           product_transaction_item_uuid: string | null
           product_uuid: string | null
@@ -1741,6 +1742,7 @@ export type Database = {
           buyer_name?: string | null
           comments?: string | null
           created_at?: string
+          email?: string | null
           expert_uuid?: string | null
           product_transaction_item_uuid?: string | null
           product_uuid?: string | null
@@ -1760,6 +1762,7 @@ export type Database = {
           buyer_name?: string | null
           comments?: string | null
           created_at?: string
+          email?: string | null
           expert_uuid?: string | null
           product_transaction_item_uuid?: string | null
           product_uuid?: string | null

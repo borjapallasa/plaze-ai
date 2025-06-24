@@ -79,7 +79,7 @@ export default function PersonalArea() {
       icon: <Users className="w-8 h-8" />,
       title: "My Communities",
       description: "See all the communities that you're part of.",
-      to: "/community"
+      to: "/account/communities"
     },
     {
       icon: <CircleDollarSign className="w-8 h-8" />,
