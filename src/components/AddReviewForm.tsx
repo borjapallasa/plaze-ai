@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,11 +11,10 @@ import { useAuth } from "@/lib/auth";
 
 interface AddReviewFormProps {
   transactionUuid: string;
-  sellerUserUuid?: string;
   onReviewAdded?: () => void;
 }
 
-export function AddReviewForm({ transactionUuid, sellerUserUuid, onReviewAdded }: AddReviewFormProps) {
+export function AddReviewForm({ transactionUuid, onReviewAdded }: AddReviewFormProps) {
   const { user } = useAuth();
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
@@ -47,14 +47,13 @@ export function AddReviewForm({ transactionUuid, sellerUserUuid, onReviewAdded }
       console.log('Title:', title);
       console.log('Comments:', comments);
       console.log('Product Transaction Item UUID:', transactionUuid);
-      console.log('Seller User UUID (expert_uuid):', sellerUserUuid);
 
       // Get user's first and last name from user metadata
       const firstName = user.user_metadata?.first_name || '';
       const lastName = user.user_metadata?.last_name || '';
       const buyerName = `${firstName} ${lastName}`.trim() || user.email;
 
-      // Insert review with all required fields, including seller_user_uuid
+      // Insert review with basic required fields
       const reviewData = {
         rating,
         title: title.trim() || null,
@@ -64,8 +63,7 @@ export function AddReviewForm({ transactionUuid, sellerUserUuid, onReviewAdded }
         transaction_type: 'product' as const,
         type: 'product' as const,
         status: 'published' as const,
-        buyer_email: user.email,
-        seller_user_uuid: sellerUserUuid // This is the expert_uuid
+        buyer_email: user.email
       };
 
       console.log('Final review data being inserted:', reviewData);

@@ -255,11 +255,10 @@ export default function UserTransactionItemDetails() {
               </div>
             </div>
 
-            {/* Reviews section - specific to this transaction item, removed productUuid */}
+            {/* Reviews section - specific to this transaction item */}
             <Separator className="my-8" />
             <TransactionReview 
               transactionUuid={itemId || ''} 
-              sellerUserUuid={transactionItem?.products?.experts?.expert_uuid}
             />
           </CardContent>
         </Card>
