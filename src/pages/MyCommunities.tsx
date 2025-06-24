@@ -19,6 +19,7 @@ interface CommunitySubscription {
   created_at: string;
   community_name?: string;
   community_thumbnail?: string;
+  community_description?: string;
 }
 
 export default function MyCommunities() {
@@ -59,7 +60,8 @@ export default function MyCommunities() {
             created_at,
             communities (
               name,
-              thumbnail
+              thumbnail,
+              description
             )
           `)
           .eq('user_uuid', user.id);
@@ -78,7 +80,8 @@ export default function MyCommunities() {
           status: sub.status,
           created_at: sub.created_at,
           community_name: sub.communities?.name,
-          community_thumbnail: sub.communities?.thumbnail
+          community_thumbnail: sub.communities?.thumbnail,
+          community_description: sub.communities?.description
         }));
         
         setSubscriptions(transformedData);

@@ -8,6 +8,7 @@ interface CommunitySubscription {
   created_at: string;
   community_name?: string;
   community_thumbnail?: string;
+  community_description?: string;
 }
 
 interface CommunitySubscriptionCardProps {
@@ -37,6 +38,13 @@ export function CommunitySubscriptionCard({ subscription }: CommunitySubscriptio
       <CardContent className="p-4 space-y-3 flex-1 flex flex-col">
         {/* Community Name */}
         <h3 className="font-semibold text-lg line-clamp-2">{subscription.community_name}</h3>
+        
+        {/* Community Description */}
+        {subscription.community_description && (
+          <p className="text-sm text-muted-foreground line-clamp-2">
+            {subscription.community_description}
+          </p>
+        )}
         
         {/* Joined Date */}
         <p className="text-sm text-muted-foreground line-clamp-2 flex-1">
