@@ -23,6 +23,7 @@ import ManageSubscriptionsPage from "./pages/ManageSubscriptions";
 import MyCommunitiesPage from "./pages/MyCommunities";
 import TransactionsPage from "./pages/Transactions";
 import UserTransactionDetailsPage from "./pages/UserTransactionDetails";
+import UserVariantTransactionDetailsPage from "./pages/UserVariantTransactionDetails";
 import ThankYouPage from "./pages/ThankYou";
 import RecoverPasswordPage from "./pages/RecoverPassword";
 import AdminDashboardPage from "./pages/admin/AdminDashboard";
