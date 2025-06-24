@@ -75,8 +75,8 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
           className="p-0 hover:shadow-md transition-shadow duration-200 overflow-hidden"
         >
           <div className="flex items-stretch min-h-[120px]">
-            {/* Left: Community Thumbnail - Square aspect ratio */}
-            <div className="w-24 flex-shrink-0 aspect-square">
+            {/* Left: Community Thumbnail - Square that fills height */}
+            <div className="h-[120px] w-[120px] flex-shrink-0">
               <img 
                 src={subscription.community_thumbnail || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f"} 
                 alt={subscription.community_name || "Community"} 
