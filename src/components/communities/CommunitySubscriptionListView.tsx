@@ -102,7 +102,7 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
             {/* Vertical Separator */}
             <Separator orientation="vertical" className="h-12 mx-2" />
             
-            {/* Right Section - Date, Status, and Actions */}
+            {/* Right Section - Date and Status */}
             <div className="flex flex-col items-end justify-start gap-2 min-w-[160px]">
               {/* Joined Date - Small gray text */}
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -117,36 +117,39 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
               >
                 {getStatusText(subscription.status)}
               </Badge>
+            </div>
+            
+            {/* Vertical Separator for Actions */}
+            <Separator orientation="vertical" className="h-12 mx-2" />
+            
+            {/* Action Buttons Section */}
+            <div className="flex flex-col gap-2 min-w-[140px]">
+              {/* Open Community Button - Primary */}
+              <Button 
+                size="sm" 
+                className="text-xs h-7 w-full"
+                onClick={() => {
+                  // TODO: Navigate to community page
+                  console.log('Open community for:', subscription.community_subscription_uuid);
+                }}
+              >
+                <ExternalLink className="h-3 w-3 mr-1" />
+                Open Community
+              </Button>
 
-              {/* Action Buttons - Horizontal layout */}
-              <div className="flex gap-1 mt-1">
-                {/* Open Community Button - Primary */}
-                <Button 
-                  size="sm" 
-                  className="text-xs h-7 px-3"
-                  onClick={() => {
-                    // TODO: Navigate to community page
-                    console.log('Open community for:', subscription.community_subscription_uuid);
-                  }}
-                >
-                  <ExternalLink className="h-3 w-3 mr-1" />
-                  Open
-                </Button>
-
-                {/* Manage Membership Button - Secondary */}
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="text-xs h-7 px-3 text-muted-foreground hover:text-foreground"
-                  onClick={() => {
-                    // TODO: Navigate to community membership management page
-                    console.log('Manage membership for:', subscription.community_subscription_uuid);
-                  }}
-                >
-                  <Settings className="h-3 w-3 mr-1" />
-                  Manage
-                </Button>
-              </div>
+              {/* Manage Membership Button - Secondary */}
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="text-xs h-7 w-full"
+                onClick={() => {
+                  // TODO: Navigate to community membership management page
+                  console.log('Manage membership for:', subscription.community_subscription_uuid);
+                }}
+              >
+                <Settings className="h-3 w-3 mr-1" />
+                Manage
+              </Button>
             </div>
           </div>
         </Card>
