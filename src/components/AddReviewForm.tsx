@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -48,6 +47,7 @@ export function AddReviewForm({ transactionUuid, sellerUserUuid, onReviewAdded }
       console.log('Title:', title);
       console.log('Comments:', comments);
       console.log('Product Transaction Item UUID:', transactionUuid);
+      console.log('Seller User UUID:', sellerUserUuid);
 
       // Get user's first and last name from user metadata
       const firstName = user.user_metadata?.first_name || '';
