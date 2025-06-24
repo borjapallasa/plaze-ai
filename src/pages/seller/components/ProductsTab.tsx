@@ -1,10 +1,10 @@
-
 import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge as UIBadge } from "@/components/ui/badge";
 import { Search, ArrowUpDown, ArrowUp, ArrowDown, Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 type SortField = 'name' | 'status' | 'variant_count' | 'price_from' | 'created_at';
 type SortDirection = 'asc' | 'desc';
@@ -25,11 +25,12 @@ interface ProductsTabProps {
 }
 
 export function ProductsTab({ products, isLoading = false }: ProductsTabProps) {
+  const navigate = useNavigate();
   const [sortField, setSortField] = useState<SortField>('created_at');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
   const handleProductClick = (productId: string) => {
-    window.location.href = `/admin/product/${productId}`;
+    navigate(`/product/${productId}/edit`);
   };
 
   const handleSort = (field: SortField) => {
