@@ -204,8 +204,8 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
             {/* Vertical Divider */}
             <Separator orientation="vertical" className="h-16 mx-4" />
             
-            {/* Right: Action Buttons */}
-            <div className="flex gap-2">
+            {/* Right: Action Buttons - Stacked Vertically */}
+            <div className="flex flex-col gap-2">
               <Button 
                 size="sm" 
                 className="text-xs h-8 px-4 font-medium"
