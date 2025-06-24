@@ -45,11 +45,23 @@ export default function UserTransactionDetails() {
       
       console.log('Fetching actual transaction_uuid for product_transaction_uuid:', transactionId);
       
+      // First, let's check what's in the transactions table
+      const { data: allTransactions, error: allError } = await supabase
+        .from('transactions')
+        .select('*')
+        .limit(5);
+      
+      console.log('Sample transactions in database:', allTransactions);
+      console.log('Sample transactions error:', allError);
+      
       const { data, error } = await supabase
         .from('transactions')
-        .select('transaction_uuid')
+        .select('transaction_uuid, products_transactions_uuid')
         .eq('products_transactions_uuid', transactionId)
         .maybeSingle();
+
+      console.log('Query result for products_transactions_uuid:', data);
+      console.log('Query error:', error);
 
       if (error) {
         console.error('Error fetching actual transaction_uuid:', error);
@@ -59,7 +71,7 @@ export default function UserTransactionDetails() {
       console.log('Found actual transaction_uuid:', data?.transaction_uuid);
       return data?.transaction_uuid || null;
     },
-    enabled: !!transactionId,
+    enabled: !!transactionId && !!transaction, // Only run if we have a product transaction
   });
 
   const isLoading = isLoadingProduct || isLoadingCommunity;
@@ -162,6 +174,8 @@ export default function UserTransactionDetails() {
     // Use the available properties from TransactionDetails interface
     (transaction.seller_user?.name ? 'seller_user_uuid_placeholder' : undefined) : 
     undefined;
+
+  console.log('Final actualTransactionUuid being passed to TransactionReview:', actualTransactionUuid);
   
   return (
     <>
