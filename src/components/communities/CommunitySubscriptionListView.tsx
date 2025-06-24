@@ -81,7 +81,7 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
       {subscriptions.map((subscription) => (
         <Card 
           key={subscription.community_subscription_uuid}
-          className="p-0 hover:shadow-md hover:bg-gray-50/50 transition-all duration-200 overflow-hidden border border-gray-200"
+          className="p-0 hover:shadow-md transition-shadow duration-200 overflow-hidden border border-gray-200"
         >
           {/* Mobile Layout */}
           <div className="md:hidden p-4 space-y-4">
@@ -92,7 +92,7 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
                   <img 
                     src={subscription.community_thumbnail} 
                     alt={subscription.community_name || "Community"} 
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-cover"
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-xs font-medium">
@@ -128,11 +128,11 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
               </p>
             )}
 
-            {/* Action Buttons - Vertical Stack on Mobile */}
-            <div className="flex flex-col gap-2">
+            {/* Action Buttons */}
+            <div className="flex gap-2">
               <Button 
                 size="sm" 
-                className="text-xs h-8 w-full font-medium"
+                className="flex-1 text-xs h-8 font-medium"
                 onClick={() => {
                   console.log('Open community for:', subscription.community_subscription_uuid);
                 }}
@@ -143,7 +143,7 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="text-xs h-8 w-full"
+                className="flex-1 text-xs h-8"
                 onClick={() => {
                   console.log('Manage membership for:', subscription.community_subscription_uuid);
                 }}
@@ -157,12 +157,12 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
           {/* Desktop Layout */}
           <div className="hidden md:flex items-center p-4 gap-4">
             {/* Left: Logo - Fixed Width */}
-            <div className="w-16 h-16 flex-shrink-0 rounded-lg bg-gray-50 border flex items-center justify-center overflow-hidden">
+            <div className="w-16 h-16 flex-shrink-0 rounded-lg bg-gray-50/50 border flex items-center justify-center overflow-hidden">
               {subscription.community_thumbnail ? (
                 <img 
                   src={subscription.community_thumbnail} 
                   alt={subscription.community_name || "Community"} 
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-cover"
                 />
               ) : (
                 <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-medium">
@@ -172,7 +172,7 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
             </div>
             
             {/* Middle: Content Section - Flex Grow */}
-            <div className="flex-1 min-w-0 space-y-2">
+            <div className="flex-1 min-w-0 space-y-1">
               {/* Community Name */}
               <h3 className="font-semibold text-lg text-foreground truncate">
                 {subscription.community_name || "Community Subscription"}
@@ -182,7 +182,7 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
               <div className="flex items-center gap-3 text-sm text-gray-600">
                 <Badge 
                   variant="secondary" 
-                  className={`${getStatusColor(subscription.status)} text-xs px-2 py-1 font-medium capitalize`}
+                  className={`${getStatusColor(subscription.status)} text-xs px-2 py-0.5 font-medium capitalize`}
                 >
                   {getStatusText(subscription.status)}
                 </Badge>
@@ -194,21 +194,18 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
               
               {/* Community Description */}
               {subscription.community_description && (
-                <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed">
+                <p className="text-sm text-gray-600 line-clamp-1 leading-relaxed pt-1">
                   {subscription.community_description}
                 </p>
               )}
             </div>
             
-            {/* Subtle Divider */}
-            <div className="w-px h-12 bg-gray-200 mx-2"></div>
-            
             {/* Right: Action Buttons - Fixed Width */}
-            <div className="flex gap-2 min-w-[320px]">
+            <div className="flex gap-2 min-w-[280px] justify-end">
               {/* Open Community Button - Primary */}
               <Button 
                 size="sm" 
-                className="text-xs h-8 flex-1 font-medium"
+                className="text-xs h-8 px-4 font-medium"
                 onClick={() => {
                   console.log('Open community for:', subscription.community_subscription_uuid);
                 }}
@@ -221,7 +218,7 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="text-xs h-8 flex-1"
+                className="text-xs h-8 px-4"
                 onClick={() => {
                   console.log('Manage membership for:', subscription.community_subscription_uuid);
                 }}
