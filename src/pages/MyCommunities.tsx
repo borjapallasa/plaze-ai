@@ -21,6 +21,7 @@ interface CommunitySubscription {
   community_name?: string;
   community_thumbnail?: string;
   community_description?: string;
+  community_uuid?: string;
 }
 
 export default function MyCommunities() {
@@ -61,6 +62,7 @@ export default function MyCommunities() {
             status, 
             created_at,
             amount,
+            community_uuid,
             communities (
               name,
               thumbnail,
@@ -83,6 +85,7 @@ export default function MyCommunities() {
           status: sub.status,
           created_at: sub.created_at,
           amount: sub.amount,
+          community_uuid: sub.community_uuid,
           community_name: sub.communities?.name,
           community_thumbnail: sub.communities?.thumbnail,
           community_description: sub.communities?.description

@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Calendar, Settings, ExternalLink } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface CommunitySubscription {
   community_subscription_uuid: string;
@@ -11,6 +12,7 @@ interface CommunitySubscription {
   community_name?: string;
   community_thumbnail?: string;
   community_description?: string;
+  community_uuid?: string;
 }
 
 interface CommunitySubscriptionCardProps {
@@ -18,12 +20,23 @@ interface CommunitySubscriptionCardProps {
 }
 
 export function CommunitySubscriptionCard({ subscription }: CommunitySubscriptionCardProps) {
+  const navigate = useNavigate();
+
   const getStatusText = (status: string) => {
     return status.toLowerCase() === "active" ? "Free" : status;
   };
 
   const getStatusColor = (status: string) => {
     return status.toLowerCase() === "active" ? "text-green-600" : "text-gray-600";
+  };
+
+  const handleOpenCommunity = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (subscription.community_uuid) {
+      navigate(`/community/${subscription.community_uuid}`);
+    } else {
+      console.error('No community UUID available for navigation');
+    }
   };
 
   return (
@@ -68,11 +81,7 @@ export function CommunitySubscriptionCard({ subscription }: CommunitySubscriptio
           {/* Open Community Button - Primary */}
           <Button 
             className="flex-1 text-xs h-8"
-            onClick={(e) => {
-              e.stopPropagation();
-              // TODO: Navigate to community page
-              console.log('Open community for:', subscription.community_subscription_uuid);
-            }}
+            onClick={handleOpenCommunity}
           >
             <ExternalLink className="h-3 w-3 mr-1" />
             Open Community

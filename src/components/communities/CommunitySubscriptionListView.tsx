@@ -1,9 +1,9 @@
-
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Calendar, Settings, ExternalLink } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface CommunitySubscription {
   community_subscription_uuid: string;
@@ -12,6 +12,7 @@ interface CommunitySubscription {
   community_name?: string;
   community_thumbnail?: string;
   community_description?: string;
+  community_uuid?: string;
 }
 
 interface CommunitySubscriptionListViewProps {
@@ -20,6 +21,8 @@ interface CommunitySubscriptionListViewProps {
 }
 
 export function CommunitySubscriptionListView({ subscriptions, loading }: CommunitySubscriptionListViewProps) {
+  const navigate = useNavigate();
+
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "active":
@@ -45,6 +48,14 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
       .join("")
       .substring(0, 2)
       .toUpperCase();
+  };
+
+  const handleOpenCommunity = (subscription: CommunitySubscription) => {
+    if (subscription.community_uuid) {
+      navigate(`/community/${subscription.community_uuid}`);
+    } else {
+      console.error('No community UUID available for navigation');
+    }
   };
 
   if (loading) {
@@ -134,9 +145,7 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
               <Button 
                 size="sm" 
                 className="flex-1 text-xs h-8 font-medium"
-                onClick={() => {
-                  console.log('Open community for:', subscription.community_subscription_uuid);
-                }}
+                onClick={() => handleOpenCommunity(subscription)}
               >
                 <ExternalLink className="h-3 w-3 mr-2" />
                 Open Community
@@ -209,9 +218,7 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
               <Button 
                 size="sm" 
                 className="text-xs h-8 px-4 font-medium"
-                onClick={() => {
-                  console.log('Open community for:', subscription.community_subscription_uuid);
-                }}
+                onClick={() => handleOpenCommunity(subscription)}
               >
                 <ExternalLink className="h-3 w-3 mr-2" />
                 Open Community
