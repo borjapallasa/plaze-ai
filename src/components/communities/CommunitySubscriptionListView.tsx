@@ -72,10 +72,10 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
       {subscriptions.map((subscription) => (
         <Card 
           key={subscription.community_subscription_uuid}
-          className="p-4 hover:shadow-md transition-shadow duration-200"
+          className="p-6 hover:shadow-md transition-shadow duration-200"
         >
-          <div className="flex items-center gap-4">
-            {/* Community Thumbnail - Fixed square size */}
+          <div className="flex items-start gap-6">
+            {/* Left: Community Thumbnail */}
             <div className="w-16 h-16 flex-shrink-0">
               <img 
                 src={subscription.community_thumbnail || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f"} 
@@ -84,14 +84,32 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
               />
             </div>
             
-            {/* Main Content - Flex grow to take remaining space */}
-            <div className="flex-1 min-w-0">
-              {/* Community Name - Bold, larger */}
-              <h3 className="font-semibold text-lg text-foreground mb-1 truncate">
-                {subscription.community_name || "Community Subscription"}
-              </h3>
+            {/* Center: Content Section */}
+            <div className="flex-1 min-w-0 space-y-3">
+              {/* Community Name with Metadata */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-3 flex-wrap">
+                  <h3 className="font-semibold text-lg text-foreground">
+                    {subscription.community_name || "Community Subscription"}
+                  </h3>
+                  
+                  {/* Price Badge */}
+                  <Badge 
+                    variant="secondary" 
+                    className={`${getStatusColor(subscription.status)} text-xs px-2 py-1 font-medium capitalize`}
+                  >
+                    {getStatusText(subscription.status)}
+                  </Badge>
+                  
+                  {/* Join Date */}
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Calendar className="h-3 w-3" />
+                    <span>Joined {new Date(subscription.created_at).toLocaleDateString()}</span>
+                  </div>
+                </div>
+              </div>
               
-              {/* Community Description - Limited to 2 lines with ellipsis */}
+              {/* Community Description */}
               {subscription.community_description && (
                 <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
                   {subscription.community_description}
@@ -100,34 +118,14 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
             </div>
             
             {/* Vertical Separator */}
-            <Separator orientation="vertical" className="h-12 mx-2" />
+            <Separator orientation="vertical" className="h-16 mx-2" />
             
-            {/* Right Section - Date and Status */}
-            <div className="flex flex-col items-end justify-start gap-2 min-w-[160px]">
-              {/* Joined Date - Small gray text */}
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Calendar className="h-3 w-3" />
-                <span>Joined {new Date(subscription.created_at).toLocaleDateString()}</span>
-              </div>
-              
-              {/* Status Badge - Enhanced styling */}
-              <Badge 
-                variant="secondary" 
-                className={`${getStatusColor(subscription.status)} text-xs px-2 py-1 font-medium capitalize`}
-              >
-                {getStatusText(subscription.status)}
-              </Badge>
-            </div>
-            
-            {/* Vertical Separator for Actions */}
-            <Separator orientation="vertical" className="h-12 mx-2" />
-            
-            {/* Action Buttons Section */}
+            {/* Right: Action Buttons Only */}
             <div className="flex flex-col gap-2 min-w-[140px]">
               {/* Open Community Button - Primary */}
               <Button 
                 size="sm" 
-                className="text-xs h-7 w-full"
+                className="text-xs h-8 w-full"
                 onClick={() => {
                   // TODO: Navigate to community page
                   console.log('Open community for:', subscription.community_subscription_uuid);
@@ -141,7 +139,7 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="text-xs h-7 w-full"
+                className="text-xs h-8 w-full"
                 onClick={() => {
                   // TODO: Navigate to community membership management page
                   console.log('Manage membership for:', subscription.community_subscription_uuid);
