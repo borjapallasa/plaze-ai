@@ -32,10 +32,10 @@ export function LeaveCommunityDialog({ communityName, subscriptionUuid }: LeaveC
     <>
       <Button 
         variant="outline" 
-        className="w-full text-xs h-8"
+        className="w-full h-10 font-medium"
         onClick={() => setOpen(true)}
       >
-        <Settings className="h-3 w-3 mr-1" />
+        <Settings className="h-4 w-4 mr-2" />
         Manage
       </Button>
 

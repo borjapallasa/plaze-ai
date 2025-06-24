@@ -51,40 +51,40 @@ export function CommunitySubscriptionCard({ subscription }: CommunitySubscriptio
         />
       </div>
       
-      <CardContent className="p-4 space-y-3 flex-1 flex flex-col">
+      <CardContent className="p-6 space-y-4 flex-1 flex flex-col">
         {/* Community Name */}
-        <h3 className="font-semibold text-lg line-clamp-2">{subscription.community_name}</h3>
+        <h3 className="font-semibold text-xl line-clamp-2 leading-tight">{subscription.community_name}</h3>
         
         {/* Community Description */}
         {subscription.community_description && (
-          <p className="text-sm text-muted-foreground line-clamp-3 flex-1">
+          <p className="text-sm text-muted-foreground line-clamp-3 flex-1 leading-relaxed">
             {subscription.community_description}
           </p>
         )}
         
         {/* Separator */}
-        <Separator className="my-2" />
+        <Separator className="my-4" />
         
         {/* Bottom section with joined date and price */}
         <div className="flex items-center justify-between text-sm mt-auto">
-          <div className="flex items-center gap-1 text-muted-foreground">
-            <Calendar className="h-3 w-3" />
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Calendar className="h-4 w-4" />
             <span>Joined {new Date(subscription.created_at).toLocaleDateString()}</span>
           </div>
           
-          <div className={`font-medium ${getStatusColor(subscription.status)}`}>
+          <div className={`font-semibold text-base ${getStatusColor(subscription.status)}`}>
             <span>{getStatusText(subscription.status)}</span>
           </div>
         </div>
 
         {/* Action Buttons - Stacked Vertically */}
-        <div className="flex flex-col gap-2 mt-3">
+        <div className="flex flex-col gap-3 mt-6">
           {/* Open Community Button - Primary */}
           <Button 
-            className="w-full text-xs h-8"
+            className="w-full h-10 font-medium"
             onClick={handleOpenCommunity}
           >
-            <ExternalLink className="h-3 w-3 mr-1" />
+            <ExternalLink className="h-4 w-4 mr-2" />
             Open Community
           </Button>
           
