@@ -7,44 +7,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Check, Search, User, Settings, Video, MessageSquare, Image, SmilePlus, Send, ArrowLeft } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useConversations, type Conversation } from "@/hooks/use-conversations";
+import { useConversationMessages } from "@/hooks/use-conversation-messages";
 import { useAuth } from "@/lib/auth";
-
-interface Message {
-  id: string;
-  sender: string;
-  content: string;
-  timestamp: string;
-  avatar?: string;
-  outgoing?: boolean;
-  read?: boolean;
-}
-
-const mockMessages: Message[] = [
-  {
-    id: "1",
-    sender: "Borja Pallasa Alvarez",
-    content: "Hey man, was super busy yesterday, can you show the themes?",
-    timestamp: "Jan 16, 2025 | 3:49 PM",
-    outgoing: false,
-    read: true
-  },
-  {
-    id: "2",
-    sender: "Elisha Adeniyi",
-    content: "go through the messages I sent",
-    timestamp: "4:04 PM",
-    outgoing: true,
-    read: true
-  },
-  {
-    id: "3",
-    sender: "Elisha Adeniyi",
-    content: "I tagged you on the other chat",
-    timestamp: "5:13 PM",
-    outgoing: true,
-    read: false
-  }
-];
 
 export default function Chats() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -52,6 +16,7 @@ export default function Chats() {
   const isMobile = useIsMobile();
   const { user, loading: authLoading } = useAuth();
   const { data: conversations, isLoading, error } = useConversations();
+  const { data: messages, isLoading: messagesLoading } = useConversationMessages(selectedChat?.conversation_uuid || null);
 
   const filteredChats = conversations?.filter(chat =>
     chat.otherParticipantName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -225,46 +190,56 @@ export default function Chats() {
 
                 {/* Messages */}
                 <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
-                  {mockMessages.map((message) => (
-                    <div 
-                      key={message.id} 
-                      className={`flex gap-3 ${message.outgoing ? 'flex-row-reverse' : ''}`}
-                    >
-                      <Avatar className="h-8 w-8 flex-shrink-0 ring-2 ring-background">
-                        <AvatarFallback>
-                          <User className="h-4 w-4" />
-                        </AvatarFallback>
-                        {message.avatar && <AvatarImage src={message.avatar} />}
-                      </Avatar>
-                      <div className={`flex flex-col ${message.outgoing ? 'items-end' : 'items-start'} max-w-[85%] md:max-w-[80%]`}>
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className={`text-sm font-medium ${message.outgoing ? 'order-2' : ''}`}>
-                            {message.sender}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            {message.timestamp}
-                          </span>
-                        </div>
-                        <div 
-                          className={`rounded-2xl px-4 py-2.5 ${
-                            message.outgoing 
-                              ? 'bg-primary text-primary-foreground rounded-br-none' 
-                              : 'bg-accent rounded-bl-none'
-                          }`}
-                        >
-                          <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
-                        </div>
-                        {message.outgoing && (
-                          <div className="flex items-center gap-1 mt-1">
-                            <span className="text-xs text-muted-foreground">
-                              {message.read ? 'Read' : 'Sent'}
-                            </span>
-                            <Check className={`h-3 w-3 ${message.read ? 'text-primary' : 'text-muted-foreground'}`} />
-                          </div>
-                        )}
-                      </div>
+                  {messagesLoading ? (
+                    <div className="flex items-center justify-center h-full">
+                      <p>Loading messages...</p>
                     </div>
-                  ))}
+                  ) : messages && messages.length > 0 ? (
+                    messages.map((message) => {
+                      const isOutgoing = message.user_uuid === user.id;
+                      return (
+                        <div 
+                          key={message.message_uuid} 
+                          className={`flex gap-3 ${isOutgoing ? 'flex-row-reverse' : ''}`}
+                        >
+                          <Avatar className="h-8 w-8 flex-shrink-0 ring-2 ring-background">
+                            <AvatarFallback>
+                              <User className="h-4 w-4" />
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className={`flex flex-col ${isOutgoing ? 'items-end' : 'items-start'} max-w-[85%] md:max-w-[80%]`}>
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className={`text-sm font-medium ${isOutgoing ? 'order-2' : ''}`}>
+                                {message.user_name}
+                              </span>
+                              <span className="text-xs text-muted-foreground">
+                                {new Date(message.created_at).toLocaleString()}
+                              </span>
+                            </div>
+                            <div 
+                              className={`rounded-2xl px-4 py-2.5 ${
+                                isOutgoing 
+                                  ? 'bg-primary text-primary-foreground rounded-br-none' 
+                                  : 'bg-accent rounded-bl-none'
+                              }`}
+                            >
+                              <p className="text-sm whitespace-pre-wrap break-words">Message content not available</p>
+                            </div>
+                            {isOutgoing && (
+                              <div className="flex items-center gap-1 mt-1">
+                                <span className="text-xs text-muted-foreground">Sent</span>
+                                <Check className="h-3 w-3 text-muted-foreground" />
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="flex items-center justify-center h-full text-muted-foreground">
+                      <p>No messages in this conversation yet</p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Message Input */}
