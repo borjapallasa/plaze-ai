@@ -11,7 +11,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Textarea } from "@/components/ui/textarea";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useConversations, type Conversation } from "@/hooks/use-conversations";
 import { useConversationMessages } from "@/hooks/use-conversation-messages";
@@ -22,7 +21,7 @@ export default function Chats() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedChat, setSelectedChat] = useState<Conversation | null>(null);
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
-  const [editContent, setEditContent] = useState("");
+  const [messageInput, setMessageInput] = useState("");
   const isMobile = useIsMobile();
   const {
     user,
@@ -58,23 +57,33 @@ export default function Chats() {
 
   const handleEditMessage = (messageId: string, currentContent: string) => {
     setEditingMessageId(messageId);
-    setEditContent(currentContent);
+    setMessageInput(currentContent);
   };
 
   const handleSaveEdit = () => {
-    if (editingMessageId && editContent.trim()) {
+    if (editingMessageId && messageInput.trim()) {
       updateMessage.mutate({
         messageUuid: editingMessageId,
-        content: editContent.trim()
+        content: messageInput.trim()
       });
       setEditingMessageId(null);
-      setEditContent("");
+      setMessageInput("");
     }
   };
 
   const handleCancelEdit = () => {
     setEditingMessageId(null);
-    setEditContent("");
+    setMessageInput("");
+  };
+
+  const handleSendMessage = () => {
+    if (editingMessageId) {
+      handleSaveEdit();
+    } else {
+      // Handle new message sending logic here
+      console.log('Send new message:', messageInput);
+      setMessageInput("");
+    }
   };
 
   if (authLoading || isLoading) {
@@ -223,7 +232,7 @@ export default function Chats() {
                       <p>Loading messages...</p>
                     </div> : messages && messages.length > 0 ? messages.map(message => {
                 const isOutgoing = message.user_uuid === user.id;
-                const isEditing = editingMessageId === message.message_uuid;
+                const isBeingEdited = editingMessageId === message.message_uuid;
                 
                 return <div key={message.message_uuid} className={`flex gap-3 ${isOutgoing ? 'flex-row-reverse' : ''}`}>
                           <Avatar className="h-8 w-8 flex-shrink-0 ring-2 ring-background">
@@ -240,43 +249,22 @@ export default function Chats() {
                                 {new Date(message.created_at).toLocaleString()}
                               </span>
                             </div>
-                            <div className={`rounded-2xl px-4 py-2.5 ${isOutgoing ? 'bg-primary text-primary-foreground rounded-br-none' : 'bg-accent rounded-bl-none'} relative group`}>
-                              {isEditing ? (
-                                <div className="space-y-2">
-                                  <Textarea
-                                    value={editContent}
-                                    onChange={(e) => setEditContent(e.target.value)}
-                                    className="text-sm bg-transparent border-none p-0 resize-none focus:ring-0"
-                                    autoFocus
-                                  />
-                                  <div className="flex gap-2">
-                                    <Button size="sm" onClick={handleSaveEdit} disabled={updateMessage.isPending}>
-                                      Save
-                                    </Button>
-                                    <Button size="sm" variant="outline" onClick={handleCancelEdit}>
-                                      Cancel
-                                    </Button>
-                                  </div>
-                                </div>
-                              ) : (
-                                <>
-                                  <p className="text-sm whitespace-pre-wrap break-words">
-                                    {message.content || "No content available"}
-                                  </p>
-                                  {isOutgoing && (
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="absolute -top-8 right-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                                      onClick={() => handleEditMessage(message.message_uuid, message.content || "")}
-                                    >
-                                      <Edit2 className="h-3 w-3" />
-                                    </Button>
-                                  )}
-                                </>
+                            <div className={`rounded-2xl px-4 py-2.5 ${isOutgoing ? 'bg-primary text-primary-foreground rounded-br-none' : 'bg-accent rounded-bl-none'} relative group ${isBeingEdited ? 'ring-2 ring-primary' : ''}`}>
+                              <p className="text-sm whitespace-pre-wrap break-words">
+                                {message.content || "No content available"}
+                              </p>
+                              {isOutgoing && (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="absolute -top-8 right-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                  onClick={() => handleEditMessage(message.message_uuid, message.content || "")}
+                                >
+                                  <Edit2 className="h-3 w-3" />
+                                </Button>
                               )}
                             </div>
-                            {isOutgoing && !isEditing && <div className="flex items-center gap-1 mt-1">
+                            {isOutgoing && <div className="flex items-center gap-1 mt-1">
                                 <span className="text-xs text-muted-foreground">Sent</span>
                                 <Check className="h-3 w-3 text-muted-foreground" />
                               </div>}
@@ -289,6 +277,20 @@ export default function Chats() {
 
                 {/* Message Input */}
                 <div className="p-3 md:p-4 border-t bg-card/50 backdrop-blur-sm">
+                  {editingMessageId && (
+                    <div className="mb-2 p-2 bg-blue-50 border border-blue-200 rounded-md flex items-center gap-2 text-sm text-blue-700">
+                      <Edit2 className="h-4 w-4" />
+                      <span>Editing message</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleCancelEdit}
+                        className="ml-auto p-1 h-auto text-blue-600 hover:text-blue-800"
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  )}
                   <div className="flex gap-2 items-center">
                     <Button variant="ghost" size="icon" className="flex-shrink-0 hover:bg-accent hidden md:inline-flex">
                       <Image className="h-5 w-5" />
@@ -296,8 +298,24 @@ export default function Chats() {
                     <Button variant="ghost" size="icon" className="flex-shrink-0 hover:bg-accent hidden md:inline-flex">
                       <SmilePlus className="h-5 w-5" />
                     </Button>
-                    <Input className="flex-1 bg-background" placeholder="Type your message..." />
-                    <Button size="icon" className="flex-shrink-0">
+                    <Input 
+                      className="flex-1 bg-background" 
+                      placeholder={editingMessageId ? "Edit your message..." : "Type your message..."} 
+                      value={messageInput}
+                      onChange={(e) => setMessageInput(e.target.value)}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          handleSendMessage();
+                        }
+                      }}
+                    />
+                    <Button 
+                      size="icon" 
+                      className="flex-shrink-0"
+                      onClick={handleSendMessage}
+                      disabled={!messageInput.trim() || updateMessage.isPending}
+                    >
                       <Send className="h-4 w-4" />
                     </Button>
                   </div>
