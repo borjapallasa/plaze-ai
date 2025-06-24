@@ -1,13 +1,22 @@
+
 import { useState } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Check, Search, User, Settings, Video, MessageSquare, Image, SmilePlus, Send, ArrowLeft } from "lucide-react";
+import { Check, Search, User, Settings, Video, MessageSquare, Image, SmilePlus, Send, ArrowLeft, Pin, Archive, UserPlus, Flag, MoreVertical } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useConversations, type Conversation } from "@/hooks/use-conversations";
 import { useConversationMessages } from "@/hooks/use-conversation-messages";
 import { useAuth } from "@/lib/auth";
+
 export default function Chats() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedChat, setSelectedChat] = useState<Conversation | null>(null);
@@ -26,6 +35,23 @@ export default function Chats() {
     isLoading: messagesLoading
   } = useConversationMessages(selectedChat?.conversation_uuid || null);
   const filteredChats = conversations?.filter(chat => chat.otherParticipantName.toLowerCase().includes(searchQuery.toLowerCase()) || chat.subject.toLowerCase().includes(searchQuery.toLowerCase())) || [];
+
+  const handlePinChat = () => {
+    console.log('Pin chat action');
+  };
+
+  const handleArchiveChat = () => {
+    console.log('Archive chat action');
+  };
+
+  const handleInviteUser = () => {
+    console.log('Invite user action');
+  };
+
+  const handleReportChat = () => {
+    console.log('Report chat action');
+  };
+
   if (authLoading || isLoading) {
     return <div className="min-h-screen bg-background">
         <MainHeader />
@@ -136,11 +162,33 @@ export default function Chats() {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    
-                    
-                    <Button variant="ghost" size="icon" className="hover:bg-accent">
-                      <Settings className="h-5 w-5" />
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="hover:bg-accent">
+                          <MoreVertical className="h-5 w-5" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48 bg-background border shadow-md">
+                        <DropdownMenuItem onClick={handlePinChat} className="cursor-pointer">
+                          <Pin className="mr-2 h-4 w-4" />
+                          Pin
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleArchiveChat} className="cursor-pointer">
+                          <Archive className="mr-2 h-4 w-4" />
+                          Archive
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={handleInviteUser} className="cursor-pointer">
+                          <UserPlus className="mr-2 h-4 w-4" />
+                          Invite User
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={handleReportChat} className="cursor-pointer text-red-600">
+                          <Flag className="mr-2 h-4 w-4" />
+                          Report
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </div>
 
