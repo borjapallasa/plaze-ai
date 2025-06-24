@@ -1,5 +1,4 @@
 
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MainHeader } from "@/components/MainHeader";
 import { ArrowLeft, Copy } from "lucide-react";
@@ -143,7 +142,7 @@ export default function UserTransactionItemDetails() {
           <CardHeader>
             <div className="flex flex-col gap-4">
               <CardTitle className="text-2xl font-semibold">
-                Transaction Item Details
+                Purchase Details
               </CardTitle>
               
               {/* Item ID near the top */}
@@ -158,30 +157,62 @@ export default function UserTransactionItemDetails() {
           </CardHeader>
 
           <CardContent className="space-y-8">
-            {/* Product Information */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-[#1A1F2C]">Product Information</h3>
+            {/* Files and Instructions Section - First and most prominent */}
+            {transactionItem.variants?.files_link && (
+              <div className="space-y-6">
+                <h3 className="text-xl font-semibold text-[#1A1F2C]">Your Download</h3>
+                
+                <div className="bg-blue-50 border border-blue-200 p-6 rounded-lg">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-[#1A1F2C] mb-1">{transactionItem.variants.name}</h4>
+                      <p className="text-sm text-[#8E9196]">Your purchased files are ready for download</p>
+                    </div>
+                    <Button asChild size="lg" className="w-full sm:w-auto">
+                      <a 
+                        href={transactionItem.variants.files_link} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                      >
+                        Download Files
+                      </a>
+                    </Button>
+                  </div>
+                  
+                  {/* Instructions for using the files */}
+                  {transactionItem.variants?.additional_details && (
+                    <div className="border-t border-blue-200 pt-4">
+                      <h5 className="text-sm font-semibold text-[#1A1F2C] mb-2">Instructions</h5>
+                      <div className="prose prose-sm max-w-none">
+                        <p className="text-[#8E9196] text-sm whitespace-pre-wrap">{transactionItem.variants.additional_details}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            <Separator className="my-8" />
+
+            {/* Purchase Summary */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-[#1A1F2C]">Purchase Summary</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
                   <div>
-                    <span className="text-[#8E9196] text-sm">Product Name:</span>
+                    <span className="text-[#8E9196] text-sm">Product:</span>
                     <p className="font-medium">{transactionItem.products?.name || 'Unknown Product'}</p>
+                  </div>
+                  <div>
+                    <span className="text-[#8E9196] text-sm">Variant:</span>
+                    <p className="font-medium">{transactionItem.variants?.name || 'Default'}</p>
                   </div>
                   <div>
                     <span className="text-[#8E9196] text-sm">Seller:</span>
                     <p className="font-medium">{transactionItem.products?.experts?.name || 'Unknown Seller'}</p>
                   </div>
-                  {transactionItem.variants?.name && (
-                    <div>
-                      <span className="text-[#8E9196] text-sm">Variant:</span>
-                      <p className="font-medium">{transactionItem.variants.name}</p>
-                    </div>
-                  )}
                 </div>
-              </div>
 
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-[#1A1F2C]">Purchase Information</h3>
                 <div className="space-y-3">
                   <div>
                     <span className="text-[#8E9196] text-sm">Price:</span>
@@ -193,11 +224,7 @@ export default function UserTransactionItemDetails() {
                   </div>
                   <div>
                     <span className="text-[#8E9196] text-sm">Total:</span>
-                    <p className="font-medium">${transactionItem.total_price?.toFixed(2) || '0.00'}</p>
-                  </div>
-                  <div>
-                    <span className="text-[#8E9196] text-sm">Status:</span>
-                    <p className="font-medium capitalize">{transactionItem.status || 'Unknown'}</p>
+                    <p className="font-semibold text-lg">${transactionItem.total_price?.toFixed(2) || '0.00'}</p>
                   </div>
                 </div>
               </div>
@@ -205,12 +232,12 @@ export default function UserTransactionItemDetails() {
 
             <Separator className="my-8" />
 
-            {/* Transaction Details */}
+            {/* Transaction Information */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-[#1A1F2C]">Transaction Details</h3>
+              <h3 className="text-lg font-semibold text-[#1A1F2C]">Transaction Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <span className="text-[#8E9196] text-sm">Transaction Date:</span>
+                  <span className="text-[#8E9196] text-sm">Purchase Date:</span>
                   <p className="font-medium">
                     {transactionItem.products_transactions?.created_at 
                       ? new Date(transactionItem.products_transactions.created_at).toLocaleString()
@@ -219,62 +246,13 @@ export default function UserTransactionItemDetails() {
                   </p>
                 </div>
                 <div>
-                  <span className="text-[#8E9196] text-sm">Transaction Status:</span>
+                  <span className="text-[#8E9196] text-sm">Status:</span>
                   <p className="font-medium capitalize">
-                    {transactionItem.products_transactions?.status || 'Unknown'}
+                    {transactionItem.status || 'Unknown'}
                   </p>
                 </div>
               </div>
             </div>
-
-            {/* Files and Instructions Section - Combined */}
-            {transactionItem.variants?.files_link && (
-              <>
-                <Separator className="my-8" />
-                <div className="space-y-6">
-                  <h3 className="text-lg font-semibold text-[#1A1F2C]">Files & Instructions</h3>
-                  
-                  {/* Download Section */}
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="text-sm font-medium text-[#1A1F2C]">Download Files</span>
-                      <Button asChild>
-                        <a 
-                          href={transactionItem.variants.files_link} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                        >
-                          Download Files
-                        </a>
-                      </Button>
-                    </div>
-                    
-                    {/* Instructions for using the files */}
-                    {transactionItem.variants?.additional_details && (
-                      <div className="border-t pt-4 mt-4">
-                        <h4 className="text-sm font-medium text-[#1A1F2C] mb-2">Instructions for Use</h4>
-                        <div className="prose prose-sm max-w-none">
-                          <p className="text-[#8E9196] text-sm whitespace-pre-wrap">{transactionItem.variants.additional_details}</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </>
-            )}
-
-            {/* Product Description */}
-            {transactionItem.products?.description && (
-              <>
-                <Separator className="my-8" />
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-[#1A1F2C]">Product Description</h3>
-                  <div className="prose prose-sm max-w-none">
-                    <p className="text-[#8E9196]">{transactionItem.products.description}</p>
-                  </div>
-                </div>
-              </>
-            )}
 
             {/* Reviews section - specific to this transaction item */}
             <Separator className="my-8" />
@@ -288,4 +266,3 @@ export default function UserTransactionItemDetails() {
     </>
   );
 }
-
