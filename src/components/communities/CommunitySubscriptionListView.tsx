@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -86,7 +85,7 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
                     UUID: {subscription.community_subscription_uuid}
                   </span>
                   <span>•</span>
-                  <span>{new Date(subscription.created_at).toLocaleDateString()}</span>
+                  <span>Joined {new Date(subscription.created_at).toLocaleDateString()}</span>
                 </div>
               </div>
             </div>

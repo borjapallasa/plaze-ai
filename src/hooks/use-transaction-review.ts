@@ -26,7 +26,7 @@ export function useTransactionReview(transactionUuid: string) {
       // Try to fetch reviews for the specific transaction
       const { data: reviews, error } = await supabase
         .from('reviews')
-        .select('review_uuid, rating, title, comments, buyer_name, email, created_at')
+        .select('review_uuid, rating, title, comments, buyer_name, buyer_email, created_at')
         .eq('transaction_uuid', transactionUuid);
 
       if (error) {
@@ -42,7 +42,7 @@ export function useTransactionReview(transactionUuid: string) {
         title: review.title,
         comments: review.comments,
         buyer_name: review.buyer_name,
-        buyer_email: review.email || '',
+        buyer_email: review.buyer_email || '',
         created_at: review.created_at,
       }));
     },

@@ -49,7 +49,7 @@ export function CommunitySubscriptionCard({ subscription }: CommunitySubscriptio
         <div className="flex items-center justify-between mt-4">
           <div className="space-y-1">
             <p className="text-sm text-muted-foreground">
-              Created: {new Date(subscription.created_at).toLocaleDateString()}
+              Joined: {new Date(subscription.created_at).toLocaleDateString()}
             </p>
           </div>
           <Badge 
