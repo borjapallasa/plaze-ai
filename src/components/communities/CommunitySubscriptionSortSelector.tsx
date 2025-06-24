@@ -1,11 +1,9 @@
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowDown, ArrowUp, DollarSign } from "lucide-react";
 
 interface SortOption {
   value: string;
   label: string;
-  icon: React.ReactNode;
 }
 
 interface CommunitySubscriptionSortSelectorProps {
@@ -17,53 +15,39 @@ export function CommunitySubscriptionSortSelector({ sortBy, onSortChange }: Comm
   const sortOptions: SortOption[] = [
     {
       value: "name-asc",
-      label: "Name (A-Z)",
-      icon: <ArrowUp className="h-3 w-3" />
+      label: "Name (asc)"
     },
     {
       value: "name-desc", 
-      label: "Name (Z-A)",
-      icon: <ArrowDown className="h-3 w-3" />
+      label: "Name (desc)"
     },
     {
       value: "date-asc",
-      label: "Date (Oldest)",
-      icon: <ArrowUp className="h-3 w-3" />
+      label: "Date (asc)"
     },
     {
       value: "date-desc",
-      label: "Date (Newest)", 
-      icon: <ArrowDown className="h-3 w-3" />
+      label: "Date (desc)"
     },
     {
       value: "amount-asc",
-      label: "Amount (Low to High)",
-      icon: <ArrowUp className="h-3 w-3" />
+      label: "Amount (asc)"
     },
     {
       value: "amount-desc",
-      label: "Amount (High to Low)",
-      icon: <ArrowDown className="h-3 w-3" />
+      label: "Amount (desc)"
     }
   ];
 
-  const selectedOption = sortOptions.find(option => option.value === sortBy);
-
   return (
     <Select value={sortBy} onValueChange={onSortChange}>
-      <SelectTrigger className="w-[180px]">
-        <div className="flex items-center gap-2">
-          {selectedOption?.icon}
-          <SelectValue placeholder="Sort by" />
-        </div>
+      <SelectTrigger className="w-[140px]">
+        <SelectValue placeholder="Sort by" />
       </SelectTrigger>
       <SelectContent>
         {sortOptions.map((option) => (
           <SelectItem key={option.value} value={option.value}>
-            <div className="flex items-center gap-2">
-              {option.icon}
-              {option.label}
-            </div>
+            {option.label}
           </SelectItem>
         ))}
       </SelectContent>
