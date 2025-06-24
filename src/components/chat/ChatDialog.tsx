@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { MessageCircle, Users, Clock, ArrowLeft, Send, User } from "lucide-react";
 import {
@@ -48,7 +47,7 @@ export function ChatDialog() {
 
   const handleViewAllConversations = () => {
     setOpen(false);
-    navigate('/chats');
+    navigate('/account/chats');
   };
 
   const handleSendMessage = () => {

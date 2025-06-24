@@ -64,7 +64,7 @@ function App() {
           <Route path="/community/:id/products/new" element={<NewCommunityProductPage />} />
           <Route path="/community/:id" element={<CommunityPage />} />
           <Route path="/classroom/:id" element={<ClassroomPage />} />
-          <Route path="/chats" element={<ChatsPage />} />
+          <Route path="/account/chats" element={<ChatsPage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/personal-area" element={<PersonalAreaPage />} />

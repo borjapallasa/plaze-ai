@@ -248,7 +248,7 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                         </DropdownMenuItem>
                       </Link>
                     )}
-                    <Link to="/chats">
+                    <Link to="/account/chats">
                       <DropdownMenuItem>
                         <MessageSquare className="mr-2 h-4 w-4" />
                         Chats
@@ -415,7 +415,7 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                         </DropdownMenuItem>
                       </Link>
                     )}
-                    <Link to="/chats">
+                    <Link to="/account/chats">
                       <DropdownMenuItem>
                         <MessageSquare className="mr-2 h-4 w-4" />
                         Chats
