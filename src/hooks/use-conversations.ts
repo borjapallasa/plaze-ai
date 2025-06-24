@@ -53,6 +53,12 @@ export function useConversations() {
           ? conversation.user_recipient_name 
           : conversation.user_starter_name;
 
+        // Show message count or appropriate message
+        const messageCount = conversation.message_count || 0;
+        const lastMessage = messageCount > 0 
+          ? `${messageCount} message${messageCount === 1 ? '' : 's'}`
+          : "No messages yet";
+
         return {
           conversation_uuid: conversation.conversation_uuid,
           subject: conversation.subject || otherParticipantName,
@@ -60,12 +66,12 @@ export function useConversations() {
           user_recipient_uuid: conversation.user_recipient_uuid,
           user_starter_name: conversation.user_starter_name,
           user_recipient_name: conversation.user_recipient_name,
-          message_count: conversation.message_count || 0,
+          message_count: messageCount,
           created_at: conversation.created_at,
           status: conversation.status || 'active',
           // UI fields
           otherParticipantName,
-          lastMessage: "No messages yet", // We can enhance this later with actual last message
+          lastMessage,
           timestamp: new Date(conversation.created_at).toLocaleDateString(),
           online: Math.random() > 0.5, // Random for now, can be enhanced with real presence data
         };
