@@ -6,48 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Check, Search, User, Settings, Video, MessageSquare, Image, SmilePlus, Send, ArrowLeft } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-
-interface Chat {
-  id: string;
-  subject: string;
-  avatar?: string;
-  lastMessage: string;
-  timestamp: string;
-  unread?: number;
-  online?: boolean;
-}
-
-const mockChats: Chat[] = [
-  {
-    id: "1",
-    subject: "Ihor Poltavtsev",
-    lastMessage: "E-commerce Email Marketing I...",
-    timestamp: "6/3/23",
-    online: false,
-  },
-  {
-    id: "2",
-    subject: "Elisha Adeniyi",
-    lastMessage: "Quick Fix: CSS Conflict Style in ...",
-    timestamp: "1/24/25",
-    online: true,
-  },
-  {
-    id: "3",
-    subject: "Arslan Ahmad",
-    lastMessage: "LinkedIn API Trouble Shooting ...",
-    timestamp: "1/24/25",
-    online: true,
-  },
-  {
-    id: "4",
-    subject: "Manoj Kargar",
-    lastMessage: "FlutterFlow Developer for Saa...",
-    timestamp: "1/22/25",
-    unread: 2,
-    online: true,
-  }
-];
+import { useConversations, type Conversation } from "@/hooks/use-conversations";
+import { useAuth } from "@/lib/auth";
 
 interface Message {
   id: string;
@@ -88,12 +48,52 @@ const mockMessages: Message[] = [
 
 export default function Chats() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
+  const [selectedChat, setSelectedChat] = useState<Conversation | null>(null);
   const isMobile = useIsMobile();
+  const { user, loading: authLoading } = useAuth();
+  const { data: conversations, isLoading, error } = useConversations();
 
-  const filteredChats = mockChats.filter(chat =>
+  const filteredChats = conversations?.filter(chat =>
+    chat.otherParticipantName.toLowerCase().includes(searchQuery.toLowerCase()) ||
     chat.subject.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ) || [];
+
+  if (authLoading || isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <MainHeader />
+        <div className="container mx-auto max-w-[1400px] px-2 md:px-4 lg:px-8 py-6 pt-28">
+          <div className="flex h-[calc(100vh-140px)] rounded-lg border bg-card shadow-sm overflow-hidden">
+            <div className="flex-1 flex items-center justify-center">
+              <p>Loading conversations...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background">
+        <MainHeader />
+        <div className="container mx-auto max-w-[1400px] px-2 md:px-4 lg:px-8 py-6 pt-28">
+          <div className="flex h-[calc(100vh-140px)] rounded-lg border bg-card shadow-sm overflow-hidden">
+            <div className="flex-1 flex items-center justify-center text-muted-foreground">
+              <div className="text-center space-y-2">
+                <MessageSquare className="h-12 w-12 mx-auto text-muted-foreground/50" />
+                <p>Please sign in to view your conversations</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    console.error('Error loading conversations:', error);
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -124,49 +124,54 @@ export default function Chats() {
             </div>
 
             <div className="flex-1 overflow-y-auto">
-              {filteredChats.map((chat) => (
-                <div
-                  key={chat.id}
-                  className={`p-4 cursor-pointer transition-all hover:bg-accent/50 border-l-2 ${
-                    selectedChat?.id === chat.id 
-                      ? "bg-accent border-l-primary" 
-                      : "border-l-transparent"
-                  }`}
-                  onClick={() => setSelectedChat(chat)}
-                >
-                  <div className="flex gap-3">
-                    <div className="relative flex-shrink-0">
-                      <Avatar className="h-12 w-12 border-2 border-background ring-2 ring-background">
-                        <AvatarFallback>
-                          <User className="h-6 w-6" />
-                        </AvatarFallback>
-                        {chat.avatar && <AvatarImage src={chat.avatar} />}
-                      </Avatar>
-                      {chat.online && (
-                        <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 ring-2 ring-background" />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex justify-between items-start gap-2">
-                        <p className="font-semibold truncate leading-none mb-1.5">
-                          {chat.subject}
-                        </p>
-                        <span className="text-xs text-muted-foreground whitespace-nowrap flex-shrink-0">
-                          {chat.timestamp}
-                        </span>
+              {filteredChats.length === 0 ? (
+                <div className="p-4 text-center text-muted-foreground">
+                  <p>No conversations found</p>
+                </div>
+              ) : (
+                filteredChats.map((chat) => (
+                  <div
+                    key={chat.conversation_uuid}
+                    className={`p-4 cursor-pointer transition-all hover:bg-accent/50 border-l-2 ${
+                      selectedChat?.conversation_uuid === chat.conversation_uuid 
+                        ? "bg-accent border-l-primary" 
+                        : "border-l-transparent"
+                    }`}
+                    onClick={() => setSelectedChat(chat)}
+                  >
+                    <div className="flex gap-3">
+                      <div className="relative flex-shrink-0">
+                        <Avatar className="h-12 w-12 border-2 border-background ring-2 ring-background">
+                          <AvatarFallback>
+                            <User className="h-6 w-6" />
+                          </AvatarFallback>
+                        </Avatar>
+                        {chat.online && (
+                          <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 ring-2 ring-background" />
+                        )}
                       </div>
-                      <p className="text-sm text-muted-foreground truncate mb-1">
-                        {chat.lastMessage}
-                      </p>
-                      {chat.unread && (
-                        <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full text-xs font-medium bg-primary text-primary-foreground">
-                          {chat.unread}
-                        </span>
-                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex justify-between items-start gap-2">
+                          <p className="font-semibold truncate leading-none mb-1.5">
+                            {chat.otherParticipantName}
+                          </p>
+                          <span className="text-xs text-muted-foreground whitespace-nowrap flex-shrink-0">
+                            {chat.timestamp}
+                          </span>
+                        </div>
+                        <p className="text-sm text-muted-foreground truncate mb-1">
+                          {chat.lastMessage}
+                        </p>
+                        {chat.unread && (
+                          <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full text-xs font-medium bg-primary text-primary-foreground">
+                            {chat.unread}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
 
@@ -193,10 +198,9 @@ export default function Chats() {
                       <AvatarFallback>
                         <User className="h-5 w-5" />
                       </AvatarFallback>
-                      {selectedChat.avatar && <AvatarImage src={selectedChat.avatar} />}
                     </Avatar>
                     <div>
-                      <h2 className="font-semibold leading-none mb-1">{selectedChat.subject}</h2>
+                      <h2 className="font-semibold leading-none mb-1">{selectedChat.otherParticipantName}</h2>
                       <p className="text-sm text-muted-foreground flex items-center gap-1.5">
                         <span className={`h-2 w-2 rounded-full ${selectedChat.online ? 'bg-green-500' : 'bg-muted-foreground'}`} />
                         {selectedChat.online ? "Active now" : "Offline"}

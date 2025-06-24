@@ -823,17 +823,11 @@ export type Database = {
           archived: boolean | null
           conversation_uuid: string
           created_at: string
-          draft_created: boolean | null
           id: number
-          job_name: string | null
-          job_uuid: string | null
           message_count: number | null
-          product_name: string | null
-          product_uuid: string | null
           source: Database["public"]["Enums"]["conversation_source"] | null
           status: Database["public"]["Enums"]["conversation_status"] | null
           subject: string | null
-          transaction_uuid: string | null
           user_recipient_name: string | null
           user_recipient_uuid: string | null
           user_starter_name: string | null
@@ -843,17 +837,11 @@ export type Database = {
           archived?: boolean | null
           conversation_uuid?: string
           created_at?: string
-          draft_created?: boolean | null
           id?: number
-          job_name?: string | null
-          job_uuid?: string | null
           message_count?: number | null
-          product_name?: string | null
-          product_uuid?: string | null
           source?: Database["public"]["Enums"]["conversation_source"] | null
           status?: Database["public"]["Enums"]["conversation_status"] | null
           subject?: string | null
-          transaction_uuid?: string | null
           user_recipient_name?: string | null
           user_recipient_uuid?: string | null
           user_starter_name?: string | null
@@ -863,44 +851,17 @@ export type Database = {
           archived?: boolean | null
           conversation_uuid?: string
           created_at?: string
-          draft_created?: boolean | null
           id?: number
-          job_name?: string | null
-          job_uuid?: string | null
           message_count?: number | null
-          product_name?: string | null
-          product_uuid?: string | null
           source?: Database["public"]["Enums"]["conversation_source"] | null
           status?: Database["public"]["Enums"]["conversation_status"] | null
           subject?: string | null
-          transaction_uuid?: string | null
           user_recipient_name?: string | null
           user_recipient_uuid?: string | null
           user_starter_name?: string | null
           user_starter_uuid?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "conversations_job_uuid_fkey"
-            columns: ["job_uuid"]
-            isOneToOne: false
-            referencedRelation: "jobs"
-            referencedColumns: ["job_uuid"]
-          },
-          {
-            foreignKeyName: "conversations_product_uuid_fkey"
-            columns: ["product_uuid"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["product_uuid"]
-          },
-          {
-            foreignKeyName: "conversations_transaction_uuid_fkey"
-            columns: ["transaction_uuid"]
-            isOneToOne: false
-            referencedRelation: "transactions"
-            referencedColumns: ["transaction_uuid"]
-          },
           {
             foreignKeyName: "conversations_user_recipient_uuid_fkey"
             columns: ["user_recipient_uuid"]
