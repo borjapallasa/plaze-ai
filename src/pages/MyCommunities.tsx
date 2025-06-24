@@ -115,7 +115,7 @@ export default function MyCommunities() {
 
           {/* Search Bar and Layout Selector */}
           <div className="space-y-4">
-            {/* Mobile layout - three lines */}
+            {/* Mobile layout - only search input */}
             <div className="md:hidden space-y-3">
               {/* Search input - full width on mobile */}
               <div className="relative">
@@ -127,14 +127,9 @@ export default function MyCommunities() {
                   className="pl-9"
                 />
               </div>
-              
-              {/* Layout selector - separate line on mobile */}
-              <div className="flex justify-end">
-                <LayoutSelector layout={layout} onLayoutChange={setLayout} />
-              </div>
             </div>
 
-            {/* Desktop/Tablet layout - all in one line */}
+            {/* Desktop/Tablet layout - search input and layout selector */}
             <div className="hidden md:flex md:items-center gap-3">
               {/* Search input */}
               <div className="relative flex-1">
@@ -147,7 +142,7 @@ export default function MyCommunities() {
                 />
               </div>
               
-              {/* Layout selector */}
+              {/* Layout selector - only on desktop */}
               <LayoutSelector layout={layout} onLayoutChange={setLayout} />
             </div>
           </div>
@@ -172,12 +167,8 @@ export default function MyCommunities() {
           {/* Subscriptions Display */}
           {!loading && subscriptions.length > 0 && (
             <>
-              {layout === "list" ? (
-                <CommunitySubscriptionListView
-                  subscriptions={filteredSubscriptions}
-                  loading={loading}
-                />
-              ) : (
+              {/* Mobile: Always show gallery layout */}
+              <div className="md:hidden">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {filteredSubscriptions.map((subscription) => (
                     <CommunitySubscriptionCard
@@ -186,7 +177,26 @@ export default function MyCommunities() {
                     />
                   ))}
                 </div>
-              )}
+              </div>
+
+              {/* Desktop: Show selected layout */}
+              <div className="hidden md:block">
+                {layout === "list" ? (
+                  <CommunitySubscriptionListView
+                    subscriptions={filteredSubscriptions}
+                    loading={loading}
+                  />
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredSubscriptions.map((subscription) => (
+                      <CommunitySubscriptionCard
+                        key={subscription.community_subscription_uuid}
+                        subscription={subscription}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
             </>
           )}
 
