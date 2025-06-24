@@ -52,7 +52,7 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
         {[...Array(5)].map((_, index) => (
           <Card key={index} className="p-4 animate-pulse">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-gray-200 rounded-lg flex-shrink-0"></div>
+              <div className="w-20 h-20 bg-gray-200 rounded-lg flex-shrink-0"></div>
               <div className="flex-1 space-y-2">
                 <div className="h-5 bg-gray-200 rounded w-1/3"></div>
                 <div className="h-4 bg-gray-200 rounded w-3/4"></div>
@@ -87,7 +87,7 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
           <div className="md:hidden p-4 space-y-4">
             {/* Logo and Title Row */}
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 flex-shrink-0 rounded-lg bg-gray-50 border flex items-center justify-center overflow-hidden">
+              <div className="w-16 h-16 flex-shrink-0 rounded-lg bg-gray-50 border flex items-center justify-center overflow-hidden">
                 {subscription.community_thumbnail ? (
                   <img 
                     src={subscription.community_thumbnail} 
@@ -157,7 +157,7 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
           {/* Desktop Layout */}
           <div className="hidden md:flex items-center p-4 gap-4">
             {/* Left: Logo - Fixed Width */}
-            <div className="w-16 h-16 flex-shrink-0 rounded-lg bg-gray-50/50 border flex items-center justify-center overflow-hidden">
+            <div className="w-20 h-20 flex-shrink-0 rounded-lg bg-gray-50/50 border flex items-center justify-center overflow-hidden">
               {subscription.community_thumbnail ? (
                 <img 
                   src={subscription.community_thumbnail} 
