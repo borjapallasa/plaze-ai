@@ -30,58 +30,41 @@ export default function MyCommunities() {
           return;
         }
         
-        // Get user record with communities_joined array
-        const { data: userData, error: userError } = await supabase
-          .from('users')
-          .select('communities_joined')
+        console.log("Fetching community subscriptions for user:", user.id);
+        
+        // Fetch community subscriptions for the authenticated user
+        const { data: subscriptions, error: subscriptionsError } = await supabase
+          .from('community_subscriptions')
+          .select(`
+            community_uuid,
+            status,
+            created_at,
+            communities (
+              community_uuid,
+              name,
+              description,
+              thumbnail,
+              member_count,
+              slug
+            )
+          `)
           .eq('user_uuid', user.id)
-          .single();
+          .eq('status', 'active'); // Only fetch active subscriptions
           
-        if (userError) {
-          console.error("Error fetching user data:", userError);
-          toast.error("Failed to load user data");
+        if (subscriptionsError) {
+          console.error("Error fetching community subscriptions:", subscriptionsError);
+          toast.error("Failed to load your communities");
           return;
         }
         
-        // Ensure communities_joined is always a valid string array with complete UUIDs
-        let communitiesJoined: string[] = [];
+        console.log("Community subscriptions data:", subscriptions);
         
-        if (userData?.communities_joined) {
-          if (Array.isArray(userData.communities_joined)) {
-            // Standard UUID regex for validation
-            const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-            
-            // Filter out any non-UUID values, with proper type checking
-            communitiesJoined = (userData.communities_joined as any[])
-              .filter(id => id !== null && id !== undefined)
-              .map(id => String(id))
-              .filter(id => typeof id === 'string')
-              .filter(id => uuidRegex.test(id.trim()));
-          }
-          
-          console.log("Validated community UUIDs:", communitiesJoined);
-        }
+        // Extract communities from subscriptions
+        const userCommunities = subscriptions
+          ?.filter(sub => sub.communities) // Filter out any null communities
+          .map(sub => sub.communities) || [];
         
-        // If user has no communities, show empty state
-        if (communitiesJoined.length === 0) {
-          setCommunities([]);
-          setLoading(false);
-          return;
-        }
-        
-        // Fetch communities that match the community_uuids in the communities_joined array
-        const { data: communitiesData, error: communitiesError } = await supabase
-          .from('communities')
-          .select('*')
-          .in('community_uuid', communitiesJoined);
-          
-        if (communitiesError) {
-          console.error("Error fetching communities:", communitiesError);
-          toast.error("Failed to load communities");
-          return;
-        }
-        
-        setCommunities(communitiesData || []);
+        setCommunities(userCommunities);
       } catch (error) {
         console.error("Error in fetchUserCommunities:", error);
         toast.error("An unexpected error occurred");

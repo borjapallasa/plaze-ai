@@ -646,7 +646,6 @@ export type Database = {
       community_subscriptions: {
         Row: {
           cancelled_at: string | null
-          commnity_name: string | null
           community_price_uuid: string | null
           community_subscription_uuid: string
           community_uuid: string | null
@@ -671,7 +670,6 @@ export type Database = {
         }
         Insert: {
           cancelled_at?: string | null
-          commnity_name?: string | null
           community_price_uuid?: string | null
           community_subscription_uuid?: string
           community_uuid?: string | null
@@ -696,7 +694,6 @@ export type Database = {
         }
         Update: {
           cancelled_at?: string | null
-          commnity_name?: string | null
           community_price_uuid?: string | null
           community_subscription_uuid?: string
           community_uuid?: string | null
@@ -2570,7 +2567,7 @@ export type Database = {
       community_billing_period: "monthly" | "yearly"
       community_price_status: "active" | "inactive"
       community_product_type: "free" | "paid"
-      community_subscription_status: "active" | "inactive"
+      community_subscription_status: "active" | "inactive" | "pending"
       community_type: "free" | "paid"
       community_visibility: "draft" | "private" | "public"
       conversation_source: "template" | "job request" | "information request"
@@ -2778,7 +2775,7 @@ export const Constants = {
       community_billing_period: ["monthly", "yearly"],
       community_price_status: ["active", "inactive"],
       community_product_type: ["free", "paid"],
-      community_subscription_status: ["active", "inactive"],
+      community_subscription_status: ["active", "inactive", "pending"],
       community_type: ["free", "paid"],
       community_visibility: ["draft", "private", "public"],
       conversation_source: ["template", "job request", "information request"],
