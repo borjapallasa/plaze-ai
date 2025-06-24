@@ -54,7 +54,7 @@ export default function MyCommunities() {
         
         console.log("Authenticated user:", user.id);
         
-        // Fetch community subscriptions with community details
+        // Fetch community subscriptions with community details - only active ones
         const { data: subscriptionsData, error: subscriptionsError } = await supabase
           .from('community_subscriptions')
           .select(`
@@ -69,7 +69,8 @@ export default function MyCommunities() {
               description
             )
           `)
-          .eq('user_uuid', user.id);
+          .eq('user_uuid', user.id)
+          .eq('status', 'active');
           
         if (subscriptionsError) {
           console.error("Error fetching community subscriptions:", subscriptionsError);

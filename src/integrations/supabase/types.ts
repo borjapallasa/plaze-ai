@@ -651,6 +651,7 @@ export type Database = {
           community_subscription_uuid: string
           community_uuid: string | null
           created_at: string
+          email: string | null
           id: number
           seller_user_uuid: string | null
           status:
@@ -676,6 +677,7 @@ export type Database = {
           community_subscription_uuid?: string
           community_uuid?: string | null
           created_at?: string
+          email?: string | null
           id?: number
           seller_user_uuid?: string | null
           status?:
@@ -701,6 +703,7 @@ export type Database = {
           community_subscription_uuid?: string
           community_uuid?: string | null
           created_at?: string
+          email?: string | null
           id?: number
           seller_user_uuid?: string | null
           status?:
