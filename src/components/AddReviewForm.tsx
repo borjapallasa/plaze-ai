@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -49,7 +50,7 @@ export function AddReviewForm({ transactionUuid, sellerUserUuid, productUuid, on
       console.log('Comments:', comments);
       console.log('Product Transaction Item UUID:', transactionUuid);
       console.log('Seller User UUID (expert_uuid):', sellerUserUuid);
-      console.log('Product UUID:', productUuid);
+      console.log('Product UUID (from transaction item):', productUuid);
 
       // Get user's first and last name from user metadata
       const firstName = user.user_metadata?.first_name || '';
@@ -66,24 +67,12 @@ export function AddReviewForm({ transactionUuid, sellerUserUuid, productUuid, on
         transaction_type: 'product' as const,
         type: 'product' as const,
         status: 'published' as const,
-        buyer_email: user.email
+        buyer_email: user.email,
+        product_uuid: productUuid, // Use the product_uuid directly from transaction item
+        seller_user_uuid: sellerUserUuid // This is the expert_uuid
       };
 
-      // Add seller_user_uuid if provided (this is the expert_uuid)
-      if (sellerUserUuid) {
-        (reviewData as any).seller_user_uuid = sellerUserUuid;
-        console.log('Including seller_user_uuid in review:', sellerUserUuid);
-      } else {
-        console.warn('No sellerUserUuid provided - review will be submitted without seller reference');
-      }
-
-      // Add product_uuid if provided
-      if (productUuid) {
-        (reviewData as any).product_uuid = productUuid;
-        console.log('Including product_uuid in review:', productUuid);
-      } else {
-        console.warn('No productUuid provided - review will be submitted without product reference');
-      }
+      console.log('Final review data being inserted:', reviewData);
 
       const { error } = await supabase
         .from('reviews')
