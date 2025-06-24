@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MainHeader } from "@/components/MainHeader";
 import { ArrowLeft, Copy } from "lucide-react";
@@ -18,7 +17,6 @@ export default function UserTransactionItemDetails() {
   
   console.log('Transaction Item ID from params:', itemId);
   
-  // Fetch the specific transaction item details
   const { data: transactionItem, isLoading, error } = useQuery({
     queryKey: ['transaction-item-details', itemId],
     queryFn: async () => {
@@ -80,6 +78,7 @@ export default function UserTransactionItemDetails() {
     }
   };
 
+  
   if (isLoading) {
     return (
       <>
@@ -261,6 +260,7 @@ export default function UserTransactionItemDetails() {
             <TransactionReview 
               transactionUuid={itemId || ''} 
               productUuid={transactionItem.product_uuid}
+              expertUuid={transactionItem.products?.experts?.expert_uuid}
             />
           </CardContent>
         </Card>
