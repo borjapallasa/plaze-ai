@@ -41,22 +41,6 @@ export default function SignUp() {
 
       if (data.user) {
         console.log("User created successfully:", data.user);
-        
-        // Update the users table with first_name and last_name
-        const { error: updateError } = await supabase
-          .from('users')
-          .update({
-            first_name: firstName,
-            last_name: lastName,
-          })
-          .eq('user_uuid', data.user.id);
-
-        if (updateError) {
-          console.error("Error updating user profile:", updateError);
-          // Don't block the signup flow for this error
-          toast.error("Account created but profile update failed");
-        }
-        
         toast.success("Successfully signed up! Please check your email for verification.");
         navigate("/sign-in");
       }
