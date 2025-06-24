@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,12 +8,14 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
 import { Upload, User, BellRing, Key, Eye, EyeOff, X, Check } from "lucide-react";
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useUserProfile } from "@/hooks/use-user-profile";
 
 export default function AccountSettings() {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { data: userProfile, isLoading: isLoadingProfile } = useUserProfile();
   
   // Profile state
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
@@ -23,6 +24,15 @@ export default function AccountSettings() {
   const [email, setEmail] = useState("");
   const [hasProfileChanges, setHasProfileChanges] = useState(false);
   const [isProfileSaving, setIsProfileSaving] = useState(false);
+
+  // Initialize form with fetched user data
+  useEffect(() => {
+    if (userProfile) {
+      setFirstName(userProfile.first_name || "");
+      setLastName(userProfile.last_name || "");
+      setEmail(userProfile.email || "");
+    }
+  }, [userProfile]);
 
   // Notification preferences state
   const [notifications, setNotifications] = useState({
@@ -124,16 +134,18 @@ export default function AccountSettings() {
 
   // Profile form handlers
   const handleProfileInputChange = (field: string, value: string) => {
-    setHasProfileChanges(true);
     switch (field) {
       case 'firstName':
         setFirstName(value);
+        setHasProfileChanges(value !== (userProfile?.first_name || ""));
         break;
       case 'lastName':
         setLastName(value);
+        setHasProfileChanges(value !== (userProfile?.last_name || ""));
         break;
       case 'email':
         setEmail(value);
+        setHasProfileChanges(value !== (userProfile?.email || ""));
         break;
     }
   };
@@ -245,6 +257,21 @@ export default function AccountSettings() {
       });
     }, 1000);
   };
+
+  if (isLoadingProfile) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm">
+          <MainHeader />
+        </div>
+        <main className="container mx-auto px-4 pt-[126px] pb-8">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center">Loading...</div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
