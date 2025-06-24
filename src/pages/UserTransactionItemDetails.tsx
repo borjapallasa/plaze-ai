@@ -32,7 +32,8 @@ export default function UserTransactionItemDetails() {
             name,
             description,
             thumbnail,
-            experts (
+            expert_uuid,
+            experts!products_expert_uuid_fkey (
               name,
               expert_uuid,
               user_uuid
@@ -60,6 +61,8 @@ export default function UserTransactionItemDetails() {
       }
 
       console.log('Found transaction item:', data);
+      console.log('Expert data from products:', data?.products?.experts);
+      console.log('Expert UUID from products:', data?.products?.expert_uuid);
       return data;
     },
     enabled: !!itemId,
@@ -78,7 +81,6 @@ export default function UserTransactionItemDetails() {
     }
   };
 
-  
   if (isLoading) {
     return (
       <>
@@ -125,6 +127,11 @@ export default function UserTransactionItemDetails() {
       </>
     );
   }
+
+  // Get the expert UUID - try from the direct expert_uuid field first, then from the joined experts table
+  const expertUuid = transactionItem.products?.expert_uuid || transactionItem.products?.experts?.expert_uuid;
+  
+  console.log('Final expert UUID to pass:', expertUuid);
 
   return (
     <>
@@ -260,7 +267,7 @@ export default function UserTransactionItemDetails() {
             <TransactionReview 
               transactionUuid={itemId || ''} 
               productUuid={transactionItem.product_uuid}
-              expertUuid={transactionItem.products?.experts?.expert_uuid}
+              expertUuid={expertUuid}
             />
           </CardContent>
         </Card>
