@@ -27,12 +27,12 @@ export function CommunitySubscriptionSortSelector({ sortBy, onSortChange }: Comm
     },
     {
       value: "date-asc",
-      label: "Joined (Oldest)",
+      label: "Date (Oldest)",
       icon: <ArrowUp className="h-3 w-3" />
     },
     {
       value: "date-desc",
-      label: "Joined (Newest)", 
+      label: "Date (Newest)", 
       icon: <ArrowDown className="h-3 w-3" />
     }
   ];

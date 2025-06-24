@@ -645,6 +645,7 @@ export type Database = {
       }
       community_subscriptions: {
         Row: {
+          amount: number | null
           cancelled_at: string | null
           community_price_uuid: string | null
           community_subscription_uuid: string
@@ -669,6 +670,7 @@ export type Database = {
           utm_term: string | null
         }
         Insert: {
+          amount?: number | null
           cancelled_at?: string | null
           community_price_uuid?: string | null
           community_subscription_uuid?: string
@@ -693,6 +695,7 @@ export type Database = {
           utm_term?: string | null
         }
         Update: {
+          amount?: number | null
           cancelled_at?: string | null
           community_price_uuid?: string | null
           community_subscription_uuid?: string
