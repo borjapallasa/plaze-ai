@@ -8,6 +8,7 @@ export interface TransactionItemReview {
   title: string;
   comments: string;
   buyer_name: string;
+  buyer_email: string;
   created_at: string;
 }
 
@@ -25,7 +26,7 @@ export function useTransactionItemReview(transactionItemUuid: string) {
       // Fetch reviews for the specific transaction item
       const { data: reviews, error } = await supabase
         .from('reviews')
-        .select('review_uuid, rating, title, comments, buyer_name, created_at')
+        .select('review_uuid, rating, title, comments, buyer_name, buyer_email, created_at')
         .eq('product_transaction_item_uuid', transactionItemUuid);
 
       if (error) {

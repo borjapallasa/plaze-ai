@@ -8,13 +8,14 @@ export interface TransactionReview {
   title: string;
   comments: string;
   buyer_name: string;
+  buyer_email: string;
   created_at: string;
 }
 
 export function useTransactionReview(transactionUuid: string) {
   return useQuery({
     queryKey: ['transaction-review', transactionUuid],
-    queryFn: async () => {
+    queryFn: async (): Promise<TransactionReview[]> => {
       console.log('Fetching reviews for transaction:', transactionUuid);
       
       if (!transactionUuid) {
@@ -25,7 +26,7 @@ export function useTransactionReview(transactionUuid: string) {
       // Try to fetch reviews for the specific transaction
       const { data: reviews, error } = await supabase
         .from('reviews')
-        .select('review_uuid, rating, title, comments, buyer_name, created_at')
+        .select('review_uuid, rating, title, comments, buyer_name, buyer_email, created_at')
         .eq('transaction_uuid', transactionUuid);
 
       if (error) {
