@@ -1,9 +1,7 @@
-
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Calendar, Settings, ExternalLink } from "lucide-react";
 
 interface CommunitySubscription {
@@ -76,15 +74,13 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
           className="p-0 hover:shadow-md transition-shadow duration-200 overflow-hidden"
         >
           <div className="flex items-stretch min-h-[120px]">
-            {/* Left: Community Thumbnail - 1:1 Aspect Ratio */}
-            <div className="w-24 flex-shrink-0">
-              <AspectRatio ratio={1} className="w-full">
-                <img 
-                  src={subscription.community_thumbnail || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f"} 
-                  alt={subscription.community_name || "Community"} 
-                  className="w-full h-full object-cover"
-                />
-              </AspectRatio>
+            {/* Left: Community Thumbnail - Full Height */}
+            <div className="w-24 h-full flex-shrink-0">
+              <img 
+                src={subscription.community_thumbnail || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f"} 
+                alt={subscription.community_name || "Community"} 
+                className="w-full h-full object-cover"
+              />
             </div>
             
             {/* Center: Content Section */}
