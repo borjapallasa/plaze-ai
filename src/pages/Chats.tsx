@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
@@ -42,6 +43,30 @@ export default function Chats() {
   const updateMessage = useUpdateMessage();
   const sendMessage = useSendMessage();
   const filteredChats = conversations?.filter(chat => chat.otherParticipantName.toLowerCase().includes(searchQuery.toLowerCase()) || chat.subject.toLowerCase().includes(searchQuery.toLowerCase())) || [];
+
+  // Helper function to check if a message should show user info
+  const shouldShowUserInfo = (currentIndex: number, messages: any[]) => {
+    if (currentIndex === 0) return true;
+    const currentMessage = messages[currentIndex];
+    const previousMessage = messages[currentIndex - 1];
+    return currentMessage.user_uuid !== previousMessage.user_uuid;
+  };
+
+  // Helper function to check if a message should show timestamp
+  const shouldShowTimestamp = (currentIndex: number, messages: any[]) => {
+    if (currentIndex === 0) return true;
+    const currentMessage = messages[currentIndex];
+    const previousMessage = messages[currentIndex - 1];
+    
+    // Show timestamp if different user or more than 5 minutes apart
+    if (currentMessage.user_uuid !== previousMessage.user_uuid) return true;
+    
+    const currentTime = new Date(currentMessage.created_at).getTime();
+    const previousTime = new Date(previousMessage.created_at).getTime();
+    const timeDifference = currentTime - previousTime;
+    
+    return timeDifference > 5 * 60 * 1000; // 5 minutes
+  };
 
   const handlePinChat = () => {
     console.log('Pin chat action');
@@ -239,29 +264,38 @@ export default function Chats() {
                 </div>
 
                 {/* Messages */}
-                <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+                <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-1">
                   {messagesLoading ? <div className="flex items-center justify-center h-full">
                       <p>Loading messages...</p>
-                    </div> : messages && messages.length > 0 ? messages.map(message => {
+                    </div> : messages && messages.length > 0 ? messages.map((message, index) => {
                 const isOutgoing = message.user_uuid === user.id;
                 const isBeingEdited = editingMessageId === message.message_uuid;
+                const showUserInfo = shouldShowUserInfo(index, messages);
+                const showTimestamp = shouldShowTimestamp(index, messages);
                 
-                return <div key={message.message_uuid} className={`flex gap-3 ${isOutgoing ? 'flex-row-reverse' : ''}`}>
-                          <Avatar className="h-8 w-8 flex-shrink-0 ring-2 ring-background">
-                            <AvatarFallback>
-                              <User className="h-4 w-4" />
-                            </AvatarFallback>
-                          </Avatar>
+                return <div key={message.message_uuid} className={`flex gap-3 ${isOutgoing ? 'flex-row-reverse' : ''} ${showUserInfo ? 'mt-6 first:mt-0' : 'mt-1'}`}>
+                          {showUserInfo && (
+                            <Avatar className="h-8 w-8 flex-shrink-0 ring-2 ring-background">
+                              <AvatarFallback>
+                                <User className="h-4 w-4" />
+                              </AvatarFallback>
+                            </Avatar>
+                          )}
+                          {!showUserInfo && <div className="w-8 flex-shrink-0" />}
                           <div className={`flex flex-col ${isOutgoing ? 'items-end' : 'items-start'} max-w-[85%] md:max-w-[80%]`}>
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className={`text-sm font-medium ${isOutgoing ? 'order-2' : ''}`}>
-                                {message.user_name}
-                              </span>
-                              <span className="text-xs text-muted-foreground">
-                                {new Date(message.created_at).toLocaleString()}
-                              </span>
-                            </div>
-                            <div className={`rounded-2xl px-4 py-2.5 ${isOutgoing ? 'bg-primary text-primary-foreground rounded-br-none' : 'bg-accent rounded-bl-none'} relative group ${isBeingEdited ? 'ring-2 ring-primary' : ''}`}>
+                            {showUserInfo && (
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className={`text-sm font-medium ${isOutgoing ? 'order-2' : ''}`}>
+                                  {message.user_name}
+                                </span>
+                                {showTimestamp && (
+                                  <span className="text-xs text-muted-foreground">
+                                    {new Date(message.created_at).toLocaleString()}
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                            <div className={`rounded-2xl px-4 py-2.5 ${isOutgoing ? 'bg-primary text-primary-foreground rounded-br-none' : 'bg-accent rounded-bl-none'} relative group ${isBeingEdited ? 'ring-2 ring-primary' : ''} ${!showUserInfo ? (isOutgoing ? 'rounded-br-2xl' : 'rounded-bl-2xl') : ''}`}>
                               <p className="text-sm whitespace-pre-wrap break-words">
                                 {message.content || "No content available"}
                               </p>
@@ -276,7 +310,7 @@ export default function Chats() {
                                 </Button>
                               )}
                             </div>
-                            {isOutgoing && <div className="flex items-center gap-1 mt-1">
+                            {isOutgoing && showUserInfo && <div className="flex items-center gap-1 mt-1">
                                 <span className="text-xs text-muted-foreground">Sent</span>
                                 <Check className="h-3 w-3 text-muted-foreground" />
                               </div>}
