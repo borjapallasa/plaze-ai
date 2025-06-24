@@ -23,16 +23,35 @@ export default function MyCommunities() {
         setLoading(true);
         
         // Get the current user
-        const { data: { user } } = await supabase.auth.getUser();
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        
+        if (userError) {
+          console.error("Error getting user:", userError);
+          toast.error("Authentication error");
+          return;
+        }
         
         if (!user) {
+          console.log("No authenticated user found");
           toast.error("Please log in to view your communities");
           return;
         }
         
-        console.log("Fetching community subscriptions for user:", user.id);
+        console.log("Authenticated user:", user.id);
         
-        // Fetch community subscriptions for the authenticated user
+        // First, let's check if there are any community subscriptions for this user
+        const { data: allSubscriptions, error: checkError } = await supabase
+          .from('community_subscriptions')
+          .select('*')
+          .eq('user_uuid', user.id);
+          
+        console.log("All subscriptions for user:", allSubscriptions);
+        
+        if (checkError) {
+          console.error("Error checking subscriptions:", checkError);
+        }
+        
+        // Fetch community subscriptions for the authenticated user with community details
         const { data: subscriptions, error: subscriptionsError } = await supabase
           .from('community_subscriptions')
           .select(`
@@ -49,7 +68,7 @@ export default function MyCommunities() {
             )
           `)
           .eq('user_uuid', user.id)
-          .eq('status', 'active'); // Only fetch active subscriptions
+          .eq('status', 'active');
           
         if (subscriptionsError) {
           console.error("Error fetching community subscriptions:", subscriptionsError);
@@ -64,6 +83,7 @@ export default function MyCommunities() {
           ?.filter(sub => sub.communities) // Filter out any null communities
           .map(sub => sub.communities) || [];
         
+        console.log("Processed communities:", userCommunities);
         setCommunities(userCommunities);
       } catch (error) {
         console.error("Error in fetchUserCommunities:", error);
@@ -83,10 +103,6 @@ export default function MyCommunities() {
 
   const handleOpenCommunity = (community) => {
     navigate(`/community/${community.slug || community.community_uuid}`);
-  };
-
-  const handleJoinCommunity = (communityUuid) => {
-    navigate(`/sign-in/community/${communityUuid}`);
   };
 
   return (
