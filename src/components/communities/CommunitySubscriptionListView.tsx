@@ -2,6 +2,7 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { Calendar, Settings, ExternalLink } from "lucide-react";
 
 interface CommunitySubscription {
@@ -155,8 +156,8 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
           </div>
 
           {/* Desktop Layout */}
-          <div className="hidden md:flex items-center p-4 gap-4">
-            {/* Left: Logo - Fixed Width */}
+          <div className="hidden md:flex items-center p-4">
+            {/* Left: Logo */}
             <div className="w-20 h-20 flex-shrink-0 rounded-lg bg-gray-50/50 border flex items-center justify-center overflow-hidden">
               {subscription.community_thumbnail ? (
                 <img 
@@ -171,8 +172,8 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
               )}
             </div>
             
-            {/* Middle: Content Section - Flex Grow */}
-            <div className="flex-1 min-w-0 space-y-1">
+            {/* Middle: Content Section */}
+            <div className="flex-1 min-w-0 space-y-1 ml-4">
               {/* Community Name */}
               <h3 className="font-semibold text-lg text-foreground truncate">
                 {subscription.community_name || "Community Subscription"}
@@ -200,9 +201,11 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
               )}
             </div>
             
-            {/* Right: Action Buttons - Fixed Width */}
-            <div className="flex gap-2 min-w-[280px] justify-end">
-              {/* Open Community Button - Primary */}
+            {/* Vertical Divider */}
+            <Separator orientation="vertical" className="h-16 mx-4" />
+            
+            {/* Right: Action Buttons */}
+            <div className="flex gap-2">
               <Button 
                 size="sm" 
                 className="text-xs h-8 px-4 font-medium"
@@ -214,7 +217,6 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
                 Open Community
               </Button>
 
-              {/* Manage Membership Button - Secondary */}
               <Button 
                 variant="outline" 
                 size="sm" 
