@@ -57,6 +57,7 @@ export function ProductLayout({
             reviews={reviews}
             isLoading={isLoading}
             onLeaveReview={onLeaveReview}
+            expertUuid={product.expert_uuid}
           />
         ) : (
           <DesktopProductLayout
@@ -74,6 +75,7 @@ export function ProductLayout({
             reviews={reviews}
             isLoading={isLoading}
             onLeaveReview={onLeaveReview}
+            expertUuid={product.expert_uuid}
           />
         )}
       </main>
