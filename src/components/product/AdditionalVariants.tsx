@@ -122,7 +122,7 @@ export function AdditionalVariants({
         Bundle & Save
       </Badge>
 
-      <Card className="p-6 pt-4">
+      <Card className="p-4 pt-3 bg-gray-50/50">
         <div className="space-y-1">
           {Object.entries(productGroups).map(([productUuid, { productName, variants }]) => {
             // Initialize and get the selected variant
