@@ -8,6 +8,7 @@ import { Star, Loader2, User, CheckCircle, Package } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useExpertReviews } from "@/hooks/expert/useExpertReviews";
 import { useParams } from "react-router-dom";
+import { ReviewActions } from "@/components/reviews/ReviewActions";
 
 interface ReviewsTabProps {
   expertUuid?: string;
@@ -165,6 +166,9 @@ export function ReviewsTab({
                             {review.description}
                           </p>}
                       </div>
+
+                      {/* Review Actions for pending reviews */}
+                      <ReviewActions reviewId={review.id} status={review.status || 'published'} />
                     </div>
                   </div>
                   {index < reviews.length - 1 && <Separator className="my-4 sm:my-6" />}

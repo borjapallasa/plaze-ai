@@ -40,7 +40,7 @@ export function useTransactionReview(transactionUuid: string | undefined) {
         return [];
       }
 
-      const mappedReviews: TransactionReview[] = reviews.map((review) => ({
+      return reviews.map((review) => ({
         review_uuid: review.review_uuid,
         rating: review.rating,
         title: review.title,
@@ -50,8 +50,6 @@ export function useTransactionReview(transactionUuid: string | undefined) {
         created_at: review.created_at,
         verified: Boolean(review.verified),
       }));
-
-      return mappedReviews;
     },
     enabled: !!transactionUuid,
   });

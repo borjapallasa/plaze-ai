@@ -30,7 +30,8 @@ export function useExpertReviews(expert_uuid: string | undefined) {
         date: new Date(review.created_at).toLocaleDateString(),
         type: review.type,
         productName: review.products?.name || 'Unknown Product',
-        verified: Boolean(review.verified)
+        verified: Boolean(review.verified),
+        status: review.status || 'published'
       }));
     },
     enabled: !!expert_uuid
