@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
@@ -84,11 +83,25 @@ export function NavigationButtons({
       try {
         let userId;
         let isNewUser = false;
+        let userFirstName = '';
+        let userLastName = '';
         
         if (user) {
           // User is already authenticated, use their ID
           userId = user.id;
           console.log("Using authenticated user:", userId);
+          
+          // Get user's first name and last name from the users table
+          const { data: userData } = await supabase
+            .from('users')
+            .select('first_name, last_name')
+            .eq('user_uuid', userId)
+            .single();
+          
+          if (userData) {
+            userFirstName = userData.first_name || '';
+            userLastName = userData.last_name || '';
+          }
         } else {
           // User is not authenticated, create new account
           const tempPassword = Math.random().toString(36).slice(-12);
@@ -96,13 +109,15 @@ export function NavigationButtons({
           // Check if user exists
           const { data: existingUserData } = await supabase
             .from('users')
-            .select('user_uuid')
+            .select('user_uuid, first_name, last_name')
             .eq('email', emailToUse)
             .maybeSingle();
           
           if (existingUserData) {
-            // User exists, get the UUID
+            // User exists, get the UUID and names
             userId = existingUserData.user_uuid;
+            userFirstName = existingUserData.first_name || '';
+            userLastName = existingUserData.last_name || '';
             console.log("Found existing user:", userId);
             
             // Send a magic link for authentication
@@ -117,6 +132,10 @@ export function NavigationButtons({
               throw new Error(`Failed to sign in: ${signInError.message}`);
             }
           } else {
+            // Use the form data for names
+            userFirstName = formData.firstName;
+            userLastName = formData.lastName;
+            
             // Create new user in Auth with first name and last name
             const { data: authData, error: signUpError } = await supabase.auth.signUp({
               email: emailToUse,
@@ -196,13 +215,16 @@ export function NavigationButtons({
             }
           }
           
+          // Create expert name by concatenating first_name and last_name
+          const expertName = `${userFirstName} ${userLastName}`.trim();
+          
           // Now attempt to create the expert with the user's session
           const { data: expertData, error: expertError } = await supabase
             .from('experts')
             .insert({
               user_uuid: userId,
               email: emailToUse,
-              name: formData.name,
+              name: expertName,
               description: formData.description,
               areas: [] // Initialize with empty areas array
             })
