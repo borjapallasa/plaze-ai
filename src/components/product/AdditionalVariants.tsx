@@ -116,13 +116,13 @@ export function AdditionalVariants({
     <div className={cn("relative", className)}>
       <Badge
         variant="outline"
-        className="absolute -top-2 left-4 z-10 bg-blue-500 text-white px-2 py-0.5 text-xs font-medium flex items-center gap-1.5 border-blue-500"
+        className="absolute -top-2 left-4 z-10 bg-primary text-primary-foreground px-2 py-0.5 text-xs font-medium flex items-center gap-1.5"
       >
         <Package className="h-3 w-3" />
         Bundle & Save
       </Badge>
 
-      <Card className="pt-4 pb-2.5 px-4 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 shadow-sm rounded-xl">
+      <Card className="p-6 pt-4">
         <div className="space-y-1">
           {Object.entries(productGroups).map(([productUuid, { productName, variants }]) => {
             // Initialize and get the selected variant
@@ -144,13 +144,13 @@ export function AdditionalVariants({
             const hasMultipleVariants = variants.length > 1;
 
             return (
-              <div key={productName} className="flex items-center gap-3 py-2 px-2 rounded hover:bg-white/70 transition-colors">
+              <div key={productName} className="flex items-center gap-3 py-2 px-2 rounded hover:bg-muted/50 transition-colors">
                 <div className="flex items-start pt-0.5">
                   <Checkbox
                     id={`product-${productUuid}`}
                     checked={isSelected}
                     onCheckedChange={(checked) => handleCheckboxChange(productUuid, checked === true)}
-                    className="h-4 w-4 border-blue-300 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
+                    className="h-4 w-4"
                   />
                 </div>
 
@@ -159,9 +159,9 @@ export function AdditionalVariants({
                     htmlFor={`product-${productUuid}`}
                     className="text-sm cursor-pointer truncate flex items-center gap-1.5"
                   >
-                    <span className="font-medium text-blue-900">{productName}</span>
-                    <span className="mx-1 text-blue-700">-</span>
-                    <span className="font-medium text-blue-800">${formatPrice(selectedVariant?.variant_price || 0)}</span>
+                    <span className="font-medium">{productName}</span>
+                    <span className="mx-1 text-muted-foreground">-</span>
+                    <span className="font-medium">${formatPrice(selectedVariant?.variant_price || 0)}</span>
                   </label>
 
                   <Select
@@ -171,7 +171,7 @@ export function AdditionalVariants({
                   >
                     <SelectTrigger 
                       className={cn(
-                        "w-[180px] h-8 text-xs border-blue-300 bg-white/80",
+                        "w-[180px] h-8 text-xs",
                         (isDefaultVariant || !hasMultipleVariants) && "opacity-50 cursor-not-allowed"
                       )}
                     >
