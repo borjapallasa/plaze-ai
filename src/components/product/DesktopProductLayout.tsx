@@ -26,6 +26,7 @@ interface DesktopProductLayoutProps {
   reviews: any[];
   isLoading?: boolean;
   onLeaveReview?: (variantId: string) => void;
+  expertUuid?: string;
 }
 
 export function DesktopProductLayout({
@@ -42,7 +43,8 @@ export function DesktopProductLayout({
   isMobile,
   reviews,
   isLoading = false,
-  onLeaveReview
+  onLeaveReview,
+  expertUuid
 }: DesktopProductLayoutProps) {
   const embedUrl = getVideoEmbedUrl(product.demo);
 
@@ -67,6 +69,7 @@ export function DesktopProductLayout({
             rating={averageRating}
             onContactSeller={handleContactSeller}
             className="mb-2"
+            expertUuid={expertUuid}
           />
           {Array.isArray(variants) && variants.length > 0 && (
             <VariantPicker
