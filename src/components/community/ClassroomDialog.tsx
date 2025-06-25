@@ -20,11 +20,15 @@ interface ClassroomDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   communityUuid: string;
+  expertUuid?: string;
 }
 
-export function ClassroomDialog({ open, onOpenChange, communityUuid }: ClassroomDialogProps) {
+export function ClassroomDialog({ open, onOpenChange, communityUuid, expertUuid }: ClassroomDialogProps) {
   const [name, setName] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
+  const [summary, setSummary] = useState("");
   const [description, setDescription] = useState("");
+  const [notify, setNotify] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const queryClient = useQueryClient();
 
@@ -43,9 +47,13 @@ export function ClassroomDialog({ open, onOpenChange, communityUuid }: Classroom
         .from('classrooms')
         .insert({
           name: name.trim(),
+          video_url: videoUrl.trim() || null,
+          summary: summary.trim() || null,
           description: description.trim() || null,
           community_uuid: communityUuid,
-          status: 'visible'
+          expert_uuid: expertUuid,
+          status: 'invisible',
+          notify: notify
         })
         .select()
         .single();
@@ -60,7 +68,10 @@ export function ClassroomDialog({ open, onOpenChange, communityUuid }: Classroom
       
       // Reset form
       setName("");
+      setVideoUrl("");
+      setSummary("");
       setDescription("");
+      setNotify(false);
       
       // Close dialog
       onOpenChange(false);
@@ -78,7 +89,7 @@ export function ClassroomDialog({ open, onOpenChange, communityUuid }: Classroom
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create New Classroom</DialogTitle>
           <DialogDescription>
@@ -97,6 +108,28 @@ export function ClassroomDialog({ open, onOpenChange, communityUuid }: Classroom
               required
             />
           </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="classroom-video">Video URL (Optional)</Label>
+            <Input
+              id="classroom-video"
+              value={videoUrl}
+              onChange={(e) => setVideoUrl(e.target.value)}
+              placeholder="Enter video URL"
+              type="url"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="classroom-summary">Summary (Optional)</Label>
+            <Textarea
+              id="classroom-summary"
+              value={summary}
+              onChange={(e) => setSummary(e.target.value)}
+              placeholder="Brief summary of the classroom"
+              rows={2}
+            />
+          </div>
           
           <div className="space-y-2">
             <Label htmlFor="classroom-description">Description (Optional)</Label>
@@ -104,9 +137,20 @@ export function ClassroomDialog({ open, onOpenChange, communityUuid }: Classroom
               id="classroom-description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Describe what this classroom is about"
+              placeholder="Detailed description of what this classroom is about"
               rows={3}
             />
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id="classroom-notify"
+              checked={notify}
+              onChange={(e) => setNotify(e.target.checked)}
+              className="rounded border border-input"
+            />
+            <Label htmlFor="classroom-notify">Send notifications for this classroom</Label>
           </div>
           
           <DialogFooter>
