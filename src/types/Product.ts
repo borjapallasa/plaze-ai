@@ -37,6 +37,7 @@ export interface Product {
   reviewed_by: null;
   sales_amount: null;
   sales_count: null;
+  short_description: string | null;
   slug: string;
   status: string;
   team: null;

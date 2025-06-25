@@ -37,6 +37,7 @@ const mapProductData = (data: any): ProductData => {
     review_count: data.review_count || null,
     sales_amount: data.sales_amount || null,
     sales_count: data.sales_count || null,
+    short_description: data.short_description || null,
     tech_stack: data.tech_stack || '',
     tech_stack_price: data.tech_stack_price || '',
     difficulty_level: data.difficulty_level || null,

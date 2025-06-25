@@ -11,6 +11,7 @@ interface ProductHeaderProps {
   className?: string;
   onContactSeller: () => void;
   expertUuid?: string;
+  shortDescription?: string;
 }
 
 export function ProductHeader({ 
@@ -19,7 +20,8 @@ export function ProductHeader({
   rating, 
   onContactSeller, 
   className = "",
-  expertUuid
+  expertUuid,
+  shortDescription
 }: ProductHeaderProps) {
   const { data: expertName } = useExpertName(expertUuid);
   
@@ -61,9 +63,11 @@ export function ProductHeader({
           {renderStars()}
         </div>
       </div>
-      <div className="text-sm text-gray-600 leading-relaxed">
-        This is a comprehensive digital product designed to help you build amazing solutions. Perfect for developers and designers looking to create professional-grade applications with modern technologies and best practices.
-      </div>
+      {shortDescription && (
+        <div className="text-sm text-gray-600 leading-relaxed">
+          {shortDescription}
+        </div>
+      )}
     </div>
   );
 }
