@@ -1,10 +1,9 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight, Plus, Info } from "lucide-react";
+import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight, Plus } from "lucide-react";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/ProductCard";
@@ -22,7 +21,6 @@ import { ProductGallery } from "@/components/product/ProductGallery";
 import type { ProductImage } from "@/types/product-images";
 import { CommunityProductDialog } from "@/components/community/CommunityProductDialog";
 import { formatNumber } from "@/lib/utils";
-import { CommunityImageGallery } from "@/components/community/CommunityImageGallery";
 
 interface Link {
   name: string;
@@ -65,7 +63,7 @@ export default function CommunityPage() {
   const [selectedThread, setSelectedThread] = useState<any>(null);
   const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
   const [showProductTemplateSelector, setShowProductTemplateSelector] = useState(false);
-  const [activeTab, setActiveTab] = useState("about");
+  const [activeTab, setActiveTab] = useState("threads");
   const { user } = useAuth();
   const { images } = useCommunityImages(communityId);
 
@@ -416,7 +414,6 @@ export default function CommunityPage() {
   };
 
   const tabs = [
-    { id: "about", label: "About", icon: Info },
     { id: "threads", label: "Threads", icon: MessageSquare },
     { id: "classrooms", label: "Classrooms", icon: BookOpen },
     { id: "templates", label: "Products", icon: Users },
@@ -427,31 +424,24 @@ export default function CommunityPage() {
     <>
       <MainHeader />
       <div className="container mx-auto px-4 py-8 max-w-[1400px] space-y-8 mt-16">
-        {/* Main layout with tabs on left and video/info on right */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Left Side - Tab Navigation */}
-          <div className="lg:col-span-4">
-            <Tabs value={activeTab} onValueChange={setActiveTab} orientation="vertical" className="h-full">
-              <TabsList className="grid w-full grid-cols-1 h-auto">
-                {tabs.map((tab) => {
-                  const Icon = tab.icon;
-                  return (
-                    <TabsTrigger
-                      key={tab.id}
-                      value={tab.id}
-                      className="w-full justify-start gap-2 py-3"
-                    >
-                      <Icon className="w-4 h-4" />
-                      {tab.label}
-                    </TabsTrigger>
-                  );
-                })}
-              </TabsList>
-            </Tabs>
+          <div className="lg:col-span-8">
+            <Card className="p-6 space-y-6">
+              <div>
+                <ProductGallery 
+                  images={galleryImages}
+                  priority
+                />
+              </div>
+
+              <div className="space-y-4">
+                <h1 className="text-2xl font-bold">{community?.name}</h1>
+                <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: community?.description || '' }} />
+              </div>
+            </Card>
           </div>
 
-          {/* Right Side - Video and Community Info */}
-          <div className="lg:col-span-8">
+          <div className="lg:col-span-4 space-y-6">
             <Card className="overflow-hidden bg-white">
               <div className="p-6 space-y-6">
                 {videoEmbedUrl && (
@@ -522,7 +512,7 @@ export default function CommunityPage() {
                   </Avatar>
                   <div className="min-w-0">
                     <span className="text-sm text-muted-foreground">
-                      Hosted by {community?.expert?.name || "Expert"}
+                      Hosted by <span className="font-medium">{community?.expert?.name || "Expert"}</span>
                     </span>
                   </div>
                 </div>
@@ -531,20 +521,29 @@ export default function CommunityPage() {
           </div>
         </div>
 
-        {/* Tab Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsContent value="about" className="space-y-6">
-            <Card className="p-6 space-y-6">
-              <div>
-                <CommunityImageGallery images={galleryImages} />
-              </div>
-
-              <div className="space-y-4">
-                <h1 className="text-2xl font-bold">{community?.name}</h1>
-                <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: community?.description || '' }} />
-              </div>
-            </Card>
-          </TabsContent>
+          <div className="border-b border-border">
+            <nav className="flex space-x-6 overflow-x-auto scrollbar-hide px-6" aria-label="Tabs">
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 flex items-center gap-2 ${
+                      isActive
+                        ? "border-primary text-primary"
+                        : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
 
           <TabsContent value="threads" className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-4">
