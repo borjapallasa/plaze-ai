@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -5,17 +6,25 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useExpertReviews } from "@/hooks/expert/useExpertReviews";
+import { useParams } from "react-router-dom";
+
 interface ReviewsTabProps {
   expertUuid?: string;
 }
+
 export function ReviewsTab({
   expertUuid
 }: ReviewsTabProps) {
+  const { id } = useParams();
+  
+  // Use the id from URL params if expertUuid is not provided
+  const targetExpertUuid = expertUuid || id;
+  
   const {
     data: reviews = [],
     isLoading,
     error
-  } = useExpertReviews(expertUuid);
+  } = useExpertReviews(targetExpertUuid);
 
   // Calculate stats from real data
   const totalReviews = reviews.length;
@@ -29,17 +38,20 @@ export function ReviewsTab({
       percentage
     };
   });
+
   if (isLoading) {
     return <div className="flex items-center justify-center py-8">
         <Loader2 className="h-8 w-8 animate-spin text-primary/70" />
         <span className="ml-3 text-muted-foreground">Loading reviews...</span>
       </div>;
   }
+
   if (error) {
     return <div className="text-center py-8">
         <p className="text-muted-foreground">Error loading reviews. Please try again.</p>
       </div>;
   }
+
   return <div className="space-y-6">
       {/* Overview Stats */}
       <div className="grid gap-4 md:grid-cols-3">
@@ -68,8 +80,6 @@ export function ReviewsTab({
             <p className="text-xs text-muted-foreground">across all products</p>
           </CardContent>
         </Card>
-
-        
       </div>
 
       {/* Rating Distribution */}
