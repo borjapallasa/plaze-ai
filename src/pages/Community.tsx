@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight, Plus } from "lucide-react";
+import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight, Plus, Images } from "lucide-react";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/ProductCard";
@@ -63,7 +63,7 @@ export default function CommunityPage() {
   const [selectedThread, setSelectedThread] = useState<any>(null);
   const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
   const [showProductTemplateSelector, setShowProductTemplateSelector] = useState(false);
-  const [activeTab, setActiveTab] = useState("threads");
+  const [activeTab, setActiveTab] = useState("about");
   const { user } = useAuth();
   const { images } = useCommunityImages(communityId);
 
@@ -414,10 +414,12 @@ export default function CommunityPage() {
   };
 
   const tabs = [
+    { id: "about", label: "About", icon: Users },
     { id: "threads", label: "Threads", icon: MessageSquare },
     { id: "classrooms", label: "Classrooms", icon: BookOpen },
     { id: "templates", label: "Products", icon: Users },
-    { id: "calendar", label: "Calendar", icon: Calendar }
+    { id: "calendar", label: "Calendar", icon: Calendar },
+    { id: "gallery", label: "Gallery", icon: Images }
   ];
 
   return (
@@ -427,13 +429,6 @@ export default function CommunityPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-8">
             <Card className="p-6 space-y-6">
-              <div>
-                <ProductGallery 
-                  images={galleryImages}
-                  priority
-                />
-              </div>
-
               <div className="space-y-4">
                 <h1 className="text-2xl font-bold">{community?.name}</h1>
                 <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: community?.description || '' }} />
@@ -544,6 +539,22 @@ export default function CommunityPage() {
               })}
             </nav>
           </div>
+
+          <TabsContent value="about" className="space-y-6">
+            <Card className="p-6 space-y-6">
+              <div>
+                <ProductGallery 
+                  images={galleryImages}
+                  priority
+                />
+              </div>
+
+              <div className="space-y-4">
+                <h1 className="text-2xl font-bold">{community?.name}</h1>
+                <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: community?.description || '' }} />
+              </div>
+            </Card>
+          </TabsContent>
 
           <TabsContent value="threads" className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-4">
@@ -742,6 +753,22 @@ export default function CommunityPage() {
                   }}
                 />
               </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="gallery" className="space-y-6">
+            <Card className="p-6 space-y-6">
+              <div>
+                <ProductGallery 
+                  images={galleryImages}
+                  priority
+                />
+              </div>
+
+              <div className="space-y-4">
+                <h1 className="text-2xl font-bold">{community?.name}</h1>
+                <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: community?.description || '' }} />
+              </div>
             </Card>
           </TabsContent>
         </Tabs>
