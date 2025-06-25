@@ -426,96 +426,6 @@ export default function CommunityPage() {
     <>
       <MainHeader />
       <div className="container mx-auto px-4 py-8 max-w-[1400px] space-y-8 mt-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <div className="lg:col-span-8">
-            <Card className="p-6 space-y-6">
-              <div className="space-y-4">
-                <h1 className="text-2xl font-bold">{community?.name}</h1>
-                <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: community?.description || '' }} />
-              </div>
-            </Card>
-          </div>
-
-          <div className="lg:col-span-4 space-y-6">
-            <Card className="overflow-hidden bg-white">
-              <div className="p-6 space-y-6">
-                {videoEmbedUrl && (
-                  <div className="aspect-video w-full bg-muted rounded-lg overflow-hidden">
-                    <iframe
-                      src={videoEmbedUrl}
-                      className="w-full h-full"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                  </div>
-                )}
-
-                <div>
-                  <h2 className="text-2xl font-bold mb-2">{community?.name}</h2>
-                  <p className="text-muted-foreground text-sm mb-4">
-                    {community?.description?.substring(0, 150)}...
-                  </p>
-                </div>
-
-                {links.length > 0 && (
-                  <div className="space-y-2">
-                    {links.map((link, index) => (
-                      <a 
-                        key={index}
-                        href={link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
-                      >
-                        <LinkIcon className="w-4 h-4" />
-                        <span className="text-sm">{link.name}</span>
-                      </a>
-                    ))}
-                  </div>
-                )}
-
-                <div className="grid grid-cols-4 gap-4 py-4 border-y">
-                  <div className="text-center">
-                    <p className="text-2xl font-bold">{formatNumber(community?.member_count)}</p>
-                    <p className="text-sm text-muted-foreground">Members</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold">{formatNumber(community?.post_count)}</p>
-                    <p className="text-sm text-muted-foreground">Posts</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold">{formatNumber(community?.product_count)}</p>
-                    <p className="text-sm text-muted-foreground">Products</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold">{formatNumber(community?.classroom_count)}</p>
-                    <p className="text-sm text-muted-foreground">Classrooms</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-10 w-10 flex-shrink-0">
-                    <AvatarImage 
-                      src={community?.expert?.name ? community.expert.thumbnail || "https://github.com/shadcn.png" : "https://github.com/shadcn.png"} 
-                      alt={`${community?.expert?.name || "Expert"} avatar`}
-                      className="object-cover"
-                    />
-                    <AvatarFallback className="text-sm font-medium">
-                      {community?.expert?.name?.substring(0, 2)?.toUpperCase() || "EX"}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="min-w-0">
-                    <span className="text-sm text-muted-foreground">
-                      Hosted by <span className="font-medium">{community?.expert?.name || "Expert"}</span>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          </div>
-        </div>
-
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <div className="border-b border-border">
             <nav className="flex space-x-6 overflow-x-auto scrollbar-hide px-6" aria-label="Tabs">
@@ -772,6 +682,96 @@ export default function CommunityPage() {
             </Card>
           </TabsContent>
         </Tabs>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-8">
+            <Card className="p-6 space-y-6">
+              <div className="space-y-4">
+                <h1 className="text-2xl font-bold">{community?.name}</h1>
+                <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: community?.description || '' }} />
+              </div>
+            </Card>
+          </div>
+
+          <div className="lg:col-span-4 space-y-6">
+            <Card className="overflow-hidden bg-white">
+              <div className="p-6 space-y-6">
+                {videoEmbedUrl && (
+                  <div className="aspect-video w-full bg-muted rounded-lg overflow-hidden">
+                    <iframe
+                      src={videoEmbedUrl}
+                      className="w-full h-full"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                )}
+
+                <div>
+                  <h2 className="text-2xl font-bold mb-2">{community?.name}</h2>
+                  <p className="text-muted-foreground text-sm mb-4">
+                    {community?.description?.substring(0, 150)}...
+                  </p>
+                </div>
+
+                {links.length > 0 && (
+                  <div className="space-y-2">
+                    {links.map((link, index) => (
+                      <a 
+                        key={index}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+                      >
+                        <LinkIcon className="w-4 h-4" />
+                        <span className="text-sm">{link.name}</span>
+                      </a>
+                    ))}
+                  </div>
+                )}
+
+                <div className="grid grid-cols-4 gap-4 py-4 border-y">
+                  <div className="text-center">
+                    <p className="text-2xl font-bold">{formatNumber(community?.member_count)}</p>
+                    <p className="text-sm text-muted-foreground">Members</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-bold">{formatNumber(community?.post_count)}</p>
+                    <p className="text-sm text-muted-foreground">Posts</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-bold">{formatNumber(community?.product_count)}</p>
+                    <p className="text-sm text-muted-foreground">Products</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-bold">{formatNumber(community?.classroom_count)}</p>
+                    <p className="text-sm text-muted-foreground">Classrooms</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-10 w-10 flex-shrink-0">
+                    <AvatarImage 
+                      src={community?.expert?.name ? community.expert.thumbnail || "https://github.com/shadcn.png" : "https://github.com/shadcn.png"} 
+                      alt={`${community?.expert?.name || "Expert"} avatar`}
+                      className="object-cover"
+                    />
+                    <AvatarFallback className="text-sm font-medium">
+                      {community?.expert?.name?.substring(0, 2)?.toUpperCase() || "EX"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0">
+                    <span className="text-sm text-muted-foreground">
+                      Hosted by <span className="font-medium">{community?.expert?.name || "Expert"}</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </div>
 
         <ThreadDialog 
           isOpen={isThreadOpen}
