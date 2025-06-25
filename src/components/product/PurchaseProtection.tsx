@@ -1,7 +1,6 @@
 
 import React from "react";
-import { handshake } from "lucide-react";
-import { Icon } from "lucide-react";
+import { Handshake } from "lucide-react";
 
 interface PurchaseProtectionProps {
   className?: string;
@@ -13,7 +12,7 @@ export function PurchaseProtection({ className = "" }: PurchaseProtectionProps) 
       <div className="flex items-start gap-3">
         <div className="flex-shrink-0 mt-0.5">
           <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-            <Icon iconNode={handshake} className="w-4 h-4 text-blue-600" />
+            <Handshake className="w-4 h-4 text-blue-600" />
           </div>
         </div>
         <div className="flex-1">
