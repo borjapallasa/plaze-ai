@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { Star, Loader2, User } from "lucide-react";
+import { Star, Loader2, User, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useExpertReviews } from "@/hooks/expert/useExpertReviews";
 import { useParams } from "react-router-dom";
@@ -57,7 +57,7 @@ export function ReviewsTab({
       {/* Overview Stats */}
       <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         <Card>
-          <CardHeader className="pb-3 sm:pb-2">
+          <CardHeader className="pb-2 sm:pb-2">
             <CardTitle className="text-sm font-medium">Average Rating</CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
@@ -73,7 +73,7 @@ export function ReviewsTab({
         </Card>
 
         <Card>
-          <CardHeader className="pb-3 sm:pb-2">
+          <CardHeader className="pb-2 sm:pb-2">
             <CardTitle className="text-sm font-medium">Total Reviews</CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
@@ -120,31 +120,44 @@ export function ReviewsTab({
         <CardContent className="pt-0">
           {totalReviews === 0 ? <div className="text-center py-6 sm:py-8">
               <p className="text-muted-foreground">No reviews found for this expert.</p>
-            </div> : <div className="space-y-3 sm:space-y-4">
+            </div> : <div className="space-y-4 sm:space-y-6">
               {reviews.map((review, index) => <div key={review.id}>
-                  <div className="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-4 rounded-lg border bg-card">
-                    <Avatar className="h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0">
+                  <div className="flex items-start space-x-3 p-3 sm:p-4 rounded-lg border bg-card">
+                    <Avatar className="h-8 w-8 sm:h-9 sm:w-9 flex-shrink-0">
                       <AvatarImage src={review.avatar || undefined} alt={review.author} />
                       <AvatarFallback className="bg-muted">
-                        <User className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
+                        <User className="h-4 w-4 text-muted-foreground" />
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 space-y-2 min-w-0">
                       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
                         <div className="min-w-0 flex-1">
-                          <h4 className="font-medium text-sm sm:text-base truncate">{review.author}</h4>
-                          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h4 className="font-medium text-sm sm:text-base truncate">{review.author}</h4>
+                            {review.verified && (
+                              <div className="flex items-center gap-1 bg-green-50 text-green-700 px-2 py-0.5 rounded-full">
+                                <CheckCircle className="h-3 w-3" />
+                                <span className="text-xs font-medium">Verified</span>
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-1">
                             <div className="flex items-center space-x-1">
                               {Array(5).fill(0).map((_, i) => <Star key={i} className={cn("h-3 w-3", i < review.rating ? "fill-yellow-400 text-yellow-400" : "fill-gray-200 text-gray-200")} />)}
                             </div>
                             <span className="text-xs text-muted-foreground">{review.date}</span>
                           </div>
-                          <p className="text-xs text-muted-foreground mt-1 truncate">Product: {review.productName}</p>
                         </div>
-                        {review.type && <Badge variant="outline" className="text-xs capitalize flex-shrink-0">
+                        {review.type && <Badge variant="outline" className="text-xs capitalize flex-shrink-0 self-start">
                             {review.type}
                           </Badge>}
                       </div>
+                      
+                      {/* Product info - improved mobile layout */}
+                      <div className="text-xs text-muted-foreground bg-gray-50 px-2 py-1 rounded inline-block">
+                        Product: {review.productName}
+                      </div>
+                      
                       <div className="space-y-1">
                         <h5 className="font-medium text-sm leading-tight">{review.content}</h5>
                         {review.description && <p className="text-sm text-muted-foreground leading-relaxed">
@@ -153,7 +166,7 @@ export function ReviewsTab({
                       </div>
                     </div>
                   </div>
-                  {index < reviews.length - 1 && <Separator className="my-3 sm:my-4" />}
+                  {index < reviews.length - 1 && <Separator className="my-4 sm:my-6" />}
                 </div>)}
             </div>}
         </CardContent>
