@@ -216,8 +216,9 @@ export function NavigationButtons({
             }
           }
           
-          // Create expert name by concatenating first_name and last_name
+          // Create expert name by concatenating first_name and last_name from the USER, not the product
           const expertName = `${userFirstName} ${userLastName}`.trim();
+          console.log("Creating expert with name:", expertName, "from user names:", userFirstName, userLastName);
           
           // Now attempt to create the expert with the user's session
           const { data: expertData, error: expertError } = await supabase
@@ -225,8 +226,8 @@ export function NavigationButtons({
             .insert({
               user_uuid: userId,
               email: emailToUse,
-              name: expertName,
-              description: formData.description,
+              name: expertName, // This should be the user's full name, NOT the product name
+              description: `Expert specializing in ${selectedOption}`, // Generic expert description, not the product description
               areas: [] // Initialize with empty areas array
             })
             .select('expert_uuid')
@@ -242,7 +243,7 @@ export function NavigationButtons({
           }
           
           expertId = expertData.expert_uuid;
-          console.log("Created new expert profile:", expertId);
+          console.log("Created new expert profile:", expertId, "with name:", expertName);
         }
 
         // Create the appropriate resource based on selection
@@ -252,8 +253,8 @@ export function NavigationButtons({
             .insert({
               user_uuid: userId,
               expert_uuid: expertId,
-              name: formData.name,
-              description: formData.description,
+              name: formData.name, // This is the PRODUCT name
+              description: formData.description, // This is the PRODUCT description
               price_from: parseFloat(formData.productPrice),
               status: 'draft'
             });
@@ -269,8 +270,8 @@ export function NavigationButtons({
             .insert({
               user_uuid: userId,
               expert_uuid: expertId,
-              name: formData.name,
-              description: formData.description,
+              name: formData.name, // This is the COMMUNITY name
+              description: formData.description, // This is the COMMUNITY description
               intro: formData.description,
               type: communityType as "free" | "paid",
               price: formData.type === 'paid' ? parseFloat(formData.price) : 0,
