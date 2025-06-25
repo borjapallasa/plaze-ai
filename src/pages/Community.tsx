@@ -21,6 +21,7 @@ import { ProductGallery } from "@/components/product/ProductGallery";
 import type { ProductImage } from "@/types/product-images";
 import { CommunityProductDialog } from "@/components/community/CommunityProductDialog";
 import { formatNumber } from "@/lib/utils";
+import { CommunityImageGallery } from "@/components/community/CommunityImageGallery";
 
 interface Link {
   name: string;
@@ -425,116 +426,116 @@ export default function CommunityPage() {
     <>
       <MainHeader />
       <div className="container mx-auto px-4 py-8 max-w-[1400px] space-y-8 mt-16">
-        <div className="lg:col-span-4 space-y-6">
-          <Card className="overflow-hidden bg-white">
-            <div className="p-6 space-y-6">
-              {videoEmbedUrl && (
-                <div className="aspect-video w-full bg-muted rounded-lg overflow-hidden">
-                  <iframe
-                    src={videoEmbedUrl}
-                    className="w-full h-full"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                </div>
-              )}
-
-              <div>
-                <h2 className="text-2xl font-bold mb-2">{community?.name}</h2>
-                <p className="text-muted-foreground text-sm mb-4">
-                  {community?.description?.substring(0, 150)}...
-                </p>
-              </div>
-
-              {links.length > 0 && (
-                <div className="space-y-2">
-                  {links.map((link, index) => (
-                    <a 
-                      key={index}
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+        {/* Main layout with tabs on left and community summary on right */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Tab Selector - Left Side */}
+          <div className="lg:col-span-3">
+            <Tabs value={activeTab} onValueChange={setActiveTab} orientation="vertical">
+              <TabsList className="grid w-full grid-cols-1 h-auto">
+                {tabs.map((tab) => {
+                  const Icon = tab.icon;
+                  return (
+                    <TabsTrigger
+                      key={tab.id}
+                      value={tab.id}
+                      className="w-full justify-start gap-2 py-3"
                     >
-                      <LinkIcon className="w-4 h-4" />
-                      <span className="text-sm">{link.name}</span>
-                    </a>
-                  ))}
-                </div>
-              )}
-
-              <div className="grid grid-cols-4 gap-4 py-4 border-y">
-                <div className="text-center">
-                  <p className="text-2xl font-bold">{formatNumber(community?.member_count)}</p>
-                  <p className="text-sm text-muted-foreground">Members</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold">{formatNumber(community?.post_count)}</p>
-                  <p className="text-sm text-muted-foreground">Posts</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold">{formatNumber(community?.product_count)}</p>
-                  <p className="text-sm text-muted-foreground">Products</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold">{formatNumber(community?.classroom_count)}</p>
-                  <p className="text-sm text-muted-foreground">Classrooms</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <Avatar className="h-10 w-10 flex-shrink-0">
-                  <AvatarImage 
-                    src={community?.expert?.name ? community.expert.thumbnail || "https://github.com/shadcn.png" : "https://github.com/shadcn.png"} 
-                    alt={`${community?.expert?.name || "Expert"} avatar`}
-                    className="object-cover"
-                  />
-                  <AvatarFallback className="text-sm font-medium">
-                    {community?.expert?.name?.substring(0, 2)?.toUpperCase() || "EX"}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="min-w-0">
-                  <span className="text-sm text-muted-foreground">
-                    Hosted by {community?.expert?.name || "Expert"}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </Card>
-        </div>
-
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <div className="border-b border-border">
-            <nav className="flex space-x-6 overflow-x-auto scrollbar-hide px-6" aria-label="Tabs">
-              {tabs.map((tab) => {
-                const Icon = tab.icon;
-                const isActive = activeTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 flex items-center gap-2 ${
-                      isActive
-                        ? "border-primary text-primary"
-                        : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
-                    }`}
-                  >
-                    <Icon className="w-4 h-4" />
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </nav>
+                      <Icon className="w-4 h-4" />
+                      {tab.label}
+                    </TabsTrigger>
+                  );
+                })}
+              </TabsList>
+            </Tabs>
           </div>
 
+          {/* Community Summary - Right Side */}
+          <div className="lg:col-span-9">
+            <Card className="overflow-hidden bg-white">
+              <div className="p-6 space-y-6">
+                {videoEmbedUrl && (
+                  <div className="aspect-video w-full bg-muted rounded-lg overflow-hidden">
+                    <iframe
+                      src={videoEmbedUrl}
+                      className="w-full h-full"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                )}
+
+                <div>
+                  <h2 className="text-2xl font-bold mb-2">{community?.name}</h2>
+                  <p className="text-muted-foreground text-sm mb-4">
+                    {community?.description?.substring(0, 150)}...
+                  </p>
+                </div>
+
+                {links.length > 0 && (
+                  <div className="space-y-2">
+                    {links.map((link, index) => (
+                      <a 
+                        key={index}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+                      >
+                        <LinkIcon className="w-4 h-4" />
+                        <span className="text-sm">{link.name}</span>
+                      </a>
+                    ))}
+                  </div>
+                )}
+
+                <div className="grid grid-cols-4 gap-4 py-4 border-y">
+                  <div className="text-center">
+                    <p className="text-2xl font-bold">{formatNumber(community?.member_count)}</p>
+                    <p className="text-sm text-muted-foreground">Members</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-bold">{formatNumber(community?.post_count)}</p>
+                    <p className="text-sm text-muted-foreground">Posts</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-bold">{formatNumber(community?.product_count)}</p>
+                    <p className="text-sm text-muted-foreground">Products</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-bold">{formatNumber(community?.classroom_count)}</p>
+                    <p className="text-sm text-muted-foreground">Classrooms</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-10 w-10 flex-shrink-0">
+                    <AvatarImage 
+                      src={community?.expert?.name ? community.expert.thumbnail || "https://github.com/shadcn.png" : "https://github.com/shadcn.png"} 
+                      alt={`${community?.expert?.name || "Expert"} avatar`}
+                      className="object-cover"
+                    />
+                    <AvatarFallback className="text-sm font-medium">
+                      {community?.expert?.name?.substring(0, 2)?.toUpperCase() || "EX"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0">
+                    <span className="text-sm text-muted-foreground">
+                      Hosted by {community?.expert?.name || "Expert"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </div>
+
+        {/* Tab Content */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsContent value="about" className="space-y-6">
             <Card className="p-6 space-y-6">
               <div>
-                <ProductGallery 
-                  images={galleryImages}
-                  priority
-                />
+                <CommunityImageGallery images={galleryImages} />
               </div>
 
               <div className="space-y-4">
