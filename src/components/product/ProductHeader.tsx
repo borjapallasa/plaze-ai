@@ -1,5 +1,7 @@
 
 import React from "react";
+import { Star } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface ProductHeaderProps {
   title: string;
@@ -16,15 +18,36 @@ export function ProductHeader({
   onContactSeller, 
   className = "" 
 }: ProductHeaderProps) {
+  const renderStars = () => {
+    return Array(5).fill(0).map((_, index) => {
+      const starValue = index + 1;
+      const isActive = starValue <= rating;
+      
+      return (
+        <Star 
+          key={index}
+          className={cn(
+            "h-3 w-3",
+            isActive 
+              ? "fill-yellow-400 text-yellow-400" 
+              : "fill-gray-200 text-gray-200"
+          )}
+        />
+      );
+    });
+  };
+
   return (
     <div className={className}>
       <h1 className="text-2xl font-semibold mb-3">{title}</h1>
-      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+      <div className="flex items-center gap-1 text-xs text-muted-foreground">
         <span className="font-bold">
           {seller}
         </span>
         <span className="mx-0.5">•</span>
-        <span>{rating.toFixed(1)} Rating</span>
+        <div className="flex gap-0.5">
+          {renderStars()}
+        </div>
       </div>
     </div>
   );
