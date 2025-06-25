@@ -41,19 +41,23 @@ export function ReviewActions({ reviewId, status }: ReviewActionsProps) {
 
   return (
     <>
-      <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
-        <div className="flex items-center gap-1 text-xs text-orange-600 bg-orange-50 px-2 py-1 rounded-full">
-          <AlertTriangle className="h-3 w-3" />
-          <span className="font-medium">Pending Review</span>
+      <div className="mt-3 pt-3 border-t border-gray-100 space-y-3">
+        {/* Pending Review Badge - Full width on mobile */}
+        <div className="flex justify-center sm:justify-start">
+          <div className="flex items-center gap-1 text-xs text-orange-600 bg-orange-50 px-2 py-1 rounded-full">
+            <AlertTriangle className="h-3 w-3" />
+            <span className="font-medium">Pending Review</span>
+          </div>
         </div>
         
-        <div className="flex items-center gap-2">
+        {/* Action Buttons - Full width on mobile, right-aligned on desktop */}
+        <div className="flex items-center gap-2 justify-center sm:justify-end">
           <Button
             size="sm"
             variant="outline"
             onClick={() => setShowRejectDialog(true)}
             disabled={updateReviewStatus.isPending}
-            className="h-8 px-3 text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+            className="h-8 px-3 text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 flex-1 sm:flex-none"
           >
             <X className="h-3 w-3 mr-1" />
             Reject
@@ -63,7 +67,7 @@ export function ReviewActions({ reviewId, status }: ReviewActionsProps) {
             size="sm"
             onClick={() => setShowApproveDialog(true)}
             disabled={updateReviewStatus.isPending}
-            className="h-8 px-3 bg-green-600 hover:bg-green-700 text-white"
+            className="h-8 px-3 bg-green-600 hover:bg-green-700 text-white flex-1 sm:flex-none"
           >
             <Check className="h-3 w-3 mr-1" />
             Approve

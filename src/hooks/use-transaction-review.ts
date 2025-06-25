@@ -16,12 +16,12 @@ export interface TransactionReview {
 export function useTransactionReview(transactionUuid: string | undefined) {
   return useQuery({
     queryKey: ['transaction-review', transactionUuid],
-    queryFn: async (): Promise<TransactionReview[]> => {
+    queryFn: async () => {
       console.log('Fetching reviews for transaction:', transactionUuid);
       
       if (!transactionUuid) {
         console.log('No transaction UUID provided');
-        return [];
+        return [] as TransactionReview[];
       }
       
       const { data: reviews, error } = await supabase
@@ -37,10 +37,10 @@ export function useTransactionReview(transactionUuid: string | undefined) {
       console.log('Reviews found for transaction:', reviews);
 
       if (!reviews || reviews.length === 0) {
-        return [];
+        return [] as TransactionReview[];
       }
 
-      return reviews.map((review): TransactionReview => ({
+      return reviews.map((review) => ({
         review_uuid: review.review_uuid,
         rating: review.rating,
         title: review.title,
@@ -49,7 +49,7 @@ export function useTransactionReview(transactionUuid: string | undefined) {
         buyer_email: review.buyer_email || '',
         created_at: review.created_at,
         verified: Boolean(review.verified),
-      }));
+      })) as TransactionReview[];
     },
     enabled: !!transactionUuid,
   });
