@@ -41,37 +41,73 @@ export function ReviewActions({ reviewId, status }: ReviewActionsProps) {
 
   return (
     <>
-      <div className="mt-3 pt-3 border-t border-gray-100 space-y-3">
-        {/* Pending Review Badge - Full width */}
-        <div className="w-full bg-orange-50 border border-orange-200 rounded-lg p-3">
-          <div className="flex items-center justify-center gap-2 text-sm text-orange-700">
+      <div className="mt-3 pt-3 border-t border-gray-100">
+        {/* Mobile Layout - Stacked */}
+        <div className="block md:hidden space-y-3">
+          {/* Pending Review Badge - Full width on mobile */}
+          <div className="w-full bg-orange-50 border border-orange-200 rounded-lg p-3">
+            <div className="flex items-center justify-center gap-2 text-sm text-orange-700">
+              <AlertTriangle className="h-4 w-4" />
+              <span className="font-medium">Pending Review</span>
+            </div>
+          </div>
+          
+          {/* Action Buttons - Full width on mobile */}
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setShowRejectDialog(true)}
+              disabled={updateReviewStatus.isPending}
+              className="h-8 px-3 text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 flex-1"
+            >
+              <X className="h-3 w-3 mr-1" />
+              Reject
+            </Button>
+            
+            <Button
+              size="sm"
+              onClick={() => setShowApproveDialog(true)}
+              disabled={updateReviewStatus.isPending}
+              className="h-8 px-3 bg-green-600 hover:bg-green-700 text-white flex-1"
+            >
+              <Check className="h-3 w-3 mr-1" />
+              Approve
+            </Button>
+          </div>
+        </div>
+
+        {/* Desktop/Tablet Layout - Single Line */}
+        <div className="hidden md:flex md:items-center md:justify-between md:gap-4">
+          {/* Pending Review Badge - Compact on desktop */}
+          <div className="flex items-center gap-2 text-sm text-orange-700 bg-orange-50 border border-orange-200 rounded-lg px-3 py-2">
             <AlertTriangle className="h-4 w-4" />
             <span className="font-medium">Pending Review</span>
           </div>
-        </div>
-        
-        {/* Action Buttons - Full width on mobile, right-aligned on desktop */}
-        <div className="flex items-center gap-2 justify-center sm:justify-end">
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => setShowRejectDialog(true)}
-            disabled={updateReviewStatus.isPending}
-            className="h-8 px-3 text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 flex-1 sm:flex-none"
-          >
-            <X className="h-3 w-3 mr-1" />
-            Reject
-          </Button>
           
-          <Button
-            size="sm"
-            onClick={() => setShowApproveDialog(true)}
-            disabled={updateReviewStatus.isPending}
-            className="h-8 px-3 bg-green-600 hover:bg-green-700 text-white flex-1 sm:flex-none"
-          >
-            <Check className="h-3 w-3 mr-1" />
-            Approve
-          </Button>
+          {/* Action Buttons - Right aligned on desktop */}
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setShowRejectDialog(true)}
+              disabled={updateReviewStatus.isPending}
+              className="h-8 px-3 text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+            >
+              <X className="h-3 w-3 mr-1" />
+              Reject
+            </Button>
+            
+            <Button
+              size="sm"
+              onClick={() => setShowApproveDialog(true)}
+              disabled={updateReviewStatus.isPending}
+              className="h-8 px-3 bg-green-600 hover:bg-green-700 text-white"
+            >
+              <Check className="h-3 w-3 mr-1" />
+              Approve
+            </Button>
+          </div>
         </div>
       </div>
 
