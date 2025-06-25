@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft } from "lucide-react";
@@ -21,14 +21,23 @@ export function CommunityFormHeader({
   onSave,
   isSaving
 }: CommunityFormHeaderProps) {
+  const navigate = useNavigate();
+
+  const handleBackClick = () => {
+    navigate(-1);
+  };
+
   return (
     <div className="mb-6">
       <div className="flex items-start gap-3 sm:gap-4">
-        <Link to="/communities" className="flex-shrink-0 mt-1">
-          <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 sm:h-10 sm:w-10">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-        </Link>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="rounded-full h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0 mt-1"
+          onClick={handleBackClick}
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
         
         <div className="flex-1 min-w-0">
           {/* Title and subtitle */}
