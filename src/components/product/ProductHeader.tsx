@@ -52,7 +52,7 @@ export function ProductHeader({
   return (
     <div className={className}>
       <h1 className="text-2xl font-semibold mb-3">{title}</h1>
-      <div className="flex items-center gap-1 text-xs text-muted-foreground">
+      <div className="flex items-center gap-1 text-xs text-muted-foreground mb-3">
         <span className="font-bold">
           {displayName}
         </span>
@@ -60,6 +60,9 @@ export function ProductHeader({
         <div className="flex gap-0.5">
           {renderStars()}
         </div>
+      </div>
+      <div className="text-sm text-gray-600 leading-relaxed">
+        This is a comprehensive digital product designed to help you build amazing solutions. Perfect for developers and designers looking to create professional-grade applications with modern technologies and best practices.
       </div>
     </div>
   );
