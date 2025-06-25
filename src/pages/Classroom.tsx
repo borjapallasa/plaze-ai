@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -51,10 +52,17 @@ export default function Classroom() {
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
+
+  console.log('Classroom ID from params:', id);
 
   const { data: classroom, isLoading: isClassroomLoading } = useQuery({
     queryKey: ['classroom', id],
     queryFn: async () => {
+      if (!id) {
+        throw new Error('No classroom ID provided');
+      }
+
       const { data, error } = await supabase
         .from('classrooms')
         .select('*')
@@ -146,6 +154,10 @@ export default function Classroom() {
   const { data: lessons, isLoading: isLessonsLoading } = useQuery({
     queryKey: ['classroom-lessons', id],
     queryFn: async () => {
+      if (!id) {
+        throw new Error('No classroom ID provided');
+      }
+
       const { data, error } = await supabase
         .from('lessons')
         .select('*')
@@ -162,14 +174,65 @@ export default function Classroom() {
     enabled: !!id
   });
 
+  // Handle lesson navigation
+  const handleLessonSelect = (lesson: any) => {
+    setActiveLesson(lesson);
+  };
+
+  const handleBackToClassroom = () => {
+    setActiveLesson(null);
+  };
+
+  // Placeholder functions for lesson management
+  const handleOpenEditLesson = (lesson: any, e: React.MouseEvent) => {
+    e.stopPropagation();
+    console.log('Edit lesson:', lesson);
+    // TODO: Implement edit lesson functionality
+  };
+
+  const handleOpenDeleteDialog = (lesson: any, e: React.MouseEvent) => {
+    e.stopPropagation();
+    console.log('Delete lesson:', lesson);
+    // TODO: Implement delete lesson functionality
+  };
+
   const tabs = [
     { id: "classroom", label: "Classroom", icon: BookOpen },
     { id: "community", label: "Community", icon: Users },
     { id: "discussions", label: "Discussions", icon: MessageSquare }
   ];
 
+  // Products section component
+  const ProductsSection = () => {
+    if (!variants || variants.length === 0) return null;
+
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold">Products</h3>
+          {isOwner && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsProductDialogOpen(true)}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Add Product
+            </Button>
+          )}
+        </div>
+        <VariantPicker
+          variants={variants}
+          selectedVariantId={selectedVariant}
+          onVariantSelect={setSelectedVariant}
+          showPricing={true}
+        />
+      </div>
+    );
+  };
+
   const ClassroomContent = () => (
-    <>
+    <div className="space-y-6">
       {isMobile ? (
         <div className="space-y-6">
           <Card className="w-full">
@@ -216,53 +279,69 @@ export default function Classroom() {
                               ? "bg-muted/50"
                               : "hover:bg-muted/30"
                           )}
-                          onClick={() => setActiveLesson(lesson)}
+                          onClick={() => handleLessonSelect(lesson)}
                         >
                           <span className="text-sm">{lesson.name ? lesson.name : ''}</span>
 
-                          <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button
-                              onClick={(e) => handleOpenEditLesson(lesson, e)}
-                              className="p-1 hover:bg-muted rounded-full"
-                              aria-label="Edit lesson"
-                            >
-                              <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
-                            </button>
-                            <button
-                              onClick={(e) => handleOpenDeleteDialog(lesson, e)}
-                              className="p-1 hover:bg-muted rounded-full"
-                              aria-label="Delete lesson"
-                            >
-                              <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
-                            </button>
-                          </div>
+                          {isOwner && (
+                            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <button
+                                onClick={(e) => handleOpenEditLesson(lesson, e)}
+                                className="p-1 hover:bg-muted rounded-full"
+                                aria-label="Edit lesson"
+                              >
+                                <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
+                              </button>
+                              <button
+                                onClick={(e) => handleOpenDeleteDialog(lesson, e)}
+                                className="p-1 hover:bg-muted rounded-full"
+                                aria-label="Delete lesson"
+                              >
+                                <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
+                              </button>
+                            </div>
+                          )}
                         </div>
                       ))
                     ) : (
                       <p className="text-sm text-muted-foreground p-2">No lessons available yet</p>
                     )}
 
-                    <Button
-                      variant="outline"
-                      className="w-full mt-2 bg-primary/5 border-dashed"
-                      onClick={() => setIsAddLessonOpen(true)}
-                    >
-                      <PlusCircle className="mr-2 h-4 w-4" />
-                      Add New Lesson
-                    </Button>
+                    {isOwner && (
+                      <Button
+                        variant="outline"
+                        className="w-full mt-2 bg-primary/5 border-dashed"
+                        onClick={() => setIsAddLessonOpen(true)}
+                      >
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        Add New Lesson
+                      </Button>
+                    )}
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <h2 className="text-xl">
-                    <span className="font-bold text-black">{classroom?.name ? classroom.name : ''}</span>
+                  <div className="flex items-center space-x-2">
+                    <h2 className="text-xl">
+                      <span className="font-bold text-black">{classroom?.name ? classroom.name : ''}</span>
+                      {activeLesson && (
+                        <>
+                          <span className="mx-2 text-gray-400">/</span>
+                          <span className="text-gray-500">{activeLesson.name ? activeLesson.name : ''}</span>
+                        </>
+                      )}
+                    </h2>
                     {activeLesson && (
-                      <>
-                        <span className="mx-2 text-gray-400">/</span>
-                        <span className="text-gray-500">{activeLesson.name ? activeLesson.name : ''}</span>
-                      </>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleBackToClassroom}
+                        className="text-sm text-muted-foreground hover:text-foreground"
+                      >
+                        ← Back to Classroom
+                      </Button>
                     )}
-                  </h2>
+                  </div>
 
                   <div className="space-y-4">
                     {getVideoEmbedUrl(activeLesson?.video_url || classroom?.video_url) ? (
@@ -297,52 +376,54 @@ export default function Classroom() {
                     )}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-        ) : (
-          <div className="flex gap-6">
-            <Card className="w-80 flex-shrink-0 h-fit">
-              <CardContent className="p-4">
-                <div className="space-y-6">
-                  <div>
-                    <button
-                      onClick={() => setIsExpanded(!isExpanded)}
-                      className="w-full flex items-center justify-between text-left text-lg font-semibold mb-2"
-                    >
-                      <span>{classroom?.name ? classroom.name : ''}</span>
-                      <ChevronDown
-                        className={cn(
-                          "h-5 w-5 text-muted-foreground transition-transform duration-200",
-                          isExpanded ? "transform rotate-180" : ""
-                        )}
-                      />
-                    </button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      ) : (
+        <div className="flex gap-6">
+          <Card className="w-80 flex-shrink-0 h-fit">
+            <CardContent className="p-4">
+              <div className="space-y-6">
+                <div>
+                  <button
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="w-full flex items-center justify-between text-left text-lg font-semibold mb-2"
+                  >
+                    <span>{classroom?.name ? classroom.name : ''}</span>
+                    <ChevronDown
+                      className={cn(
+                        "h-5 w-5 text-muted-foreground transition-transform duration-200",
+                        isExpanded ? "transform rotate-180" : ""
+                      )}
+                    />
+                  </button>
 
-                    <div className={cn(
-                      "space-y-2 overflow-hidden transition-all duration-200",
-                      isExpanded ? "max-h-[500px]" : "max-h-0"
-                    )}>
-                      {isLessonsLoading ? (
-                        Array(2).fill(0).map((_, index) => (
-                          <div key={index} className="animate-pulse">
-                            <div className="w-full h-10 bg-muted rounded-lg my-1"></div>
-                          </div>
-                        ))
-                      ) : lessons && lessons.length > 0 ? (
-                        lessons.map((lesson) => (
-                          <div
-                            key={lesson.lesson_uuid}
-                            className={cn(
-                              "p-3 rounded-lg cursor-pointer group relative",
-                              activeLesson?.lesson_uuid === lesson.lesson_uuid
-                                ? "bg-muted"
-                                : "hover:bg-muted/30"
-                            )}
-                            onClick={() => setActiveLesson(lesson)}
-                          >
-                            <span className="text-sm">{lesson.name ? lesson.name : ''}</span>
+                  <div className={cn(
+                    "space-y-2 overflow-hidden transition-all duration-200",
+                    isExpanded ? "max-h-[500px]" : "max-h-0"
+                  )}>
+                    {isLessonsLoading ? (
+                      Array(2).fill(0).map((_, index) => (
+                        <div key={index} className="animate-pulse">
+                          <div className="w-full h-10 bg-muted rounded-lg my-1"></div>
+                        </div>
+                      ))
+                    ) : lessons && lessons.length > 0 ? (
+                      lessons.map((lesson) => (
+                        <div
+                          key={lesson.lesson_uuid}
+                          className={cn(
+                            "p-3 rounded-lg cursor-pointer group relative",
+                            activeLesson?.lesson_uuid === lesson.lesson_uuid
+                              ? "bg-muted"
+                              : "hover:bg-muted/30"
+                          )}
+                          onClick={() => handleLessonSelect(lesson)}
+                        >
+                          <span className="text-sm">{lesson.name ? lesson.name : ''}</span>
 
+                          {isOwner && (
                             <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
                               <button
                                 onClick={(e) => handleOpenEditLesson(lesson, e)}
@@ -359,12 +440,14 @@ export default function Classroom() {
                                 <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
                               </button>
                             </div>
-                          </div>
-                        ))
-                      ) : (
-                        <p className="text-sm text-muted-foreground p-2">No lessons available yet</p>
-                      )}
+                          )}
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-sm text-muted-foreground p-2">No lessons available yet</p>
+                    )}
 
+                    {isOwner && (
                       <Button
                         variant="outline"
                         className="w-full mt-3 bg-primary/5 border-dashed"
@@ -373,16 +456,18 @@ export default function Classroom() {
                         <PlusCircle className="mr-2 h-4 w-4" />
                         Add New Lesson
                       </Button>
-                    </div>
+                    )}
                   </div>
-
-                  <ProductsSection />
                 </div>
-              </CardContent>
-            </Card>
 
-            <Card className="flex-1">
-              <CardContent className="p-6 space-y-6">
+                <ProductsSection />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="flex-1">
+            <CardContent className="p-6 space-y-6">
+              <div className="flex items-center justify-between">
                 <h1 className="text-2xl flex flex-wrap items-center">
                   <span className="font-bold text-black">{classroom?.name ? classroom.name : ''}</span>
                   {activeLesson && (
@@ -392,44 +477,55 @@ export default function Classroom() {
                     </>
                   )}
                 </h1>
+                {activeLesson && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleBackToClassroom}
+                    className="text-sm text-muted-foreground hover:text-foreground"
+                  >
+                    ← Back to Classroom
+                  </Button>
+                )}
+              </div>
 
-                <div className="space-y-4">
-                  {getVideoEmbedUrl(activeLesson?.video_url || classroom?.video_url) ? (
-                    <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
-                      <iframe
-                        src={getVideoEmbedUrl(activeLesson?.video_url || classroom?.video_url)}
-                        title={activeLesson?.name || classroom?.name}
-                        className="w-full h-full absolute inset-0"
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowFullScreen
-                      ></iframe>
-                    </div>
-                  ) : (
-                    <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
-                      <img
-                        src={activeLesson?.thumbnail_url || classroom?.thumbnail || "/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"}
-                        alt="Course thumbnail"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
-                </div>
-
-                <div className="space-y-6">
-                  {(activeLesson?.description || classroom?.description) && (
-                    <div className="prose prose-sm max-w-none"
-                      dangerouslySetInnerHTML={{
-                        __html: activeLesson?.description || classroom?.description
-                      }}
+              <div className="space-y-4">
+                {getVideoEmbedUrl(activeLesson?.video_url || classroom?.video_url) ? (
+                  <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
+                    <iframe
+                      src={getVideoEmbedUrl(activeLesson?.video_url || classroom?.video_url)}
+                      title={activeLesson?.name || classroom?.name}
+                      className="w-full h-full absolute inset-0"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                ) : (
+                  <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
+                    <img
+                      src={activeLesson?.thumbnail_url || classroom?.thumbnail || "/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"}
+                      alt="Course thumbnail"
+                      className="w-full h-full object-cover"
                     />
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-    </>
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-6">
+                {(activeLesson?.description || classroom?.description) && (
+                  <div className="prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{
+                      __html: activeLesson?.description || classroom?.description
+                    }}
+                  />
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+    </div>
   );
 
   if (isClassroomLoading || isCommunityLoading) {
@@ -479,34 +575,23 @@ export default function Classroom() {
         <MainHeader />
         <div className="container mx-auto px-4 py-8 max-w-[1400px]">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <div className="border-b border-border">
-              <nav className="flex space-x-6 overflow-x-auto scrollbar-hide px-6" aria-label="Tabs">
-                {tabs.map((tab) => {
-                  const Icon = tab.icon;
-                  const isActive = activeTab === tab.id;
-                  return (
-                    <button
-                      key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 flex items-center gap-2 ${
-                        isActive
-                          ? "border-primary text-primary"
-                          : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
-                      }`}
-                    >
-                      <Icon className="w-4 h-4" />
-                      {tab.label}
-                    </button>
-                  );
-                })}
-              </nav>
-            </div>
+            <TabsList className="grid w-full grid-cols-3">
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                return (
+                  <TabsTrigger key={tab.id} value={tab.id} className="flex items-center gap-2">
+                    <Icon className="w-4 h-4" />
+                    {tab.label}
+                  </TabsTrigger>
+                );
+              })}
+            </TabsList>
 
-            <TabsContent value="classroom" className="mt-0">
+            <TabsContent value="classroom" className="mt-6">
               <ClassroomContent />
             </TabsContent>
 
-            <TabsContent value="community" className="mt-0">
+            <TabsContent value="community" className="mt-6">
               <Card className="p-6">
                 <h2 className="text-xl font-semibold mb-4">Community</h2>
                 <p className="text-muted-foreground">
@@ -521,7 +606,7 @@ export default function Classroom() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="discussions" className="mt-0">
+            <TabsContent value="discussions" className="mt-6">
               <Card className="p-6">
                 <h2 className="text-xl font-semibold mb-4">Discussions</h2>
                 <p className="text-muted-foreground">
