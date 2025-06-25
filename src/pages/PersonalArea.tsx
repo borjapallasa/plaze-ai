@@ -39,37 +39,11 @@ const MenuItem = ({ icon, title, description, to }: MenuItemProps) => (
 export default function PersonalArea() {
   const { user } = useAuth();
 
-  // Query to check if user is an expert
-  const { data: userData } = useQuery({
-    queryKey: ['user-data', user?.id],
-    queryFn: async () => {
-      if (!user?.id) return null;
-      
-      const { data, error } = await supabase
-        .from('users')
-        .select('is_expert')
-        .eq('user_uuid', user.id)
-        .single();
-
-      if (error) {
-        console.error('Error fetching user data:', error);
-        return null;
-      }
-
-      return data;
-    },
-    enabled: !!user?.id
-  });
-
-  const isExpert = userData?.is_expert || false;
-
   // Fetch expert UUID for the authenticated user
   const { data: expertData } = useQuery({
     queryKey: ['expert-by-email', user?.email],
     queryFn: async () => {
-      if (!user?.email || !isExpert) return null;
-      
-      console.log('Looking for expert with email:', user.email);
+      if (!user?.email) return null;
       
       const { data, error } = await supabase
         .from('experts')
@@ -82,23 +56,10 @@ export default function PersonalArea() {
         return null;
       }
       
-      console.log('Expert data found:', data);
       return data;
     },
-    enabled: !!user?.email && isExpert,
+    enabled: !!user?.email,
   });
-
-  // Determine seller area link
-  const getSellerAreaLink = () => {
-    if (!user) return "/sell";
-    
-    if (isExpert && expertData?.expert_uuid) {
-      return `/seller/${expertData.expert_uuid}`;
-    }
-    
-    // If user is marked as expert but no expert profile found, still go to sell page
-    return "/sell";
-  };
 
   const menuItems = [
     {
@@ -147,7 +108,7 @@ export default function PersonalArea() {
       icon: <DollarSign className="w-8 h-8" />,
       title: "Seller Area",
       description: "Track all your sales and insights of your NCC sales.",
-      to: getSellerAreaLink()
+      to: expertData?.expert_uuid ? `/seller/${expertData.expert_uuid}` : "/sell"
     }
   ];
 
