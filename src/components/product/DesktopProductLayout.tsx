@@ -1,31 +1,19 @@
 
+import React from "react";
 import { ProductGallery } from "./ProductGallery";
 import { ProductHeader } from "./ProductHeader";
 import { VariantPicker } from "./VariantPicker";
+import { ProductPricing } from "./ProductPricing";
 import { AdditionalVariants } from "./AdditionalVariants";
-import { ProductDescription } from "./ProductDescription";
-import { ProductInfo } from "./ProductInfo";
-import { ProductFullWidthSections } from "./ProductFullWidthSections";
 import { PurchaseProtection } from "./PurchaseProtection";
-import { ProductImage } from "@/hooks/use-product-images";
-import { getVideoEmbedUrl } from "@/utils/videoEmbed";
-import { Product, RelatedProduct } from "@/types/Product";
-import { RelatedProductsList } from "./RelatedProductsList";
+import { ProductFullWidthSections } from "./ProductFullWidthSections";
+import { ProductLayoutProps } from "./types/variants";
+import { ProductImage } from "@/types/product-images";
 
-interface DesktopProductLayoutProps {
-  product: Product;
+interface DesktopProductLayoutProps extends ProductLayoutProps {
   images: ProductImage[];
-  variants: any[];
-  relatedProductsWithVariants: any[];
-  selectedVariant?: string;
-  averageRating: number;
-  onVariantChange: (variantId: string) => void;
-  onAddToCart: () => void;
-  onAdditionalVariantToggle: (variantId: string, selected: boolean) => void;
   handleContactSeller: () => void;
   isMobile: boolean;
-  reviews: any[];
-  isLoading?: boolean;
   onLeaveReview?: (variantId: string) => void;
   expertUuid?: string;
 }
@@ -33,9 +21,9 @@ interface DesktopProductLayoutProps {
 export function DesktopProductLayout({
   product,
   images,
-  variants = [],
-  relatedProductsWithVariants = [],
+  variants,
   selectedVariant,
+  relatedProductsWithVariants,
   averageRating,
   onVariantChange,
   onAddToCart,
@@ -47,69 +35,60 @@ export function DesktopProductLayout({
   onLeaveReview,
   expertUuid
 }: DesktopProductLayoutProps) {
-  const embedUrl = getVideoEmbedUrl(product.demo);
+  const embedUrl = product.demo ? `https://www.youtube.com/embed/${product.demo}` : null;
 
   return (
-    <>
-      <div className="hidden lg:grid grid-cols-1 lg:grid-cols-3 gap-7">
-        <div className="lg:col-span-2">
-          <div className="space-y-6">
-            <ProductGallery
-              images={images}
-              className="mb-5"
-              priority={!isMobile}
-            />
-            <ProductDescription description={product.description} />
-          </div>
+    <div className="space-y-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+        {/* Left Column - Gallery */}
+        <div className="space-y-6">
+          <ProductGallery images={images} />
         </div>
 
-        <div className="lg:space-y-4">
+        {/* Right Column - Product Info */}
+        <div className="space-y-6">
           <ProductHeader
             title={product.name}
-            seller="Design Master"
+            seller={product.expert_uuid || "Unknown Seller"}
             rating={averageRating}
             onContactSeller={handleContactSeller}
-            className="mb-2"
             expertUuid={expertUuid}
+            shortDescription={product.short_description}
           />
-          {Array.isArray(variants) && variants.length > 0 && (
-            <VariantPicker
-              variants={variants}
-              selectedVariant={selectedVariant}
-              onVariantChange={onVariantChange}
-              onAddToCart={onAddToCart}
-              className="mb-3"
-              isLoading={isLoading}
-            />)
-          }
-          {Array.isArray(variants) && variants.length > 0 && Array.isArray(relatedProductsWithVariants) && relatedProductsWithVariants.length > 0 && (
+
+          <VariantPicker
+            variants={variants}
+            selectedVariant={selectedVariant}
+            onVariantChange={onVariantChange}
+          />
+
+          <ProductPricing
+            variants={variants}
+            selectedVariant={selectedVariant}
+            onAddToCart={onAddToCart}
+            isLoading={isLoading}
+          />
+
+          {relatedProductsWithVariants.length > 0 && (
             <AdditionalVariants
               relatedProductsWithVariants={relatedProductsWithVariants}
               onAdditionalSelect={onAdditionalVariantToggle}
-              className="mb-3"
-            />)
-          }
-          
-          <PurchaseProtection className="mb-4" />
+            />
+          )}
 
-          <ProductInfo
-            techStack={product.tech_stack}
-            productIncludes={product.product_includes}
-            difficultyLevel={product.difficulty_level}
-          />
+          <PurchaseProtection />
         </div>
       </div>
 
-      <div className="hidden lg:block mt-8 space-y-6">
-        <ProductFullWidthSections
-          embedUrl={embedUrl}
-          reviews={reviews}
-          expert_uuid={product.expert_uuid}
-          productUuid={product.product_uuid}
-          selectedVariant={selectedVariant}
-          onLeaveReview={onLeaveReview}
-        />
-      </div>
-    </>
+      {/* Full-width sections */}
+      <ProductFullWidthSections
+        embedUrl={embedUrl}
+        reviews={reviews}
+        expert_uuid={expertUuid}
+        productUuid={product.product_uuid}
+        selectedVariant={selectedVariant}
+        onLeaveReview={onLeaveReview}
+      />
+    </div>
   );
 }

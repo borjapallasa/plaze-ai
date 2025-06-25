@@ -1,33 +1,24 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Card } from "@/components/ui/card";
-import { ChevronDown, ChevronUp } from "lucide-react";
 
 interface ProductDescriptionProps {
   description: string;
+  className?: string;
 }
 
-export function ProductDescription({ description }: ProductDescriptionProps) {
-  const [isOpen, setIsOpen] = useState(false);
+export function ProductDescription({ description, className = "" }: ProductDescriptionProps) {
+  if (!description) {
+    return null;
+  }
 
   return (
-    <Card className="p-6">
-      <div 
-        className="flex items-center justify-between cursor-pointer mb-4"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <h3 className="font-semibold text-lg">Details</h3>
-        {isOpen ? (
-          <ChevronUp className="h-5 w-5 text-gray-500" />
-        ) : (
-          <ChevronDown className="h-5 w-5 text-gray-500" />
-        )}
-      </div>
-      {isOpen && (
-        <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+    <Card className={`p-4 border border-gray-200 ${className}`}>
+      <div className="space-y-2">
+        <p className="text-sm text-foreground leading-relaxed">
           {description}
         </p>
-      )}
+      </div>
     </Card>
   );
 }
