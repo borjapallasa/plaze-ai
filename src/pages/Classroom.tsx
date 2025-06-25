@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { ChevronDown, PlusCircle, Pencil, Trash2, Loader2, Plus } from "lucide-react";
+import { ChevronDown, PlusCircle, Pencil, Trash2, Loader2, Plus, MessageSquare, Users } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MainHeader } from "@/components/MainHeader";
@@ -543,6 +544,286 @@ export default function Classroom() {
     </div>
   );
 
+  const ClassroomContent = () => (
+    <>
+      {isMobile ? (
+        <div className="space-y-6">
+          <Card className="w-full">
+            <CardContent className="p-6 space-y-6">
+              <div className="space-y-4">
+                <div>
+                  <button
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="w-full flex items-center justify-between text-left text-xl font-semibold py-2"
+                  >
+                    <span>{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
+                    <ChevronDown
+                      className={cn(
+                        "h-5 w-5 text-muted-foreground transition-transform duration-200",
+                        isExpanded ? "transform rotate-180" : ""
+                      )}
+                    />
+                  </button>
+
+                  <div className={cn(
+                    "space-y-2 overflow-hidden transition-all duration-200 pt-2",
+                    isExpanded ? "max-h-[500px]" : "max-h-0"
+                  )}>
+                    {isLessonsLoading ? (
+                      Array(2).fill(0).map((_, index) => (
+                        <div key={index} className="animate-pulse">
+                          <div className="w-full h-10 bg-muted rounded-lg my-1"></div>
+                        </div>
+                      ))
+                    ) : lessons && lessons.length > 0 ? (
+                      lessons.map((lesson) => (
+                        <div
+                          key={lesson.lesson_uuid}
+                          className={cn(
+                            "p-3 rounded-lg cursor-pointer group relative",
+                            activeLesson?.lesson_uuid === lesson.lesson_uuid
+                              ? "bg-muted/50"
+                              : "hover:bg-muted/30"
+                          )}
+                          onClick={() => setActiveLesson(lesson)}
+                        >
+                          <span className="text-sm">{lesson.name ? capitalizeFirstLetter(lesson.name) : ''}</span>
+
+                          {isOwner && (
+                            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <button
+                                onClick={(e) => handleOpenEditLesson(lesson, e)}
+                                className="p-1 hover:bg-muted rounded-full"
+                                aria-label="Edit lesson"
+                              >
+                                <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
+                              </button>
+                              <button
+                                onClick={(e) => handleOpenDeleteDialog(lesson, e)}
+                                className="p-1 hover:bg-muted rounded-full"
+                                aria-label="Delete lesson"
+                              >
+                                <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-sm text-muted-foreground p-2">No lessons available yet</p>
+                    )}
+
+                    {isOwner && (
+                      <Button
+                        variant="outline"
+                        className="w-full mt-2 bg-primary/5 border-dashed"
+                        onClick={() => setIsAddLessonOpen(true)}
+                      >
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        Add New Lesson
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h2 className="text-xl">
+                  <span className="font-bold text-black">{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
+                  {activeLesson && (
+                    <>
+                      <span className="mx-2 text-gray-400">/</span>
+                      <span className="text-gray-500">{activeLesson.name ? capitalizeFirstLetter(activeLesson.name) : ''}</span>
+                    </>
+                  )}
+                </h2>
+
+                {videoEmbedUrl ? (
+                  <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
+                    <iframe
+                      src={videoEmbedUrl}
+                      title={activeLesson?.name || classroom?.name}
+                      className="w-full h-full absolute inset-0"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                ) : (
+                  <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
+                    <img
+                      src={activeLesson?.thumbnail_url || classroom?.thumbnail || "/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"}
+                      alt="Course thumbnail"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                      <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center cursor-pointer hover:bg-white transition-colors">
+                        <div className="w-6 h-6 border-8 border-transparent border-l-primary ml-1" style={{ transform: 'rotate(-45deg)' }} />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-6">
+                {(activeLesson?.description || classroom?.description) && (
+                  <div className="prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{
+                      __html: activeLesson?.description || classroom?.description
+                    }}
+                  />
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="w-full">
+            <CardContent className="p-4">
+              <ProductsSection />
+            </CardContent>
+          </Card>
+        </div>
+      ) : (
+        <div className="flex gap-6">
+          <Card className="w-80 flex-shrink-0 h-fit">
+            <CardContent className="p-4">
+              <div className="space-y-6">
+                <div>
+                  <button
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="w-full flex items-center justify-between text-left text-lg font-semibold mb-2"
+                  >
+                    <span>{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
+                    <ChevronDown
+                      className={cn(
+                        "h-5 w-5 text-muted-foreground transition-transform duration-200",
+                        isExpanded ? "transform rotate-180" : ""
+                      )}
+                    />
+                  </button>
+
+                  <div className={cn(
+                    "space-y-2 overflow-hidden transition-all duration-200",
+                    isExpanded ? "max-h-[500px]" : "max-h-0"
+                  )}>
+                    {isLessonsLoading ? (
+                      Array(2).fill(0).map((_, index) => (
+                        <div key={index} className="animate-pulse">
+                          <div className="w-full h-10 bg-muted rounded-lg my-1"></div>
+                        </div>
+                      ))
+                    ) : lessons && lessons.length > 0 ? (
+                      lessons.map((lesson) => (
+                        <div
+                          key={lesson.lesson_uuid}
+                          className={cn(
+                            "p-3 rounded-lg cursor-pointer group relative",
+                            activeLesson?.lesson_uuid === lesson.lesson_uuid
+                              ? "bg-muted"
+                              : "hover:bg-muted/30"
+                          )}
+                          onClick={() => setActiveLesson(lesson)}
+                        >
+                          <span className="text-sm">{lesson.name ? capitalizeFirstLetter(lesson.name) : ''}</span>
+
+                          {isOwner && (
+                            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <button
+                                onClick={(e) => handleOpenEditLesson(lesson, e)}
+                                className="p-1 hover:bg-muted rounded-full"
+                                aria-label="Edit lesson"
+                              >
+                                <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
+                              </button>
+                              <button
+                                onClick={(e) => handleOpenDeleteDialog(lesson, e)}
+                                className="p-1 hover:bg-muted rounded-full"
+                                aria-label="Delete lesson"
+                              >
+                                <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-sm text-muted-foreground p-2">No lessons available yet</p>
+                    )}
+
+                    {isOwner && (
+                      <Button
+                        variant="outline"
+                        className="w-full mt-3 bg-primary/5 border-dashed"
+                        onClick={() => setIsAddLessonOpen(true)}
+                      >
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        Add New Lesson
+                      </Button>
+                    )}
+                  </div>
+                </div>
+
+                <ProductsSection />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="flex-1">
+            <CardContent className="p-6 space-y-6">
+              <h1 className="text-2xl flex flex-wrap items-center">
+                <span className="font-bold text-black">{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
+                {activeLesson && (
+                  <>
+                    <span className="mx-2 text-gray-400">/</span>
+                    <span className="text-gray-500">{activeLesson.name ? capitalizeFirstLetter(activeLesson.name) : ''}</span>
+                  </>
+                )}
+              </h1>
+
+              <div className="space-y-4">
+                {videoEmbedUrl ? (
+                  <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
+                    <iframe
+                      src={videoEmbedUrl}
+                      title={activeLesson?.name || classroom?.name}
+                      className="w-full h-full absolute inset-0"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                ) : (
+                  <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
+                    <img
+                      src={activeLesson?.thumbnail_url || classroom?.thumbnail || "/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"}
+                      alt="Course thumbnail"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                      <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center cursor-pointer hover:bg-white transition-colors">
+                        <div className="w-6 h-6 border-8 border-transparent border-l-primary ml-1" style={{ transform: 'rotate(-45deg)' }} />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-6">
+                {(activeLesson?.description || classroom?.description) && (
+                  <div className="prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{
+                      __html: activeLesson?.description || classroom?.description
+                    }}
+                  />
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+    </>
+  );
+
   const isLoading = isClassroomLoading || (classroom?.community_uuid && isCommunityLoading);
 
   if (isLoading) {
@@ -591,273 +872,48 @@ export default function Classroom() {
       <div className="pt-16">
         <MainHeader />
         <div className="container mx-auto px-4 py-8 max-w-[1400px]">
-          {isMobile ? (
-            <div className="space-y-6">
-              <Card className="w-full">
-                <CardContent className="p-6 space-y-6">
-                  <div className="space-y-4">
-                    <div>
-                      <button
-                        onClick={() => setIsExpanded(!isExpanded)}
-                        className="w-full flex items-center justify-between text-left text-xl font-semibold py-2"
-                      >
-                        <span>{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
-                        <ChevronDown
-                          className={cn(
-                            "h-5 w-5 text-muted-foreground transition-transform duration-200",
-                            isExpanded ? "transform rotate-180" : ""
-                          )}
-                        />
-                      </button>
+          <Tabs defaultValue="classroom" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="classroom" className="flex items-center gap-2">
+                <PlusCircle className="h-4 w-4" />
+                Classroom
+              </TabsTrigger>
+              <TabsTrigger value="community" className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                Community
+              </TabsTrigger>
+              <TabsTrigger value="discussions" className="flex items-center gap-2">
+                <MessageSquare className="h-4 w-4" />
+                Discussions
+              </TabsTrigger>
+            </TabsList>
 
-                      <div className={cn(
-                        "space-y-2 overflow-hidden transition-all duration-200 pt-2",
-                        isExpanded ? "max-h-[500px]" : "max-h-0"
-                      )}>
-                        {isLessonsLoading ? (
-                          Array(2).fill(0).map((_, index) => (
-                            <div key={index} className="animate-pulse">
-                              <div className="w-full h-10 bg-muted rounded-lg my-1"></div>
-                            </div>
-                          ))
-                        ) : lessons && lessons.length > 0 ? (
-                          lessons.map((lesson) => (
-                            <div
-                              key={lesson.lesson_uuid}
-                              className={cn(
-                                "p-3 rounded-lg cursor-pointer group relative",
-                                activeLesson?.lesson_uuid === lesson.lesson_uuid
-                                  ? "bg-muted/50"
-                                  : "hover:bg-muted/30"
-                              )}
-                              onClick={() => setActiveLesson(lesson)}
-                            >
-                              <span className="text-sm">{lesson.name ? capitalizeFirstLetter(lesson.name) : ''}</span>
+            <TabsContent value="classroom" className="mt-6">
+              <ClassroomContent />
+            </TabsContent>
 
-                              <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button
-                                  onClick={(e) => handleOpenEditLesson(lesson, e)}
-                                  className="p-1 hover:bg-muted rounded-full"
-                                  aria-label="Edit lesson"
-                                >
-                                  <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
-                                </button>
-                                <button
-                                  onClick={(e) => handleOpenDeleteDialog(lesson, e)}
-                                  className="p-1 hover:bg-muted rounded-full"
-                                  aria-label="Delete lesson"
-                                >
-                                  <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
-                                </button>
-                              </div>
-                            </div>
-                          ))
-                        ) : (
-                          <p className="text-sm text-muted-foreground p-2">No lessons available yet</p>
-                        )}
-
-                        <Button
-                          variant="outline"
-                          className="w-full mt-2 bg-primary/5 border-dashed"
-                          onClick={() => setIsAddLessonOpen(true)}
-                        >
-                          <PlusCircle className="mr-2 h-4 w-4" />
-                          Add New Lesson
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <h2 className="text-xl">
-                      <span className="font-bold text-black">{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
-                      {activeLesson && (
-                        <>
-                          <span className="mx-2 text-gray-400">/</span>
-                          <span className="text-gray-500">{activeLesson.name ? capitalizeFirstLetter(activeLesson.name) : ''}</span>
-                        </>
-                      )}
-                    </h2>
-
-                    {videoEmbedUrl ? (
-                      <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
-                        <iframe
-                          src={videoEmbedUrl}
-                          title={activeLesson?.name || classroom?.name}
-                          className="w-full h-full absolute inset-0"
-                          frameBorder="0"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                          allowFullScreen
-                        ></iframe>
-                      </div>
-                    ) : (
-                      <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
-                        <img
-                          src={activeLesson?.thumbnail_url || classroom?.thumbnail || "/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"}
-                          alt="Course thumbnail"
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                          <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center cursor-pointer hover:bg-white transition-colors">
-                            <div className="w-6 h-6 border-8 border-transparent border-l-primary ml-1" style={{ transform: 'rotate(-45deg)' }} />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="space-y-6">
-                    {(activeLesson?.description || classroom?.description) && (
-                      <div className="prose prose-sm max-w-none"
-                        dangerouslySetInnerHTML={{
-                          __html: activeLesson?.description || classroom?.description
-                        }}
-                      />
-                    )}
-                  </div>
+            <TabsContent value="community" className="mt-6">
+              <Card>
+                <CardContent className="p-6">
+                  <h2 className="text-xl font-semibold mb-4">Community</h2>
+                  <p className="text-muted-foreground">
+                    Community features are coming soon. Connect with other learners and share your progress.
+                  </p>
                 </CardContent>
               </Card>
+            </TabsContent>
 
-              <Card className="w-full">
-                <CardContent className="p-4">
-                  <ProductsSection />
+            <TabsContent value="discussions" className="mt-6">
+              <Card>
+                <CardContent className="p-6">
+                  <h2 className="text-xl font-semibold mb-4">Discussions</h2>
+                  <p className="text-muted-foreground">
+                    Discussion features are coming soon. Ask questions and get help from instructors and peers.
+                  </p>
                 </CardContent>
               </Card>
-            </div>
-          ) : (
-            <div className="flex gap-6">
-              <Card className="w-80 flex-shrink-0 h-fit">
-                <CardContent className="p-4">
-                  <div className="space-y-6">
-                    <div>
-                      <button
-                        onClick={() => setIsExpanded(!isExpanded)}
-                        className="w-full flex items-center justify-between text-left text-lg font-semibold mb-2"
-                      >
-                        <span>{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
-                        <ChevronDown
-                          className={cn(
-                            "h-5 w-5 text-muted-foreground transition-transform duration-200",
-                            isExpanded ? "transform rotate-180" : ""
-                          )}
-                        />
-                      </button>
-
-                      <div className={cn(
-                        "space-y-2 overflow-hidden transition-all duration-200",
-                        isExpanded ? "max-h-[500px]" : "max-h-0"
-                      )}>
-                        {isLessonsLoading ? (
-                          Array(2).fill(0).map((_, index) => (
-                            <div key={index} className="animate-pulse">
-                              <div className="w-full h-10 bg-muted rounded-lg my-1"></div>
-                            </div>
-                          ))
-                        ) : lessons && lessons.length > 0 ? (
-                          lessons.map((lesson) => (
-                            <div
-                              key={lesson.lesson_uuid}
-                              className={cn(
-                                "p-3 rounded-lg cursor-pointer group relative",
-                                activeLesson?.lesson_uuid === lesson.lesson_uuid
-                                  ? "bg-muted"
-                                  : "hover:bg-muted/30"
-                              )}
-                              onClick={() => setActiveLesson(lesson)}
-                            >
-                              <span className="text-sm">{lesson.name ? capitalizeFirstLetter(lesson.name) : ''}</span>
-
-                              <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button
-                                  onClick={(e) => handleOpenEditLesson(lesson, e)}
-                                  className="p-1 hover:bg-muted rounded-full"
-                                  aria-label="Edit lesson"
-                                >
-                                  <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
-                                </button>
-                                <button
-                                  onClick={(e) => handleOpenDeleteDialog(lesson, e)}
-                                  className="p-1 hover:bg-muted rounded-full"
-                                  aria-label="Delete lesson"
-                                >
-                                  <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
-                                </button>
-                              </div>
-                            </div>
-                          ))
-                        ) : (
-                          <p className="text-sm text-muted-foreground p-2">No lessons available yet</p>
-                        )}
-
-                        <Button
-                          variant="outline"
-                          className="w-full mt-3 bg-primary/5 border-dashed"
-                          onClick={() => setIsAddLessonOpen(true)}
-                        >
-                          <PlusCircle className="mr-2 h-4 w-4" />
-                          Add New Lesson
-                        </Button>
-                      </div>
-                    </div>
-
-                    <ProductsSection />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="flex-1">
-                <CardContent className="p-6 space-y-6">
-                  <h1 className="text-2xl flex flex-wrap items-center">
-                    <span className="font-bold text-black">{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
-                    {activeLesson && (
-                      <>
-                        <span className="mx-2 text-gray-400">/</span>
-                        <span className="text-gray-500">{activeLesson.name ? capitalizeFirstLetter(activeLesson.name) : ''}</span>
-                      </>
-                    )}
-                  </h1>
-
-                  <div className="space-y-4">
-                    {videoEmbedUrl ? (
-                      <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
-                        <iframe
-                          src={videoEmbedUrl}
-                          title={activeLesson?.name || classroom?.name}
-                          className="w-full h-full absolute inset-0"
-                          frameBorder="0"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                          allowFullScreen
-                        ></iframe>
-                      </div>
-                    ) : (
-                      <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
-                        <img
-                          src={activeLesson?.thumbnail_url || classroom?.thumbnail || "/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"}
-                          alt="Course thumbnail"
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                          <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center cursor-pointer hover:bg-white transition-colors">
-                            <div className="w-6 h-6 border-8 border-transparent border-l-primary ml-1" style={{ transform: 'rotate(-45deg)' }} />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="space-y-6">
-                    {(activeLesson?.description || classroom?.description) && (
-                      <div className="prose prose-sm max-w-none"
-                        dangerouslySetInnerHTML={{
-                          __html: activeLesson?.description || classroom?.description
-                        }}
-                      />
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
+            </TabsContent>
+          </Tabs>
 
           {/* Add Lesson Dialog */}
           <Dialog open={isAddLessonOpen} onOpenChange={setIsAddLessonOpen}>
@@ -982,8 +1038,6 @@ export default function Classroom() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
-
-          {/* Cart Drawer */}
 
           {/* Product Creation Dialog */}
           <CommunityProductDialog
