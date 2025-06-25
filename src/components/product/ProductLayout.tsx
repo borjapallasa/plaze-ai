@@ -24,6 +24,8 @@ export function ProductLayout({
   const isMobile = useIsMobile();
   const { images, isLoading: isLoadingImages } = useProductImages(product.product_uuid);
 
+  console.log('ProductLayout - isMobile:', isMobile, 'screen width:', window.innerWidth);
+
   const mainImage = images[0]?.url;
   usePreloadImage(mainImage);
 
