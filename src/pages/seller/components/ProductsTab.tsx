@@ -1,10 +1,15 @@
+
 import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge as UIBadge } from "@/components/ui/badge";
-import { Search, ArrowUpDown, ArrowUp, ArrowDown, Loader2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Search, ArrowUpDown, ArrowUp, ArrowDown, Loader2, Plus } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "@/lib/auth";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 type SortField = 'name' | 'status' | 'variant_count' | 'price_from' | 'created_at';
 type SortDirection = 'asc' | 'desc';
@@ -26,11 +31,41 @@ interface ProductsTabProps {
 
 export function ProductsTab({ products, isLoading = false }: ProductsTabProps) {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const { user } = useAuth();
   const [sortField, setSortField] = useState<SortField>('created_at');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
+  // Get current user's expert_uuid
+  const { data: expertData } = useQuery({
+    queryKey: ['current-user-expert', user?.email],
+    queryFn: async () => {
+      if (!user?.email) return null;
+      
+      const { data, error } = await supabase
+        .from('experts')
+        .select('expert_uuid')
+        .eq('email', user.email)
+        .maybeSingle();
+      
+      if (error) {
+        console.error('Error fetching expert:', error);
+        return null;
+      }
+      
+      return data;
+    },
+    enabled: !!user?.email,
+  });
+
+  const isCurrentUserSeller = expertData?.expert_uuid === id;
+
   const handleProductClick = (productId: string) => {
     navigate(`/product/${productId}/edit`);
+  };
+
+  const handleCreateProduct = () => {
+    navigate('/seller/products/new');
   };
 
   const handleSort = (field: SortField) => {
@@ -78,6 +113,12 @@ export function ProductsTab({ products, isLoading = false }: ProductsTabProps) {
             className="pl-9"
           />
         </div>
+        {isCurrentUserSeller && (
+          <Button onClick={handleCreateProduct} className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            Create Product
+          </Button>
+        )}
       </div>
 
       <Card className="p-6">

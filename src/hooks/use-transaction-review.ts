@@ -35,11 +35,11 @@ export function useTransactionReview(transactionUuid: string | undefined) {
 
       console.log('Reviews found for transaction:', reviews);
 
-      if (!reviews) {
+      if (!reviews || reviews.length === 0) {
         return [];
       }
 
-      return reviews.map((review: any) => ({
+      return reviews.map((review) => ({
         review_uuid: review.review_uuid,
         rating: review.rating,
         title: review.title,
