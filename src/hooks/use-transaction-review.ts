@@ -39,7 +39,7 @@ export function useTransactionReview(transactionUuid: string | undefined) {
         return [];
       }
 
-      return reviews.map((review) => ({
+      return reviews.map((review: any) => ({
         review_uuid: review.review_uuid,
         rating: review.rating,
         title: review.title,

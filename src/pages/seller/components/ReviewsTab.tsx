@@ -138,6 +138,7 @@ export function ReviewsTab({
                             </div>
                             <span className="text-xs text-muted-foreground">{review.date}</span>
                           </div>
+                          <p className="text-xs text-muted-foreground mt-1">Product: {review.productName}</p>
                         </div>
                         {review.type && <Badge variant="outline" className="text-xs capitalize">
                             {review.type}

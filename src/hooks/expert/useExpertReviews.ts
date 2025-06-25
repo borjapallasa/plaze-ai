@@ -10,7 +10,12 @@ export function useExpertReviews(expert_uuid: string | undefined) {
 
       const { data, error } = await supabase
         .from('reviews')
-        .select('*')
+        .select(`
+          *,
+          products (
+            name
+          )
+        `)
         .eq('expert_uuid', expert_uuid);
 
       if (error) throw error;
@@ -23,7 +28,8 @@ export function useExpertReviews(expert_uuid: string | undefined) {
         description: review.comments || '',
         avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330',
         date: new Date(review.created_at).toLocaleDateString(),
-        type: review.type
+        type: review.type,
+        productName: review.products?.name || 'Unknown Product'
       }));
     },
     enabled: !!expert_uuid
