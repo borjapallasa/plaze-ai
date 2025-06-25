@@ -94,7 +94,14 @@ export default function CommunityPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('communities')
-        .select('*, expert:expert_uuid(*)')
+        .select(`
+          *,
+          expert:expert_uuid(
+            expert_uuid,
+            name,
+            thumbnail
+          )
+        `)
         .eq('community_uuid', communityId)
         .single();
 
@@ -495,17 +502,17 @@ export default function CommunityPage() {
                 <div className="flex items-center gap-3">
                   <Avatar className="h-10 w-10 flex-shrink-0">
                     <AvatarImage 
-                      src={community?.expert_thumbnail || "https://github.com/shadcn.png"} 
-                      alt={`${community?.expert_name} avatar`}
+                      src={community?.expert?.thumbnail || "https://github.com/shadcn.png"} 
+                      alt={`${community?.expert?.name} avatar`}
                       className="object-cover"
                     />
                     <AvatarFallback className="text-sm font-medium">
-                      {community?.expert_name?.substring(0, 2)?.toUpperCase() || "EX"}
+                      {community?.expert?.name?.substring(0, 2)?.toUpperCase() || "EX"}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex items-center gap-2 min-w-0">
                     <span className="text-sm text-muted-foreground">Hosted by</span>
-                    <span className="font-medium truncate">{community?.expert_name}</span>
+                    <span className="font-medium truncate">{community?.expert?.name}</span>
                   </div>
                 </div>
               </div>
