@@ -381,7 +381,6 @@ export default function CommunityPage() {
       return (
         <div className="dropdown relative">
           <Button
-            variant="outline"
             className="flex items-center gap-2"
             onClick={() => handleOpenProductDialog(false)}
           >
@@ -398,7 +397,6 @@ export default function CommunityPage() {
     if (isOwner) {
       return (
         <Button
-          variant="outline"
           className="flex items-center gap-2"
         >
           <Plus className="h-4 w-4" />
