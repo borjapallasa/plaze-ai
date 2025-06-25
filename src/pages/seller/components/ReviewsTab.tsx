@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { Star, Loader2, User } from "lucide-react";
+import { Star, Loader2, User, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useExpertReviews } from "@/hooks/expert/useExpertReviews";
 import { useParams } from "react-router-dom";
@@ -41,19 +41,24 @@ export function ReviewsTab({
   });
 
   if (isLoading) {
-    return <div className="flex items-center justify-center py-8">
+    return (
+      <div className="flex items-center justify-center py-8">
         <Loader2 className="h-8 w-8 animate-spin text-primary/70" />
         <span className="ml-3 text-muted-foreground">Loading reviews...</span>
-      </div>;
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="text-center py-8">
+    return (
+      <div className="text-center py-8">
         <p className="text-muted-foreground">Error loading reviews. Please try again.</p>
-      </div>;
+      </div>
+    );
   }
 
-  return <div className="space-y-4 sm:space-y-6">
+  return (
+    <div className="space-y-4 sm:space-y-6">
       {/* Overview Stats */}
       <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         <Card>
@@ -66,7 +71,17 @@ export function ReviewsTab({
                 {totalReviews > 0 ? averageRating.toFixed(1) : '0.0'}
               </span>
               <div className="flex">
-                {Array(5).fill(0).map((_, i) => <Star key={i} className={cn("h-3 w-3 sm:h-4 sm:w-4", i < Math.floor(averageRating) ? "fill-yellow-400 text-yellow-400" : "fill-gray-200 text-gray-200")} />)}
+                {Array(5).fill(0).map((_, i) => (
+                  <Star 
+                    key={i} 
+                    className={cn(
+                      "h-3 w-3 sm:h-4 sm:w-4", 
+                      i < Math.floor(averageRating) 
+                        ? "fill-yellow-400 text-yellow-400" 
+                        : "fill-gray-200 text-gray-200"
+                    )} 
+                  />
+                ))}
               </div>
             </div>
           </CardContent>
@@ -91,22 +106,21 @@ export function ReviewsTab({
         </CardHeader>
         <CardContent className="pt-0">
           <div className="space-y-2 sm:space-y-3">
-            {ratingDistribution.map(({
-            rating,
-            count,
-            percentage
-          }) => <div key={rating} className="flex items-center space-x-2 sm:space-x-3">
+            {ratingDistribution.map(({ rating, count, percentage }) => (
+              <div key={rating} className="flex items-center space-x-2 sm:space-x-3">
                 <div className="flex items-center space-x-1 w-10 sm:w-12">
                   <span className="text-sm">{rating}</span>
                   <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
                 </div>
                 <div className="flex-1 bg-gray-200 rounded-full h-2">
-                  <div className="bg-yellow-400 h-2 rounded-full" style={{
-                width: `${percentage}%`
-              }} />
+                  <div 
+                    className="bg-yellow-400 h-2 rounded-full" 
+                    style={{ width: `${percentage}%` }} 
+                  />
                 </div>
                 <span className="text-sm text-muted-foreground w-6 sm:w-8 text-right">{count}</span>
-              </div>)}
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>
@@ -118,10 +132,14 @@ export function ReviewsTab({
           <CardDescription className="text-sm">Latest feedback from your customers</CardDescription>
         </CardHeader>
         <CardContent className="pt-0">
-          {totalReviews === 0 ? <div className="text-center py-6 sm:py-8">
+          {totalReviews === 0 ? (
+            <div className="text-center py-6 sm:py-8">
               <p className="text-muted-foreground">No reviews found for this expert.</p>
-            </div> : <div className="space-y-3 sm:space-y-4">
-              {reviews.map((review, index) => <div key={review.id}>
+            </div>
+          ) : (
+            <div className="space-y-3 sm:space-y-4">
+              {reviews.map((review, index) => (
+                <div key={review.id}>
                   <div className="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-4 rounded-lg border bg-card">
                     <Avatar className="h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0">
                       <AvatarImage src={review.avatar || undefined} alt={review.author} />
@@ -132,31 +150,56 @@ export function ReviewsTab({
                     <div className="flex-1 space-y-2 min-w-0">
                       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
                         <div className="min-w-0 flex-1">
-                          <h4 className="font-medium text-sm sm:text-base truncate">{review.author}</h4>
+                          <div className="flex items-center gap-2 mb-1">
+                            <h4 className="font-medium text-sm sm:text-base truncate">{review.author}</h4>
+                            {review.verified && (
+                              <Badge variant="secondary" className="text-xs px-2 py-0.5 bg-green-100 text-green-700 border-green-200">
+                                <CheckCircle className="h-3 w-3 mr-1" />
+                                Verified
+                              </Badge>
+                            )}
+                          </div>
                           <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
                             <div className="flex items-center space-x-1">
-                              {Array(5).fill(0).map((_, i) => <Star key={i} className={cn("h-3 w-3", i < review.rating ? "fill-yellow-400 text-yellow-400" : "fill-gray-200 text-gray-200")} />)}
+                              {Array(5).fill(0).map((_, i) => (
+                                <Star 
+                                  key={i} 
+                                  className={cn(
+                                    "h-3 w-3", 
+                                    i < review.rating 
+                                      ? "fill-yellow-400 text-yellow-400" 
+                                      : "fill-gray-200 text-gray-200"
+                                  )} 
+                                />
+                              ))}
                             </div>
                             <span className="text-xs text-muted-foreground">{review.date}</span>
                           </div>
                           <p className="text-xs text-muted-foreground mt-1 truncate">Product: {review.productName}</p>
                         </div>
-                        {review.type && <Badge variant="outline" className="text-xs capitalize flex-shrink-0">
+                        {review.type && (
+                          <Badge variant="outline" className="text-xs capitalize flex-shrink-0">
                             {review.type}
-                          </Badge>}
+                          </Badge>
+                        )}
                       </div>
                       <div className="space-y-1">
                         <h5 className="font-medium text-sm leading-tight">{review.content}</h5>
-                        {review.description && <p className="text-sm text-muted-foreground leading-relaxed">
+                        {review.description && (
+                          <p className="text-sm text-muted-foreground leading-relaxed">
                             {review.description}
-                          </p>}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
                   {index < reviews.length - 1 && <Separator className="my-3 sm:my-4" />}
-                </div>)}
-            </div>}
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
-    </div>;
+    </div>
+  );
 }
