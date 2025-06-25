@@ -502,17 +502,18 @@ export default function CommunityPage() {
                 <div className="flex items-center gap-3">
                   <Avatar className="h-10 w-10 flex-shrink-0">
                     <AvatarImage 
-                      src={community?.expert?.thumbnail || "https://github.com/shadcn.png"} 
-                      alt={`${community?.expert?.name} avatar`}
+                      src={community?.expert?.name ? community.expert.thumbnail || "https://github.com/shadcn.png" : "https://github.com/shadcn.png"} 
+                      alt={`${community?.expert?.name || "Expert"} avatar`}
                       className="object-cover"
                     />
                     <AvatarFallback className="text-sm font-medium">
                       {community?.expert?.name?.substring(0, 2)?.toUpperCase() || "EX"}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className="text-sm text-muted-foreground">Hosted by</span>
-                    <span className="font-medium truncate">{community?.expert?.name || "Expert"}</span>
+                  <div className="min-w-0">
+                    <span className="text-sm text-muted-foreground">
+                      Hosted by <span className="font-medium">{community?.expert?.name || "Expert"}</span>
+                    </span>
                   </div>
                 </div>
               </div>
