@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -156,21 +155,21 @@ export function SellerHeader({
                 <div className="flex items-center gap-2">
                   <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                   <span className="text-sm font-semibold">
-                    {averageRating > 0 ? averageRating.toFixed(1) : '0.0'} avg rating ({satisfactionPercentage}%)
+                    {satisfactionPercentage}% Satisfaction
                   </span>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <Users className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm font-semibold">
-                    {communitiesCount} communities
+                    {communitiesCount} Communities
                   </span>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <Package className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm font-semibold">
-                    {productsCount} products
+                    {productsCount} Products
                   </span>
                 </div>
               </div>
@@ -235,7 +234,7 @@ export function SellerHeader({
               <div className="flex items-center gap-2 flex-shrink-0">
                 <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                 <span className="text-sm font-semibold">
-                  {averageRating > 0 ? averageRating.toFixed(1) : '0.0'}
+                  {satisfactionPercentage}%
                 </span>
               </div>
 
