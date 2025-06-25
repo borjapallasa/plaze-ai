@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { DefaultHeader } from "@/components/DefaultHeader";
+import { MainHeader } from "@/components/MainHeader";
 import { CommunityForm } from "@/components/community/CommunityForm";
 import { useCreateCommunity } from "@/hooks/use-create-community";
 import { toast } from "sonner";
@@ -84,10 +84,7 @@ export default function NewCommunityPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <DefaultHeader 
-        title="Create New Community"
-        subtitle="Enter the details for your new community"
-      />
+      <MainHeader />
       <CommunityForm
         communityName={communityName}
         communityIntro={communityIntro}
