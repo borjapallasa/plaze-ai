@@ -21,6 +21,7 @@ import { ProductGallery } from "@/components/product/ProductGallery";
 import type { ProductImage } from "@/types/product-images";
 import { CommunityProductDialog } from "@/components/community/CommunityProductDialog";
 import { formatNumber } from "@/lib/utils";
+import { ClassroomDialog } from "@/components/community/ClassroomDialog";
 
 interface Link {
   name: string;
@@ -62,6 +63,7 @@ export default function CommunityPage() {
   const [isThreadOpen, setIsThreadOpen] = useState(false);
   const [selectedThread, setSelectedThread] = useState<any>(null);
   const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
+  const [isClassroomDialogOpen, setIsClassroomDialogOpen] = useState(false);
   const [showProductTemplateSelector, setShowProductTemplateSelector] = useState(false);
   const [activeTab, setActiveTab] = useState("threads");
   const { user } = useAuth();
@@ -405,6 +407,7 @@ export default function CommunityPage() {
       return (
         <Button
           className="flex items-center gap-2"
+          onClick={() => setIsClassroomDialogOpen(true)}
         >
           <span>Add Classroom</span>
         </Button>
@@ -761,6 +764,12 @@ export default function CommunityPage() {
           communityUuid={communityId || ''}
           expertUuid={community?.expert_uuid}
           showTemplateSelector={showProductTemplateSelector}
+        />
+
+        <ClassroomDialog
+          open={isClassroomDialogOpen}
+          onOpenChange={setIsClassroomDialogOpen}
+          communityUuid={communityId || ''}
         />
       </div>
     </>
