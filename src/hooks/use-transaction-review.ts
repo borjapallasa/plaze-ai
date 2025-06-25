@@ -25,7 +25,7 @@ export function useTransactionReview(transactionUuid: string | undefined) {
       
       const { data: reviews, error } = await supabase
         .from('reviews')
-        .select('review_uuid, rating, title, comments, buyer_name, buyer_email, created_at')
+        .select('*')
         .eq('transaction_uuid', transactionUuid);
 
       if (error) {
