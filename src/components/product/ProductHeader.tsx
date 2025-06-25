@@ -54,7 +54,7 @@ export function ProductHeader({
   return (
     <div className={className}>
       <h1 className="text-2xl font-semibold mb-3">{title}</h1>
-      <div className="flex items-center gap-1 text-xs text-muted-foreground mb-3">
+      <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
         <span className="font-bold">
           {displayName}
         </span>
@@ -64,7 +64,7 @@ export function ProductHeader({
         </div>
       </div>
       {shortDescription && (
-        <div className="text-sm text-gray-600 leading-relaxed">
+        <div className="text-base text-gray-600 leading-relaxed mb-2">
           {shortDescription}
         </div>
       )}
