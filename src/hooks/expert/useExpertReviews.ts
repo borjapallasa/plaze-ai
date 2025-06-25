@@ -26,7 +26,7 @@ export function useExpertReviews(expert_uuid: string | undefined) {
         rating: review.rating || 0,
         content: review.title || '',
         description: review.comments || '',
-        avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330',
+        avatar: null, // We'll handle the default avatar in the component
         date: new Date(review.created_at).toLocaleDateString(),
         type: review.type,
         productName: review.products?.name || 'Unknown Product'
