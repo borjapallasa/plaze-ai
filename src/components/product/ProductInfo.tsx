@@ -12,7 +12,7 @@ interface ProductInfoProps {
 }
 
 export function ProductInfo({ description, techStack, productIncludes, difficultyLevel, className }: ProductInfoProps) {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div className={className}>

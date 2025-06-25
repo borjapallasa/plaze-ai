@@ -8,7 +8,7 @@ interface ProductDescriptionProps {
 }
 
 export function ProductDescription({ description }: ProductDescriptionProps) {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <Card className="p-6">
