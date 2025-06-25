@@ -60,6 +60,7 @@ export function MobileProductLayout({
         onContactSeller={handleContactSeller}
         className="mb-3"
         expertUuid={expertUuid}
+        shortDescription={product.short_description}
       />
       {Array.isArray(variants) && variants.length > 0 && (
         <VariantPicker
