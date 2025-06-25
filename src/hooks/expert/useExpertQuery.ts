@@ -31,6 +31,16 @@ export function useExpertQuery(expert_uuid: string | undefined) {
           .maybeSingle());
       }
 
+      // If still no data found, try as email with case insensitive comparison
+      if (!data && !error) {
+        console.log("No expert found by slug, trying as email...");
+        ({ data, error } = await supabase
+          .from('experts')
+          .select('*')
+          .ilike('email', expert_uuid) // Use ilike for case insensitive email comparison
+          .maybeSingle());
+      }
+
       if (error) {
         console.error("Supabase error:", error);
         throw error;

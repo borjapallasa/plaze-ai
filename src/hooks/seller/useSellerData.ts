@@ -33,6 +33,16 @@ export function useSellerData(id: string | undefined) {
             .maybeSingle());
         }
 
+        // If still not found, try as email with case insensitive comparison
+        if (!data && !error) {
+          console.log('No expert found with UUIDs, trying as email:', id);
+          ({ data, error } = await supabase
+            .from('experts')
+            .select('*')
+            .ilike('email', id) // Use ilike for case insensitive email comparison
+            .maybeSingle());
+        }
+
         if (error) {
           console.error('Error fetching expert:', error);
           throw error;

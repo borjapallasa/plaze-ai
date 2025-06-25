@@ -39,7 +39,7 @@ const MenuItem = ({ icon, title, description, to }: MenuItemProps) => (
 export default function PersonalArea() {
   const { user } = useAuth();
 
-  // Fetch expert UUID for the authenticated user
+  // Fetch expert UUID for the authenticated user - using case insensitive email comparison
   const { data: expertData } = useQuery({
     queryKey: ['expert-by-email', user?.email],
     queryFn: async () => {
@@ -48,7 +48,7 @@ export default function PersonalArea() {
       const { data, error } = await supabase
         .from('experts')
         .select('expert_uuid')
-        .eq('email', user.email)
+        .ilike('email', user.email) // Use ilike for case insensitive comparison
         .maybeSingle();
       
       if (error) {

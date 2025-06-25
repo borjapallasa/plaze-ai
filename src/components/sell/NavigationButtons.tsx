@@ -107,11 +107,11 @@ export function NavigationButtons({
           // User is not authenticated, create new account
           const tempPassword = Math.random().toString(36).slice(-12);
           
-          // Check if user exists
+          // Check if user exists - using case insensitive email comparison
           const { data: existingUserData } = await supabase
             .from('users')
             .select('user_uuid, first_name, last_name')
-            .eq('email', emailToUse)
+            .ilike('email', emailToUse) // Use ilike for case insensitive comparison
             .maybeSingle();
           
           if (existingUserData) {
@@ -178,7 +178,7 @@ export function NavigationButtons({
           }
         }
         
-        // Check if expert profile exists
+        // Check if expert profile exists - using case insensitive email comparison
         let expertId;
         let expertExists = false;
         

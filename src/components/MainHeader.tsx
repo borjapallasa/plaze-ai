@@ -46,7 +46,7 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
 
   const isExpert = userData?.is_expert || false;
 
-  // Get expert UUID if user is an expert
+  // Get expert UUID if user is an expert - using case insensitive email comparison
   const { data: expertData } = useQuery({
     queryKey: ['expert-by-email', user?.email],
     queryFn: async () => {
@@ -55,7 +55,7 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
       const { data, error } = await supabase
         .from('experts')
         .select('expert_uuid')
-        .eq('email', user.email)
+        .ilike('email', user.email) // Use ilike for case insensitive comparison
         .maybeSingle();
       
       if (error) {
