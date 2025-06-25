@@ -246,43 +246,6 @@ export function NavigationButtons({
           console.log("Created new expert profile:", expertId, "with name:", expertName);
         }
 
-        // Create the appropriate resource based on selection
-        if (selectedOption === "products") {
-          const { error: productError } = await supabase
-            .from('products')
-            .insert({
-              user_uuid: userId,
-              expert_uuid: expertId,
-              name: formData.name, // This is the PRODUCT name
-              description: formData.description, // This is the PRODUCT description
-              price_from: parseFloat(formData.productPrice),
-              status: 'draft'
-            });
-
-          if (productError) {
-            throw new Error(`Failed to create product: ${productError.message}`);
-          }
-        } else if (selectedOption === "community") {
-          const communityType = formData.type === "paid" ? "paid" : "free";
-          
-          const { error: communityError } = await supabase
-            .from('communities')
-            .insert({
-              user_uuid: userId,
-              expert_uuid: expertId,
-              name: formData.name, // This is the COMMUNITY name
-              description: formData.description, // This is the COMMUNITY description
-              intro: formData.description,
-              type: communityType as "free" | "paid",
-              price: formData.type === 'paid' ? parseFloat(formData.price) : 0,
-              visibility: 'draft'
-            });
-
-          if (communityError) {
-            throw new Error(`Failed to create community: ${communityError.message}`);
-          }
-        }
-
         // Send magic link for future logins only if user wasn't already authenticated
         if (!user) {
           await supabase.auth.signInWithOtp({
@@ -294,9 +257,11 @@ export function NavigationButtons({
           
           toast.success("Account created! A magic link has been sent to your email for future logins");
         } else {
-          toast.success(`${selectedOption === 'products' ? 'Product' : 'Community'} created successfully!`);
+          toast.success("Expert profile created successfully!");
         }
         
+        // Call onNext to trigger navigation to the appropriate creation page
+        // The actual product/community creation will happen on the next page
         onNext();
       } catch (error) {
         console.error("Creation error:", error);
