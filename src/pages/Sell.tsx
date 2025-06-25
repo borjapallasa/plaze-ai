@@ -17,6 +17,8 @@ const SellPage = () => {
     name: "",
     description: "",
     contactEmail: "",
+    firstName: "",
+    lastName: "",
     intro: "",
     type: "free",
     price: "",
@@ -47,6 +49,22 @@ const SellPage = () => {
       if (!formData.captchaConfirmed) {
         toast.error("Please confirm that you are not a robot");
         return;
+      }
+
+      // Check required fields for non-authenticated users
+      if (!user) {
+        if (!formData.firstName.trim()) {
+          toast.error("Please enter your first name");
+          return;
+        }
+        if (!formData.lastName.trim()) {
+          toast.error("Please enter your last name");
+          return;
+        }
+        if (!formData.contactEmail.trim()) {
+          toast.error("Please enter your email address");
+          return;
+        }
       }
 
       // The authentication is now handled in NavigationButtons

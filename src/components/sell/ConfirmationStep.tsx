@@ -16,6 +16,8 @@ interface ConfirmationStepProps {
     productPrice: string;
     filesLink: string;
     contactEmail: string;
+    firstName: string;
+    lastName: string;
     captchaConfirmed: boolean;
   };
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
@@ -91,25 +93,61 @@ export function ConfirmationStep({
         </div>
       </div>
 
-      {/* Only show email input if user is not authenticated */}
+      {/* Only show name and email inputs if user is not authenticated */}
       {!user && (
-        <div className="space-y-2">
-          <Label htmlFor="contactEmail" className="font-medium text-gray-700">
-            Email Address <span className="text-red-500">*</span>
-          </Label>
-          <Input
-            id="contactEmail"
-            name="contactEmail"
-            type="email"
-            value={formData.contactEmail}
-            onChange={handleInputChange}
-            placeholder="your@email.com"
-            required
-            className="w-full"
-          />
-          <p className="text-sm text-gray-500">
-            We'll use this to set up your account and send you a magic link for future logins.
-          </p>
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="firstName" className="font-medium text-gray-700">
+                First Name <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="firstName"
+                name="firstName"
+                type="text"
+                value={formData.firstName}
+                onChange={handleInputChange}
+                placeholder="John"
+                required
+                className="w-full"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="lastName" className="font-medium text-gray-700">
+                Last Name <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="lastName"
+                name="lastName"
+                type="text"
+                value={formData.lastName}
+                onChange={handleInputChange}
+                placeholder="Doe"
+                required
+                className="w-full"
+              />
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="contactEmail" className="font-medium text-gray-700">
+              Email Address <span className="text-red-500">*</span>
+            </Label>
+            <Input
+              id="contactEmail"
+              name="contactEmail"
+              type="email"
+              value={formData.contactEmail}
+              onChange={handleInputChange}
+              placeholder="your@email.com"
+              required
+              className="w-full"
+            />
+            <p className="text-sm text-gray-500">
+              We'll use this to set up your account and send you a magic link for future logins.
+            </p>
+          </div>
         </div>
       )}
 
