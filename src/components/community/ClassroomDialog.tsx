@@ -5,6 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -28,6 +35,7 @@ export function ClassroomDialog({ open, onOpenChange, communityUuid, expertUuid 
   const [videoUrl, setVideoUrl] = useState("");
   const [summary, setSummary] = useState("");
   const [description, setDescription] = useState("");
+  const [status, setStatus] = useState<"visible" | "not visible">("not visible");
   const [notify, setNotify] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const queryClient = useQueryClient();
@@ -52,7 +60,7 @@ export function ClassroomDialog({ open, onOpenChange, communityUuid, expertUuid 
           description: description.trim() || null,
           community_uuid: communityUuid,
           expert_uuid: expertUuid,
-          status: 'invisible',
+          status: status,
           notify: notify
         })
         .select()
@@ -71,6 +79,7 @@ export function ClassroomDialog({ open, onOpenChange, communityUuid, expertUuid 
       setVideoUrl("");
       setSummary("");
       setDescription("");
+      setStatus("not visible");
       setNotify(false);
       
       // Close dialog
@@ -140,6 +149,19 @@ export function ClassroomDialog({ open, onOpenChange, communityUuid, expertUuid 
               placeholder="Detailed description of what this classroom is about"
               rows={3}
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="classroom-status">Status</Label>
+            <Select value={status} onValueChange={(value) => setStatus(value as "visible" | "not visible")}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="visible">Visible</SelectItem>
+                <SelectItem value="not visible">Not Visible</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="flex items-center space-x-2">
