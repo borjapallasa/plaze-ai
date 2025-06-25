@@ -16,7 +16,7 @@ export function ProductInfo({ description, techStack, productIncludes, difficult
 
   return (
     <div className={className}>
-      <Card className="p-6">
+      <Card className="p-4">
         <div 
           className="flex items-center justify-between cursor-pointer mb-4"
           onClick={() => setIsOpen(!isOpen)}
