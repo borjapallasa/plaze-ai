@@ -49,7 +49,7 @@ export function CommunitiesTab({ communities, isLoading }: CommunitiesTabProps) 
 
   console.log("CommunitiesTab rendered with:", { communities, isLoading });
 
-  // Get current user's expert_uuid
+  // Get current user's expert_uuid - using case insensitive email comparison
   const { data: expertData } = useQuery({
     queryKey: ['current-user-expert', user?.email],
     queryFn: async () => {
@@ -58,7 +58,7 @@ export function CommunitiesTab({ communities, isLoading }: CommunitiesTabProps) 
       const { data, error } = await supabase
         .from('experts')
         .select('expert_uuid')
-        .eq('email', user.email)
+        .ilike('email', user.email) // Case insensitive comparison
         .maybeSingle();
       
       if (error) {
@@ -89,7 +89,7 @@ export function CommunitiesTab({ communities, isLoading }: CommunitiesTabProps) 
     navigate('/seller/communities/new');
   };
 
-  // Safely filter communities based on search query
+  // Case-insensitive filter for communities based on search query
   const filteredCommunities = React.useMemo(() => {
     if (!communities || !Array.isArray(communities)) {
       console.log("Communities is not an array:", communities);
@@ -106,6 +106,7 @@ export function CommunitiesTab({ communities, isLoading }: CommunitiesTabProps) 
       const description = community.description || '';
       const query = searchQuery.toLowerCase();
       
+      // Case-insensitive search
       return name.toLowerCase().includes(query) || description.toLowerCase().includes(query);
     });
   }, [communities, searchQuery]);
