@@ -14,9 +14,6 @@ export function useExpertReviews(expert_uuid: string | undefined) {
           *,
           products (
             name
-          ),
-          users!reviews_buyer_email_fkey (
-            user_thumbnail
           )
         `)
         .eq('expert_uuid', expert_uuid);
@@ -29,10 +26,9 @@ export function useExpertReviews(expert_uuid: string | undefined) {
         rating: review.rating || 0,
         content: review.title || '',
         description: review.comments || '',
-        avatar: review.users?.[0]?.user_thumbnail || null,
+        avatar: null, // We'll handle the default avatar in the component
         date: new Date(review.created_at).toLocaleDateString(),
         type: review.type,
-        verified: review.verified || false,
         productName: review.products?.name || 'Unknown Product'
       }));
     },

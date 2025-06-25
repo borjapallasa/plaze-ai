@@ -10,7 +10,6 @@ export interface TransactionReview {
   buyer_name: string;
   buyer_email: string;
   created_at: string;
-  verified: boolean;
 }
 
 export function useTransactionReview(transactionUuid: string | undefined) {
@@ -40,7 +39,7 @@ export function useTransactionReview(transactionUuid: string | undefined) {
         return [];
       }
 
-      return reviews.map((review: any): TransactionReview => ({
+      return reviews.map((review) => ({
         review_uuid: review.review_uuid,
         rating: review.rating,
         title: review.title,
@@ -48,7 +47,6 @@ export function useTransactionReview(transactionUuid: string | undefined) {
         buyer_name: review.buyer_name,
         buyer_email: review.buyer_email || '',
         created_at: review.created_at,
-        verified: Boolean(review.verified),
       }));
     },
     enabled: !!transactionUuid,
