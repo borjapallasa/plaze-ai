@@ -66,6 +66,28 @@ export default function CommunityPage() {
   const { user } = useAuth();
   const { images } = useCommunityImages(communityId);
 
+  // Get current user's expert data
+  const { data: currentUserExpertData } = useQuery({
+    queryKey: ['current-user-expert', user?.email],
+    queryFn: async () => {
+      if (!user?.email) return null;
+      
+      const { data, error } = await supabase
+        .from('experts')
+        .select('expert_uuid, user_uuid')
+        .ilike('email', user.email)
+        .maybeSingle();
+      
+      if (error) {
+        console.error('Error fetching current user expert:', error);
+        return null;
+      }
+      
+      return data;
+    },
+    enabled: !!user?.email,
+  });
+
   const { data: community, isLoading: isCommunityLoading } = useQuery({
     queryKey: ['community', communityId],
     queryFn: async () => {
@@ -186,6 +208,13 @@ export default function CommunityPage() {
     );
   }
 
+  // Check if current user is the community owner
+  const isOwner = currentUserExpertData && community && (
+    currentUserExpertData.expert_uuid === community.expert_uuid ||
+    currentUserExpertData.user_uuid === community.expert_uuid ||
+    user?.id === community.expert_uuid
+  );
+
   // Create gallery images - use community images if available, otherwise add placeholders
   const createGalleryImages = (): ProductImage[] => {
     const communityImages = images?.map(img => ({
@@ -259,8 +288,6 @@ export default function CommunityPage() {
 
   const galleryImages = createGalleryImages();
   
-  const isOwner = user?.id === community?.expert?.user_uuid;
-
   const templates = [
     {
       title: "Automated Email Workflow",
@@ -362,6 +389,21 @@ export default function CommunityPage() {
             <span>Add Product</span>
           </Button>
         </div>
+      );
+    }
+    return null;
+  };
+
+  const renderAddClassroomButton = () => {
+    if (isOwner) {
+      return (
+        <Button
+          variant="outline"
+          className="flex items-center gap-2"
+        >
+          <Plus className="h-4 w-4" />
+          <span>Add Classroom</span>
+        </Button>
       );
     }
     return null;
@@ -572,9 +614,12 @@ export default function CommunityPage() {
           </TabsContent>
 
           <TabsContent value="classrooms" className="space-y-6">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input placeholder="Search classroom" className="pl-9" />
+            <div className="flex justify-between items-center mb-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <Input placeholder="Search classroom" className="pl-9" />
+              </div>
+              {renderAddClassroomButton()}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {isClassroomsLoading ? (
@@ -628,11 +673,11 @@ export default function CommunityPage() {
           </TabsContent>
 
           <TabsContent value="templates" className="space-y-6">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input placeholder="Search products" className="pl-9" />
-            </div>
-            <div className="flex justify-end mb-4">
+            <div className="flex justify-between items-center mb-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <Input placeholder="Search products" className="pl-9" />
+              </div>
               {renderAddProductButton()}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

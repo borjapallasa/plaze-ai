@@ -49,7 +49,7 @@ export function useTransactionReview(transactionUuid: string | undefined) {
         buyer_email: review.buyer_email || '',
         created_at: review.created_at,
         verified: Boolean(review.verified),
-      }));
+      })) as TransactionReview[];
     },
     enabled: !!transactionUuid,
   });
