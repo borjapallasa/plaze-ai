@@ -707,18 +707,16 @@ export default function Classroom() {
                     </div>
 
                     <div className="space-y-4">
-                      {viewMode === 'lesson' && activeLesson && (
-                        <Button
-                          variant="ghost"
-                          onClick={handleBackToClassroom}
-                          className="mb-4 text-muted-foreground hover:text-foreground"
-                        >
-                          <ArrowLeft className="mr-2 h-4 w-4" />
-                          Back to Classroom
-                        </Button>
-                      )}
-
-                      <h2 className="text-xl">
+                      <h2 className="text-xl flex items-center">
+                        {viewMode === 'lesson' && activeLesson && (
+                          <Button
+                            variant="ghost"
+                            onClick={handleBackToClassroom}
+                            className="mr-2 p-1 h-auto text-muted-foreground hover:text-foreground"
+                          >
+                            <ArrowLeft className="h-4 w-4" />
+                          </Button>
+                        )}
                         <span className="font-bold text-black">{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
                         {viewMode === 'lesson' && activeLesson && (
                           <>
@@ -767,13 +765,11 @@ export default function Classroom() {
                   </CardContent>
                 </Card>
 
-                {viewMode === 'classroom' && (
-                  <Card className="w-full">
-                    <CardContent className="p-4">
-                      <ProductsSection />
-                    </CardContent>
-                  </Card>
-                )}
+                <Card className="w-full">
+                  <CardContent className="p-4">
+                    <ProductsSection />
+                  </CardContent>
+                </Card>
               </div>
             ) : (
               <div className="flex gap-6">
@@ -821,25 +817,23 @@ export default function Classroom() {
                         </div>
                       </div>
 
-                      {viewMode === 'classroom' && <ProductsSection />}
+                      <ProductsSection />
                     </div>
                   </CardContent>
                 </Card>
 
                 <Card className="flex-1">
                   <CardContent className="p-6 space-y-6">
-                    {viewMode === 'lesson' && activeLesson && (
-                      <Button
-                        variant="ghost"
-                        onClick={handleBackToClassroom}
-                        className="mb-4 text-muted-foreground hover:text-foreground"
-                      >
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        Back to Classroom
-                      </Button>
-                    )}
-
-                    <h1 className="text-2xl flex flex-wrap items-center">
+                    <h1 className="text-2xl flex items-center">
+                      {viewMode === 'lesson' && activeLesson && (
+                        <Button
+                          variant="ghost"
+                          onClick={handleBackToClassroom}
+                          className="mr-2 p-1 h-auto text-muted-foreground hover:text-foreground"
+                        >
+                          <ArrowLeft className="h-4 w-4" />
+                        </Button>
+                      )}
                       <span className="font-bold text-black">{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
                       {viewMode === 'lesson' && activeLesson && (
                         <>
