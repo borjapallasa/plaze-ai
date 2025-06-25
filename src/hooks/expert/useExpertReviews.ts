@@ -26,10 +26,11 @@ export function useExpertReviews(expert_uuid: string | undefined) {
         rating: review.rating || 0,
         content: review.title || '',
         description: review.comments || '',
-        avatar: null, // We'll handle the default avatar in the component
+        avatar: null,
         date: new Date(review.created_at).toLocaleDateString(),
         type: review.type,
-        productName: review.products?.name || 'Unknown Product'
+        productName: review.products?.name || 'Unknown Product',
+        verified: Boolean(review.verified)
       }));
     },
     enabled: !!expert_uuid

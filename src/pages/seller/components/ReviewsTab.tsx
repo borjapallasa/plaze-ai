@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { Star, Loader2, User, CheckCircle } from "lucide-react";
+import { Star, Loader2, User, CheckCircle, Package } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useExpertReviews } from "@/hooks/expert/useExpertReviews";
 import { useParams } from "react-router-dom";
@@ -141,7 +141,7 @@ export function ReviewsTab({
                               </div>
                             )}
                           </div>
-                          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-1">
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-2">
                             <div className="flex items-center space-x-1">
                               {Array(5).fill(0).map((_, i) => <Star key={i} className={cn("h-3 w-3", i < review.rating ? "fill-yellow-400 text-yellow-400" : "fill-gray-200 text-gray-200")} />)}
                             </div>
@@ -153,9 +153,10 @@ export function ReviewsTab({
                           </Badge>}
                       </div>
                       
-                      {/* Product info - improved mobile layout */}
-                      <div className="text-xs text-muted-foreground bg-gray-50 px-2 py-1 rounded inline-block">
-                        Product: {review.productName}
+                      {/* Product info with icon */}
+                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-gray-50 px-2 py-1.5 rounded w-fit">
+                        <Package className="h-3 w-3 flex-shrink-0" />
+                        <span className="truncate">{review.productName}</span>
                       </div>
                       
                       <div className="space-y-1">
