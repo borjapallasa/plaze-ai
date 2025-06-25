@@ -82,9 +82,12 @@ const Index = () => {
     enabled: viewMode === 'communities'
   });
 
+  // Use case-insensitive filtering for products
   const filteredProducts = useMemo(() =>
     selectedCategory && products
-      ? products.filter(product => product.type === selectedCategory)
+      ? products.filter(product => 
+          product.type?.toLowerCase() === selectedCategory.toLowerCase()
+        )
       : products,
     [selectedCategory, products]
   );

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -74,14 +75,14 @@ export const SearchResults = () => {
     const fetchResults = async () => {
       setLoading(true);
       try {
-        // Fetch products
+        // Fetch products - using case insensitive search
         const { data: products } = await supabase
           .from("products")
           .select("*")
           .ilike("name", `%${query}%`)
           .limit(8);
 
-        // Fetch experts - map to match the Expert interface
+        // Fetch experts - using case insensitive search
         const { data: expertsData } = await supabase
           .from("experts")
           .select("*")
@@ -97,14 +98,14 @@ export const SearchResults = () => {
           slug: expert.slug,
         }));
 
-        // Fetch communities
+        // Fetch communities - using case insensitive search
         const { data: communities } = await supabase
           .from("communities")
           .select("*")
           .ilike("name", `%${query}%`)
           .limit(8);
 
-        // Fetch jobs
+        // Fetch jobs - using case insensitive search
         const { data: jobs } = await supabase
           .from("jobs")
           .select("*")

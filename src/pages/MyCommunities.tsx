@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
@@ -104,6 +105,7 @@ export default function MyCommunities() {
     fetchUserSubscriptions();
   }, []);
 
+  // Use case-insensitive filtering
   const filteredSubscriptions = subscriptions.filter(subscription =>
     subscription.community_name?.toLowerCase().includes(searchQuery.toLowerCase())
   );

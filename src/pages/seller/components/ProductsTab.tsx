@@ -35,8 +35,9 @@ export function ProductsTab({ products, isLoading = false }: ProductsTabProps) {
   const { user } = useAuth();
   const [sortField, setSortField] = useState<SortField>('created_at');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // Get current user's expert_uuid
+  // Get current user's expert_uuid - using case insensitive email comparison
   const { data: expertData } = useQuery({
     queryKey: ['current-user-expert', user?.email],
     queryFn: async () => {
@@ -45,7 +46,7 @@ export function ProductsTab({ products, isLoading = false }: ProductsTabProps) {
       const { data, error } = await supabase
         .from('experts')
         .select('expert_uuid')
-        .eq('email', user.email)
+        .ilike('email', user.email) // Use ilike for case insensitive comparison
         .maybeSingle();
       
       if (error) {
@@ -84,7 +85,12 @@ export function ProductsTab({ products, isLoading = false }: ProductsTabProps) {
       <ArrowDown className="w-4 h-4 ml-1" />;
   };
 
-  const sortedProducts = [...products].sort((a, b) => {
+  // Filter products using case-insensitive search
+  const filteredProducts = products.filter(product =>
+    product.name?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
     const direction = sortDirection === 'asc' ? 1 : -1;
     
     switch (sortField) {
@@ -111,6 +117,8 @@ export function ProductsTab({ products, isLoading = false }: ProductsTabProps) {
           <Input 
             placeholder="Search products..." 
             className="pl-9"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
         {isCurrentUserSeller && (
@@ -225,10 +233,10 @@ export function ProductsTab({ products, isLoading = false }: ProductsTabProps) {
                           </td>
                         </tr>
                       ))}
-                      {products.length === 0 && (
+                      {sortedProducts.length === 0 && (
                         <tr>
                           <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
-                            No products found
+                            {searchQuery ? `No products found matching "${searchQuery}"` : "No products found"}
                           </td>
                         </tr>
                       )}
