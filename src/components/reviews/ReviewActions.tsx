@@ -35,44 +35,52 @@ export function ReviewActions({ reviewId, status }: ReviewActionsProps) {
   };
 
   const handleReject = () => {
-    updateReviewStatus.mutate({ reviewId, status: 'rejected' });
+    updateReviewStatus.mutate({ reviewId, status: 'not published' });
     setShowRejectDialog(false);
   };
 
   return (
-    <div className="flex items-center gap-2 mt-2">
-      <Button
-        size="sm"
-        variant="outline"
-        onClick={() => setShowApproveDialog(true)}
-        disabled={updateReviewStatus.isPending}
-        className="text-green-600 border-green-200 hover:bg-green-50"
-      >
-        <Check className="h-3 w-3 mr-1" />
-        Approve
-      </Button>
-      
-      <Button
-        size="sm"
-        variant="outline"
-        onClick={() => setShowRejectDialog(true)}
-        disabled={updateReviewStatus.isPending}
-        className="text-red-600 border-red-200 hover:bg-red-50"
-      >
-        <X className="h-3 w-3 mr-1" />
-        Reject
-      </Button>
+    <>
+      <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+        <div className="flex items-center gap-1 text-xs text-orange-600 bg-orange-50 px-2 py-1 rounded-full">
+          <AlertTriangle className="h-3 w-3" />
+          <span className="font-medium">Pending Review</span>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setShowRejectDialog(true)}
+            disabled={updateReviewStatus.isPending}
+            className="h-8 px-3 text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+          >
+            <X className="h-3 w-3 mr-1" />
+            Reject
+          </Button>
+          
+          <Button
+            size="sm"
+            onClick={() => setShowApproveDialog(true)}
+            disabled={updateReviewStatus.isPending}
+            className="h-8 px-3 bg-green-600 hover:bg-green-700 text-white"
+          >
+            <Check className="h-3 w-3 mr-1" />
+            Approve
+          </Button>
+        </div>
+      </div>
 
       {/* Approve Dialog */}
       <AlertDialog open={showApproveDialog} onOpenChange={setShowApproveDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-amber-500" />
+              <Check className="h-5 w-5 text-green-600" />
               Approve Review
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to approve this review? This action will publish the review and make it visible to all users. 
+              Are you sure you want to approve this review? This action will publish the review and make it visible to all users.
               <strong className="block mt-2 text-red-600">This action is irreversible.</strong>
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -93,7 +101,7 @@ export function ReviewActions({ reviewId, status }: ReviewActionsProps) {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-amber-500" />
+              <X className="h-5 w-5 text-red-600" />
               Reject Review
             </AlertDialogTitle>
             <AlertDialogDescription>
@@ -112,6 +120,6 @@ export function ReviewActions({ reviewId, status }: ReviewActionsProps) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </>
   );
 }

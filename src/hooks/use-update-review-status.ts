@@ -7,7 +7,7 @@ export function useUpdateReviewStatus() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ reviewId, status }: { reviewId: string; status: 'published' | 'rejected' }) => {
+    mutationFn: async ({ reviewId, status }: { reviewId: string; status: 'published' | 'not published' }) => {
       const { error } = await supabase
         .from('reviews')
         .update({ status })
