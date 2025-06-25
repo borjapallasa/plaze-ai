@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Star, Briefcase, Package, Users, Edit2 } from "lucide-react";
+import { MapPin, Star, Users, Package, Edit2 } from "lucide-react";
 import { EditExpertDialog } from "./EditExpertDialog";
 import { EditExpertStatusDialog } from "./EditExpertStatusDialog";
 import type { Expert } from "@/types/expert";
@@ -40,6 +40,16 @@ export function SellerHeader({
         return 'outline';
     }
   };
+
+  // Calculate satisfaction percentage from client_satisfaction
+  const satisfactionPercentage = seller.client_satisfaction || 0;
+  
+  // Calculate average rating (assuming 4.5+ = 100%)
+  const averageRating = satisfactionPercentage >= 90 ? 5.0 : 
+                       satisfactionPercentage >= 80 ? 4.5 :
+                       satisfactionPercentage >= 70 ? 4.0 :
+                       satisfactionPercentage >= 60 ? 3.5 :
+                       satisfactionPercentage >= 50 ? 3.0 : 2.5;
 
   return (
     <Card className="mb-8 shadow-sm">
@@ -144,14 +154,14 @@ export function SellerHeader({
                 <div className="flex items-center gap-2">
                   <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                   <span className="text-sm font-semibold">
-                    {seller.client_satisfaction}% satisfaction
+                    {averageRating.toFixed(1)} avg rating ({satisfactionPercentage}%)
                   </span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <Briefcase className="h-4 w-4 text-muted-foreground" />
+                  <Users className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm font-semibold">
-                    {seller.completed_projects} projects
+                    {communitiesCount} communities
                   </span>
                 </div>
 
@@ -161,15 +171,6 @@ export function SellerHeader({
                     {productsCount} products
                   </span>
                 </div>
-
-                {communitiesCount > 0 && (
-                  <div className="flex items-center gap-2">
-                    <Users className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm font-semibold">
-                      {communitiesCount} communities
-                    </span>
-                  </div>
-                )}
               </div>
             </div>
           </div>
@@ -232,16 +233,16 @@ export function SellerHeader({
               <div className="flex items-center gap-2 flex-shrink-0">
                 <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                 <span className="text-sm font-semibold">
-                  {seller.client_satisfaction}%
+                  {averageRating.toFixed(1)}
                 </span>
               </div>
 
               <Separator orientation="vertical" className="h-4" />
 
               <div className="flex items-center gap-2 flex-shrink-0">
-                <Briefcase className="h-4 w-4 text-muted-foreground" />
+                <Users className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm font-semibold">
-                  {seller.completed_projects}
+                  {communitiesCount}
                 </span>
               </div>
 
@@ -253,18 +254,6 @@ export function SellerHeader({
                   {productsCount}
                 </span>
               </div>
-
-              {communitiesCount > 0 && (
-                <>
-                  <Separator orientation="vertical" className="h-4" />
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    <Users className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm font-semibold">
-                      {communitiesCount}
-                    </span>
-                  </div>
-                </>
-              )}
             </div>
 
             {/* Edit Button */}
