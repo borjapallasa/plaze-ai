@@ -58,7 +58,7 @@ export function MobileProductLayout({
         seller="Design Master"
         rating={averageRating}
         onContactSeller={handleContactSeller}
-        className="mb-3"
+        className="mb-1"
         expertUuid={expertUuid}
         shortDescription={product.short_description}
       />

@@ -69,7 +69,7 @@ export function DesktopProductLayout({
             seller="Design Master"
             rating={averageRating}
             onContactSeller={handleContactSeller}
-            className="mb-2"
+            className="mb-1"
             expertUuid={expertUuid}
             shortDescription={product.short_description}
           />

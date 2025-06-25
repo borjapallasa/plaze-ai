@@ -64,7 +64,7 @@ export function ProductHeader({
         </div>
       </div>
       {shortDescription && (
-        <div className="text-base text-gray-600 leading-relaxed mb-1">
+        <div className="text-base text-gray-600 leading-relaxed mb-0">
           {shortDescription}
         </div>
       )}
