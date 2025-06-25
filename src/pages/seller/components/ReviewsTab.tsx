@@ -53,31 +53,31 @@ export function ReviewsTab({
       </div>;
   }
 
-  return <div className="space-y-6">
+  return <div className="space-y-4 sm:space-y-6">
       {/* Overview Stats */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         <Card>
-          <CardHeader className="pb-2">
+          <CardHeader className="pb-3 sm:pb-2">
             <CardTitle className="text-sm font-medium">Average Rating</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-0">
             <div className="flex items-center space-x-2">
-              <span className="text-2xl font-bold">
+              <span className="text-xl sm:text-2xl font-bold">
                 {totalReviews > 0 ? averageRating.toFixed(1) : '0.0'}
               </span>
               <div className="flex">
-                {Array(5).fill(0).map((_, i) => <Star key={i} className={cn("h-4 w-4", i < Math.floor(averageRating) ? "fill-yellow-400 text-yellow-400" : "fill-gray-200 text-gray-200")} />)}
+                {Array(5).fill(0).map((_, i) => <Star key={i} className={cn("h-3 w-3 sm:h-4 sm:w-4", i < Math.floor(averageRating) ? "fill-yellow-400 text-yellow-400" : "fill-gray-200 text-gray-200")} />)}
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="pb-2">
+          <CardHeader className="pb-3 sm:pb-2">
             <CardTitle className="text-sm font-medium">Total Reviews</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalReviews}</div>
+          <CardContent className="pt-0">
+            <div className="text-xl sm:text-2xl font-bold">{totalReviews}</div>
             <p className="text-xs text-muted-foreground">across all products</p>
           </CardContent>
         </Card>
@@ -85,18 +85,18 @@ export function ReviewsTab({
 
       {/* Rating Distribution */}
       <Card>
-        <CardHeader>
-          <CardTitle>Rating Distribution</CardTitle>
-          <CardDescription>Breakdown of ratings across all reviews</CardDescription>
+        <CardHeader className="pb-3 sm:pb-4">
+          <CardTitle className="text-base sm:text-lg">Rating Distribution</CardTitle>
+          <CardDescription className="text-sm">Breakdown of ratings across all reviews</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
+        <CardContent className="pt-0">
+          <div className="space-y-2 sm:space-y-3">
             {ratingDistribution.map(({
             rating,
             count,
             percentage
-          }) => <div key={rating} className="flex items-center space-x-3">
-                <div className="flex items-center space-x-1 w-12">
+          }) => <div key={rating} className="flex items-center space-x-2 sm:space-x-3">
+                <div className="flex items-center space-x-1 w-10 sm:w-12">
                   <span className="text-sm">{rating}</span>
                   <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
                 </div>
@@ -105,7 +105,7 @@ export function ReviewsTab({
                 width: `${percentage}%`
               }} />
                 </div>
-                <span className="text-sm text-muted-foreground w-8">{count}</span>
+                <span className="text-sm text-muted-foreground w-6 sm:w-8 text-right">{count}</span>
               </div>)}
           </div>
         </CardContent>
@@ -113,47 +113,47 @@ export function ReviewsTab({
 
       {/* Recent Reviews */}
       <Card>
-        <CardHeader>
-          <CardTitle>Recent Reviews</CardTitle>
-          <CardDescription>Latest feedback from your customers</CardDescription>
+        <CardHeader className="pb-3 sm:pb-4">
+          <CardTitle className="text-base sm:text-lg">Recent Reviews</CardTitle>
+          <CardDescription className="text-sm">Latest feedback from your customers</CardDescription>
         </CardHeader>
-        <CardContent>
-          {totalReviews === 0 ? <div className="text-center py-8">
+        <CardContent className="pt-0">
+          {totalReviews === 0 ? <div className="text-center py-6 sm:py-8">
               <p className="text-muted-foreground">No reviews found for this expert.</p>
-            </div> : <div className="space-y-4">
+            </div> : <div className="space-y-3 sm:space-y-4">
               {reviews.map((review, index) => <div key={review.id}>
-                  <div className="flex items-start space-x-4 p-4 rounded-lg border bg-card">
-                    <Avatar className="h-10 w-10">
+                  <div className="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-4 rounded-lg border bg-card">
+                    <Avatar className="h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0">
                       <AvatarImage src={review.avatar || undefined} alt={review.author} />
                       <AvatarFallback className="bg-muted">
-                        <User className="h-5 w-5 text-muted-foreground" />
+                        <User className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
                       </AvatarFallback>
                     </Avatar>
-                    <div className="flex-1 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="font-medium">{review.author}</h4>
-                          <div className="flex items-center space-x-2">
-                            <div className="flex">
+                    <div className="flex-1 space-y-2 min-w-0">
+                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+                        <div className="min-w-0 flex-1">
+                          <h4 className="font-medium text-sm sm:text-base truncate">{review.author}</h4>
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                            <div className="flex items-center space-x-1">
                               {Array(5).fill(0).map((_, i) => <Star key={i} className={cn("h-3 w-3", i < review.rating ? "fill-yellow-400 text-yellow-400" : "fill-gray-200 text-gray-200")} />)}
                             </div>
                             <span className="text-xs text-muted-foreground">{review.date}</span>
                           </div>
-                          <p className="text-xs text-muted-foreground mt-1">Product: {review.productName}</p>
+                          <p className="text-xs text-muted-foreground mt-1 truncate">Product: {review.productName}</p>
                         </div>
-                        {review.type && <Badge variant="outline" className="text-xs capitalize">
+                        {review.type && <Badge variant="outline" className="text-xs capitalize flex-shrink-0">
                             {review.type}
                           </Badge>}
                       </div>
-                      <div>
-                        <h5 className="font-medium text-sm">{review.content}</h5>
-                        {review.description && <p className="text-sm text-muted-foreground mt-1">
+                      <div className="space-y-1">
+                        <h5 className="font-medium text-sm leading-tight">{review.content}</h5>
+                        {review.description && <p className="text-sm text-muted-foreground leading-relaxed">
                             {review.description}
                           </p>}
                       </div>
                     </div>
                   </div>
-                  {index < reviews.length - 1 && <Separator className="my-4" />}
+                  {index < reviews.length - 1 && <Separator className="my-3 sm:my-4" />}
                 </div>)}
             </div>}
         </CardContent>
