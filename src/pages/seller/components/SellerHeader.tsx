@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -49,8 +50,34 @@ export function SellerHeader({
     ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length 
     : 0;
   
-  // Calculate satisfaction percentage (100% if rating is 4.5+)
-  const satisfactionPercentage = averageRating >= 4.5 ? 100 : Math.round((averageRating / 5) * 100);
+  // Calculate satisfaction percentage with granular scaling
+  const calculateSatisfactionPercentage = (rating: number): number => {
+    if (rating >= 4.5) {
+      // 4.5 to 5.0 maps to 100%
+      return 100;
+    } else if (rating >= 4.0) {
+      // 4.0 to 4.5 maps to 90-100%
+      // Linear interpolation: 90 + (rating - 4.0) / 0.5 * 10
+      return Math.round(90 + ((rating - 4.0) / 0.5) * 10);
+    } else if (rating >= 3.0) {
+      // 3.0 to 4.0 maps to 80-90%
+      // Linear interpolation: 80 + (rating - 3.0) / 1.0 * 10
+      return Math.round(80 + ((rating - 3.0) / 1.0) * 10);
+    } else if (rating >= 2.0) {
+      // 2.0 to 3.0 maps to 60-80%
+      // Linear interpolation: 60 + (rating - 2.0) / 1.0 * 20
+      return Math.round(60 + ((rating - 2.0) / 1.0) * 20);
+    } else if (rating >= 1.0) {
+      // 1.0 to 2.0 maps to 40-60%
+      // Linear interpolation: 40 + (rating - 1.0) / 1.0 * 20
+      return Math.round(40 + ((rating - 1.0) / 1.0) * 20);
+    } else {
+      // Below 1.0 or no rating
+      return 0;
+    }
+  };
+
+  const satisfactionPercentage = calculateSatisfactionPercentage(averageRating);
 
   return (
     <Card className="mb-8 shadow-sm">
