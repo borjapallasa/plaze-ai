@@ -15,6 +15,6 @@ export function toStartCase(str: string): string {
 }
 
 export function formatNumber(num: number | null | undefined): string {
-  if (num === null || num === undefined) return '0';
-  return num.toLocaleString();
+  if (num === null || num === undefined || isNaN(num)) return '0';
+  return Math.floor(num).toLocaleString('en-US');
 }
