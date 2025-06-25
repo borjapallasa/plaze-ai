@@ -384,7 +384,6 @@ export default function CommunityPage() {
             className="flex items-center gap-2"
             onClick={() => handleOpenProductDialog(false)}
           >
-            <Plus className="h-4 w-4" />
             <span>Add Product</span>
           </Button>
         </div>
@@ -399,7 +398,6 @@ export default function CommunityPage() {
         <Button
           className="flex items-center gap-2"
         >
-          <Plus className="h-4 w-4" />
           <span>Add Classroom</span>
         </Button>
       );
@@ -540,8 +538,8 @@ export default function CommunityPage() {
 
           <TabsContent value="threads" className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button className="w-full sm:w-auto">Create New Thread</Button>
               <Input placeholder="Search thread" className="flex-1" />
+              <Button className="w-full sm:w-auto">Create New Thread</Button>
             </div>
 
             {isThreadsLoading ? (
