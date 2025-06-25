@@ -1,12 +1,14 @@
-
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, Clock, MessageSquare, GraduationCap, Package2, Globe, Search } from "lucide-react";
+import { Users, Clock, MessageSquare, GraduationCap, Package2, Globe, Search, Plus } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/lib/auth";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Community {
   community_uuid: string;
@@ -41,9 +43,35 @@ const formatNumber = (num: number = 0): string => {
 
 export function CommunitiesTab({ communities, isLoading }: CommunitiesTabProps) {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
 
   console.log("CommunitiesTab rendered with:", { communities, isLoading });
+
+  // Get current user's expert_uuid
+  const { data: expertData } = useQuery({
+    queryKey: ['current-user-expert', user?.email],
+    queryFn: async () => {
+      if (!user?.email) return null;
+      
+      const { data, error } = await supabase
+        .from('experts')
+        .select('expert_uuid')
+        .eq('email', user.email)
+        .maybeSingle();
+      
+      if (error) {
+        console.error('Error fetching expert:', error);
+        return null;
+      }
+      
+      return data;
+    },
+    enabled: !!user?.email,
+  });
+
+  const isCurrentUserSeller = expertData?.expert_uuid === id;
 
   // Function to handle clicking on the card
   const handleCardClick = (communityId: string) => {
@@ -54,6 +82,11 @@ export function CommunitiesTab({ communities, isLoading }: CommunitiesTabProps) 
   const handleViewCommunity = (e: React.MouseEvent, communityId: string) => {
     e.stopPropagation(); // Prevent the card click from triggering
     navigate(`/community/${communityId}`);
+  };
+
+  // Function to handle creating a new community
+  const handleCreateCommunity = () => {
+    navigate('/seller/communities/new');
   };
 
   // Safely filter communities based on search query
@@ -122,6 +155,12 @@ export function CommunitiesTab({ communities, isLoading }: CommunitiesTabProps) 
             className="pl-9 w-full"
           />
         </div>
+        {isCurrentUserSeller && (
+          <Button onClick={handleCreateCommunity} className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            Create Community
+          </Button>
+        )}
       </div>
       
       {!filteredCommunities.length ? (
