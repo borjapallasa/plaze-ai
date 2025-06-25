@@ -3,7 +3,6 @@ import React from "react";
 import { Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useExpertName } from "@/hooks/use-expert-name";
-import { ProductDescription } from "./ProductDescription";
 
 interface ProductHeaderProps {
   title: string;
@@ -12,7 +11,6 @@ interface ProductHeaderProps {
   className?: string;
   onContactSeller: () => void;
   expertUuid?: string;
-  shortDescription?: string;
 }
 
 export function ProductHeader({ 
@@ -21,8 +19,7 @@ export function ProductHeader({
   rating, 
   onContactSeller, 
   className = "",
-  expertUuid,
-  shortDescription
+  expertUuid
 }: ProductHeaderProps) {
   const { data: expertName } = useExpertName(expertUuid);
   
@@ -55,7 +52,7 @@ export function ProductHeader({
   return (
     <div className={className}>
       <h1 className="text-2xl font-semibold mb-3">{title}</h1>
-      <div className="flex items-center gap-1 text-xs text-muted-foreground mb-4">
+      <div className="flex items-center gap-1 text-xs text-muted-foreground">
         <span className="font-bold">
           {displayName}
         </span>
@@ -64,13 +61,6 @@ export function ProductHeader({
           {renderStars()}
         </div>
       </div>
-      
-      {shortDescription && (
-        <ProductDescription 
-          description={shortDescription} 
-          className="mt-4"
-        />
-      )}
     </div>
   );
 }
