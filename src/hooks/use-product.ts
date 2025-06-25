@@ -14,7 +14,6 @@ const mapProductData = (data: any): ProductData => {
     product_uuid: data.product_uuid,
     name: data.name || '',
     description: data.description || '',
-    short_description: data.short_description || null,
     thumbnail: data.thumbnail || '',
     slug: data.slug || '',
     variant_count: data.variant_count || 0,
