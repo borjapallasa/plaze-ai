@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -16,6 +17,13 @@ export default {
 			screens: {
 				'2xl': '1400px'
 			}
+		},
+		screens: {
+			'sm': '640px',
+			'md': '768px',
+			'lg': '1024px',
+			'xl': '1280px',
+			'2xl': '1536px',
 		},
 		extend: {
 			colors: {
@@ -88,12 +96,17 @@ export default {
 				"slide-up": {
 					"0%": { transform: "translateY(100%)" },
 					"100%": { transform: "translateY(0)" }
+				},
+				"slide-down": {
+					"0%": { transform: "translateY(0)" },
+					"100%": { transform: "translateY(100%)" }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				"slide-up": "slide-up 0.3s ease-out"
+				"slide-up": "slide-up 0.3s ease-out",
+				"slide-down": "slide-down 0.3s ease-out"
 			}
 		}
 	},
