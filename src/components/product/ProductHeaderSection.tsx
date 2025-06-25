@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Link, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import {
@@ -26,16 +26,23 @@ export function ProductHeaderSection({
   onSave,
   isSaving
 }: ProductHeaderSectionProps) {
-  const { slug, id } = useParams(); // Extract dynamic segments
+  const navigate = useNavigate();
+
+  const handleBackClick = () => {
+    navigate(-1); // Go to previous page in history
+  };
 
   return (
     <div className="mb-6">
       <div className="flex items-start gap-3 sm:gap-4">
-        <Link to={`/product/${slug}/${id}`} className="flex-shrink-0 mt-1">
-          <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 sm:h-10 sm:w-10">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-        </Link>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="rounded-full h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0 mt-1"
+          onClick={handleBackClick}
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
         
         <div className="flex-1 min-w-0">
           {/* Title and subtitle */}
