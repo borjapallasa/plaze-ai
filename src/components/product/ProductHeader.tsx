@@ -1,6 +1,5 @@
 
 import React from "react";
-import { MessageCircle } from "lucide-react";
 
 interface ProductHeaderProps {
   title: string;
@@ -28,11 +27,11 @@ export function ProductHeader({
         </span>
         <button 
           onClick={onContactSeller}
-          className="inline-flex items-center justify-center p-0.5 rounded-full hover:bg-muted/50 transition-colors"
+          className="font-bold hover:underline transition-colors"
           aria-label="Message seller"
           title="Message seller"
         >
-          <MessageCircle className="h-3.5 w-3.5" />
+          Message
         </button>
         <span className="mx-0.5">•</span>
         <span>{rating.toFixed(1)} Rating</span>
