@@ -42,7 +42,12 @@ export function ProductHeader({
     });
   };
 
-  const displayName = expertName || seller;
+  const capitalizeFirstLetter = (str: string) => {
+    if (!str) return str;
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
+
+  const displayName = expertName ? capitalizeFirstLetter(expertName) : seller;
 
   return (
     <div className={className}>
