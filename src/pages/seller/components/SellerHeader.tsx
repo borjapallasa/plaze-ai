@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { MapPin, Star, Users, Package, Edit2 } from "lucide-react";
 import { EditExpertDialog } from "./EditExpertDialog";
 import { EditExpertStatusDialog } from "./EditExpertStatusDialog";
+import { useExpertReviews } from "@/hooks/expert/useExpertReviews";
 import type { Expert } from "@/types/expert";
 
 interface SellerHeaderProps {
@@ -28,6 +29,9 @@ export function SellerHeader({
   onSellerUpdate,
   isAdminView = false
 }: SellerHeaderProps) {
+  // Fetch actual reviews to calculate average rating
+  const { data: reviews = [] } = useExpertReviews(seller.expert_uuid);
+
   const getBadgeVariant = (status: string) => {
     switch (status) {
       case 'active':
@@ -41,15 +45,13 @@ export function SellerHeader({
     }
   };
 
-  // Calculate satisfaction percentage from client_satisfaction
-  const satisfactionPercentage = seller.client_satisfaction || 0;
+  // Calculate actual average rating from reviews
+  const averageRating = reviews.length > 0 
+    ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length 
+    : 0;
   
-  // Calculate average rating (assuming 4.5+ = 100%)
-  const averageRating = satisfactionPercentage >= 90 ? 5.0 : 
-                       satisfactionPercentage >= 80 ? 4.5 :
-                       satisfactionPercentage >= 70 ? 4.0 :
-                       satisfactionPercentage >= 60 ? 3.5 :
-                       satisfactionPercentage >= 50 ? 3.0 : 2.5;
+  // Calculate satisfaction percentage (100% if rating is 4.5+)
+  const satisfactionPercentage = averageRating >= 4.5 ? 100 : Math.round((averageRating / 5) * 100);
 
   return (
     <Card className="mb-8 shadow-sm">
@@ -154,7 +156,7 @@ export function SellerHeader({
                 <div className="flex items-center gap-2">
                   <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                   <span className="text-sm font-semibold">
-                    {averageRating.toFixed(1)} avg rating ({satisfactionPercentage}%)
+                    {averageRating > 0 ? averageRating.toFixed(1) : '0.0'} avg rating ({satisfactionPercentage}%)
                   </span>
                 </div>
 
@@ -233,7 +235,7 @@ export function SellerHeader({
               <div className="flex items-center gap-2 flex-shrink-0">
                 <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                 <span className="text-sm font-semibold">
-                  {averageRating.toFixed(1)}
+                  {averageRating > 0 ? averageRating.toFixed(1) : '0.0'}
                 </span>
               </div>
 
