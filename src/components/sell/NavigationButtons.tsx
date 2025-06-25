@@ -18,6 +18,8 @@ interface NavigationButtonsProps {
     productPrice: string;
     thumbnail: string;
     contactEmail: string;
+    firstName: string;
+    lastName: string;
     captchaConfirmed: boolean;
   };
   onNext: () => void;
@@ -50,11 +52,11 @@ export function NavigationButtons({
     }
 
     if (currentStep === 3) {
-      // If user is authenticated, only check captcha. If not authenticated, check both email and captcha
+      // If user is authenticated, only check captcha. If not authenticated, check names, email and captcha
       if (user) {
         return !formData.captchaConfirmed;
       } else {
-        return !formData.contactEmail || !formData.captchaConfirmed;
+        return !formData.contactEmail || !formData.firstName || !formData.lastName || !formData.captchaConfirmed;
       }
     }
     
@@ -115,12 +117,14 @@ export function NavigationButtons({
               throw new Error(`Failed to sign in: ${signInError.message}`);
             }
           } else {
-            // Create new user in Auth
+            // Create new user in Auth with first name and last name
             const { data: authData, error: signUpError } = await supabase.auth.signUp({
               email: emailToUse,
               password: tempPassword,
               options: {
                 data: {
+                  first_name: formData.firstName,
+                  last_name: formData.lastName,
                   seller_type: selectedOption,
                 },
               }
@@ -177,6 +181,19 @@ export function NavigationButtons({
           const { data: session } = await supabase.auth.getSession();
           if (!session.session && !user) {
             throw new Error("No active session to create expert profile");
+          }
+          
+          // Update the users table to set is_expert as true if this is a new user
+          if (isNewUser) {
+            const { error: updateUserError } = await supabase
+              .from('users')
+              .update({ is_expert: true })
+              .eq('user_uuid', userId);
+
+            if (updateUserError) {
+              console.error("Error updating user is_expert:", updateUserError);
+              // Don't throw error, just log it as this is not critical for the flow
+            }
           }
           
           // Now attempt to create the expert with the user's session
