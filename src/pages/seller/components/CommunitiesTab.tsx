@@ -49,20 +49,20 @@ export function CommunitiesTab({ communities, isLoading }: CommunitiesTabProps) 
 
   console.log("CommunitiesTab rendered with:", { communities, isLoading });
 
-  // Get current user's expert_uuid - using case insensitive email comparison
-  const { data: expertData } = useQuery({
+  // Get current user's expert data - using case insensitive email comparison
+  const { data: currentUserExpertData } = useQuery({
     queryKey: ['current-user-expert', user?.email],
     queryFn: async () => {
       if (!user?.email) return null;
       
       const { data, error } = await supabase
         .from('experts')
-        .select('expert_uuid')
+        .select('expert_uuid, user_uuid')
         .ilike('email', user.email) // Case insensitive comparison
         .maybeSingle();
       
       if (error) {
-        console.error('Error fetching expert:', error);
+        console.error('Error fetching current user expert:', error);
         return null;
       }
       
@@ -71,7 +71,19 @@ export function CommunitiesTab({ communities, isLoading }: CommunitiesTabProps) 
     enabled: !!user?.email,
   });
 
-  const isCurrentUserSeller = expertData?.expert_uuid === id;
+  // Check if current user is the seller - compare both expert_uuid and user_uuid
+  const isCurrentUserSeller = currentUserExpertData && (
+    currentUserExpertData.expert_uuid === id || 
+    currentUserExpertData.user_uuid === id ||
+    user?.id === id
+  );
+
+  console.log("Seller check:", { 
+    currentUserExpertData, 
+    id, 
+    userId: user?.id, 
+    isCurrentUserSeller 
+  });
 
   // Function to handle clicking on the card
   const handleCardClick = (communityId: string) => {
