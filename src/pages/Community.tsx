@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -426,11 +427,11 @@ export default function CommunityPage() {
     <>
       <MainHeader />
       <div className="container mx-auto px-4 py-8 max-w-[1400px] space-y-8 mt-16">
-        {/* Main layout with tabs on left and community summary on right */}
+        {/* Main layout with tabs on left and video/info on right */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Tab Selector - Left Side */}
-          <div className="lg:col-span-3">
-            <Tabs value={activeTab} onValueChange={setActiveTab} orientation="vertical">
+          {/* Left Side - Tab Navigation */}
+          <div className="lg:col-span-4">
+            <Tabs value={activeTab} onValueChange={setActiveTab} orientation="vertical" className="h-full">
               <TabsList className="grid w-full grid-cols-1 h-auto">
                 {tabs.map((tab) => {
                   const Icon = tab.icon;
@@ -449,8 +450,8 @@ export default function CommunityPage() {
             </Tabs>
           </div>
 
-          {/* Community Summary - Right Side */}
-          <div className="lg:col-span-9">
+          {/* Right Side - Video and Community Info */}
+          <div className="lg:col-span-8">
             <Card className="overflow-hidden bg-white">
               <div className="p-6 space-y-6">
                 {videoEmbedUrl && (
