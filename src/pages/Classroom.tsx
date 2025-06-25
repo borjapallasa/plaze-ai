@@ -571,7 +571,7 @@ export default function Classroom() {
             )}
             onClick={() => handleLessonClick(lesson)}
           >
-            <span className="text-sm">{lesson.name ? capitalizeFirstLetter(lesson.name) : ''}</span>
+            <span className="text-sm pr-16">{lesson.name ? capitalizeFirstLetter(lesson.name) : ''}</span>
 
             {isOwner && (
               <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
