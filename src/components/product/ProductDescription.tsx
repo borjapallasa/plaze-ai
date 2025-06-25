@@ -13,7 +13,7 @@ export function ProductDescription({ description }: ProductDescriptionProps) {
   return (
     <Card className="p-4">
       <div 
-        className="flex items-center justify-between cursor-pointer mb-4"
+        className="flex items-center justify-between cursor-pointer py-2"
         onClick={() => setIsOpen(!isOpen)}
       >
         <h3 className="font-semibold text-lg">Details</h3>
@@ -24,7 +24,7 @@ export function ProductDescription({ description }: ProductDescriptionProps) {
         )}
       </div>
       {isOpen && (
-        <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+        <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap mt-4">
           {description}
         </p>
       )}

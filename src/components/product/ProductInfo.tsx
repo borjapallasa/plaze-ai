@@ -18,7 +18,7 @@ export function ProductInfo({ description, techStack, productIncludes, difficult
     <div className={className}>
       <Card className="p-4">
         <div 
-          className="flex items-center justify-between cursor-pointer mb-4"
+          className="flex items-center justify-between cursor-pointer py-2"
           onClick={() => setIsOpen(!isOpen)}
         >
           <h3 className="font-semibold">Additional Details</h3>
@@ -29,7 +29,7 @@ export function ProductInfo({ description, techStack, productIncludes, difficult
           )}
         </div>
         {isOpen && (
-          <div className="space-y-4">
+          <div className="space-y-4 mt-4">
             {techStack && (
               <div>
                 <h4 className="font-medium mb-2">Tech Stack</h4>
