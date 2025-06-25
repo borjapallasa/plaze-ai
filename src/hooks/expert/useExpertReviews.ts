@@ -29,7 +29,7 @@ export function useExpertReviews(expert_uuid: string | undefined) {
         rating: review.rating || 0,
         content: review.title || '',
         description: review.comments || '',
-        avatar: review.users?.user_thumbnail || null,
+        avatar: review.users?.[0]?.user_thumbnail || null,
         date: new Date(review.created_at).toLocaleDateString(),
         type: review.type,
         verified: review.verified || false,
