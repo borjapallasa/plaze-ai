@@ -1,7 +1,8 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Loader2, Star } from "lucide-react";
+import { Loader2, Heart } from "lucide-react";
 import { Variant } from "./types/variants";
 import { PurchaseProtection } from "./PurchaseProtection";
 
@@ -61,7 +62,7 @@ export function VariantPicker({
                     <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors duration-200 ${isSelected ? "border-black" : "border-gray-300"
                       }`}>
                       {isSelected && (
-                        <div className="w-2 h-2 rounded-full bg-black animate-scale-in" />
+                        <div className="w-2 h-2 rounded-full bg-black animate-pulse" />
                       )}
                     </div>
                     <h3 className="text-base font-medium">{variant.name}</h3>
@@ -82,7 +83,7 @@ export function VariantPicker({
                       key={index}
                       className="inline-flex items-center gap-1 bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full text-xs"
                     >
-                      <Star className="h-3 w-3" />
+                      <Heart className="h-3 w-3" />
                       {feature}
                     </span>
                   ))}
