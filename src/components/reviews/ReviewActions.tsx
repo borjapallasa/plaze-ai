@@ -42,10 +42,10 @@ export function ReviewActions({ reviewId, status }: ReviewActionsProps) {
   return (
     <>
       <div className="mt-3 pt-3 border-t border-gray-100 space-y-3">
-        {/* Pending Review Badge - Full width on mobile */}
-        <div className="flex justify-center sm:justify-start">
-          <div className="flex items-center gap-1 text-xs text-orange-600 bg-orange-50 px-2 py-1 rounded-full">
-            <AlertTriangle className="h-3 w-3" />
+        {/* Pending Review Badge - Full width */}
+        <div className="w-full bg-orange-50 border border-orange-200 rounded-lg p-3">
+          <div className="flex items-center justify-center gap-2 text-sm text-orange-700">
+            <AlertTriangle className="h-4 w-4" />
             <span className="font-medium">Pending Review</span>
           </div>
         </div>
