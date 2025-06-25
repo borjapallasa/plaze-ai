@@ -619,10 +619,10 @@ export default function CommunityPage() {
           </TabsContent>
 
           <TabsContent value="classrooms" className="space-y-6">
-            <div className="flex justify-between items-center mb-4">
-              <div className="relative">
+            <div className="flex flex-col sm:flex-row gap-4 mb-4">
+              <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input placeholder="Search classroom" className="pl-9" />
+                <Input placeholder="Search classroom" className="pl-9 w-full" />
               </div>
               {renderAddClassroomButton()}
             </div>
@@ -678,10 +678,10 @@ export default function CommunityPage() {
           </TabsContent>
 
           <TabsContent value="templates" className="space-y-6">
-            <div className="flex justify-between items-center mb-4">
-              <div className="relative">
+            <div className="flex flex-col sm:flex-row gap-4 mb-4">
+              <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input placeholder="Search products" className="pl-9" />
+                <Input placeholder="Search products" className="pl-9 w-full" />
               </div>
               {renderAddProductButton()}
             </div>
