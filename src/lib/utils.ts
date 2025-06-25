@@ -13,3 +13,8 @@ export function toStartCase(str: string): string {
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(' ');
 }
+
+export function formatNumber(num: number | null | undefined): string {
+  if (num === null || num === undefined) return '0';
+  return num.toLocaleString();
+}

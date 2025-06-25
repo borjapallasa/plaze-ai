@@ -6,6 +6,7 @@ import { Copy, Check } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { CommunityDangerZone } from "./CommunityDangerZone";
 import { EditCommunityRelatedProducts } from "./EditCommunityRelatedProduts";
+import { formatNumber } from "@/lib/utils";
 
 export interface Community {
   user_uuid: string | null
@@ -46,11 +47,6 @@ export function CommunityStats({
   onDeleteCommunity,
   communityName // Use the new prop
 }: CommunityStatsProps) {
-  const formatNumber = (num: number | null | undefined) => {
-    if (num === null || num === undefined) return '0';
-    return num.toLocaleString();
-  };
-
   const formatCurrency = (amount: number | null | undefined) => {
     if (amount === null || amount === undefined) return '$0';
     return new Intl.NumberFormat('en-US', {
