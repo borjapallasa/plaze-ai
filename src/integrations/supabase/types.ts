@@ -2573,7 +2573,7 @@ export type Database = {
         | "chargeback"
       product_transaction_type: "guest" | "user"
       product_type: "template" | "guide or manual"
-      review_status: "published" | "not published"
+      review_status: "published" | "not published" | "pending"
       review_type: "product" | "service" | "job" | "community"
       service_price_status: "active" | "inactive"
       service_status: "draft" | "active" | "archived"
@@ -2783,7 +2783,7 @@ export const Constants = {
       ],
       product_transaction_type: ["guest", "user"],
       product_type: ["template", "guide or manual"],
-      review_status: ["published", "not published"],
+      review_status: ["published", "not published", "pending"],
       review_type: ["product", "service", "job", "community"],
       service_price_status: ["active", "inactive"],
       service_status: ["draft", "active", "archived"],
