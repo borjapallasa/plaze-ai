@@ -414,12 +414,11 @@ export default function CommunityPage() {
   };
 
   const tabs = [
-    { id: "about", label: "About", icon: Users },
     { id: "threads", label: "Threads", icon: MessageSquare },
     { id: "classrooms", label: "Classrooms", icon: BookOpen },
     { id: "templates", label: "Products", icon: Users },
     { id: "calendar", label: "Calendar", icon: Calendar },
-    { id: "gallery", label: "Gallery", icon: Images }
+    { id: "about", label: "About", icon: Users }
   ];
 
   return (
@@ -665,22 +664,6 @@ export default function CommunityPage() {
                       }}
                     />
                   </CardContent>
-                </Card>
-              </TabsContent>
-
-              <TabsContent value="gallery" className="space-y-6">
-                <Card className="p-6 space-y-6">
-                  <div>
-                    <ProductGallery 
-                      images={galleryImages}
-                      priority
-                    />
-                  </div>
-
-                  <div className="space-y-4">
-                    <h1 className="text-2xl font-bold">{community?.name}</h1>
-                    <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: community?.description || '' }} />
-                  </div>
                 </Card>
               </TabsContent>
             </Tabs>
