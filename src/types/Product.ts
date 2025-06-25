@@ -54,6 +54,7 @@ export interface Product {
   utm_term: null;
   variant_count: null;
   product_files: null | string;
+  short_description?: string;
 }
 
 // Type for the product data from the API

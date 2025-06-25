@@ -11,6 +11,7 @@ interface ProductHeaderProps {
   className?: string;
   onContactSeller: () => void;
   expertUuid?: string;
+  shortDescription?: string;
 }
 
 export function ProductHeader({ 
@@ -19,7 +20,8 @@ export function ProductHeader({
   rating, 
   onContactSeller, 
   className = "",
-  expertUuid
+  expertUuid,
+  shortDescription
 }: ProductHeaderProps) {
   const { data: expertName } = useExpertName(expertUuid);
   
@@ -52,7 +54,7 @@ export function ProductHeader({
   return (
     <div className={className}>
       <h1 className="text-2xl font-semibold mb-3">{title}</h1>
-      <div className="flex items-center gap-1 text-xs text-muted-foreground">
+      <div className="flex items-center gap-1 text-xs text-muted-foreground mb-3">
         <span className="font-bold">
           {displayName}
         </span>
@@ -61,6 +63,11 @@ export function ProductHeader({
           {renderStars()}
         </div>
       </div>
+      {shortDescription && (
+        <div className="text-sm text-muted-foreground leading-relaxed">
+          {shortDescription}
+        </div>
+      )}
     </div>
   );
 }

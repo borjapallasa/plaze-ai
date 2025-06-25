@@ -53,6 +53,7 @@ const mapProductData = (data: any): ProductData => {
     expert_uuid: data.expert_uuid || null,
     user_uuid: data.user_uuid || null,
     product_files: data.product_files || null,
+    short_description: data.short_description || null,
   };
 };
 
