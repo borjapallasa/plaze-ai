@@ -20,7 +20,7 @@ export function useTransactionReview(transactionUuid: string | undefined) {
       
       if (!transactionUuid) {
         console.log('No transaction UUID provided');
-        return [];
+        return [] as TransactionReview[];
       }
       
       const { data: reviews, error } = await supabase
@@ -36,10 +36,10 @@ export function useTransactionReview(transactionUuid: string | undefined) {
       console.log('Reviews found for transaction:', reviews);
 
       if (!reviews) {
-        return [];
+        return [] as TransactionReview[];
       }
 
-      const mappedReviews: TransactionReview[] = reviews.map(review => ({
+      return reviews.map(review => ({
         review_uuid: review.review_uuid,
         rating: review.rating,
         title: review.title,
@@ -47,9 +47,7 @@ export function useTransactionReview(transactionUuid: string | undefined) {
         buyer_name: review.buyer_name,
         buyer_email: review.buyer_email || '',
         created_at: review.created_at,
-      }));
-
-      return mappedReviews;
+      })) as TransactionReview[];
     },
     enabled: !!transactionUuid,
   });
