@@ -6,6 +6,7 @@ import { AdditionalVariants } from "./AdditionalVariants";
 import { ProductDescription } from "./ProductDescription";
 import { ProductInfo } from "./ProductInfo";
 import { ProductFullWidthSections } from "./ProductFullWidthSections";
+import { PurchaseProtection } from "./PurchaseProtection";
 import { ProductImage } from "@/hooks/use-product-images";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
 import { Product, RelatedProduct } from "@/types/Product";
@@ -85,9 +86,11 @@ export function DesktopProductLayout({
             <AdditionalVariants
               relatedProductsWithVariants={relatedProductsWithVariants}
               onAdditionalSelect={onAdditionalVariantToggle}
-              className="mb-4"
+              className="mb-3"
             />)
           }
+          
+          <PurchaseProtection className="mb-4" />
 
           <ProductInfo
             techStack={product.tech_stack}

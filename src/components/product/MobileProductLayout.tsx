@@ -7,6 +7,7 @@ import { AdditionalVariants } from "./AdditionalVariants";
 import { ProductDescription } from "./ProductDescription";
 import { ProductInfo } from "./ProductInfo";
 import { ProductFullWidthSections } from "./ProductFullWidthSections";
+import { PurchaseProtection } from "./PurchaseProtection";
 import { ProductImage } from "@/hooks/use-product-images";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
 
@@ -74,9 +75,12 @@ export function MobileProductLayout({
         <AdditionalVariants
           relatedProductsWithVariants={relatedProductsWithVariants}
           onAdditionalSelect={onAdditionalVariantToggle}
-          className="mb-5"
+          className="mb-3"
         />)
       }
+      <div className="mb-5">
+        <PurchaseProtection />
+      </div>
 
       <div className="space-y-6">
         <ProductDescription description={product.description} />

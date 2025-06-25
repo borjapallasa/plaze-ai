@@ -1,9 +1,9 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Loader2, Star } from "lucide-react";
 import { Variant } from "./types/variants";
-import { PurchaseProtection } from "./PurchaseProtection";
 
 interface VariantPickerProps {
   variants: Variant[];
@@ -115,7 +115,6 @@ export function VariantPicker({
               "Add to Cart"
             )}
           </Button>
-          <PurchaseProtection />
         </div>
       )}
     </div>
