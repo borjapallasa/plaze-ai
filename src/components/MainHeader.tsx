@@ -52,6 +52,8 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
     queryFn: async () => {
       if (!user?.email || !isExpert) return null;
       
+      console.log('Looking for expert with email:', user.email);
+      
       const { data, error } = await supabase
         .from('experts')
         .select('expert_uuid')
@@ -63,10 +65,23 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
         return null;
       }
       
+      console.log('Expert data found:', data);
       return data;
     },
     enabled: !!user?.email && isExpert,
   });
+
+  // Determine seller area link
+  const getSellerAreaLink = () => {
+    if (!user) return "/sell";
+    
+    if (isExpert && expertData?.expert_uuid) {
+      return `/seller/${expertData.expert_uuid}`;
+    }
+    
+    // If user is marked as expert but no expert profile found, still go to sell page
+    return "/sell";
+  };
 
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileSearchQuery, setMobileSearchQuery] = useState("");
@@ -240,14 +255,12 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                         Personal Area
                       </DropdownMenuItem>
                     </Link>
-                    {isExpert && (
-                      <Link to={expertData?.expert_uuid ? `/seller/${expertData.expert_uuid}` : "/sell"}>
-                        <DropdownMenuItem>
-                          <Store className="mr-2 h-4 w-4" />
-                          Seller Area
-                        </DropdownMenuItem>
-                      </Link>
-                    )}
+                    <Link to={getSellerAreaLink()}>
+                      <DropdownMenuItem>
+                        <Store className="mr-2 h-4 w-4" />
+                        Seller Area
+                      </DropdownMenuItem>
+                    </Link>
                     <Link to="/account/chats">
                       <DropdownMenuItem>
                         <MessageSquare className="mr-2 h-4 w-4" />
@@ -407,14 +420,12 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                         Personal Area
                       </DropdownMenuItem>
                     </Link>
-                    {isExpert && (
-                      <Link to={expertData?.expert_uuid ? `/seller/${expertData.expert_uuid}` : "/sell"}>
-                        <DropdownMenuItem>
-                          <Store className="mr-2 h-4 w-4" />
-                          Seller Area
-                        </DropdownMenuItem>
-                      </Link>
-                    )}
+                    <Link to={getSellerAreaLink()}>
+                      <DropdownMenuItem>
+                        <Store className="mr-2 h-4 w-4" />
+                        Seller Area
+                      </DropdownMenuItem>
+                    </Link>
                     <Link to="/account/chats">
                       <DropdownMenuItem>
                         <MessageSquare className="mr-2 h-4 w-4" />
