@@ -71,7 +71,6 @@ export function DesktopProductLayout({
             onContactSeller={handleContactSeller}
             className="mb-2"
             expertUuid={expertUuid}
-            shortDescription={product.short_description}
           />
           {Array.isArray(variants) && variants.length > 0 && (
             <VariantPicker
