@@ -21,6 +21,7 @@ import { ProductGallery } from "@/components/product/ProductGallery";
 import type { ProductImage } from "@/types/product-images";
 import { CommunityProductDialog } from "@/components/community/CommunityProductDialog";
 import { formatNumber } from "@/lib/utils";
+import { CommunityImageGallery } from "@/components/community/CommunityImageGallery";
 
 interface Link {
   name: string;
@@ -64,6 +65,7 @@ export default function CommunityPage() {
   const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
   const [showProductTemplateSelector, setShowProductTemplateSelector] = useState(false);
   const [activeTab, setActiveTab] = useState("threads");
+  const [selectedGalleryImage, setSelectedGalleryImage] = useState<any>(null);
   const { user } = useAuth();
   const { images } = useCommunityImages(communityId);
 
@@ -445,13 +447,22 @@ export default function CommunityPage() {
             <Card className="overflow-hidden bg-white">
               <div className="p-6 space-y-6">
                 {videoEmbedUrl && (
-                  <div className="aspect-video w-full bg-muted rounded-lg overflow-hidden">
-                    <iframe
-                      src={videoEmbedUrl}
-                      className="w-full h-full"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
+                  <div className="space-y-4">
+                    <div className="aspect-video w-full bg-muted rounded-lg overflow-hidden">
+                      <iframe
+                        src={videoEmbedUrl}
+                        className="w-full h-full"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    </div>
+
+                    {/* Image Gallery below video */}
+                    <CommunityImageGallery
+                      images={images || []}
+                      onImageSelect={setSelectedGalleryImage}
+                      selectedImage={selectedGalleryImage}
                     />
                   </div>
                 )}
