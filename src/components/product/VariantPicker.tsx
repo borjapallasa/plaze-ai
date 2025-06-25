@@ -1,9 +1,9 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Loader2, Star } from "lucide-react";
 import { Variant } from "./types/variants";
+import { PurchaseProtection } from "./PurchaseProtection";
 
 interface VariantPickerProps {
   variants: Variant[];
@@ -99,7 +99,7 @@ export function VariantPicker({
         )}
       </div>
       {onAddToCart && (
-        <div className="pt-2">
+        <div className="space-y-3">
           <Button
             className="w-full"
             size="lg"
@@ -115,6 +115,7 @@ export function VariantPicker({
               "Add to Cart"
             )}
           </Button>
+          <PurchaseProtection />
         </div>
       )}
     </div>
