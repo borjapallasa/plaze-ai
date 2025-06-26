@@ -34,7 +34,7 @@ export default function Affiliates() {
   const filteredProducts = affiliateProducts.filter(product => {
     if (filterType === "All") return true;
     if (filterType === "Product") return product.type === "product";
-    if (filterType === "Community") return product.type === "affiliate";
+    if (filterType === "Community") return product.type === "community";
     return true;
   });
 
