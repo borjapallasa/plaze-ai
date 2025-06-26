@@ -29,6 +29,15 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
   const showVariantSelector = variants.length > 1;
   const selectedCommunityName = communities.find(c => c.community_uuid === selectedCommunity)?.name || "";
 
+  // Check if all required fields are filled
+  const isFormValid = () => {
+    if (!isCommunityProduct) return false;
+    if (!selectedCommunity) return false;
+    if (showVariantSelector && !selectedVariant) return false;
+    if (productType === "paid" && !price) return false;
+    return true;
+  };
+
   const handleConfirm = () => {
     setShowConfirmDialog(true);
   };
@@ -129,13 +138,15 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
                 </div>
               )}
 
-              {selectedCommunity && (
-                <div className="pt-4 border-t">
-                  <Button onClick={handleConfirm} className="w-full">
-                    Confirm
-                  </Button>
-                </div>
-              )}
+              <div className="pt-4 border-t">
+                <Button 
+                  onClick={handleConfirm} 
+                  className="w-full"
+                  disabled={!isFormValid()}
+                >
+                  Confirm
+                </Button>
+              </div>
             </div>
           )}
         </div>
