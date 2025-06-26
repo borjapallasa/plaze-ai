@@ -152,6 +152,20 @@ export function CommunityProductDialog({
           throw productError;
         }
 
+        // Step 2.5: Update the community product with the new product_uuid
+        const { error: updateCommunityProductError } = await supabase
+          .from("community_products")
+          .update({
+            product_uuid: productData.product_uuid
+          })
+          .eq("community_product_uuid", data.community_product_uuid);
+
+        if (updateCommunityProductError) {
+          console.error("Error updating community product with product_uuid:", updateCommunityProductError);
+          toast.error("Product created but failed to link community product");
+          throw updateCommunityProductError;
+        }
+
         // Step 3: Create a variant for the new product
         const { error: variantError } = await supabase
           .from("variants")
