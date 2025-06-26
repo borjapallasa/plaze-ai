@@ -31,7 +31,6 @@ export function CommunityProductDialog({
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [productType, setProductType] = useState<"free" | "paid">("free");
-  const [paymentLink, setPaymentLink] = useState("");
   const [filesLink, setFilesLink] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const { user } = useAuth();
@@ -43,7 +42,6 @@ export function CommunityProductDialog({
     setProductType(product.product_type as "free" | "paid" || "free");
     setPrice(product.price ? product.price.toString() : "");
     setFilesLink(product.files_link || "");
-    setPaymentLink(product.payment_link || "");
   };
 
   const handleSubmit = async () => {
@@ -73,7 +71,7 @@ export function CommunityProductDialog({
           community_uuid: communityUuid,
           product_type: productType,
           price: productType === "paid" ? parseFloat(price) : null,
-          payment_link: productType === "paid" ? paymentLink : null,
+          payment_link: null, // Always set to null since we're not collecting it
           files_link: filesLink || null,
           expert_uuid: expertUuid,
         })
@@ -113,7 +111,6 @@ export function CommunityProductDialog({
       setName("");
       setPrice("");
       setProductType("free");
-      setPaymentLink("");
       setFilesLink("");
       setSelectedTemplate(null);
       
@@ -196,33 +193,18 @@ export function CommunityProductDialog({
           </div>
 
           {productType === "paid" && (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="price">Price ($)</Label>
-                <Input
-                  id="price"
-                  type="number"
-                  min="0.01"
-                  step="0.01"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                  placeholder="19.99"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="payment-link">Payment Link</Label>
-                <Input
-                  id="payment-link"
-                  value={paymentLink}
-                  onChange={(e) => setPaymentLink(e.target.value)}
-                  placeholder="https://buy.stripe.com/your-product"
-                />
-                <p className="text-xs text-muted-foreground">
-                  Link to where customers can purchase this product
-                </p>
-              </div>
-            </>
+            <div className="space-y-2">
+              <Label htmlFor="price">Price ($)</Label>
+              <Input
+                id="price"
+                type="number"
+                min="0.01"
+                step="0.01"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                placeholder="19.99"
+              />
+            </div>
           )}
         </div>
 
