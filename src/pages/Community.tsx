@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight, Plus } from "lucide-react";
+import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight, Plus, Edit } from "lucide-react";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/ProductCard";
@@ -469,7 +469,17 @@ export default function CommunityPage() {
               </div>
 
               <div className="space-y-4">
-                <h1 className="text-2xl font-bold">{community?.name}</h1>
+                <div className="flex items-center justify-between gap-4">
+                  <h1 className="text-2xl font-bold">{community?.name}</h1>
+                  {isOwner && (
+                    <Link to={`/community/${communityId}/edit`}>
+                      <Button variant="outline" size="sm" className="flex items-center gap-2">
+                        <Edit className="w-4 h-4" />
+                        Edit Community
+                      </Button>
+                    </Link>
+                  )}
+                </div>
                 <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: community?.description || '' }} />
               </div>
             </Card>
