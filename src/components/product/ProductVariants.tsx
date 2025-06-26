@@ -1,10 +1,19 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { VariantCard } from "./VariantCard";
 import { Variant, ProductVariantsEditorProps } from "./types/variants";
 import { VariantPicker } from "./VariantPicker";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export function ProductVariantsEditor({ 
   variants: externalVariants,
@@ -25,6 +34,9 @@ export function ProductVariantsEditor({
       filesLink: "",
     },
   ]);
+
+  const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
+  const [variantToDelete, setVariantToDelete] = React.useState<string | null>(null);
 
   const variants = externalVariants || internalVariants;
   const setVariants = (newVariants: Variant[]) => {
@@ -58,15 +70,29 @@ export function ProductVariantsEditor({
       return;
     }
     
-    console.log('Removing variant with ID:', id);
+    setVariantToDelete(id);
+    setShowDeleteDialog(true);
+  };
+
+  const confirmDeleteVariant = () => {
+    if (!variantToDelete) return;
+    
+    console.log('Removing variant with ID:', variantToDelete);
     console.log('Current variants before removal:', variants);
     
     // Simply filter out the variant with the matching ID
-    const updatedVariants = variants.filter(v => v.id !== id);
+    const updatedVariants = variants.filter(v => v.id !== variantToDelete);
     
     console.log('Updated variants after removal:', updatedVariants);
     
     setVariants(updatedVariants);
+    setShowDeleteDialog(false);
+    setVariantToDelete(null);
+  };
+
+  const cancelDeleteVariant = () => {
+    setShowDeleteDialog(false);
+    setVariantToDelete(null);
   };
 
   const updateVariant = (id: string, field: keyof Variant, value: any) => {
@@ -112,30 +138,54 @@ export function ProductVariantsEditor({
   };
 
   return (
-    <div className={`space-y-4 ${className}`}>
-      <div className="space-y-3">
-        {variants.map((variant) => (
-          <VariantCard
-            key={variant.id}
-            variant={variant}
-            showRemove={variants.length > 1}
-            onRemove={removeVariant}
-            onUpdate={updateVariant}
-            onAddTag={addTag}
-            onRemoveTag={removeTag}
-          />
-        ))}
+    <>
+      <div className={`space-y-4 ${className}`}>
+        <div className="space-y-3">
+          {variants.map((variant) => (
+            <VariantCard
+              key={variant.id}
+              variant={variant}
+              showRemove={variants.length > 1}
+              onRemove={removeVariant}
+              onUpdate={updateVariant}
+              onAddTag={addTag}
+              onRemoveTag={removeTag}
+            />
+          ))}
+        </div>
+
+        <Button
+          onClick={addVariant}
+          variant="outline"
+          className="w-full"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Add Variant
+        </Button>
       </div>
 
-      <Button
-        onClick={addVariant}
-        variant="outline"
-        className="w-full"
-      >
-        <Plus className="h-4 w-4 mr-2" />
-        Add Variant
-      </Button>
-    </div>
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Variant</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure? This action is irreversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={cancelDeleteVariant}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmDeleteVariant}
+              className="bg-red-500 hover:bg-red-600"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
 
