@@ -6,7 +6,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { MainHeader } from "@/components/MainHeader";
 import { toast } from "sonner";
-import { ProductHeaderSection } from "@/components/product/ProductHeaderSection";
 import { ProductMainInfoPanel } from "@/components/product/ProductMainInfoPanel";
 import { ProductTechnicalDetails } from "@/components/product/ProductTechnicalDetails";
 import { ProductMediaSection } from "@/components/product/ProductMediaSection";
@@ -16,6 +15,15 @@ import { DangerZone } from "@/components/product/DangerZone";
 import { useExpertQuery } from "@/hooks/expert/useExpertQuery";
 import { CommunityProductSection } from "@/components/product/CommunityProductSection";
 import { AffiliateProductSection } from "@/components/product/AffiliateProductSection";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type ProductStatus = 'draft' | 'active' | 'inactive';
 
@@ -71,6 +79,10 @@ export default function EditProduct() {
   const [team, setTeam] = useState<string[]>([]);
   const [localVariants, setLocalVariants] = useState<any[]>([]);
   const [deletedVariantIds, setDeletedVariantIds] = useState<string[]>([]);
+
+  const handleBackClick = () => {
+    navigate(-1);
+  };
 
   const handleStatusChange = (value: ProductStatus) => {
     setProductStatus(value);
@@ -347,12 +359,26 @@ export default function EditProduct() {
       <MainHeader />
       <div className="mt-16">
         <div className="w-full max-w-[1400px] mx-auto px-2 xs:px-3 sm:px-6 lg:px-8 py-3 sm:py-6">
-          <ProductHeaderSection
-            productStatus={productStatus}
-            onStatusChange={handleStatusChange}
-            onSave={handleSave}
-            isSaving={isSaving}
-          />
+          {/* Header with back button and title */}
+          <div className="mb-6">
+            <div className="flex items-start gap-3 sm:gap-4">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="rounded-full h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0 mt-1"
+                onClick={handleBackClick}
+              >
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+              
+              <div className="flex-1 min-w-0">
+                <div className="mb-4 sm:mb-0">
+                  <h1 className="text-xl sm:text-2xl font-semibold">Edit Product</h1>
+                  <p className="text-sm text-muted-foreground mt-1">Product details and configuration</p>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <div className="space-y-3 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-6">
             <div className="lg:col-span-8">
@@ -385,6 +411,34 @@ export default function EditProduct() {
             </div>
 
             <div className="lg:col-span-4 space-y-3 sm:space-y-6">
+              {/* Status and Save Controls */}
+              <Card className="p-3 sm:p-6">
+                <h2 className="text-lg font-medium mb-3 sm:mb-4">Product Status</h2>
+                <div className="space-y-4">
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="flex-1">
+                      <Select value={productStatus} onValueChange={handleStatusChange}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="draft">Draft</SelectItem>
+                          <SelectItem value="active">Active</SelectItem>
+                          <SelectItem value="inactive">Inactive</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <Button
+                      onClick={handleSave}
+                      disabled={isSaving}
+                      className="sm:w-auto"
+                    >
+                      {isSaving ? "Saving..." : "Save changes"}
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+
               <Card className="p-3 sm:p-6">
                 <h2 className="text-lg font-medium mb-3 sm:mb-4">Product Organization</h2>
                 <div className="space-y-4">
