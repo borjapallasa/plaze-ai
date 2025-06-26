@@ -53,11 +53,31 @@ export default function Affiliates() {
             </p>
             
             <Tabs defaultValue="affiliates" className="space-y-4">
-              <TabsList className="w-full justify-start">
-                <TabsTrigger value="affiliates">Affiliates</TabsTrigger>
-                <TabsTrigger value="transactions">Transactions</TabsTrigger>
-                <TabsTrigger value="partnerships">Partnerships</TabsTrigger>
-                <TabsTrigger value="payouts">Payouts</TabsTrigger>
+              <TabsList className="w-full justify-start bg-muted p-1 rounded-lg h-auto">
+                <TabsTrigger 
+                  value="affiliates"
+                  className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm rounded-md px-6 py-3 text-sm font-medium transition-all"
+                >
+                  Affiliates
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="transactions"
+                  className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm rounded-md px-6 py-3 text-sm font-medium transition-all"
+                >
+                  Transactions
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="partnerships"
+                  className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm rounded-md px-6 py-3 text-sm font-medium transition-all"
+                >
+                  Partnerships
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="payouts"
+                  className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm rounded-md px-6 py-3 text-sm font-medium transition-all"
+                >
+                  Payouts
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="affiliates">
