@@ -28,14 +28,6 @@ export function CommunitySubscriptionSortSelector({ sortBy, onSortChange }: Comm
     {
       value: "date-desc",
       label: "Date (desc)"
-    },
-    {
-      value: "amount-asc",
-      label: "Amount (asc)"
-    },
-    {
-      value: "amount-desc",
-      label: "Amount (desc)"
     }
   ];
 
