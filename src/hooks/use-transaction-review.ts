@@ -2,57 +2,35 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export interface TransactionReview {
-  review_uuid: string;
-  rating: number;
-  title: string;
-  comments: string;
-  buyer_name: string;
-  buyer_email: string;
-  created_at: string;
-  verified: boolean;
-  transaction_uuid: string;
-}
-
 export function useTransactionReview(transactionUuid: string | undefined) {
   return useQuery({
     queryKey: ['transaction-review', transactionUuid],
-    queryFn: async (): Promise<TransactionReview[]> => {
-      console.log('Fetching reviews for transaction:', transactionUuid);
-      
-      if (!transactionUuid) {
-        console.log('No transaction UUID provided');
-        return [];
-      }
-      
-      const { data: reviews, error } = await supabase
-        .from('reviews')
-        .select('*')
-        .eq('transaction_uuid', transactionUuid);
+    queryFn: async () => {
+      if (!transactionUuid) return null;
 
-      if (error) {
-        console.error('Error fetching transaction reviews:', error);
-        throw error;
-      }
+      const { data, error } = await supabase
+        .from('transactions')
+        .select(`
+          transaction_uuid,
+          status,
+          review_score,
+          review_comment,
+          created_at,
+          amount,
+          affiliate_fees,
+          user:users(
+            user_uuid,
+            first_name,
+            last_name,
+            email
+          )
+        `)
+        .eq('transaction_uuid', transactionUuid)
+        .single();
 
-      console.log('Reviews found for transaction:', reviews);
-
-      if (!reviews || reviews.length === 0) {
-        return [];
-      }
-
-      return reviews.map((review): TransactionReview => ({
-        review_uuid: review.review_uuid,
-        rating: review.rating || 0,
-        title: review.title || '',
-        comments: review.comments || '',
-        buyer_name: review.buyer_name || '',
-        buyer_email: review.buyer_email || '',
-        created_at: review.created_at,
-        verified: Boolean(review.verified),
-        transaction_uuid: transactionUuid,
-      }));
+      if (error) throw error;
+      return data;
     },
-    enabled: !!transactionUuid,
+    enabled: !!transactionUuid
   });
 }

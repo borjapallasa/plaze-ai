@@ -2,34 +2,43 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export function useUserDetails(userUuid: string) {
+export interface UserDetailsData {
+  user_uuid: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  created_at: string;
+  is_expert: boolean;
+  is_affiliate: boolean;
+  is_admin: boolean;
+  total_spent: number;
+}
+
+export function useUserDetails(userId: string | undefined) {
   return useQuery({
-    queryKey: ['user-details', userUuid],
-    queryFn: async () => {
-      if (!userUuid) {
-        throw new Error('User UUID is required');
-      }
+    queryKey: ['user-details', userId],
+    queryFn: async (): Promise<UserDetailsData> => {
+      if (!userId) throw new Error('User ID is required');
 
-      console.log('Fetching user details for:', userUuid);
-      
-      const { data: userData, error } = await supabase
+      const { data, error } = await supabase
         .from('users')
-        .select('user_uuid, email, first_name, last_name, created_at, is_expert, is_affiliate, is_admin, total_spent')
-        .eq('user_uuid', userUuid)
-        .maybeSingle();
+        .select(`
+          user_uuid,
+          email,
+          first_name,
+          last_name,
+          created_at,
+          is_expert,
+          is_affiliate,
+          is_admin,
+          total_spent
+        `)
+        .eq('user_uuid', userId)
+        .single();
 
-      if (error) {
-        console.error('Error fetching user details:', error);
-        throw error;
-      }
-
-      if (!userData) {
-        throw new Error('User not found');
-      }
-
-      console.log('User details:', userData);
-      return userData;
+      if (error) throw error;
+      return data;
     },
-    enabled: !!userUuid,
+    enabled: !!userId
   });
 }
