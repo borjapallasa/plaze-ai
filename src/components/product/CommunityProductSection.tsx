@@ -33,6 +33,9 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
 
   const showVariantSelector = variants.length > 1;
   const selectedCommunityName = communities.find(c => c.community_uuid === selectedCommunity)?.name || "";
+  
+  // Check if product is already linked to any community
+  const isAlreadyLinked = communityProducts.length > 0;
 
   // Check if all required fields are filled
   const isFormValid = () => {
@@ -141,99 +144,111 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
             </div>
           )}
 
-          <div className="flex items-center justify-between">
-            <Label htmlFor="community-product-toggle" className="text-base font-medium">
-              Include in your community
-            </Label>
-            <Switch
-              id="community-product-toggle"
-              checked={isCommunityProduct}
-              onCheckedChange={setIsCommunityProduct}
-            />
-          </div>
-
-          {isCommunityProduct && (
-            <div className="space-y-4 border-t pt-4">
-              <div className="space-y-2">
-                <Label htmlFor="community-select">Community</Label>
-                <Select value={selectedCommunity} onValueChange={setSelectedCommunity}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a community" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {communities.map((community) => (
-                      <SelectItem key={community.community_uuid} value={community.community_uuid}>
-                        {community.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+          {/* Show toggle only if not already linked to a community */}
+          {!isAlreadyLinked && (
+            <>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="community-product-toggle" className="text-base font-medium">
+                  Include in your community
+                </Label>
+                <Switch
+                  id="community-product-toggle"
+                  checked={isCommunityProduct}
+                  onCheckedChange={setIsCommunityProduct}
+                />
               </div>
 
-              <div className="space-y-2">
-                <Label>Product Type</Label>
-                <div className="flex gap-2">
-                  <Button
-                    type="button"
-                    variant={productType === "free" ? "default" : "outline"}
-                    onClick={() => setProductType("free")}
-                    className="flex-1"
-                  >
-                    Free
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={productType === "paid" ? "default" : "outline"}
-                    onClick={() => setProductType("paid")}
-                    className="flex-1"
-                  >
-                    Paid
-                  </Button>
-                </div>
-              </div>
+              {isCommunityProduct && (
+                <div className="space-y-4 border-t pt-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="community-select">Community</Label>
+                    <Select value={selectedCommunity} onValueChange={setSelectedCommunity}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a community" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {communities.map((community) => (
+                          <SelectItem key={community.community_uuid} value={community.community_uuid}>
+                            {community.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-              {showVariantSelector && (
-                <div className="space-y-2">
-                  <Label htmlFor="variant-select">Variant</Label>
-                  <Select value={selectedVariant} onValueChange={setSelectedVariant}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a variant" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {variants.map((variant) => (
-                        <SelectItem key={variant.id} value={variant.id}>
-                          {variant.name} - ${variant.price}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="space-y-2">
+                    <Label>Product Type</Label>
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        variant={productType === "free" ? "default" : "outline"}
+                        onClick={() => setProductType("free")}
+                        className="flex-1"
+                      >
+                        Free
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={productType === "paid" ? "default" : "outline"}
+                        onClick={() => setProductType("paid")}
+                        className="flex-1"
+                      >
+                        Paid
+                      </Button>
+                    </div>
+                  </div>
+
+                  {showVariantSelector && (
+                    <div className="space-y-2">
+                      <Label htmlFor="variant-select">Variant</Label>
+                      <Select value={selectedVariant} onValueChange={setSelectedVariant}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a variant" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {variants.map((variant) => (
+                            <SelectItem key={variant.id} value={variant.id}>
+                              {variant.name} - ${variant.price}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+
+                  {productType === "paid" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="community-price">Price ($)</Label>
+                      <Input
+                        id="community-price"
+                        type="number"
+                        min="0.01"
+                        step="0.01"
+                        value={price}
+                        onChange={(e) => setPrice(e.target.value)}
+                        placeholder="19.99"
+                      />
+                    </div>
+                  )}
+
+                  <div className="pt-4 border-t">
+                    <Button 
+                      onClick={handleConfirm} 
+                      className="w-full"
+                      disabled={!isFormValid()}
+                    >
+                      Confirm
+                    </Button>
+                  </div>
                 </div>
               )}
+            </>
+          )}
 
-              {productType === "paid" && (
-                <div className="space-y-2">
-                  <Label htmlFor="community-price">Price ($)</Label>
-                  <Input
-                    id="community-price"
-                    type="number"
-                    min="0.01"
-                    step="0.01"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    placeholder="19.99"
-                  />
-                </div>
-              )}
-
-              <div className="pt-4 border-t">
-                <Button 
-                  onClick={handleConfirm} 
-                  className="w-full"
-                  disabled={!isFormValid()}
-                >
-                  Confirm
-                </Button>
-              </div>
+          {/* Show message if already linked */}
+          {isAlreadyLinked && !isCommunityProduct && (
+            <div className="text-sm text-muted-foreground p-3 bg-muted/30 rounded-lg">
+              This product is already linked to a community. Products can only be linked to one community at a time.
             </div>
           )}
         </div>

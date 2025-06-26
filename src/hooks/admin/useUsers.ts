@@ -41,7 +41,12 @@ export function useUsers() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      
+      // Add commissions_generated as undefined for all users to match the interface
+      return (data || []).map(user => ({
+        ...user,
+        commissions_generated: undefined
+      }));
     }
   });
 
