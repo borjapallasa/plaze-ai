@@ -49,7 +49,7 @@ export function ProductCreationDialog({
               <div className="mb-4 p-4 rounded-full bg-secondary/10 group-hover:bg-secondary/20 transition-colors">
                 <List className="h-8 w-8 text-secondary-foreground" />
               </div>
-              <h3 className="font-semibold mb-2">Select from Template</h3>
+              <h3 className="font-semibold mb-2">Select from List</h3>
               <p className="text-sm text-muted-foreground">
                 Choose from your existing products as a starting point
               </p>
