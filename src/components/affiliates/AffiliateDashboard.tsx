@@ -27,7 +27,11 @@ export function AffiliateDashboard() {
     <div className="space-y-6">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div className="flex items-center gap-2">
+        <div>
+          <h2 className="text-2xl font-bold text-foreground">Your affiliate dashboard</h2>
+          <p className="text-muted-foreground">Track your performance and manage your affiliate network</p>
+        </div>
+        <div className="flex items-center gap-2 md:self-start">
           <Button>Request Payout</Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
