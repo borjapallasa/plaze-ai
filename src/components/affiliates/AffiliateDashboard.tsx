@@ -1,17 +1,21 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MoreHorizontal, Copy, DollarSign, Users, TrendingUp, CreditCard, ExternalLink } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+
 export function AffiliateDashboard() {
   const handleCopyLink = () => {
     navigator.clipboard.writeText("https://nocodeclick.com/sign-up?ref=BorjaLBLY");
   };
-  return <div className="space-y-6">
+
+  return (
+    <div className="space-y-6">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          
+      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2">
+        <div className="space-y-1">
+          <h1 className="text-4xl font-bold text-foreground">Your affiliate dashboard</h1>
           <p className="text-muted-foreground">Track your performance and manage your affiliate network</p>
         </div>
         <div className="flex items-center gap-2 md:self-start">
@@ -131,5 +135,6 @@ export function AffiliateDashboard() {
           </CardContent>
         </Card>
       </div>
-    </div>;
+    </div>
+  );
 }
