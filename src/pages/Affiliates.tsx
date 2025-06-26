@@ -30,6 +30,14 @@ export default function Affiliates() {
     );
   };
 
+  // Filter products based on type
+  const filteredProducts = affiliateProducts.filter(product => {
+    if (filterType === "All") return true;
+    if (filterType === "Product") return product.type === "product";
+    if (filterType === "Community") return product.type === "affiliate";
+    return true;
+  });
+
   return (
     <div className="min-h-screen bg-background">
       <MainHeader />
@@ -134,13 +142,13 @@ export default function Affiliates() {
               <div className="text-center py-8">
                 <p className="text-muted-foreground">Error loading affiliate products. Please try again.</p>
               </div>
-            ) : affiliateProducts.length === 0 ? (
+            ) : filteredProducts.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-muted-foreground">No affiliate products available at the moment.</p>
+                <p className="text-muted-foreground">No affiliate products available for the selected filter.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {affiliateProducts.map((product) => (
+                {filteredProducts.map((product) => (
                   <ProductCard
                     key={product.affiliate_products_uuid}
                     title={product.product_name}

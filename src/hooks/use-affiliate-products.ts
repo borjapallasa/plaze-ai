@@ -8,6 +8,7 @@ export interface AffiliateProduct {
   affiliate_share: number;
   expert_share: number;
   status: string;
+  type: string;
   created_at: string;
   // Product details from joined query
   product_name: string;
@@ -32,6 +33,7 @@ export function useAffiliateProducts() {
           affiliate_share,
           expert_share,
           status,
+          type,
           created_at,
           products!inner(
             name,
@@ -64,6 +66,7 @@ export function useAffiliateProducts() {
         affiliate_share: item.affiliate_share || 0,
         expert_share: item.expert_share || 0,
         status: item.status,
+        type: item.type || '',
         created_at: item.created_at,
         product_name: item.products?.name || '',
         product_description: item.products?.description || '',
