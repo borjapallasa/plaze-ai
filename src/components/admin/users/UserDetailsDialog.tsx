@@ -26,7 +26,7 @@ interface UserDetailsDialogProps {
 
 export function UserDetailsDialog({ open, onOpenChange, userUuid }: UserDetailsDialogProps) {
   const { data: userDetails, isLoading: userLoading } = useUserDetails(userUuid || '');
-  const { data: transactions, isLoading: transactionsLoading } = useUserTransactions(userUuid || '');
+  const { transactions, isLoading: transactionsLoading } = useUserTransactions(userUuid || '');
 
   if (!userUuid) return null;
 
