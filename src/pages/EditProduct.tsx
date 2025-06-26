@@ -15,6 +15,7 @@ import { RelatedProducts } from "@/components/product/RelatedProducts";
 import { DangerZone } from "@/components/product/DangerZone";
 import { useExpertQuery } from "@/hooks/expert/useExpertQuery";
 import { CommunityProductSection } from "@/components/product/CommunityProductSection";
+import { AffiliateProductSection } from "@/components/product/AffiliateProductSection";
 
 type ProductStatus = 'draft' | 'active' | 'inactive';
 
@@ -408,6 +409,11 @@ export default function EditProduct() {
               </Card>
 
               <CommunityProductSection 
+                expertUuid={expertData?.expert_uuid}
+                productUuid={id}
+              />
+
+              <AffiliateProductSection 
                 expertUuid={expertData?.expert_uuid}
                 productUuid={id}
               />

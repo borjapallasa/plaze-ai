@@ -46,7 +46,10 @@ export function useTransactionReview(transactionUuid: string | undefined) {
         .eq('transaction_uuid', transactionUuid)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching transaction review:', error);
+        return null;
+      }
       return data;
     },
     enabled: !!transactionUuid

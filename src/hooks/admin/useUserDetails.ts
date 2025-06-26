@@ -12,6 +12,11 @@ export interface UserDetailsData {
   is_affiliate: boolean;
   is_admin: boolean;
   total_spent: number;
+  expert_uuid?: string;
+  affiliate_uuid?: string;
+  admin_uuid?: string;
+  source?: string;
+  transaction_count?: number;
 }
 
 export function useUserDetails(userId: string | undefined) {
@@ -31,7 +36,9 @@ export function useUserDetails(userId: string | undefined) {
           is_expert,
           is_affiliate,
           is_admin,
-          total_spent
+          total_spent,
+          source,
+          transaction_count
         `)
         .eq('user_uuid', userId)
         .single();
