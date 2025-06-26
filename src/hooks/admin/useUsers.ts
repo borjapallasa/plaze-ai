@@ -19,7 +19,7 @@ export interface UserData {
 export function useUsers() {
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
-  const [sortField, setSortField] = useState("created_at");
+  const [sortField, setSortField] = useState<keyof UserData>("created_at");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
   const query = useQuery({

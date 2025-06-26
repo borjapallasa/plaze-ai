@@ -1376,6 +1376,7 @@ export type Database = {
           affiliation_amount: number | null
           change_reasons: string | null
           changes_neeeded: string | null
+          community_product_uuid: string | null
           created_at: string
           demo: string | null
           description: string | null
@@ -1424,6 +1425,7 @@ export type Database = {
           affiliation_amount?: number | null
           change_reasons?: string | null
           changes_neeeded?: string | null
+          community_product_uuid?: string | null
           created_at?: string
           demo?: string | null
           description?: string | null
@@ -1472,6 +1474,7 @@ export type Database = {
           affiliation_amount?: number | null
           change_reasons?: string | null
           changes_neeeded?: string | null
+          community_product_uuid?: string | null
           created_at?: string
           demo?: string | null
           description?: string | null
@@ -1514,6 +1517,13 @@ export type Database = {
           variant_count?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "products_community_product_uuid_fkey"
+            columns: ["community_product_uuid"]
+            isOneToOne: false
+            referencedRelation: "community_products"
+            referencedColumns: ["community_product_uuid"]
+          },
           {
             foreignKeyName: "products_expert_uuid_fkey"
             columns: ["expert_uuid"]

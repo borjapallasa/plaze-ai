@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -93,7 +94,7 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
       }
 
       // Insert into community_products table
-      const { error: insertError } = await supabase
+      const { data: communityProductData, error: insertError } = await supabase
         .from('community_products')
         .insert({
           community_uuid: selectedCommunity,
@@ -103,12 +104,27 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
           files_link: variantToUse.filesLink,
           product_uuid: productUuid,
           price: productType === "paid" ? parseFloat(price) : 0
-        });
+        })
+        .select()
+        .single();
 
       if (insertError) {
         console.error('Error inserting community product:', insertError);
         toast.error("Failed to link product to community");
         return;
+      }
+
+      // Update the products table with the community_product_uuid
+      if (communityProductData) {
+        const { error: updateError } = await supabase
+          .from('products')
+          .update({ community_product_uuid: communityProductData.community_product_uuid })
+          .eq('product_uuid', productUuid);
+
+        if (updateError) {
+          console.error('Error updating product with community_product_uuid:', updateError);
+          toast.error("Product linked but failed to update reference");
+        }
       }
 
       toast.success("Product successfully linked to community");
@@ -172,6 +188,7 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
     try {
       setIsLoading(true);
 
+      // Delete the community product
       const { error } = await supabase
         .from('community_products')
         .delete()
@@ -181,6 +198,19 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
         console.error('Error deleting community product:', error);
         toast.error("Failed to delete community product");
         return;
+      }
+
+      // Update the products table to remove the community_product_uuid reference
+      if (productUuid) {
+        const { error: updateError } = await supabase
+          .from('products')
+          .update({ community_product_uuid: null })
+          .eq('product_uuid', productUuid);
+
+        if (updateError) {
+          console.error('Error removing community_product_uuid from product:', updateError);
+          toast.error("Community product deleted but failed to update reference");
+        }
       }
 
       toast.success("Community product deleted successfully");
