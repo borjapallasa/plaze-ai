@@ -21,7 +21,7 @@ const badges = [
 
 export default function Affiliates() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [filterType, setFilterType] = useState("Products");
+  const [filterType, setFilterType] = useState("All");
   const { data: affiliateProducts = [], isLoading, error } = useAffiliateProducts();
 
   const handleBadgeClick = (category: string | null) => {
@@ -104,7 +104,7 @@ export default function Affiliates() {
                 </div>
                 
                 <Select 
-                  defaultValue="Products" 
+                  defaultValue="All" 
                   onValueChange={setFilterType}
                   value={filterType}
                 >
@@ -112,9 +112,9 @@ export default function Affiliates() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Products">Products</SelectItem>
-                    <SelectItem value="Experts">Experts</SelectItem>
-                    <SelectItem value="Communities">Communities</SelectItem>
+                    <SelectItem value="All">All</SelectItem>
+                    <SelectItem value="Product">Product</SelectItem>
+                    <SelectItem value="Community">Community</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

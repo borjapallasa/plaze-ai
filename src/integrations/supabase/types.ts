@@ -2541,6 +2541,7 @@ export type Database = {
     }
     Enums: {
       affiliate_product_status: "active" | "inactive"
+      affiliate_product_type: "product" | "affiliate"
       affiliate_status: "new" | "accepted" | "needs attention" | "rejected"
       applications_status:
         | "open"
@@ -2749,6 +2750,7 @@ export const Constants = {
   public: {
     Enums: {
       affiliate_product_status: ["active", "inactive"],
+      affiliate_product_type: ["product", "affiliate"],
       affiliate_status: ["new", "accepted", "needs attention", "rejected"],
       applications_status: [
         "open",
