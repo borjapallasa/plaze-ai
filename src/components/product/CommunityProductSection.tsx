@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -12,6 +11,7 @@ import { useProductVariants } from "@/hooks/use-product-variants";
 import { useCommunityProducts } from "@/hooks/use-community-products";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Edit, Trash2 } from "lucide-react";
 
 interface CommunityProductSectionProps {
   expertUuid?: string;
@@ -25,6 +25,9 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
   const [selectedVariant, setSelectedVariant] = useState("");
   const [price, setPrice] = useState("");
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const { data: communities = [] } = useExpertCommunities(expertUuid);
@@ -48,6 +51,19 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
 
   const handleConfirm = () => {
     setShowConfirmDialog(true);
+  };
+
+  const handleEdit = (communityProduct: any) => {
+    setEditingProduct(communityProduct);
+    setSelectedCommunity(communityProduct.community_uuid);
+    setProductType(communityProduct.product_type);
+    setPrice(communityProduct.price?.toString() || "");
+    setShowEditDialog(true);
+  };
+
+  const handleDelete = (communityProduct: any) => {
+    setEditingProduct(communityProduct);
+    setShowDeleteDialog(true);
   };
 
   const handleDialogConfirm = async () => {
@@ -116,6 +132,70 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
     }
   };
 
+  const handleEditConfirm = async () => {
+    if (!editingProduct) return;
+
+    try {
+      setIsLoading(true);
+
+      const { error } = await supabase
+        .from('community_products')
+        .update({
+          community_uuid: selectedCommunity,
+          product_type: productType,
+          price: productType === "paid" ? parseFloat(price) : 0
+        })
+        .eq('community_product_uuid', editingProduct.community_product_uuid);
+
+      if (error) {
+        console.error('Error updating community product:', error);
+        toast.error("Failed to update community product");
+        return;
+      }
+
+      toast.success("Community product updated successfully");
+      setShowEditDialog(false);
+      setEditingProduct(null);
+      refetchCommunityProducts();
+
+    } catch (error) {
+      console.error('Error updating community product:', error);
+      toast.error("Failed to update community product");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!editingProduct) return;
+
+    try {
+      setIsLoading(true);
+
+      const { error } = await supabase
+        .from('community_products')
+        .delete()
+        .eq('community_product_uuid', editingProduct.community_product_uuid);
+
+      if (error) {
+        console.error('Error deleting community product:', error);
+        toast.error("Failed to delete community product");
+        return;
+      }
+
+      toast.success("Community product deleted successfully");
+      setShowDeleteDialog(false);
+      setEditingProduct(null);
+      refetchCommunityProducts();
+
+    } catch (error) {
+      console.error('Error deleting community product:', error);
+      toast.error("Failed to delete community product");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <>
       <Card className="p-3 sm:p-6">
@@ -130,11 +210,29 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
                 {communityProducts.map((cp) => (
                   <div key={cp.community_product_uuid} className="p-3 border rounded-lg bg-muted/50">
                     <div className="flex justify-between items-start">
-                      <div className="space-y-1">
+                      <div className="space-y-1 flex-1">
                         <p className="font-medium">{cp.community.name}</p>
                         <p className="text-sm text-muted-foreground">
                           {cp.name} - {cp.product_type === "paid" ? `$${cp.price}` : "Free"}
                         </p>
+                      </div>
+                      <div className="flex gap-2 ml-4">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => handleEdit(cp)}
+                          className="h-8 w-8"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => handleDelete(cp)}
+                          className="h-8 w-8 text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -253,6 +351,105 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
           )}
         </div>
       </Card>
+
+      {/* Edit Dialog */}
+      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Community Product</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="edit-community-select">Community</Label>
+              <Select value={selectedCommunity} onValueChange={setSelectedCommunity}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a community" />
+                </SelectTrigger>
+                <SelectContent>
+                  {communities.map((community) => (
+                    <SelectItem key={community.community_uuid} value={community.community_uuid}>
+                      {community.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Product Type</Label>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={productType === "free" ? "default" : "outline"}
+                  onClick={() => setProductType("free")}
+                  className="flex-1"
+                >
+                  Free
+                </Button>
+                <Button
+                  type="button"
+                  variant={productType === "paid" ? "default" : "outline"}
+                  onClick={() => setProductType("paid")}
+                  className="flex-1"
+                >
+                  Paid
+                </Button>
+              </div>
+            </div>
+
+            {productType === "paid" && (
+              <div className="space-y-2">
+                <Label htmlFor="edit-community-price">Price ($)</Label>
+                <Input
+                  id="edit-community-price"
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  placeholder="19.99"
+                />
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowEditDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleEditConfirm} disabled={isLoading}>
+              {isLoading ? "Updating..." : "Update"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Dialog */}
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Community Product</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p>Are you sure you want to remove this product from the community? This action cannot be undone.</p>
+            {editingProduct && (
+              <div className="mt-4 p-3 border rounded-lg bg-muted/50">
+                <p className="font-medium">{editingProduct.community?.name}</p>
+                <p className="text-sm text-muted-foreground">
+                  {editingProduct.name} - {editingProduct.product_type === "paid" ? `$${editingProduct.price}` : "Free"}
+                </p>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowDeleteDialog(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDeleteConfirm} disabled={isLoading}>
+              {isLoading ? "Deleting..." : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <DialogContent>

@@ -42,7 +42,6 @@ export function useUsers() {
 
       if (error) throw error;
       
-      // Add commissions_generated as undefined for all users to match the interface
       return (data || []).map(user => ({
         ...user,
         commissions_generated: undefined
@@ -50,7 +49,7 @@ export function useUsers() {
     }
   });
 
-  const handleSort = (field: string) => {
+  const handleSort = (field: keyof UserData) => {
     if (field === sortField) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
@@ -83,8 +82,8 @@ export function useUsers() {
 
   // Sort users
   filteredUsers.sort((a, b) => {
-    const aValue = a[sortField as keyof UserData];
-    const bValue = b[sortField as keyof UserData];
+    const aValue = a[sortField];
+    const bValue = b[sortField];
     
     if (sortDirection === "asc") {
       return aValue > bValue ? 1 : -1;
