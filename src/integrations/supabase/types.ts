@@ -572,7 +572,6 @@ export type Database = {
       }
       community_products: {
         Row: {
-          classroom_uuid: string | null
           community_product_uuid: string
           community_uuid: string | null
           created_at: string
@@ -588,7 +587,6 @@ export type Database = {
           product_uuid: string | null
         }
         Insert: {
-          classroom_uuid?: string | null
           community_product_uuid?: string
           community_uuid?: string | null
           created_at?: string
@@ -604,7 +602,6 @@ export type Database = {
           product_uuid?: string | null
         }
         Update: {
-          classroom_uuid?: string | null
           community_product_uuid?: string
           community_uuid?: string | null
           created_at?: string
@@ -620,13 +617,6 @@ export type Database = {
           product_uuid?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "community_products_classroom_uuid_fkey"
-            columns: ["classroom_uuid"]
-            isOneToOne: false
-            referencedRelation: "classrooms"
-            referencedColumns: ["classroom_uuid"]
-          },
           {
             foreignKeyName: "community_products_community_uuid_fkey"
             columns: ["community_uuid"]
