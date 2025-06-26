@@ -40,10 +40,8 @@ export type Database = {
       }
       affiliate_products: {
         Row: {
-          additional_information: string | null
           affiliate_products_uuid: string
           affiliate_share: number | null
-          affiliate_uuid: string | null
           created_at: string
           expert_share: number | null
           id: number
@@ -52,10 +50,8 @@ export type Database = {
           type: Database["public"]["Enums"]["affiliate_product_type"] | null
         }
         Insert: {
-          additional_information?: string | null
           affiliate_products_uuid?: string
           affiliate_share?: number | null
-          affiliate_uuid?: string | null
           created_at?: string
           expert_share?: number | null
           id?: number
@@ -66,10 +62,8 @@ export type Database = {
           type?: Database["public"]["Enums"]["affiliate_product_type"] | null
         }
         Update: {
-          additional_information?: string | null
           affiliate_products_uuid?: string
           affiliate_share?: number | null
-          affiliate_uuid?: string | null
           created_at?: string
           expert_share?: number | null
           id?: number
@@ -80,13 +74,6 @@ export type Database = {
           type?: Database["public"]["Enums"]["affiliate_product_type"] | null
         }
         Relationships: [
-          {
-            foreignKeyName: "affiliate_products_affiliate_uuid_fkey"
-            columns: ["affiliate_uuid"]
-            isOneToOne: false
-            referencedRelation: "affiliates"
-            referencedColumns: ["affiliate_uuid"]
-          },
           {
             foreignKeyName: "affiliate_products_product_uuid_fkey"
             columns: ["product_uuid"]

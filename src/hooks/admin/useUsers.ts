@@ -13,7 +13,7 @@ export interface UserData {
   is_affiliate: boolean;
   is_admin: boolean;
   total_spent: number;
-  commissions_generated?: number;
+  commissions_generated: number;
 }
 
 export function useUsers() {
@@ -44,7 +44,7 @@ export function useUsers() {
       
       return (data || []).map(user => ({
         ...user,
-        commissions_generated: undefined
+        commissions_generated: 0
       }));
     }
   });
