@@ -40,6 +40,7 @@ export type Database = {
       }
       affiliate_products: {
         Row: {
+          additional_information: string | null
           affiliate_products_uuid: string
           affiliate_share: number | null
           affiliate_uuid: string | null
@@ -51,6 +52,7 @@ export type Database = {
           type: Database["public"]["Enums"]["affiliate_product_type"] | null
         }
         Insert: {
+          additional_information?: string | null
           affiliate_products_uuid?: string
           affiliate_share?: number | null
           affiliate_uuid?: string | null
@@ -64,6 +66,7 @@ export type Database = {
           type?: Database["public"]["Enums"]["affiliate_product_type"] | null
         }
         Update: {
+          additional_information?: string | null
           affiliate_products_uuid?: string
           affiliate_share?: number | null
           affiliate_uuid?: string | null

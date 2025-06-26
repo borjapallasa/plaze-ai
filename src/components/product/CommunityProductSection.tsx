@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { useExpertCommunities } from "@/hooks/expert/useExpertCommunities";
 import { useProductVariants } from "@/hooks/use-product-variants";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface CommunityProductSectionProps {
   expertUuid?: string;
@@ -22,6 +24,7 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
   const [selectedVariant, setSelectedVariant] = useState("");
   const [price, setPrice] = useState("");
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { data: communities = [] } = useExpertCommunities(expertUuid);
   const { data: variants = [] } = useProductVariants(productUuid);
@@ -42,10 +45,67 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
     setShowConfirmDialog(true);
   };
 
-  const handleDialogConfirm = () => {
-    // TODO: Implement the actual linking logic here
-    console.log("Linking product to community:", selectedCommunity);
-    setShowConfirmDialog(false);
+  const handleDialogConfirm = async () => {
+    if (!productUuid || !expertUuid || !selectedCommunity) {
+      toast.error("Missing required information");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      // Get the selected variant or use the first one if only one variant exists
+      const variantToUse = showVariantSelector 
+        ? variants.find(v => v.id === selectedVariant)
+        : variants[0];
+
+      if (!variantToUse) {
+        toast.error("No variant selected");
+        return;
+      }
+
+      // Get the authenticated user
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) {
+        toast.error("User not authenticated");
+        return;
+      }
+
+      // Insert into community_products table
+      const { error: insertError } = await supabase
+        .from('community_products')
+        .insert({
+          community_uuid: selectedCommunity,
+          expert_uuid: expertUuid,
+          product_type: productType,
+          name: variantToUse.name,
+          files_link: variantToUse.filesLink,
+          product_uuid: productUuid,
+          price: productType === "paid" ? parseFloat(price) : 0
+        });
+
+      if (insertError) {
+        console.error('Error inserting community product:', insertError);
+        toast.error("Failed to link product to community");
+        return;
+      }
+
+      toast.success("Product successfully linked to community");
+      setShowConfirmDialog(false);
+      
+      // Reset form
+      setIsCommunityProduct(false);
+      setSelectedCommunity("");
+      setProductType("free");
+      setSelectedVariant("");
+      setPrice("");
+
+    } catch (error) {
+      console.error('Error linking product to community:', error);
+      toast.error("Failed to link product to community");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -164,8 +224,8 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
             <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>
               Cancel
             </Button>
-            <Button onClick={handleDialogConfirm}>
-              Confirm
+            <Button onClick={handleDialogConfirm} disabled={isLoading}>
+              {isLoading ? "Linking..." : "Confirm"}
             </Button>
           </DialogFooter>
         </DialogContent>
