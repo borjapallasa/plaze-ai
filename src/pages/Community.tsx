@@ -217,6 +217,22 @@ export default function CommunityPage() {
   const videoEmbedUrl = getVideoEmbedUrl(community?.intro);
   const links = parseLinks(community?.links);
 
+  // Check if current user is the community owner - enhanced debugging
+  const isOwner = currentUserExpertData && community && (
+    currentUserExpertData.expert_uuid === community.expert_uuid ||
+    currentUserExpertData.user_uuid === community.expert_uuid ||
+    user?.id === community.expert_uuid
+  );
+
+  // Add debugging logs
+  console.log('Ownership debug:', {
+    user: user?.id,
+    userEmail: user?.email,
+    currentUserExpertData,
+    communityExpertUuid: community?.expert_uuid,
+    isOwner
+  });
+
   if (isCommunityLoading) {
     return (
       <>
@@ -247,13 +263,6 @@ export default function CommunityPage() {
       </>
     );
   }
-
-  // Check if current user is the community owner
-  const isOwner = currentUserExpertData && community && (
-    currentUserExpertData.expert_uuid === community.expert_uuid ||
-    currentUserExpertData.user_uuid === community.expert_uuid ||
-    user?.id === community.expert_uuid
-  );
 
   // Create gallery images - use community images if available, otherwise add placeholders
   const createGalleryImages = (): ProductImage[] => {
