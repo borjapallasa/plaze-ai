@@ -11,12 +11,13 @@ export interface TransactionReview {
   buyer_email: string;
   created_at: string;
   verified: boolean;
+  transaction_uuid: string;
 }
 
 export function useTransactionReview(transactionUuid: string | undefined) {
   return useQuery({
     queryKey: ['transaction-review', transactionUuid],
-    queryFn: async (): Promise<TransactionReview[]> => {
+    queryFn: async () => {
       console.log('Fetching reviews for transaction:', transactionUuid);
       
       if (!transactionUuid) {
@@ -49,6 +50,7 @@ export function useTransactionReview(transactionUuid: string | undefined) {
         buyer_email: review.buyer_email || '',
         created_at: review.created_at,
         verified: Boolean(review.verified),
+        transaction_uuid: transactionUuid,
       }));
     },
     enabled: !!transactionUuid,

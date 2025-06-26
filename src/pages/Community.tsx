@@ -22,6 +22,14 @@ import type { ProductImage } from "@/types/product-images";
 import { CommunityProductDialog } from "@/components/community/CommunityProductDialog";
 import { formatNumber } from "@/lib/utils";
 import { ClassroomDialog } from "@/components/community/ClassroomDialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface Link {
   name: string;
@@ -180,6 +188,36 @@ export default function CommunityPage() {
       }
 
       return data?.map(item => item.community_product_uuid) || [];
+    },
+    enabled: !!communityId
+  });
+
+  const { data: communityMembers, isLoading: isMembersLoading } = useQuery({
+    queryKey: ['community-members', communityId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('community_subscriptions')
+        .select(`
+          community_subscription_uuid,
+          created_at,
+          user_uuid,
+          users!inner (
+            user_uuid,
+            first_name,
+            last_name,
+            user_thumbnail
+          )
+        `)
+        .eq('community_uuid', communityId)
+        .eq('status', 'active')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error("Error fetching community members:", error);
+        throw error;
+      }
+
+      return data;
     },
     enabled: !!communityId
   });
@@ -420,7 +458,8 @@ export default function CommunityPage() {
     { id: "threads", label: "Threads", icon: MessageSquare },
     { id: "classrooms", label: "Classrooms", icon: BookOpen },
     { id: "templates", label: "Products", icon: Users },
-    { id: "calendar", label: "Calendar", icon: Calendar }
+    { id: "calendar", label: "Calendar", icon: Calendar },
+    { id: "members", label: "Members", icon: Users }
   ];
 
   return (
@@ -744,6 +783,77 @@ export default function CommunityPage() {
                     event: "text-primary font-bold underline"
                   }}
                 />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="members" className="space-y-6">
+            <div className="flex flex-col sm:flex-row gap-4 mb-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <Input placeholder="Search members" className="pl-9 w-full" />
+              </div>
+            </div>
+            
+            <Card>
+              <CardContent className="p-0">
+                {isMembersLoading ? (
+                  <div className="p-6">
+                    <div className="animate-pulse space-y-4">
+                      {Array.from({ length: 5 }).map((_, index) => (
+                        <div key={index} className="flex items-center space-x-4">
+                          <div className="w-10 h-10 bg-muted rounded-full"></div>
+                          <div className="flex-1 space-y-2">
+                            <div className="h-4 bg-muted rounded w-1/4"></div>
+                            <div className="h-3 bg-muted rounded w-1/6"></div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : communityMembers && communityMembers.length > 0 ? (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Member</TableHead>
+                        <TableHead>Joined</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {communityMembers.map((member) => (
+                        <TableRow key={member.community_subscription_uuid}>
+                          <TableCell>
+                            <div className="flex items-center space-x-3">
+                              <Avatar className="h-10 w-10">
+                                <AvatarImage 
+                                  src={member.users.user_thumbnail || "https://github.com/shadcn.png"} 
+                                  alt={`${member.users.first_name} ${member.users.last_name}`}
+                                />
+                                <AvatarFallback>
+                                  {`${member.users.first_name?.charAt(0) || ''}${member.users.last_name?.charAt(0) || ''}`}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <p className="font-medium">
+                                  {member.users.first_name} {member.users.last_name}
+                                </p>
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <span className="text-sm text-muted-foreground">
+                              {new Date(member.created_at).toLocaleDateString()}
+                            </span>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                ) : (
+                  <div className="p-6 text-center">
+                    <p className="text-muted-foreground">No active members found in this community.</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
