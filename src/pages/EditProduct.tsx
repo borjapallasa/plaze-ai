@@ -237,9 +237,11 @@ export default function EditProduct() {
       }
       
       // Check if this variant exists in updatedVariants
-      return !updatedVariants.find(updatedVariant => 
+      const stillExists = updatedVariants.some(updatedVariant => 
         updatedVariant && updatedVariant.id && updatedVariant.id === currentVariant.id
       );
+      
+      return !stillExists;
     });
 
     console.log('Removed variants:', removedVariants);
@@ -253,7 +255,8 @@ export default function EditProduct() {
 
     if (removedDatabaseVariants.length > 0) {
       setDeletedVariantIds(prev => {
-        const newDeletedIds = [...prev, ...removedDatabaseVariants];
+        // Avoid duplicates
+        const newDeletedIds = [...new Set([...prev, ...removedDatabaseVariants])];
         console.log('Updated deletedVariantIds:', newDeletedIds);
         return newDeletedIds;
       });
