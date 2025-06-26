@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { X } from "lucide-react";
@@ -18,6 +19,7 @@ import { AffiliateProductSection } from "@/components/product/AffiliateProductSe
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   Select,
   SelectContent,
@@ -351,11 +353,23 @@ export default function EditProduct() {
     const hasCommunityProduct = !!product?.community_product_uuid;
 
     if (isActive && hasCommunityProduct) {
-      return { label: "Dual Product", variant: "default" as const };
+      return { 
+        label: "Dual Product", 
+        variant: "default" as const,
+        description: "This product is active in both marketplace and community"
+      };
     } else if (isActive && !hasCommunityProduct) {
-      return { label: "Marketplace Only", variant: "secondary" as const };
+      return { 
+        label: "Marketplace Only", 
+        variant: "secondary" as const,
+        description: "This product is only available in the marketplace"
+      };
     } else if (!isActive && hasCommunityProduct) {
-      return { label: "Community Only", variant: "warning" as const };
+      return { 
+        label: "Community Only", 
+        variant: "outline" as const,
+        description: "This product is only available in the community"
+      };
     }
     return null;
   };
@@ -428,15 +442,6 @@ export default function EditProduct() {
             </div>
 
             <div className="lg:col-span-4 space-y-3 sm:space-y-6">
-              {/* Product Type Badge */}
-              {productType && (
-                <div className="flex justify-center">
-                  <Badge variant={productType.variant} className="text-sm px-3 py-1">
-                    {productType.label}
-                  </Badge>
-                </div>
-              )}
-
               {/* Status and Save Controls */}
               <Card className="p-3 sm:p-6">
                 <h2 className="text-lg font-medium mb-3 sm:mb-4">Product Status</h2>
@@ -464,6 +469,27 @@ export default function EditProduct() {
                   </div>
                 </div>
               </Card>
+
+              {/* Product Type Badge */}
+              {productType && (
+                <TooltipProvider>
+                  <div className="flex justify-center">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Badge 
+                          variant={productType.variant} 
+                          className="text-sm font-medium px-4 py-2 cursor-help border-2 shadow-sm"
+                        >
+                          {productType.label}
+                        </Badge>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="max-w-xs text-center">{productType.description}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                </TooltipProvider>
+              )}
 
               <Card className="p-3 sm:p-6">
                 <h2 className="text-lg font-medium mb-3 sm:mb-4">Product Organization</h2>
