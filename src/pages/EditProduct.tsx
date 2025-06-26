@@ -14,6 +14,7 @@ import { ProductOrganization } from "@/components/product/ProductOrganization";
 import { RelatedProducts } from "@/components/product/RelatedProducts";
 import { DangerZone } from "@/components/product/DangerZone";
 import { useExpertQuery } from "@/hooks/expert/useExpertQuery";
+import { CommunityProductSection } from "@/components/product/CommunityProductSection";
 
 type ProductStatus = 'draft' | 'active' | 'inactive';
 
@@ -403,16 +404,23 @@ export default function EditProduct() {
                     userUuid={product?.user_uuid || ""}
                     className="mt-6 pt-4 border-t"
                   />
-
-                  <DangerZone
-                    productName={productName}
-                    isDeleting={isDeleting}
-                    showDeleteDialog={showDeleteDialog}
-                    sellerUuid={product?.expert_uuid || ""}
-                    setShowDeleteDialog={setShowDeleteDialog}
-                    onDeleteProduct={handleDeleteProduct}
-                  />
                 </div>
+              </Card>
+
+              <CommunityProductSection 
+                expertUuid={expertData?.expert_uuid}
+                productUuid={id}
+              />
+
+              <Card className="p-3 sm:p-6">
+                <DangerZone
+                  productName={productName}
+                  isDeleting={isDeleting}
+                  showDeleteDialog={showDeleteDialog}
+                  sellerUuid={product?.expert_uuid || ""}
+                  setShowDeleteDialog={setShowDeleteDialog}
+                  onDeleteProduct={handleDeleteProduct}
+                />
               </Card>
             </div>
           </div>

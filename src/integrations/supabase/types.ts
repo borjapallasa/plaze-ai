@@ -595,6 +595,7 @@ export type Database = {
           product_type:
             | Database["public"]["Enums"]["community_product_type"]
             | null
+          product_uuid: string | null
         }
         Insert: {
           classroom_uuid?: string | null
@@ -610,6 +611,7 @@ export type Database = {
           product_type?:
             | Database["public"]["Enums"]["community_product_type"]
             | null
+          product_uuid?: string | null
         }
         Update: {
           classroom_uuid?: string | null
@@ -625,6 +627,7 @@ export type Database = {
           product_type?:
             | Database["public"]["Enums"]["community_product_type"]
             | null
+          product_uuid?: string | null
         }
         Relationships: [
           {
@@ -647,6 +650,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "experts"
             referencedColumns: ["expert_uuid"]
+          },
+          {
+            foreignKeyName: "community_products_product_uuid_fkey"
+            columns: ["product_uuid"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["product_uuid"]
           },
         ]
       }
