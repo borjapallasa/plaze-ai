@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Star, ThumbsUp, TrendingUp, Sparkle, Trophy, Tags } from "lucide-react";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAffiliateProducts } from "@/hooks/use-affiliate-products";
 
 const badges = [
   { label: "Trending", icon: TrendingUp, category: null },
@@ -18,142 +19,10 @@ const badges = [
   { label: "Affiliate Offers", icon: Tags, category: null }
 ];
 
-const affiliateOffers = [
-  {
-    title: "AI Marketing Suite",
-    price: "$99.99",
-    image: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81",
-    seller: "Marketing AI",
-    description: "Complete suite of AI-powered marketing tools for automated campaigns, social media management, and analytics.",
-    tags: ["marketing", "ai", "automation"],
-    category: "software",
-    split: "70/30"
-  },
-  {
-    title: "SEO Optimizer Pro",
-    price: "$79.99",
-    image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7",
-    seller: "SEO Tools Inc",
-    description: "Professional SEO optimization toolkit with keyword research, rank tracking, and content optimization features.",
-    tags: ["seo", "marketing", "tools"],
-    category: "software",
-    split: "75/25"
-  },
-  {
-    title: "Content Creator AI",
-    price: "$129.99",
-    image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
-    seller: "AI Solutions",
-    description: "AI-powered content creation platform with smart templates, multilingual support, and brand voice customization.",
-    tags: ["content", "ai", "writing"],
-    category: "software",
-    split: "65/35"
-  },
-  {
-    title: "Data Analytics Dashboard",
-    price: "$149.99",
-    image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6",
-    seller: "Data Insights Pro",
-    description: "Comprehensive data visualization and analytics platform for business intelligence and reporting.",
-    tags: ["analytics", "data", "business"],
-    category: "software",
-    split: "60/40"
-  },
-  {
-    title: "AI Development Kit",
-    price: "$199.99",
-    image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e",
-    seller: "AI Labs",
-    description: "Complete toolkit for developing and deploying AI models with pre-trained algorithms.",
-    tags: ["ai", "development", "ml"],
-    category: "software",
-    split: "80/20"
-  },
-  {
-    title: "Cybersecurity Suite",
-    price: "$299.99",
-    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5",
-    seller: "SecureNet",
-    description: "Enterprise-grade security solution with threat detection, encryption, and network protection.",
-    tags: ["security", "enterprise", "protection"],
-    category: "software",
-    split: "70/30"
-  },
-  {
-    title: "Remote Work Platform",
-    price: "$89.99",
-    image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
-    seller: "Remote Solutions",
-    description: "Integrated platform for remote team collaboration, project management, and communication.",
-    tags: ["remote", "collaboration", "teams"],
-    category: "software",
-    split: "75/25"
-  },
-  {
-    title: "Digital Learning System",
-    price: "$159.99",
-    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
-    seller: "EduTech Pro",
-    description: "Complete e-learning platform with course creation, student management, and analytics.",
-    tags: ["education", "learning", "online"],
-    category: "software",
-    split: "65/35"
-  },
-  {
-    title: "Cloud Infrastructure Manager",
-    price: "$249.99",
-    image: "https://images.unsplash.com/photo-1531297484001-80022131f5a1",
-    seller: "Cloud Tech Solutions",
-    description: "Advanced cloud infrastructure management and monitoring platform for enterprises.",
-    tags: ["cloud", "infrastructure", "management"],
-    category: "software",
-    split: "70/30"
-  },
-  {
-    title: "Smart Project Manager",
-    price: "$119.99",
-    image: "https://images.unsplash.com/photo-1488591534298-04dcbce3278c",
-    seller: "Project Tech",
-    description: "AI-powered project management tool with automated task allocation and progress tracking.",
-    tags: ["project", "management", "automation"],
-    category: "software",
-    split: "75/25"
-  },
-  {
-    title: "Digital Asset Platform",
-    price: "$179.99",
-    image: "https://images.unsplash.com/photo-1518770660439-4636190af475",
-    seller: "Asset Solutions",
-    description: "Comprehensive digital asset management platform with AI-powered organization and tracking.",
-    tags: ["assets", "digital", "management"],
-    category: "software",
-    split: "65/35"
-  },
-  {
-    title: "Design Automation Tool",
-    price: "$139.99",
-    image: "https://images.unsplash.com/photo-1473091534298-04dcbce3278c",
-    seller: "Creative AI",
-    description: "AI-powered design automation tool for creating professional marketing materials and graphics.",
-    tags: ["design", "automation", "creative"],
-    category: "software",
-    split: "70/30"
-  },
-  {
-    title: "Customer Success Platform",
-    price: "$189.99",
-    image: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7",
-    seller: "Customer Pro",
-    description: "All-in-one customer success platform with support ticketing, chat, and analytics.",
-    tags: ["customer", "support", "success"],
-    category: "software",
-    split: "75/25"
-  }
-];
-
 export default function Affiliates() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [filterType, setFilterType] = useState("Products");
+  const { data: affiliateProducts = [], isLoading, error } = useAffiliateProducts();
 
   const handleBadgeClick = (category: string | null) => {
     setSelectedCategory(prevCategory => 
@@ -251,21 +120,41 @@ export default function Affiliates() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {affiliateOffers.map((offer, index) => (
-                <ProductCard
-                  key={index}
-                  title={offer.title}
-                  price={offer.price}
-                  image={offer.image}
-                  seller={offer.seller}
-                  description={offer.description}
-                  tags={offer.tags}
-                  category={offer.category}
-                  split={offer.split}
-                />
-              ))}
-            </div>
+            {isLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[...Array(6)].map((_, index) => (
+                  <div key={index} className="border rounded-lg p-6 animate-pulse">
+                    <div className="bg-gray-200 h-48 rounded mb-4"></div>
+                    <div className="bg-gray-200 h-4 rounded mb-2"></div>
+                    <div className="bg-gray-200 h-4 rounded w-3/4"></div>
+                  </div>
+                ))}
+              </div>
+            ) : error ? (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">Error loading affiliate products. Please try again.</p>
+              </div>
+            ) : affiliateProducts.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">No affiliate products available at the moment.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {affiliateProducts.map((product) => (
+                  <ProductCard
+                    key={product.affiliate_products_uuid}
+                    title={product.product_name}
+                    price={`$${product.product_price_from.toFixed(2)}`}
+                    image={product.product_thumbnail || "https://images.unsplash.com/photo-1605810230434-7631ac76ec81"}
+                    seller={product.expert_name}
+                    description={product.product_description}
+                    tags={["affiliate"]}
+                    category="software"
+                    split={`${Math.round(product.affiliate_share * 100)}/${Math.round(product.expert_share * 100)}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </main>

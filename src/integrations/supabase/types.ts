@@ -47,6 +47,7 @@ export type Database = {
           expert_share: number | null
           id: number
           product_uuid: string | null
+          status: Database["public"]["Enums"]["affiliate_product_status"] | null
         }
         Insert: {
           affiliate_products_uuid?: string
@@ -56,6 +57,9 @@ export type Database = {
           expert_share?: number | null
           id?: number
           product_uuid?: string | null
+          status?:
+            | Database["public"]["Enums"]["affiliate_product_status"]
+            | null
         }
         Update: {
           affiliate_products_uuid?: string
@@ -65,6 +69,9 @@ export type Database = {
           expert_share?: number | null
           id?: number
           product_uuid?: string | null
+          status?:
+            | Database["public"]["Enums"]["affiliate_product_status"]
+            | null
         }
         Relationships: [
           {
@@ -2533,6 +2540,7 @@ export type Database = {
       }
     }
     Enums: {
+      affiliate_product_status: "active" | "inactive"
       affiliate_status: "new" | "accepted" | "needs attention" | "rejected"
       applications_status:
         | "open"
@@ -2740,6 +2748,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      affiliate_product_status: ["active", "inactive"],
       affiliate_status: ["new", "accepted", "needs attention", "rejected"],
       applications_status: [
         "open",
