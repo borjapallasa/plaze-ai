@@ -306,7 +306,7 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
                         <SelectContent>
                           {variants.map((variant) => (
                             <SelectItem key={variant.id} value={variant.id}>
-                              {variant.name} - ${variant.price}
+                              {variant.name}
                             </SelectItem>
                           ))}
                         </SelectContent>

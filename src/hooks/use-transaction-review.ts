@@ -2,22 +2,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-interface UserData {
-  user_uuid: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-}
-
-interface TransactionReviewData {
+export interface TransactionReviewData {
   transaction_uuid: string;
   status: string;
   review_score: number | null;
   review_comment: string | null;
   created_at: string;
-  amount: number;
-  affiliate_fees: number | null;
-  user: UserData;
+  updated_at: string | null;
+  reviewer_name: string | null;
+  reviewer_email: string | null;
 }
 
 export function useTransactionReview(transactionUuid: string | undefined) {
@@ -27,30 +20,38 @@ export function useTransactionReview(transactionUuid: string | undefined) {
       if (!transactionUuid) return null;
 
       const { data, error } = await supabase
-        .from('transactions')
+        .from('reviews')
         .select(`
-          transaction_uuid,
+          review_uuid,
           status,
-          review_score,
-          review_comment,
+          rating,
+          comments,
           created_at,
-          amount,
-          affiliate_fees,
-          user:users(
-            user_uuid,
-            first_name,
-            last_name,
-            email
-          )
+          title,
+          buyer_name,
+          buyer_email
         `)
-        .eq('transaction_uuid', transactionUuid)
-        .single();
+        .eq('transaction_type', 'product')
+        .eq('product_transaction_item_uuid', transactionUuid)
+        .maybeSingle();
 
       if (error) {
         console.error('Error fetching transaction review:', error);
-        return null;
+        throw error;
       }
-      return data;
+
+      if (!data) return null;
+
+      return {
+        transaction_uuid: transactionUuid,
+        status: data.status || 'pending',
+        review_score: data.rating,
+        review_comment: data.comments,
+        created_at: data.created_at,
+        updated_at: data.created_at,
+        reviewer_name: data.buyer_name,
+        reviewer_email: data.buyer_email
+      };
     },
     enabled: !!transactionUuid
   });
