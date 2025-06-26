@@ -470,25 +470,28 @@ export default function EditProduct() {
                 </div>
               </Card>
 
-              {/* Product Type Badge */}
+              {/* Product Type Container */}
               {productType && (
-                <TooltipProvider>
-                  <div className="flex justify-center">
+                <Card className="p-3 sm:p-6">
+                  <h2 className="text-lg font-medium mb-3 sm:mb-4">Product Type</h2>
+                  <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <Badge 
-                          variant={productType.variant} 
-                          className="text-sm font-medium px-4 py-2 cursor-help border-2 shadow-sm"
-                        >
-                          {productType.label}
-                        </Badge>
+                        <div className="cursor-help">
+                          <Badge 
+                            variant={productType.variant} 
+                            className="text-sm font-medium px-4 py-2 w-full justify-center"
+                          >
+                            {productType.label}
+                          </Badge>
+                        </div>
                       </TooltipTrigger>
                       <TooltipContent>
                         <p className="max-w-xs text-center">{productType.description}</p>
                       </TooltipContent>
                     </Tooltip>
-                  </div>
-                </TooltipProvider>
+                  </TooltipProvider>
+                </Card>
               )}
 
               <Card className="p-3 sm:p-6">
