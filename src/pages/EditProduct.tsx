@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
-import { X } from "lucide-react";
+import { X, Info } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
@@ -473,29 +473,30 @@ export default function EditProduct() {
               {/* Product Type Container */}
               {productType && (
                 <Card className="p-3 sm:p-6">
-                  <h2 className="text-lg font-medium mb-3 sm:mb-4">Product Type</h2>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="cursor-help">
-                          <div className={`
-                            text-sm font-medium px-4 py-3 rounded-lg border text-center
-                            ${productType.variant === 'default' 
-                              ? 'bg-primary/5 border-primary/20 text-primary' 
-                              : productType.variant === 'secondary'
-                              ? 'bg-secondary border-secondary/20 text-secondary-foreground'
-                              : 'bg-background border-border text-foreground'
-                            }
-                          `}>
-                            {productType.label}
-                          </div>
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p className="max-w-xs text-center">{productType.description}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  <div className="flex items-center gap-2 mb-3 sm:mb-4">
+                    <h2 className="text-lg font-medium">Product Type</h2>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="max-w-xs text-center">{productType.description}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                  <div className={`
+                    text-sm font-medium px-4 py-3 rounded-md border text-center
+                    ${productType.variant === 'default' 
+                      ? 'bg-primary/10 border-primary/30 text-primary' 
+                      : productType.variant === 'secondary'
+                      ? 'bg-secondary/50 border-secondary text-secondary-foreground'
+                      : 'bg-muted border-muted-foreground/20 text-muted-foreground'
+                    }
+                  `}>
+                    {productType.label}
+                  </div>
                 </Card>
               )}
 
