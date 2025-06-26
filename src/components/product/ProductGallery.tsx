@@ -45,11 +45,11 @@ export function ProductGallery({ images, className, priority = false }: ProductG
       {/* Desktop Layout */}
       <div className="hidden lg:block space-y-6">
         {/* Main image container */}
-        <div className="w-full aspect-video bg-card rounded-lg overflow-hidden relative flex items-center justify-center">
+        <div className="w-full aspect-video bg-card rounded-lg overflow-hidden relative">
           <img 
             src={imageSizes.large}
             alt={currentImage.alt_text || currentImage.file_name}
-            className={`max-w-full max-h-full object-contain transition-opacity duration-300 ${
+            className={`w-full h-full object-cover transition-opacity duration-300 ${
               isLoading ? 'opacity-0' : 'opacity-100'
             }`}
             onLoad={() => setIsLoading(false)}
@@ -100,11 +100,11 @@ export function ProductGallery({ images, className, priority = false }: ProductG
 
       {/* Mobile Layout */}
       <div className="lg:hidden">
-        <div className="aspect-video bg-card rounded-lg overflow-hidden relative flex items-center justify-center">
+        <div className="aspect-video bg-card rounded-lg overflow-hidden relative">
           <img 
             src={imageSizes.large}
             alt={currentImage.alt_text || currentImage.file_name}
-            className={`max-w-full max-h-full object-contain transition-opacity duration-300 ${
+            className={`w-full h-full object-cover transition-opacity duration-300 ${
               isLoading ? 'opacity-0' : 'opacity-100'
             }`}
             onLoad={() => setIsLoading(false)}
