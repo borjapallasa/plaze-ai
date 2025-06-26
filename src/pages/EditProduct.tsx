@@ -168,7 +168,8 @@ export default function EditProduct() {
       const { data, error } = await supabase
         .from('variants')
         .select('*')
-        .eq('product_uuid', id);
+        .eq('product_uuid', id)
+        .order('price', { ascending: true });
 
       if (error) throw error;
       return data || [];
