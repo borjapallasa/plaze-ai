@@ -1,6 +1,6 @@
 import { MainHeader } from "@/components/MainHeader";
 import { AffiliateDashboard } from "@/components/affiliates/AffiliateDashboard";
-import { AffiliateTable } from "@/components/affiliates/AffiliateTable";
+import { UsersTable } from "@/components/admin/users/UsersTable";
 import { ProductCard } from "@/components/ProductCard";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -9,6 +9,7 @@ import { Star, ThumbsUp, TrendingUp, Sparkle, Trophy, Tags } from "lucide-react"
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAffiliateProducts } from "@/hooks/use-affiliate-products";
+import { useUsers } from "@/hooks/admin/useUsers";
 
 const badges = [
   { label: "Trending", icon: TrendingUp, category: null },
@@ -23,6 +24,18 @@ export default function Affiliates() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [filterType, setFilterType] = useState("All");
   const { data: affiliateProducts = [], isLoading, error } = useAffiliateProducts();
+  const { 
+    users, 
+    isLoading: usersLoading, 
+    error: usersError, 
+    searchQuery, 
+    setSearchQuery, 
+    roleFilter, 
+    setRoleFilter, 
+    sortField, 
+    sortDirection, 
+    handleSort 
+  } = useUsers();
 
   const handleBadgeClick = (category: string | null) => {
     setSelectedCategory(prevCategory => 
@@ -84,7 +97,22 @@ export default function Affiliates() {
               </div>
 
               <TabsContent value="users">
-                <AffiliateTable />
+                {usersLoading ? (
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">Loading users...</p>
+                  </div>
+                ) : usersError ? (
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">Error loading users. Please try again.</p>
+                  </div>
+                ) : (
+                  <UsersTable 
+                    users={users}
+                    sortField={sortField}
+                    sortDirection={sortDirection}
+                    onSort={handleSort}
+                  />
+                )}
               </TabsContent>
 
               <TabsContent value="product-transactions">
