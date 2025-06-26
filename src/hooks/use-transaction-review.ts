@@ -51,7 +51,7 @@ export function useTransactionReview(transactionUuid: string | undefined) {
         created_at: review.created_at,
         verified: Boolean(review.verified),
         transaction_uuid: transactionUuid,
-      }));
+      })) as TransactionReview[];
     },
     enabled: !!transactionUuid,
   });
