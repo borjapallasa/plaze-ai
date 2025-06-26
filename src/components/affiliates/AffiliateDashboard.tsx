@@ -6,6 +6,7 @@ import { MoreHorizontal, Copy, DollarSign, Users, TrendingUp, CreditCard, Extern
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useAffiliateData } from "@/hooks/use-affiliate-data";
 import { useUserProfile } from "@/hooks/use-user-profile";
+import { PaymentSettingsDialog } from "./PaymentSettingsDialog";
 
 export function AffiliateDashboard() {
   const { data: affiliateData, isLoading: affiliateLoading } = useAffiliateData();
@@ -48,10 +49,12 @@ export function AffiliateDashboard() {
                 <ExternalLink className="h-4 w-4 mr-2" />
                 View Analytics
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard className="h-4 w-4 mr-2" />
-                Payment Settings
-              </DropdownMenuItem>
+              <PaymentSettingsDialog>
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                  <CreditCard className="h-4 w-4 mr-2" />
+                  Payment Settings
+                </DropdownMenuItem>
+              </PaymentSettingsDialog>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
