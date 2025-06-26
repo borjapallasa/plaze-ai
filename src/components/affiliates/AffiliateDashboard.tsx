@@ -4,11 +4,28 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MoreHorizontal, Copy, DollarSign, Users, TrendingUp, CreditCard, ExternalLink } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useAffiliateData } from "@/hooks/use-affiliate-data";
+import { useUserProfile } from "@/hooks/use-user-profile";
 
 export function AffiliateDashboard() {
+  const { data: affiliateData, isLoading: affiliateLoading } = useAffiliateData();
+  const { data: userProfile } = useUserProfile();
+
   const handleCopyLink = () => {
-    navigator.clipboard.writeText("https://nocodeclick.com/sign-up?ref=BorjaLBLY");
+    const affiliateCode = affiliateData?.affiliate_code || 'DEFAULT';
+    navigator.clipboard.writeText(`https://nocodeclick.com/sign-up?ref=${affiliateCode}`);
   };
+
+  if (affiliateLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded w-1/3 mb-2"></div>
+          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -48,9 +65,11 @@ export function AffiliateDashboard() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">$121.14</div>
+            <div className="text-2xl font-bold">
+              ${(affiliateData?.commissions_made || 0).toFixed(2)}
+            </div>
             <p className="text-xs text-muted-foreground">
-              +12% from last month
+              Total earned commissions
             </p>
           </CardContent>
         </Card>
@@ -61,7 +80,9 @@ export function AffiliateDashboard() {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">$121.14</div>
+            <div className="text-2xl font-bold">
+              ${(affiliateData?.commissions_available || 0).toFixed(2)}
+            </div>
             <p className="text-xs text-muted-foreground">
               Ready for payout
             </p>
@@ -74,7 +95,9 @@ export function AffiliateDashboard() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">4</div>
+            <div className="text-2xl font-bold">
+              {affiliateData?.affiliate_count || 0}
+            </div>
             <p className="text-xs text-muted-foreground">
               Active referrals
             </p>
@@ -87,7 +110,9 @@ export function AffiliateDashboard() {
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">$0.00</div>
+            <div className="text-2xl font-bold">
+              ${(affiliateData?.commissions_paid || 0).toFixed(2)}
+            </div>
             <p className="text-xs text-muted-foreground">
               Total withdrawn
             </p>
@@ -101,17 +126,21 @@ export function AffiliateDashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               Account Information
-              <Badge variant="secondary">Verified</Badge>
+              <Badge variant={affiliateData?.status === 'active' ? "default" : "secondary"}>
+                {affiliateData?.status === 'active' ? 'Verified' : 'Pending'}
+              </Badge>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
               <p className="text-sm text-muted-foreground">Email Address</p>
-              <p className="font-medium">info@optimalpath.ai</p>
+              <p className="font-medium">{affiliateData?.email || userProfile?.email || 'Not available'}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">PayPal Account</p>
-              <p className="font-medium text-muted-foreground">Not connected</p>
+              <p className="font-medium text-muted-foreground">
+                {affiliateData?.paypal || 'Not connected'}
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -123,7 +152,7 @@ export function AffiliateDashboard() {
           <CardContent className="space-y-4">
             <div className="flex items-center gap-2 p-3 bg-muted rounded-md">
               <code className="flex-1 text-sm break-all">
-                https://nocodeclick.com/sign-up?ref=BorjaLBLY
+                https://nocodeclick.com/sign-up?ref={affiliateData?.affiliate_code || 'DEFAULT'}
               </code>
               <Button variant="ghost" size="icon" onClick={handleCopyLink} className="shrink-0">
                 <Copy className="h-4 w-4" />
