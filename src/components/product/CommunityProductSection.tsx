@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -34,6 +34,12 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
   const { data: communities = [] } = useExpertCommunities(expertUuid);
   const { data: variants = [] } = useProductVariants(productUuid);
   const { data: communityProducts = [], refetch: refetchCommunityProducts } = useCommunityProducts(productUuid);
+
+  // Add debug logging
+  useEffect(() => {
+    console.log('CommunityProductSection props:', { expertUuid, productUuid });
+    console.log('Community products:', communityProducts);
+  }, [expertUuid, productUuid, communityProducts]);
 
   const showVariantSelector = variants.length > 1;
   const selectedCommunityName = communities.find(c => c.community_uuid === selectedCommunity)?.name || "";
@@ -241,7 +247,7 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
                   <div key={cp.community_product_uuid} className="p-3 border rounded-lg bg-muted/50">
                     <div className="flex justify-between items-start">
                       <div className="space-y-1 flex-1">
-                        <p className="font-medium">{cp.community.name}</p>
+                        <p className="font-medium">{cp.community?.name || 'Unknown Community'}</p>
                         <p className="text-sm text-muted-foreground">
                           {cp.name} - {cp.product_type === "paid" ? `$${cp.price}` : "Free"}
                         </p>
@@ -377,6 +383,17 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
           {isAlreadyLinked && !isCommunityProduct && (
             <div className="text-sm text-muted-foreground p-3 bg-muted/30 rounded-lg">
               This product is already linked to a community. Products can only be linked to one community at a time.
+            </div>
+          )}
+
+          {/* Debug information - remove in production */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="mt-4 p-2 bg-gray-100 rounded text-xs">
+              <p>Debug Info:</p>
+              <p>Product UUID: {productUuid}</p>
+              <p>Expert UUID: {expertUuid}</p>
+              <p>Community Products Count: {communityProducts.length}</p>
+              <p>Community Products: {JSON.stringify(communityProducts, null, 2)}</p>
             </div>
           )}
         </div>

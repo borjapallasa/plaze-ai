@@ -8,6 +8,8 @@ export function useCommunityProducts(productUuid?: string) {
     queryFn: async () => {
       if (!productUuid) return [];
       
+      console.log('Fetching community products for product UUID:', productUuid);
+      
       const { data, error } = await supabase
         .from('community_products')
         .select(`
@@ -24,6 +26,7 @@ export function useCommunityProducts(productUuid?: string) {
         throw error;
       }
 
+      console.log('Community products data:', data);
       return data || [];
     },
     enabled: !!productUuid
