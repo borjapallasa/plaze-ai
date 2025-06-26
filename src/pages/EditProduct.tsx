@@ -17,6 +17,7 @@ import { CommunityProductSection } from "@/components/product/CommunityProductSe
 import { AffiliateProductSection } from "@/components/product/AffiliateProductSection";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -345,6 +346,20 @@ export default function EditProduct() {
     }
   };
 
+  const getProductType = () => {
+    const isActive = productStatus === 'active';
+    const hasCommunityProduct = !!product?.community_product_uuid;
+
+    if (isActive && hasCommunityProduct) {
+      return { label: "Dual Product", variant: "default" as const };
+    } else if (isActive && !hasCommunityProduct) {
+      return { label: "Marketplace Only", variant: "secondary" as const };
+    } else if (!isActive && hasCommunityProduct) {
+      return { label: "Community Only", variant: "warning" as const };
+    }
+    return null;
+  };
+
   if (isLoadingProduct || isLoadingVariants) {
     return (
       <div className="min-h-screen bg-background">
@@ -353,6 +368,8 @@ export default function EditProduct() {
       </div>
     );
   }
+
+  const productType = getProductType();
 
   return (
     <div className="min-h-screen bg-background">
@@ -411,6 +428,15 @@ export default function EditProduct() {
             </div>
 
             <div className="lg:col-span-4 space-y-3 sm:space-y-6">
+              {/* Product Type Badge */}
+              {productType && (
+                <div className="flex justify-center">
+                  <Badge variant={productType.variant} className="text-sm px-3 py-1">
+                    {productType.label}
+                  </Badge>
+                </div>
+              )}
+
               {/* Status and Save Controls */}
               <Card className="p-3 sm:p-6">
                 <h2 className="text-lg font-medium mb-3 sm:mb-4">Product Status</h2>
