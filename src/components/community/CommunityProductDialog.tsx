@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { ProductSelector } from "@/components/community/ProductSelector";
+import { VariantSelector } from "@/components/community/VariantSelector";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
@@ -18,6 +19,15 @@ interface Product {
   thumbnail?: string;
   status: string;
   created_at: string;
+}
+
+interface ProductVariant {
+  variant_uuid: string;
+  name: string;
+  price: number;
+  compare_price?: number;
+  files_link?: string;
+  additional_details?: string;
 }
 
 interface CommunityProductDialogProps {
@@ -36,6 +46,7 @@ export function CommunityProductDialog({
   showTemplateSelector,
 }: CommunityProductDialogProps) {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [productType, setProductType] = useState<"free" | "paid">("free");
@@ -50,12 +61,26 @@ export function CommunityProductDialog({
     setPrice(product.price_from ? product.price_from.toString() : "");
     setProductType(product.price_from && product.price_from > 0 ? "paid" : "free");
     setFilesLink("");
+    setSelectedVariant(null); // Reset variant selection when product changes
+  };
+
+  const handleVariantSelect = (variant: ProductVariant) => {
+    setSelectedVariant(variant);
+    setPrice(variant.price ? variant.price.toString() : "");
+    setFilesLink(variant.files_link || "");
   };
 
   const handleSubmit = async () => {
-    if (!name.trim()) {
-      toast.error("Product name is required");
-      return;
+    if (showTemplateSelector) {
+      if (!selectedProduct) {
+        toast.error("Please select a product");
+        return;
+      }
+    } else {
+      if (!name.trim()) {
+        toast.error("Product name is required");
+        return;
+      }
     }
 
     if (productType === "paid" && (!price || parseFloat(price) <= 0)) {
@@ -75,12 +100,12 @@ export function CommunityProductDialog({
       const { data, error } = await supabase
         .from("community_products")
         .insert({
-          name,
+          name: showTemplateSelector ? selectedProduct?.name : name,
           community_uuid: communityUuid,
           product_type: productType,
           price: productType === "paid" ? parseFloat(price) : null,
           payment_link: null,
-          files_link: showTemplateSelector ? null : (filesLink || null),
+          files_link: showTemplateSelector ? (selectedVariant?.files_link || null) : (filesLink || null),
           expert_uuid: expertUuid,
           product_uuid: selectedProduct?.product_uuid || null,
         })
@@ -121,6 +146,7 @@ export function CommunityProductDialog({
       setProductType("free");
       setFilesLink("");
       setSelectedProduct(null);
+      setSelectedVariant(null);
       
     } catch (error) {
       console.error("Error creating product:", error);
@@ -140,10 +166,38 @@ export function CommunityProductDialog({
 
         <div className="space-y-4 py-4">
           {showTemplateSelector && (
-            <ProductSelector
-              onSelect={handleProductSelect}
-              selectedProduct={selectedProduct}
-            />
+            <>
+              <ProductSelector
+                onSelect={handleProductSelect}
+                selectedProduct={selectedProduct}
+              />
+              
+              {selectedProduct && (
+                <VariantSelector
+                  productUuid={selectedProduct.product_uuid}
+                  onSelect={handleVariantSelect}
+                  selectedVariant={selectedVariant}
+                />
+              )}
+              
+              {selectedProduct && (
+                <div className="space-y-2">
+                  <Label htmlFor="community-price">Set Price ($)</Label>
+                  <Input
+                    id="community-price"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    placeholder="0.00"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Set the price for this product in your community (can be different from original)
+                  </p>
+                </div>
+              )}
+            </>
           )}
 
           {!showTemplateSelector && (
