@@ -1,34 +1,17 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  MoreHorizontal, 
-  Copy, 
-  DollarSign, 
-  Users, 
-  TrendingUp, 
-  CreditCard,
-  ExternalLink 
-} from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
+import { MoreHorizontal, Copy, DollarSign, Users, TrendingUp, CreditCard, ExternalLink } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 export function AffiliateDashboard() {
   const handleCopyLink = () => {
     navigator.clipboard.writeText("https://nocodeclick.com/sign-up?ref=BorjaLBLY");
   };
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-foreground">Your affiliate dashboard</h2>
+          
           <p className="text-muted-foreground">Track your performance and manage your affiliate network</p>
         </div>
         <div className="flex items-center gap-2 md:self-start">
@@ -138,12 +121,7 @@ export function AffiliateDashboard() {
               <code className="flex-1 text-sm break-all">
                 https://nocodeclick.com/sign-up?ref=BorjaLBLY
               </code>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={handleCopyLink}
-                className="shrink-0"
-              >
+              <Button variant="ghost" size="icon" onClick={handleCopyLink} className="shrink-0">
                 <Copy className="h-4 w-4" />
               </Button>
             </div>
@@ -153,6 +131,5 @@ export function AffiliateDashboard() {
           </CardContent>
         </Card>
       </div>
-    </div>
-  );
+    </div>;
 }
