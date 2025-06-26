@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { X, Info } from "lucide-react";
@@ -228,35 +227,29 @@ export default function EditProduct() {
     console.log('handleVariantsChange called with:', updatedVariants);
     console.log('Current localVariants:', localVariants);
 
-    // Find variants that were removed (exist in current localVariants but not in updatedVariants)
-    const removedVariants = localVariants.filter(currentVariant => {
-      // Ensure currentVariant and its id exist
-      if (!currentVariant || !currentVariant.id) {
-        console.warn('Found variant without ID:', currentVariant);
-        return false;
-      }
-      
-      // Check if this variant exists in updatedVariants
-      const stillExists = updatedVariants.some(updatedVariant => 
-        updatedVariant && updatedVariant.id && updatedVariant.id === currentVariant.id
-      );
-      
-      return !stillExists;
-    });
+    // Simple approach: find variants that are no longer in the updated list
+    const currentVariantIds = localVariants
+      .filter(v => v && v.id)
+      .map(v => v.id);
+    
+    const updatedVariantIds = updatedVariants
+      .filter(v => v && v.id)
+      .map(v => v.id);
 
-    console.log('Removed variants:', removedVariants);
+    console.log('Current variant IDs:', currentVariantIds);
+    console.log('Updated variant IDs:', updatedVariantIds);
 
-    // Only add to deletedVariantIds if they're not temporary variants (actually exist in database)
-    const removedDatabaseVariants = removedVariants
-      .filter(variant => variant && variant.id && !variant.id.toString().includes('temp_'))
-      .map(variant => variant.id);
+    // Find IDs that were removed
+    const removedIds = currentVariantIds.filter(id => !updatedVariantIds.includes(id));
+    console.log('Removed variant IDs:', removedIds);
 
-    console.log('Removed database variants:', removedDatabaseVariants);
+    // Only add database variants (not temp ones) to deletedVariantIds
+    const removedDatabaseIds = removedIds.filter(id => !id.toString().includes('temp_'));
+    console.log('Removed database variant IDs:', removedDatabaseIds);
 
-    if (removedDatabaseVariants.length > 0) {
+    if (removedDatabaseIds.length > 0) {
       setDeletedVariantIds(prev => {
-        // Avoid duplicates
-        const newDeletedIds = [...new Set([...prev, ...removedDatabaseVariants])];
+        const newDeletedIds = [...new Set([...prev, ...removedDatabaseIds])];
         console.log('Updated deletedVariantIds:', newDeletedIds);
         return newDeletedIds;
       });
@@ -269,7 +262,7 @@ export default function EditProduct() {
     try {
       setIsSaving(true);
       console.log('Saving product with ID:', id);
-      console.log('Deleted variant IDs:', deletedVariantIds);
+      console.log('Deleted variant IDs to remove from database:', deletedVariantIds);
 
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       if (userError) throw userError;
@@ -298,7 +291,7 @@ export default function EditProduct() {
 
       // Delete removed variants from database
       if (deletedVariantIds.length > 0) {
-        console.log('Deleting variants:', deletedVariantIds);
+        console.log('Deleting variants from database:', deletedVariantIds);
         const { error: deleteError } = await supabase
           .from('variants')
           .delete()
@@ -308,7 +301,7 @@ export default function EditProduct() {
           console.error('Error deleting variants:', deleteError);
           throw deleteError;
         }
-        console.log('Successfully deleted variants');
+        console.log('Successfully deleted variants from database');
       }
 
       // Process remaining variants (insert new ones, update existing ones)
@@ -320,6 +313,7 @@ export default function EditProduct() {
 
         if (variant.id.toString().includes('temp_')) {
           // Insert new variant
+          console.log('Inserting new variant:', variant);
           const { error: insertError } = await supabase
             .from('variants')
             .insert({
@@ -340,6 +334,7 @@ export default function EditProduct() {
           }
         } else {
           // Update existing variant
+          console.log('Updating existing variant:', variant);
           const { error: updateError } = await supabase
             .from('variants')
             .update({
