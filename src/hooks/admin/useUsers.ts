@@ -11,9 +11,7 @@ interface UserData {
   first_name: string;
   last_name: string;
   created_at: string;
-  is_expert: boolean;
-  is_affiliate: boolean;
-  is_admin: boolean;
+  total_spent: number;
 }
 
 export function useUsers() {
@@ -37,7 +35,7 @@ export function useUsers() {
 
       const { data, error } = await supabase
         .from('users')
-        .select('user_uuid, email, first_name, last_name, created_at, is_expert, is_affiliate, is_admin')
+        .select('user_uuid, email, first_name, last_name, created_at, total_spent')
         .eq('referral_affiliate_code', affiliateData.affiliate_code)
         .order('created_at', { ascending: false });
 
@@ -55,9 +53,7 @@ export function useUsers() {
         first_name: user.first_name || '',
         last_name: user.last_name || '',
         created_at: user.created_at,
-        is_expert: user.is_expert || false,
-        is_affiliate: user.is_affiliate || false,
-        is_admin: user.is_admin || false
+        total_spent: user.total_spent || 0
       })) as UserData[];
       
       console.log('Transformed users for affiliate:', transformedData);
@@ -83,18 +79,7 @@ export function useUsers() {
             (user.first_name?.toLowerCase().includes(searchQuery.toLowerCase()) || false) ||
             (user.last_name?.toLowerCase().includes(searchQuery.toLowerCase()) || false);
           
-          let matchesRole = false;
-          if (roleFilter === "all") {
-            matchesRole = true;
-          } else if (roleFilter === "experts") {
-            matchesRole = user.is_expert;
-          } else if (roleFilter === "affiliates") {
-            matchesRole = user.is_affiliate;
-          } else if (roleFilter === "admins") {
-            matchesRole = user.is_admin;
-          }
-          
-          return matchesSearch && matchesRole;
+          return matchesSearch;
         })
         .sort((a, b) => {
           const aValue = a[sortField];
@@ -107,10 +92,6 @@ export function useUsers() {
           
           if (typeof aValue === "number" && typeof bValue === "number") {
             return (aValue - bValue) * multiplier;
-          }
-          
-          if (typeof aValue === "boolean" && typeof bValue === "boolean") {
-            return (aValue === bValue ? 0 : aValue ? 1 : -1) * multiplier;
           }
           
           return 0;
