@@ -80,7 +80,7 @@ export function CommunityProductDialog({
           product_type: productType,
           price: productType === "paid" ? parseFloat(price) : null,
           payment_link: null,
-          files_link: filesLink || null,
+          files_link: showTemplateSelector ? null : (filesLink || null),
           expert_uuid: expertUuid,
           product_uuid: selectedProduct?.product_uuid || null,
         })
@@ -146,71 +146,75 @@ export function CommunityProductDialog({
             />
           )}
 
-          <div className="space-y-2">
-            <Label htmlFor="name">Product Name</Label>
-            <Input
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Enter product name"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label>Product Type</Label>
-            <div className="flex gap-4">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="productType"
-                  value="free"
-                  checked={productType === "free"}
-                  onChange={() => setProductType("free")}
-                  className="h-4 w-4"
+          {!showTemplateSelector && (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="name">Product Name</Label>
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Enter product name"
                 />
-                <span>Free</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="productType"
-                  value="paid"
-                  checked={productType === "paid"}
-                  onChange={() => setProductType("paid")}
-                  className="h-4 w-4"
-                />
-                <span>Paid</span>
-              </label>
-            </div>
-          </div>
+              </div>
 
-          {productType === "paid" && (
-            <div className="space-y-2">
-              <Label htmlFor="price">Price ($)</Label>
-              <Input
-                id="price"
-                type="number"
-                min="0.01"
-                step="0.01"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                placeholder="19.99"
-              />
-            </div>
+              <div className="space-y-2">
+                <Label>Product Type</Label>
+                <div className="flex gap-4">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="productType"
+                      value="free"
+                      checked={productType === "free"}
+                      onChange={() => setProductType("free")}
+                      className="h-4 w-4"
+                    />
+                    <span>Free</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="productType"
+                      value="paid"
+                      checked={productType === "paid"}
+                      onChange={() => setProductType("paid")}
+                      className="h-4 w-4"
+                    />
+                    <span>Paid</span>
+                  </label>
+                </div>
+              </div>
+
+              {productType === "paid" && (
+                <div className="space-y-2">
+                  <Label htmlFor="price">Price ($)</Label>
+                  <Input
+                    id="price"
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    placeholder="19.99"
+                  />
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="files-link">Files Link</Label>
+                <Input
+                  id="files-link"
+                  value={filesLink}
+                  onChange={(e) => setFilesLink(e.target.value)}
+                  placeholder="https://example.com/files"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Link to downloadable files for this product
+                </p>
+              </div>
+            </>
           )}
-
-          <div className="space-y-2">
-            <Label htmlFor="files-link">Files Link</Label>
-            <Input
-              id="files-link"
-              value={filesLink}
-              onChange={(e) => setFilesLink(e.target.value)}
-              placeholder="https://example.com/files"
-            />
-            <p className="text-xs text-muted-foreground">
-              Link to downloadable files for this product
-            </p>
-          </div>
         </div>
 
         <DialogFooter>

@@ -28,7 +28,7 @@ export function useUserProducts() {
         return [];
       }
 
-      // Then fetch products for this expert
+      // Then fetch products for this expert where community_product_uuid is empty
       const { data, error } = await supabase
         .from('products')
         .select(`
@@ -41,6 +41,7 @@ export function useUserProducts() {
         `)
         .eq('expert_uuid', expertData.expert_uuid)
         .eq('status', 'active')
+        .is('community_product_uuid', null)
         .order('created_at', { ascending: false });
 
       if (error) {
