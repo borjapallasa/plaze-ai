@@ -118,7 +118,23 @@ export function CommunityProductDialog({
         throw error;
       }
 
-      // Step 2: Create the product relationship
+      // Step 2: If creating from template, update the original product with community_product_uuid
+      if (showTemplateSelector && selectedProduct) {
+        const { error: updateError } = await supabase
+          .from("products")
+          .update({
+            community_product_uuid: data.community_product_uuid
+          })
+          .eq("product_uuid", selectedProduct.product_uuid);
+
+        if (updateError) {
+          console.error("Error updating original product:", updateError);
+          // Don't throw here as the community product was already created successfully
+          toast.error("Product created but failed to link to original template");
+        }
+      }
+
+      // Step 3: Create the product relationship
       const { error: relationshipError } = await supabase
         .from("community_product_relationships")
         .insert({
@@ -136,6 +152,7 @@ export function CommunityProductDialog({
       // Invalidate related queries to refresh the UI
       queryClient.invalidateQueries({ queryKey: ['communityProducts', communityUuid] });
       queryClient.invalidateQueries({ queryKey: ['communityProductRelationships'] });
+      queryClient.invalidateQueries({ queryKey: ['userProducts', user.id] }); // Refresh user products list
       
       toast.success("Product added successfully");
       onOpenChange(false);
