@@ -69,7 +69,6 @@ export default function Classroom() {
   const [isAddLessonOpen, setIsAddLessonOpen] = useState(false);
   const [isEditLessonOpen, setIsEditLessonOpen] = useState(false);
   const [isDeleteLessonOpen, setIsDeleteLessonOpen] = useState(false);
-  const [isEditClassroomOpen, setIsEditClassroomOpen] = useState(false);
   const [isProcessingPurchase, setIsProcessingPurchase] = useState(false);
   const navigate = useNavigate();
   const [newLessonData, setNewLessonData] = useState({
@@ -78,11 +77,6 @@ export default function Classroom() {
     video_url: ''
   });
   const [editLessonData, setEditLessonData] = useState({
-    name: '',
-    description: '',
-    video_url: ''
-  });
-  const [editClassroomData, setEditClassroomData] = useState({
     name: '',
     description: '',
     video_url: ''
@@ -322,39 +316,6 @@ export default function Classroom() {
       toast({
         title: "Error",
         description: "Failed to delete lesson. Please try again.",
-        variant: "destructive"
-      });
-    }
-  });
-
-  const updateClassroomMutation = useMutation({
-    mutationFn: async (classroomData: any) => {
-      const { data, error } = await supabase
-        .from('classrooms')
-        .update(classroomData)
-        .eq('classroom_uuid', id)
-        .select();
-
-      if (error) {
-        console.error("Error updating classroom:", error);
-        throw error;
-      }
-
-      return data;
-    },
-    onSuccess: () => {
-      setIsEditClassroomOpen(false);
-      queryClient.invalidateQueries({ queryKey: ['classroom', id] });
-      toast({
-        title: "Success",
-        description: "Classroom updated successfully",
-      });
-    },
-    onError: (error) => {
-      console.error("Error updating classroom:", error);
-      toast({
-        title: "Error",
-        description: "Failed to update classroom. Please try again.",
         variant: "destructive"
       });
     }
@@ -717,42 +678,23 @@ export default function Classroom() {
                               )}
                             />
                           </button>
-                          <div className="flex items-center space-x-2">
-                            {viewMode === 'classroom' && isOwner && (
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={handleOpenEditClassroom}
-                                    className="text-muted-foreground"
-                                  >
-                                    <Pencil className="h-4 w-4" />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Edit classroom details</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            )}
-                            {!isExpanded && lessons && lessons.length > 0 && (
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={handleBackToClassroom}
-                                    className="text-muted-foreground"
-                                  >
-                                    <Info className="h-4 w-4" />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Click to view classroom overview</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            )}
-                          </div>
+                          {!isExpanded && lessons && lessons.length > 0 && (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={handleBackToClassroom}
+                                  className="text-muted-foreground"
+                                >
+                                  <Info className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Click to view classroom overview</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          )}
                         </div>
 
                         <div className={cn(
@@ -848,42 +790,23 @@ export default function Classroom() {
                               )}
                             />
                           </button>
-                          <div className="flex items-center space-x-1">
-                            {viewMode === 'classroom' && isOwner && (
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={handleOpenEditClassroom}
-                                    className="text-muted-foreground"
-                                  >
-                                    <Pencil className="h-4 w-4" />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Edit classroom details</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            )}
-                            {!isExpanded && lessons && lessons.length > 0 && (
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={handleBackToClassroom}
-                                    className="text-muted-foreground"
-                                  >
-                                    <Info className="h-4 w-4" />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Click to view classroom overview</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            )}
-                          </div>
+                          {!isExpanded && lessons && lessons.length > 0 && (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={handleBackToClassroom}
+                                  className="text-muted-foreground"
+                                >
+                                  <Info className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Click to view classroom overview</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          )}
                         </div>
 
                         <div className={cn(
@@ -1081,56 +1004,6 @@ export default function Classroom() {
                     disabled={deleteLessonMutation.isPending}
                   >
                     {deleteLessonMutation.isPending ? "Deleting..." : "Delete Lesson"}
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-
-            {/* Edit Classroom Dialog */}
-            <Dialog open={isEditClassroomOpen} onOpenChange={setIsEditClassroomOpen}>
-              <DialogContent className="sm:max-w-[500px]">
-                <DialogHeader>
-                  <DialogTitle>Edit Classroom</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4 py-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="edit-classroom-name">Name</Label>
-                    <Input
-                      id="edit-classroom-name"
-                      placeholder="Enter classroom name"
-                      value={editClassroomData.name}
-                      onChange={(e) => setEditClassroomData({ ...editClassroomData, name: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="edit-classroom-description">Description</Label>
-                    <ProductEditor
-                      value={editClassroomData.description}
-                      onChange={(value) => setEditClassroomData({ ...editClassroomData, description: value })}
-                      placeholder="Enter classroom description"
-                      minHeight="150px"
-                      maxHeight="250px"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="edit-classroom-video_url">Video URL</Label>
-                    <Input
-                      id="edit-classroom-video_url"
-                      placeholder="Enter video URL"
-                      value={editClassroomData.video_url}
-                      onChange={(e) => setEditClassroomData({ ...editClassroomData, video_url: e.target.value })}
-                    />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="outline">Cancel</Button>
-                  </DialogClose>
-                  <Button
-                    onClick={handleEditClassroom}
-                    disabled={updateClassroomMutation.isPending}
-                  >
-                    {updateClassroomMutation.isPending ? "Updating..." : "Update Classroom"}
                   </Button>
                 </DialogFooter>
               </DialogContent>
