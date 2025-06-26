@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { X, Info } from "lucide-react";
@@ -184,7 +185,9 @@ export default function EditProduct() {
         price: v.price?.toString() || "0",
         comparePrice: v.compare_price?.toString() || "0",
         highlight: v.highlighted || false,
-        tags: Array.isArray(v.tags) ? v.tags : []
+        tags: Array.isArray(v.tags) ? v.tags : [],
+        filesLink: v.files_link || "",
+        additionalDetails: v.additional_details || ""
       })));
     }
   }, [variants]);
@@ -213,25 +216,47 @@ export default function EditProduct() {
       price: "0",
       comparePrice: "0",
       highlight: false,
-      tags: []
+      tags: [],
+      filesLink: "",
+      additionalDetails: ""
     };
 
     setLocalVariants(prev => [...prev, newVariant]);
   };
 
   const handleVariantsChange = (updatedVariants: any[]) => {
+    console.log('handleVariantsChange called with:', updatedVariants);
+    console.log('Current localVariants:', localVariants);
+
     // Find variants that were removed (exist in current localVariants but not in updatedVariants)
-    const removedVariants = localVariants.filter(currentVariant => 
-      !updatedVariants.find(updatedVariant => updatedVariant.id === currentVariant.id)
-    );
+    const removedVariants = localVariants.filter(currentVariant => {
+      // Ensure currentVariant and its id exist
+      if (!currentVariant || !currentVariant.id) {
+        console.warn('Found variant without ID:', currentVariant);
+        return false;
+      }
+      
+      // Check if this variant exists in updatedVariants
+      return !updatedVariants.find(updatedVariant => 
+        updatedVariant && updatedVariant.id && updatedVariant.id === currentVariant.id
+      );
+    });
+
+    console.log('Removed variants:', removedVariants);
 
     // Only add to deletedVariantIds if they're not temporary variants (actually exist in database)
     const removedDatabaseVariants = removedVariants
-      .filter(variant => !variant.id.toString().includes('temp_'))
+      .filter(variant => variant && variant.id && !variant.id.toString().includes('temp_'))
       .map(variant => variant.id);
 
+    console.log('Removed database variants:', removedDatabaseVariants);
+
     if (removedDatabaseVariants.length > 0) {
-      setDeletedVariantIds(prev => [...prev, ...removedDatabaseVariants]);
+      setDeletedVariantIds(prev => {
+        const newDeletedIds = [...prev, ...removedDatabaseVariants];
+        console.log('Updated deletedVariantIds:', newDeletedIds);
+        return newDeletedIds;
+      });
     }
 
     setLocalVariants(updatedVariants);
@@ -285,6 +310,11 @@ export default function EditProduct() {
 
       // Process remaining variants (insert new ones, update existing ones)
       for (const variant of localVariants) {
+        if (!variant || !variant.id) {
+          console.warn('Skipping variant without ID:', variant);
+          continue;
+        }
+
         if (variant.id.toString().includes('temp_')) {
           // Insert new variant
           const { error: insertError } = await supabase
@@ -516,7 +546,7 @@ export default function EditProduct() {
                         </Tooltip>
                       </TooltipProvider>
                     </div>
-                    <div className="bg-gray-50 border border-gray-200 rounded-md px-3 py-2">
+                    <div className="bg-gray-50 border border-gray-200 rounded-md px-3 py-2 cursor-default">
                       <span className="text-sm font-semibold text-gray-900">
                         {productType.label}
                       </span>
