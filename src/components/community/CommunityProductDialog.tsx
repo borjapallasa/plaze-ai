@@ -118,8 +118,8 @@ export function CommunityProductDialog({
         throw error;
       }
 
-      // Step 2: If creating from template, update the original product with community_product_uuid
       if (showTemplateSelector && selectedProduct) {
+        // Step 2: If creating from template, update the original product with community_product_uuid
         const { error: updateError } = await supabase
           .from("products")
           .update({
@@ -132,9 +132,45 @@ export function CommunityProductDialog({
           // Don't throw here as the community product was already created successfully
           toast.error("Product created but failed to link to original template");
         }
+      } else {
+        // Step 2: If creating from scratch, create a new product record
+        const { data: productData, error: productError } = await supabase
+          .from("products")
+          .insert({
+            name: name,
+            user_uuid: user.id,
+            expert_uuid: expertUuid,
+            status: 'draft',
+            community_product_uuid: data.community_product_uuid
+          })
+          .select()
+          .single();
+
+        if (productError) {
+          console.error("Error creating product:", productError);
+          toast.error("Failed to create product record");
+          throw productError;
+        }
+
+        // Step 3: Create a variant for the new product
+        const { error: variantError } = await supabase
+          .from("variants")
+          .insert({
+            user_uuid: user.id,
+            name: name,
+            price: productType === "paid" ? parseFloat(price) : 0,
+            product_uuid: productData.product_uuid,
+            files_link: filesLink || null
+          });
+
+        if (variantError) {
+          console.error("Error creating variant:", variantError);
+          toast.error("Product created but failed to create variant");
+          // Don't throw here as the main records were created
+        }
       }
 
-      // Step 3: Create the product relationship
+      // Step 4: Create the product relationship
       const { error: relationshipError } = await supabase
         .from("community_product_relationships")
         .insert({
