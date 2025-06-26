@@ -10,6 +10,7 @@ interface UserTransaction {
   seller_name: string | null;
   products_transactions_uuid?: string | null;
   community_transaction_uuid?: string | null;
+  afiliate_fees: number;
 }
 
 export function useUserTransactions(userUuid: string) {
@@ -27,6 +28,7 @@ export function useUserTransactions(userUuid: string) {
           created_at,
           expert_uuid,
           products_transactions_uuid,
+          afiliate_fees,
           experts!inner(name),
           products_transactions!left(
             expert_uuid,
@@ -81,7 +83,8 @@ export function useUserTransactions(userUuid: string) {
           created_at: transaction.created_at,
           seller_name: sellerName,
           products_transactions_uuid: transaction.products_transactions_uuid,
-          community_transaction_uuid: communityTransactionUuid
+          community_transaction_uuid: communityTransactionUuid,
+          afiliate_fees: transaction.afiliate_fees || 0
         });
       }
 

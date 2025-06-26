@@ -32,7 +32,7 @@ export function UserDetailsDialog({ open, onOpenChange, userUuid }: UserDetailsD
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-5xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>User Details</DialogTitle>
         </DialogHeader>
@@ -98,6 +98,7 @@ export function UserDetailsDialog({ open, onOpenChange, userUuid }: UserDetailsD
                         <TableHead>Date</TableHead>
                         <TableHead>Type</TableHead>
                         <TableHead>Amount</TableHead>
+                        <TableHead>Affiliate Fees</TableHead>
                         <TableHead>Seller</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -114,6 +115,9 @@ export function UserDetailsDialog({ open, onOpenChange, userUuid }: UserDetailsD
                           </TableCell>
                           <TableCell>
                             ${(transaction.amount || 0).toFixed(2)}
+                          </TableCell>
+                          <TableCell>
+                            ${(transaction.afiliate_fees || 0).toFixed(2)}
                           </TableCell>
                           <TableCell>
                             {transaction.seller_name || 'Unknown'}
