@@ -24,6 +24,7 @@ export function useProductVariants(productUuid?: string) {
         throw error;
       }
 
+      console.log("Raw variants data from database:", data);
       console.log("Variants found:", data.length);
 
       return data.map((variant, index) => {
@@ -42,20 +43,28 @@ export function useProductVariants(productUuid?: string) {
           }
         }
 
-        return {
+        const mappedVariant = {
           id: variant.variant_uuid,
           name: variant.name || "Lorem Ipsum Package",
           price: variant.price || 99.99,
-          comparePrice: variant.compare_price || 0, // Fixed: map compare_price correctly
+          comparePrice: variant.compare_price || 0, // Ensure compare_price is properly mapped
           label: "Package",
           highlight: variant.highlighted || index === 1,
           features: parsedTags.length > 0 
             ? parsedTags 
             : ["Core Features", "Basic Support"],
           tags: parsedTags,
-          filesLink: variant.files_link || "", // Fixed: map files_link correctly  
-          additionalDetails: variant.additional_details || "" // Fixed: map additional_details correctly
+          filesLink: variant.files_link || "",
+          additionalDetails: variant.additional_details || "",
+          // Include database fields for debugging
+          variant_uuid: variant.variant_uuid,
+          compare_price: variant.compare_price,
+          files_link: variant.files_link,
+          additional_details: variant.additional_details
         };
+
+        console.log("Mapped variant:", mappedVariant);
+        return mappedVariant;
       });
     },
     enabled: !!productUuid

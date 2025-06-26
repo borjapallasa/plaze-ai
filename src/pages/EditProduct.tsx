@@ -182,7 +182,7 @@ export default function EditProduct() {
         id: v.variant_uuid,
         name: v.name || "",
         price: v.price?.toString() || "0",
-        comparePrice: v.compare_price?.toString() || "0",
+        comparePrice: v.compare_price?.toString() || "0", // Fixed: properly map compare_price
         highlight: v.highlighted || false,
         tags: Array.isArray(v.tags) ? v.tags : [],
         filesLink: v.files_link || "",
@@ -227,34 +227,34 @@ export default function EditProduct() {
     console.log('handleVariantsChange called with:', updatedVariants);
     console.log('Current localVariants:', localVariants);
 
-    // Simple approach: find variants that are no longer in the updated list
-    const currentVariantIds = localVariants
-      .filter(v => v && v.id)
-      .map(v => v.id);
-    
-    const updatedVariantIds = updatedVariants
-      .filter(v => v && v.id)
-      .map(v => v.id);
+    // Get current variant IDs for comparison
+    const currentIds = localVariants.map(v => v?.id).filter(Boolean);
+    const updatedIds = updatedVariants.map(v => v?.id).filter(Boolean);
 
-    console.log('Current variant IDs:', currentVariantIds);
-    console.log('Updated variant IDs:', updatedVariantIds);
+    console.log('Current variant IDs:', currentIds);
+    console.log('Updated variant IDs:', updatedIds);
 
-    // Find IDs that were removed
-    const removedIds = currentVariantIds.filter(id => !updatedVariantIds.includes(id));
+    // Find variants that were removed
+    const removedIds = currentIds.filter(id => !updatedIds.includes(id));
     console.log('Removed variant IDs:', removedIds);
 
-    // Only add database variants (not temp ones) to deletedVariantIds
-    const removedDatabaseIds = removedIds.filter(id => !id.toString().includes('temp_'));
-    console.log('Removed database variant IDs:', removedDatabaseIds);
+    // Only track database variants for deletion (not temp ones)
+    const databaseVariantsToDelete = removedIds.filter(id => 
+      id && !id.toString().startsWith('temp_')
+    );
 
-    if (removedDatabaseIds.length > 0) {
+    console.log('Database variants to delete:', databaseVariantsToDelete);
+
+    // Update deletedVariantIds if we have variants to delete
+    if (databaseVariantsToDelete.length > 0) {
       setDeletedVariantIds(prev => {
-        const newDeletedIds = [...new Set([...prev, ...removedDatabaseIds])];
-        console.log('Updated deletedVariantIds:', newDeletedIds);
-        return newDeletedIds;
+        const updated = [...new Set([...prev, ...databaseVariantsToDelete])];
+        console.log('Updated deletedVariantIds:', updated);
+        return updated;
       });
     }
 
+    // Update local variants
     setLocalVariants(updatedVariants);
   };
 
