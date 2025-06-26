@@ -28,12 +28,12 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
 
   return (
     <Card className="p-3 sm:p-6">
-      <h2 className="text-lg font-medium mb-3 sm:mb-4">Include in your community</h2>
+      <h2 className="text-lg font-medium mb-3 sm:mb-4">Community product</h2>
       
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <Label htmlFor="community-product-toggle" className="text-base font-medium">
-            Community Product
+            Include in your community
           </Label>
           <Switch
             id="community-product-toggle"

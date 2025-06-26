@@ -15,7 +15,7 @@ export interface UserDetailsData {
 }
 
 export function useUserDetails(userId: string | undefined) {
-  return useQuery({
+  const query = useQuery({
     queryKey: ['user-details', userId],
     queryFn: async (): Promise<UserDetailsData> => {
       if (!userId) throw new Error('User ID is required');
@@ -41,4 +41,9 @@ export function useUserDetails(userId: string | undefined) {
     },
     enabled: !!userId
   });
+
+  return {
+    ...query,
+    user: query.data
+  };
 }
