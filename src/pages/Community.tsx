@@ -22,15 +22,6 @@ import type { ProductImage } from "@/types/product-images";
 import { CommunityProductDialog } from "@/components/community/CommunityProductDialog";
 import { formatNumber } from "@/lib/utils";
 import { ClassroomDialog } from "@/components/community/ClassroomDialog";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { CommunitySubscriptionSortSelector } from "@/components/communities/CommunitySubscriptionSortSelector";
 
 interface Link {
   name: string;
@@ -75,7 +66,6 @@ export default function CommunityPage() {
   const [isClassroomDialogOpen, setIsClassroomDialogOpen] = useState(false);
   const [showProductTemplateSelector, setShowProductTemplateSelector] = useState(false);
   const [activeTab, setActiveTab] = useState("threads");
-  const [membersSortBy, setMembersSortBy] = useState("date-desc");
   const { user } = useAuth();
   const { images } = useCommunityImages(communityId);
 
@@ -195,9 +185,9 @@ export default function CommunityPage() {
   });
 
   const { data: communityMembers, isLoading: isMembersLoading } = useQuery({
-    queryKey: ['community-members', communityId, membersSortBy],
+    queryKey: ['community-members', communityId],
     queryFn: async () => {
-      let query = supabase
+      const { data, error } = await supabase
         .from('community_subscriptions')
         .select(`
           community_subscription_uuid,
@@ -211,20 +201,8 @@ export default function CommunityPage() {
           )
         `)
         .eq('community_uuid', communityId)
-        .eq('status', 'active');
-
-      // Apply sorting
-      if (membersSortBy === 'name-asc') {
-        query = query.order('first_name', { ascending: true, referencedTable: 'users' });
-      } else if (membersSortBy === 'name-desc') {
-        query = query.order('first_name', { ascending: false, referencedTable: 'users' });
-      } else if (membersSortBy === 'date-asc') {
-        query = query.order('created_at', { ascending: true });
-      } else if (membersSortBy === 'date-desc') {
-        query = query.order('created_at', { ascending: false });
-      }
-
-      const { data, error } = await query;
+        .eq('status', 'active')
+        .order('created_at', { ascending: false });
 
       if (error) {
         console.error("Error fetching community members:", error);
@@ -802,14 +780,6 @@ export default function CommunityPage() {
           </TabsContent>
 
           <TabsContent value="members" className="space-y-6">
-            <div className="flex flex-col sm:flex-row gap-4 mb-4">
-              <div className="flex-1"></div>
-              <CommunitySubscriptionSortSelector 
-                sortBy={membersSortBy} 
-                onSortChange={setMembersSortBy} 
-              />
-            </div>
-            
             <Card>
               <CardContent className="p-0">
                 {isMembersLoading ? (
@@ -827,43 +797,31 @@ export default function CommunityPage() {
                     </div>
                   </div>
                 ) : communityMembers && communityMembers.length > 0 ? (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Member</TableHead>
-                        <TableHead>Joined</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {communityMembers.map((member) => (
-                        <TableRow key={member.community_subscription_uuid}>
-                          <TableCell>
-                            <div className="flex items-center space-x-3">
-                              <Avatar className="h-10 w-10">
-                                <AvatarImage 
-                                  src={member.users.user_thumbnail || "https://github.com/shadcn.png"} 
-                                  alt={`${member.users.first_name} ${member.users.last_name}`}
-                                />
-                                <AvatarFallback>
-                                  {`${member.users.first_name?.charAt(0) || ''}${member.users.last_name?.charAt(0) || ''}`}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div>
-                                <p className="font-medium">
-                                  {member.users.first_name} {member.users.last_name}
-                                </p>
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <span className="text-sm text-muted-foreground">
-                              {new Date(member.created_at).toLocaleDateString()}
-                            </span>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                  <div className="p-6 space-y-4">
+                    {communityMembers.map((member) => (
+                      <div key={member.community_subscription_uuid} className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent transition-colors">
+                        <div className="flex items-center space-x-3">
+                          <Avatar className="h-12 w-12">
+                            <AvatarImage 
+                              src={member.users.user_thumbnail || "https://github.com/shadcn.png"} 
+                              alt={`${member.users.first_name} ${member.users.last_name}`}
+                            />
+                            <AvatarFallback>
+                              {`${member.users.first_name?.charAt(0) || ''}${member.users.last_name?.charAt(0) || ''}`}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-medium">
+                              {member.users.first_name} {member.users.last_name}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              Member since {new Date(member.created_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 ) : (
                   <div className="p-6 text-center">
                     <p className="text-muted-foreground">No active members found in this community.</p>
