@@ -20,6 +20,7 @@ import { useCommunityImages } from "@/hooks/use-community-images";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import type { ProductImage } from "@/types/product-images";
 import { CommunityProductDialog } from "@/components/community/CommunityProductDialog";
+import { ProductCreationDialog } from "@/components/community/ProductCreationDialog";
 import { formatNumber } from "@/lib/utils";
 import { ClassroomDialog } from "@/components/community/ClassroomDialog";
 
@@ -63,6 +64,7 @@ export default function CommunityPage() {
   const [isThreadOpen, setIsThreadOpen] = useState(false);
   const [selectedThread, setSelectedThread] = useState<any>(null);
   const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
+  const [isProductCreationDialogOpen, setIsProductCreationDialogOpen] = useState(false);
   const [isClassroomDialogOpen, setIsClassroomDialogOpen] = useState(false);
   const [showProductTemplateSelector, setShowProductTemplateSelector] = useState(false);
   const [activeTab, setActiveTab] = useState("threads");
@@ -423,19 +425,22 @@ export default function CommunityPage() {
   const handleOpenProductDialog = (useTemplates: boolean) => {
     setShowProductTemplateSelector(useTemplates);
     setIsProductDialogOpen(true);
+    setIsProductCreationDialogOpen(false);
+  };
+
+  const handleOpenProductCreationDialog = () => {
+    setIsProductCreationDialogOpen(true);
   };
 
   const renderAddProductButton = () => {
     if (isOwner) {
       return (
-        <div className="dropdown relative">
-          <Button
-            className="flex items-center gap-2"
-            onClick={() => handleOpenProductDialog(false)}
-          >
-            <span>Add Product</span>
-          </Button>
-        </div>
+        <Button
+          className="flex items-center gap-2"
+          onClick={handleOpenProductCreationDialog}
+        >
+          <span>Add Product</span>
+        </Button>
       );
     }
     return null;
@@ -852,6 +857,13 @@ export default function CommunityPage() {
             setSelectedThread(null);
           }}
           thread={selectedThread}
+        />
+
+        <ProductCreationDialog
+          open={isProductCreationDialogOpen}
+          onOpenChange={setIsProductCreationDialogOpen}
+          onSelectFromScratch={() => handleOpenProductDialog(false)}
+          onSelectFromTemplate={() => handleOpenProductDialog(true)}
         />
 
         <CommunityProductDialog
