@@ -649,8 +649,8 @@ export type Database = {
           community_uuid: string | null
           created_at: string
           email: string | null
+          expert_user_uuid: string | null
           id: number
-          seller_user_uuid: string | null
           status:
             | Database["public"]["Enums"]["community_subscription_status"]
             | null
@@ -675,8 +675,8 @@ export type Database = {
           community_uuid?: string | null
           created_at?: string
           email?: string | null
+          expert_user_uuid?: string | null
           id?: number
-          seller_user_uuid?: string | null
           status?:
             | Database["public"]["Enums"]["community_subscription_status"]
             | null
@@ -701,8 +701,8 @@ export type Database = {
           community_uuid?: string | null
           created_at?: string
           email?: string | null
+          expert_user_uuid?: string | null
           id?: number
-          seller_user_uuid?: string | null
           status?:
             | Database["public"]["Enums"]["community_subscription_status"]
             | null
@@ -735,11 +735,11 @@ export type Database = {
             referencedColumns: ["community_uuid"]
           },
           {
-            foreignKeyName: "community_subscriptions_seller_user_uuid_fkey"
-            columns: ["seller_user_uuid"]
+            foreignKeyName: "community_subscriptions_expert_user_uuid_fkey"
+            columns: ["expert_user_uuid"]
             isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["user_uuid"]
+            referencedRelation: "experts"
+            referencedColumns: ["expert_uuid"]
           },
           {
             foreignKeyName: "community_subscriptions_user_uuid_fkey"

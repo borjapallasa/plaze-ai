@@ -30,6 +30,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { CommunitySubscriptionSortSelector } from "@/components/communities/CommunitySubscriptionSortSelector";
 
 interface Link {
   name: string;
@@ -74,6 +75,7 @@ export default function CommunityPage() {
   const [isClassroomDialogOpen, setIsClassroomDialogOpen] = useState(false);
   const [showProductTemplateSelector, setShowProductTemplateSelector] = useState(false);
   const [activeTab, setActiveTab] = useState("threads");
+  const [membersSortBy, setMembersSortBy] = useState("date-desc");
   const { user } = useAuth();
   const { images } = useCommunityImages(communityId);
 
@@ -193,9 +195,9 @@ export default function CommunityPage() {
   });
 
   const { data: communityMembers, isLoading: isMembersLoading } = useQuery({
-    queryKey: ['community-members', communityId],
+    queryKey: ['community-members', communityId, membersSortBy],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('community_subscriptions')
         .select(`
           community_subscription_uuid,
@@ -209,8 +211,20 @@ export default function CommunityPage() {
           )
         `)
         .eq('community_uuid', communityId)
-        .eq('status', 'active')
-        .order('created_at', { ascending: false });
+        .eq('status', 'active');
+
+      // Apply sorting
+      if (membersSortBy === 'name-asc') {
+        query = query.order('first_name', { ascending: true, referencedTable: 'users' });
+      } else if (membersSortBy === 'name-desc') {
+        query = query.order('first_name', { ascending: false, referencedTable: 'users' });
+      } else if (membersSortBy === 'date-asc') {
+        query = query.order('created_at', { ascending: true });
+      } else if (membersSortBy === 'date-desc') {
+        query = query.order('created_at', { ascending: false });
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error("Error fetching community members:", error);
@@ -789,10 +803,11 @@ export default function CommunityPage() {
 
           <TabsContent value="members" className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-4 mb-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input placeholder="Search members" className="pl-9 w-full" />
-              </div>
+              <div className="flex-1"></div>
+              <CommunitySubscriptionSortSelector 
+                sortBy={membersSortBy} 
+                onSortChange={setMembersSortBy} 
+              />
             </div>
             
             <Card>
