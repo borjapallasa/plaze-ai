@@ -69,6 +69,7 @@ export default function Classroom() {
   const [isAddLessonOpen, setIsAddLessonOpen] = useState(false);
   const [isEditLessonOpen, setIsEditLessonOpen] = useState(false);
   const [isDeleteLessonOpen, setIsDeleteLessonOpen] = useState(false);
+  const [isEditClassroomOpen, setIsEditClassroomOpen] = useState(false);
   const [isProcessingPurchase, setIsProcessingPurchase] = useState(false);
   const navigate = useNavigate();
   const [newLessonData, setNewLessonData] = useState({
@@ -77,6 +78,11 @@ export default function Classroom() {
     video_url: ''
   });
   const [editLessonData, setEditLessonData] = useState({
+    name: '',
+    description: '',
+    video_url: ''
+  });
+  const [editClassroomData, setEditClassroomData] = useState({
     name: '',
     description: '',
     video_url: ''
@@ -321,6 +327,39 @@ export default function Classroom() {
     }
   });
 
+  const updateClassroomMutation = useMutation({
+    mutationFn: async (classroomData: any) => {
+      const { data, error } = await supabase
+        .from('classrooms')
+        .update(classroomData)
+        .eq('classroom_uuid', id)
+        .select();
+
+      if (error) {
+        console.error("Error updating classroom:", error);
+        throw error;
+      }
+
+      return data;
+    },
+    onSuccess: () => {
+      setIsEditClassroomOpen(false);
+      queryClient.invalidateQueries({ queryKey: ['classroom', id] });
+      toast({
+        title: "Success",
+        description: "Classroom updated successfully",
+      });
+    },
+    onError: (error) => {
+      console.error("Error updating classroom:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update classroom. Please try again.",
+        variant: "destructive"
+      });
+    }
+  });
+
   const handleAddLesson = async () => {
     if (!newLessonData.name.trim()) {
       toast({
@@ -385,6 +424,28 @@ export default function Classroom() {
     }
 
     deleteLessonMutation.mutate(activeLesson.lesson_uuid);
+  };
+
+  const handleOpenEditClassroom = () => {
+    setEditClassroomData({
+      name: classroom?.name || '',
+      description: classroom?.description || '',
+      video_url: classroom?.video_url || ''
+    });
+    setIsEditClassroomOpen(true);
+  };
+
+  const handleEditClassroom = () => {
+    if (!editClassroomData.name.trim()) {
+      toast({
+        title: "Error",
+        description: "Classroom name is required",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    updateClassroomMutation.mutate(editClassroomData);
   };
 
   const handleOpenEditLesson = (lesson: any, e?: React.MouseEvent) => {
@@ -724,6 +785,16 @@ export default function Classroom() {
                             <span className="text-gray-500">{activeLesson.name ? capitalizeFirstLetter(activeLesson.name) : ''}</span>
                           </>
                         )}
+                        {isOwner && viewMode === 'classroom' && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleOpenEditClassroom}
+                            className="ml-2 p-1 h-auto text-muted-foreground hover:text-foreground"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                        )}
                       </h2>
 
                       {videoEmbedUrl ? (
@@ -840,6 +911,16 @@ export default function Classroom() {
                           <span className="mx-2 text-gray-400">/</span>
                           <span className="text-gray-500">{activeLesson.name ? capitalizeFirstLetter(activeLesson.name) : ''}</span>
                         </>
+                      )}
+                      {isOwner && viewMode === 'classroom' && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleOpenEditClassroom}
+                          className="ml-2 p-1 h-auto text-muted-foreground hover:text-foreground"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
                       )}
                     </h1>
 
@@ -1004,6 +1085,56 @@ export default function Classroom() {
                     disabled={deleteLessonMutation.isPending}
                   >
                     {deleteLessonMutation.isPending ? "Deleting..." : "Delete Lesson"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            {/* Edit Classroom Dialog */}
+            <Dialog open={isEditClassroomOpen} onOpenChange={setIsEditClassroomOpen}>
+              <DialogContent className="sm:max-w-[500px]">
+                <DialogHeader>
+                  <DialogTitle>Edit Classroom</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="classroom-name">Name</Label>
+                    <Input
+                      id="classroom-name"
+                      placeholder="Enter classroom name"
+                      value={editClassroomData.name}
+                      onChange={(e) => setEditClassroomData({ ...editClassroomData, name: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="classroom-description">Description</Label>
+                    <ProductEditor
+                      value={editClassroomData.description}
+                      onChange={(value) => setEditClassroomData({ ...editClassroomData, description: value })}
+                      placeholder="Enter classroom description"
+                      minHeight="150px"
+                      maxHeight="250px"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="classroom-video_url">Video URL</Label>
+                    <Input
+                      id="classroom-video_url"
+                      placeholder="Enter video URL"
+                      value={editClassroomData.video_url}
+                      onChange={(e) => setEditClassroomData({ ...editClassroomData, video_url: e.target.value })}
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="outline">Cancel</Button>
+                  </DialogClose>
+                  <Button
+                    onClick={handleEditClassroom}
+                    disabled={updateClassroomMutation.isPending}
+                  >
+                    {updateClassroomMutation.isPending ? "Updating..." : "Update Classroom"}
                   </Button>
                 </DialogFooter>
               </DialogContent>
