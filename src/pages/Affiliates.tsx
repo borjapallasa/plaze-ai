@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { AffiliateDashboard } from "@/components/affiliates/AffiliateDashboard";
 import { AffiliateTable } from "@/components/affiliates/AffiliateTable";
@@ -55,7 +54,7 @@ export default function Affiliates() {
             
             <Tabs defaultValue="affiliates" className="space-y-4">
               <div className="w-full">
-                <TabsList className="h-auto p-0 bg-transparent gap-6 justify-start w-full">
+                <TabsList className="h-auto p-0 bg-transparent gap-6 justify-start w-auto">
                   <TabsTrigger 
                     value="affiliates"
                     className="relative h-12 px-0 py-0 bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:text-foreground text-muted-foreground font-medium hover:text-foreground transition-colors"
