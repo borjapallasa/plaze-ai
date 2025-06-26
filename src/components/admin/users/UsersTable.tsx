@@ -10,6 +10,7 @@ interface UserData {
   last_name: string;
   created_at: string;
   total_spent: number;
+  commissions_generated: number;
 }
 
 interface UsersTableProps {
@@ -37,7 +38,7 @@ export function UsersTable({ users, sortField, sortDirection, onSort }: UsersTab
     <div className="rounded-lg border border-[#E5E7EB] bg-white">
       <ScrollArea className="h-[600px] w-full" type="always">
         <div className="min-w-[800px]">
-          <div className="grid grid-cols-[2fr,2fr,1.5fr] px-6 py-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
+          <div className="grid grid-cols-[2fr,2fr,1.5fr,1.5fr] px-6 py-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
             <button onClick={() => onSort("first_name")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
               <span className="truncate">User</span> {getSortIcon("first_name")}
             </button>
@@ -46,6 +47,9 @@ export function UsersTable({ users, sortField, sortDirection, onSort }: UsersTab
             </button>
             <button onClick={() => onSort("total_spent")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
               <span className="truncate">Amount Spent</span> {getSortIcon("total_spent")}
+            </button>
+            <button onClick={() => onSort("commissions_generated")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
+              <span className="truncate">Commissions</span> {getSortIcon("commissions_generated")}
             </button>
           </div>
 
@@ -58,7 +62,7 @@ export function UsersTable({ users, sortField, sortDirection, onSort }: UsersTab
               users.map((user) => (
                 <div
                   key={user.user_uuid}
-                  className="grid grid-cols-[2fr,2fr,1.5fr] px-6 py-4 hover:bg-[#F8F9FC] transition-colors duration-200 cursor-pointer"
+                  className="grid grid-cols-[2fr,2fr,1.5fr,1.5fr] px-6 py-4 hover:bg-[#F8F9FC] transition-colors duration-200 cursor-pointer"
                   onClick={() => handleUserClick(user.user_uuid)}
                 >
                   <div className="text-sm text-[#1A1F2C] truncate pr-4">
@@ -70,6 +74,9 @@ export function UsersTable({ users, sortField, sortDirection, onSort }: UsersTab
                   </div>
                   <div className="text-sm text-[#1A1F2C] font-medium truncate pr-4">
                     ${(user.total_spent || 0).toFixed(2)}
+                  </div>
+                  <div className="text-sm text-[#1A1F2C] font-medium truncate pr-4">
+                    ${(user.commissions_generated || 0).toFixed(2)}
                   </div>
                 </div>
               ))

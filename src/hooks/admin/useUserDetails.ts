@@ -12,7 +12,7 @@ export function useUserDetails(userUuid: string) {
 
       console.log('Fetching user details for:', userUuid);
       
-      const { data: user, error } = await supabase
+      const { data: userData, error } = await supabase
         .from('users')
         .select('user_uuid, email, first_name, last_name, created_at, is_expert, is_affiliate, is_admin, total_spent')
         .eq('user_uuid', userUuid)
@@ -23,12 +23,12 @@ export function useUserDetails(userUuid: string) {
         throw error;
       }
 
-      if (!user) {
+      if (!userData) {
         throw new Error('User not found');
       }
 
-      console.log('User details:', user);
-      return user;
+      console.log('User details:', userData);
+      return userData;
     },
     enabled: !!userUuid,
   });

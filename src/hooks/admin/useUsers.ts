@@ -12,6 +12,7 @@ interface UserData {
   last_name: string;
   created_at: string;
   total_spent: number;
+  commissions_generated: number;
 }
 
 export function useUsers() {
@@ -53,7 +54,8 @@ export function useUsers() {
         first_name: user.first_name || '',
         last_name: user.last_name || '',
         created_at: user.created_at,
-        total_spent: user.total_spent || 0
+        total_spent: user.total_spent || 0,
+        commissions_generated: (user.total_spent || 0) * 0.1 // 10% commission rate
       })) as UserData[];
       
       console.log('Transformed users for affiliate:', transformedData);
