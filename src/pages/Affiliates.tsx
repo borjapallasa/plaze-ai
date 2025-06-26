@@ -49,59 +49,62 @@ export default function Affiliates() {
           <div>
             <h2 className="text-4xl font-bold mb-4 text-foreground">Your affiliates</h2>
             <p className="text-muted-foreground mb-8">
-              Click on your affiliate to see all transactions.
+              Manage your affiliate network and track performance across different categories.
             </p>
             
-            <Tabs defaultValue="affiliates" className="space-y-4">
+            <Tabs defaultValue="users" className="space-y-4">
               <div className="w-full">
                 <TabsList className="h-auto p-0 bg-transparent gap-6 justify-start w-auto">
                   <TabsTrigger 
-                    value="affiliates"
+                    value="users"
                     className="relative h-12 px-0 py-0 bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:text-foreground text-muted-foreground font-medium hover:text-foreground transition-colors"
                   >
-                    Affiliates
+                    Users
                   </TabsTrigger>
                   <TabsTrigger 
-                    value="transactions"
+                    value="product-transactions"
                     className="relative h-12 px-0 py-0 bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:text-foreground text-muted-foreground font-medium hover:text-foreground transition-colors"
                   >
-                    Transactions
+                    Product Transactions
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="community-transactions"
+                    className="relative h-12 px-0 py-0 bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:text-foreground text-muted-foreground font-medium hover:text-foreground transition-colors"
+                  >
+                    Community Transactions
                   </TabsTrigger>
                   <TabsTrigger 
                     value="partnerships"
                     className="relative h-12 px-0 py-0 bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:text-foreground text-muted-foreground font-medium hover:text-foreground transition-colors"
                   >
-                    Partnerships
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="payouts"
-                    className="relative h-12 px-0 py-0 bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:text-foreground text-muted-foreground font-medium hover:text-foreground transition-colors"
-                  >
-                    Payouts
+                    Your Partnerships
                   </TabsTrigger>
                 </TabsList>
                 <Separator />
               </div>
 
-              <TabsContent value="affiliates">
+              <TabsContent value="users">
                 <AffiliateTable />
               </TabsContent>
 
-              <TabsContent value="transactions">
+              <TabsContent value="product-transactions">
                 <div className="border rounded-lg p-6 text-center text-muted-foreground">
-                  Transactions tab content
+                  <h3 className="font-semibold mb-2">Product Transactions</h3>
+                  <p>View and manage all product-related affiliate transactions</p>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="community-transactions">
+                <div className="border rounded-lg p-6 text-center text-muted-foreground">
+                  <h3 className="font-semibold mb-2">Community Transactions</h3>
+                  <p>Track community subscription and membership transactions</p>
                 </div>
               </TabsContent>
 
               <TabsContent value="partnerships">
                 <div className="border rounded-lg p-6 text-center text-muted-foreground">
-                  Partnerships tab content
-                </div>
-              </TabsContent>
-
-              <TabsContent value="payouts">
-                <div className="border rounded-lg p-6 text-center text-muted-foreground">
-                  Payouts tab content
+                  <h3 className="font-semibold mb-2">Your Partnerships</h3>
+                  <p>Manage your partnership agreements and collaboration opportunities</p>
                 </div>
               </TabsContent>
             </Tabs>
