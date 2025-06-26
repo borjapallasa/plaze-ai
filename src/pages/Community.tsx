@@ -201,7 +201,7 @@ export default function CommunityPage() {
           community_subscription_uuid,
           created_at,
           user_uuid,
-          users!inner (
+          users!community_subscriptions_user_uuid_fkey (
             user_uuid,
             first_name,
             last_name,
