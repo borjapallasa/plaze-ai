@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth";
+import { useAffiliateData } from "@/hooks/use-affiliate-data";
 
 interface UserData {
   user_uuid: string;
@@ -15,6 +17,8 @@ interface UserData {
 }
 
 export function useUsers() {
+  const { user } = useAuth();
+  const { data: affiliateData } = useAffiliateData();
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [sortField, setSortField] = useState<keyof UserData>("created_at");
@@ -22,12 +26,19 @@ export function useUsers() {
 
   // Fetch users from Supabase
   const { data: users, isLoading, error, refetch } = useQuery({
-    queryKey: ['admin-users'],
+    queryKey: ['admin-users', affiliateData?.affiliate_code],
     queryFn: async () => {
-      console.log('Fetching users for admin panel...');
+      console.log('Fetching users for affiliate dashboard...', affiliateData?.affiliate_code);
+      
+      if (!affiliateData?.affiliate_code) {
+        console.log('No affiliate code available, returning empty array');
+        return [];
+      }
+
       const { data, error } = await supabase
         .from('users')
         .select('user_uuid, email, first_name, last_name, created_at, is_expert, is_affiliate, is_admin')
+        .eq('referral_affiliate_code', affiliateData.affiliate_code)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -35,7 +46,7 @@ export function useUsers() {
         throw error;
       }
       
-      console.log('Raw user data:', data);
+      console.log('Raw user data for affiliate:', data);
       
       // Transform the data to match our interface
       const transformedData = (data || []).map(user => ({
@@ -49,9 +60,10 @@ export function useUsers() {
         is_admin: user.is_admin || false
       })) as UserData[];
       
-      console.log('Transformed users:', transformedData);
+      console.log('Transformed users for affiliate:', transformedData);
       return transformedData;
-    }
+    },
+    enabled: !!user?.id && !!affiliateData?.affiliate_code,
   });
 
   const handleSort = (field: keyof UserData) => {

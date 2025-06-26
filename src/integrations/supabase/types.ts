@@ -2344,7 +2344,7 @@ export type Database = {
           product_amount_spent: number | null
           product_count: number | null
           product_sales_amount: number | null
-          referral_source: string | null
+          referral_affiliate_code: string | null
           requested_amount: number | null
           service_sales_amount: number | null
           service_transaction_amount_spent: number | null
@@ -2392,7 +2392,7 @@ export type Database = {
           product_amount_spent?: number | null
           product_count?: number | null
           product_sales_amount?: number | null
-          referral_source?: string | null
+          referral_affiliate_code?: string | null
           requested_amount?: number | null
           service_sales_amount?: number | null
           service_transaction_amount_spent?: number | null
@@ -2440,7 +2440,7 @@ export type Database = {
           product_amount_spent?: number | null
           product_count?: number | null
           product_sales_amount?: number | null
-          referral_source?: string | null
+          referral_affiliate_code?: string | null
           requested_amount?: number | null
           service_sales_amount?: number | null
           service_transaction_amount_spent?: number | null
