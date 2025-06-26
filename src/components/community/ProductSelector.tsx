@@ -82,10 +82,10 @@ export function ProductSelector({ onSelect, selectedProduct }: ProductSelectorPr
         {filteredProducts.map((product) => (
           <Card
             key={product.product_uuid}
-            className={`cursor-pointer transition-colors hover:bg-accent ${
+            className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
               selectedProduct?.product_uuid === product.product_uuid
-                ? "ring-2 ring-primary bg-accent"
-                : ""
+                ? "ring-2 ring-primary border-primary bg-primary/5"
+                : "border-border hover:border-primary/50"
             }`}
             onClick={() => onSelect(product)}
           >
@@ -108,9 +108,12 @@ export function ProductSelector({ onSelect, selectedProduct }: ProductSelectorPr
                     <Badge variant="secondary" className="text-xs">
                       From ${product.price_from}
                     </Badge>
-                    <span className="text-xs text-muted-foreground">
+                    <Badge 
+                      variant={product.status === 'active' ? 'default' : 'secondary'} 
+                      className="text-xs capitalize"
+                    >
                       {product.status}
-                    </span>
+                    </Badge>
                   </div>
                 </div>
               </div>

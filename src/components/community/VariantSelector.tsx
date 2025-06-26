@@ -76,10 +76,10 @@ export function VariantSelector({ productUuid, onSelect, selectedVariant }: Vari
           return (
             <Card
               key={variant.id}
-              className={`cursor-pointer transition-colors hover:bg-accent ${
+              className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
                 selectedVariant?.variant_uuid === variant.id
-                  ? "ring-2 ring-primary bg-accent"
-                  : ""
+                  ? "ring-2 ring-primary border-primary bg-primary/5"
+                  : "border-border hover:border-primary/50"
               }`}
               onClick={() => onSelect(variantData)}
             >
@@ -88,11 +88,11 @@ export function VariantSelector({ productUuid, onSelect, selectedVariant }: Vari
                   <div className="flex-1">
                     <h4 className="font-medium text-sm">{variant.name}</h4>
                     <div className="flex items-center gap-2 mt-1">
-                      <Badge variant="secondary" className="text-xs">
+                      <Badge variant="default" className="text-xs font-medium">
                         ${variant.price}
                       </Badge>
                       {variant.comparePrice > 0 && variant.comparePrice !== variant.price && (
-                        <Badge variant="outline" className="text-xs line-through">
+                        <Badge variant="outline" className="text-xs line-through text-muted-foreground">
                           ${variant.comparePrice}
                         </Badge>
                       )}
