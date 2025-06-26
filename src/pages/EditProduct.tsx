@@ -478,12 +478,17 @@ export default function EditProduct() {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <div className="cursor-help">
-                          <Badge 
-                            variant={productType.variant} 
-                            className="text-sm font-medium px-4 py-2 w-full justify-center"
-                          >
+                          <div className={`
+                            text-sm font-medium px-4 py-3 rounded-lg border text-center
+                            ${productType.variant === 'default' 
+                              ? 'bg-primary/5 border-primary/20 text-primary' 
+                              : productType.variant === 'secondary'
+                              ? 'bg-secondary border-secondary/20 text-secondary-foreground'
+                              : 'bg-background border-border text-foreground'
+                            }
+                          `}>
                             {productType.label}
-                          </Badge>
+                          </div>
                         </div>
                       </TooltipTrigger>
                       <TooltipContent>
