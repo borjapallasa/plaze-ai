@@ -206,15 +206,48 @@ export default function EditProduct() {
     }
   }, [product]);
 
+  const handleAddVariant = () => {
+    const newVariant = {
+      id: `temp_${Date.now()}`,
+      name: "New Variant",
+      price: "0",
+      comparePrice: "0",
+      highlight: false,
+      tags: []
+    };
+
+    setLocalVariants(prev => [...prev, newVariant]);
+  };
+
+  const handleVariantsChange = (updatedVariants: any[]) => {
+    // Find variants that were removed (exist in current localVariants but not in updatedVariants)
+    const removedVariants = localVariants.filter(currentVariant => 
+      !updatedVariants.find(updatedVariant => updatedVariant.id === currentVariant.id)
+    );
+
+    // Only add to deletedVariantIds if they're not temporary variants (actually exist in database)
+    const removedDatabaseVariants = removedVariants
+      .filter(variant => !variant.id.toString().includes('temp_'))
+      .map(variant => variant.id);
+
+    if (removedDatabaseVariants.length > 0) {
+      setDeletedVariantIds(prev => [...prev, ...removedDatabaseVariants]);
+    }
+
+    setLocalVariants(updatedVariants);
+  };
+
   const handleSave = async () => {
     try {
       setIsSaving(true);
       console.log('Saving product with ID:', id);
+      console.log('Deleted variant IDs:', deletedVariantIds);
 
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       if (userError) throw userError;
       if (!user) throw new Error('No authenticated user found');
 
+      // Update product information
       const { error: productError } = await supabase
         .from('products')
         .update({
@@ -235,51 +268,71 @@ export default function EditProduct() {
 
       if (productError) throw productError;
 
+      // Delete removed variants from database
       if (deletedVariantIds.length > 0) {
+        console.log('Deleting variants:', deletedVariantIds);
         const { error: deleteError } = await supabase
           .from('variants')
           .delete()
           .in('variant_uuid', deletedVariantIds);
 
-        if (deleteError) throw deleteError;
+        if (deleteError) {
+          console.error('Error deleting variants:', deleteError);
+          throw deleteError;
+        }
+        console.log('Successfully deleted variants');
       }
 
+      // Process remaining variants (insert new ones, update existing ones)
       for (const variant of localVariants) {
         if (variant.id.toString().includes('temp_')) {
+          // Insert new variant
           const { error: insertError } = await supabase
             .from('variants')
             .insert({
               user_uuid: user.id,
               product_uuid: id,
               name: variant.name,
-              price: parseFloat(variant.price),
-              compare_price: parseFloat(variant.comparePrice),
+              price: parseFloat(variant.price) || 0,
+              compare_price: parseFloat(variant.comparePrice) || 0,
               highlighted: variant.highlight,
               tags: Array.isArray(variant.tags) ? variant.tags : [],
-              files_link: variant.filesLink
+              files_link: variant.filesLink,
+              additional_details: variant.additionalDetails
             });
 
-          if (insertError) throw insertError;
+          if (insertError) {
+            console.error('Error inserting variant:', insertError);
+            throw insertError;
+          }
         } else {
+          // Update existing variant
           const { error: updateError } = await supabase
             .from('variants')
             .update({
               name: variant.name,
-              price: parseFloat(variant.price),
-              compare_price: parseFloat(variant.comparePrice),
+              price: parseFloat(variant.price) || 0,
+              compare_price: parseFloat(variant.comparePrice) || 0,
               highlighted: variant.highlight,
               tags: Array.isArray(variant.tags) ? variant.tags : [],
-              files_link: variant.filesLink
+              files_link: variant.filesLink,
+              additional_details: variant.additionalDetails
             })
             .eq('variant_uuid', variant.id);
 
-          if (updateError) throw updateError;
+          if (updateError) {
+            console.error('Error updating variant:', updateError);
+            throw updateError;
+          }
         }
       }
+
       toast.success("All changes have been saved successfully");
 
+      // Clear deleted variant IDs after successful save
       setDeletedVariantIds([]);
 
+      // Refetch variants to get updated data
       refetchVariants();
 
     } catch (error) {
@@ -288,29 +341,6 @@ export default function EditProduct() {
     } finally {
       setIsSaving(false);
     }
-  };
-
-  const handleAddVariant = () => {
-    const newVariant = {
-      id: `temp_${Date.now()}`,
-      name: "New Variant",
-      price: "0",
-      comparePrice: "0",
-      highlight: false,
-      tags: []
-    };
-
-    setLocalVariants(prev => [...prev, newVariant]);
-  };
-
-  const handleVariantsChange = (updatedVariants: any[]) => {
-    const removedVariants = localVariants
-      .filter(v => !updatedVariants.find(uv => uv.id === v.id))
-      .filter(v => !v.id.toString().includes('temp_'))
-      .map(v => v.id);
-
-    setDeletedVariantIds(prev => [...prev, ...removedVariants]);
-    setLocalVariants(updatedVariants);
   };
 
   const handleDeleteProduct = async (redirectUrl: string) => {
