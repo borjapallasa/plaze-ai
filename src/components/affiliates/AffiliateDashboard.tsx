@@ -31,7 +31,7 @@ export function AffiliateDashboard() {
     <div className="space-y-6">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2">
-        <div className="space-y-1">
+        <div>
           <h1 className="text-4xl font-bold text-foreground">Your affiliate dashboard</h1>
           <p className="text-muted-foreground">Track your performance and manage your affiliate network</p>
         </div>
@@ -126,8 +126,8 @@ export function AffiliateDashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               Account Information
-              <Badge variant={affiliateData?.status === 'active' ? "default" : "secondary"}>
-                {affiliateData?.status === 'active' ? 'Verified' : 'Pending'}
+              <Badge variant={affiliateData?.status === 'accepted' ? "default" : "secondary"}>
+                {affiliateData?.status === 'accepted' ? 'Verified' : affiliateData?.status || 'Pending'}
               </Badge>
             </CardTitle>
           </CardHeader>
