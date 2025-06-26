@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -57,13 +58,15 @@ export function ProductVariantsEditor({
       return;
     }
     
-    setVariants(
-      variants.map(v => 
-        v.id === id 
-          ? { ...v, hidden: true }
-          : v
-      ).filter(v => !v.hidden)
-    );
+    console.log('Removing variant with ID:', id);
+    console.log('Current variants before removal:', variants);
+    
+    // Simply filter out the variant with the matching ID
+    const updatedVariants = variants.filter(v => v.id !== id);
+    
+    console.log('Updated variants after removal:', updatedVariants);
+    
+    setVariants(updatedVariants);
   };
 
   const updateVariant = (id: string, field: keyof Variant, value: any) => {
