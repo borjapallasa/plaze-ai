@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { useExpertCommunities } from "@/hooks/expert/useExpertCommunities";
 import { useProductVariants } from "@/hooks/use-product-variants";
+import { useCommunityProducts } from "@/hooks/use-community-products";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -28,6 +29,7 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
 
   const { data: communities = [] } = useExpertCommunities(expertUuid);
   const { data: variants = [] } = useProductVariants(productUuid);
+  const { data: communityProducts = [], refetch: refetchCommunityProducts } = useCommunityProducts(productUuid);
 
   const showVariantSelector = variants.length > 1;
   const selectedCommunityName = communities.find(c => c.community_uuid === selectedCommunity)?.name || "";
@@ -100,6 +102,9 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
       setSelectedVariant("");
       setPrice("");
 
+      // Refetch community products to show the new one
+      refetchCommunityProducts();
+
     } catch (error) {
       console.error('Error linking product to community:', error);
       toast.error("Failed to link product to community");
@@ -114,6 +119,28 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
         <h2 className="text-lg font-medium mb-3 sm:mb-4">Community product</h2>
         
         <div className="space-y-4">
+          {/* Display existing community products */}
+          {communityProducts.length > 0 && (
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Linked to communities:</Label>
+              <div className="space-y-2">
+                {communityProducts.map((cp) => (
+                  <div key={cp.community_product_uuid} className="p-3 border rounded-lg bg-muted/50">
+                    <div className="flex justify-between items-start">
+                      <div className="space-y-1">
+                        <p className="font-medium">{cp.community.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {cp.name} - {cp.product_type === "paid" ? `$${cp.price}` : "Free"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <hr className="my-4" />
+            </div>
+          )}
+
           <div className="flex items-center justify-between">
             <Label htmlFor="community-product-toggle" className="text-base font-medium">
               Include in your community
