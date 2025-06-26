@@ -1,16 +1,24 @@
 
 import React, { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { ExistingProductSelector } from "@/components/community/ExistingProductSelector";
-import { CommunityProduct } from "@/types/Product";
+import { ProductSelector } from "@/components/community/ProductSelector";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { useQueryClient } from "@tanstack/react-query";
+
+interface Product {
+  product_uuid: string;
+  name: string;
+  price_from: number;
+  thumbnail?: string;
+  status: string;
+  created_at: string;
+}
 
 interface CommunityProductDialogProps {
   open: boolean;
@@ -27,7 +35,7 @@ export function CommunityProductDialog({
   expertUuid,
   showTemplateSelector,
 }: CommunityProductDialogProps) {
-  const [selectedTemplate, setSelectedTemplate] = useState<CommunityProduct | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [productType, setProductType] = useState<"free" | "paid">("free");
@@ -36,12 +44,12 @@ export function CommunityProductDialog({
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  const handleTemplateSelect = (product: CommunityProduct) => {
-    setSelectedTemplate(product);
+  const handleProductSelect = (product: Product) => {
+    setSelectedProduct(product);
     setName(product.name || "");
-    setProductType(product.product_type as "free" | "paid" || "free");
-    setPrice(product.price ? product.price.toString() : "");
-    setFilesLink(product.files_link || "");
+    setPrice(product.price_from ? product.price_from.toString() : "");
+    setProductType(product.price_from && product.price_from > 0 ? "paid" : "free");
+    setFilesLink("");
   };
 
   const handleSubmit = async () => {
@@ -71,9 +79,10 @@ export function CommunityProductDialog({
           community_uuid: communityUuid,
           product_type: productType,
           price: productType === "paid" ? parseFloat(price) : null,
-          payment_link: null, // Always set to null since we're not collecting it
+          payment_link: null,
           files_link: filesLink || null,
           expert_uuid: expertUuid,
+          product_uuid: selectedProduct?.product_uuid || null,
         })
         .select()
         .single();
@@ -84,7 +93,7 @@ export function CommunityProductDialog({
         throw error;
       }
 
-      // Step 2: Create the product relationship to make it appear in the classroom
+      // Step 2: Create the product relationship
       const { error: relationshipError } = await supabase
         .from("community_product_relationships")
         .insert({
@@ -95,12 +104,11 @@ export function CommunityProductDialog({
 
       if (relationshipError) {
         console.error("Error creating product relationship:", relationshipError);
-        toast.error("Product created but not linked to classroom");
+        toast.error("Product created but not linked to community");
         throw relationshipError;
       }
 
       // Invalidate related queries to refresh the UI
-      queryClient.invalidateQueries({ queryKey: ['classroomCommunityProducts', communityUuid] });
       queryClient.invalidateQueries({ queryKey: ['communityProducts', communityUuid] });
       queryClient.invalidateQueries({ queryKey: ['communityProductRelationships'] });
       
@@ -112,7 +120,7 @@ export function CommunityProductDialog({
       setPrice("");
       setProductType("free");
       setFilesLink("");
-      setSelectedTemplate(null);
+      setSelectedProduct(null);
       
     } catch (error) {
       console.error("Error creating product:", error);
@@ -123,22 +131,19 @@ export function CommunityProductDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {showTemplateSelector ? "Create Product from Template" : "Create New Product"}
+            {showTemplateSelector ? "Create Product from List" : "Create New Product"}
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          {showTemplateSelector && expertUuid && (
-            <div className="space-y-2">
-              <ExistingProductSelector
-                expertUuid={expertUuid}
-                onSelect={handleTemplateSelect}
-                selectedProduct={selectedTemplate}
-              />
-            </div>
+          {showTemplateSelector && (
+            <ProductSelector
+              onSelect={handleProductSelect}
+              selectedProduct={selectedProduct}
+            />
           )}
 
           <div className="space-y-2">
@@ -179,19 +184,6 @@ export function CommunityProductDialog({
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="files-link">Files Link</Label>
-            <Input
-              id="files-link"
-              value={filesLink}
-              onChange={(e) => setFilesLink(e.target.value)}
-              placeholder="https://example.com/files"
-            />
-            <p className="text-xs text-muted-foreground">
-              Link to downloadable files for this product
-            </p>
-          </div>
-
           {productType === "paid" && (
             <div className="space-y-2">
               <Label htmlFor="price">Price ($)</Label>
@@ -206,6 +198,19 @@ export function CommunityProductDialog({
               />
             </div>
           )}
+
+          <div className="space-y-2">
+            <Label htmlFor="files-link">Files Link</Label>
+            <Input
+              id="files-link"
+              value={filesLink}
+              onChange={(e) => setFilesLink(e.target.value)}
+              placeholder="https://example.com/files"
+            />
+            <p className="text-xs text-muted-foreground">
+              Link to downloadable files for this product
+            </p>
+          </div>
         </div>
 
         <DialogFooter>
