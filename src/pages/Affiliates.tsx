@@ -53,28 +53,28 @@ export default function Affiliates() {
             </p>
             
             <Tabs defaultValue="affiliates" className="space-y-4">
-              <TabsList className="w-full justify-start bg-muted p-1 rounded-lg h-auto">
+              <TabsList className="h-auto p-0 bg-transparent gap-0 justify-start">
                 <TabsTrigger 
                   value="affiliates"
-                  className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm rounded-md px-6 py-3 text-sm font-medium transition-all"
+                  className="relative h-12 px-4 py-0 bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:text-foreground text-muted-foreground font-medium hover:text-foreground transition-colors"
                 >
                   Affiliates
                 </TabsTrigger>
                 <TabsTrigger 
                   value="transactions"
-                  className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm rounded-md px-6 py-3 text-sm font-medium transition-all"
+                  className="relative h-12 px-4 py-0 bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:text-foreground text-muted-foreground font-medium hover:text-foreground transition-colors"
                 >
                   Transactions
                 </TabsTrigger>
                 <TabsTrigger 
                   value="partnerships"
-                  className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm rounded-md px-6 py-3 text-sm font-medium transition-all"
+                  className="relative h-12 px-4 py-0 bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:text-foreground text-muted-foreground font-medium hover:text-foreground transition-colors"
                 >
                   Partnerships
                 </TabsTrigger>
                 <TabsTrigger 
                   value="payouts"
-                  className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm rounded-md px-6 py-3 text-sm font-medium transition-all"
+                  className="relative h-12 px-4 py-0 bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:text-foreground text-muted-foreground font-medium hover:text-foreground transition-colors"
                 >
                   Payouts
                 </TabsTrigger>
