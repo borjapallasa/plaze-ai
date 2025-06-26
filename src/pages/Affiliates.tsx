@@ -1,9 +1,11 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { AffiliateDashboard } from "@/components/affiliates/AffiliateDashboard";
 import { AffiliateTable } from "@/components/affiliates/AffiliateTable";
 import { ProductCard } from "@/components/ProductCard";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import { Star, ThumbsUp, TrendingUp, Sparkle, Trophy, Tags } from "lucide-react";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -52,33 +54,34 @@ export default function Affiliates() {
             </p>
             
             <Tabs defaultValue="affiliates" className="space-y-4">
-              <div className="border-b border-border">
-                <TabsList className="h-auto p-0 bg-transparent gap-0 justify-start w-full">
+              <div className="w-full">
+                <TabsList className="h-auto p-0 bg-transparent gap-6 justify-start w-full">
                   <TabsTrigger 
                     value="affiliates"
-                    className="relative h-12 px-4 py-0 bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:text-foreground text-muted-foreground font-medium hover:text-foreground transition-colors"
+                    className="relative h-12 px-0 py-0 bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:text-foreground text-muted-foreground font-medium hover:text-foreground transition-colors"
                   >
                     Affiliates
                   </TabsTrigger>
                   <TabsTrigger 
                     value="transactions"
-                    className="relative h-12 px-4 py-0 bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:text-foreground text-muted-foreground font-medium hover:text-foreground transition-colors"
+                    className="relative h-12 px-0 py-0 bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:text-foreground text-muted-foreground font-medium hover:text-foreground transition-colors"
                   >
                     Transactions
                   </TabsTrigger>
                   <TabsTrigger 
                     value="partnerships"
-                    className="relative h-12 px-4 py-0 bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:text-foreground text-muted-foreground font-medium hover:text-foreground transition-colors"
+                    className="relative h-12 px-0 py-0 bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:text-foreground text-muted-foreground font-medium hover:text-foreground transition-colors"
                   >
                     Partnerships
                   </TabsTrigger>
                   <TabsTrigger 
                     value="payouts"
-                    className="relative h-12 px-4 py-0 bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:text-foreground text-muted-foreground font-medium hover:text-foreground transition-colors"
+                    className="relative h-12 px-0 py-0 bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:text-foreground text-muted-foreground font-medium hover:text-foreground transition-colors"
                   >
                     Payouts
                   </TabsTrigger>
                 </TabsList>
+                <Separator />
               </div>
 
               <TabsContent value="affiliates">
