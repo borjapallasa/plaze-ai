@@ -34,62 +34,6 @@ export default function CommunityProductPage() {
     alert("Redirecting to checkout - this would normally process payment");
   };
 
-  const PurchaseSection = () => (
-    <Card>
-      <CardContent className="p-6 space-y-6">
-        <div className="space-y-2">
-          <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-bold text-foreground">
-              ${productData.price}
-            </span>
-            <span className="text-lg text-muted-foreground line-through">
-              ${productData.originalPrice}
-            </span>
-          </div>
-          <Badge variant="destructive" className="text-xs">
-            Limited Time Offer
-          </Badge>
-        </div>
-
-        <Button 
-          onClick={handleCheckout}
-          className="w-full h-12 text-lg font-semibold"
-          size="lg"
-        >
-          Buy Now
-        </Button>
-
-        <div className="text-center">
-          <p className="text-sm text-muted-foreground mb-2">
-            30-day money-back guarantee
-          </p>
-          <button className="text-sm text-primary hover:underline flex items-center gap-1 mx-auto">
-            <ExternalLink className="w-3 h-3" />
-            Share this course
-          </button>
-        </div>
-      </CardContent>
-    </Card>
-  );
-
-  const FeaturesSection = () => (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-xl">What's Included</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <ul className="space-y-3">
-          {productData.features.map((feature, index) => (
-            <li key={index} className="flex items-start gap-3">
-              <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
-              <span className="text-muted-foreground">{feature}</span>
-            </li>
-          ))}
-        </ul>
-      </CardContent>
-    </Card>
-  );
-
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -141,27 +85,64 @@ export default function CommunityProductPage() {
                 {productData.description}
               </p>
 
-              {/* Mobile: Purchase Section above Features */}
-              <div className="lg:hidden">
-                <PurchaseSection />
-              </div>
-
-              {/* Features Section */}
-              <FeaturesSection />
-
-              {/* Desktop: Purchase Section below Features */}
-              <div className="hidden lg:block">
-                <PurchaseSection />
-              </div>
+              {/* Features */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-xl">What's Included</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-3">
+                    {productData.features.map((feature, index) => (
+                      <li key={index} className="flex items-start gap-3">
+                        <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
+                        <span className="text-muted-foreground">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
             </div>
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Stats */}
+            {/* Purchase Card */}
             <Card className="sticky top-4">
-              <CardContent className="p-6">
-                <div className="grid grid-cols-1 gap-4">
+              <CardContent className="p-6 space-y-6">
+                <div className="space-y-2">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-3xl font-bold text-foreground">
+                      ${productData.price}
+                    </span>
+                    <span className="text-lg text-muted-foreground line-through">
+                      ${productData.originalPrice}
+                    </span>
+                  </div>
+                  <Badge variant="destructive" className="text-xs">
+                    Limited Time Offer
+                  </Badge>
+                </div>
+
+                <Button 
+                  onClick={handleCheckout}
+                  className="w-full h-12 text-lg font-semibold"
+                  size="lg"
+                >
+                  Buy Now
+                </Button>
+
+                <div className="text-center">
+                  <p className="text-sm text-muted-foreground mb-2">
+                    30-day money-back guarantee
+                  </p>
+                  <button className="text-sm text-primary hover:underline flex items-center gap-1 mx-auto">
+                    <ExternalLink className="w-3 h-3" />
+                    Share this course
+                  </button>
+                </div>
+
+                {/* Stats */}
+                <div className="grid grid-cols-2 gap-4 pt-4 border-t">
                   <div className="text-center">
                     <div className="text-2xl font-bold text-foreground">
                       {productData.students.toLocaleString()}
