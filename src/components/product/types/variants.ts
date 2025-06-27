@@ -1,16 +1,18 @@
+
 export interface Variant {
   id: string;
-  name: string; // Name is required
-  price: number; // Price is number
-  comparePrice: number; // Compare price is number
-  label: string; // Make label required to match usage
+  name: string;
+  price: number;
+  comparePrice: number;
+  label: string;
   highlight: boolean;
-  tags: string[]; // Make tags required and always an array
-  features: string[]; // Make features required and always an array
+  tags: string[];
+  features: string[];
   hidden: boolean;
   createdAt: Date | null;
   filesLink: string | null;
-  relationshipUuid?: string; // Keep this optional since not all variants have it
+  additionalDetails?: string; // Add this back for compatibility
+  relationshipUuid?: string;
 }
 
 export interface ProductVariantsEditorProps {

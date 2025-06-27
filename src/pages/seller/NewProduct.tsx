@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { MainHeader } from "@/components/MainHeader";
@@ -41,8 +40,11 @@ export default function NewProduct() {
       highlight: false,
       label: "Package",
       tags: [],
-      createdAt: new Date().toISOString(),
-      features: []
+      features: [],
+      hidden: false,
+      createdAt: new Date(),
+      filesLink: null,
+      additionalDetails: "",
     }
   ]);
 

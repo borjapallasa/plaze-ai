@@ -21,8 +21,10 @@ export function ProductVariantsEditor({
       tags: [],
       label: "Package",
       features: [],
-      createdAt: new Date().toISOString(),
+      hidden: false,
+      createdAt: new Date(),
       filesLink: "",
+      additionalDetails: "",
     },
   ]);
 
@@ -47,8 +49,10 @@ export function ProductVariantsEditor({
         tags: [],
         label: "Package",
         features: [],
-        createdAt: new Date().toISOString(),
+        hidden: false,
+        createdAt: new Date(),
         filesLink: "",
+        additionalDetails: "",
       },
     ]);
   };

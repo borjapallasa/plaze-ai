@@ -10,9 +10,14 @@ export function communityProductToVariant(product: CommunityProduct): Variant {
     id: product.community_product_uuid || product.variant_uuid || '',
     name: product.name || 'Product',
     price: Number(product.price) || 0,
-    comparePrice: Number(product.price ? product.price * 1.25 : 0), // default higher compare price
+    comparePrice: Number(product.price ? product.price * 1.25 : 0),
     label: product.product_type || 'Package',
-    features: [] // Ensure features is always an array
+    highlight: false,
+    tags: [],
+    features: [],
+    hidden: false,
+    createdAt: null,
+    filesLink: null,
   };
 }
 
@@ -35,7 +40,11 @@ export function productVariantToVariant(variant: ProductVariant): Variant {
     comparePrice: Number(variant.comparePrice) || 0,
     label: variant.label || 'Package',
     highlight: variant.highlight,
-    features: Array.isArray(variant.features) ? variant.features : [] // Ensure features is always an array
+    tags: [],
+    features: Array.isArray(variant.features) ? variant.features : [],
+    hidden: false,
+    createdAt: null,
+    filesLink: null,
   };
 }
 

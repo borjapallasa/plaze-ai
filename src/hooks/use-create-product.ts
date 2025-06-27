@@ -134,9 +134,9 @@ export function useCreateProduct(initialData?: ProductInitialData) {
           tags: variant.tags,
           product_uuid: product.product_uuid,
           user_uuid: currentUser.id,
-          created_at: variant.createdAt,
+          created_at: variant.createdAt ? variant.createdAt.toISOString() : new Date().toISOString(),
           files_link: variant.filesLink,
-          additional_details: variant.additionalDetails,
+          additional_details: variant.additionalDetails || null,
         }));
 
         const { error: variantsError } = await supabase
