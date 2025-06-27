@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, Calendar, ExternalLink, Loader2 } from "lucide-react";
+import { Star, Calendar, ExternalLink, Loader2, User } from "lucide-react";
 import { useCommunityProduct } from "@/hooks/use-community-product";
 
 export default function CommunityProductPage() {
@@ -48,6 +48,23 @@ export default function CommunityProductPage() {
   const expertName = communityProduct.experts?.name || 'Unknown Expert';
   const expertThumbnail = communityProduct.experts?.thumbnail;
   const expertRating = communityProduct.experts?.client_satisfaction || 0;
+  const expertCreatedAt = communityProduct.experts?.created_at;
+
+  // Format the created date
+  const formatCreatedDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - date.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 1) return "Updated 1 day ago";
+    if (diffDays < 7) return `Updated ${diffDays} days ago`;
+    if (diffDays < 14) return "Updated 1 week ago";
+    if (diffDays < 21) return "Updated 2 weeks ago";
+    if (diffDays < 28) return "Updated 3 weeks ago";
+    if (diffDays < 60) return "Updated 1 month ago";
+    return `Updated ${Math.floor(diffDays / 30)} months ago`;
+  };
 
   // Features array - keep some default features for now
   const features = [
@@ -93,28 +110,31 @@ export default function CommunityProductPage() {
                 {productName}
               </h1>
 
-              {/* Expert Information */}
-              <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg">
-                <Avatar className="h-12 w-12">
-                  <AvatarImage src={expertThumbnail} alt={expertName} />
-                  <AvatarFallback>{expertName.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="font-medium">{expertName}</p>
+              {/* Expert Information - Similar to reference style */}
+              <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <Avatar className="h-6 w-6">
+                    <AvatarImage src={expertThumbnail} alt={expertName} />
+                    <AvatarFallback className="text-xs">
+                      {expertName.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="font-medium text-foreground">{expertName}</span>
+                </div>
+
+                {expertRating > 0 && (
                   <div className="flex items-center gap-1">
                     <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    <span className="text-sm text-muted-foreground">
-                      {expertRating ? `${expertRating}% satisfaction` : 'No rating available'}
-                    </span>
+                    <span>{expertRating}% satisfaction</span>
                   </div>
-                </div>
-              </div>
+                )}
 
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <div className="flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
-                  <span>Updated recently</span>
-                </div>
+                {expertCreatedAt && (
+                  <div className="flex items-center gap-1">
+                    <Calendar className="w-4 h-4" />
+                    <span>{formatCreatedDate(expertCreatedAt)}</span>
+                  </div>
+                )}
               </div>
 
               <p className="text-muted-foreground text-lg leading-relaxed">
