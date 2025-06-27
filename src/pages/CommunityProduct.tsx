@@ -85,24 +85,7 @@ export default function CommunityProductPage() {
                 {productData.description}
               </p>
 
-              {/* Features */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-xl">What's Included</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3">
-                    {productData.features.map((feature, index) => (
-                      <li key={index} className="flex items-start gap-3">
-                        <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
-                        <span className="text-muted-foreground">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-
-              {/* Purchase Section - Moved here */}
+              {/* Purchase Section - Above What's Included */}
               <Card>
                 <CardContent className="p-6 space-y-6">
                   <div className="space-y-2">
@@ -136,6 +119,23 @@ export default function CommunityProductPage() {
                       Share this course
                     </button>
                   </div>
+                </CardContent>
+              </Card>
+
+              {/* Features */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-xl">What's Included</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-3">
+                    {productData.features.map((feature, index) => (
+                      <li key={index} className="flex items-start gap-3">
+                        <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
+                        <span className="text-muted-foreground">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </CardContent>
               </Card>
             </div>
