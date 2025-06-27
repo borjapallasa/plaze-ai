@@ -797,7 +797,7 @@ export default function CommunityPage() {
                       description={`A product by ${community?.name}`}
                       tags={[product.product_type || "product"]}
                       category="community"
-                      onClick={() => handleProductClick(product.community_product_uuid)}
+                      href={`/community/product/${product.community_product_uuid}`}
                     />
                     {isOwner && product.product_uuid && (
                       <Button
