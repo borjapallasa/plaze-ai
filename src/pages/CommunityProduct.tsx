@@ -271,7 +271,7 @@ export default function CommunityProductPage() {
                 </Button>
 
                 {/* People Viewing Indicator */}
-                <div className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground -mt-2">
+                <div className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground -mt-4">
                   <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
                   <span>
                     <span className="font-medium text-foreground">{viewersCount}</span> people viewing
