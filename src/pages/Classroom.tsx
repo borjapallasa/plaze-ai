@@ -604,11 +604,6 @@ export default function Classroom() {
       </div>
       <ClassroomProductsList
         variants={variants}
-        onAddToCart={(variantId) => {
-          setSelectedVariant(variantId);
-          handleAddToCart();
-        }}
-        isLoading={isProcessingPurchase || isCartLoading}
         className="space-y-2"
       />
     </div>

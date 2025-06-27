@@ -3,22 +3,21 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Package, ShoppingCart, ExternalLink } from "lucide-react";
+import { Package, ArrowRight, ExternalLink } from "lucide-react";
 import { Variant } from "@/components/product/types/variants";
+import { useNavigate } from "react-router-dom";
 
 interface ClassroomProductsListProps {
   variants?: Variant[];
-  onAddToCart: (variantId: string) => void;
-  isLoading?: boolean;
   className?: string;
 }
 
 export function ClassroomProductsList({ 
   variants = [], 
-  onAddToCart, 
-  isLoading = false,
   className = "" 
 }: ClassroomProductsListProps) {
+  const navigate = useNavigate();
+
   if (!variants || variants.length === 0) {
     return (
       <div className={`text-center py-8 ${className}`}>
@@ -28,10 +27,14 @@ export function ClassroomProductsList({
     );
   }
 
+  const handleProductClick = (productId: string) => {
+    navigate(`/community/product/${productId}`);
+  };
+
   return (
     <div className={`space-y-4 ${className}`}>
       {variants.map((variant) => (
-        <Card key={variant.id} className="hover:shadow-md transition-shadow">
+        <Card key={variant.id} className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => handleProductClick(variant.id)}>
           <CardContent className="p-4">
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1">
@@ -70,28 +73,26 @@ export function ClassroomProductsList({
 
               <div className="flex flex-col gap-2 flex-shrink-0">
                 <Button
-                  onClick={() => onAddToCart(variant.id)}
-                  disabled={isLoading}
+                  variant="outline"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleProductClick(variant.id);
+                  }}
                   className="min-w-[120px]"
                 >
-                  {isLoading ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                      <span>Adding...</span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <ShoppingCart className="h-4 w-4" />
-                      <span>Add to Cart</span>
-                    </div>
-                  )}
+                  <ArrowRight className="h-4 w-4 mr-1" />
+                  View Details
                 </Button>
                 
                 {variant.filesLink && (
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => window.open(variant.filesLink, '_blank')}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(variant.filesLink, '_blank');
+                    }}
                     className="min-w-[120px]"
                   >
                     <ExternalLink className="h-3 w-3 mr-1" />
