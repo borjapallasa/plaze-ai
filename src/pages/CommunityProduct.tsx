@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -271,11 +272,11 @@ export default function CommunityProductPage() {
                   Buy Now
                 </Button>
 
-                {/* Scarcity Indicator - New Style */}
+                {/* People Viewing Indicator */}
                 <div className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground">
                   <div className="w-1.5 h-1.5 bg-red-500 rounded-full" />
                   <span>
-                    Pídelo hoy y recíbelo <span className="font-medium text-red-500">Junio 30 - Julio 4</span>
+                    <span className="font-medium text-foreground">{viewersCount}</span> people viewing
                   </span>
                 </div>
 
@@ -320,3 +321,4 @@ export default function CommunityProductPage() {
     </div>
   );
 }
+
