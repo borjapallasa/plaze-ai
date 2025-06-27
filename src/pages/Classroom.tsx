@@ -44,6 +44,7 @@ import { Sheet } from "@/components/ui/sheet";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { useCart } from "@/context/CartContext";
 import { CommunityProductDialog } from "@/components/community/CommunityProductDialog";
+import { ClassroomProductsList } from "@/components/classroom/ClassroomProductsList";
 
 function transformToVariant(data: any[]): Variant[] {
   return data.map((item) => ({
@@ -601,13 +602,14 @@ export default function Classroom() {
           </DropdownMenu>
         )}
       </div>
-      <VariantPicker
+      <ClassroomProductsList
         variants={variants}
-        selectedVariant={selectedVariant}
-        onVariantChange={setSelectedVariant}
-        onAddToCart={handleAddToCart}
-        className="space-y-2"
+        onAddToCart={(variantId) => {
+          setSelectedVariant(variantId);
+          handleAddToCart();
+        }}
         isLoading={isProcessingPurchase || isCartLoading}
+        className="space-y-2"
       />
     </div>
   );
