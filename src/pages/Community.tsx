@@ -434,6 +434,12 @@ export default function CommunityPage() {
     setIsProductCreationDialogOpen(true);
   };
 
+  const handleProductClick = (e: React.MouseEvent, productId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    window.open(`/community/product/${productId}`, '_blank');
+  };
+
   const renderAddProductButton = () => {
     if (isOwner) {
       return (
@@ -469,12 +475,6 @@ export default function CommunityPage() {
     { id: "calendar", label: "Calendar", icon: Calendar },
     { id: "members", label: "Members", icon: Users }
   ];
-
-  const handleProductClick = (e: React.MouseEvent, productId: string) => {
-    e.preventDefault();
-    e.stopPropagation();
-    window.open(`/community/product/${productId}`, '_blank');
-  };
 
   return (
     <>
@@ -765,17 +765,16 @@ export default function CommunityPage() {
               ) : communityProducts && communityProducts.length > 0 ? (
                 communityProducts.map((product: any) => (
                   <div key={product.community_product_uuid} className="relative">
-                    <div onClick={(e) => handleProductClick(e, product.community_product_uuid)}>
-                      <ProductCard
-                        title={product.name}
-                        price={product.price ? `$${product.price}` : "Free"}
-                        image="/placeholder.svg"
-                        seller={community?.name || "Community"}
-                        description={`A product by ${community?.name}`}
-                        tags={[product.product_type || "product"]}
-                        category="community"
-                      />
-                    </div>
+                    <ProductCard
+                      title={product.name}
+                      price={product.price ? `$${product.price}` : "Free"}
+                      image="/placeholder.svg"
+                      seller={community?.name || "Community"}
+                      description={`A product by ${community?.name}`}
+                      tags={[product.product_type || "product"]}
+                      category="community"
+                      onClick={() => handleProductClick({} as React.MouseEvent, product.community_product_uuid)}
+                    />
                     {isOwner && product.product_uuid && (
                       <Button
                         variant="outline"
