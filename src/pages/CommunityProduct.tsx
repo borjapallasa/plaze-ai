@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -270,11 +271,11 @@ export default function CommunityProductPage() {
                   Buy Now
                 </Button>
 
-                {/* Scarcity Indicator */}
-                <div className="flex items-center justify-center gap-2 text-sm bg-muted/30 text-muted-foreground px-4 py-3 rounded-lg border">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
+                {/* Scarcity Indicator - New Style */}
+                <div className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground">
+                  <div className="w-1.5 h-1.5 bg-red-500 rounded-full" />
                   <span>
-                    <span className="font-medium text-foreground">{viewersCount}</span> people viewing
+                    Pídelo hoy y recíbelo <span className="font-medium text-red-500">Junio 30 - Julio 4</span>
                   </span>
                 </div>
 
