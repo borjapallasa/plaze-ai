@@ -32,73 +32,55 @@ export function ClassroomProductsList({
   };
 
   return (
-    <div className={`space-y-4 ${className}`}>
+    <div className={`space-y-2 ${className}`}>
       {variants.map((variant) => (
-        <Card key={variant.id} className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => handleProductClick(variant.id)}>
-          <CardContent className="p-4">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1">
-                <h4 className="font-semibold text-lg mb-2">{variant.name}</h4>
-                
-                <div className="flex items-center gap-2 mb-3">
-                  <Badge variant="default" className="font-medium">
-                    ${variant.price}
-                  </Badge>
-                  {variant.comparePrice > 0 && variant.comparePrice !== variant.price && (
-                    <Badge variant="outline" className="line-through text-muted-foreground">
-                      ${variant.comparePrice}
-                    </Badge>
-                  )}
-                  <Badge variant="secondary" className="text-xs">
-                    {variant.label || 'Package'}
+        <Card key={variant.id} className="hover:shadow-sm transition-shadow cursor-pointer border-l-4 border-l-primary/20" onClick={() => handleProductClick(variant.id)}>
+          <CardContent className="p-3">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <h4 className="font-medium text-sm truncate">{variant.name}</h4>
+                  <Badge variant={variant.price === 0 ? "secondary" : "default"} className="text-xs px-2 py-0.5 flex-shrink-0">
+                    {variant.price === 0 ? "FREE" : `$${variant.price}`}
                   </Badge>
                 </div>
-
+                
                 {variant.features && variant.features.length > 0 && (
-                  <ul className="text-sm text-muted-foreground space-y-1 mb-3">
-                    {variant.features.slice(0, 3).map((feature, index) => (
-                      <li key={index} className="flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0"></span>
-                        {feature}
-                      </li>
-                    ))}
-                    {variant.features.length > 3 && (
-                      <li className="text-xs text-muted-foreground/70">
-                        +{variant.features.length - 3} more features
-                      </li>
-                    )}
-                  </ul>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {variant.features[0]}
+                    {variant.features.length > 1 && ` +${variant.features.length - 1} more`}
+                  </p>
                 )}
               </div>
 
-              <div className="flex flex-col gap-2 flex-shrink-0">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleProductClick(variant.id);
-                  }}
-                  className="min-w-[120px]"
-                >
-                  <ArrowRight className="h-4 w-4 mr-1" />
-                  View Details
-                </Button>
-                
+              <div className="flex items-center gap-1 flex-shrink-0">
                 {variant.filesLink && (
                   <Button
-                    variant="outline"
+                    variant="ghost"
                     size="sm"
                     onClick={(e) => {
                       e.stopPropagation();
                       window.open(variant.filesLink, '_blank');
                     }}
-                    className="min-w-[120px]"
+                    className="h-8 w-8 p-0"
+                    title="View Files"
                   >
-                    <ExternalLink className="h-3 w-3 mr-1" />
-                    View Files
+                    <ExternalLink className="h-3.5 w-3.5" />
                   </Button>
                 )}
+                
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleProductClick(variant.id);
+                  }}
+                  className="h-8 w-8 p-0"
+                  title="View Details"
+                >
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Button>
               </div>
             </div>
           </CardContent>
