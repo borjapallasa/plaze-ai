@@ -262,14 +262,6 @@ export default function CommunityProductPage() {
                 </div>
               </div>
 
-              {/* People Viewing Indicator - closer to button */}
-              <div className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground">
-                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
-                <span>
-                  <span className="font-medium text-foreground">{viewersCount}</span> people viewing
-                </span>
-              </div>
-
               <Button 
                 onClick={handleCheckout} 
                 className="w-full h-12 text-base font-semibold" 
@@ -278,6 +270,14 @@ export default function CommunityProductPage() {
               >
                 Buy Now
               </Button>
+
+              {/* People Viewing Indicator - below button and closer to it */}
+              <div className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground pt-1">
+                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
+                <span>
+                  <span className="font-medium text-foreground">{viewersCount}</span> people viewing
+                </span>
+              </div>
             </CardContent>
           </Card>
 
@@ -300,11 +300,11 @@ export default function CommunityProductPage() {
             </Card>
           )}
 
-          {/* Share Product - below What's Included */}
-          <div className="text-center pt-2">
+          {/* Share Product - below What's Included and aligned left */}
+          <div className="pt-2">
             <button 
               onClick={handleShare}
-              className="text-sm text-primary hover:underline flex items-center gap-1 mx-auto transition-colors"
+              className="text-sm text-primary hover:underline flex items-center gap-1 transition-colors"
             >
               <Share2 className="w-3 h-3" />
               Share this product
@@ -396,14 +396,6 @@ export default function CommunityProductPage() {
                   </div>
                 </div>
 
-                {/* People Viewing Indicator - closer to button */}
-                <div className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground">
-                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
-                  <span>
-                    <span className="font-medium text-foreground">{viewersCount}</span> people viewing
-                  </span>
-                </div>
-
                 <Button 
                   onClick={handleCheckout} 
                   className="w-full h-12 text-lg font-semibold" 
@@ -412,6 +404,14 @@ export default function CommunityProductPage() {
                 >
                   Buy Now
                 </Button>
+
+                {/* People Viewing Indicator - below button and closer to it */}
+                <div className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground pt-1">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
+                  <span>
+                    <span className="font-medium text-foreground">{viewersCount}</span> people viewing
+                  </span>
+                </div>
               </CardContent>
             </Card>
 
@@ -434,11 +434,11 @@ export default function CommunityProductPage() {
               </Card>
             )}
 
-            {/* Share Product - below What's Included */}
-            <div className="text-center">
+            {/* Share Product - below What's Included and aligned left */}
+            <div>
               <button 
                 onClick={handleShare}
-                className="text-sm text-primary hover:underline flex items-center gap-1 mx-auto transition-colors"
+                className="text-sm text-primary hover:underline flex items-center gap-1 transition-colors"
               >
                 <Share2 className="w-3 h-3" />
                 Share this product
