@@ -22,7 +22,8 @@ export function useCommunityProduct(communityProductUuid?: string) {
           experts (
             name,
             thumbnail,
-            client_satisfaction
+            client_satisfaction,
+            created_at
           )
         `)
         .eq('community_product_uuid', communityProductUuid)

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, Calendar, ExternalLink, Loader2, User } from "lucide-react";
+import { Star, Calendar, ExternalLink, Loader2, UserPlus } from "lucide-react";
 import { useCommunityProduct } from "@/hooks/use-community-product";
 
 export default function CommunityProductPage() {
@@ -51,19 +51,19 @@ export default function CommunityProductPage() {
   const expertCreatedAt = communityProduct.experts?.created_at;
 
   // Format the created date
-  const formatCreatedDate = (dateString: string) => {
+  const formatJoinedDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
     const diffTime = Math.abs(now.getTime() - date.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     
-    if (diffDays === 1) return "Updated 1 day ago";
-    if (diffDays < 7) return `Updated ${diffDays} days ago`;
-    if (diffDays < 14) return "Updated 1 week ago";
-    if (diffDays < 21) return "Updated 2 weeks ago";
-    if (diffDays < 28) return "Updated 3 weeks ago";
-    if (diffDays < 60) return "Updated 1 month ago";
-    return `Updated ${Math.floor(diffDays / 30)} months ago`;
+    if (diffDays === 1) return "Joined 1 day ago";
+    if (diffDays < 7) return `Joined ${diffDays} days ago`;
+    if (diffDays < 14) return "Joined 1 week ago";
+    if (diffDays < 21) return "Joined 2 weeks ago";
+    if (diffDays < 28) return "Joined 3 weeks ago";
+    if (diffDays < 60) return "Joined 1 month ago";
+    return `Joined ${Math.floor(diffDays / 30)} months ago`;
   };
 
   // Features array - keep some default features for now
@@ -131,8 +131,8 @@ export default function CommunityProductPage() {
 
                 {expertCreatedAt && (
                   <div className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    <span>{formatCreatedDate(expertCreatedAt)}</span>
+                    <UserPlus className="w-4 h-4" />
+                    <span>{formatJoinedDate(expertCreatedAt)}</span>
                   </div>
                 )}
               </div>
