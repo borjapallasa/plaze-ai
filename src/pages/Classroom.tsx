@@ -576,35 +576,12 @@ export default function Classroom() {
 
   const ProductsSection = () => (
     <div className="pt-4 border-t">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="font-semibold">Products in this class</h3>
-        {isOwner && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
-                <Plus className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => {
-                setShowTemplateSelector(false);
-                setIsProductDialogOpen(true);
-              }}>
-                Create from scratch
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => {
-                setShowTemplateSelector(true);
-                setIsProductDialogOpen(true);
-              }}>
-                Create from template
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
-      </div>
       <ClassroomProductsList
         variants={variants}
         className="space-y-2"
+        isOwner={isOwner}
+        classroomId={id}
+        communityUuid={classroom?.community_uuid}
       />
     </div>
   );
