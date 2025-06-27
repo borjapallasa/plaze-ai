@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -111,7 +112,7 @@ export default function CommunityProductPage() {
               </h1>
 
               {/* Expert Information - Similar to reference style */}
-              <div className="flex items-center gap-3 text-sm text-muted-foreground">
+              <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <Avatar className="h-6 w-6">
                     <AvatarImage src={expertThumbnail} alt={expertName} />
