@@ -18,7 +18,8 @@ export function useCommunityProduct(communityProductUuid?: string) {
             name,
             description,
             thumbnail,
-            price_from
+            price_from,
+            product_includes
           ),
           experts (
             name,
