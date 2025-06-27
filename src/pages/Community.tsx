@@ -459,9 +459,7 @@ export default function CommunityPage() {
     setIsProductCreationDialogOpen(true);
   };
 
-  const handleProductClick = (e: React.MouseEvent, productId: string) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleProductClick = (productId: string) => {
     console.log('Opening community product with ID:', productId);
     window.open(`/community/product/${productId}`, '_blank');
   };
@@ -799,7 +797,7 @@ export default function CommunityPage() {
                       description={`A product by ${community?.name}`}
                       tags={[product.product_type || "product"]}
                       category="community"
-                      onClick={() => handleProductClick({} as React.MouseEvent, product.community_product_uuid)}
+                      onClick={() => handleProductClick(product.community_product_uuid)}
                     />
                     {isOwner && product.product_uuid && (
                       <Button
