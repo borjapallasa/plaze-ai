@@ -703,21 +703,9 @@ export default function Classroom() {
                         <div className="flex items-center justify-between mb-2">
                           <button
                             onClick={() => setIsExpanded(!isExpanded)}
-                            className="flex items-center text-left text-xl font-semibold py-2 group"
+                            className="flex items-center text-left text-xl font-semibold py-2"
                           >
                             <span>{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
-                            {isOwner && (
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleOpenEditClassroom();
-                                }}
-                                className="ml-2 p-1 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground"
-                                aria-label="Edit classroom"
-                              >
-                                <Pencil className="h-4 w-4" />
-                              </button>
-                            )}
                             <ChevronDown
                               className={cn(
                                 "h-5 w-5 text-muted-foreground transition-transform duration-200 ml-2",
@@ -726,6 +714,23 @@ export default function Classroom() {
                             />
                           </button>
                           <div className="flex items-center gap-2">
+                            {isOwner && (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={handleOpenEditClassroom}
+                                    className="text-muted-foreground"
+                                  >
+                                    <Pencil className="h-4 w-4" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Edit classroom</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            )}
                             {!isExpanded && lessons && lessons.length > 0 && (
                               <Tooltip>
                                 <TooltipTrigger asChild>
@@ -829,21 +834,9 @@ export default function Classroom() {
                         <div className="flex items-center justify-between mb-2">
                           <button
                             onClick={() => setIsExpanded(!isExpanded)}
-                            className="flex items-center text-left text-lg font-semibold group"
+                            className="flex items-center text-left text-lg font-semibold"
                           >
                             <span>{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
-                            {isOwner && (
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleOpenEditClassroom();
-                                }}
-                                className="ml-2 p-1 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground"
-                                aria-label="Edit classroom"
-                              >
-                                <Pencil className="h-4 w-4" />
-                              </button>
-                            )}
                             <ChevronDown
                               className={cn(
                                 "h-5 w-5 text-muted-foreground transition-transform duration-200 ml-2",
@@ -852,6 +845,23 @@ export default function Classroom() {
                             />
                           </button>
                           <div className="flex items-center gap-1">
+                            {isOwner && (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={handleOpenEditClassroom}
+                                    className="text-muted-foreground"
+                                  >
+                                    <Pencil className="h-4 w-4" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Edit classroom</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            )}
                             {!isExpanded && lessons && lessons.length > 0 && (
                               <Tooltip>
                                 <TooltipTrigger asChild>
