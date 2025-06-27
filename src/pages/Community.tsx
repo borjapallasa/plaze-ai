@@ -470,6 +470,10 @@ export default function CommunityPage() {
     { id: "members", label: "Members", icon: Users }
   ];
 
+  const handleProductClick = (productId: string) => {
+    window.open(`/community/product/${productId}`, '_blank');
+  };
+
   return (
     <>
       <MainHeader />
@@ -759,21 +763,26 @@ export default function CommunityPage() {
               ) : communityProducts && communityProducts.length > 0 ? (
                 communityProducts.map((product: any) => (
                   <div key={product.community_product_uuid} className="relative">
-                    <ProductCard
-                      title={product.name}
-                      price={product.price ? `$${product.price}` : "Free"}
-                      image="/placeholder.svg"
-                      seller={community?.name || "Community"}
-                      description={`A product by ${community?.name}`}
-                      tags={[product.product_type || "product"]}
-                      category="community"
-                    />
+                    <div onClick={() => handleProductClick(product.community_product_uuid)}>
+                      <ProductCard
+                        title={product.name}
+                        price={product.price ? `$${product.price}` : "Free"}
+                        image="/placeholder.svg"
+                        seller={community?.name || "Community"}
+                        description={`A product by ${community?.name}`}
+                        tags={[product.product_type || "product"]}
+                        category="community"
+                      />
+                    </div>
                     {isOwner && product.product_uuid && (
                       <Button
                         variant="outline"
                         size="sm"
                         className="absolute top-2 right-2 h-8 w-8 p-0"
-                        onClick={() => navigate(`/product/${product.product_uuid}/edit`)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/product/${product.product_uuid}/edit`);
+                        }}
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
