@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Package, ArrowRight, ExternalLink } from "lucide-react";
 import { Variant } from "@/components/product/types/variants";
-import { useNavigate } from "react-router-dom";
 
 interface ClassroomProductsListProps {
   variants?: Variant[];
@@ -16,8 +15,6 @@ export function ClassroomProductsList({
   variants = [], 
   className = "" 
 }: ClassroomProductsListProps) {
-  const navigate = useNavigate();
-
   if (!variants || variants.length === 0) {
     return (
       <div className={`text-center py-8 ${className}`}>
@@ -28,7 +25,7 @@ export function ClassroomProductsList({
   }
 
   const handleProductClick = (productId: string) => {
-    navigate(`/community/product/${productId}`);
+    window.open(`/community/product/${productId}`, '_blank');
   };
 
   return (
