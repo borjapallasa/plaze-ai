@@ -10,7 +10,7 @@ export interface Variant {
   hidden: boolean;
   createdAt: Date | null;
   filesLink: string | null;
-  relationshipUuid?: string; // Add this optional field
+  relationshipUuid?: string; // Keep this optional since not all variants have it
 }
 
 export interface ProductVariantsEditorProps {

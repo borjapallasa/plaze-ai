@@ -31,13 +31,20 @@ export function ClassroomProductsList({
 
   const handleDeleteClick = (variant: any, e: React.MouseEvent) => {
     e.stopPropagation();
-    console.log("Delete clicked for relationship:", variant.relationshipUuid);
+    console.log("Delete clicked for variant:", variant);
+    console.log("Relationship UUID:", variant.relationshipUuid);
+    
+    if (!variant.relationshipUuid) {
+      console.error("No relationship UUID found for variant:", variant);
+      return;
+    }
+    
     setDeleteRelationshipUuid(variant.relationshipUuid);
   };
 
   const excludedProductIds = variants.map(variant => variant.id);
 
-  // Don't render the delete dialog if classroomId is not available
+  // Don't render if classroomId is not available
   if (!classroomId) {
     console.error("ClassroomId is missing");
     return null;

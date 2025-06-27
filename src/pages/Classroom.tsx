@@ -59,7 +59,7 @@ function transformToVariant(data: any[]): Variant[] {
     hidden: false,
     createdAt: null,
     filesLink: null,
-    relationshipUuid: item.community_product_relationship_uuid // Add this to track the relationship
+    relationshipUuid: item.community_product_relationship_uuid // This should now be available
   }));
 }
 
@@ -173,6 +173,13 @@ export default function Classroom() {
   const { data: variants } = useQuery({
     queryKey: ['classroomProducts', id],
     queryFn: async () => {
+      if (!id) {
+        console.error("Classroom ID is missing");
+        return [];
+      }
+
+      console.log("Fetching classroom products for ID:", id);
+      
       const { data, error } = await supabase
         .from('community_product_relationships')
         .select(`
@@ -189,7 +196,12 @@ export default function Classroom() {
         console.error("Error fetching classroom products:", error);
         return [];
       }
-      return transformToVariant(data)
+
+      console.log("Raw classroom products data:", data);
+      const transformedData = transformToVariant(data);
+      console.log("Transformed variants:", transformedData);
+      
+      return transformedData;
     },
     enabled: !!id
   });

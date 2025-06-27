@@ -73,6 +73,15 @@ export function DeleteClassroomProductDialog({
   });
 
   const handleDelete = () => {
+    if (!relationshipUuid) {
+      toast({
+        title: "Error",
+        description: "Missing relationship information. Please try again.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     deleteMutation.mutate();
   };
 
