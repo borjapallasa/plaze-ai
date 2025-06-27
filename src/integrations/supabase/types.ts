@@ -38,6 +38,24 @@ export type Database = {
           },
         ]
       }
+      affiliate_partnerships: {
+        Row: {
+          affiliate_partnership_uuid: string
+          created_at: string
+          id: number
+        }
+        Insert: {
+          affiliate_partnership_uuid?: string
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          affiliate_partnership_uuid?: string
+          created_at?: string
+          id?: number
+        }
+        Relationships: []
+      }
       affiliate_products: {
         Row: {
           affiliate_products_uuid: string

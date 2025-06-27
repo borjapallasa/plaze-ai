@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -46,6 +47,7 @@ export default function CommunityProductPage() {
   const productDescription = communityProduct.products?.description || 'No description available';
   const productThumbnail = communityProduct.products?.thumbnail;
   const productPriceFrom = communityProduct.products?.price_from;
+  const productIncludes = communityProduct.products?.product_includes;
   const expertName = communityProduct.experts?.name || 'Unknown Expert';
   const expertThumbnail = communityProduct.experts?.thumbnail;
   const expertRating = communityProduct.experts?.client_satisfaction || 0;
@@ -67,8 +69,25 @@ export default function CommunityProductPage() {
     return `Joined ${Math.floor(diffDays / 30)} months ago`;
   };
 
-  // Features array - keep some default features for now
-  const features = [
+  // Parse product_includes - it could be a string with line breaks or bullet points
+  const parseProductIncludes = (includes: string) => {
+    if (!includes) return [];
+    
+    // Split by line breaks and filter out empty lines
+    const lines = includes.split(/\r?\n/).filter(line => line.trim());
+    
+    // If no line breaks, try splitting by bullet points or dashes
+    if (lines.length === 1) {
+      const bulletSplit = includes.split(/[•·-]\s*/).filter(item => item.trim());
+      if (bulletSplit.length > 1) {
+        return bulletSplit.map(item => item.trim()).filter(item => item);
+      }
+    }
+    
+    return lines.map(line => line.trim().replace(/^[•·-]\s*/, ''));
+  };
+
+  const features = productIncludes ? parseProductIncludes(productIncludes) : [
     "Lifetime access to course materials",
     "Weekly live Q&A sessions", 
     "Private community access",
@@ -143,21 +162,23 @@ export default function CommunityProductPage() {
               </p>
 
               {/* Features */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-xl">What's Included</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3">
-                    {features.map((feature, index) => (
-                      <li key={index} className="flex items-start gap-3">
-                        <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
-                        <span className="text-muted-foreground">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
+              {features.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-xl">What's Included</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-3">
+                      {features.map((feature, index) => (
+                        <li key={index} className="flex items-start gap-3">
+                          <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
+                          <span className="text-muted-foreground">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              )}
             </div>
           </div>
 
