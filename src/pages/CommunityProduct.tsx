@@ -13,9 +13,10 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Star, Calendar, ExternalLink, Loader2, UserPlus, Eye } from "lucide-react";
+import { Star, Calendar, ExternalLink, Loader2, UserPlus, Eye, Share2 } from "lucide-react";
 import { useCommunityProduct } from "@/hooks/use-community-product";
 import { useCommunityDetails } from "@/hooks/use-community-details";
+import { toast } from "sonner";
 
 export default function CommunityProductPage() {
   const { id } = useParams();
@@ -45,6 +46,28 @@ export default function CommunityProductPage() {
       window.open(communityProduct.payment_link, '_blank');
     } else {
       alert("Payment link not available");
+    }
+  };
+
+  const handleShare = async () => {
+    const shareData = {
+      title: productName,
+      text: `Check out this amazing product: ${productName}`,
+      url: window.location.href,
+    };
+
+    try {
+      if (navigator.share && navigator.canShare(shareData)) {
+        await navigator.share(shareData);
+        toast.success("Product shared successfully!");
+      } else {
+        // Fallback to copying URL to clipboard
+        await navigator.clipboard.writeText(window.location.href);
+        toast.success("Product link copied to clipboard!");
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+      toast.error("Failed to share product");
     }
   };
 
@@ -143,13 +166,13 @@ export default function CommunityProductPage() {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbLink href="/communities">Communities</BreadcrumbLink>
+                <span className="text-muted-foreground">Communities</span>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbLink href={`/community/${communityProduct.community_uuid}`}>
+                <span className="text-muted-foreground">
                   {community?.name || 'Community'}
-                </BreadcrumbLink>
+                </span>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
@@ -252,19 +275,19 @@ export default function CommunityProductPage() {
                 </Button>
 
                 {/* Scarcity Indicator */}
-                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground bg-orange-50 dark:bg-orange-950/20 px-3 py-2 rounded-md border border-orange-200 dark:border-orange-800">
-                  <Eye className="w-4 h-4 text-orange-600 dark:text-orange-400" />
-                  <span className="text-orange-700 dark:text-orange-300">
-                    <span className="font-semibold">{viewersCount}</span> people viewing this product
+                <div className="flex items-center justify-center gap-2 text-xs bg-primary/5 text-primary px-3 py-1.5 rounded-full border border-primary/20">
+                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+                  <span className="font-medium">
+                    {viewersCount} people viewing
                   </span>
                 </div>
 
                 <div className="text-center">
-                  <p className="text-sm text-muted-foreground mb-2">
-                    30-day money-back guarantee
-                  </p>
-                  <button className="text-sm text-primary hover:underline flex items-center gap-1 mx-auto">
-                    <ExternalLink className="w-3 h-3" />
+                  <button 
+                    onClick={handleShare}
+                    className="text-sm text-primary hover:underline flex items-center gap-1 mx-auto transition-colors"
+                  >
+                    <Share2 className="w-3 h-3" />
                     Share this product
                   </button>
                 </div>
