@@ -38,6 +38,12 @@ export function ClassroomProductsList({
 
   const excludedProductIds = variants.map(variant => variant.id);
 
+  // Don't render the delete dialog if classroomId is not available
+  if (!classroomId) {
+    console.error("ClassroomId is missing");
+    return null;
+  }
+
   return (
     <div className={`${className}`}>
       <div className="flex justify-between items-center mb-4">
@@ -129,28 +135,26 @@ export function ClassroomProductsList({
         </div>
       )}
 
-      {isOwner && classroomId && communityUuid && (
-        <>
-          <ClassroomProductSelector
-            open={isSelectorOpen}
-            onOpenChange={setIsSelectorOpen}
-            classroomId={classroomId}
-            communityUuid={communityUuid}
-            excludedProductIds={excludedProductIds}
-          />
-          
-          <DeleteClassroomProductDialog
-            open={!!deleteProductId}
-            onOpenChange={(open) => !open && setDeleteProductId(null)}
-            productId={deleteProductId}
-            classroomId={classroomId}
-            onSuccess={() => {
-              setDeleteProductId(null);
-              // The parent component will handle the refresh via query invalidation
-            }}
-          />
-        </>
+      {isOwner && communityUuid && (
+        <ClassroomProductSelector
+          open={isSelectorOpen}
+          onOpenChange={setIsSelectorOpen}
+          classroomId={classroomId}
+          communityUuid={communityUuid}
+          excludedProductIds={excludedProductIds}
+        />
       )}
+      
+      <DeleteClassroomProductDialog
+        open={!!deleteProductId}
+        onOpenChange={(open) => !open && setDeleteProductId(null)}
+        productId={deleteProductId}
+        classroomId={classroomId}
+        onSuccess={() => {
+          setDeleteProductId(null);
+          // The parent component will handle the refresh via query invalidation
+        }}
+      />
     </div>
   );
 }

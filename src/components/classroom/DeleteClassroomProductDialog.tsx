@@ -18,7 +18,7 @@ interface DeleteClassroomProductDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   productId: string | null;
-  classroomId?: string;
+  classroomId: string;
   onSuccess?: () => void;
 }
 
@@ -34,8 +34,12 @@ export function DeleteClassroomProductDialog({
 
   const deleteMutation = useMutation({
     mutationFn: async () => {
-      if (!productId || !classroomId) {
-        throw new Error("Product ID and Classroom ID are required");
+      if (!productId) {
+        throw new Error("Product ID is required");
+      }
+
+      if (!classroomId) {
+        throw new Error("Classroom ID is required");
       }
 
       console.log("Attempting to delete relationship:", {
