@@ -47,20 +47,41 @@ import { CommunityProductDialog } from "@/components/community/CommunityProductD
 import { ClassroomProductsList } from "@/components/classroom/ClassroomProductsList";
 
 function transformToVariant(data: any[]): Variant[] {
-  return data.map((item) => ({
-    id: item.community_product_uuid.community_product_uuid,
-    name: item.community_product_uuid.name,
-    price: item.community_product_uuid.price ?? 0,
-    comparePrice: 0,
-    label: item.community_product_uuid.name,
-    highlight: false,
-    tags: [],
-    features: [],
-    hidden: false,
-    createdAt: null,
-    filesLink: null,
-    relationshipUuid: item.community_product_relationship_uuid // Make sure this maps correctly
-  }));
+  console.log("Transform function received data:", data);
+  
+  return data.map((item) => {
+    const relationshipUuid = item.community_product_relationship_uuid;
+    const productData = item.community_product_uuid;
+    
+    console.log("Processing item:", {
+      relationshipUuid,
+      productData,
+      fullItem: item
+    });
+    
+    if (!productData) {
+      console.error("No product data found for item:", item);
+      return null;
+    }
+    
+    const variant = {
+      id: productData.community_product_uuid,
+      name: productData.name,
+      price: productData.price ?? 0,
+      comparePrice: 0,
+      label: productData.name,
+      highlight: false,
+      tags: [],
+      features: [],
+      hidden: false,
+      createdAt: null,
+      filesLink: null,
+      relationshipUuid: relationshipUuid
+    };
+    
+    console.log("Created variant:", variant);
+    return variant;
+  }).filter(Boolean);
 }
 
 export default function Classroom() {
@@ -184,7 +205,7 @@ export default function Classroom() {
         .from('community_product_relationships')
         .select(`
           community_product_relationship_uuid,
-          community_product_uuid (
+          community_product_uuid!inner (
             community_product_uuid, 
             name, 
             price 
@@ -199,16 +220,8 @@ export default function Classroom() {
 
       console.log("Raw classroom products data:", data);
       
-      // Add debug logging to see what we're actually getting
-      data?.forEach((item, index) => {
-        console.log(`Item ${index}:`, {
-          relationship_uuid: item.community_product_relationship_uuid,
-          product_data: item.community_product_uuid
-        });
-      });
-      
       const transformedData = transformToVariant(data);
-      console.log("Transformed variants:", transformedData);
+      console.log("Final transformed variants:", transformedData);
       
       return transformedData;
     },

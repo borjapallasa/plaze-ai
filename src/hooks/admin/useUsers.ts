@@ -1,106 +1,102 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useState } from "react";
 
 export interface UserData {
   user_uuid: string;
   email: string;
-  first_name: string;
-  last_name: string;
+  first_name: string | null;
+  last_name: string | null;
   created_at: string;
-  is_expert: boolean;
-  is_affiliate: boolean;
-  is_admin: boolean;
-  total_spent: number;
-  commissions_generated: number;
+  is_affiliate: boolean | null;
+  is_admin: boolean | null;
+  is_expert: boolean | null;
+  total_spent: number | null;
+  total_sales_amount: number | null;
+  transaction_count: number | null;
+  product_count: number | null;
+  active_product_count: number | null;
+  source: string | null;
+  via: string | null;
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  utm_id: string | null;
+  utm_term: string | null;
+  utm_content: string | null;
+  referral_affiliate_code: string | null;
+  affiliate_since: string | null;
+  affiliate_multiplier: number | null;
+  average_review: number | null;
+  payout_amount: number | null;
+  requested_amount: number | null;
+  affiliate_fees_amount: number | null;
+  available_amount: number | null;
+  net_sales_amount: number | null;
+  fees_amount: number | null;
+  service_sales_amount: number | null;
+  job_sales_amount: number | null;
+  subscription_sales_amount: number | null;
+  product_sales_amount: number | null;
+  service_transaction_amount_spent: number | null;
+  job_amount_spent: number | null;
+  product_amount_spent: number | null;
+  subscription_amount_spent: number | null;
+  stripe_client_id: string | null;
+  affiliate_id: string | null;
+  affiliate_link: string | null;
+  member_profile_link: string | null;
+  user_thumbnail: string | null;
+  communities_joined: any;
 }
 
-export function useUsers() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [roleFilter, setRoleFilter] = useState("all");
-  const [sortField, setSortField] = useState<keyof UserData>("created_at");
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+export interface UseUsersParams {
+  page?: number;
+  limit?: number;
+  searchTerm?: string;
+  sortBy?: keyof UserData;
+  sortOrder?: 'asc' | 'desc';
+}
 
-  const query = useQuery({
-    queryKey: ['admin-users'],
-    queryFn: async (): Promise<UserData[]> => {
-      const { data, error } = await supabase
+export function useUsers({
+  page = 1,
+  limit = 10,
+  searchTerm = '',
+  sortBy = 'created_at',
+  sortOrder = 'desc'
+}: UseUsersParams = {}) {
+  return useQuery({
+    queryKey: ['users', page, limit, searchTerm, sortBy, sortOrder],
+    queryFn: async () => {
+      let query = supabase
         .from('users')
-        .select(`
-          user_uuid,
-          email,
-          first_name,
-          last_name,
-          created_at,
-          is_expert,
-          is_affiliate,
-          is_admin,
-          total_spent
-        `)
-        .order('created_at', { ascending: false });
+        .select('*', { count: 'exact' });
 
-      if (error) throw error;
-      
-      return (data || []).map(user => ({
-        ...user,
-        commissions_generated: 0
-      }));
-    }
-  });
-
-  const handleSort = (field: keyof UserData) => {
-    if (field === sortField) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-    } else {
-      setSortField(field);
-      setSortDirection("asc");
-    }
-  };
-
-  // Filter and sort users
-  let filteredUsers = query.data || [];
-  
-  if (searchQuery) {
-    filteredUsers = filteredUsers.filter(user => 
-      user.first_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.last_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email?.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }
-
-  if (roleFilter !== "all") {
-    filteredUsers = filteredUsers.filter(user => {
-      switch (roleFilter) {
-        case "expert": return user.is_expert;
-        case "affiliate": return user.is_affiliate;
-        case "admin": return user.is_admin;
-        default: return true;
+      if (searchTerm) {
+        query = query.or(`email.ilike.%${searchTerm}%,first_name.ilike.%${searchTerm}%,last_name.ilike.%${searchTerm}%`);
       }
-    });
-  }
 
-  // Sort users
-  filteredUsers.sort((a, b) => {
-    const aValue = a[sortField];
-    const bValue = b[sortField];
-    
-    if (sortDirection === "asc") {
-      return aValue > bValue ? 1 : -1;
-    } else {
-      return aValue < bValue ? 1 : -1;
-    }
+      const validSortColumn = sortBy as string;
+      query = query.order(validSortColumn, { ascending: sortOrder === 'asc' });
+
+      const from = (page - 1) * limit;
+      const to = from + limit - 1;
+      query = query.range(from, to);
+
+      const { data, error, count } = await query;
+
+      if (error) {
+        console.error('Error fetching users:', error);
+        throw error;
+      }
+
+      return {
+        users: data as UserData[],
+        count: count || 0,
+        totalPages: Math.ceil((count || 0) / limit)
+      };
+    },
+    staleTime: 30000,
+    retry: 3
   });
-
-  return {
-    ...query,
-    users: filteredUsers,
-    searchQuery,
-    setSearchQuery,
-    roleFilter,
-    setRoleFilter,
-    sortField,
-    sortDirection,
-    handleSort
-  };
 }
