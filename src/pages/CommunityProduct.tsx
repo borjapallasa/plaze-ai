@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -165,13 +164,11 @@ export default function CommunityProductPage() {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
-                <span className="text-muted-foreground">Communities</span>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <span className="text-muted-foreground">
-                  {community?.name || 'Community'}
-                </span>
+                <BreadcrumbLink asChild>
+                  <Link to={`/community/${communityProduct.community_uuid}`} className="text-muted-foreground hover:text-foreground">
+                    {community?.name || 'Community'}
+                  </Link>
+                </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
