@@ -1,15 +1,44 @@
-import React from "react";
+
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, Calendar, ExternalLink, Loader2, UserPlus } from "lucide-react";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Star, Calendar, ExternalLink, Loader2, UserPlus, Eye } from "lucide-react";
 import { useCommunityProduct } from "@/hooks/use-community-product";
+import { useCommunityDetails } from "@/hooks/use-community-details";
 
 export default function CommunityProductPage() {
   const { id } = useParams();
   const { data: communityProduct, isLoading, error } = useCommunityProduct(id);
+  const { data: community } = useCommunityDetails(communityProduct?.community_uuid);
+  
+  // Scarcity counter state
+  const [viewersCount, setViewersCount] = useState(0);
+
+  // Generate a realistic viewers count
+  useEffect(() => {
+    const baseCount = Math.floor(Math.random() * 30) + 15; // 15-45 viewers
+    const variation = Math.floor(Math.random() * 5) - 2; // -2 to +2 variation
+    setViewersCount(Math.max(1, baseCount + variation));
+    
+    // Update count every 30-60 seconds for realistic variation
+    const interval = setInterval(() => {
+      const change = Math.floor(Math.random() * 3) - 1; // -1, 0, or +1
+      setViewersCount(prev => Math.max(1, Math.min(50, prev + change)));
+    }, Math.random() * 30000 + 30000);
+
+    return () => clearInterval(interval);
+  }, [id]);
 
   const handleCheckout = () => {
     if (communityProduct?.payment_link) {
@@ -109,6 +138,27 @@ export default function CommunityProductPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
+        {/* Breadcrumb */}
+        <div className="mb-6">
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/communities">Communities</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink href={`/community/${communityProduct.community_uuid}`}>
+                  {community?.name || 'Community'}
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>{productName}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
@@ -200,6 +250,14 @@ export default function CommunityProductPage() {
                 >
                   Buy Now
                 </Button>
+
+                {/* Scarcity Indicator */}
+                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground bg-orange-50 dark:bg-orange-950/20 px-3 py-2 rounded-md border border-orange-200 dark:border-orange-800">
+                  <Eye className="w-4 h-4 text-orange-600 dark:text-orange-400" />
+                  <span className="text-orange-700 dark:text-orange-300">
+                    <span className="font-semibold">{viewersCount}</span> people viewing this product
+                  </span>
+                </div>
 
                 <div className="text-center">
                   <p className="text-sm text-muted-foreground mb-2">
