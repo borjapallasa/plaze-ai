@@ -17,7 +17,8 @@ export function useCommunityProduct(communityProductUuid?: string) {
           products!community_products_product_uuid_fkey (
             name,
             description,
-            thumbnail
+            thumbnail,
+            price_from
           ),
           experts (
             name,

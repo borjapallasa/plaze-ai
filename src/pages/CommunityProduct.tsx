@@ -6,15 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star, Calendar, ExternalLink, Loader2, UserPlus } from "lucide-react";
 import { useCommunityProduct } from "@/hooks/use-community-product";
+
 export default function CommunityProductPage() {
-  const {
-    id
-  } = useParams();
-  const {
-    data: communityProduct,
-    isLoading,
-    error
-  } = useCommunityProduct(id);
+  const { id } = useParams();
+  const { data: communityProduct, isLoading, error } = useCommunityProduct(id);
+
   const handleCheckout = () => {
     if (communityProduct?.payment_link) {
       window.open(communityProduct.payment_link, '_blank');
@@ -22,27 +18,34 @@ export default function CommunityProductPage() {
       alert("Payment link not available");
     }
   };
+
   if (isLoading) {
-    return <div className="min-h-screen bg-background flex items-center justify-center">
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex items-center gap-3">
           <Loader2 className="h-6 w-6 animate-spin" />
           <span>Loading product...</span>
         </div>
-      </div>;
+      </div>
+    );
   }
+
   if (error || !communityProduct) {
-    return <div className="min-h-screen bg-background flex items-center justify-center">
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-2">Product Not Found</h2>
           <p className="text-muted-foreground">The community product you're looking for doesn't exist.</p>
         </div>
-      </div>;
+      </div>
+    );
   }
 
   // Use product data from the joined query
   const productName = communityProduct.products?.name || communityProduct.name;
   const productDescription = communityProduct.products?.description || 'No description available';
   const productThumbnail = communityProduct.products?.thumbnail;
+  const productPriceFrom = communityProduct.products?.price_from;
   const expertName = communityProduct.experts?.name || 'Unknown Expert';
   const expertThumbnail = communityProduct.experts?.thumbnail;
   const expertRating = communityProduct.experts?.client_satisfaction || 0;
@@ -54,6 +57,7 @@ export default function CommunityProductPage() {
     const now = new Date();
     const diffTime = Math.abs(now.getTime() - date.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
     if (diffDays === 1) return "Joined 1 day ago";
     if (diffDays < 7) return `Joined ${diffDays} days ago`;
     if (diffDays < 14) return "Joined 1 week ago";
@@ -64,15 +68,30 @@ export default function CommunityProductPage() {
   };
 
   // Features array - keep some default features for now
-  const features = ["Lifetime access to course materials", "Weekly live Q&A sessions", "Private community access", "30-day money-back guarantee", "Certificate of completion"];
-  return <div className="min-h-screen bg-background">
+  const features = [
+    "Lifetime access to course materials",
+    "Weekly live Q&A sessions", 
+    "Private community access",
+    "30-day money-back guarantee",
+    "Certificate of completion"
+  ];
+
+  return (
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Product Image */}
             <div className="aspect-video w-full bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg overflow-hidden relative">
-              {productThumbnail ? <img src={productThumbnail} alt={productName} className="w-full h-full object-cover" /> : <>
+              {productThumbnail ? (
+                <img 
+                  src={productThumbnail} 
+                  alt={productName} 
+                  className="w-full h-full object-cover" 
+                />
+              ) : (
+                <>
                   <div className="absolute inset-0 bg-black/20" />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center text-white">
@@ -82,7 +101,8 @@ export default function CommunityProductPage() {
                       <h2 className="text-2xl font-bold">Course Preview</h2>
                     </div>
                   </div>
-                </>}
+                </>
+              )}
             </div>
 
             {/* Product Details */}
@@ -91,8 +111,8 @@ export default function CommunityProductPage() {
                 {productName}
               </h1>
 
-              {/* Expert Information - Similar to reference style */}
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              {/* Expert Information */}
+              <div className="flex items-center gap-6 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <Avatar className="h-6 w-6">
                     <AvatarImage src={expertThumbnail} alt={expertName} />
@@ -103,15 +123,19 @@ export default function CommunityProductPage() {
                   <span className="font-medium text-foreground">{expertName}</span>
                 </div>
 
-                {expertRating > 0 && <div className="flex items-center gap-1">
+                {expertRating > 0 && (
+                  <div className="flex items-center gap-1">
                     <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                     <span>{expertRating}% satisfaction</span>
-                  </div>}
+                  </div>
+                )}
 
-                {expertCreatedAt && <div className="flex items-center gap-1">
+                {expertCreatedAt && (
+                  <div className="flex items-center gap-1">
                     <UserPlus className="w-4 h-4" />
                     <span>{formatJoinedDate(expertCreatedAt)}</span>
-                  </div>}
+                  </div>
+                )}
               </div>
 
               <p className="text-muted-foreground text-lg leading-relaxed">
@@ -125,10 +149,12 @@ export default function CommunityProductPage() {
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-3">
-                    {features.map((feature, index) => <li key={index} className="flex items-start gap-3">
+                    {features.map((feature, index) => (
+                      <li key={index} className="flex items-start gap-3">
                         <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
                         <span className="text-muted-foreground">{feature}</span>
-                      </li>)}
+                      </li>
+                    ))}
                   </ul>
                 </CardContent>
               </Card>
@@ -145,11 +171,20 @@ export default function CommunityProductPage() {
                     <span className="text-3xl font-bold text-foreground">
                       ${communityProduct.price || 0}
                     </span>
+                    {productPriceFrom && productPriceFrom > (communityProduct.price || 0) && (
+                      <span className="text-lg text-muted-foreground line-through">
+                        ${productPriceFrom}
+                      </span>
+                    )}
                   </div>
-                  
                 </div>
 
-                <Button onClick={handleCheckout} className="w-full h-12 text-lg font-semibold" size="lg" disabled={!communityProduct.payment_link}>
+                <Button 
+                  onClick={handleCheckout} 
+                  className="w-full h-12 text-lg font-semibold" 
+                  size="lg" 
+                  disabled={!communityProduct.payment_link}
+                >
                   Buy Now
                 </Button>
 
@@ -172,5 +207,6 @@ export default function CommunityProductPage() {
           Product ID: {id}
         </div>
       </div>
-    </div>;
+    </div>
+  );
 }
