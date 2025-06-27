@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -158,9 +159,9 @@ export default function CommunityProductPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="container mx-auto px-4 py-4 lg:py-8 max-w-4xl">
         {/* Breadcrumb */}
-        <div className="mb-6">
+        <div className="mb-4 lg:mb-6">
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
@@ -172,15 +173,15 @@ export default function CommunityProductPage() {
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage>{productName}</BreadcrumbPage>
+                <BreadcrumbPage className="text-sm lg:text-base">{productName}</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-4 lg:space-y-6">
             {/* Product Image */}
             <div className="aspect-video w-full bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg overflow-hidden relative">
               {productThumbnail ? (
@@ -194,10 +195,10 @@ export default function CommunityProductPage() {
                   <div className="absolute inset-0 bg-black/20" />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center text-white">
-                      <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
-                        <span className="text-2xl font-bold">CP</span>
+                      <div className="w-16 h-16 lg:w-20 lg:h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
+                        <span className="text-xl lg:text-2xl font-bold">CP</span>
                       </div>
-                      <h2 className="text-2xl font-bold">Course Preview</h2>
+                      <h2 className="text-xl lg:text-2xl font-bold">Course Preview</h2>
                     </div>
                   </div>
                 </>
@@ -205,13 +206,13 @@ export default function CommunityProductPage() {
             </div>
 
             {/* Product Details */}
-            <div className="space-y-4">
-              <h1 className="text-3xl font-bold text-foreground">
+            <div className="space-y-3 lg:space-y-4">
+              <h1 className="text-2xl lg:text-3xl font-bold text-foreground leading-tight">
                 {productName}
               </h1>
 
               {/* Expert Information */}
-              <div className="flex items-center gap-6 text-sm text-muted-foreground">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4 lg:gap-6 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <Avatar className="h-6 w-6">
                     <AvatarImage src={expertThumbnail} alt={expertName} />
@@ -237,20 +238,20 @@ export default function CommunityProductPage() {
                 )}
               </div>
 
-              <div className="text-muted-foreground text-lg leading-relaxed">
+              <div className="text-muted-foreground text-base lg:text-lg leading-relaxed">
                 {renderTextWithLineBreaks(productDescription)}
               </div>
             </div>
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="space-y-4 lg:space-y-6 order-first lg:order-last">
             {/* Purchase Card */}
-            <Card className="sticky top-4">
-              <CardContent className="p-6 space-y-6">
+            <Card className="lg:sticky lg:top-4">
+              <CardContent className="p-4 lg:p-6 space-y-4 lg:space-y-6">
                 <div className="space-y-2">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-bold text-foreground">
+                  <div className="flex items-baseline gap-2 flex-wrap">
+                    <span className="text-2xl lg:text-3xl font-bold text-foreground">
                       ${communityProduct.price || 0}
                     </span>
                     {communityProduct.compare_price && communityProduct.compare_price > (communityProduct.price || 0) && (
@@ -263,7 +264,7 @@ export default function CommunityProductPage() {
 
                 <Button 
                   onClick={handleCheckout} 
-                  className="w-full h-12 text-lg font-semibold" 
+                  className="w-full h-12 text-base lg:text-lg font-semibold" 
                   size="lg" 
                   disabled={!communityProduct.payment_link}
                 >
@@ -271,14 +272,14 @@ export default function CommunityProductPage() {
                 </Button>
 
                 {/* People Viewing Indicator */}
-                <div className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground -mt-4">
+                <div className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground -mt-2">
                   <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
                   <span>
                     <span className="font-medium text-foreground">{viewersCount}</span> people viewing
                   </span>
                 </div>
 
-                <div className="text-center">
+                <div className="text-center pt-2">
                   <button 
                     onClick={handleShare}
                     className="text-sm text-primary hover:underline flex items-center gap-1 mx-auto transition-colors"
@@ -293,15 +294,15 @@ export default function CommunityProductPage() {
             {/* What's Included */}
             {features.length > 0 && (
               <Card>
-                <CardHeader>
-                  <CardTitle className="text-xl">What's Included</CardTitle>
+                <CardHeader className="p-4 lg:p-6 pb-3 lg:pb-6">
+                  <CardTitle className="text-lg lg:text-xl">What's Included</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3">
+                <CardContent className="p-4 lg:p-6 pt-0">
+                  <ul className="space-y-2 lg:space-y-3">
                     {features.map((feature, index) => (
                       <li key={index} className="flex items-start gap-3">
                         <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
-                        <span className="text-muted-foreground">{feature}</span>
+                        <span className="text-sm lg:text-base text-muted-foreground leading-relaxed">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -312,7 +313,7 @@ export default function CommunityProductPage() {
         </div>
 
         {/* Product ID for reference */}
-        <div className="text-center text-xs text-muted-foreground mt-8 pt-4 border-t">
+        <div className="text-center text-xs text-muted-foreground mt-6 lg:mt-8 pt-4 border-t">
           Product ID: {id}
         </div>
       </div>
