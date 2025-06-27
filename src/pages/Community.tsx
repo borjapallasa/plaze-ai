@@ -462,7 +462,7 @@ export default function CommunityPage() {
   const handleProductClick = (e: React.MouseEvent, productId: string) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('Opening product with ID:', productId);
+    console.log('Opening community product with ID:', productId);
     window.open(`/community/product/${productId}`, '_blank');
   };
 
