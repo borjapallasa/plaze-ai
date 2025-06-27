@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -172,25 +171,6 @@ export default function CommunityProductPage() {
               <div className="text-muted-foreground text-lg leading-relaxed">
                 {renderTextWithLineBreaks(productDescription)}
               </div>
-
-              {/* Features */}
-              {features.length > 0 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-xl">What's Included</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-3">
-                      {features.map((feature, index) => (
-                        <li key={index} className="flex items-start gap-3">
-                          <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
-                          <span className="text-muted-foreground">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              )}
             </div>
           </div>
 
@@ -232,6 +212,25 @@ export default function CommunityProductPage() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* What's Included */}
+            {features.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-xl">What's Included</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-3">
+                    {features.map((feature, index) => (
+                      <li key={index} className="flex items-start gap-3">
+                        <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
+                        <span className="text-muted-foreground">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
 
