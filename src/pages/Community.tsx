@@ -72,6 +72,8 @@ export default function CommunityPage() {
   const { user } = useAuth();
   const { images } = useCommunityImages(communityId);
 
+  console.log('Community ID from params:', communityId);
+
   // Get current user's expert data
   const { data: currentUserExpertData } = useQuery({
     queryKey: ['current-user-expert', user?.email],
@@ -97,6 +99,13 @@ export default function CommunityPage() {
   const { data: community, isLoading: isCommunityLoading } = useQuery({
     queryKey: ['community', communityId],
     queryFn: async () => {
+      if (!communityId) {
+        console.error('No community ID provided');
+        return null;
+      }
+
+      console.log('Fetching community with ID:', communityId);
+      
       const { data, error } = await supabase
         .from('communities')
         .select(`
@@ -108,12 +117,14 @@ export default function CommunityPage() {
           )
         `)
         .eq('community_uuid', communityId)
-        .single();
+        .maybeSingle();
 
       if (error) {
+        console.error('Error fetching community:', error);
         throw error;
       }
 
+      console.log('Community data fetched:', data);
       return data;
     },
     enabled: !!communityId
@@ -163,6 +174,13 @@ export default function CommunityPage() {
   const { data: communityProducts, isLoading: isProductsLoading } = useQuery({
     queryKey: ['communityProducts', communityId],
     queryFn: async () => {
+      if (!communityId) {
+        console.error('No community ID provided for products query');
+        return [];
+      }
+
+      console.log('Fetching community products for ID:', communityId);
+
       const { data, error } = await supabase
         .from('community_product_relationships')
         .select(`
@@ -183,6 +201,7 @@ export default function CommunityPage() {
         return [];
       }
 
+      console.log('Community products fetched:', data);
       return data?.map(item => item.community_product_uuid) || [];
     },
     enabled: !!communityId
@@ -191,6 +210,13 @@ export default function CommunityPage() {
   const { data: communityMembers, isLoading: isMembersLoading } = useQuery({
     queryKey: ['community-members', communityId],
     queryFn: async () => {
+      if (!communityId) {
+        console.error('No community ID provided for members query');
+        return [];
+      }
+
+      console.log('Fetching community members for ID:', communityId);
+
       const { data, error } = await supabase
         .from('community_subscriptions')
         .select(`
@@ -213,6 +239,7 @@ export default function CommunityPage() {
         throw error;
       }
 
+      console.log('Community members fetched:', data);
       return data;
     },
     enabled: !!communityId
@@ -437,6 +464,7 @@ export default function CommunityPage() {
   const handleProductClick = (e: React.MouseEvent, productId: string) => {
     e.preventDefault();
     e.stopPropagation();
+    console.log('Opening product with ID:', productId);
     window.open(`/community/product/${productId}`, '_blank');
   };
 
