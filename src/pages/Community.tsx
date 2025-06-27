@@ -182,17 +182,15 @@ export default function CommunityPage() {
       console.log('Fetching community products for ID:', communityId);
 
       const { data, error } = await supabase
-        .from('community_product_relationships')
+        .from('community_products')
         .select(`
-          community_product_uuid (
-            community_product_uuid, 
-            name,
-            price,
-            product_type,
-            payment_link,
-            files_link,
-            product_uuid
-          )
+          community_product_uuid,
+          name,
+          price,
+          product_type,
+          payment_link,
+          files_link,
+          product_uuid
         `)
         .eq('community_uuid', communityId);
 
@@ -202,7 +200,7 @@ export default function CommunityPage() {
       }
 
       console.log('Community products fetched:', data);
-      return data?.map(item => item.community_product_uuid) || [];
+      return data || [];
     },
     enabled: !!communityId
   });
