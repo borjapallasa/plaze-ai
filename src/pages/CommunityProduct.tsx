@@ -20,6 +20,18 @@ export default function CommunityProductPage() {
     }
   };
 
+  // Helper function to render text with line breaks
+  const renderTextWithLineBreaks = (text: string) => {
+    if (!text) return null;
+    
+    return text.split('\n').map((line, index, array) => (
+      <React.Fragment key={index}>
+        {line}
+        {index < array.length - 1 && <br />}
+      </React.Fragment>
+    ));
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -157,9 +169,9 @@ export default function CommunityProductPage() {
                 )}
               </div>
 
-              <p className="text-muted-foreground text-lg leading-relaxed">
-                {productDescription}
-              </p>
+              <div className="text-muted-foreground text-lg leading-relaxed">
+                {renderTextWithLineBreaks(productDescription)}
+              </div>
 
               {/* Features */}
               {features.length > 0 && (
