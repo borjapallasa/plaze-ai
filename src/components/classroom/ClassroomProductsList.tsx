@@ -32,6 +32,7 @@ export function ClassroomProductsList({
 
   const handleDeleteClick = (productId: string, e: React.MouseEvent) => {
     e.stopPropagation();
+    console.log("Delete clicked for product:", productId, "in classroom:", classroomId);
     setDeleteProductId(productId);
   };
 

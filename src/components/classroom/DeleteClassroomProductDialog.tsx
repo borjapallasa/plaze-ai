@@ -38,6 +38,11 @@ export function DeleteClassroomProductDialog({
         throw new Error("Product ID and Classroom ID are required");
       }
 
+      console.log("Attempting to delete relationship:", {
+        community_product_uuid: productId,
+        classroom_uuid: classroomId
+      });
+
       const { error } = await supabase
         .from('community_product_relationships')
         .delete()
@@ -48,6 +53,8 @@ export function DeleteClassroomProductDialog({
         console.error("Error deleting classroom product relationship:", error);
         throw error;
       }
+
+      console.log("Successfully deleted classroom product relationship");
     },
     onSuccess: () => {
       toast({
@@ -58,6 +65,7 @@ export function DeleteClassroomProductDialog({
       // Invalidate the classroom products query to refresh the list
       queryClient.invalidateQueries({ queryKey: ['classroomProducts', classroomId] });
       
+      onOpenChange(false);
       onSuccess?.();
     },
     onError: (error) => {
