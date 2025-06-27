@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -94,12 +95,12 @@ export default function CommunityProductPage() {
               </h1>
 
               {/* Expert Information */}
-              <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg">
+              <div className="flex items-center gap-3 py-4">
                 <Avatar className="h-12 w-12">
                   <AvatarImage src={expertThumbnail} alt={expertName} />
                   <AvatarFallback>{expertName.charAt(0)}</AvatarFallback>
                 </Avatar>
-                <div>
+                <div className="flex items-center gap-3">
                   <p className="font-medium">{expertName}</p>
                   <div className="flex items-center gap-1">
                     <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
