@@ -713,23 +713,35 @@ export default function Classroom() {
                               )}
                             />
                           </button>
-                          {!isExpanded && lessons && lessons.length > 0 && (
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={handleBackToClassroom}
-                                  className="text-muted-foreground"
-                                >
-                                  <Info className="h-4 w-4" />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Click to view classroom overview</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          )}
+                          <div className="flex items-center gap-2">
+                            {isOwner && viewMode === 'classroom' && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={handleOpenEditClassroom}
+                                className="p-1 h-auto text-muted-foreground hover:text-foreground"
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                            )}
+                            {!isExpanded && lessons && lessons.length > 0 && (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={handleBackToClassroom}
+                                    className="text-muted-foreground"
+                                  >
+                                    <Info className="h-4 w-4" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Click to view classroom overview</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            )}
+                          </div>
                         </div>
 
                         <div className={cn(
@@ -758,16 +770,6 @@ export default function Classroom() {
                             <span className="mx-2 text-gray-400">/</span>
                             <span className="text-gray-500">{activeLesson.name ? capitalizeFirstLetter(activeLesson.name) : ''}</span>
                           </>
-                        )}
-                        {isOwner && viewMode === 'classroom' && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={handleOpenEditClassroom}
-                            className="ml-2 p-1 h-auto text-muted-foreground hover:text-foreground"
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
                         )}
                       </h2>
 
@@ -835,23 +837,42 @@ export default function Classroom() {
                               )}
                             />
                           </button>
-                          {!isExpanded && lessons && lessons.length > 0 && (
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={handleBackToClassroom}
-                                  className="text-muted-foreground"
-                                >
-                                  <Info className="h-4 w-4" />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Click to view classroom overview</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          )}
+                          <div className="flex items-center gap-1">
+                            {isOwner && viewMode === 'classroom' && (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={handleOpenEditClassroom}
+                                    className="p-1 h-auto text-muted-foreground hover:text-foreground"
+                                  >
+                                    <Pencil className="h-4 w-4" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Edit classroom</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            )}
+                            {!isExpanded && lessons && lessons.length > 0 && (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={handleBackToClassroom}
+                                    className="text-muted-foreground"
+                                  >
+                                    <Info className="h-4 w-4" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Click to view classroom overview</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            )}
+                          </div>
                         </div>
 
                         <div className={cn(
@@ -885,16 +906,6 @@ export default function Classroom() {
                           <span className="mx-2 text-gray-400">/</span>
                           <span className="text-gray-500">{activeLesson.name ? capitalizeFirstLetter(activeLesson.name) : ''}</span>
                         </>
-                      )}
-                      {isOwner && viewMode === 'classroom' && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={handleOpenEditClassroom}
-                          className="ml-2 p-1 h-auto text-muted-foreground hover:text-foreground"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
                       )}
                     </h1>
 
