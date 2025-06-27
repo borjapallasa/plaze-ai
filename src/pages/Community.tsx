@@ -11,7 +11,7 @@ import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Separator } from "@/components/ui/separator";
 import { ThreadDialog } from "@/components/ThreadDialog";
 import { MainHeader } from "@/components/MainHeader";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
@@ -59,6 +59,7 @@ function parseLinks(data: unknown): Link[] {
 
 export default function CommunityPage() {
   const { id: communityId } = useParams();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [isThreadOpen, setIsThreadOpen] = useState(false);
@@ -171,7 +172,8 @@ export default function CommunityPage() {
             price,
             product_type,
             payment_link,
-            files_link
+            files_link,
+            product_uuid
           )
         `)
         .eq('community_uuid', communityId);
@@ -756,16 +758,27 @@ export default function CommunityPage() {
                 ))
               ) : communityProducts && communityProducts.length > 0 ? (
                 communityProducts.map((product: any) => (
-                  <ProductCard
-                    key={product.community_product_uuid}
-                    title={product.name}
-                    price={product.price ? `$${product.price}` : "Free"}
-                    image="/placeholder.svg"
-                    seller={community?.name || "Community"}
-                    description={`A product by ${community?.name}`}
-                    tags={[product.product_type || "product"]}
-                    category="community"
-                  />
+                  <div key={product.community_product_uuid} className="relative">
+                    <ProductCard
+                      title={product.name}
+                      price={product.price ? `$${product.price}` : "Free"}
+                      image="/placeholder.svg"
+                      seller={community?.name || "Community"}
+                      description={`A product by ${community?.name}`}
+                      tags={[product.product_type || "product"]}
+                      category="community"
+                    />
+                    {isOwner && product.product_uuid && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="absolute top-2 right-2 h-8 w-8 p-0"
+                        onClick={() => navigate(`/product/${product.product_uuid}/edit`)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
                 ))
               ) : (
                 <div className="col-span-full text-center py-8 border border-dashed rounded-md bg-muted/10">
