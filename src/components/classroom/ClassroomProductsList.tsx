@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -24,16 +23,16 @@ export function ClassroomProductsList({
   communityUuid
 }: ClassroomProductsListProps) {
   const [isSelectorOpen, setIsSelectorOpen] = useState(false);
-  const [deleteProductId, setDeleteProductId] = useState<string | null>(null);
+  const [deleteRelationshipUuid, setDeleteRelationshipUuid] = useState<string | null>(null);
 
   const handleProductClick = (productId: string) => {
     window.open(`/community/product/${productId}`, '_blank');
   };
 
-  const handleDeleteClick = (productId: string, e: React.MouseEvent) => {
+  const handleDeleteClick = (variant: any, e: React.MouseEvent) => {
     e.stopPropagation();
-    console.log("Delete clicked for product:", productId, "in classroom:", classroomId);
-    setDeleteProductId(productId);
+    console.log("Delete clicked for relationship:", variant.relationshipUuid);
+    setDeleteRelationshipUuid(variant.relationshipUuid);
   };
 
   const excludedProductIds = variants.map(variant => variant.id);
@@ -107,7 +106,7 @@ export function ClassroomProductsList({
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={(e) => handleDeleteClick(variant.id, e)}
+                        onClick={(e) => handleDeleteClick(variant, e)}
                         className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
                         title="Remove from classroom"
                       >
@@ -146,12 +145,11 @@ export function ClassroomProductsList({
       )}
       
       <DeleteClassroomProductDialog
-        open={!!deleteProductId}
-        onOpenChange={(open) => !open && setDeleteProductId(null)}
-        productId={deleteProductId}
-        classroomId={classroomId}
+        open={!!deleteRelationshipUuid}
+        onOpenChange={(open) => !open && setDeleteRelationshipUuid(null)}
+        relationshipUuid={deleteRelationshipUuid}
         onSuccess={() => {
-          setDeleteProductId(null);
+          setDeleteRelationshipUuid(null);
           // The parent component will handle the refresh via query invalidation
         }}
       />

@@ -1,17 +1,16 @@
-
 export interface Variant {
   id: string;
   name: string; // Name is required
   price: number; // Price is number
   comparePrice: number; // Compare price is number
-  highlight?: boolean;
-  tags?: string[];
   label: string; // Make label required to match usage
+  highlight: boolean;
+  tags: string[]; // Make tags required and always an array
   features: string[]; // Make features required and always an array
-  hidden?: boolean;
-  createdAt?: string;
-  filesLink?: string;
-  additionalDetails?: string;
+  hidden: boolean;
+  createdAt: Date | null;
+  filesLink: string | null;
+  relationshipUuid?: string; // Add this optional field
 }
 
 export interface ProductVariantsEditorProps {

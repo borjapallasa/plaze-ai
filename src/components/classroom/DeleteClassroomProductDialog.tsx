@@ -17,16 +17,14 @@ import {
 interface DeleteClassroomProductDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  productId: string | null;
-  classroomId: string;
+  relationshipUuid: string | null;
   onSuccess?: () => void;
 }
 
 export function DeleteClassroomProductDialog({
   open,
   onOpenChange,
-  productId,
-  classroomId,
+  relationshipUuid,
   onSuccess
 }: DeleteClassroomProductDialogProps) {
   const { toast } = useToast();
@@ -34,24 +32,16 @@ export function DeleteClassroomProductDialog({
 
   const deleteMutation = useMutation({
     mutationFn: async () => {
-      if (!productId) {
-        throw new Error("Product ID is required");
+      if (!relationshipUuid) {
+        throw new Error("Relationship UUID is required");
       }
 
-      if (!classroomId) {
-        throw new Error("Classroom ID is required");
-      }
-
-      console.log("Attempting to delete relationship:", {
-        community_product_uuid: productId,
-        classroom_uuid: classroomId
-      });
+      console.log("Attempting to delete relationship:", relationshipUuid);
 
       const { error } = await supabase
         .from('community_product_relationships')
         .delete()
-        .eq('community_product_uuid', productId)
-        .eq('classroom_uuid', classroomId);
+        .eq('community_product_relationship_uuid', relationshipUuid);
 
       if (error) {
         console.error("Error deleting classroom product relationship:", error);
@@ -66,8 +56,8 @@ export function DeleteClassroomProductDialog({
         description: "Product removed from classroom successfully",
       });
       
-      // Invalidate the classroom products query to refresh the list
-      queryClient.invalidateQueries({ queryKey: ['classroomProducts', classroomId] });
+      // Invalidate all classroom products queries to refresh the list
+      queryClient.invalidateQueries({ queryKey: ['classroomProducts'] });
       
       onOpenChange(false);
       onSuccess?.();
@@ -75,7 +65,7 @@ export function DeleteClassroomProductDialog({
     onError: (error) => {
       console.error("Error deleting classroom product:", error);
       toast({
-        title: "Error",
+        title: "Error", 
         description: "Failed to remove product from classroom. Please try again.",
         variant: "destructive"
       });

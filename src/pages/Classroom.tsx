@@ -58,7 +58,8 @@ function transformToVariant(data: any[]): Variant[] {
     features: [],
     hidden: false,
     createdAt: null,
-    filesLink: null
+    filesLink: null,
+    relationshipUuid: item.community_product_relationship_uuid // Add this to track the relationship
   }));
 }
 
@@ -175,6 +176,7 @@ export default function Classroom() {
       const { data, error } = await supabase
         .from('community_product_relationships')
         .select(`
+          community_product_relationship_uuid,
           community_product_uuid (
             community_product_uuid, 
             name, 

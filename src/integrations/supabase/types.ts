@@ -552,6 +552,7 @@ export type Database = {
       community_product_relationships: {
         Row: {
           classroom_uuid: string | null
+          community_product_relationship_uuid: string
           community_product_uuid: string
           community_uuid: string
           created_at: string
@@ -560,6 +561,7 @@ export type Database = {
         }
         Insert: {
           classroom_uuid?: string | null
+          community_product_relationship_uuid?: string
           community_product_uuid: string
           community_uuid: string
           created_at?: string
@@ -568,6 +570,7 @@ export type Database = {
         }
         Update: {
           classroom_uuid?: string | null
+          community_product_relationship_uuid?: string
           community_product_uuid?: string
           community_uuid?: string
           created_at?: string
