@@ -192,9 +192,9 @@ export default function CommunityProductPage() {
                     <span className="text-3xl font-bold text-foreground">
                       ${communityProduct.price || 0}
                     </span>
-                    {productPriceFrom && productPriceFrom > (communityProduct.price || 0) && (
+                    {communityProduct.compare_price && communityProduct.compare_price > (communityProduct.price || 0) && (
                       <span className="text-lg text-muted-foreground line-through">
-                        ${productPriceFrom}
+                        ${communityProduct.compare_price}
                       </span>
                     )}
                   </div>

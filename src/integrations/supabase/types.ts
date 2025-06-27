@@ -592,6 +592,7 @@ export type Database = {
         Row: {
           community_product_uuid: string
           community_uuid: string | null
+          compare_price: number | null
           created_at: string
           expert_uuid: string | null
           files_link: string | null
@@ -607,6 +608,7 @@ export type Database = {
         Insert: {
           community_product_uuid?: string
           community_uuid?: string | null
+          compare_price?: number | null
           created_at?: string
           expert_uuid?: string | null
           files_link?: string | null
@@ -622,6 +624,7 @@ export type Database = {
         Update: {
           community_product_uuid?: string
           community_uuid?: string | null
+          compare_price?: number | null
           created_at?: string
           expert_uuid?: string | null
           files_link?: string | null
