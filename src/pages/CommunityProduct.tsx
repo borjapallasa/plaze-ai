@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -50,24 +49,39 @@ export default function CommunityProductPage() {
   };
 
   const handleShare = async () => {
+    // Use product data from the joined query
+    const productName = communityProduct?.products?.name || communityProduct?.name || 'Product';
+    
     const shareData = {
       title: productName,
       text: `Check out this amazing product: ${productName}`,
       url: window.location.href,
     };
 
+    console.log('Attempting to share:', shareData);
+
     try {
-      if (navigator.share && navigator.canShare(shareData)) {
+      if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+        console.log('Using native share API');
         await navigator.share(shareData);
         toast.success("Product shared successfully!");
       } else {
+        console.log('Using clipboard fallback');
         // Fallback to copying URL to clipboard
         await navigator.clipboard.writeText(window.location.href);
         toast.success("Product link copied to clipboard!");
       }
     } catch (error) {
       console.error('Error sharing:', error);
-      toast.error("Failed to share product");
+      
+      // Try clipboard as ultimate fallback
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        toast.success("Product link copied to clipboard!");
+      } catch (clipboardError) {
+        console.error('Clipboard also failed:', clipboardError);
+        toast.error("Unable to share or copy link");
+      }
     }
   };
 
@@ -76,10 +90,10 @@ export default function CommunityProductPage() {
     if (!text) return null;
     
     return text.split('\n').map((line, index, array) => (
-      <React.Fragment key={index}>
+      <span key={index}>
         {line}
         {index < array.length - 1 && <br />}
-      </React.Fragment>
+      </span>
     ));
   };
 
