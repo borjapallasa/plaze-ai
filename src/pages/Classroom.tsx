@@ -59,7 +59,7 @@ function transformToVariant(data: any[]): Variant[] {
     hidden: false,
     createdAt: null,
     filesLink: null,
-    relationshipUuid: item.community_product_relationship_uuid // This should now be available
+    relationshipUuid: item.community_product_relationship_uuid // Make sure this maps correctly
   }));
 }
 
@@ -198,6 +198,15 @@ export default function Classroom() {
       }
 
       console.log("Raw classroom products data:", data);
+      
+      // Add debug logging to see what we're actually getting
+      data?.forEach((item, index) => {
+        console.log(`Item ${index}:`, {
+          relationship_uuid: item.community_product_relationship_uuid,
+          product_data: item.community_product_uuid
+        });
+      });
+      
       const transformedData = transformToVariant(data);
       console.log("Transformed variants:", transformedData);
       

@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -29,13 +30,14 @@ export function ClassroomProductsList({
     window.open(`/community/product/${productId}`, '_blank');
   };
 
-  const handleDeleteClick = (variant: any, e: React.MouseEvent) => {
+  const handleDeleteClick = (variant: Variant, e: React.MouseEvent) => {
     e.stopPropagation();
     console.log("Delete clicked for variant:", variant);
-    console.log("Relationship UUID:", variant.relationshipUuid);
+    console.log("Relationship UUID from variant:", variant.relationshipUuid);
     
     if (!variant.relationshipUuid) {
       console.error("No relationship UUID found for variant:", variant);
+      console.error("Full variant object:", JSON.stringify(variant, null, 2));
       return;
     }
     
