@@ -101,48 +101,52 @@ export default function CommunityProductPage() {
                   </ul>
                 </CardContent>
               </Card>
+
+              {/* Purchase Section - Moved here */}
+              <Card>
+                <CardContent className="p-6 space-y-6">
+                  <div className="space-y-2">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-3xl font-bold text-foreground">
+                        ${productData.price}
+                      </span>
+                      <span className="text-lg text-muted-foreground line-through">
+                        ${productData.originalPrice}
+                      </span>
+                    </div>
+                    <Badge variant="destructive" className="text-xs">
+                      Limited Time Offer
+                    </Badge>
+                  </div>
+
+                  <Button 
+                    onClick={handleCheckout}
+                    className="w-full h-12 text-lg font-semibold"
+                    size="lg"
+                  >
+                    Buy Now
+                  </Button>
+
+                  <div className="text-center">
+                    <p className="text-sm text-muted-foreground mb-2">
+                      30-day money-back guarantee
+                    </p>
+                    <button className="text-sm text-primary hover:underline flex items-center gap-1 mx-auto">
+                      <ExternalLink className="w-3 h-3" />
+                      Share this course
+                    </button>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Purchase Card */}
+            {/* Stats */}
             <Card className="sticky top-4">
-              <CardContent className="p-6 space-y-6">
-                <div className="space-y-2">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-bold text-foreground">
-                      ${productData.price}
-                    </span>
-                    <span className="text-lg text-muted-foreground line-through">
-                      ${productData.originalPrice}
-                    </span>
-                  </div>
-                  <Badge variant="destructive" className="text-xs">
-                    Limited Time Offer
-                  </Badge>
-                </div>
-
-                <Button 
-                  onClick={handleCheckout}
-                  className="w-full h-12 text-lg font-semibold"
-                  size="lg"
-                >
-                  Buy Now
-                </Button>
-
-                <div className="text-center">
-                  <p className="text-sm text-muted-foreground mb-2">
-                    30-day money-back guarantee
-                  </p>
-                  <button className="text-sm text-primary hover:underline flex items-center gap-1 mx-auto">
-                    <ExternalLink className="w-3 h-3" />
-                    Share this course
-                  </button>
-                </div>
-
-                {/* Stats */}
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+              <CardContent className="p-6">
+                <div className="grid grid-cols-1 gap-4">
                   <div className="text-center">
                     <div className="text-2xl font-bold text-foreground">
                       {productData.students.toLocaleString()}
