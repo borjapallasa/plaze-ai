@@ -470,7 +470,9 @@ export default function CommunityPage() {
     { id: "members", label: "Members", icon: Users }
   ];
 
-  const handleProductClick = (productId: string) => {
+  const handleProductClick = (e: React.MouseEvent, productId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
     window.open(`/community/product/${productId}`, '_blank');
   };
 
@@ -763,7 +765,7 @@ export default function CommunityPage() {
               ) : communityProducts && communityProducts.length > 0 ? (
                 communityProducts.map((product: any) => (
                   <div key={product.community_product_uuid} className="relative">
-                    <div onClick={() => handleProductClick(product.community_product_uuid)}>
+                    <div onClick={(e) => handleProductClick(e, product.community_product_uuid)}>
                       <ProductCard
                         title={product.name}
                         price={product.price ? `$${product.price}` : "Free"}
