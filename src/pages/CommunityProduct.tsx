@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -273,8 +271,8 @@ export default function CommunityProductPage() {
                 </Button>
 
                 {/* People Viewing Indicator */}
-                <div className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground">
-                  <div className="w-1.5 h-1.5 bg-red-500 rounded-full" />
+                <div className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground -mt-2">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
                   <span>
                     <span className="font-medium text-foreground">{viewersCount}</span> people viewing
                   </span>
@@ -321,4 +319,3 @@ export default function CommunityProductPage() {
     </div>
   );
 }
-
