@@ -14,7 +14,7 @@ export function useCommunityProduct(communityProductUuid?: string) {
         .from('community_products')
         .select(`
           *,
-          products (
+          products!community_products_product_uuid_fkey (
             name,
             description,
             thumbnail
