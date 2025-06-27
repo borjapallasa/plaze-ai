@@ -3,9 +3,10 @@ import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Package, ArrowRight, ExternalLink, Plus } from "lucide-react";
+import { Package, ArrowRight, ExternalLink, Plus, Trash2 } from "lucide-react";
 import { Variant } from "@/components/product/types/variants";
 import { ClassroomProductSelector } from "./ClassroomProductSelector";
+import { DeleteClassroomProductDialog } from "./DeleteClassroomProductDialog";
 
 interface ClassroomProductsListProps {
   variants?: Variant[];
@@ -23,9 +24,15 @@ export function ClassroomProductsList({
   communityUuid
 }: ClassroomProductsListProps) {
   const [isSelectorOpen, setIsSelectorOpen] = useState(false);
+  const [deleteProductId, setDeleteProductId] = useState<string | null>(null);
 
   const handleProductClick = (productId: string) => {
     window.open(`/community/product/${productId}`, '_blank');
+  };
+
+  const handleDeleteClick = (productId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDeleteProductId(productId);
   };
 
   const excludedProductIds = variants.map(variant => variant.id);
@@ -89,6 +96,18 @@ export function ClassroomProductsList({
                       </Button>
                     )}
                     
+                    {isOwner && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => handleDeleteClick(variant.id, e)}
+                        className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                        title="Remove from classroom"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    )}
+                    
                     <Button
                       variant="ghost"
                       size="sm"
@@ -110,13 +129,26 @@ export function ClassroomProductsList({
       )}
 
       {isOwner && classroomId && communityUuid && (
-        <ClassroomProductSelector
-          open={isSelectorOpen}
-          onOpenChange={setIsSelectorOpen}
-          classroomId={classroomId}
-          communityUuid={communityUuid}
-          excludedProductIds={excludedProductIds}
-        />
+        <>
+          <ClassroomProductSelector
+            open={isSelectorOpen}
+            onOpenChange={setIsSelectorOpen}
+            classroomId={classroomId}
+            communityUuid={communityUuid}
+            excludedProductIds={excludedProductIds}
+          />
+          
+          <DeleteClassroomProductDialog
+            open={!!deleteProductId}
+            onOpenChange={(open) => !open && setDeleteProductId(null)}
+            productId={deleteProductId}
+            classroomId={classroomId}
+            onSuccess={() => {
+              setDeleteProductId(null);
+              // The parent component will handle the refresh via query invalidation
+            }}
+          />
+        </>
       )}
     </div>
   );
