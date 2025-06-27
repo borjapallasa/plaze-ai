@@ -169,7 +169,7 @@ export default function Classroom() {
   }, [user, classroom]);
 
   const { data: variants } = useQuery({
-    queryKey: ['classroomCommunityProducts', classroom?.community_uuid],
+    queryKey: ['classroomProducts', id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('community_product_relationships')
@@ -180,15 +180,15 @@ export default function Classroom() {
             price 
           )
         `)
-        .eq('community_uuid', classroom.community_uuid);
+        .eq('classroom_uuid', id);
 
       if (error) {
-        console.error("Error fetching community:", error);
+        console.error("Error fetching classroom products:", error);
         return [];
       }
       return transformToVariant(data)
     },
-    enabled: !!classroom?.community_uuid
+    enabled: !!id
   });
 
   const { data: lessons, isLoading: isLessonsLoading } = useQuery({
