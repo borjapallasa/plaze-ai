@@ -154,7 +154,6 @@ export default function CommunityProductPage() {
     "Lifetime access to course materials",
     "Weekly live Q&A sessions", 
     "Private community access",
-    "30-day money-back guarantee",
     "Certificate of completion"
   ];
 
@@ -275,10 +274,10 @@ export default function CommunityProductPage() {
                 </Button>
 
                 {/* Scarcity Indicator */}
-                <div className="flex items-center justify-center gap-2 text-xs bg-primary/5 text-primary px-3 py-1.5 rounded-full border border-primary/20">
-                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                  <span className="font-medium">
-                    {viewersCount} people viewing
+                <div className="flex items-center justify-center gap-2 text-sm bg-muted/30 text-muted-foreground px-4 py-3 rounded-lg border">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
+                  <span>
+                    <span className="font-medium text-foreground">{viewersCount}</span> people viewing
                   </span>
                 </div>
 
