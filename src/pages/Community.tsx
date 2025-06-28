@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight, Plus, Edit, Filter } from "lucide-react";
+import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight, Plus, Edit } from "lucide-react";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/ProductCard";
@@ -25,13 +25,6 @@ import { formatNumber } from "@/lib/utils";
 import { ClassroomDialog } from "@/components/community/ClassroomDialog";
 import { CommunityAccessGuard } from "@/components/community/CommunityAccessGuard";
 import { CreateThreadDialog } from "@/components/community/CreateThreadDialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 interface Link {
   name: string;
@@ -79,7 +72,6 @@ export default function CommunityPage() {
   const [isCreateThreadDialogOpen, setIsCreateThreadDialogOpen] = useState(false);
   const [showProductTemplateSelector, setShowProductTemplateSelector] = useState(false);
   const [activeTab, setActiveTab] = useState("threads");
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const { user } = useAuth();
   const { images } = useCommunityImages(communityId);
 
@@ -271,12 +263,6 @@ export default function CommunityPage() {
     }
     return [];
   }, [community?.threads_tags]);
-
-  // Filter threads based on selected tag
-  const filteredThreads = useMemo(() => {
-    if (!threads || !selectedTag) return threads;
-    return threads.filter(thread => thread.tag === selectedTag);
-  }, [threads, selectedTag]);
 
   // Check if current user is the community owner - enhanced debugging
   const isOwner = currentUserExpertData && community && (
@@ -671,31 +657,7 @@ export default function CommunityPage() {
 
             <TabsContent value="threads" className="space-y-6">
               <div className="flex flex-col sm:flex-row gap-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                  <Input placeholder="Search thread" className="pl-9" />
-                </div>
-                {threadsTags.length > 0 && (
-                  <div className="flex items-center gap-2">
-                    <Filter className="h-4 w-4 text-muted-foreground" />
-                    <Select value={selectedTag || ""} onValueChange={(value) => setSelectedTag(value || null)}>
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Filter by tag" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="">All threads</SelectItem>
-                        {threadsTags.map((tag, index) => (
-                          <SelectItem key={index} value={tag}>
-                            {tag}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex justify-end">
+                <Input placeholder="Search thread" className="flex-1" />
                 <Button 
                   className="w-full sm:w-auto"
                   onClick={() => setIsCreateThreadDialogOpen(true)}
@@ -724,9 +686,9 @@ export default function CommunityPage() {
                     </Card>
                   ))}
                 </div>
-              ) : filteredThreads && filteredThreads.length > 0 ? (
+              ) : threads && threads.length > 0 ? (
                 <div className="space-y-4">
-                  {filteredThreads.map((thread) => (
+                  {threads.map((thread) => (
                     <Card 
                       key={thread.thread_uuid}
                       className="group hover:bg-accent transition-colors cursor-pointer"
@@ -743,12 +705,7 @@ export default function CommunityPage() {
                             <div className="text-sm text-muted-foreground">
                               Created by {thread.user_name}
                             </div>
-                            <div className="flex gap-2">
-                              <Badge variant="secondary" className="text-xs w-fit">Messages: {thread.number_messages || 0}</Badge>
-                              {thread.tag && (
-                                <Badge variant="outline" className="text-xs w-fit">{thread.tag}</Badge>
-                              )}
-                            </div>
+                            <Badge variant="secondary" className="text-xs w-fit">Messages: {thread.number_messages || 0}</Badge>
                           </div>
                         </div>
 
@@ -771,9 +728,7 @@ export default function CommunityPage() {
                 </div>
               ) : (
                 <Card className="p-6">
-                  <p className="text-center text-muted-foreground">
-                    {selectedTag ? `No threads found with tag "${selectedTag}".` : 'No threads found in this community.'}
-                  </p>
+                  <p className="text-center text-muted-foreground">No threads found in this community.</p>
                 </Card>
               )}
             </TabsContent>
