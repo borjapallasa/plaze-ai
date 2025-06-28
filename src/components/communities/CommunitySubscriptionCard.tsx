@@ -40,6 +40,8 @@ export function CommunitySubscriptionCard({ subscription }: CommunitySubscriptio
     }
   };
 
+  const isPending = subscription.status.toLowerCase() === 'pending';
+
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer h-full flex flex-col">
       {/* Community Image */}
@@ -65,11 +67,17 @@ export function CommunitySubscriptionCard({ subscription }: CommunitySubscriptio
         {/* Separator */}
         <Separator className="my-4" />
         
-        {/* Bottom section with joined date and price */}
+        {/* Bottom section with status and price */}
         <div className="flex items-center justify-between text-sm mt-auto">
           <div className="flex items-center gap-2 text-muted-foreground">
-            <Calendar className="h-4 w-4" />
-            <span>Joined {new Date(subscription.created_at).toLocaleDateString()}</span>
+            {isPending ? (
+              <span className="text-yellow-600 font-medium">Pending</span>
+            ) : (
+              <>
+                <Calendar className="h-4 w-4" />
+                <span>Joined {new Date(subscription.created_at).toLocaleDateString()}</span>
+              </>
+            )}
           </div>
           
           <div className={`font-semibold text-base ${getStatusColor(subscription.status)}`}>
