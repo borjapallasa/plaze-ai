@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link as LinkIcon } from "lucide-react";
@@ -394,7 +393,7 @@ export default function CommunityAboutPage() {
                   <>
                     <Separator />
                     <Button 
-                      className="w-full"
+                      className="w-full h-10"
                       onClick={() => joinCommunityMutation.mutate()}
                       disabled={joinCommunityMutation.isPending}
                     >
@@ -407,14 +406,12 @@ export default function CommunityAboutPage() {
                 {user && membershipStatus !== 'not_member' && membershipStatus !== 'not_authenticated' && (
                   <>
                     <Separator />
-                    <div className="py-2">
-                      <div className={`w-full flex items-center justify-center px-4 py-2 rounded-lg font-medium text-sm ${
-                        membershipStatus === 'active' ? 'bg-green-100 text-green-800 border border-green-200' : 
-                        membershipStatus === 'pending' ? 'bg-gray-100 text-gray-600 border border-gray-300 cursor-not-allowed' : 
-                        'bg-gray-100 text-gray-600 border border-gray-300'
-                      }`}>
-                        {getStatusText()}
-                      </div>
+                    <div className={`w-full h-10 flex items-center justify-center rounded-lg font-medium text-sm ${
+                      membershipStatus === 'active' ? 'bg-green-100 text-green-800 border border-green-200' : 
+                      membershipStatus === 'pending' ? 'bg-gray-100 text-gray-600 border border-gray-300 cursor-not-allowed' : 
+                      'bg-gray-100 text-gray-600 border border-gray-300'
+                    }`}>
+                      {getStatusText()}
                     </div>
                   </>
                 )}
