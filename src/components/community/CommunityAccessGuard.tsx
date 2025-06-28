@@ -42,7 +42,7 @@ export function CommunityAccessGuard({ communityId, children }: CommunityAccessG
             <Button onClick={() => navigate(`/community/${communityId}/about`)}>
               Join Community
             </Button>
-            <Button variant="outline" onClick={() => navigate('/communities')}>
+            <Button variant="outline" onClick={() => navigate('/#communities')}>
               Browse Communities
             </Button>
           </div>
@@ -73,7 +73,7 @@ export function CommunityAccessGuard({ communityId, children }: CommunityAccessG
             <Button variant="outline" onClick={() => navigate('/account/communities')}>
               View My Communities
             </Button>
-            <Button variant="outline" onClick={() => navigate('/communities')}>
+            <Button variant="outline" onClick={() => navigate('/#communities')}>
               Browse Other Communities
             </Button>
           </div>
@@ -98,7 +98,7 @@ export function CommunityAccessGuard({ communityId, children }: CommunityAccessG
             <Button onClick={() => navigate(`/community/${communityId}/about`)}>
               Rejoin Community
             </Button>
-            <Button variant="outline" onClick={() => navigate('/communities')}>
+            <Button variant="outline" onClick={() => navigate('/#communities')}>
               Browse Communities
             </Button>
           </div>

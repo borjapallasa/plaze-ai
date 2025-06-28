@@ -7,18 +7,18 @@ export interface UserData {
   id: number;
   user_uuid: string;
   email: string;
-  first_name?: string;
-  last_name?: string;
+  first_name: string;
+  last_name: string;
   created_at: string;
-  total_spent?: number;
-  transaction_count?: number;
-  product_count?: number;
-  is_admin?: boolean;
-  is_affiliate?: boolean;
-  affiliate_since?: string;
-  user_thumbnail?: string;
-  is_expert?: boolean;
-  commissions_generated?: number;
+  total_spent: number;
+  transaction_count: number;
+  product_count: number;
+  is_admin: boolean;
+  is_affiliate: boolean;
+  affiliate_since: string;
+  user_thumbnail: string;
+  is_expert: boolean;
+  commissions_generated: number;
 }
 
 export const useUsers = (page = 1, limit = 10, sortBy: keyof UserData = 'created_at', sortOrder: 'asc' | 'desc' = 'desc') => {
