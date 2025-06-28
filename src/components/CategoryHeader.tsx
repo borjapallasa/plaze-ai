@@ -153,19 +153,27 @@ export const CategoryHeader = ({
             />
           </div>
 
-          {/* NEW Tab Selector - Completely rebuilt */}
+          {/* Branded Tab Selector with smooth animations */}
           {onViewModeChange && (
             <div className="mt-4 lg:mt-0 flex justify-center lg:justify-end">
-              <div className="border border-gray-200 rounded-lg overflow-hidden bg-white shadow-sm">
-                <div className="flex">
+              <div className="relative bg-gray-100 rounded-full p-1 shadow-sm">
+                {/* Sliding background indicator */}
+                <div 
+                  className={`
+                    absolute top-1 bottom-1 bg-black rounded-full transition-all duration-300 ease-out shadow-sm
+                    ${viewMode === "products" ? "left-1 right-1/2 mr-0.5" : "right-1 left-1/2 ml-0.5"}
+                  `}
+                />
+                
+                <div className="relative flex">
                   <button
                     type="button"
                     onClick={() => handleViewModeChange("products")}
                     className={`
-                      px-4 py-2 text-sm font-medium border-r border-gray-200 transition-colors duration-150
+                      px-6 py-2 text-sm font-medium rounded-full transition-all duration-300 ease-out relative z-10
                       ${viewMode === "products" 
-                        ? "bg-blue-50 text-blue-700 border-blue-200" 
-                        : "bg-white text-gray-700 hover:bg-gray-50"
+                        ? "text-white" 
+                        : "text-gray-600 hover:text-gray-800"
                       }
                     `}
                   >
@@ -175,10 +183,10 @@ export const CategoryHeader = ({
                     type="button"
                     onClick={() => handleViewModeChange("communities")}
                     className={`
-                      px-4 py-2 text-sm font-medium transition-colors duration-150
+                      px-6 py-2 text-sm font-medium rounded-full transition-all duration-300 ease-out relative z-10
                       ${viewMode === "communities" 
-                        ? "bg-blue-50 text-blue-700 border-blue-200" 
-                        : "bg-white text-gray-700 hover:bg-gray-50"
+                        ? "text-white" 
+                        : "text-gray-600 hover:text-gray-800"
                       }
                     `}
                   >
