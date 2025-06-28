@@ -72,6 +72,7 @@ export default function CommunityPage() {
   const [isCreateThreadDialogOpen, setIsCreateThreadDialogOpen] = useState(false);
   const [showProductTemplateSelector, setShowProductTemplateSelector] = useState(false);
   const [activeTab, setActiveTab] = useState("threads");
+  const [selectedTag, setSelectedTag] = useState<string>("all");
   const { user } = useAuth();
   const { images } = useCommunityImages(communityId);
 
@@ -263,6 +264,12 @@ export default function CommunityPage() {
     }
     return [];
   }, [community?.threads_tags]);
+
+  // Filter threads by selected tag
+  const filteredThreads = React.useMemo(() => {
+    if (!threads || selectedTag === "all") return threads;
+    return threads.filter(thread => thread.tag === selectedTag);
+  }, [threads, selectedTag]);
 
   // Check if current user is the community owner - enhanced debugging
   const isOwner = currentUserExpertData && community && (
@@ -658,6 +665,36 @@ export default function CommunityPage() {
             <TabsContent value="threads" className="space-y-6">
               <div className="flex flex-col sm:flex-row gap-4">
                 <Input placeholder="Search thread" className="flex-1" />
+                
+                {/* Tag Filter */}
+                {threadsTags.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => setSelectedTag("all")}
+                      className={`px-3 py-1 text-sm rounded-full border transition-colors ${
+                        selectedTag === "all"
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "bg-background border-border hover:bg-accent"
+                      }`}
+                    >
+                      All
+                    </button>
+                    {threadsTags.map((tag) => (
+                      <button
+                        key={tag}
+                        onClick={() => setSelectedTag(tag)}
+                        className={`px-3 py-1 text-sm rounded-full border transition-colors ${
+                          selectedTag === tag
+                            ? "bg-primary text-primary-foreground border-primary"
+                            : "bg-background border-border hover:bg-accent"
+                        }`}
+                      >
+                        {tag}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                
                 <Button 
                   className="w-full sm:w-auto"
                   onClick={() => setIsCreateThreadDialogOpen(true)}
@@ -686,9 +723,9 @@ export default function CommunityPage() {
                     </Card>
                   ))}
                 </div>
-              ) : threads && threads.length > 0 ? (
+              ) : filteredThreads && filteredThreads.length > 0 ? (
                 <div className="space-y-4">
-                  {threads.map((thread) => (
+                  {filteredThreads.map((thread) => (
                     <Card 
                       key={thread.thread_uuid}
                       className="group hover:bg-accent transition-colors cursor-pointer"
@@ -705,7 +742,12 @@ export default function CommunityPage() {
                             <div className="text-sm text-muted-foreground">
                               Created by {thread.user_name}
                             </div>
-                            <Badge variant="secondary" className="text-xs w-fit">Messages: {thread.number_messages || 0}</Badge>
+                            <div className="flex gap-2">
+                              <Badge variant="secondary" className="text-xs w-fit">Messages: {thread.number_messages || 0}</Badge>
+                              {thread.tag && (
+                                <Badge variant="outline" className="text-xs w-fit">{thread.tag}</Badge>
+                              )}
+                            </div>
                           </div>
                         </div>
 
@@ -728,7 +770,12 @@ export default function CommunityPage() {
                 </div>
               ) : (
                 <Card className="p-6">
-                  <p className="text-center text-muted-foreground">No threads found in this community.</p>
+                  <p className="text-center text-muted-foreground">
+                    {selectedTag === "all" 
+                      ? "No threads found in this community." 
+                      : `No threads found with the tag "${selectedTag}".`
+                    }
+                  </p>
                 </Card>
               )}
             </TabsContent>

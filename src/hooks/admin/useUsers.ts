@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 
 export interface UserData {
-  id: number;
   user_uuid: string;
   email: string;
   first_name: string;
@@ -44,7 +43,6 @@ export const useUsers = (page = 1, limit = 10, sortBy: keyof UserData = 'created
       let query = supabase
         .from('users')
         .select(`
-          id,
           user_uuid,
           email,
           first_name,
@@ -82,7 +80,6 @@ export const useUsers = (page = 1, limit = 10, sortBy: keyof UserData = 'created
 
       // Transform data to match UserData interface with required properties
       const transformedData = (data || []).map(user => ({
-        id: user.id,
         user_uuid: user.user_uuid,
         email: user.email,
         first_name: user.first_name || '',
