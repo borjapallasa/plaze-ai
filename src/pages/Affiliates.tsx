@@ -1,199 +1,175 @@
 import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { MainHeader } from "@/components/MainHeader";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, DollarSign, Users, TrendingUp, Copy, Check } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { Copy, DollarSign, Users, TrendingUp, Settings } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { AffiliateTable } from "@/components/affiliates/AffiliateTable";
 import { AffiliateDashboard } from "@/components/affiliates/AffiliateDashboard";
 import { PaymentSettingsDialog } from "@/components/affiliates/PaymentSettingsDialog";
-import { useAffiliateData } from "@/hooks/use-affiliate-data";
-import { useAffiliateProducts } from "@/hooks/use-affiliate-products";
-import { useUsers } from "@/hooks/admin/useUsers";
+import { useAuth } from "@/lib/auth";
 
 export default function Affiliates() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [copiedCode, setCopiedCode] = useState<string | null>(null);
-  const [isPaymentSettingsOpen, setIsPaymentSettingsOpen] = useState(false);
-  const { 
-    users, 
-    isLoading: isUsersLoading, 
-    searchQuery: usersSearchQuery,
-    setSearchQuery: setUsersSearchQuery,
-    roleFilter,
-    setRoleFilter,
-    sortField,
-    sortDirection,
-    handleSort
-  } = useUsers(1, 50, 'created_at' as keyof import("@/hooks/admin/useUsers").UserData, 'desc');
-  
-  const { data: affiliateData, isLoading: isAffiliateLoading } = useAffiliateData();
-  const { data: products, isLoading: isProductsLoading } = useAffiliateProducts();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
 
-  const handleCopyCode = (code: string) => {
-    navigator.clipboard.writeText(code);
-    setCopiedCode(code);
-    setTimeout(() => setCopiedCode(null), 2000);
+  const { data: affiliateData, isLoading, error } = useQuery({
+    queryKey: ['affiliate-data', user?.id],
+    queryFn: async () => {
+      if (!user?.id) {
+        console.error('No user ID provided for affiliate data query');
+        return null;
+      }
+
+      const { data, error } = await supabase
+        .from('affiliates')
+        .select('*')
+        .eq('user_uuid', user.id)
+        .single();
+
+      if (error) {
+        console.error("Error fetching affiliate data:", error);
+        return null;
+      }
+
+      return data;
+    },
+    enabled: !!user?.id,
+  });
+
+  const { data: referrals, isLoading: isReferralsLoading, error: referralsError } = useQuery({
+    queryKey: ['affiliate-referrals', affiliateData?.affiliate_uuid],
+    queryFn: async () => {
+      if (!affiliateData?.affiliate_uuid) {
+        console.warn('No affiliate UUID available, skipping referrals query');
+        return [];
+      }
+
+      const { data, error } = await supabase
+        .from('referrals')
+        .select(`
+          *,
+          referred_user: referred_user_uuid (
+            user_uuid,
+            first_name,
+            last_name,
+            email
+          )
+        `)
+        .eq('affiliate_uuid', affiliateData.affiliate_uuid);
+
+      if (error) {
+        console.error("Error fetching affiliate referrals:", error);
+        return [];
+      }
+
+      return data || [];
+    },
+    enabled: !!affiliateData?.affiliate_uuid,
+  });
+
+  const handleCopyClick = () => {
+    if (affiliateData?.referral_link) {
+      navigator.clipboard.writeText(affiliateData.referral_link);
+      toast({
+        title: "Referral link copied!",
+        description: "Share this link with your friends.",
+      });
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "No referral link available.",
+      });
+    }
   };
 
-  const userAffiliate = users?.find((user) => user.is_affiliate);
+  if (isLoading) {
+    return (
+      <>
+        <MainHeader />
+        <div className="container mx-auto px-4 py-8 mt-16">
+          <div className="animate-pulse space-y-4">
+            <div className="h-64 bg-muted rounded-lg"></div>
+            <div className="h-8 w-1/3 bg-muted rounded"></div>
+            <div className="h-4 w-2/3 bg-muted rounded"></div>
+          </div>
+        </div>
+      </>
+    );
+  }
 
-  const calculateTotalEarnings = () => {
-    if (!products || !affiliateData) return 0;
-  
-    return products.reduce((total, product) => {
-      const commissionRate = affiliateData?.commission_rate || 0.1;
-      const earnings = (product.price_from || 0) * commissionRate;
-      return total + earnings;
-    }, 0);
-  };
+  if (error) {
+    return (
+      <>
+        <MainHeader />
+        <div className="container mx-auto px-4 py-8 mt-16">
+          <Card className="p-6">
+            <h1 className="text-xl font-semibold">Error</h1>
+            <p className="text-muted-foreground mt-2">
+              Failed to load affiliate data. Please try again later.
+            </p>
+          </Card>
+        </div>
+      </>
+    );
+  }
 
-  const totalEarnings = calculateTotalEarnings();
+  if (!affiliateData) {
+    return (
+      <>
+        <MainHeader />
+        <div className="container mx-auto px-4 py-8 mt-16">
+          <Card className="p-6">
+            <h1 className="text-xl font-semibold">Affiliate Program</h1>
+            <p className="text-muted-foreground mt-2">
+              You are not currently an affiliate. Contact support to become an affiliate.
+            </p>
+          </Card>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
       <MainHeader />
-      <div className="container mx-auto py-10">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-2xl font-bold">Affiliate Program</CardTitle>
-            <Button onClick={() => setIsPaymentSettingsOpen(true)}>
-              Payment Settings
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="dashboard" className="space-y-4">
-              <TabsList>
-                <TabsTrigger value="dashboard" className="flex items-center space-x-2">
-                  <TrendingUp className="h-4 w-4" />
-                  <span>Dashboard</span>
-                </TabsTrigger>
-                <TabsTrigger value="affiliates" className="flex items-center space-x-2">
-                  <Users className="h-4 w-4" />
-                  <span>Affiliates</span>
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent value="dashboard" className="space-y-4">
-                <AffiliateDashboard 
-                  totalEarnings={totalEarnings}
-                  isAffiliateLoading={isAffiliateLoading}
-                />
-                <Card className="bg-muted">
-                  <CardHeader>
-                    <CardTitle>Your Affiliate Code</CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex items-center justify-between">
-                    <Input
-                      value={affiliateData?.code || "No code generated"}
-                      readOnly
-                      className="max-w-[300px]"
-                    />
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleCopyCode(affiliateData?.code || "")}
-                      disabled={!affiliateData?.code}
-                    >
-                      {copiedCode === affiliateData?.code ? (
-                        <Check className="h-4 w-4 mr-2" />
-                      ) : (
-                        <Copy className="h-4 w-4 mr-2" />
-                      )}
-                      {copiedCode === affiliateData?.code ? "Copied!" : "Copy Code"}
-                    </Button>
-                  </CardContent>
-                </Card>
-                <Card className="bg-muted">
-                  <CardHeader>
-                    <CardTitle>Your Affiliate Link</CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex items-center justify-between">
-                    <Input
-                      value={`${window.location.origin}/?affiliate=${affiliateData?.code}` || "No link generated"}
-                      readOnly
-                      className="max-w-[500px]"
-                    />
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleCopyCode(`${window.location.origin}/?affiliate=${affiliateData?.code}`)}
-                      disabled={!affiliateData?.code}
-                    >
-                      {copiedCode === `${window.location.origin}/?affiliate=${affiliateData?.code}` ? (
-                        <Check className="h-4 w-4 mr-2" />
-                      ) : (
-                        <Copy className="h-4 w-4 mr-2" />
-                      )}
-                      {copiedCode === `${window.location.origin}/?affiliate=${affiliateData?.code}` ? "Copied!" : "Copy Link"}
-                    </Button>
-                  </CardContent>
-                </Card>
-                <Card className="bg-muted">
-                  <CardHeader>
-                    <CardTitle>Available Products</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {isProductsLoading ? (
-                      <p>Loading products...</p>
-                    ) : products && products.length > 0 ? (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {products.map((product) => (
-                          <Card key={product.product_uuid}>
-                            <CardHeader>
-                              <CardTitle>{product.name}</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                              <p>Price: ${product.price_from}</p>
-                              <p>
-                                Commission: $
-                                {(
-                                  product.price_from *
-                                  (affiliateData?.commission_rate || 0.1)
-                                ).toFixed(2)}
-                              </p>
-                            </CardContent>
-                          </Card>
-                        ))}
-                      </div>
-                    ) : (
-                      <p>No products available.</p>
-                    )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              <TabsContent value="affiliates" className="space-y-4">
-                <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4">
-                  <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Search affiliates..."
-                      className="pl-9"
-                      value={usersSearchQuery}
-                      onChange={(e) => setUsersSearchQuery(e.target.value)}
-                    />
-                  </div>
-                  <Button>Export</Button>
-                </div>
-                <AffiliateTable
-                  users={users}
-                  isLoading={isUsersLoading}
-                  searchQuery={searchQuery}
-                  setSearchQuery={setSearchQuery}
-                  roleFilter={roleFilter}
-                  setRoleFilter={setRoleFilter}
-                  sortField={sortField}
-                  sortDirection={sortDirection}
-                  handleSort={handleSort}
-                />
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
+      <div className="container mx-auto px-4 py-8 mt-16">
+        <Tabs defaultValue="dashboard" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+            <TabsTrigger value="referrals">Referrals</TabsTrigger>
+            <TabsTrigger value="settings">Settings</TabsTrigger>
+          </TabsList>
+          <TabsContent value="dashboard" className="space-y-4">
+            <AffiliateDashboard affiliateData={affiliateData} referrals={referrals} />
+          </TabsContent>
+          <TabsContent value="referrals" className="space-y-4">
+            <AffiliateTable referrals={referrals} isLoading={isReferralsLoading} />
+          </TabsContent>
+          <TabsContent value="settings" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Payment Settings</CardTitle>
+                <CardDescription>Update your payment information.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button onClick={() => setIsPaymentDialogOpen(true)}>Update Payment Settings</Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+
         <PaymentSettingsDialog
-          open={isPaymentSettingsOpen}
-          onOpenChange={setIsPaymentSettingsOpen}
+          open={isPaymentDialogOpen}
+          onOpenChange={setIsPaymentDialogOpen}
+          affiliateUuid={affiliateData.affiliate_uuid}
         />
       </div>
     </>

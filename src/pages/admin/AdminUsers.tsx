@@ -1,102 +1,104 @@
 import React, { useState } from "react";
+import { useUsers } from "@/hooks/admin/useUsers";
 import { MainHeader } from "@/components/MainHeader";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { UsersHeader } from "@/components/admin/users/UsersHeader";
-import { UsersTable } from "@/components/admin/users/UsersTable";
-import { UsersGallery } from "@/components/admin/users/UsersGallery";
-import { UsersLoadingState } from "@/components/admin/users/UsersLoadingState";
-import { UsersErrorState } from "@/components/admin/users/UsersErrorState";
 import { UsersLayoutSwitcher } from "@/components/admin/users/UsersLayoutSwitcher";
 import { UsersSortSelector } from "@/components/admin/users/UsersSortSelector";
+import { UsersLoadingState } from "@/components/admin/users/UsersLoadingState";
+import { UsersErrorState } from "@/components/admin/users/UsersErrorState";
+import { UsersTable } from "@/components/admin/users/UsersTable";
+import { UsersGallery } from "@/components/admin/users/UsersGallery";
 import { UserDetailsDialog } from "@/components/admin/users/UserDetailsDialog";
-import { useUsers } from "@/hooks/admin/useUsers";
-import { Search, LayoutGrid, List } from "lucide-react";
 
 export default function AdminUsers() {
-  const [layout, setLayout] = useState<'table' | 'gallery'>('table');
-  const [selectedUser, setSelectedUser] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all");
+  const [layoutType, setLayoutType] = useState<"table" | "gallery">("table");
+  const [sortField, setSortField] = useState<string>("created_at");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   const {
-    users,
+    data,
     isLoading,
     error,
-    totalCount,
-    totalPages,
+    refetch
+  } = useUsers({
     searchQuery,
-    setSearchQuery,
     roleFilter,
-    setRoleFilter,
     sortField,
     sortDirection,
-    handleSort,
-    refetch
-  } = useUsers(1, 50, 'created_at', 'desc');
-
-  const handleUserClick = (userId: string) => {
-    setSelectedUser(userId);
-  };
+    page: 1,
+    limit: 50
+  });
 
   const handleSortChange = (field: string) => {
-    handleSort(field);
+    if (field === sortField) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("desc");
+    }
+  };
+
+  const handleUserClick = (userId: string) => {
+    setSelectedUserId(userId);
+    setIsDialogOpen(true);
   };
 
   return (
     <>
       <MainHeader />
       <div className="container mx-auto px-4 py-8 mt-16">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-2xl font-bold">Users</CardTitle>
-            <UsersHeader
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              roleFilter={roleFilter}
-              setRoleFilter={setRoleFilter}
+        <UsersHeader
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          roleFilter={roleFilter}
+          setRoleFilter={setRoleFilter}
+          refetch={refetch}
+        />
+
+        <div className="flex items-center justify-between py-4">
+          <UsersLayoutSwitcher
+            layoutType={layoutType}
+            setLayoutType={setLayoutType}
+          />
+          <UsersSortSelector
+            sortField={sortField}
+            sortDirection={sortDirection}
+            handleSortChange={handleSortChange}
+          />
+        </div>
+
+        {isLoading ? (
+          <UsersLoadingState layoutType={layoutType} />
+        ) : error ? (
+          <UsersErrorState error={error} />
+        ) : data && data.length > 0 ? (
+          layoutType === "table" ? (
+            <UsersTable
+              users={data}
+              handleUserClick={handleUserClick}
             />
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between py-2">
-              <UsersLayoutSwitcher layout={layout} setLayout={setLayout} />
-              <UsersSortSelector
-                sortField={sortField}
-                sortDirection={sortDirection}
-                handleSortChange={handleSortChange}
-              />
-            </div>
-            <Separator />
+          ) : (
+            <UsersGallery
+              users={data}
+              handleUserClick={handleUserClick}
+            />
+          )
+        ) : (
+          <div className="text-center py-8">
+            <p className="text-muted-foreground">No users found.</p>
+          </div>
+        )}
 
-            {isLoading && <UsersLoadingState />}
-            {error && <UsersErrorState error={error} />}
-
-            {!isLoading && !error && layout === 'table' && (
-              <UsersTable
-                users={users}
-                totalCount={totalCount}
-                totalPages={totalPages}
-                handleUserClick={handleUserClick}
-                sortField={sortField}
-                sortDirection={sortDirection}
-                handleSort={handleSort}
-              />
-            )}
-            {!isLoading && !error && layout === 'gallery' && (
-              <UsersGallery users={users} handleUserClick={handleUserClick} />
-            )}
-          </CardContent>
-        </Card>
+        <UserDetailsDialog
+          userId={selectedUserId}
+          open={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
+        />
       </div>
-
-      <UserDetailsDialog
-        open={!!selectedUser}
-        onOpenChange={(open) => {
-          if (!open) setSelectedUser(null);
-        }}
-        userId={selectedUser || ''}
-        refetch={refetch}
-      />
     </>
   );
 }

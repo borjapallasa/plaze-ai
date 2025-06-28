@@ -758,14 +758,53 @@ export default function CommunityPage() {
                   ))}
                 </div>
               ) : (
-                <Card className="p-6">
-                  <p className="text-center text-muted-foreground">
-                    {selectedTag === "all" 
-                      ? "No threads found in this community." 
-                      : `No threads found with the tag "${selectedTag}".`
-                    }
-                  </p>
-                </Card>
+                <div className="space-y-4">
+                  <Card className="border-2 border-dashed border-muted-foreground/25 bg-muted/10">
+                    <CardContent className="flex flex-col items-center justify-center py-16 px-8 text-center relative">
+                      {/* Icon Container */}
+                      <div className="mb-6 p-6 rounded-full bg-gradient-to-br from-primary/10 to-primary/20 border border-primary/20">
+                        <MessageSquare className="h-12 w-12 text-primary" />
+                      </div>
+                      
+                      {/* Main Message */}
+                      <h3 className="text-xl font-semibold text-foreground mb-3">
+                        {selectedTag === "all" 
+                          ? "No discussions yet" 
+                          : `No threads with "${selectedTag}" tag`
+                        }
+                      </h3>
+                      
+                      {/* Description */}
+                      <p className="text-muted-foreground max-w-md mb-8 leading-relaxed">
+                        {selectedTag === "all" 
+                          ? "This community doesn't have any discussion threads yet. Start a conversation to engage with other members!"
+                          : `No threads found with the "${selectedTag}" tag. Try selecting a different tag or create a new thread.`
+                        }
+                      </p>
+                      
+                      {/* Action Button */}
+                      <Button 
+                        onClick={() => setIsCreateThreadDialogOpen(true)}
+                        size="lg"
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-xl"
+                      >
+                        <Plus className="h-5 w-5 mr-2" />
+                        {selectedTag === "all" 
+                          ? "Start the First Discussion" 
+                          : "Create New Thread"
+                        }
+                      </Button>
+                      
+                      {/* Decorative Elements */}
+                      <div className="absolute inset-0 -z-10 opacity-5">
+                        <div className="absolute top-4 left-4 w-8 h-8 border border-primary rounded-full"></div>
+                        <div className="absolute top-8 right-8 w-4 h-4 bg-primary/20 rounded-full"></div>
+                        <div className="absolute bottom-8 left-8 w-6 h-6 border border-primary/30 rotate-45"></div>
+                        <div className="absolute bottom-4 right-4 w-10 h-10 border-2 border-primary/20 rounded-full"></div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
               )}
             </TabsContent>
 
