@@ -157,7 +157,7 @@ export const CategoryHeader = ({
           {onViewModeChange && (
             <div className="mt-4 lg:mt-0 lg:flex-shrink-0 w-full lg:w-auto">
               <div className="relative bg-gray-100 rounded-full p-1 w-full lg:w-auto lg:inline-flex overflow-hidden">
-                {/* Sliding background indicator - completely rewritten for desktop alignment */}
+                {/* Sliding background indicator */}
                 <div 
                   className="absolute top-1 bottom-1 bg-white rounded-full shadow-sm transition-all duration-200 ease-out"
                   style={{
@@ -170,7 +170,7 @@ export const CategoryHeader = ({
                 <div className="relative z-10 flex w-full">
                   <button
                     onClick={() => handleViewModeChange("products")}
-                    className={`flex-1 py-2 px-4 text-sm font-medium transition-colors duration-200 text-center ${
+                    className={`flex-1 py-2 px-6 text-sm font-medium transition-colors duration-200 flex items-center justify-center ${
                       viewMode === "products" 
                         ? "text-gray-900" 
                         : "text-gray-500 hover:text-gray-700"
@@ -180,7 +180,7 @@ export const CategoryHeader = ({
                   </button>
                   <button
                     onClick={() => handleViewModeChange("communities")}
-                    className={`flex-1 py-2 px-4 text-sm font-medium transition-colors duration-200 text-center ${
+                    className={`flex-1 py-2 px-6 text-sm font-medium transition-colors duration-200 flex items-center justify-center ${
                       viewMode === "communities" 
                         ? "text-gray-900" 
                         : "text-gray-500 hover:text-gray-700"

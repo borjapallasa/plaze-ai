@@ -1,84 +1,54 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 
 export interface UserData {
   user_uuid: string;
+  name: string;
   email: string;
-  first_name: string | null;
-  last_name: string | null;
+  role: string;
   created_at: string;
-  is_affiliate: boolean | null;
-  is_admin: boolean | null;
-  is_expert: boolean | null;
-  total_spent: number | null;
-  total_sales_amount: number | null;
-  transaction_count: number | null;
-  product_count: number | null;
-  active_product_count: number | null;
-  source: string | null;
-  via: string | null;
-  utm_source: string | null;
-  utm_medium: string | null;
-  utm_campaign: string | null;
-  utm_id: string | null;
-  utm_term: string | null;
-  utm_content: string | null;
-  referral_affiliate_code: string | null;
-  affiliate_since: string | null;
-  affiliate_multiplier: number | null;
-  average_review: number | null;
-  payout_amount: number | null;
-  requested_amount: number | null;
-  affiliate_fees_amount: number | null;
-  available_amount: number | null;
-  net_sales_amount: number | null;
-  fees_amount: number | null;
-  service_sales_amount: number | null;
-  job_sales_amount: number | null;
-  subscription_sales_amount: number | null;
-  product_sales_amount: number | null;
-  service_transaction_amount_spent: number | null;
-  job_amount_spent: number | null;
-  product_amount_spent: number | null;
-  subscription_amount_spent: number | null;
-  stripe_client_id: string | null;
-  affiliate_id: string | null;
-  affiliate_link: string | null;
-  member_profile_link: string | null;
-  user_thumbnail: string | null;
-  communities_joined: any;
+  last_sign_in_at: string;
+  email_verified: boolean;
 }
 
-export interface UseUsersParams {
-  page?: number;
-  limit?: number;
-  searchTerm?: string;
-  sortBy?: keyof UserData;
-  sortOrder?: 'asc' | 'desc';
-}
+export const useUsers = (page: number = 1, limit: number = 20) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [roleFilter, setRoleFilter] = useState<string>("all");
+  const [sortField, setSortField] = useState<keyof UserData>("created_at");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
-export function useUsers({
-  page = 1,
-  limit = 10,
-  searchTerm = '',
-  sortBy = 'created_at',
-  sortOrder = 'desc'
-}: UseUsersParams = {}) {
-  return useQuery({
-    queryKey: ['users', page, limit, searchTerm, sortBy, sortOrder],
+  const handleSort = (field: keyof UserData) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("asc");
+    }
+  };
+
+  const queryResult = useQuery({
+    queryKey: ['users', page, limit, searchQuery, roleFilter, sortField, sortDirection],
     queryFn: async () => {
       let query = supabase
         .from('users')
         .select('*', { count: 'exact' });
 
-      if (searchTerm) {
-        query = query.or(`email.ilike.%${searchTerm}%,first_name.ilike.%${searchTerm}%,last_name.ilike.%${searchTerm}%`);
+      // Apply search filter
+      if (searchQuery) {
+        query = query.or(`name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%`);
       }
 
-      const validSortColumn = sortBy as string;
-      query = query.order(validSortColumn, { ascending: sortOrder === 'asc' });
+      // Apply role filter
+      if (roleFilter !== "all") {
+        query = query.eq('role', roleFilter);
+      }
 
+      // Apply sorting
+      query = query.order(sortField, { ascending: sortDirection === "asc" });
+
+      // Apply pagination
       const from = (page - 1) * limit;
       const to = from + limit - 1;
       query = query.range(from, to);
@@ -86,17 +56,28 @@ export function useUsers({
       const { data, error, count } = await query;
 
       if (error) {
-        console.error('Error fetching users:', error);
         throw error;
       }
 
+      const totalPages = Math.ceil((count || 0) / limit);
+
       return {
-        users: data as UserData[],
+        users: data || [],
         count: count || 0,
-        totalPages: Math.ceil((count || 0) / limit)
+        totalPages
       };
-    },
-    staleTime: 30000,
-    retry: 3
+    }
   });
-}
+
+  return {
+    ...queryResult,
+    users: queryResult.data?.users || [],
+    searchQuery,
+    setSearchQuery,
+    roleFilter,
+    setRoleFilter,
+    sortField,
+    sortDirection,
+    handleSort
+  };
+};
