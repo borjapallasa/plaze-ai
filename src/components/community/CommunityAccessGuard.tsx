@@ -17,7 +17,7 @@ export function CommunityAccessGuard({ communityId, children }: CommunityAccessG
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-12">
+      <div className="flex justify-center items-center py-12 mt-16">
         <div className="animate-pulse">
           <div className="h-8 w-48 bg-gray-200 rounded mb-4"></div>
           <div className="h-4 w-96 bg-gray-200 rounded"></div>
@@ -29,7 +29,7 @@ export function CommunityAccessGuard({ communityId, children }: CommunityAccessG
   // If user has no subscription at all
   if (!status) {
     return (
-      <div className="container mx-auto px-4 py-8 max-w-2xl">
+      <div className="container mx-auto px-4 py-8 max-w-2xl mt-16">
         <Card className="p-8 text-center">
           <div className="mb-6">
             <Lock className="h-16 w-16 text-gray-400 mx-auto mb-4" />
@@ -54,7 +54,7 @@ export function CommunityAccessGuard({ communityId, children }: CommunityAccessG
   // If user has pending subscription
   if (status === 'pending') {
     return (
-      <div className="container mx-auto px-4 py-8 max-w-2xl">
+      <div className="container mx-auto px-4 py-8 max-w-2xl mt-16">
         <Card className="p-8 text-center">
           <div className="mb-6">
             <Clock className="h-16 w-16 text-yellow-500 mx-auto mb-4" />
@@ -85,7 +85,7 @@ export function CommunityAccessGuard({ communityId, children }: CommunityAccessG
   // If user has inactive/cancelled subscription
   if (status !== 'active') {
     return (
-      <div className="container mx-auto px-4 py-8 max-w-2xl">
+      <div className="container mx-auto px-4 py-8 max-w-2xl mt-16">
         <Card className="p-8 text-center">
           <div className="mb-6">
             <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />

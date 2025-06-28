@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
@@ -16,6 +17,8 @@ export interface UserData {
   is_affiliate?: boolean;
   affiliate_since?: string;
   user_thumbnail?: string;
+  is_expert?: boolean;
+  commissions_generated?: number;
 }
 
 export const useUsers = (page = 1, limit = 10, sortBy: keyof UserData = 'created_at', sortOrder: 'asc' | 'desc' = 'desc') => {
@@ -53,7 +56,8 @@ export const useUsers = (page = 1, limit = 10, sortBy: keyof UserData = 'created
           is_admin,
           is_affiliate,
           affiliate_since,
-          user_thumbnail
+          user_thumbnail,
+          is_expert
         `, { count: 'exact' });
 
       // Apply search filter
@@ -90,7 +94,9 @@ export const useUsers = (page = 1, limit = 10, sortBy: keyof UserData = 'created
         is_admin: user.is_admin || false,
         is_affiliate: user.is_affiliate || false,
         affiliate_since: user.affiliate_since || '',
-        user_thumbnail: user.user_thumbnail || ''
+        user_thumbnail: user.user_thumbnail || '',
+        is_expert: user.is_expert || false,
+        commissions_generated: 0 // Default value for missing property
       }));
 
       return {
