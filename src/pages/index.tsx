@@ -92,6 +92,11 @@ const Index = () => {
     [selectedCategory, products]
   );
 
+  // Handle community click to redirect to about page
+  const handleCommunityClick = (communityId: string) => {
+    navigate(`/community/${communityId}/about`);
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen">
@@ -151,12 +156,12 @@ const Index = () => {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 auto-rows-fr">
               {communities?.map((community) => (
-                <a 
+                <div 
                   key={community.community_uuid} 
-                  href={`https://plaze.ai/community/${community.community_uuid}`}
-                  className="h-full"
+                  onClick={() => handleCommunityClick(community.community_uuid)}
+                  className="h-full cursor-pointer"
                 >
-                  <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer h-full flex flex-col">
+                  <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
                     {/* Community Image */}
                     <div className="aspect-video relative overflow-hidden flex-shrink-0">
                       <img
@@ -190,7 +195,7 @@ const Index = () => {
                       </div>
                     </CardContent>
                   </Card>
-                </a>
+                </div>
               ))}
             </div>
           )}
