@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -152,42 +153,36 @@ export const CategoryHeader = ({
             />
           </div>
 
-          {/* View Mode Toggle - Full width on mobile/tablet, auto width on desktop */}
+          {/* View Mode Toggle - Rebuilt from scratch */}
           {onViewModeChange && (
             <div className="mt-4 lg:mt-0 lg:flex-shrink-0 w-full lg:w-auto">
-              <div className="relative bg-gray-100 rounded-full p-1 w-full lg:w-auto">
-                {/* Sliding background indicator */}
-                <div 
-                  className="absolute top-1 bottom-1 bg-white rounded-full shadow-sm transition-all duration-200 ease-out"
-                  style={{
-                    width: '50%',
-                    transform: viewMode === "communities" ? 'translateX(100%)' : 'translateX(0%)'
-                  }}
-                />
-                
-                {/* Toggle buttons */}
-                <div className="relative z-10 flex">
-                  <button
-                    onClick={() => handleViewModeChange("products")}
-                    className={`flex-1 py-2 px-6 text-sm font-medium transition-colors duration-200 rounded-full text-center ${
-                      viewMode === "products" 
-                        ? "text-gray-900" 
-                        : "text-gray-500 hover:text-gray-700"
-                    }`}
-                  >
-                    Products
-                  </button>
-                  <button
-                    onClick={() => handleViewModeChange("communities")}
-                    className={`flex-1 py-2 px-6 text-sm font-medium transition-colors duration-200 rounded-full text-center ${
-                      viewMode === "communities" 
-                        ? "text-gray-900" 
-                        : "text-gray-500 hover:text-gray-700"
-                    }`}
-                  >
-                    Communities
-                  </button>
-                </div>
+              <div className="bg-gray-100 rounded-full p-1 inline-flex w-full lg:w-auto">
+                <button
+                  onClick={() => handleViewModeChange("products")}
+                  className={`
+                    px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 ease-out
+                    ${viewMode === "products" 
+                      ? "bg-white text-gray-900 shadow-sm" 
+                      : "text-gray-500 hover:text-gray-700"
+                    }
+                    flex-1 lg:flex-none
+                  `}
+                >
+                  Products
+                </button>
+                <button
+                  onClick={() => handleViewModeChange("communities")}
+                  className={`
+                    px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 ease-out
+                    ${viewMode === "communities" 
+                      ? "bg-white text-gray-900 shadow-sm" 
+                      : "text-gray-500 hover:text-gray-700"
+                    }
+                    flex-1 lg:flex-none
+                  `}
+                >
+                  Communities
+                </button>
               </div>
             </div>
           )}

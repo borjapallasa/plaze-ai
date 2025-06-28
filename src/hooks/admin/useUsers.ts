@@ -15,6 +15,7 @@ export interface UserData {
   last_sign_in_at: string;
   email_verified: boolean;
   total_spent: number;
+  commissions_generated: number;
 }
 
 export const useUsers = (page: number = 1, limit: number = 20) => {
@@ -76,7 +77,8 @@ export const useUsers = (page: number = 1, limit: number = 20) => {
         ...user,
         last_sign_in_at: user.created_at, // Fallback since this field might not exist
         email_verified: true, // Fallback since this field might not exist
-        total_spent: user.total_spent || 0
+        total_spent: user.total_spent || 0,
+        commissions_generated: 0 // Add missing field
       }));
 
       return {
