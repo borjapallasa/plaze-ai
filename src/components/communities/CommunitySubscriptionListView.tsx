@@ -133,7 +133,7 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-1">
                   {isPending ? (
-                    <span className="inline-flex items-center px-2.5 py-0.5 text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
+                    <span className="inline-flex items-center px-2.5 py-0.5 text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200 rounded-md">
                       Pending
                     </span>
                   ) : (
@@ -200,7 +200,7 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1 text-sm">
                     {isPending ? (
-                      <span className="inline-flex items-center px-2.5 py-0.5 text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
+                      <span className="inline-flex items-center px-2.5 py-0.5 text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200 rounded-md">
                         Pending
                       </span>
                     ) : (
