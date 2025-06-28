@@ -71,7 +71,9 @@ export function CommunitySubscriptionCard({ subscription }: CommunitySubscriptio
         <div className="flex items-center justify-between text-sm mt-auto">
           <div className="flex items-center gap-2 text-muted-foreground">
             {isPending ? (
-              <span className="text-yellow-600 font-medium">Pending</span>
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
+                Pending
+              </span>
             ) : (
               <>
                 <Calendar className="h-4 w-4" />
@@ -80,8 +82,8 @@ export function CommunitySubscriptionCard({ subscription }: CommunitySubscriptio
             )}
           </div>
           
-          <div className={`font-semibold text-base ${getStatusColor(subscription.status)}`}>
-            <span>Free</span>
+          <div className="font-semibold text-lg text-green-600">
+            Free
           </div>
         </div>
 

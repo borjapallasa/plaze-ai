@@ -6,8 +6,8 @@ import { useState } from "react";
 export interface UserData {
   user_uuid: string;
   email: string;
-  first_name?: string;
-  last_name?: string;
+  first_name: string;
+  last_name: string;
   created_at: string;
   total_spent?: number;
   transaction_count?: number;
@@ -17,6 +17,7 @@ export interface UserData {
   total_sales_amount?: number;
   product_count?: number;
   active_product_count?: number;
+  commissions_generated?: number;
 }
 
 export const useUsers = (page = 1, limit = 10, sortBy: keyof UserData = 'created_at', sortOrder: 'asc' | 'desc' = 'desc') => {
@@ -77,8 +78,26 @@ export const useUsers = (page = 1, limit = 10, sortBy: keyof UserData = 'created
 
       if (error) throw error;
 
+      // Transform data to match UserData interface
+      const transformedData = (data || []).map(user => ({
+        user_uuid: user.user_uuid,
+        email: user.email,
+        first_name: user.first_name || '',
+        last_name: user.last_name || '',
+        created_at: user.created_at,
+        total_spent: user.total_spent,
+        transaction_count: user.transaction_count,
+        is_admin: user.is_admin,
+        is_affiliate: user.is_affiliate,
+        is_expert: user.is_expert,
+        total_sales_amount: user.total_sales_amount,
+        product_count: user.product_count,
+        active_product_count: user.active_product_count,
+        commissions_generated: 0 // Default value for missing property
+      }));
+
       return {
-        users: data as UserData[],
+        users: transformedData as UserData[],
         totalCount: count || 0,
         totalPages: Math.ceil((count || 0) / limit)
       };

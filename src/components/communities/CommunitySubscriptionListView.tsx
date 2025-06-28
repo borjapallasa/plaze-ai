@@ -130,18 +130,20 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
               </div>
 
               {/* Metadata Row */}
-              <div className="flex items-center justify-between text-sm text-gray-600">
+              <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-1">
                   {isPending ? (
-                    <span className="text-yellow-600 font-medium">Pending</span>
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
+                      Pending
+                    </span>
                   ) : (
-                    <>
+                    <div className="flex items-center gap-1 text-gray-600">
                       <Calendar className="h-3 w-3" />
                       <span>Joined {new Date(subscription.created_at).toLocaleDateString()}</span>
-                    </>
+                    </div>
                   )}
                 </div>
-                <div className="font-semibold text-green-600">
+                <div className="font-semibold text-lg text-green-600">
                   Free
                 </div>
               </div>
@@ -196,17 +198,19 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
                 
                 {/* Metadata Row */}
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1 text-sm text-gray-600">
+                  <div className="flex items-center gap-1 text-sm">
                     {isPending ? (
-                      <span className="text-yellow-600 font-medium">Pending</span>
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
+                        Pending
+                      </span>
                     ) : (
-                      <>
+                      <div className="flex items-center gap-1 text-gray-600">
                         <Calendar className="h-3 w-3" />
                         <span>Joined {new Date(subscription.created_at).toLocaleDateString()}</span>
-                      </>
+                      </div>
                     )}
                   </div>
-                  <div className="font-semibold text-base text-green-600">
+                  <div className="font-semibold text-lg text-green-600">
                     Free
                   </div>
                 </div>
