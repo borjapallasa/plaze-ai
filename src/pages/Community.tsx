@@ -72,6 +72,7 @@ export default function CommunityPage() {
   const [isCreateThreadDialogOpen, setIsCreateThreadDialogOpen] = useState(false);
   const [showProductTemplateSelector, setShowProductTemplateSelector] = useState(false);
   const [activeTab, setActiveTab] = useState("threads");
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const { user } = useAuth();
   const { images } = useCommunityImages(communityId);
 
@@ -263,6 +264,12 @@ export default function CommunityPage() {
     }
     return [];
   }, [community?.threads_tags]);
+
+  // Filter threads based on selected tag
+  const filteredThreads = useMemo(() => {
+    if (!threads || !selectedTag) return threads;
+    return threads.filter(thread => thread.tag === selectedTag);
+  }, [threads, selectedTag]);
 
   // Check if current user is the community owner - enhanced debugging
   const isOwner = currentUserExpertData && community && (
@@ -662,11 +669,19 @@ export default function CommunityPage() {
 
               {threadsTags.length > 0 && (
                 <div className="flex flex-wrap gap-2">
+                  <Badge 
+                    variant={selectedTag === null ? "default" : "secondary"}
+                    className="text-sm cursor-pointer"
+                    onClick={() => setSelectedTag(null)}
+                  >
+                    All
+                  </Badge>
                   {threadsTags.map((tag, index) => (
                     <Badge 
                       key={index} 
-                      variant="secondary" 
-                      className="text-sm"
+                      variant={selectedTag === tag ? "default" : "secondary"}
+                      className="text-sm cursor-pointer"
+                      onClick={() => setSelectedTag(tag)}
                     >
                       {tag}
                     </Badge>
@@ -703,9 +718,9 @@ export default function CommunityPage() {
                     </Card>
                   ))}
                 </div>
-              ) : threads && threads.length > 0 ? (
+              ) : filteredThreads && filteredThreads.length > 0 ? (
                 <div className="space-y-4">
-                  {threads.map((thread) => (
+                  {filteredThreads.map((thread) => (
                     <Card 
                       key={thread.thread_uuid}
                       className="group hover:bg-accent transition-colors cursor-pointer"
@@ -722,7 +737,12 @@ export default function CommunityPage() {
                             <div className="text-sm text-muted-foreground">
                               Created by {thread.user_name}
                             </div>
-                            <Badge variant="secondary" className="text-xs w-fit">Messages: {thread.number_messages || 0}</Badge>
+                            <div className="flex gap-2">
+                              <Badge variant="secondary" className="text-xs w-fit">Messages: {thread.number_messages || 0}</Badge>
+                              {thread.tag && (
+                                <Badge variant="outline" className="text-xs w-fit">{thread.tag}</Badge>
+                              )}
+                            </div>
                           </div>
                         </div>
 
@@ -745,7 +765,9 @@ export default function CommunityPage() {
                 </div>
               ) : (
                 <Card className="p-6">
-                  <p className="text-center text-muted-foreground">No threads found in this community.</p>
+                  <p className="text-center text-muted-foreground">
+                    {selectedTag ? `No threads found with tag "${selectedTag}".` : 'No threads found in this community.'}
+                  </p>
                 </Card>
               )}
             </TabsContent>
