@@ -44,17 +44,27 @@ export function CreateThreadDialog({ open, onOpenChange, communityId, expertUuid
         throw userError;
       }
 
+      // Map the selected tag to valid enum values or set to null
+      let validTag: "general" | "support" | "off topic" | "anouncements" | null = null;
+      if (selectedTag) {
+        const tagLower = selectedTag.toLowerCase();
+        if (tagLower === "general") validTag = "general";
+        else if (tagLower === "support") validTag = "support";
+        else if (tagLower === "off topic" || tagLower === "off-topic") validTag = "off topic";
+        else if (tagLower === "announcements" || tagLower === "anouncements") validTag = "anouncements";
+      }
+
       const { data, error } = await supabase
         .from('threads')
         .insert({
           title,
           initial_message: initialMessage,
-          status: 'open',
+          status: 'open' as const,
           user_uuid: user.id,
           user_name: userData?.first_name || 'Anonymous',
           community_uuid: communityId,
           expert_uuid: expertUuid,
-          tag: selectedTag || null,
+          tag: validTag,
           number_messages: 0,
           upvote_count: 0,
           last_message_at: new Date().toISOString()
@@ -88,6 +98,17 @@ export function CreateThreadDialog({ open, onOpenChange, communityId, expertUuid
     createThreadMutation.mutate();
   };
 
+  // Filter tags to only show valid enum values
+  const validTags = threadsTags.filter(tag => {
+    const tagLower = tag.toLowerCase();
+    return tagLower === "general" || 
+           tagLower === "support" || 
+           tagLower === "off topic" || 
+           tagLower === "off-topic" ||
+           tagLower === "announcements" ||
+           tagLower === "anouncements";
+  });
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
@@ -116,7 +137,7 @@ export function CreateThreadDialog({ open, onOpenChange, communityId, expertUuid
               required
             />
           </div>
-          {threadsTags && threadsTags.length > 0 && (
+          {validTags.length > 0 && (
             <div className="space-y-2">
               <Label htmlFor="tag">Tag (Optional)</Label>
               <Select value={selectedTag} onValueChange={setSelectedTag}>
@@ -124,7 +145,7 @@ export function CreateThreadDialog({ open, onOpenChange, communityId, expertUuid
                   <SelectValue placeholder="Select a tag" />
                 </SelectTrigger>
                 <SelectContent>
-                  {threadsTags.map((tag) => (
+                  {validTags.map((tag) => (
                     <SelectItem key={tag} value={tag}>
                       {tag}
                     </SelectItem>
