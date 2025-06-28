@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight, Plus, Edit } from "lucide-react";
+import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight, Plus, Edit, Package } from "lucide-react";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/ProductCard";
@@ -876,18 +876,49 @@ export default function CommunityPage() {
                     </div>
                   ))
                 ) : (
-                  <div className="col-span-full text-center py-8 border border-dashed rounded-md bg-muted/10">
-                    <p className="text-muted-foreground mb-2">No products available in this community.</p>
-                    {isOwner && (
-                      <Button 
-                        variant="outline" 
-                        onClick={() => handleOpenProductDialog(false)}
-                        className="gap-2"
-                      >
-                        <Plus className="h-4 w-4" />
-                        Add Your First Product
-                      </Button>
-                    )}
+                  <div className="col-span-full">
+                    <Card className="border-2 border-dashed border-muted-foreground/25 bg-muted/10">
+                      <CardContent className="flex flex-col items-center justify-center py-16 px-8 text-center">
+                        {/* Icon Container */}
+                        <div className="mb-6 p-6 rounded-full bg-gradient-to-br from-primary/10 to-primary/20 border border-primary/20">
+                          <Package className="h-12 w-12 text-primary" />
+                        </div>
+                        
+                        {/* Main Message */}
+                        <h3 className="text-xl font-semibold text-foreground mb-3">
+                          No products yet
+                        </h3>
+                        
+                        {/* Description */}
+                        <p className="text-muted-foreground max-w-md mb-8 leading-relaxed">
+                          This community doesn't have any products available yet. 
+                          {isOwner 
+                            ? " Start building your product catalog to engage with your community members."
+                            : " Check back later as the community owner adds new content."
+                          }
+                        </p>
+                        
+                        {/* Action Button */}
+                        {isOwner && (
+                          <Button 
+                            onClick={() => handleOpenProductDialog(false)}
+                            size="lg"
+                            className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-xl"
+                          >
+                            <Plus className="h-5 w-5 mr-2" />
+                            Create Your First Product
+                          </Button>
+                        )}
+                        
+                        {/* Decorative Elements */}
+                        <div className="absolute inset-0 -z-10 opacity-5">
+                          <div className="absolute top-4 left-4 w-8 h-8 border border-primary rounded-full"></div>
+                          <div className="absolute top-8 right-8 w-4 h-4 bg-primary/20 rounded-full"></div>
+                          <div className="absolute bottom-8 left-8 w-6 h-6 border border-primary/30 rotate-45"></div>
+                          <div className="absolute bottom-4 right-4 w-10 h-10 border-2 border-primary/20 rounded-full"></div>
+                        </div>
+                      </CardContent>
+                    </Card>
                   </div>
                 )}
               </div>
