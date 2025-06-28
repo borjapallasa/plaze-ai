@@ -153,36 +153,38 @@ export const CategoryHeader = ({
             />
           </div>
 
-          {/* View Mode Toggle - Rebuilt from scratch */}
+          {/* NEW Tab Selector - Completely rebuilt */}
           {onViewModeChange && (
-            <div className="mt-4 lg:mt-0 lg:flex-shrink-0 w-full lg:w-auto">
-              <div className="bg-gray-100 rounded-full p-1 inline-flex w-full lg:w-auto">
-                <button
-                  onClick={() => handleViewModeChange("products")}
-                  className={`
-                    px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 ease-out
-                    ${viewMode === "products" 
-                      ? "bg-white text-gray-900 shadow-sm" 
-                      : "text-gray-500 hover:text-gray-700"
-                    }
-                    flex-1 lg:flex-none
-                  `}
-                >
-                  Products
-                </button>
-                <button
-                  onClick={() => handleViewModeChange("communities")}
-                  className={`
-                    px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 ease-out
-                    ${viewMode === "communities" 
-                      ? "bg-white text-gray-900 shadow-sm" 
-                      : "text-gray-500 hover:text-gray-700"
-                    }
-                    flex-1 lg:flex-none
-                  `}
-                >
-                  Communities
-                </button>
+            <div className="mt-4 lg:mt-0 flex justify-center lg:justify-end">
+              <div className="border border-gray-200 rounded-lg overflow-hidden bg-white shadow-sm">
+                <div className="flex">
+                  <button
+                    type="button"
+                    onClick={() => handleViewModeChange("products")}
+                    className={`
+                      px-4 py-2 text-sm font-medium border-r border-gray-200 transition-colors duration-150
+                      ${viewMode === "products" 
+                        ? "bg-blue-50 text-blue-700 border-blue-200" 
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                      }
+                    `}
+                  >
+                    Products
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleViewModeChange("communities")}
+                    className={`
+                      px-4 py-2 text-sm font-medium transition-colors duration-150
+                      ${viewMode === "communities" 
+                        ? "bg-blue-50 text-blue-700 border-blue-200" 
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                      }
+                    `}
+                  >
+                    Communities
+                  </button>
+                </div>
               </div>
             </div>
           )}
