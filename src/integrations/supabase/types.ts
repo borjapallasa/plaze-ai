@@ -2593,7 +2593,7 @@ export type Database = {
       community_price_status: "active" | "inactive"
       community_product_type: "free" | "paid"
       community_subscription_status: "active" | "inactive" | "pending"
-      community_type: "free" | "paid"
+      community_type: "free" | "paid" | "private"
       community_visibility: "draft" | "private" | "public"
       conversation_source: "template" | "job request" | "information request"
       conversation_status: "open" | "closed" | "need attention"
@@ -2803,7 +2803,7 @@ export const Constants = {
       community_price_status: ["active", "inactive"],
       community_product_type: ["free", "paid"],
       community_subscription_status: ["active", "inactive", "pending"],
-      community_type: ["free", "paid"],
+      community_type: ["free", "paid", "private"],
       community_visibility: ["draft", "private", "public"],
       conversation_source: ["template", "job request", "information request"],
       conversation_status: ["open", "closed", "need attention"],
