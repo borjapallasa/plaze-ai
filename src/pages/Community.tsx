@@ -23,6 +23,7 @@ import { CommunityProductDialog } from "@/components/community/CommunityProductD
 import { ProductCreationDialog } from "@/components/community/ProductCreationDialog";
 import { formatNumber } from "@/lib/utils";
 import { ClassroomDialog } from "@/components/community/ClassroomDialog";
+import { CommunityAccessGuard } from "@/components/community/CommunityAccessGuard";
 
 interface Link {
   name: string;
@@ -503,430 +504,432 @@ export default function CommunityPage() {
   return (
     <>
       <MainHeader />
-      <div className="container mx-auto px-4 py-8 max-w-[1400px] space-y-8 mt-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <div className="lg:col-span-8">
-            <Card className="p-6 space-y-6">
-              <div>
-                <ProductGallery 
-                  images={galleryImages}
-                  priority
-                />
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex items-center justify-between gap-4">
-                  <h1 className="text-2xl font-bold">{community?.name}</h1>
-                  {isOwner && (
-                    <Link to={`/community/${communityId}/edit`}>
-                      <Button variant="outline" size="sm" className="flex items-center gap-2">
-                        <Edit className="w-4 h-4" />
-                        Edit Community
-                      </Button>
-                    </Link>
-                  )}
-                </div>
-                <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: community?.description || '' }} />
-              </div>
-            </Card>
-          </div>
-
-          <div className="lg:col-span-4 space-y-6">
-            <Card className="overflow-hidden bg-white">
-              <div className="p-6 space-y-6">
-                {videoEmbedUrl && (
-                  <div className="aspect-video w-full bg-muted rounded-lg overflow-hidden">
-                    <iframe
-                      src={videoEmbedUrl}
-                      className="w-full h-full"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                  </div>
-                )}
-
+      <CommunityAccessGuard communityId={communityId || ''}>
+        <div className="container mx-auto px-4 py-8 max-w-[1400px] space-y-8 mt-16">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div className="lg:col-span-8">
+              <Card className="p-6 space-y-6">
                 <div>
-                  <h2 className="text-2xl font-bold mb-2">{community?.name}</h2>
-                  <p className="text-muted-foreground text-sm mb-4">
-                    {community?.description?.substring(0, 150)}...
-                  </p>
+                  <ProductGallery 
+                    images={galleryImages}
+                    priority
+                  />
                 </div>
 
-                {links.length > 0 && (
-                  <div className="space-y-2">
-                    {links.map((link, index) => (
-                      <a 
-                        key={index}
-                        href={link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
-                      >
-                        <LinkIcon className="w-4 h-4" />
-                        <span className="text-sm">{link.name}</span>
-                      </a>
-                    ))}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <h1 className="text-2xl font-bold">{community?.name}</h1>
+                    {isOwner && (
+                      <Link to={`/community/${communityId}/edit`}>
+                        <Button variant="outline" size="sm" className="flex items-center gap-2">
+                          <Edit className="w-4 h-4" />
+                          Edit Community
+                        </Button>
+                      </Link>
+                    )}
                   </div>
-                )}
-
-                <div className="grid grid-cols-4 gap-4 py-4 border-y">
-                  <div className="text-center">
-                    <p className="text-2xl font-bold">{formatNumber(community?.member_count)}</p>
-                    <p className="text-sm text-muted-foreground">Members</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold">{formatNumber(community?.post_count)}</p>
-                    <p className="text-sm text-muted-foreground">Posts</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold">{formatNumber(community?.product_count)}</p>
-                    <p className="text-sm text-muted-foreground">Products</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold">{formatNumber(community?.classroom_count)}</p>
-                    <p className="text-sm text-muted-foreground">Classrooms</p>
-                  </div>
+                  <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: community?.description || '' }} />
                 </div>
-
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-10 w-10 flex-shrink-0">
-                    <AvatarImage 
-                      src={community?.expert?.name ? community.expert.thumbnail || "https://github.com/shadcn.png" : "https://github.com/shadcn.png"} 
-                      alt={`${community?.expert?.name || "Expert"} avatar`}
-                      className="object-cover"
-                    />
-                    <AvatarFallback className="text-sm font-medium">
-                      {community?.expert?.name?.substring(0, 2)?.toUpperCase() || "EX"}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="min-w-0">
-                    <span className="text-sm text-muted-foreground">
-                      Hosted by <span className="font-medium">{community?.expert?.name || "Expert"}</span>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          </div>
-        </div>
-
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <div className="border-b border-border">
-            <nav className="flex space-x-6 overflow-x-auto scrollbar-hide px-6" aria-label="Tabs">
-              {tabs.map((tab) => {
-                const Icon = tab.icon;
-                const isActive = activeTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 flex items-center gap-2 ${
-                      isActive
-                        ? "border-primary text-primary"
-                        : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
-                    }`}
-                  >
-                    <Icon className="w-4 h-4" />
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </nav>
-          </div>
-
-          <TabsContent value="threads" className="space-y-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Input placeholder="Search thread" className="flex-1" />
-              <Button className="w-full sm:w-auto">Create New Thread</Button>
-            </div>
-
-            {isThreadsLoading ? (
-              <div className="space-y-4">
-                {[...Array(3)].map((_, i) => (
-                  <Card key={i} className="p-6">
-                    <div className="animate-pulse space-y-4">
-                      <div className="flex gap-4">
-                        <div className="w-12 h-12 bg-muted rounded-full" />
-                        <div className="flex-1 space-y-2">
-                          <div className="h-4 w-1/4 bg-muted rounded" />
-                          <div className="h-3 w-1/3 bg-muted rounded" />
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="h-4 w-full bg-muted rounded" />
-                        <div className="h-4 w-2/3 bg-muted rounded" />
-                      </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            ) : threads && threads.length > 0 ? (
-              <div className="space-y-4">
-                {threads.map((thread) => (
-                  <Card 
-                    key={thread.thread_uuid}
-                    className="group hover:bg-accent transition-colors cursor-pointer"
-                    onClick={() => handleThreadClick(thread)}
-                  >
-                    <CardContent className="p-6 space-y-4">
-                      <div className="flex items-start gap-4">
-                        <Avatar className="h-12 w-12 flex-shrink-0">
-                          <AvatarImage src="https://github.com/shadcn.png" />
-                          <AvatarFallback>{thread.user_name?.substring(0, 2).toUpperCase()}</AvatarFallback>
-                        </Avatar>
-                        <div className="flex flex-col gap-1">
-                          <h3 className="font-semibold">{thread.title}</h3>
-                          <div className="text-sm text-muted-foreground">
-                            Created by {thread.user_name}
-                          </div>
-                          <Badge variant="secondary" className="text-xs w-fit">Messages: {thread.number_messages || 0}</Badge>
-                        </div>
-                      </div>
-
-                      <div className="space-y-4">
-                        <p className="text-muted-foreground line-clamp-3">{thread.initial_message}</p>
-                        
-                        <div className="flex justify-between items-end">
-                          <div className="text-sm text-muted-foreground">
-                            Last Message: {thread.last_message_at ? new Date(thread.last_message_at).toLocaleString() : 'No messages yet'}
-                          </div>
-                          <Badge variant="outline" className="flex items-center gap-1 w-fit">
-                            <ThumbsUp className="w-3 h-3" />
-                            {thread.upvote_count || 0}
-                          </Badge>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <Card className="p-6">
-                <p className="text-center text-muted-foreground">No threads found in this community.</p>
               </Card>
-            )}
-          </TabsContent>
-
-          <TabsContent value="classrooms" className="space-y-6">
-            <div className="flex flex-col sm:flex-row gap-4 mb-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input placeholder="Search classroom" className="pl-9 w-full" />
-              </div>
-              {renderAddClassroomButton()}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {isClassroomsLoading ? (
-                [...Array(3)].map((_, index) => (
-                  <Card key={index} className="group relative flex flex-col hover:bg-accent transition-colors animate-pulse">
-                    <div className="aspect-[1.25] bg-muted rounded-t-lg"></div>
-                    <CardContent className="p-6 relative space-y-4">
-                      <div className="h-6 bg-muted rounded w-3/4"></div>
-                      <div className="h-4 bg-muted rounded w-full"></div>
-                      <div className="h-4 bg-muted rounded w-2/3"></div>
-                    </CardContent>
-                  </Card>
-                ))
-              ) : classrooms && classrooms.length > 0 ? (
-                classrooms.map((classroom) => (
-                  <Link 
-                    key={classroom.classroom_uuid}
-                    to={`/classroom/${classroom.classroom_uuid}`}
-                    className="block"
-                  >
-                    <Card className="group relative flex flex-col hover:bg-accent transition-colors cursor-pointer overflow-hidden h-full">
-                      <div className="aspect-[1.25] relative overflow-hidden bg-gradient-to-br from-blue-400 to-blue-600 rounded-t-lg">
-                        {classroom.thumbnail ? (
-                          <img 
-                            src={classroom.thumbnail} 
-                            alt={classroom.name} 
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="absolute inset-0 p-6 flex items-center justify-center">
-                            <h3 className="text-white text-2xl font-bold text-center leading-tight">Classroom</h3>
+
+            <div className="lg:col-span-4 space-y-6">
+              <Card className="overflow-hidden bg-white">
+                <div className="p-6 space-y-6">
+                  {videoEmbedUrl && (
+                    <div className="aspect-video w-full bg-muted rounded-lg overflow-hidden">
+                      <iframe
+                        src={videoEmbedUrl}
+                        className="w-full h-full"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    </div>
+                  )}
+
+                  <div>
+                    <h2 className="text-2xl font-bold mb-2">{community?.name}</h2>
+                    <p className="text-muted-foreground text-sm mb-4">
+                      {community?.description?.substring(0, 150)}...
+                    </p>
+                  </div>
+
+                  {links.length > 0 && (
+                    <div className="space-y-2">
+                      {links.map((link, index) => (
+                        <a 
+                          key={index}
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+                        >
+                          <LinkIcon className="w-4 h-4" />
+                          <span className="text-sm">{link.name}</span>
+                        </a>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-4 gap-4 py-4 border-y">
+                    <div className="text-center">
+                      <p className="text-2xl font-bold">{formatNumber(community?.member_count)}</p>
+                      <p className="text-sm text-muted-foreground">Members</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-2xl font-bold">{formatNumber(community?.post_count)}</p>
+                      <p className="text-sm text-muted-foreground">Posts</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-2xl font-bold">{formatNumber(community?.product_count)}</p>
+                      <p className="text-sm text-muted-foreground">Products</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-2xl font-bold">{formatNumber(community?.classroom_count)}</p>
+                      <p className="text-sm text-muted-foreground">Classrooms</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-10 w-10 flex-shrink-0">
+                      <AvatarImage 
+                        src={community?.expert?.name ? community.expert.thumbnail || "https://github.com/shadcn.png" : "https://github.com/shadcn.png"} 
+                        alt={`${community?.expert?.name || "Expert"} avatar`}
+                        className="object-cover"
+                      />
+                      <AvatarFallback className="text-sm font-medium">
+                        {community?.expert?.name?.substring(0, 2)?.toUpperCase() || "EX"}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="min-w-0">
+                      <span className="text-sm text-muted-foreground">
+                        Hosted by <span className="font-medium">{community?.expert?.name || "Expert"}</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          </div>
+
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+            <div className="border-b border-border">
+              <nav className="flex space-x-6 overflow-x-auto scrollbar-hide px-6" aria-label="Tabs">
+                {tabs.map((tab) => {
+                  const Icon = tab.icon;
+                  const isActive = activeTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 flex items-center gap-2 ${
+                        isActive
+                          ? "border-primary text-primary"
+                          : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                      {tab.label}
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
+
+            <TabsContent value="threads" className="space-y-6">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Input placeholder="Search thread" className="flex-1" />
+                <Button className="w-full sm:w-auto">Create New Thread</Button>
+              </div>
+
+              {isThreadsLoading ? (
+                <div className="space-y-4">
+                  {[...Array(3)].map((_, i) => (
+                    <Card key={i} className="p-6">
+                      <div className="animate-pulse space-y-4">
+                        <div className="flex gap-4">
+                          <div className="w-12 h-12 bg-muted rounded-full" />
+                          <div className="flex-1 space-y-2">
+                            <div className="h-4 w-1/4 bg-muted rounded" />
+                            <div className="h-3 w-1/3 bg-muted rounded" />
                           </div>
-                        )}
+                        </div>
+                        <div className="space-y-2">
+                          <div className="h-4 w-full bg-muted rounded" />
+                          <div className="h-4 w-2/3 bg-muted rounded" />
+                        </div>
                       </div>
-                      <CardContent className="p-6 relative flex flex-col flex-1">
-                        <CardTitle className="text-lg font-semibold mb-2">{classroom.name}</CardTitle>
-                        <p className="text-muted-foreground text-sm flex-1">{classroom.description || classroom.summary}</p>
-                        <div className="absolute right-6 bottom-6 opacity-0 transform translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200">
-                          <ArrowRight className="w-4 h-4 text-primary" />
+                    </Card>
+                  ))}
+                </div>
+              ) : threads && threads.length > 0 ? (
+                <div className="space-y-4">
+                  {threads.map((thread) => (
+                    <Card 
+                      key={thread.thread_uuid}
+                      className="group hover:bg-accent transition-colors cursor-pointer"
+                      onClick={() => handleThreadClick(thread)}
+                    >
+                      <CardContent className="p-6 space-y-4">
+                        <div className="flex items-start gap-4">
+                          <Avatar className="h-12 w-12 flex-shrink-0">
+                            <AvatarImage src="https://github.com/shadcn.png" />
+                            <AvatarFallback>{thread.user_name?.substring(0, 2).toUpperCase()}</AvatarFallback>
+                          </Avatar>
+                          <div className="flex flex-col gap-1">
+                            <h3 className="font-semibold">{thread.title}</h3>
+                            <div className="text-sm text-muted-foreground">
+                              Created by {thread.user_name}
+                            </div>
+                            <Badge variant="secondary" className="text-xs w-fit">Messages: {thread.number_messages || 0}</Badge>
+                          </div>
+                        </div>
+
+                        <div className="space-y-4">
+                          <p className="text-muted-foreground line-clamp-3">{thread.initial_message}</p>
+                          
+                          <div className="flex justify-between items-end">
+                            <div className="text-sm text-muted-foreground">
+                              Last Message: {thread.last_message_at ? new Date(thread.last_message_at).toLocaleString() : 'No messages yet'}
+                            </div>
+                            <Badge variant="outline" className="flex items-center gap-1 w-fit">
+                              <ThumbsUp className="w-3 h-3" />
+                              {thread.upvote_count || 0}
+                            </Badge>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
-                  </Link>
-                ))
+                  ))}
+                </div>
               ) : (
-                <Card className="col-span-full p-6">
-                  <p className="text-center text-muted-foreground">No classrooms found in this community.</p>
+                <Card className="p-6">
+                  <p className="text-center text-muted-foreground">No threads found in this community.</p>
                 </Card>
               )}
-            </div>
-          </TabsContent>
+            </TabsContent>
 
-          <TabsContent value="templates" className="space-y-6">
-            <div className="flex flex-col sm:flex-row gap-4 mb-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input placeholder="Search products" className="pl-9 w-full" />
+            <TabsContent value="classrooms" className="space-y-6">
+              <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                  <Input placeholder="Search classroom" className="pl-9 w-full" />
+                </div>
+                {renderAddClassroomButton()}
               </div>
-              {renderAddProductButton()}
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {isProductsLoading ? (
-                Array.from({ length: 3 }).map((_, index) => (
-                  <Card key={index} className="animate-pulse">
-                    <div className="h-48 bg-muted"></div>
-                    <CardContent className="p-4">
-                      <div className="h-6 bg-muted rounded w-2/3 mb-2"></div>
-                      <div className="h-4 bg-muted rounded w-full"></div>
-                    </CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {isClassroomsLoading ? (
+                  [...Array(3)].map((_, index) => (
+                    <Card key={index} className="group relative flex flex-col hover:bg-accent transition-colors animate-pulse">
+                      <div className="aspect-[1.25] bg-muted rounded-t-lg"></div>
+                      <CardContent className="p-6 relative space-y-4">
+                        <div className="h-6 bg-muted rounded w-3/4"></div>
+                        <div className="h-4 bg-muted rounded w-full"></div>
+                        <div className="h-4 bg-muted rounded w-2/3"></div>
+                      </CardContent>
+                    </Card>
+                  ))
+                ) : classrooms && classrooms.length > 0 ? (
+                  classrooms.map((classroom) => (
+                    <Link 
+                      key={classroom.classroom_uuid}
+                      to={`/classroom/${classroom.classroom_uuid}`}
+                      className="block"
+                    >
+                      <Card className="group relative flex flex-col hover:bg-accent transition-colors cursor-pointer overflow-hidden h-full">
+                        <div className="aspect-[1.25] relative overflow-hidden bg-gradient-to-br from-blue-400 to-blue-600 rounded-t-lg">
+                          {classroom.thumbnail ? (
+                            <img 
+                              src={classroom.thumbnail} 
+                              alt={classroom.name} 
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="absolute inset-0 p-6 flex items-center justify-center">
+                              <h3 className="text-white text-2xl font-bold text-center leading-tight">Classroom</h3>
+                            </div>
+                          )}
+                        </div>
+                        <CardContent className="p-6 relative flex flex-col flex-1">
+                          <CardTitle className="text-lg font-semibold mb-2">{classroom.name}</CardTitle>
+                          <p className="text-muted-foreground text-sm flex-1">{classroom.description || classroom.summary}</p>
+                          <div className="absolute right-6 bottom-6 opacity-0 transform translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200">
+                            <ArrowRight className="w-4 h-4 text-primary" />
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  ))
+                ) : (
+                  <Card className="col-span-full p-6">
+                    <p className="text-center text-muted-foreground">No classrooms found in this community.</p>
                   </Card>
-                ))
-              ) : communityProducts && communityProducts.length > 0 ? (
-                communityProducts.map((product: any) => (
-                  <div key={product.community_product_uuid} className="relative">
-                    <ProductCard
-                      title={product.name}
-                      price={product.price ? `$${product.price}` : "Free"}
-                      image="/placeholder.svg"
-                      seller={community?.name || "Community"}
-                      description={`A product by ${community?.name}`}
-                      tags={[product.product_type || "product"]}
-                      category="community"
-                      href={`/community/product/${product.community_product_uuid}`}
-                    />
-                    {isOwner && product.product_uuid && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="absolute top-2 right-2 h-8 w-8 p-0"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/product/${product.product_uuid}/edit`);
-                        }}
+                )}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="templates" className="space-y-6">
+              <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                  <Input placeholder="Search products" className="pl-9 w-full" />
+                </div>
+                {renderAddProductButton()}
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {isProductsLoading ? (
+                  Array.from({ length: 3 }).map((_, index) => (
+                    <Card key={index} className="animate-pulse">
+                      <div className="h-48 bg-muted"></div>
+                      <CardContent className="p-4">
+                        <div className="h-6 bg-muted rounded w-2/3 mb-2"></div>
+                        <div className="h-4 bg-muted rounded w-full"></div>
+                      </CardContent>
+                    </Card>
+                  ))
+                ) : communityProducts && communityProducts.length > 0 ? (
+                  communityProducts.map((product: any) => (
+                    <div key={product.community_product_uuid} className="relative">
+                      <ProductCard
+                        title={product.name}
+                        price={product.price ? `$${product.price}` : "Free"}
+                        image="/placeholder.svg"
+                        seller={community?.name || "Community"}
+                        description={`A product by ${community?.name}`}
+                        tags={[product.product_type || "product"]}
+                        category="community"
+                        href={`/community/product/${product.community_product_uuid}`}
+                      />
+                      {isOwner && product.product_uuid && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="absolute top-2 right-2 h-8 w-8 p-0"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/product/${product.product_uuid}/edit`);
+                          }}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div className="col-span-full text-center py-8 border border-dashed rounded-md bg-muted/10">
+                    <p className="text-muted-foreground mb-2">No products available in this community.</p>
+                    {isOwner && (
+                      <Button 
+                        variant="outline" 
+                        onClick={() => handleOpenProductDialog(false)}
+                        className="gap-2"
                       >
-                        <Edit className="h-4 w-4" />
+                        <Plus className="h-4 w-4" />
+                        Add Your First Product
                       </Button>
                     )}
                   </div>
-                ))
-              ) : (
-                <div className="col-span-full text-center py-8 border border-dashed rounded-md bg-muted/10">
-                  <p className="text-muted-foreground mb-2">No products available in this community.</p>
-                  {isOwner && (
-                    <Button 
-                      variant="outline" 
-                      onClick={() => handleOpenProductDialog(false)}
-                      className="gap-2"
-                    >
-                      <Plus className="h-4 w-4" />
-                      Add Your First Product
-                    </Button>
-                  )}
-                </div>
-              )}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="calendar" className="space-y-6">
-            <Card>
-              <CardContent className="p-6">
-                <CalendarComponent
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  modifiers={{
-                    event: events.map(event => event.date)
-                  }}
-                  modifiersClassNames={{
-                    event: "text-primary font-bold underline"
-                  }}
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="members" className="space-y-6">
-            {isMembersLoading ? (
-              <div className="space-y-4">
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <div key={index} className="flex items-center space-x-4 p-4 rounded-lg border bg-card animate-pulse">
-                    <div className="w-12 h-12 bg-muted rounded-full"></div>
-                    <div className="flex-1 space-y-2">
-                      <div className="h-4 bg-muted rounded w-1/4"></div>
-                      <div className="h-3 bg-muted rounded w-1/6"></div>
-                    </div>
-                  </div>
-                ))}
+                )}
               </div>
-            ) : communityMembers && communityMembers.length > 0 ? (
-              <div className="space-y-4">
-                {communityMembers.map((member) => (
-                  <div key={member.community_subscription_uuid} className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent transition-colors">
-                    <div className="flex items-center space-x-3">
-                      <Avatar className="h-12 w-12">
-                        <AvatarImage 
-                          src={member.users.user_thumbnail || "https://github.com/shadcn.png"} 
-                          alt={`${member.users.first_name} ${member.users.last_name}`}
-                        />
-                        <AvatarFallback>
-                          {`${member.users.first_name?.charAt(0) || ''}${member.users.last_name?.charAt(0) || ''}`}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-medium">
-                          {member.users.first_name} {member.users.last_name}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          Member since {new Date(member.created_at).toLocaleDateString()}
-                        </p>
+            </TabsContent>
+
+            <TabsContent value="calendar" className="space-y-6">
+              <Card>
+                <CardContent className="p-6">
+                  <CalendarComponent
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    modifiers={{
+                      event: events.map(event => event.date)
+                    }}
+                    modifiersClassNames={{
+                      event: "text-primary font-bold underline"
+                    }}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="members" className="space-y-6">
+              {isMembersLoading ? (
+                <div className="space-y-4">
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <div key={index} className="flex items-center space-x-4 p-4 rounded-lg border bg-card animate-pulse">
+                      <div className="w-12 h-12 bg-muted rounded-full"></div>
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 bg-muted rounded w-1/4"></div>
+                        <div className="h-3 bg-muted rounded w-1/6"></div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">No active members found in this community.</p>
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
+                  ))}
+                </div>
+              ) : communityMembers && communityMembers.length > 0 ? (
+                <div className="space-y-4">
+                  {communityMembers.map((member) => (
+                    <div key={member.community_subscription_uuid} className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent transition-colors">
+                      <div className="flex items-center space-x-3">
+                        <Avatar className="h-12 w-12">
+                          <AvatarImage 
+                            src={member.users.user_thumbnail || "https://github.com/shadcn.png"} 
+                            alt={`${member.users.first_name} ${member.users.last_name}`}
+                          />
+                          <AvatarFallback>
+                            {`${member.users.first_name?.charAt(0) || ''}${member.users.last_name?.charAt(0) || ''}`}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-medium">
+                            {member.users.first_name} {member.users.last_name}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            Member since {new Date(member.created_at).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">No active members found in this community.</p>
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
 
-        <ThreadDialog 
-          isOpen={isThreadOpen}
-          onClose={() => {
-            setIsThreadOpen(false);
-            setSelectedThread(null);
-          }}
-          thread={selectedThread}
-        />
+          <ThreadDialog 
+            isOpen={isThreadOpen}
+            onClose={() => {
+              setIsThreadOpen(false);
+              setSelectedThread(null);
+            }}
+            thread={selectedThread}
+          />
 
-        <ProductCreationDialog
-          open={isProductCreationDialogOpen}
-          onOpenChange={setIsProductCreationDialogOpen}
-          onSelectFromScratch={() => handleOpenProductDialog(false)}
-          onSelectFromTemplate={() => handleOpenProductDialog(true)}
-        />
+          <ProductCreationDialog
+            open={isProductCreationDialogOpen}
+            onOpenChange={setIsProductCreationDialogOpen}
+            onSelectFromScratch={() => handleOpenProductDialog(false)}
+            onSelectFromTemplate={() => handleOpenProductDialog(true)}
+          />
 
-        <CommunityProductDialog
-          open={isProductDialogOpen}
-          onOpenChange={setIsProductDialogOpen}
-          communityUuid={communityId || ''}
-          expertUuid={community?.expert_uuid}
-          showTemplateSelector={showProductTemplateSelector}
-        />
+          <CommunityProductDialog
+            open={isProductDialogOpen}
+            onOpenChange={setIsProductDialogOpen}
+            communityUuid={communityId || ''}
+            expertUuid={community?.expert_uuid}
+            showTemplateSelector={showProductTemplateSelector}
+          />
 
-        <ClassroomDialog
-          open={isClassroomDialogOpen}
-          onOpenChange={setIsClassroomDialogOpen}
-          communityUuid={communityId || ''}
-        />
-      </div>
+          <ClassroomDialog
+            open={isClassroomDialogOpen}
+            onOpenChange={setIsClassroomDialogOpen}
+            communityUuid={communityId || ''}
+          />
+        </div>
+      </CommunityAccessGuard>
     </>
   );
 }
