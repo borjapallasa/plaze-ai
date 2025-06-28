@@ -9,15 +9,15 @@ export interface UserData {
   first_name: string;
   last_name: string;
   created_at: string;
-  total_spent?: number;
-  transaction_count?: number;
-  is_admin?: boolean;
-  is_affiliate?: boolean;
-  is_expert?: boolean;
-  total_sales_amount?: number;
-  product_count?: number;
-  active_product_count?: number;
-  commissions_generated?: number;
+  total_spent: number;
+  transaction_count: number;
+  is_admin: boolean;
+  is_affiliate: boolean;
+  is_expert: boolean;
+  total_sales_amount: number;
+  product_count: number;
+  active_product_count: number;
+  commissions_generated: number;
 }
 
 export const useUsers = (page = 1, limit = 10, sortBy: keyof UserData = 'created_at', sortOrder: 'asc' | 'desc' = 'desc') => {
@@ -78,22 +78,22 @@ export const useUsers = (page = 1, limit = 10, sortBy: keyof UserData = 'created
 
       if (error) throw error;
 
-      // Transform data to match UserData interface
+      // Transform data to match UserData interface with required properties
       const transformedData = (data || []).map(user => ({
         user_uuid: user.user_uuid,
         email: user.email,
         first_name: user.first_name || '',
         last_name: user.last_name || '',
         created_at: user.created_at,
-        total_spent: user.total_spent,
-        transaction_count: user.transaction_count,
-        is_admin: user.is_admin,
-        is_affiliate: user.is_affiliate,
-        is_expert: user.is_expert,
-        total_sales_amount: user.total_sales_amount,
-        product_count: user.product_count,
-        active_product_count: user.active_product_count,
-        commissions_generated: 0 // Default value for missing property
+        total_spent: user.total_spent || 0,
+        transaction_count: user.transaction_count || 0,
+        is_admin: user.is_admin || false,
+        is_affiliate: user.is_affiliate || false,
+        is_expert: user.is_expert || false,
+        total_sales_amount: user.total_sales_amount || 0,
+        product_count: user.product_count || 0,
+        active_product_count: user.active_product_count || 0,
+        commissions_generated: 0
       }));
 
       return {
