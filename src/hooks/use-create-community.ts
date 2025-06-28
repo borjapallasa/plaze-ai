@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/auth";
 import type { Json } from "@/integrations/supabase/types";
 
 export type BillingPeriod = "monthly" | "yearly";
-export type CommunityType = "free" | "paid";
+export type CommunityType = "free" | "paid" | "private";
 export type CommunityVisibility = "public" | "private" | "draft";
 
 interface CommunityData {

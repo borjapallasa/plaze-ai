@@ -91,44 +91,57 @@ export default function CommunityAboutPage() {
     enabled: !!communityId
   });
 
-  // Fetch current user data to check communities_joined
-  const { data: userData } = useQuery({
-    queryKey: ['user-data', user?.id],
+  // Fetch user's community subscription status
+  const { data: subscription } = useQuery({
+    queryKey: ['community-subscription', user?.id, communityId],
     queryFn: async () => {
-      if (!user?.id) return null;
+      if (!user?.id || !communityId) return null;
       
       const { data, error } = await supabase
-        .from('users')
-        .select('communities_joined')
+        .from('community_subscriptions')
+        .select('status')
         .eq('user_uuid', user.id)
+        .eq('community_uuid', communityId)
         .maybeSingle();
 
       if (error) throw error;
       return data;
     },
-    enabled: !!user?.id
+    enabled: !!user?.id && !!communityId
   });
 
   // Join community mutation
   const joinCommunityMutation = useMutation({
     mutationFn: async () => {
-      if (!user?.id || !communityId) {
-        throw new Error('User not authenticated or community ID missing');
+      if (!user?.id || !communityId || !community) {
+        throw new Error('User not authenticated or community data missing');
       }
 
-      const currentCommunities = userData?.communities_joined || [];
-      const updatedCommunities = [...currentCommunities, communityId];
-
+      // Determine status based on community type
+      const status = community.type === 'private' ? 'pending' : 'active';
+      
       const { error } = await supabase
-        .from('users')
-        .update({ communities_joined: updatedCommunities })
-        .eq('user_uuid', user.id);
+        .from('community_subscriptions')
+        .insert({
+          user_uuid: user.id,
+          community_uuid: communityId,
+          status: status,
+          type: 'free',
+          amount: 0,
+          total_amount: 0
+        });
 
       if (error) throw error;
+      
+      return { status };
     },
-    onSuccess: () => {
-      toast.success("Successfully joined the community!");
-      queryClient.invalidateQueries({ queryKey: ['user-data', user?.id] });
+    onSuccess: ({ status }) => {
+      if (status === 'pending') {
+        toast.success("Join request sent! You'll be notified when approved.");
+      } else {
+        toast.success("Successfully joined the community!");
+      }
+      queryClient.invalidateQueries({ queryKey: ['community-subscription', user?.id, communityId] });
     },
     onError: (error) => {
       console.error('Failed to join community:', error);
@@ -139,8 +152,38 @@ export default function CommunityAboutPage() {
   const videoEmbedUrl = getVideoEmbedUrl(community?.intro);
   const links = parseLinks(community?.links);
 
-  // Check if user has already joined this community
-  const hasJoinedCommunity = userData?.communities_joined?.includes(communityId) || false;
+  // Determine user's membership status
+  const getMembershipStatus = () => {
+    if (!user) return 'not_authenticated';
+    if (!subscription) return 'not_member';
+    return subscription.status; // 'active', 'pending', etc.
+  };
+
+  const membershipStatus = getMembershipStatus();
+
+  const getJoinButtonText = () => {
+    if (joinCommunityMutation.isPending) return "Processing...";
+    
+    switch (community?.type) {
+      case 'private':
+        return "Request to Join";
+      case 'paid':
+        return `Join for $${community.price}`;
+      default:
+        return "Join Community";
+    }
+  };
+
+  const getStatusText = () => {
+    switch (membershipStatus) {
+      case 'pending':
+        return "Request Pending";
+      case 'active':
+        return "Member";
+      default:
+        return null;
+    }
+  };
 
   if (isCommunityLoading) {
     return (
@@ -346,7 +389,7 @@ export default function CommunityAboutPage() {
                 </div>
 
                 {/* Join Community Button */}
-                {user && !hasJoinedCommunity && (
+                {user && membershipStatus === 'not_member' && (
                   <>
                     <Separator />
                     <Button 
@@ -354,8 +397,24 @@ export default function CommunityAboutPage() {
                       onClick={() => joinCommunityMutation.mutate()}
                       disabled={joinCommunityMutation.isPending}
                     >
-                      {joinCommunityMutation.isPending ? "Joining..." : "Join Community"}
+                      {getJoinButtonText()}
                     </Button>
+                  </>
+                )}
+
+                {/* Status Display */}
+                {user && membershipStatus !== 'not_member' && membershipStatus !== 'not_authenticated' && (
+                  <>
+                    <Separator />
+                    <div className="text-center py-2">
+                      <span className={`text-sm font-medium ${
+                        membershipStatus === 'active' ? 'text-green-600' : 
+                        membershipStatus === 'pending' ? 'text-yellow-600' : 
+                        'text-gray-600'
+                      }`}>
+                        {getStatusText()}
+                      </span>
+                    </div>
                   </>
                 )}
               </div>

@@ -2361,6 +2361,7 @@ export type Database = {
           available_amount: number | null
           average_review: number | null
           communities_joined: Json | null
+          communities_pending: Json | null
           created_at: string
           email: string
           fees_amount: number | null
@@ -2409,6 +2410,7 @@ export type Database = {
           available_amount?: number | null
           average_review?: number | null
           communities_joined?: Json | null
+          communities_pending?: Json | null
           created_at?: string
           email: string
           fees_amount?: number | null
@@ -2457,6 +2459,7 @@ export type Database = {
           available_amount?: number | null
           average_review?: number | null
           communities_joined?: Json | null
+          communities_pending?: Json | null
           created_at?: string
           email?: string
           fees_amount?: number | null
