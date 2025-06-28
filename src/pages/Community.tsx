@@ -25,6 +25,7 @@ import { formatNumber } from "@/lib/utils";
 import { ClassroomDialog } from "@/components/community/ClassroomDialog";
 import { CommunityAccessGuard } from "@/components/community/CommunityAccessGuard";
 import { CreateThreadDialog } from "@/components/community/CreateThreadDialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface Link {
   name: string;
@@ -666,33 +667,21 @@ export default function CommunityPage() {
               <div className="flex flex-col sm:flex-row gap-4">
                 <Input placeholder="Search thread" className="flex-1" />
                 
-                {/* Tag Filter */}
+                {/* Tag Filter Dropdown */}
                 {threadsTags.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      onClick={() => setSelectedTag("all")}
-                      className={`px-3 py-1 text-sm rounded-full border transition-colors ${
-                        selectedTag === "all"
-                          ? "bg-primary text-primary-foreground border-primary"
-                          : "bg-background border-border hover:bg-accent"
-                      }`}
-                    >
-                      All
-                    </button>
-                    {threadsTags.map((tag) => (
-                      <button
-                        key={tag}
-                        onClick={() => setSelectedTag(tag)}
-                        className={`px-3 py-1 text-sm rounded-full border transition-colors ${
-                          selectedTag === tag
-                            ? "bg-primary text-primary-foreground border-primary"
-                            : "bg-background border-border hover:bg-accent"
-                        }`}
-                      >
-                        {tag}
-                      </button>
-                    ))}
-                  </div>
+                  <Select value={selectedTag} onValueChange={setSelectedTag}>
+                    <SelectTrigger className="w-full sm:w-[180px]">
+                      <SelectValue placeholder="Filter by tag" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Tags</SelectItem>
+                      {threadsTags.map((tag) => (
+                        <SelectItem key={tag} value={tag}>
+                          {tag}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 )}
                 
                 <Button 

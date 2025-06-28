@@ -18,6 +18,8 @@ export interface UserData {
   user_thumbnail: string;
   is_expert: boolean;
   commissions_generated: number;
+  affiliate_code?: string;
+  affiliate_commission_rate?: number;
 }
 
 export const useUsers = (page = 1, limit = 10, sortBy: keyof UserData = 'created_at', sortOrder: 'asc' | 'desc' = 'desc') => {
@@ -93,7 +95,9 @@ export const useUsers = (page = 1, limit = 10, sortBy: keyof UserData = 'created
         affiliate_since: user.affiliate_since || '',
         user_thumbnail: user.user_thumbnail || '',
         is_expert: user.is_expert || false,
-        commissions_generated: 0 // Default value for missing property
+        commissions_generated: 0,
+        affiliate_code: '',
+        affiliate_commission_rate: 0
       }));
 
       return {
