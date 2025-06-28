@@ -682,6 +682,9 @@ export type Database = {
           community_subscription_uuid: string
           community_uuid: string | null
           created_at: string
+          digest_frequency:
+            | Database["public"]["Enums"]["community_digest"]
+            | null
           email: string | null
           expert_user_uuid: string | null
           id: number
@@ -708,6 +711,9 @@ export type Database = {
           community_subscription_uuid?: string
           community_uuid?: string | null
           created_at?: string
+          digest_frequency?:
+            | Database["public"]["Enums"]["community_digest"]
+            | null
           email?: string | null
           expert_user_uuid?: string | null
           id?: number
@@ -734,6 +740,9 @@ export type Database = {
           community_subscription_uuid?: string
           community_uuid?: string | null
           created_at?: string
+          digest_frequency?:
+            | Database["public"]["Enums"]["community_digest"]
+            | null
           email?: string | null
           expert_user_uuid?: string | null
           id?: number
@@ -2593,6 +2602,7 @@ export type Database = {
       classroom_status: "visible" | "not visible"
       commnunity_subscription_type: "free" | "paid"
       community_billing_period: "monthly" | "yearly"
+      community_digest: "Daily" | "Weekly" | "Bi-Weekly" | "Monthly" | "None"
       community_price_status: "active" | "inactive"
       community_product_type: "free" | "paid"
       community_subscription_status: "active" | "inactive" | "pending"
@@ -2803,6 +2813,7 @@ export const Constants = {
       classroom_status: ["visible", "not visible"],
       commnunity_subscription_type: ["free", "paid"],
       community_billing_period: ["monthly", "yearly"],
+      community_digest: ["Daily", "Weekly", "Bi-Weekly", "Monthly", "None"],
       community_price_status: ["active", "inactive"],
       community_product_type: ["free", "paid"],
       community_subscription_status: ["active", "inactive", "pending"],

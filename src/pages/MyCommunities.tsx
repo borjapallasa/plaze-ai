@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
@@ -55,7 +54,7 @@ export default function MyCommunities() {
         
         console.log("Authenticated user:", user.id);
         
-        // Fetch community subscriptions with community details - only active ones
+        // Fetch community subscriptions with community details - both active and pending
         const { data: subscriptionsData, error: subscriptionsError } = await supabase
           .from('community_subscriptions')
           .select(`
@@ -71,7 +70,7 @@ export default function MyCommunities() {
             )
           `)
           .eq('user_uuid', user.id)
-          .eq('status', 'active');
+          .in('status', ['active', 'pending']);
           
         if (subscriptionsError) {
           console.error("Error fetching community subscriptions:", subscriptionsError);
