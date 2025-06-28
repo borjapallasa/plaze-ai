@@ -33,7 +33,7 @@ export const useUsers = (page: number = 1, limit: number = 20) => {
     queryFn: async () => {
       let query = supabase
         .from('users')
-        .select('*', { count: 'exact' });
+        .select('user_uuid, name, email, role, created_at, last_sign_in_at, email_verified', { count: 'exact' });
 
       // Apply search filter
       if (searchQuery) {

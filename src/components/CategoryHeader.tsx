@@ -161,8 +161,8 @@ export const CategoryHeader = ({
                 <div 
                   className="absolute top-1 bottom-1 bg-white rounded-full shadow-sm transition-all duration-200 ease-out"
                   style={{
-                    left: viewMode === "communities" ? "50%" : "4px",
-                    right: viewMode === "communities" ? "4px" : "50%"
+                    left: viewMode === "communities" ? "calc(50% - 2px)" : "4px",
+                    right: viewMode === "communities" ? "4px" : "calc(50% - 2px)"
                   }}
                 />
                 
@@ -170,7 +170,7 @@ export const CategoryHeader = ({
                 <div className="relative z-10 flex w-full">
                   <button
                     onClick={() => handleViewModeChange("products")}
-                    className={`flex-1 py-2 px-6 text-sm font-medium transition-colors duration-200 flex items-center justify-center ${
+                    className={`flex-1 py-2 px-8 text-sm font-medium transition-colors duration-200 flex items-center justify-center text-center ${
                       viewMode === "products" 
                         ? "text-gray-900" 
                         : "text-gray-500 hover:text-gray-700"
@@ -180,7 +180,7 @@ export const CategoryHeader = ({
                   </button>
                   <button
                     onClick={() => handleViewModeChange("communities")}
-                    className={`flex-1 py-2 px-6 text-sm font-medium transition-colors duration-200 flex items-center justify-center ${
+                    className={`flex-1 py-2 px-8 text-sm font-medium transition-colors duration-200 flex items-center justify-center text-center ${
                       viewMode === "communities" 
                         ? "text-gray-900" 
                         : "text-gray-500 hover:text-gray-700"
