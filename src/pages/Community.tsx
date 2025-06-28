@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight, Plus, Edit } from "lucide-react";
+import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight, Plus, Edit, Filter } from "lucide-react";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/ProductCard";
@@ -25,6 +25,13 @@ import { formatNumber } from "@/lib/utils";
 import { ClassroomDialog } from "@/components/community/ClassroomDialog";
 import { CommunityAccessGuard } from "@/components/community/CommunityAccessGuard";
 import { CreateThreadDialog } from "@/components/community/CreateThreadDialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface Link {
   name: string;
@@ -664,30 +671,29 @@ export default function CommunityPage() {
 
             <TabsContent value="threads" className="space-y-6">
               <div className="flex flex-col sm:flex-row gap-4">
-                <Input placeholder="Search thread" className="flex-1" />
-              </div>
-
-              {threadsTags.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  <Badge 
-                    variant={selectedTag === null ? "default" : "secondary"}
-                    className="text-sm cursor-pointer"
-                    onClick={() => setSelectedTag(null)}
-                  >
-                    All
-                  </Badge>
-                  {threadsTags.map((tag, index) => (
-                    <Badge 
-                      key={index} 
-                      variant={selectedTag === tag ? "default" : "secondary"}
-                      className="text-sm cursor-pointer"
-                      onClick={() => setSelectedTag(tag)}
-                    >
-                      {tag}
-                    </Badge>
-                  ))}
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                  <Input placeholder="Search thread" className="pl-9" />
                 </div>
-              )}
+                {threadsTags.length > 0 && (
+                  <div className="flex items-center gap-2">
+                    <Filter className="h-4 w-4 text-muted-foreground" />
+                    <Select value={selectedTag || ""} onValueChange={(value) => setSelectedTag(value || null)}>
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Filter by tag" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">All threads</SelectItem>
+                        {threadsTags.map((tag, index) => (
+                          <SelectItem key={index} value={tag}>
+                            {tag}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              </div>
 
               <div className="flex justify-end">
                 <Button 
