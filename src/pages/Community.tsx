@@ -24,6 +24,7 @@ import { ProductCreationDialog } from "@/components/community/ProductCreationDia
 import { formatNumber } from "@/lib/utils";
 import { ClassroomDialog } from "@/components/community/ClassroomDialog";
 import { CommunityAccessGuard } from "@/components/community/CommunityAccessGuard";
+import { CreateThreadDialog } from "@/components/community/CreateThreadDialog";
 
 interface Link {
   name: string;
@@ -68,6 +69,7 @@ export default function CommunityPage() {
   const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
   const [isProductCreationDialogOpen, setIsProductCreationDialogOpen] = useState(false);
   const [isClassroomDialogOpen, setIsClassroomDialogOpen] = useState(false);
+  const [isCreateThreadDialogOpen, setIsCreateThreadDialogOpen] = useState(false);
   const [showProductTemplateSelector, setShowProductTemplateSelector] = useState(false);
   const [activeTab, setActiveTab] = useState("threads");
   const { user } = useAuth();
@@ -641,7 +643,12 @@ export default function CommunityPage() {
             <TabsContent value="threads" className="space-y-6">
               <div className="flex flex-col sm:flex-row gap-4">
                 <Input placeholder="Search thread" className="flex-1" />
-                <Button className="w-full sm:w-auto">Create New Thread</Button>
+                <Button 
+                  className="w-full sm:w-auto"
+                  onClick={() => setIsCreateThreadDialogOpen(true)}
+                >
+                  Create New Thread
+                </Button>
               </div>
 
               {isThreadsLoading ? (
@@ -907,6 +914,13 @@ export default function CommunityPage() {
               setSelectedThread(null);
             }}
             thread={selectedThread}
+          />
+
+          <CreateThreadDialog
+            open={isCreateThreadDialogOpen}
+            onOpenChange={setIsCreateThreadDialogOpen}
+            communityId={communityId || ''}
+            expertUuid={community?.expert_uuid}
           />
 
           <ProductCreationDialog
