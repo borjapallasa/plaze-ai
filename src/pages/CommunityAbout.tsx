@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { MainHeader } from "@/components/MainHeader";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
@@ -54,6 +54,7 @@ export default function CommunityAboutPage() {
   const { images } = useCommunityImages(communityId);
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   console.log('Community ID from params:', communityId);
 
@@ -183,6 +184,10 @@ export default function CommunityAboutPage() {
       default:
         return null;
     }
+  };
+
+  const handleOpenCommunity = () => {
+    navigate(`/community/${communityId}`);
   };
 
   if (isCommunityLoading) {
@@ -388,7 +393,7 @@ export default function CommunityAboutPage() {
                   </div>
                 </div>
 
-                {/* Join Community Button */}
+                {/* Join Community Button or Open Community Button */}
                 {user && membershipStatus === 'not_member' && (
                   <>
                     <Separator />
@@ -402,16 +407,25 @@ export default function CommunityAboutPage() {
                   </>
                 )}
 
-                {/* Status Display */}
-                {user && membershipStatus !== 'not_member' && membershipStatus !== 'not_authenticated' && (
+                {/* Active Member - Open Community Button */}
+                {user && membershipStatus === 'active' && (
                   <>
                     <Separator />
-                    <div className={`w-full h-10 flex items-center justify-center rounded-lg font-medium text-sm ${
-                      membershipStatus === 'active' ? 'bg-green-100 text-green-800 border border-green-200' : 
-                      membershipStatus === 'pending' ? 'bg-gray-100 text-gray-600 border border-gray-300 cursor-not-allowed' : 
-                      'bg-gray-100 text-gray-600 border border-gray-300'
-                    }`}>
-                      {getStatusText()}
+                    <Button 
+                      className="w-full h-10"
+                      onClick={handleOpenCommunity}
+                    >
+                      Open Community
+                    </Button>
+                  </>
+                )}
+
+                {/* Status Display - Pending */}
+                {user && membershipStatus === 'pending' && (
+                  <>
+                    <Separator />
+                    <div className="w-full h-10 flex items-center justify-center rounded-lg font-medium text-sm bg-gray-100 text-gray-600 border border-gray-300 cursor-not-allowed">
+                      Request Pending
                     </div>
                   </>
                 )}
