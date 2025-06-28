@@ -72,8 +72,8 @@ export const useUsers = (page: number = 1, limit: number = 20) => {
 
       const totalPages = Math.ceil((count || 0) / limit);
 
-      // Transform data to add missing fields
-      const transformedData = (data || []).map(user => ({
+      // Transform data to add missing fields with proper types
+      const transformedData: UserData[] = (data || []).map(user => ({
         ...user,
         last_sign_in_at: user.created_at, // Fallback since this field might not exist
         email_verified: true, // Fallback since this field might not exist

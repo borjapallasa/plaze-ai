@@ -153,18 +153,18 @@ export const CategoryHeader = ({
             />
           </div>
 
-          {/* Branded Tab Selector with smooth animations */}
+          {/* Tab Selector - Full width on tablet/mobile, softer colors */}
           {onViewModeChange && (
-            <div className="mt-4 lg:mt-0 flex justify-center lg:justify-end">
-              <div className="border border-gray-300 rounded-lg overflow-hidden bg-white shadow-sm">
-                <div className="flex">
+            <div className="mt-4 lg:mt-0 w-full lg:w-auto flex justify-center lg:justify-end">
+              <div className="w-full md:w-full lg:w-auto border border-gray-300 rounded-lg overflow-hidden bg-white shadow-sm">
+                <div className="flex w-full">
                   <button
                     type="button"
                     onClick={() => handleViewModeChange("products")}
                     className={`
-                      px-4 py-2 text-sm font-medium border-r border-gray-300 transition-all duration-300 ease-in-out transform
+                      flex-1 lg:flex-none px-4 py-2 text-sm font-medium border-r border-gray-300 transition-all duration-300 ease-in-out transform
                       ${viewMode === "products" 
-                        ? "bg-black text-white scale-[1.02]" 
+                        ? "bg-gray-600 text-white scale-[1.02]" 
                         : "bg-white text-gray-700 hover:bg-gray-50 hover:scale-[1.01]"
                       }
                     `}
@@ -175,9 +175,9 @@ export const CategoryHeader = ({
                     type="button"
                     onClick={() => handleViewModeChange("communities")}
                     className={`
-                      px-4 py-2 text-sm font-medium transition-all duration-300 ease-in-out transform
+                      flex-1 lg:flex-none px-4 py-2 text-sm font-medium transition-all duration-300 ease-in-out transform
                       ${viewMode === "communities" 
-                        ? "bg-black text-white scale-[1.02]" 
+                        ? "bg-gray-600 text-white scale-[1.02]" 
                         : "bg-white text-gray-700 hover:bg-gray-50 hover:scale-[1.01]"
                       }
                     `}
