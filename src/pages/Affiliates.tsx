@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -51,32 +52,16 @@ export default function Affiliates() {
         return [];
       }
 
-      const { data, error } = await supabase
-        .from('referrals')
-        .select(`
-          *,
-          referred_user: referred_user_uuid (
-            user_uuid,
-            first_name,
-            last_name,
-            email
-          )
-        `)
-        .eq('affiliate_uuid', affiliateData.affiliate_uuid);
-
-      if (error) {
-        console.error("Error fetching affiliate referrals:", error);
-        return [];
-      }
-
-      return data || [];
+      // For now, return empty array as referrals table doesn't exist in schema
+      return [];
     },
     enabled: !!affiliateData?.affiliate_uuid,
   });
 
   const handleCopyClick = () => {
-    if (affiliateData?.referral_link) {
-      navigator.clipboard.writeText(affiliateData.referral_link);
+    if (affiliateData?.affiliate_code) {
+      const referralLink = `${window.location.origin}?ref=${affiliateData.affiliate_code}`;
+      navigator.clipboard.writeText(referralLink);
       toast({
         title: "Referral link copied!",
         description: "Share this link with your friends.",
@@ -85,7 +70,7 @@ export default function Affiliates() {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "No referral link available.",
+        description: "No affiliate code available.",
       });
     }
   };
@@ -148,10 +133,10 @@ export default function Affiliates() {
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
           <TabsContent value="dashboard" className="space-y-4">
-            <AffiliateDashboard affiliateData={affiliateData} referrals={referrals} />
+            <AffiliateDashboard affiliateData={affiliateData} referrals={referrals || []} />
           </TabsContent>
           <TabsContent value="referrals" className="space-y-4">
-            <AffiliateTable referrals={referrals} isLoading={isReferralsLoading} />
+            <AffiliateTable referrals={referrals || []} isLoading={isReferralsLoading} />
           </TabsContent>
           <TabsContent value="settings" className="space-y-4">
             <Card>

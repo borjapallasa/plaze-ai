@@ -1062,8 +1062,33 @@ export default function CommunityPage() {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground">No active members found in this community.</p>
+                <div className="space-y-4">
+                  <Card className="border-2 border-dashed border-muted-foreground/25 bg-muted/10">
+                    <CardContent className="flex flex-col items-center justify-center py-16 px-8 text-center">
+                      {/* Icon Container */}
+                      <div className="mb-6 p-6 rounded-full bg-gradient-to-br from-primary/10 to-primary/20 border border-primary/20">
+                        <Users className="h-12 w-12 text-primary" />
+                      </div>
+                      
+                      {/* Main Message */}
+                      <h3 className="text-xl font-semibold text-foreground mb-3">
+                        No members yet
+                      </h3>
+                      
+                      {/* Description */}
+                      <p className="text-muted-foreground max-w-md mb-8 leading-relaxed">
+                        This community doesn't have any active members yet. Once people join your community, they'll appear here and you can see who's part of your growing community.
+                      </p>
+                      
+                      {/* Decorative Elements */}
+                      <div className="absolute inset-0 -z-10 opacity-5">
+                        <div className="absolute top-4 left-4 w-8 h-8 border border-primary rounded-full"></div>
+                        <div className="absolute top-8 right-8 w-4 h-4 bg-primary/20 rounded-full"></div>
+                        <div className="absolute bottom-8 left-8 w-6 h-6 border border-primary/30 rotate-45"></div>
+                        <div className="absolute bottom-4 right-4 w-10 h-10 border-2 border-primary/20 rounded-full"></div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
               )}
             </TabsContent>

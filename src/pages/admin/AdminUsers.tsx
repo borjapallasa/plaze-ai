@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useUsers } from "@/hooks/admin/useUsers";
 import { MainHeader } from "@/components/MainHeader";
@@ -75,16 +76,20 @@ export default function AdminUsers() {
           <UsersLoadingState layoutType={layoutType} />
         ) : error ? (
           <UsersErrorState error={error} />
-        ) : data && data.length > 0 ? (
+        ) : data && data.users && data.users.length > 0 ? (
           layoutType === "table" ? (
             <UsersTable
-              users={data}
-              handleUserClick={handleUserClick}
+              users={data.users}
+              sortField={sortField as keyof any}
+              sortDirection={sortDirection}
+              onSort={handleSortChange}
             />
           ) : (
             <UsersGallery
-              users={data}
-              handleUserClick={handleUserClick}
+              users={data.users}
+              sortField={sortField as keyof any}
+              sortDirection={sortDirection}
+              onSort={handleSortChange}
             />
           )
         ) : (
@@ -94,7 +99,7 @@ export default function AdminUsers() {
         )}
 
         <UserDetailsDialog
-          userId={selectedUserId}
+          userUuid={selectedUserId}
           open={isDialogOpen}
           onOpenChange={setIsDialogOpen}
         />
