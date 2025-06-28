@@ -37,7 +37,7 @@ export const useUsers = (page = 1, limit = 10, sortBy: keyof UserData = 'created
   };
 
   const query = useQuery({
-    queryKey: ['admin-users', page, limit, sortBy, sortOrder, searchQuery, roleFilter],
+    queryKey: ['admin-users', page, limit, sortField, sortDirection, searchQuery, roleFilter],
     queryFn: async () => {
       const offset = (page - 1) * limit;
       

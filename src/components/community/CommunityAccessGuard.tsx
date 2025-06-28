@@ -29,27 +29,27 @@ export function CommunityAccessGuard({ communityId, children }: CommunityAccessG
   // If user has no subscription at all
   if (!status) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md p-8 text-center shadow-lg border-0 bg-white/80 backdrop-blur-sm">
-          <div className="mb-8">
-            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Lock className="h-10 w-10 text-gray-500" />
+      <div className="min-h-screen bg-white flex items-center justify-center p-4 mt-16">
+        <Card className="w-full max-w-lg p-10 text-center shadow-xl border-0 bg-white">
+          <div className="mb-10">
+            <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-8 shadow-sm">
+              <Lock className="h-12 w-12 text-gray-400" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-3">Access Required</h2>
-            <p className="text-gray-600 leading-relaxed">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4 tracking-tight">Access Required</h2>
+            <p className="text-gray-600 leading-relaxed text-lg">
               You need to join this community to access its content and connect with other members.
             </p>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-4">
             <Button 
-              className="w-full h-12 text-base font-medium"
+              className="w-full h-14 text-base font-semibold rounded-xl shadow-sm hover:shadow-md transition-all"
               onClick={() => navigate(`/community/${communityId}/about`)}
             >
               Join Community
             </Button>
             <Button 
               variant="outline" 
-              className="w-full h-12 text-base"
+              className="w-full h-14 text-base font-medium rounded-xl border-2 hover:bg-gray-50 transition-all"
               onClick={() => navigate('/#communities')}
             >
               Browse Communities
@@ -63,34 +63,34 @@ export function CommunityAccessGuard({ communityId, children }: CommunityAccessG
   // If user has pending subscription
   if (status === 'pending') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-orange-50 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md p-8 text-center shadow-lg border-0 bg-white/80 backdrop-blur-sm">
-          <div className="mb-8">
-            <div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Clock className="h-10 w-10 text-yellow-600" />
+      <div className="min-h-screen bg-white flex items-center justify-center p-4 mt-16">
+        <Card className="w-full max-w-lg p-10 text-center shadow-xl border-0 bg-white">
+          <div className="mb-10">
+            <div className="w-24 h-24 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-8 shadow-sm">
+              <Clock className="h-12 w-12 text-orange-500" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-3">Membership Pending</h2>
-            <p className="text-gray-600 leading-relaxed mb-6">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4 tracking-tight">Membership Pending</h2>
+            <p className="text-gray-600 leading-relaxed text-lg mb-8">
               Your request to join this community is being reviewed. You'll be notified when approved.
             </p>
-            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-              <div className="flex items-center justify-center gap-2 text-yellow-800">
-                <Clock className="h-4 w-4" />
-                <span className="text-sm font-medium">Request submitted and pending approval</span>
+            <div className="bg-orange-50 border-2 border-orange-100 rounded-xl p-6">
+              <div className="flex items-center justify-center gap-3 text-orange-700">
+                <Clock className="h-5 w-5" />
+                <span className="font-semibold">Request submitted and pending approval</span>
               </div>
             </div>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-4">
             <Button 
               variant="outline" 
-              className="w-full h-12 text-base"
+              className="w-full h-14 text-base font-medium rounded-xl border-2 hover:bg-gray-50 transition-all"
               onClick={() => navigate('/account/communities')}
             >
               View My Communities
             </Button>
             <Button 
               variant="outline" 
-              className="w-full h-12 text-base"
+              className="w-full h-14 text-base font-medium rounded-xl border-2 hover:bg-gray-50 transition-all"
               onClick={() => navigate('/#communities')}
             >
               Browse Other Communities
@@ -104,27 +104,27 @@ export function CommunityAccessGuard({ communityId, children }: CommunityAccessG
   // If user has inactive/cancelled subscription
   if (status !== 'active') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md p-8 text-center shadow-lg border-0 bg-white/80 backdrop-blur-sm">
-          <div className="mb-8">
-            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Users className="h-10 w-10 text-gray-500" />
+      <div className="min-h-screen bg-white flex items-center justify-center p-4 mt-16">
+        <Card className="w-full max-w-lg p-10 text-center shadow-xl border-0 bg-white">
+          <div className="mb-10">
+            <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-8 shadow-sm">
+              <Users className="h-12 w-12 text-gray-400" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-3">Membership Inactive</h2>
-            <p className="text-gray-600 leading-relaxed">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4 tracking-tight">Membership Inactive</h2>
+            <p className="text-gray-600 leading-relaxed text-lg">
               Your membership to this community is currently inactive. Rejoin to access all content and features.
             </p>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-4">
             <Button 
-              className="w-full h-12 text-base font-medium"
+              className="w-full h-14 text-base font-semibold rounded-xl shadow-sm hover:shadow-md transition-all"
               onClick={() => navigate(`/community/${communityId}/about`)}
             >
               Rejoin Community
             </Button>
             <Button 
               variant="outline" 
-              className="w-full h-12 text-base"
+              className="w-full h-14 text-base font-medium rounded-xl border-2 hover:bg-gray-50 transition-all"
               onClick={() => navigate('/#communities')}
             >
               Browse Communities
