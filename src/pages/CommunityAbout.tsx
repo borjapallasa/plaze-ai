@@ -2,15 +2,19 @@ import React, { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link as LinkIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { MainHeader } from "@/components/MainHeader";
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
 import { useCommunityImages } from "@/hooks/use-community-images";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import type { ProductImage } from "@/types/product-images";
 import { formatNumber } from "@/lib/utils";
+import { useAuth } from "@/lib/auth";
+import { toast } from "sonner";
 
 interface Link {
   name: string;
@@ -48,6 +52,8 @@ function parseLinks(data: unknown): Link[] {
 export default function CommunityAboutPage() {
   const { id: communityId } = useParams();
   const { images } = useCommunityImages(communityId);
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
 
   console.log('Community ID from params:', communityId);
 
@@ -85,8 +91,56 @@ export default function CommunityAboutPage() {
     enabled: !!communityId
   });
 
+  // Fetch current user data to check communities_joined
+  const { data: userData } = useQuery({
+    queryKey: ['user-data', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      
+      const { data, error } = await supabase
+        .from('users')
+        .select('communities_joined')
+        .eq('user_uuid', user.id)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id
+  });
+
+  // Join community mutation
+  const joinCommunityMutation = useMutation({
+    mutationFn: async () => {
+      if (!user?.id || !communityId) {
+        throw new Error('User not authenticated or community ID missing');
+      }
+
+      const currentCommunities = userData?.communities_joined || [];
+      const updatedCommunities = [...currentCommunities, communityId];
+
+      const { error } = await supabase
+        .from('users')
+        .update({ communities_joined: updatedCommunities })
+        .eq('user_uuid', user.id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Successfully joined the community!");
+      queryClient.invalidateQueries({ queryKey: ['user-data', user?.id] });
+    },
+    onError: (error) => {
+      console.error('Failed to join community:', error);
+      toast.error("Failed to join community. Please try again.");
+    },
+  });
+
   const videoEmbedUrl = getVideoEmbedUrl(community?.intro);
   const links = parseLinks(community?.links);
+
+  // Check if user has already joined this community
+  const hasJoinedCommunity = userData?.communities_joined?.includes(communityId) || false;
 
   if (isCommunityLoading) {
     return (
@@ -290,6 +344,20 @@ export default function CommunityAboutPage() {
                     </span>
                   </div>
                 </div>
+
+                {/* Join Community Button */}
+                {user && !hasJoinedCommunity && (
+                  <>
+                    <Separator />
+                    <Button 
+                      className="w-full"
+                      onClick={() => joinCommunityMutation.mutate()}
+                      disabled={joinCommunityMutation.isPending}
+                    >
+                      {joinCommunityMutation.isPending ? "Joining..." : "Join Community"}
+                    </Button>
+                  </>
+                )}
               </div>
             </Card>
           </div>
