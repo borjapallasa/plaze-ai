@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Link as LinkIcon } from "lucide-react";
+import { Link as LinkIcon, Edit } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { MainHeader } from "@/components/MainHeader";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getVideoEmbedUrl } from "@/utils/videoEmbed";
@@ -58,6 +58,7 @@ export default function CommunityAboutPage() {
 
   console.log('Community ID from params:', communityId);
 
+  // Fetch community data
   const { data: community, isLoading: isCommunityLoading } = useQuery({
     queryKey: ['community', communityId],
     queryFn: async () => {
@@ -149,6 +150,35 @@ export default function CommunityAboutPage() {
       toast.error("Failed to join community. Please try again.");
     },
   });
+
+  // Get current user's expert data
+  const { data: currentUserExpertData } = useQuery({
+    queryKey: ['current-user-expert', user?.email],
+    queryFn: async () => {
+      if (!user?.email) return null;
+      
+      const { data, error } = await supabase
+        .from('experts')
+        .select('expert_uuid, user_uuid')
+        .ilike('email', user.email)
+        .maybeSingle();
+      
+      if (error) {
+        console.error('Error fetching current user expert:', error);
+        return null;
+      }
+      
+      return data;
+    },
+    enabled: !!user?.email,
+  });
+
+  // Check if current user is the community owner
+  const isOwner = currentUserExpertData && community && (
+    currentUserExpertData.expert_uuid === community.expert_uuid ||
+    currentUserExpertData.user_uuid === community.expert_uuid ||
+    user?.id === community.expert_uuid
+  );
 
   const videoEmbedUrl = getVideoEmbedUrl(community?.intro);
   const links = parseLinks(community?.links);
@@ -301,6 +331,18 @@ export default function CommunityAboutPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-8">
             <Card className="p-6 space-y-6">
+              <div className="flex items-center justify-between gap-4">
+                <h1 className="text-2xl font-bold">{community?.name}</h1>
+                {isOwner && (
+                  <Link to={`/community/${communityId}/edit`}>
+                    <Button variant="ghost" size="sm" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
+                      <Edit className="w-4 h-4" />
+                      <span className="text-sm">Edit</span>
+                    </Button>
+                  </Link>
+                )}
+              </div>
+
               <div>
                 <ProductGallery 
                   images={galleryImages}
@@ -309,9 +351,6 @@ export default function CommunityAboutPage() {
               </div>
 
               <div className="space-y-4">
-                <div className="flex items-center justify-between gap-4">
-                  <h1 className="text-2xl font-bold">{community?.name}</h1>
-                </div>
                 <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: community?.description || '' }} />
               </div>
             </Card>
