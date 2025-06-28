@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
@@ -15,11 +16,13 @@ interface CreateThreadDialogProps {
   onOpenChange: (open: boolean) => void;
   communityId: string;
   expertUuid?: string;
+  threadsTags?: string[];
 }
 
-export function CreateThreadDialog({ open, onOpenChange, communityId, expertUuid }: CreateThreadDialogProps) {
+export function CreateThreadDialog({ open, onOpenChange, communityId, expertUuid, threadsTags = [] }: CreateThreadDialogProps) {
   const [title, setTitle] = useState("");
   const [initialMessage, setInitialMessage] = useState("");
+  const [selectedTag, setSelectedTag] = useState<string>("");
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
@@ -51,6 +54,7 @@ export function CreateThreadDialog({ open, onOpenChange, communityId, expertUuid
           user_name: userData?.first_name || 'Anonymous',
           community_uuid: communityId,
           expert_uuid: expertUuid,
+          tag: selectedTag || null,
           number_messages: 0,
           upvote_count: 0,
           last_message_at: new Date().toISOString()
@@ -66,6 +70,7 @@ export function CreateThreadDialog({ open, onOpenChange, communityId, expertUuid
       queryClient.invalidateQueries({ queryKey: ['community-threads', communityId] });
       setTitle("");
       setInitialMessage("");
+      setSelectedTag("");
       onOpenChange(false);
     },
     onError: (error) => {
@@ -111,6 +116,23 @@ export function CreateThreadDialog({ open, onOpenChange, communityId, expertUuid
               required
             />
           </div>
+          {threadsTags && threadsTags.length > 0 && (
+            <div className="space-y-2">
+              <Label htmlFor="tag">Tag (Optional)</Label>
+              <Select value={selectedTag} onValueChange={setSelectedTag}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a tag" />
+                </SelectTrigger>
+                <SelectContent>
+                  {threadsTags.map((tag) => (
+                    <SelectItem key={tag} value={tag}>
+                      {tag}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           <div className="flex justify-end gap-2">
             <Button 
               type="button" 

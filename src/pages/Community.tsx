@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -248,6 +248,21 @@ export default function CommunityPage() {
 
   const videoEmbedUrl = getVideoEmbedUrl(community?.intro);
   const links = parseLinks(community?.links);
+
+  // Parse threads_tags from community data
+  const threadsTags = React.useMemo(() => {
+    if (!community?.threads_tags) return [];
+    if (Array.isArray(community.threads_tags)) return community.threads_tags;
+    if (typeof community.threads_tags === 'string') {
+      try {
+        const parsed = JSON.parse(community.threads_tags);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  }, [community?.threads_tags]);
 
   // Check if current user is the community owner - enhanced debugging
   const isOwner = currentUserExpertData && community && (
@@ -921,6 +936,7 @@ export default function CommunityPage() {
             onOpenChange={setIsCreateThreadDialogOpen}
             communityId={communityId || ''}
             expertUuid={community?.expert_uuid}
+            threadsTags={threadsTags}
           />
 
           <ProductCreationDialog

@@ -357,6 +357,7 @@ export type Database = {
           price: number | null
           product_count: number | null
           slug: string | null
+          threads_tags: Json | null
           thumbnail: string | null
           title: string | null
           total_revenue: number | null
@@ -391,6 +392,7 @@ export type Database = {
           price?: number | null
           product_count?: number | null
           slug?: string | null
+          threads_tags?: Json | null
           thumbnail?: string | null
           title?: string | null
           total_revenue?: number | null
@@ -427,6 +429,7 @@ export type Database = {
           price?: number | null
           product_count?: number | null
           slug?: string | null
+          threads_tags?: Json | null
           thumbnail?: string | null
           title?: string | null
           total_revenue?: number | null
