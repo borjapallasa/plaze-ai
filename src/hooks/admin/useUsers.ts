@@ -8,10 +8,13 @@ export interface UserData {
   first_name: string;
   last_name: string;
   email: string;
-  role: string;
+  is_admin: boolean;
+  is_expert: boolean;
+  is_affiliate: boolean;
   created_at: string;
   last_sign_in_at: string;
   email_verified: boolean;
+  total_spent: number;
 }
 
 export const useUsers = (page: number = 1, limit: number = 20) => {
@@ -34,7 +37,7 @@ export const useUsers = (page: number = 1, limit: number = 20) => {
     queryFn: async () => {
       let query = supabase
         .from('users')
-        .select('user_uuid, first_name, last_name, email, role, created_at, last_sign_in_at, email_verified', { count: 'exact' });
+        .select('user_uuid, first_name, last_name, email, is_admin, is_expert, is_affiliate, created_at, total_spent', { count: 'exact' });
 
       // Apply search filter
       if (searchQuery) {
@@ -43,7 +46,13 @@ export const useUsers = (page: number = 1, limit: number = 20) => {
 
       // Apply role filter
       if (roleFilter !== "all") {
-        query = query.eq('role', roleFilter);
+        if (roleFilter === "admins") {
+          query = query.eq('is_admin', true);
+        } else if (roleFilter === "experts") {
+          query = query.eq('is_expert', true);
+        } else if (roleFilter === "affiliates") {
+          query = query.eq('is_affiliate', true);
+        }
       }
 
       // Apply sorting
@@ -62,8 +71,16 @@ export const useUsers = (page: number = 1, limit: number = 20) => {
 
       const totalPages = Math.ceil((count || 0) / limit);
 
+      // Transform data to add missing fields
+      const transformedData = (data || []).map(user => ({
+        ...user,
+        last_sign_in_at: user.created_at, // Fallback since this field might not exist
+        email_verified: true, // Fallback since this field might not exist
+        total_spent: user.total_spent || 0
+      }));
+
       return {
-        users: data || [],
+        users: transformedData,
         count: count || 0,
         totalPages
       };

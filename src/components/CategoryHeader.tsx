@@ -155,37 +155,37 @@ export const CategoryHeader = ({
           {/* View Mode Toggle - Full width on mobile/tablet, auto width on desktop */}
           {onViewModeChange && (
             <div className="mt-4 lg:mt-0 lg:flex-shrink-0 w-full lg:w-auto">
-              <div className="relative bg-gray-100 rounded-full p-1 w-full lg:w-auto lg:inline-flex overflow-hidden">
-                {/* Sliding background indicator with improved positioning */}
+              <div className="relative bg-gray-100 rounded-full p-1 w-full lg:w-auto">
+                {/* Sliding background indicator */}
                 <div 
-                  className="absolute top-1 bottom-1 bg-white rounded-full shadow-sm transition-all duration-300 ease-in-out"
+                  className="absolute top-1 bottom-1 bg-white rounded-full shadow-sm transition-all duration-200 ease-out"
                   style={{
-                    left: viewMode === "communities" ? "50%" : "4px",
-                    right: viewMode === "communities" ? "4px" : "50%"
+                    width: '50%',
+                    transform: viewMode === "communities" ? 'translateX(100%)' : 'translateX(0%)'
                   }}
                 />
                 
-                {/* Toggle buttons container with better text centering */}
-                <div className="relative z-10 flex w-full">
+                {/* Toggle buttons */}
+                <div className="relative z-10 flex">
                   <button
                     onClick={() => handleViewModeChange("products")}
-                    className={`flex-1 py-2 px-6 text-sm font-medium transition-colors duration-300 text-center ${
+                    className={`flex-1 py-2 px-6 text-sm font-medium transition-colors duration-200 rounded-full text-center ${
                       viewMode === "products" 
                         ? "text-gray-900" 
                         : "text-gray-500 hover:text-gray-700"
                     }`}
                   >
-                    <span className="block w-full text-center">Products</span>
+                    Products
                   </button>
                   <button
                     onClick={() => handleViewModeChange("communities")}
-                    className={`flex-1 py-2 px-6 text-sm font-medium transition-colors duration-300 text-center ${
+                    className={`flex-1 py-2 px-6 text-sm font-medium transition-colors duration-200 rounded-full text-center ${
                       viewMode === "communities" 
                         ? "text-gray-900" 
                         : "text-gray-500 hover:text-gray-700"
                     }`}
                   >
-                    <span className="block w-full text-center">Communities</span>
+                    Communities
                   </button>
                 </div>
               </div>
