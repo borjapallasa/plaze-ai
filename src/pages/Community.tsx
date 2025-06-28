@@ -821,9 +821,50 @@ export default function CommunityPage() {
                     </Link>
                   ))
                 ) : (
-                  <Card className="col-span-full p-6">
-                    <p className="text-center text-muted-foreground">No classrooms found in this community.</p>
-                  </Card>
+                  <div className="col-span-full">
+                    <Card className="border-2 border-dashed border-muted-foreground/25 bg-muted/10">
+                      <CardContent className="flex flex-col items-center justify-center py-16 px-8 text-center">
+                        {/* Icon Container */}
+                        <div className="mb-6 p-6 rounded-full bg-gradient-to-br from-primary/10 to-primary/20 border border-primary/20">
+                          <BookOpen className="h-12 w-12 text-primary" />
+                        </div>
+                        
+                        {/* Main Message */}
+                        <h3 className="text-xl font-semibold text-foreground mb-3">
+                          No classrooms yet
+                        </h3>
+                        
+                        {/* Description */}
+                        <p className="text-muted-foreground max-w-md mb-8 leading-relaxed">
+                          This community doesn't have any classrooms available yet. 
+                          {isOwner 
+                            ? " Start creating educational content to engage with your community members."
+                            : " Check back later as the community owner adds new learning materials."
+                          }
+                        </p>
+                        
+                        {/* Action Button */}
+                        {isOwner && (
+                          <Button 
+                            onClick={() => setIsClassroomDialogOpen(true)}
+                            size="lg"
+                            className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-xl"
+                          >
+                            <Plus className="h-5 w-5 mr-2" />
+                            Create Your First Classroom
+                          </Button>
+                        )}
+                        
+                        {/* Decorative Elements */}
+                        <div className="absolute inset-0 -z-10 opacity-5">
+                          <div className="absolute top-4 left-4 w-8 h-8 border border-primary rounded-full"></div>
+                          <div className="absolute top-8 right-8 w-4 h-4 bg-primary/20 rounded-full"></div>
+                          <div className="absolute bottom-8 left-8 w-6 h-6 border border-primary/30 rotate-45"></div>
+                          <div className="absolute bottom-4 right-4 w-10 h-10 border-2 border-primary/20 rounded-full"></div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
                 )}
               </div>
             </TabsContent>
