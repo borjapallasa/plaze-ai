@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Calendar, ExternalLink } from "lucide-react";
+import { Calendar, ExternalLink, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { LeaveCommunityDialog } from "./LeaveCommunityDialog";
 
@@ -99,11 +99,12 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
     <div className="space-y-4">
       {subscriptions.map((subscription) => {
         const isPending = subscription.status.toLowerCase() === 'pending';
+        const isActive = subscription.status.toLowerCase() === 'active';
         
         return (
           <Card 
             key={subscription.community_subscription_uuid}
-            className="p-0 hover:shadow-md transition-shadow duration-200 overflow-hidden border border-gray-200"
+            className={`p-0 hover:shadow-md transition-shadow duration-200 overflow-hidden border border-gray-200 ${isPending ? 'opacity-75' : ''}`}
           >
             {/* Mobile Layout */}
             <div className="md:hidden p-4 space-y-4">
@@ -114,10 +115,10 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
                     <img 
                       src={subscription.community_thumbnail} 
                       alt={subscription.community_name || "Community"} 
-                      className="w-full h-full object-cover"
+                      className={`w-full h-full object-cover ${isPending ? 'grayscale' : ''}`}
                     />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-xs font-medium">
+                    <div className={`w-full h-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-xs font-medium ${isPending ? 'grayscale' : ''}`}>
                       {getCommunityInitials(subscription.community_name)}
                     </div>
                   )}
@@ -157,19 +158,48 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
 
               {/* Action Buttons */}
               <div className="flex gap-2">
-                <Button 
-                  size="sm" 
-                  className="flex-1 text-xs h-8 font-medium"
-                  onClick={() => handleOpenCommunity(subscription)}
-                >
-                  <ExternalLink className="h-3 w-3 mr-2" />
-                  Open Community
-                </Button>
-                <LeaveCommunityDialog 
-                  communityName={subscription.community_name}
-                  subscriptionUuid={subscription.community_subscription_uuid}
-                />
+                {isActive ? (
+                  <>
+                    <Button 
+                      size="sm" 
+                      className="flex-1 text-xs h-8 font-medium"
+                      onClick={() => handleOpenCommunity(subscription)}
+                    >
+                      <ExternalLink className="h-3 w-3 mr-2" />
+                      Open Community
+                    </Button>
+                    <LeaveCommunityDialog 
+                      communityName={subscription.community_name}
+                      subscriptionUuid={subscription.community_subscription_uuid}
+                    />
+                  </>
+                ) : (
+                  <Button 
+                    size="sm" 
+                    className="flex-1 text-xs h-8 font-medium"
+                    variant="outline"
+                    disabled
+                  >
+                    <Clock className="h-3 w-3 mr-2" />
+                    Awaiting Approval
+                  </Button>
+                )}
               </div>
+
+              {/* Pending Status Info */}
+              {isPending && (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
+                  <div className="flex items-start gap-2">
+                    <Clock className="h-4 w-4 text-yellow-600 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-yellow-800">Request Pending</p>
+                      <p className="text-xs text-yellow-700 mt-1">
+                        Your join request is being reviewed. You'll be notified when approved.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Desktop Layout */}
@@ -180,10 +210,10 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
                   <img 
                     src={subscription.community_thumbnail} 
                     alt={subscription.community_name || "Community"} 
-                    className="w-full h-full object-cover"
+                    className={`w-full h-full object-cover ${isPending ? 'grayscale' : ''}`}
                   />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-medium">
+                  <div className={`w-full h-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-medium ${isPending ? 'grayscale' : ''}`}>
                     {getCommunityInitials(subscription.community_name)}
                   </div>
                 )}
@@ -221,6 +251,18 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
                     {subscription.community_description}
                   </p>
                 )}
+
+                {/* Pending Status Info - Desktop */}
+                {isPending && (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-md p-2 mt-2">
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-3 w-3 text-yellow-600 flex-shrink-0" />
+                      <p className="text-xs text-yellow-700">
+                        Your join request is being reviewed. You'll be notified when approved.
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
               
               {/* Vertical Divider */}
@@ -228,19 +270,33 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
               
               {/* Right: Action Buttons - Stacked Vertically */}
               <div className="flex flex-col gap-2">
-                <Button 
-                  size="sm" 
-                  className="text-xs h-8 px-4 font-medium"
-                  onClick={() => handleOpenCommunity(subscription)}
-                >
-                  <ExternalLink className="h-3 w-3 mr-2" />
-                  Open Community
-                </Button>
+                {isActive ? (
+                  <>
+                    <Button 
+                      size="sm" 
+                      className="text-xs h-8 px-4 font-medium"
+                      onClick={() => handleOpenCommunity(subscription)}
+                    >
+                      <ExternalLink className="h-3 w-3 mr-2" />
+                      Open Community
+                    </Button>
 
-                <LeaveCommunityDialog 
-                  communityName={subscription.community_name}
-                  subscriptionUuid={subscription.community_subscription_uuid}
-                />
+                    <LeaveCommunityDialog 
+                      communityName={subscription.community_name}
+                      subscriptionUuid={subscription.community_subscription_uuid}
+                    />
+                  </>
+                ) : (
+                  <Button 
+                    size="sm" 
+                    className="text-xs h-8 px-4 font-medium"
+                    variant="outline"
+                    disabled
+                  >
+                    <Clock className="h-3 w-3 mr-2" />
+                    Awaiting Approval
+                  </Button>
+                )}
               </div>
             </div>
           </Card>

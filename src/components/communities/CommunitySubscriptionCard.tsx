@@ -2,7 +2,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Calendar, ExternalLink } from "lucide-react";
+import { Calendar, ExternalLink, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { LeaveCommunityDialog } from "./LeaveCommunityDialog";
 
@@ -41,16 +41,24 @@ export function CommunitySubscriptionCard({ subscription }: CommunitySubscriptio
   };
 
   const isPending = subscription.status.toLowerCase() === 'pending';
+  const isActive = subscription.status.toLowerCase() === 'active';
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer h-full flex flex-col">
+    <Card className={`overflow-hidden hover:shadow-lg transition-shadow cursor-pointer h-full flex flex-col ${isPending ? 'opacity-75' : ''}`}>
       {/* Community Image */}
       <div className="aspect-video relative overflow-hidden flex-shrink-0">
         <img
           src={subscription.community_thumbnail || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f"}
           alt={subscription.community_name || 'Community'}
-          className="object-cover w-full h-full"
+          className={`object-cover w-full h-full ${isPending ? 'grayscale' : ''}`}
         />
+        {isPending && (
+          <div className="absolute inset-0 bg-black bg-opacity-10 flex items-center justify-center">
+            <div className="bg-white bg-opacity-90 px-3 py-1 rounded-md">
+              <span className="text-sm font-medium text-gray-700">Access Pending</span>
+            </div>
+          </div>
+        )}
       </div>
       
       <CardContent className="p-6 space-y-4 flex-1 flex flex-col">
@@ -89,20 +97,48 @@ export function CommunitySubscriptionCard({ subscription }: CommunitySubscriptio
 
         {/* Action Buttons - Stacked Vertically */}
         <div className="flex flex-col gap-3 mt-6">
-          {/* Open Community Button - Primary */}
-          <Button 
-            className="w-full h-10 font-medium"
-            onClick={handleOpenCommunity}
-          >
-            <ExternalLink className="h-4 w-4 mr-2" />
-            Open Community
-          </Button>
+          {/* Conditional Button Based on Status */}
+          {isActive ? (
+            <Button 
+              className="w-full h-10 font-medium"
+              onClick={handleOpenCommunity}
+            >
+              <ExternalLink className="h-4 w-4 mr-2" />
+              Open Community
+            </Button>
+          ) : (
+            <Button 
+              className="w-full h-10 font-medium"
+              variant="outline"
+              disabled
+            >
+              <Clock className="h-4 w-4 mr-2" />
+              Awaiting Approval
+            </Button>
+          )}
           
-          {/* Leave Community Dialog */}
-          <LeaveCommunityDialog 
-            communityName={subscription.community_name}
-            subscriptionUuid={subscription.community_subscription_uuid}
-          />
+          {/* Leave Community Dialog - Only show for active subscriptions */}
+          {isActive && (
+            <LeaveCommunityDialog 
+              communityName={subscription.community_name}
+              subscriptionUuid={subscription.community_subscription_uuid}
+            />
+          )}
+
+          {/* Pending Status Info */}
+          {isPending && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
+              <div className="flex items-start gap-2">
+                <Clock className="h-4 w-4 text-yellow-600 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-yellow-800">Request Pending</p>
+                  <p className="text-xs text-yellow-700 mt-1">
+                    Your join request is being reviewed. You'll be notified when approved.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
