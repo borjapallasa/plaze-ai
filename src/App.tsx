@@ -13,6 +13,7 @@ import NewCommunityPage from "./pages/seller/NewCommunityPage";
 import EditProductPage from "./pages/EditProduct";
 import EditCommunityPage from "./pages/EditCommunity";
 import CommunityPage from "./pages/Community";
+import CommunityAboutPage from "./pages/CommunityAbout";
 import CommunityProductPage from "./pages/CommunityProduct";
 import ClassroomPage from "./pages/Classroom";
 import ChatsPage from "./pages/Chats";
@@ -64,6 +65,7 @@ function App() {
           <Route path="/community/:id/edit" element={<EditCommunityPage />} />
           <Route path="/community/:id/products/new" element={<NewCommunityProductPage />} />
           <Route path="/community/:id" element={<CommunityPage />} />
+          <Route path="/community/:id/about" element={<CommunityAboutPage />} />
           <Route path="/community/product/:id" element={<CommunityProductPage />} />
           <Route path="/classroom/:id" element={<ClassroomPage />} />
           <Route path="/account/chats" element={<ChatsPage />} />
