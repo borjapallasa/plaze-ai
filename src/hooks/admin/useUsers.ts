@@ -5,7 +5,8 @@ import { useState } from "react";
 
 export interface UserData {
   user_uuid: string;
-  name: string;
+  first_name: string;
+  last_name: string;
   email: string;
   role: string;
   created_at: string;
@@ -33,11 +34,11 @@ export const useUsers = (page: number = 1, limit: number = 20) => {
     queryFn: async () => {
       let query = supabase
         .from('users')
-        .select('user_uuid, name, email, role, created_at, last_sign_in_at, email_verified', { count: 'exact' });
+        .select('user_uuid, first_name, last_name, email, role, created_at, last_sign_in_at, email_verified', { count: 'exact' });
 
       // Apply search filter
       if (searchQuery) {
-        query = query.or(`name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%`);
+        query = query.or(`first_name.ilike.%${searchQuery}%,last_name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%`);
       }
 
       // Apply role filter
