@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -129,13 +130,7 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
               </div>
 
               {/* Metadata Row */}
-              <div className="flex items-center gap-3 text-sm text-gray-600">
-                <Badge 
-                  variant="secondary" 
-                  className={`${getStatusColor(subscription.status)} text-xs px-2 py-1 font-medium capitalize`}
-                >
-                  {getStatusText(subscription.status)}
-                </Badge>
+              <div className="flex items-center justify-between text-sm text-gray-600">
                 <div className="flex items-center gap-1">
                   {isPending ? (
                     <span className="text-yellow-600 font-medium">Pending</span>
@@ -145,6 +140,9 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
                       <span>Joined {new Date(subscription.created_at).toLocaleDateString()}</span>
                     </>
                   )}
+                </div>
+                <div className="font-semibold text-green-600">
+                  Free
                 </div>
               </div>
 
@@ -197,14 +195,8 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
                 </h3>
                 
                 {/* Metadata Row */}
-                <div className="flex items-center gap-3 text-sm text-gray-600">
-                  <Badge 
-                    variant="secondary" 
-                    className={`${getStatusColor(subscription.status)} text-xs px-2 py-0.5 font-medium capitalize`}
-                  >
-                    {getStatusText(subscription.status)}
-                  </Badge>
-                  <div className="flex items-center gap-1">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1 text-sm text-gray-600">
                     {isPending ? (
                       <span className="text-yellow-600 font-medium">Pending</span>
                     ) : (
@@ -213,6 +205,9 @@ export function CommunitySubscriptionListView({ subscriptions, loading }: Commun
                         <span>Joined {new Date(subscription.created_at).toLocaleDateString()}</span>
                       </>
                     )}
+                  </div>
+                  <div className="font-semibold text-base text-green-600">
+                    Free
                   </div>
                 </div>
                 

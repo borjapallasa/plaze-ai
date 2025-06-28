@@ -1,6 +1,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 
 export interface UserData {
   user_uuid: string;
@@ -19,12 +20,26 @@ export interface UserData {
 }
 
 export const useUsers = (page = 1, limit = 10, sortBy: keyof UserData = 'created_at', sortOrder: 'asc' | 'desc' = 'desc') => {
-  return useQuery({
-    queryKey: ['admin-users', page, limit, sortBy, sortOrder],
+  const [searchQuery, setSearchQuery] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all");
+  const [sortField, setSortField] = useState<keyof UserData>('created_at');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+
+  const handleSort = (field: keyof UserData) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('desc');
+    }
+  };
+
+  const query = useQuery({
+    queryKey: ['admin-users', page, limit, sortBy, sortOrder, searchQuery, roleFilter],
     queryFn: async () => {
       const offset = (page - 1) * limit;
       
-      const { data, error, count } = await supabase
+      let query = supabase
         .from('users')
         .select(`
           user_uuid,
@@ -40,8 +55,24 @@ export const useUsers = (page = 1, limit = 10, sortBy: keyof UserData = 'created
           total_sales_amount,
           product_count,
           active_product_count
-        `, { count: 'exact' })
-        .order(sortBy, { ascending: sortOrder === 'asc' })
+        `, { count: 'exact' });
+
+      // Apply search filter
+      if (searchQuery) {
+        query = query.or(`email.ilike.%${searchQuery}%,first_name.ilike.%${searchQuery}%,last_name.ilike.%${searchQuery}%`);
+      }
+
+      // Apply role filter
+      if (roleFilter === 'experts') {
+        query = query.eq('is_expert', true);
+      } else if (roleFilter === 'affiliates') {
+        query = query.eq('is_affiliate', true);
+      } else if (roleFilter === 'admins') {
+        query = query.eq('is_admin', true);
+      }
+
+      const { data, error, count } = await query
+        .order(sortField, { ascending: sortDirection === 'asc' })
         .range(offset, offset + limit - 1);
 
       if (error) throw error;
@@ -53,4 +84,19 @@ export const useUsers = (page = 1, limit = 10, sortBy: keyof UserData = 'created
       };
     }
   });
+
+  return {
+    ...query,
+    users: query.data?.users || [],
+    totalCount: query.data?.totalCount || 0,
+    totalPages: query.data?.totalPages || 0,
+    searchQuery,
+    setSearchQuery,
+    roleFilter,
+    setRoleFilter,
+    sortField,
+    sortDirection,
+    handleSort,
+    refetch: query.refetch
+  };
 };

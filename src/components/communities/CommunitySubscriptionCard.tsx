@@ -81,7 +81,7 @@ export function CommunitySubscriptionCard({ subscription }: CommunitySubscriptio
           </div>
           
           <div className={`font-semibold text-base ${getStatusColor(subscription.status)}`}>
-            <span>{getStatusText(subscription.status)}</span>
+            <span>Free</span>
           </div>
         </div>
 
