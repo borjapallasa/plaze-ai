@@ -30,26 +30,26 @@ export function CommunityAccessGuard({ communityId, children }: CommunityAccessG
   if (!status) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center p-4 mt-16">
-        <Card className="w-full max-w-lg p-10 text-center shadow-xl border-0 bg-white">
-          <div className="mb-10">
-            <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-8 shadow-sm">
-              <Lock className="h-12 w-12 text-gray-400" />
+        <Card className="w-full max-w-md p-8 text-center border-2 border-gray-200 bg-white shadow-lg">
+          <div className="mb-6">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Lock className="h-8 w-8 text-gray-500" />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-4 tracking-tight">Access Required</h2>
-            <p className="text-gray-600 leading-relaxed text-lg">
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Access Required</h2>
+            <p className="text-gray-600 text-sm">
               You need to join this community to access its content and connect with other members.
             </p>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3">
             <Button 
-              className="w-full h-14 text-base font-semibold rounded-xl shadow-sm hover:shadow-md transition-all"
+              className="w-full h-10 text-sm font-medium"
               onClick={() => navigate(`/community/${communityId}/about`)}
             >
               Join Community
             </Button>
             <Button 
               variant="outline" 
-              className="w-full h-14 text-base font-medium rounded-xl border-2 hover:bg-gray-50 transition-all"
+              className="w-full h-10 text-sm font-medium border-2"
               onClick={() => navigate('/#communities')}
             >
               Browse Communities
@@ -64,33 +64,33 @@ export function CommunityAccessGuard({ communityId, children }: CommunityAccessG
   if (status === 'pending') {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center p-4 mt-16">
-        <Card className="w-full max-w-lg p-10 text-center shadow-xl border-0 bg-white">
-          <div className="mb-10">
-            <div className="w-24 h-24 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-8 shadow-sm">
-              <Clock className="h-12 w-12 text-orange-500" />
+        <Card className="w-full max-w-md p-8 text-center border-2 border-gray-200 bg-white shadow-lg">
+          <div className="mb-6">
+            <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Clock className="h-8 w-8 text-orange-600" />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-4 tracking-tight">Membership Pending</h2>
-            <p className="text-gray-600 leading-relaxed text-lg mb-8">
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Membership Pending</h2>
+            <p className="text-gray-600 text-sm mb-4">
               Your request to join this community is being reviewed. You'll be notified when approved.
             </p>
-            <div className="bg-orange-50 border-2 border-orange-100 rounded-xl p-6">
-              <div className="flex items-center justify-center gap-3 text-orange-700">
-                <Clock className="h-5 w-5" />
-                <span className="font-semibold">Request submitted and pending approval</span>
+            <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+              <div className="flex items-center justify-center gap-2 text-orange-700 text-sm">
+                <Clock className="h-4 w-4" />
+                <span className="font-medium">Request submitted and pending approval</span>
               </div>
             </div>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3">
             <Button 
               variant="outline" 
-              className="w-full h-14 text-base font-medium rounded-xl border-2 hover:bg-gray-50 transition-all"
+              className="w-full h-10 text-sm font-medium border-2"
               onClick={() => navigate('/account/communities')}
             >
               View My Communities
             </Button>
             <Button 
               variant="outline" 
-              className="w-full h-14 text-base font-medium rounded-xl border-2 hover:bg-gray-50 transition-all"
+              className="w-full h-10 text-sm font-medium border-2"
               onClick={() => navigate('/#communities')}
             >
               Browse Other Communities
@@ -105,26 +105,26 @@ export function CommunityAccessGuard({ communityId, children }: CommunityAccessG
   if (status !== 'active') {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center p-4 mt-16">
-        <Card className="w-full max-w-lg p-10 text-center shadow-xl border-0 bg-white">
-          <div className="mb-10">
-            <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-8 shadow-sm">
-              <Users className="h-12 w-12 text-gray-400" />
+        <Card className="w-full max-w-md p-8 text-center border-2 border-gray-200 bg-white shadow-lg">
+          <div className="mb-6">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Users className="h-8 w-8 text-gray-500" />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-4 tracking-tight">Membership Inactive</h2>
-            <p className="text-gray-600 leading-relaxed text-lg">
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Membership Inactive</h2>
+            <p className="text-gray-600 text-sm">
               Your membership to this community is currently inactive. Rejoin to access all content and features.
             </p>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3">
             <Button 
-              className="w-full h-14 text-base font-semibold rounded-xl shadow-sm hover:shadow-md transition-all"
+              className="w-full h-10 text-sm font-medium"
               onClick={() => navigate(`/community/${communityId}/about`)}
             >
               Rejoin Community
             </Button>
             <Button 
               variant="outline" 
-              className="w-full h-14 text-base font-medium rounded-xl border-2 hover:bg-gray-50 transition-all"
+              className="w-full h-10 text-sm font-medium border-2"
               onClick={() => navigate('/#communities')}
             >
               Browse Communities
