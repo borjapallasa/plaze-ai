@@ -658,6 +658,23 @@ export default function CommunityPage() {
             <TabsContent value="threads" className="space-y-6">
               <div className="flex flex-col sm:flex-row gap-4">
                 <Input placeholder="Search thread" className="flex-1" />
+              </div>
+
+              {threadsTags.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {threadsTags.map((tag, index) => (
+                    <Badge 
+                      key={index} 
+                      variant="secondary" 
+                      className="text-sm"
+                    >
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+
+              <div className="flex justify-end">
                 <Button 
                   className="w-full sm:w-auto"
                   onClick={() => setIsCreateThreadDialogOpen(true)}

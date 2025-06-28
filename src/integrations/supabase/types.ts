@@ -2125,7 +2125,7 @@ export type Database = {
           last_message_at: string | null
           number_messages: number | null
           status: Database["public"]["Enums"]["thread_status"] | null
-          tag: Database["public"]["Enums"]["thread_tag"] | null
+          tag: string | null
           thread_uuid: string
           title: string | null
           upvote_count: number | null
@@ -2141,7 +2141,7 @@ export type Database = {
           last_message_at?: string | null
           number_messages?: number | null
           status?: Database["public"]["Enums"]["thread_status"] | null
-          tag?: Database["public"]["Enums"]["thread_tag"] | null
+          tag?: string | null
           thread_uuid?: string
           title?: string | null
           upvote_count?: number | null
@@ -2157,7 +2157,7 @@ export type Database = {
           last_message_at?: string | null
           number_messages?: number | null
           status?: Database["public"]["Enums"]["thread_status"] | null
-          tag?: Database["public"]["Enums"]["thread_tag"] | null
+          tag?: string | null
           thread_uuid?: string
           title?: string | null
           upvote_count?: number | null
