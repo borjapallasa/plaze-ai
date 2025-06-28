@@ -509,6 +509,18 @@ export default function CommunityPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             <div className="lg:col-span-8">
               <Card className="p-6 space-y-6">
+                <div className="flex items-center justify-between gap-4">
+                  <h1 className="text-3xl font-bold">{community?.name}</h1>
+                  {isOwner && (
+                    <Link to={`/community/${communityId}/edit`}>
+                      <Button variant="ghost" size="sm" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
+                        <Edit className="w-4 h-4" />
+                        <span className="text-sm">Edit</span>
+                      </Button>
+                    </Link>
+                  )}
+                </div>
+
                 <div>
                   <ProductGallery 
                     images={galleryImages}
@@ -517,17 +529,6 @@ export default function CommunityPage() {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between gap-4">
-                    <h1 className="text-2xl font-bold">{community?.name}</h1>
-                    {isOwner && (
-                      <Link to={`/community/${communityId}/edit`}>
-                        <Button variant="outline" size="sm" className="flex items-center gap-2">
-                          <Edit className="w-4 h-4" />
-                          Edit Community
-                        </Button>
-                      </Link>
-                    )}
-                  </div>
                   <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: community?.description || '' }} />
                 </div>
               </Card>
