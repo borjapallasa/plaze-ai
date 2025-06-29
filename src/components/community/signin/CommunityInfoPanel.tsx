@@ -1,10 +1,13 @@
 
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { useExpertName } from "@/hooks/use-expert-name";
+import { useExpertQuery } from "@/hooks/expert/useExpertQuery";
 
 interface CommunityInfoPanelProps {
   community: {
     name: string;
     expert_name?: string;
+    expert_uuid?: string;
     thumbnail?: string;
     description?: string;
     member_count?: number;
@@ -17,6 +20,8 @@ interface CommunityInfoPanelProps {
 }
 
 export function CommunityInfoPanel({ community }: CommunityInfoPanelProps) {
+  const { data: expert } = useExpertQuery(community.expert_uuid);
+
   const formatMemberCount = (count?: number) => {
     if (!count) return "New community";
     if (count > 1000) return `${(count / 1000).toFixed(1)}k+ members`;
@@ -42,59 +47,77 @@ export function CommunityInfoPanel({ community }: CommunityInfoPanelProps) {
   };
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-8">
       {/* Main heading */}
-      <div className="space-y-6">
-        <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
+      <div className="space-y-4">
+        <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 leading-tight">
           Welcome to{" "}
           <span className="text-primary">
             {community.name || "our community"}
           </span>
         </h1>
         
-        <p className="text-base text-gray-600 leading-relaxed max-w-md">
+        <p className="text-sm text-gray-600 leading-relaxed max-w-md">
           Join our community to connect with like-minded individuals and grow together.
         </p>
       </div>
 
       {/* Community visual and info */}
-      <div className="flex items-start gap-6">
-        <Avatar className="h-20 w-20 rounded-2xl border-2 border-gray-100 flex-shrink-0">
+      <div className="flex items-start gap-4">
+        <Avatar className="h-16 w-16 rounded-2xl border-2 border-gray-100 flex-shrink-0">
           <AvatarImage 
             src={community.thumbnail} 
             alt={`${community.name} thumbnail`} 
             className="object-cover"
           />
-          <AvatarFallback className="text-xl font-semibold bg-primary/10 text-primary rounded-2xl">
+          <AvatarFallback className="text-lg font-semibold bg-primary/10 text-primary rounded-2xl">
             {community.name?.substring(0, 2)?.toUpperCase() || "CO"}
           </AvatarFallback>
         </Avatar>
         
         <div className="flex-1 min-w-0">
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
             {community.name}
           </h3>
-          <p className="text-sm text-gray-600 mb-4">
-            {community.expert_name ? 
-              `Hosted by ${community.expert_name}` : 
-              "Expert-led community"
-            }
-          </p>
+          
+          {/* Expert info with thumbnail and name */}
+          {expert ? (
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-sm text-gray-600">By</span>
+              <Avatar className="h-6 w-6">
+                <AvatarImage 
+                  src={expert.thumbnail} 
+                  alt={`${expert.name} avatar`} 
+                  className="object-cover"
+                />
+                <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                  {expert.name?.substring(0, 2)?.toUpperCase() || "EX"}
+                </AvatarFallback>
+              </Avatar>
+              <span className="text-sm font-medium text-gray-700">
+                {expert.name || "Expert"}
+              </span>
+            </div>
+          ) : (
+            <p className="text-sm text-gray-600 mb-3">
+              Expert-led community
+            </p>
+          )}
           
           {/* Community stats */}
-          <div className="flex flex-wrap gap-3">
-            <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-primary/10 text-primary">
+          <div className="flex flex-wrap gap-2">
+            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
               {formatMemberCount(community.member_count)}
             </span>
             
             {community.type && (
-              <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-gray-100 text-gray-700 capitalize">
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 capitalize">
                 {community.type}
               </span>
             )}
             
             {formatLastActivity(community.last_activity) && (
-              <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-green-100 text-green-700">
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
                 {formatLastActivity(community.last_activity)}
               </span>
             )}
@@ -104,8 +127,8 @@ export function CommunityInfoPanel({ community }: CommunityInfoPanelProps) {
 
       {/* Description */}
       {community.description && (
-        <div className="space-y-3">
-          <h4 className="text-lg font-semibold text-gray-900">About this community</h4>
+        <div className="space-y-2">
+          <h4 className="text-base font-semibold text-gray-900">About this community</h4>
           <p className="text-sm text-gray-600 leading-relaxed line-clamp-4">
             {community.description}
           </p>
@@ -113,21 +136,21 @@ export function CommunityInfoPanel({ community }: CommunityInfoPanelProps) {
       )}
 
       {/* Community Metrics */}
-      <div className="grid grid-cols-4 gap-4 pt-6 border-t border-gray-200">
+      <div className="grid grid-cols-4 gap-3 pt-4 border-t border-gray-200">
         <div className="text-center">
-          <div className="text-2xl font-bold text-primary mb-1">{formatCount(community.member_count)}</div>
+          <div className="text-xl font-bold text-primary mb-1">{formatCount(community.member_count)}</div>
           <div className="text-xs font-medium text-gray-600">Members</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold text-primary mb-1">{formatCount(community.product_count)}</div>
+          <div className="text-xl font-bold text-primary mb-1">{formatCount(community.product_count)}</div>
           <div className="text-xs font-medium text-gray-600">Products</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold text-primary mb-1">{formatCount(community.post_count)}</div>
+          <div className="text-xl font-bold text-primary mb-1">{formatCount(community.post_count)}</div>
           <div className="text-xs font-medium text-gray-600">Posts</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold text-primary mb-1">{formatCount(community.classroom_count)}</div>
+          <div className="text-xl font-bold text-primary mb-1">{formatCount(community.classroom_count)}</div>
           <div className="text-xs font-medium text-gray-600">Classrooms</div>
         </div>
       </div>
