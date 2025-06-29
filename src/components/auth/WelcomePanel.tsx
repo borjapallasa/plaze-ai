@@ -32,7 +32,7 @@ export function WelcomePanel() {
             <p className="text-sm text-muted-foreground">The Operative System for Digital Creators.</p>
           </div>
           <Link to="/sell">
-            <Button variant="secondary" className="mt-4 bg-gray-100 hover:bg-gray-200 text-foreground border border-gray-300">
+            <Button variant="secondary" className="mt-4 bg-white hover:bg-gray-50 text-foreground border border-gray-300">
               Sell on Plaze →
             </Button>
           </Link>
