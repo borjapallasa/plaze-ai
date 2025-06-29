@@ -70,22 +70,17 @@ export default function SignUpCommunityPage() {
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/sign-up/community/${id}`,
-          queryParams: {
-            community_id: id,
-            expert_uuid: community.expert_uuid,
-            community_price: community.price?.toString() || '0',
-          },
         },
       });
 
       if (error) {
         console.error("Google auth error:", error);
         toast.error(error.message);
+        setGoogleLoading(false);
       }
     } catch (error) {
       console.error("Unexpected error during Google sign up:", error);
       toast.error("An unexpected error occurred. Please try again.");
-    } finally {
       setGoogleLoading(false);
     }
   };

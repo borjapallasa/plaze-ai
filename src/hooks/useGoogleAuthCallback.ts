@@ -11,49 +11,69 @@ export const useGoogleAuthCallback = () => {
 
   useEffect(() => {
     const handleAuthCallback = async () => {
-      // Check if this is a callback from Google OAuth
-      const urlParams = new URLSearchParams(window.location.search);
-      const communityId = urlParams.get('community_id');
-      const expertUuid = urlParams.get('expert_uuid');
-      const communityPrice = urlParams.get('community_price');
-
-      // Only process if we have community parameters from OAuth redirect
-      if (!communityId || !expertUuid) {
-        return;
-      }
-
-      setIsProcessing(true);
-
       try {
+        // Check if this is a callback from Google OAuth
+        const urlParams = new URLSearchParams(window.location.search);
+        const hasAuthParams = urlParams.has('code') || window.location.hash.includes('access_token');
+        
+        // Only process if we have auth parameters and are on a community sign-up/sign-in page
+        if (!hasAuthParams || !id) {
+          return;
+        }
+
+        console.log('Detected Google OAuth callback for community:', id);
+        setIsProcessing(true);
+
+        // Wait a moment for Supabase to process the auth session
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
         // Get the current user session
         const { data: { session } } = await supabase.auth.getSession();
         
         if (!session?.user) {
-          console.log('No user session found');
+          console.log('No user session found after OAuth callback');
+          setIsProcessing(false);
           return;
         }
 
-        console.log('Processing Google OAuth callback for community:', communityId);
+        console.log('Processing Google OAuth callback for user:', session.user.id);
+
+        // Get community details
+        const { data: community, error: communityError } = await supabase
+          .from('communities')
+          .select('community_uuid, expert_uuid, price')
+          .eq('community_uuid', id)
+          .single();
+
+        if (communityError || !community) {
+          console.error('Error fetching community:', communityError);
+          toast.error('Community not found');
+          setIsProcessing(false);
+          return;
+        }
 
         // Check if subscription already exists
         const { data: existingSubscription } = await supabase
           .from('community_subscriptions')
           .select('community_subscription_uuid')
           .eq('user_uuid', session.user.id)
-          .eq('community_uuid', communityId)
+          .eq('community_uuid', id)
           .maybeSingle();
 
         if (existingSubscription) {
           console.log('Community subscription already exists');
+          toast.success('Welcome back! You\'re already a member of this community.');
+          setIsProcessing(false);
+          navigate(`/community/${id}`);
           return;
         }
 
         // Create community subscription
-        const price = parseFloat(communityPrice || '0');
+        const price = community.price || 0;
         const subscriptionData = {
           user_uuid: session.user.id,
-          community_uuid: communityId,
-          expert_user_uuid: expertUuid,
+          community_uuid: id,
+          expert_user_uuid: community.expert_uuid,
           email: session.user.email,
           status: (price > 0 ? 'pending' : 'active') as 'active' | 'inactive' | 'pending',
           type: (price > 0 ? 'paid' : 'free') as 'free' | 'paid',
@@ -69,6 +89,7 @@ export const useGoogleAuthCallback = () => {
         if (error) {
           console.error('Error creating community subscription:', error);
           toast.error('Failed to join community. Please try again.');
+          setIsProcessing(false);
           return;
         }
 
@@ -79,14 +100,14 @@ export const useGoogleAuthCallback = () => {
           toast.success('Welcome! You\'ve successfully joined the community.');
         }
 
-        // Clean up URL parameters and redirect
-        const cleanUrl = `${window.location.origin}/community/${communityId}`;
+        // Clean up URL and redirect
+        const cleanUrl = `${window.location.origin}/community/${id}`;
         window.history.replaceState({}, document.title, cleanUrl);
+        navigate(`/community/${id}`);
         
       } catch (error) {
         console.error('Error in Google OAuth callback:', error);
         toast.error('An error occurred while joining the community.');
-      } finally {
         setIsProcessing(false);
       }
     };

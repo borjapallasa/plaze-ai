@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -61,23 +60,18 @@ export default function SignInCommunityPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/community/${id}`,
-          queryParams: {
-            community_id: id,
-            expert_uuid: community.expert_uuid,
-            community_price: community.price?.toString() || '0',
-          },
+          redirectTo: `${window.location.origin}/sign-in/community/${id}`,
         },
       });
 
       if (error) {
         console.error("Google auth error:", error);
         toast.error(error.message);
+        setGoogleLoading(false);
       }
     } catch (error) {
       console.error("Unexpected error during Google sign in:", error);
       toast.error("An unexpected error occurred. Please try again.");
-    } finally {
       setGoogleLoading(false);
     }
   };
