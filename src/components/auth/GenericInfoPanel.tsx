@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle } from "lucide-react";
 export function GenericInfoPanel() {
@@ -5,11 +6,13 @@ export function GenericInfoPanel() {
   return <div className="space-y-8">
       {/* Logo and Title */}
       <div className="space-y-4">
-        <img src="/lovable-uploads/84b87a79-21ab-4d4e-b6fe-3af1f7e0464d.png" alt="Plaze.ai" className="h-12 w-auto" />
         <div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Welcome to Plaze
-          </h1>
+          <div className="flex items-center gap-2 mb-2">
+            <h1 className="text-4xl font-bold text-gray-900">
+              Welcome to
+            </h1>
+            <img src="/lovable-uploads/84b87a79-21ab-4d4e-b6fe-3af1f7e0464d.png" alt="Plaze.ai" className="h-10 w-auto italic" />
+          </div>
           <p className="text-xl text-gray-600">
             The Operative System for Digital Creators.
           </p>
