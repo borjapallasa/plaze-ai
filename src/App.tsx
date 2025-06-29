@@ -1,4 +1,3 @@
-
 import { Route, Routes } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -39,6 +38,7 @@ import DraftTemplatesPage from "./pages/admin/DraftTemplates";
 import AdminTemplateDetailsPage from "./pages/admin/AdminTemplateDetails";
 import AffiliatesPage from "./pages/Affiliates";
 import SellerPage from "./pages/seller/SellerPage";
+import SellerAboutPage from "./pages/seller/SellerAboutPage";
 import SellPage from "./pages/Sell";
 import ExpertsPage from "./pages/Experts";
 import ExpertPage from "./pages/Expert";
@@ -63,6 +63,7 @@ function App() {
           <Route path="/seller/products/new" element={<NewProductPage />} />
           <Route path="/seller/communities/new" element={<NewCommunityPage />} />
           <Route path="/seller/:id" element={<SellerPage />} />
+          <Route path="/seller/:id/about" element={<SellerAboutPage />} />
           <Route path="/product/:id/edit" element={<EditProductPage />} />
           <Route path="/community/:id/edit" element={<EditCommunityPage />} />
           <Route path="/community/:id/products/new" element={<NewCommunityProductPage />} />
