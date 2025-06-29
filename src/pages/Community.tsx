@@ -1069,8 +1069,8 @@ export default function CommunityPage() {
               {isMembersLoading ? (
                 <div className="space-y-4">
                   {Array.from({ length: 5 }).map((_, index) => (
-                    <div key={index} className="flex items-center space-x-4 p-4 rounded-lg border bg-card animate-pulse">
-                      <div className="w-12 h-12 bg-muted rounded-full"></div>
+                    <div key={index} className="flex items-center space-x-4 p-5 rounded-xl border bg-card animate-pulse">
+                      <div className="w-14 h-14 bg-muted rounded-full"></div>
                       <div className="flex-1 space-y-2">
                         <div className="h-4 bg-muted rounded w-1/4"></div>
                         <div className="h-3 bg-muted rounded w-1/6"></div>
@@ -1081,35 +1081,38 @@ export default function CommunityPage() {
               ) : activeMembers.length > 0 ? (
                 <div className="space-y-4">
                   {activeMembers.map((member) => (
-                    <div key={member.community_subscription_uuid} className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent transition-colors">
-                      <div className="flex items-center space-x-3">
-                        <Avatar className="h-12 w-12">
+                    <div key={member.community_subscription_uuid} className="flex items-center justify-between p-5 rounded-xl border bg-card hover:bg-accent/20 transition-colors">
+                      <div className="flex items-center space-x-4">
+                        <Avatar className="h-14 w-14">
                           <AvatarImage 
                             src={member.users.user_thumbnail || "https://github.com/shadcn.png"} 
                             alt={`${member.users.first_name} ${member.users.last_name}`}
                           />
-                          <AvatarFallback>
+                          <AvatarFallback className="bg-primary/10 text-primary font-medium text-lg">
                             {`${member.users.first_name?.charAt(0) || ''}${member.users.last_name?.charAt(0) || ''}`}
                           </AvatarFallback>
                         </Avatar>
-                        <div>
-                          <p className="font-medium">
+                        <div className="space-y-1">
+                          <p className="font-semibold text-base">
                             {member.users.first_name} {member.users.last_name}
                           </p>
                           <p className="text-sm text-muted-foreground">
-                            Member since {new Date(member.created_at).toLocaleDateString()}
+                            Member since {new Date(member.created_at).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric'
+                            })}
                           </p>
                         </div>
                       </div>
                       {isOwner && (
                         <Button
-                          variant="outline"
+                          variant="ghost"
                           size="sm"
                           onClick={() => handleRemoveMember(member.community_subscription_uuid)}
-                          className="text-destructive hover:text-destructive"
+                          className="h-10 w-10 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full"
                         >
-                          <UserX className="h-4 w-4 mr-1" />
-                          Remove
+                          <UserX className="h-5 w-5" />
                         </Button>
                       )}
                     </div>
