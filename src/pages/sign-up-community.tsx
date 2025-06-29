@@ -1,15 +1,16 @@
 
 import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Mail, Lock, User, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, User, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CommunityInfoPanel } from "@/components/community/signin/CommunityInfoPanel";
 import { LoadingState } from "@/components/community/signin/LoadingState";
 import { NotFoundState } from "@/components/community/signin/NotFoundState";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 async function fetchCommunity(communityId: string) {
   const { data, error } = await supabase
@@ -24,12 +25,14 @@ async function fetchCommunity(communityId: string) {
 
 export default function SignUpCommunityPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { data: community, isLoading, error } = useQuery({
     queryKey: ['community', id],
@@ -37,9 +40,93 @@ export default function SignUpCommunityPage() {
     enabled: !!id
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Sign up attempt with:", { email, password, firstName, lastName, communityId: id });
+    
+    if (!agreeToTerms) {
+      toast.error("Please agree to the Terms of Service and Privacy Policy");
+      return;
+    }
+
+    if (!community || !id) {
+      toast.error("Community not found");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      console.log("Starting sign up process for community:", id);
+      
+      // Step 1: Create user account with Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            first_name: firstName,
+            last_name: lastName,
+          },
+          emailRedirectTo: `${window.location.origin}/community/${id}`,
+        },
+      });
+
+      if (authError) {
+        console.error("Auth error:", authError);
+        toast.error(authError.message);
+        return;
+      }
+
+      if (!authData.user) {
+        toast.error("Failed to create user account");
+        return;
+      }
+
+      console.log("User created successfully:", authData.user.id);
+
+      // Step 2: Create community subscription record
+      const subscriptionData = {
+        user_uuid: authData.user.id,
+        community_uuid: id,
+        expert_user_uuid: community.expert_uuid,
+        email: email,
+        status: community.price && community.price > 0 ? 'pending' : 'active',
+        type: community.price && community.price > 0 ? 'paid' : 'free',
+        amount: community.price || 0,
+      };
+
+      console.log("Creating community subscription:", subscriptionData);
+
+      const { data: subscriptionResult, error: subscriptionError } = await supabase
+        .from('community_subscriptions')
+        .insert(subscriptionData)
+        .select()
+        .single();
+
+      if (subscriptionError) {
+        console.error("Subscription error:", subscriptionError);
+        toast.error("Failed to create community subscription. Please contact support.");
+        return;
+      }
+
+      console.log("Community subscription created:", subscriptionResult);
+
+      // Success message and redirect
+      if (community.price && community.price > 0) {
+        toast.success("Account created! Please complete payment to access the community.");
+        // For paid communities, you might want to redirect to a payment page
+        navigate(`/community/${id}`);
+      } else {
+        toast.success("Welcome! You've successfully joined the community.");
+        navigate(`/community/${id}`);
+      }
+
+    } catch (error) {
+      console.error("Unexpected error during sign up:", error);
+      toast.error("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const formatMemberCount = (count?: number) => {
@@ -96,6 +183,7 @@ export default function SignUpCommunityPage() {
                         onChange={(e) => setFirstName(e.target.value)}
                         className="pl-10 h-12"
                         required
+                        disabled={isSubmitting}
                       />
                     </div>
                     <div className="relative">
@@ -107,6 +195,7 @@ export default function SignUpCommunityPage() {
                         onChange={(e) => setLastName(e.target.value)}
                         className="pl-10 h-12"
                         required
+                        disabled={isSubmitting}
                       />
                     </div>
                   </div>
@@ -120,6 +209,7 @@ export default function SignUpCommunityPage() {
                       onChange={(e) => setEmail(e.target.value)}
                       className="pl-10 h-12"
                       required
+                      disabled={isSubmitting}
                     />
                   </div>
 
@@ -132,11 +222,14 @@ export default function SignUpCommunityPage() {
                       onChange={(e) => setPassword(e.target.value)}
                       className="pl-10 pr-10 h-12"
                       required
+                      disabled={isSubmitting}
+                      minLength={6}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-3"
+                      disabled={isSubmitting}
                     >
                       {showPassword ? (
                         <EyeOff className="h-5 w-5 text-gray-400" />
@@ -152,6 +245,7 @@ export default function SignUpCommunityPage() {
                       checked={agreeToTerms}
                       onCheckedChange={(checked) => setAgreeToTerms(checked as boolean)}
                       className="mt-1"
+                      disabled={isSubmitting}
                     />
                     <label
                       htmlFor="terms"
@@ -171,9 +265,16 @@ export default function SignUpCommunityPage() {
                   <Button
                     type="submit"
                     className="w-full h-12 text-base font-medium"
-                    disabled={!agreeToTerms}
+                    disabled={!agreeToTerms || isSubmitting}
                   >
-                    {formatButtonText(community.price)}
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        Creating Account...
+                      </>
+                    ) : (
+                      formatButtonText(community.price)
+                    )}
                   </Button>
 
                   <div className="text-center text-sm border-t pt-6">
