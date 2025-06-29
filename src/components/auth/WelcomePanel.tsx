@@ -1,7 +1,9 @@
+
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { CircleCheckBig } from "lucide-react";
+
 export function WelcomePanel() {
   return <div className="space-y-8">
       <div className="flex items-center gap-3">
@@ -23,7 +25,7 @@ export function WelcomePanel() {
         </div>
       </div>
 
-      <Card className="bg-muted/50 border-muted">
+      <Card className="border-muted" style={{ backgroundColor: '#EEF2FF' }}>
         <div className="p-6">
           <div className="space-y-2">
             <h3 className="font-semibold text-foreground">Are you a creator?</h3>
