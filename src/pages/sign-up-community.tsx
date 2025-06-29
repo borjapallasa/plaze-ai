@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,11 @@ export default function SignUpCommunityPage() {
     if (!count) return "Join the community";
     if (count > 1000) return `Join ${(count / 1000).toFixed(1)}k members`;
     return `Join ${count} members`;
+  };
+
+  const formatButtonText = (price?: number) => {
+    if (!price || price === 0) return "Join for Free";
+    return `Join for $${price}`;
   };
 
   if (isLoading) {
@@ -167,7 +173,7 @@ export default function SignUpCommunityPage() {
                     className="w-full h-12 text-base font-medium"
                     disabled={!agreeToTerms}
                   >
-                    Create Account
+                    {formatButtonText(community.price)}
                   </Button>
 
                   <div className="text-center text-sm border-t pt-6">
@@ -177,6 +183,18 @@ export default function SignUpCommunityPage() {
                     </Link>
                   </div>
                 </form>
+
+                {/* Powered by Plaze.ai branding */}
+                <div className="flex items-center justify-center pt-4 border-t border-gray-100">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs text-gray-400">Powered by</span>
+                    <img 
+                      src="/lovable-uploads/84b87a79-21ab-4d4e-b6fe-3af1f7e0464d.png" 
+                      alt="Plaze.ai" 
+                      className="h-4 w-auto opacity-60"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
