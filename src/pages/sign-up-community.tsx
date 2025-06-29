@@ -1,47 +1,80 @@
-import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Mail, Lock, User, Eye, EyeOff } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
+
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { CommunityInfoPanel } from "@/components/community/signin/CommunityInfoPanel";
 import { LoadingState } from "@/components/community/signin/LoadingState";
 import { NotFoundState } from "@/components/community/signin/NotFoundState";
-import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { UnifiedAuthForm } from "@/components/auth/UnifiedAuthForm";
 
-async function fetchCommunity(communityId: string) {
-  const { data, error } = await supabase
-    .from('communities')
-    .select('*')
-    .eq('community_uuid', communityId)
-    .single();
-
-  if (error) throw error;
-  return data;
+interface Community {
+  community_uuid: string;
+  name: string;
+  description: string | null;
+  expert_name: string | null;
+  expert_thumbnail: string | null;
+  community_thumbnail: string | null;
 }
 
-export default function SignUpCommunityPage() {
+export default function SignUpCommunity() {
   const { id } = useParams<{ id: string }>();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [community, setCommunity] = useState<Community | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const { data: community, isLoading, error } = useQuery({
-    queryKey: ['community', id],
-    queryFn: () => fetchCommunity(id!),
-    enabled: !!id
-  });
+  useEffect(() => {
+    const fetchCommunity = async () => {
+      if (!id) {
+        setError("Community ID is required");
+        setLoading(false);
+        return;
+      }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Sign up attempt with:", { email, password, firstName, lastName, communityId: id });
-  };
+      try {
+        const { data, error } = await supabase
+          .from('communities')
+          .select(`
+            community_uuid,
+            name,
+            description,
+            expert:expert_uuid (
+              first_name,
+              last_name,
+              user_thumbnail
+            )
+          `)
+          .eq('community_uuid', id)
+          .single();
 
-  if (isLoading) {
+        if (error) {
+          console.error("Error fetching community:", error);
+          setError("Failed to load community");
+        } else if (data) {
+          setCommunity({
+            community_uuid: data.community_uuid,
+            name: data.name,
+            description: data.description,
+            expert_name: data.expert 
+              ? `${data.expert.first_name || ''} ${data.expert.last_name || ''}`.trim()
+              : null,
+            expert_thumbnail: data.expert?.user_thumbnail || null,
+            community_thumbnail: null
+          });
+        } else {
+          setError("Community not found");
+        }
+      } catch (err) {
+        console.error("Unexpected error:", err);
+        setError("An unexpected error occurred");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCommunity();
+  }, [id]);
+
+  if (loading) {
     return <LoadingState />;
   }
 
@@ -50,117 +83,46 @@ export default function SignUpCommunityPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 py-12 bg-muted/40">
-      <div className="w-full max-w-6xl grid md:grid-cols-2 gap-12 items-start">
-        <CommunityInfoPanel community={community} />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[80vh]">
+            {/* Left side - Community Info */}
+            <div className="space-y-8">
+              <div className="text-center lg:text-left">
+                <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+                  Welcome back to {community.name}!
+                </h1>
+                <p className="text-xl text-gray-600 leading-relaxed">
+                  {community.description || "Join this amazing community and start your journey."}
+                </p>
+              </div>
+              
+              <CommunityInfoPanel 
+                community={community}
+                className="bg-white/70 backdrop-blur-sm border border-gray-200/50 shadow-lg"
+              />
+            </div>
 
-        <div className="w-full p-8 rounded-lg bg-card text-card-foreground shadow-sm">
-          <div className="space-y-8">
-            <img
-              src="/placeholder.svg"
-              alt="Logo"
-              className="h-8 mx-auto"
-            />
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="relative">
-                  <User className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
-                  <Input
-                    placeholder="First Name"
-                    type="text"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    className="pl-10"
-                    required
-                  />
-                </div>
-                <div className="relative">
-                  <User className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
-                  <Input
-                    placeholder="Last Name"
-                    type="text"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    className="pl-10"
-                    required
+            {/* Right side - Sign Up Form */}
+            <div className="flex justify-center lg:justify-end">
+              <div className="w-full max-w-md">
+                <div className="bg-white rounded-2xl shadow-xl border border-gray-200/50 p-8">
+                  <UnifiedAuthForm 
+                    defaultMode="signup"
+                    redirectTo={`/community/${id}`}
                   />
                 </div>
               </div>
-
-              <div className="relative">
-                <Mail className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
-                <Input
-                  placeholder="Email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10"
-                  required
-                />
-              </div>
-
-              <div className="relative">
-                <Lock className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
-                <Input
-                  placeholder="Password"
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 pr-10"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-muted-foreground" />
-                  ) : (
-                    <Eye className="h-5 w-5 text-muted-foreground" />
-                  )}
-                </button>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="terms"
-                  checked={agreeToTerms}
-                  onCheckedChange={(checked) => setAgreeToTerms(checked as boolean)}
-                />
-                <label
-                  htmlFor="terms"
-                  className="text-sm text-muted-foreground"
-                >
-                  I agree to the{" "}
-                  <Link to="#" className="text-primary hover:underline">
-                    Terms
-                  </Link>{" "}
-                  and{" "}
-                  <Link to="#" className="text-primary hover:underline">
-                    Privacy Policy
-                  </Link>
-                </label>
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={!agreeToTerms}
-              >
-                Sign Up
-              </Button>
-
-              <div className="text-center text-sm">
-                <span className="text-muted-foreground">Already have an account? </span>
-                <Link to={`/sign-in/community/${id}`} className="text-primary hover:underline">
-                  Sign In
-                </Link>
-              </div>
-            </form>
+            </div>
           </div>
         </div>
+      </div>
+      
+      {/* Decorative elements */}
+      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-200/30 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-200/30 rounded-full blur-3xl"></div>
       </div>
     </div>
   );
