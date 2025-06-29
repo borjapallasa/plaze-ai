@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight, Plus, Edit, Package, Settings, UserX, Check, X } from "lucide-react";
+import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight, Plus, Edit, Package, Settings, UserX, Check, X, UserCheck } from "lucide-react";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/ProductCard";
@@ -27,6 +27,8 @@ import { CommunityAccessGuard } from "@/components/community/CommunityAccessGuar
 import { CreateThreadDialog } from "@/components/community/CreateThreadDialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MemberRequestsDialog } from "@/components/community/MemberRequestsDialog";
+import { MemberApprovalDialog } from "@/components/community/MemberApprovalDialog";
+import { MemberRejectDialog } from "@/components/community/MemberRejectDialog";
 import { useToast } from "@/hooks/use-toast";
 
 interface Link {
@@ -75,6 +77,9 @@ export default function CommunityPage() {
   const [isClassroomDialogOpen, setIsClassroomDialogOpen] = useState(false);
   const [isCreateThreadDialogOpen, setIsCreateThreadDialogOpen] = useState(false);
   const [isMemberRequestsDialogOpen, setIsMemberRequestsDialogOpen] = useState(false);
+  const [isApprovalDialogOpen, setIsApprovalDialogOpen] = useState(false);
+  const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
+  const [selectedMemberForAction, setSelectedMemberForAction] = useState<any>(null);
   const [showProductTemplateSelector, setShowProductTemplateSelector] = useState(false);
   const [activeTab, setActiveTab] = useState("threads");
   const [selectedTag, setSelectedTag] = useState<string>("all");
@@ -306,78 +311,15 @@ export default function CommunityPage() {
     status: member.status as 'pending' | 'active' | 'cancelled' | 'rejected'
   })) || [];
 
-  // Handle member approval
-  const handleApproveMember = async (memberUuid: string) => {
-    try {
-      console.log('Approving member:', memberUuid);
-      
-      const { error } = await supabase
-        .from('community_subscriptions')
-        .update({ status: 'active' })
-        .eq('community_subscription_uuid', memberUuid);
-
-      if (error) {
-        console.error('Error approving member:', error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to approve member. Please try again.",
-        });
-        return;
-      }
-
-      // Invalidate queries to refresh data
-      queryClient.invalidateQueries({ queryKey: ['community-members', communityId] });
-      
-      toast({
-        title: "Member approved",
-        description: "The member has been approved and added to the community.",
-      });
-    } catch (error) {
-      console.error('Error approving member:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to approve member. Please try again.",
-      });
-    }
+  // New handler functions for the dialogs
+  const handleOpenApprovalDialog = (member: any) => {
+    setSelectedMemberForAction(member);
+    setIsApprovalDialogOpen(true);
   };
 
-  // Handle member removal/rejection
-  const handleRemoveMember = async (memberUuid: string) => {
-    try {
-      console.log('Removing member:', memberUuid);
-      
-      const { error } = await supabase
-        .from('community_subscriptions')
-        .delete()
-        .eq('community_subscription_uuid', memberUuid);
-
-      if (error) {
-        console.error('Error removing member:', error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to remove member. Please try again.",
-        });
-        return;
-      }
-
-      // Invalidate queries to refresh data
-      queryClient.invalidateQueries({ queryKey: ['community-members', communityId] });
-      
-      toast({
-        title: "Member removed",
-        description: "The member has been removed from the community.",
-      });
-    } catch (error) {
-      console.error('Error removing member:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to remove member. Please try again.",
-      });
-    }
+  const handleOpenRejectDialog = (member: any, isKick = false) => {
+    setSelectedMemberForAction({ ...member, isKick });
+    setIsRejectDialogOpen(true);
   };
 
   // Early return for invalid community ID
@@ -793,7 +735,6 @@ export default function CommunityPage() {
               <div className="flex flex-col sm:flex-row gap-4">
                 <Input placeholder="Search thread" className="flex-1" />
                 
-                {/* Tag Filter Dropdown */}
                 {threadsTags.length > 0 && (
                   <Select value={selectedTag} onValueChange={setSelectedTag}>
                     <SelectTrigger className="w-full sm:w-[180px]">
@@ -887,12 +828,10 @@ export default function CommunityPage() {
                 <div className="space-y-4">
                   <Card className="border-2 border-dashed border-muted-foreground/25 bg-muted/10">
                     <CardContent className="flex flex-col items-center justify-center py-16 px-8 text-center relative">
-                      {/* Icon Container */}
                       <div className="mb-6 p-6 rounded-full bg-gradient-to-br from-primary/10 to-primary/20 border border-primary/20">
                         <MessageSquare className="h-12 w-12 text-primary" />
                       </div>
                       
-                      {/* Main Message */}
                       <h3 className="text-xl font-semibold text-foreground mb-3">
                         {selectedTag === "all" 
                           ? "No discussions yet" 
@@ -900,7 +839,6 @@ export default function CommunityPage() {
                         }
                       </h3>
                       
-                      {/* Description */}
                       <p className="text-muted-foreground max-w-md mb-8 leading-relaxed">
                         {selectedTag === "all" 
                           ? "This community doesn't have any discussion threads yet. Start a conversation to engage with other members!"
@@ -908,7 +846,6 @@ export default function CommunityPage() {
                         }
                       </p>
                       
-                      {/* Action Button */}
                       <Button 
                         onClick={() => setIsCreateThreadDialogOpen(true)}
                         size="lg"
@@ -921,7 +858,6 @@ export default function CommunityPage() {
                         }
                       </Button>
                       
-                      {/* Decorative Elements */}
                       <div className="absolute inset-0 -z-10 opacity-5">
                         <div className="absolute top-4 left-4 w-8 h-8 border border-primary rounded-full"></div>
                         <div className="absolute top-8 right-8 w-4 h-4 bg-primary/20 rounded-full"></div>
@@ -1212,7 +1148,7 @@ export default function CommunityPage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => handleRemoveMember(member.community_subscription_uuid)}
+                            onClick={() => handleOpenRejectDialog(member, true)}
                             className="h-10 w-10 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full ml-2"
                           >
                             <UserX className="h-5 w-5" />
@@ -1256,15 +1192,15 @@ export default function CommunityPage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => handleApproveMember(member.community_subscription_uuid)}
+                            onClick={() => handleOpenApprovalDialog(member)}
                             className="h-10 w-10 p-0 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-full"
                           >
-                            <Check className="h-5 w-5" />
+                            <UserCheck className="h-5 w-5" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => handleRemoveMember(member.community_subscription_uuid)}
+                            onClick={() => handleOpenRejectDialog(member, false)}
                             className="h-10 w-10 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full"
                           >
                             <X className="h-5 w-5" />
@@ -1351,6 +1287,21 @@ export default function CommunityPage() {
             members={pendingMembers}
             isOwner={isOwner}
             communityId={communityId || ''}
+          />
+
+          <MemberApprovalDialog
+            open={isApprovalDialogOpen}
+            onOpenChange={setIsApprovalDialogOpen}
+            member={selectedMemberForAction}
+            communityId={communityId || ''}
+          />
+
+          <MemberRejectDialog
+            open={isRejectDialogOpen}
+            onOpenChange={setIsRejectDialogOpen}
+            member={selectedMemberForAction}
+            communityId={communityId || ''}
+            isKick={selectedMemberForAction?.isKick || false}
           />
         </div>
       </CommunityAccessGuard>

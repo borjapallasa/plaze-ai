@@ -5,12 +5,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { MainHeader } from "@/components/MainHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { AffiliateDashboard } from "@/components/affiliates/AffiliateDashboard";
-import { AffiliateTable } from "@/components/affiliates/AffiliateTable";
-import { AffiliateDetailsDialog } from "@/components/affiliates/AffiliateDetailsDialog";
-import { PaymentSettingsDialog } from "@/components/affiliates/PaymentSettingsDialog";
 import { useAuth } from "@/lib/auth";
 import { DollarSign, Users, TrendingUp, Calendar } from "lucide-react";
 
@@ -117,7 +111,43 @@ export default function AffiliatesPage() {
         </div>
 
         {affiliateData ? (
-          <AffiliateDashboard affiliate={affiliateData} />
+          <Card>
+            <CardHeader>
+              <CardTitle>Your Affiliate Dashboard</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <DollarSign className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">Commissions Made</span>
+                  </div>
+                  <p className="text-2xl font-bold">${affiliateData.commissions_made || 0}</p>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">Available</span>
+                  </div>
+                  <p className="text-2xl font-bold">${affiliateData.commissions_available || 0}</p>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">Referrals</span>
+                  </div>
+                  <p className="text-2xl font-bold">{affiliateData.affiliate_count || 0}</p>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">Transactions</span>
+                  </div>
+                  <p className="text-2xl font-bold">{affiliateData.transaction_count || 0}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         ) : (
           <Card>
             <CardHeader>
@@ -131,31 +161,6 @@ export default function AffiliatesPage() {
             </CardContent>
           </Card>
         )}
-
-        <Separator />
-
-        {allAffiliates && allAffiliates.length > 0 && (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-semibold">All Affiliates</h2>
-            <AffiliateTable
-              affiliates={allAffiliates}
-              onViewDetails={handleViewDetails}
-              onManagePayment={handleOpenPaymentSettings}
-            />
-          </div>
-        )}
-
-        <AffiliateDetailsDialog
-          affiliateUuid={selectedAffiliate}
-          open={isDetailsDialogOpen}
-          onOpenChange={setIsDetailsDialogOpen}
-        />
-
-        <PaymentSettingsDialog
-          affiliateUuid={selectedAffiliate || ''}
-          isOpen={isPaymentDialogOpen}
-          onClose={() => setIsPaymentDialogOpen(false)}
-        />
       </div>
     </>
   );

@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { useUsers } from "@/hooks/admin/useUsers";
 import { MainHeader } from "@/components/MainHeader";
-import { UsersHeader } from "@/components/admin/users/UsersHeader";
 import { UsersLoadingState } from "@/components/admin/users/UsersLoadingState";
 import { UsersErrorState } from "@/components/admin/users/UsersErrorState";
 import { UsersTable } from "@/components/admin/users/UsersTable";
@@ -43,70 +42,77 @@ export default function AdminUsers() {
     <>
       <MainHeader />
       <div className="container mx-auto px-4 py-8 mt-16">
-        <UsersHeader />
-
-        <div className="flex items-center justify-between py-4">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setLayoutType("table")}
-              className={`px-3 py-2 rounded ${layoutType === "table" ? "bg-primary text-white" : "bg-gray-200"}`}
-            >
-              Table
-            </button>
-            <button
-              onClick={() => setLayoutType("gallery")}
-              className={`px-3 py-2 rounded ${layoutType === "gallery" ? "bg-primary text-white" : "bg-gray-200"}`}
-            >
-              Gallery
-            </button>
+        <div className="space-y-6">
+          <div>
+            <h1 className="text-3xl font-bold">User Management</h1>
+            <p className="text-muted-foreground mt-2">
+              Manage and monitor user accounts across the platform
+            </p>
           </div>
-          <select
-            value={`${sortField}-${sortDirection}`}
-            onChange={(e) => {
-              const [field, direction] = e.target.value.split('-');
-              setSortField(field);
-              setSortDirection(direction as "asc" | "desc");
-            }}
-            className="px-3 py-2 border rounded"
-          >
-            <option value="created_at-desc">Newest First</option>
-            <option value="created_at-asc">Oldest First</option>
-            <option value="first_name-asc">Name A-Z</option>
-            <option value="first_name-desc">Name Z-A</option>
-          </select>
-        </div>
 
-        {isLoading ? (
-          <UsersLoadingState />
-        ) : error ? (
-          <UsersErrorState />
-        ) : data && data.users && data.users.length > 0 ? (
-          layoutType === "table" ? (
-            <UsersTable
-              users={data.users}
-              sortField={sortField as keyof typeof data.users[0]}
-              sortDirection={sortDirection}
-              onSort={handleSortChange}
-            />
+          <div className="flex items-center justify-between py-4">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setLayoutType("table")}
+                className={`px-3 py-2 rounded ${layoutType === "table" ? "bg-primary text-white" : "bg-gray-200"}`}
+              >
+                Table
+              </button>
+              <button
+                onClick={() => setLayoutType("gallery")}
+                className={`px-3 py-2 rounded ${layoutType === "gallery" ? "bg-primary text-white" : "bg-gray-200"}`}
+              >
+                Gallery
+              </button>
+            </div>
+            <select
+              value={`${sortField}-${sortDirection}`}
+              onChange={(e) => {
+                const [field, direction] = e.target.value.split('-');
+                setSortField(field);
+                setSortDirection(direction as "asc" | "desc");
+              }}
+              className="px-3 py-2 border rounded"
+            >
+              <option value="created_at-desc">Newest First</option>
+              <option value="created_at-asc">Oldest First</option>
+              <option value="first_name-asc">Name A-Z</option>
+              <option value="first_name-desc">Name Z-A</option>
+            </select>
+          </div>
+
+          {isLoading ? (
+            <UsersLoadingState />
+          ) : error ? (
+            <UsersErrorState />
+          ) : data && data.users && data.users.length > 0 ? (
+            layoutType === "table" ? (
+              <UsersTable
+                users={data.users}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onSort={handleSortChange}
+              />
+            ) : (
+              <UsersGallery
+                users={data.users}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onSort={handleSortChange}
+              />
+            )
           ) : (
-            <UsersGallery
-              users={data.users}
-              sortField={sortField as keyof typeof data.users[0]}
-              sortDirection={sortDirection}
-              onSort={handleSortChange}
-            />
-          )
-        ) : (
-          <div className="text-center py-8">
-            <p className="text-muted-foreground">No users found.</p>
-          </div>
-        )}
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">No users found.</p>
+            </div>
+          )}
 
-        <UserDetailsDialog
-          userUuid={selectedUserId}
-          open={isDialogOpen}
-          onOpenChange={setIsDialogOpen}
-        />
+          <UserDetailsDialog
+            userUuid={selectedUserId}
+            open={isDialogOpen}
+            onOpenChange={setIsDialogOpen}
+          />
+        </div>
       </div>
     </>
   );
