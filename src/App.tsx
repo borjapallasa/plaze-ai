@@ -1,3 +1,4 @@
+
 import { Route, Routes } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -44,6 +45,7 @@ import ExpertsPage from "./pages/Experts";
 import ExpertPage from "./pages/Expert";
 import { SearchResults } from "./pages/search";
 import NewCommunityProductPage from "./pages/community/NewCommunityProductPage";
+import ProductWithSlugPage from "./pages/ProductWithSlug";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +61,7 @@ function App() {
           <Route path="/sign-up/community/:id" element={<SignUpCommunityPage />} />
           <Route path="/product/:id" element={<ProductPage />} />
           <Route path="/product/:slug/:id" element={<ProductPage />} />
+          <Route path="/product/:slug-:id" element={<ProductWithSlugPage />} />
           <Route path="/sell" element={<SellPage />} />
           <Route path="/seller/products/new" element={<NewProductPage />} />
           <Route path="/seller/communities/new" element={<NewCommunityPage />} />

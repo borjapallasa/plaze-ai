@@ -69,9 +69,20 @@ export function useProduct({ productId, productSlug }: UseProductDataProps = {})
   const [error, setError] = useState<Error | null>(null);
   const { toast } = useToast();
   
-  // Use URL params if direct props aren't provided
-  const effectiveProductId = productId || params.id;
-  const effectiveProductSlug = productSlug || params.slug;
+  // Handle different URL patterns
+  let effectiveProductId = productId || params.id;
+  let effectiveProductSlug = productSlug || params.slug;
+
+  // Handle the slug-id format
+  if (params['slug-id']) {
+    const combinedParam = params['slug-id'];
+    const parts = combinedParam.split('-');
+    if (parts.length >= 2) {
+      // Last part is the ID, everything before is the slug
+      effectiveProductId = parts[parts.length - 1];
+      effectiveProductSlug = parts.slice(0, -1).join('-');
+    }
+  }
 
   useEffect(() => {
     const fetchProductData = async () => {
