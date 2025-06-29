@@ -50,8 +50,8 @@ export function CommunityInfoPanel({ community }: CommunityInfoPanelProps) {
     <div className="space-y-8">
       {/* Main heading */}
       <div className="space-y-4">
-        <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 leading-tight">
-          Welcome to{" "}
+        <h1 className="text-xl lg:text-2xl font-bold text-gray-900 leading-tight">
+          Join{" "}
           <span className="text-primary">
             {community.name || "our community"}
           </span>
@@ -76,7 +76,7 @@ export function CommunityInfoPanel({ community }: CommunityInfoPanelProps) {
         </Avatar>
         
         <div className="flex-1 min-w-0">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <h3 className="text-base font-semibold text-gray-900 mb-2">
             {community.name}
           </h3>
           
@@ -128,7 +128,7 @@ export function CommunityInfoPanel({ community }: CommunityInfoPanelProps) {
       {/* Description */}
       {community.description && (
         <div className="space-y-2">
-          <h4 className="text-base font-semibold text-gray-900">About this community</h4>
+          <h4 className="text-sm font-semibold text-gray-900">About this community</h4>
           <p className="text-sm text-gray-600 leading-relaxed line-clamp-4">
             {community.description}
           </p>
