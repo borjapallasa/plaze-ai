@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Loader2, Plus } from "lucide-react";
+import { Search, Loader2, Plus, Package } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
 import { useQuery } from "@tanstack/react-query";
@@ -139,9 +139,42 @@ export function ProductsTab({ products, isLoading = false }: ProductsTabProps) {
       ) : (
         <div>
           {filteredAndSortedProducts.length === 0 ? (
-            <Card className="p-8">
-              <div className="text-center text-muted-foreground">
-                {searchQuery ? `No products found matching "${searchQuery}"` : "No products found"}
+            <Card className="border-dashed border-2 border-muted-foreground/30">
+              <div className="flex flex-col items-center justify-center py-20 px-6 text-center max-w-md mx-auto">
+                {/* Icon Circle */}
+                <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center mb-6">
+                  <Package className="h-12 w-12 text-muted-foreground" />
+                </div>
+                
+                {/* Title */}
+                <h3 className="text-xl font-semibold mb-3 text-foreground">
+                  {searchQuery ? "No products found" : "No products yet"}
+                </h3>
+                
+                {/* Description */}
+                <p className="text-muted-foreground text-base leading-relaxed mb-6 max-w-sm">
+                  {searchQuery 
+                    ? `No products found matching "${searchQuery}". Try a different search term or clear the search.`
+                    : "This seller doesn't have any products available yet. Check back later as the seller adds new products."}
+                </p>
+                
+                {/* Action Button */}
+                {searchQuery ? (
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setSearchQuery("")}
+                    className="px-6"
+                  >
+                    Clear Search
+                  </Button>
+                ) : isCurrentUserSeller ? (
+                  <Button 
+                    onClick={handleCreateProduct}
+                    className="px-6"
+                  >
+                    Create Your First Product
+                  </Button>
+                ) : null}
               </div>
             </Card>
           ) : (

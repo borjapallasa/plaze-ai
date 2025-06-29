@@ -119,9 +119,26 @@ export function ReviewsTab({
           <CardDescription className="text-sm">Latest feedback from your customers</CardDescription>
         </CardHeader>
         <CardContent className="pt-0">
-          {totalReviews === 0 ? <div className="text-center py-6 sm:py-8">
-              <p className="text-muted-foreground">No reviews found for this expert.</p>
-            </div> : <div className="space-y-4 sm:space-y-6">
+          {totalReviews === 0 ? (
+            <Card className="border-dashed border-2 border-muted-foreground/30">
+              <div className="flex flex-col items-center justify-center py-20 px-6 text-center max-w-md mx-auto">
+                {/* Icon Circle */}
+                <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center mb-6">
+                  <Star className="h-12 w-12 text-muted-foreground" />
+                </div>
+                
+                {/* Title */}
+                <h3 className="text-xl font-semibold mb-3 text-foreground">
+                  No reviews yet
+                </h3>
+                
+                {/* Description */}
+                <p className="text-muted-foreground text-base leading-relaxed mb-6 max-w-sm">
+                  This seller doesn't have any reviews yet. Check back later as customers leave feedback on their products.
+                </p>
+              </div>
+            </Card>
+          ) : <div className="space-y-4 sm:space-y-6">
               {reviews.map((review, index) => <div key={review.id}>
                   <div className="flex items-start space-x-3 p-3 sm:p-4 rounded-lg border bg-card">
                     <Avatar className="h-8 w-8 sm:h-9 sm:w-9 flex-shrink-0">
