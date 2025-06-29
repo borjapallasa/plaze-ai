@@ -177,28 +177,42 @@ export function CommunitiesTab({ communities, isLoading }: CommunitiesTabProps) 
       </div>
       
       {!filteredCommunities.length ? (
-        <Card className="border-dashed border-2 border-muted-foreground/20 bg-muted/5">
-          <CardContent className="flex flex-col items-center justify-center py-8 sm:py-10">
-            <Users className="h-8 sm:h-10 w-8 sm:w-10 text-muted-foreground mb-4" />
-            <h3 className="text-base sm:text-lg font-semibold mb-1">
-              {searchQuery ? "No Communities Found" : "No Communities"}
-            </h3>
-            <p className="text-sm text-muted-foreground text-center max-w-md px-4">
-              {searchQuery 
-                ? "Try a different search term or clear the search."
-                : "This seller hasn't created any communities yet."}
-            </p>
-            {searchQuery && (
-              <Button 
-                variant="outline" 
-                onClick={() => setSearchQuery("")} 
-                className="mt-4"
-              >
-                Clear Search
-              </Button>
-            )}
-          </CardContent>
-        </Card>
+        <div className="flex flex-col items-center justify-center py-20 px-6 text-center max-w-md mx-auto">
+          {/* Icon Circle */}
+          <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center mb-6">
+            <Users className="h-12 w-12 text-muted-foreground" />
+          </div>
+          
+          {/* Title */}
+          <h3 className="text-xl font-semibold mb-3 text-foreground">
+            {searchQuery ? "No communities found" : "No communities yet"}
+          </h3>
+          
+          {/* Description */}
+          <p className="text-muted-foreground text-base leading-relaxed mb-6 max-w-sm">
+            {searchQuery 
+              ? `No communities found matching "${searchQuery}". Try a different search term or clear the search.`
+              : "This seller doesn't have any communities available yet. Check back later as the seller adds new learning communities."}
+          </p>
+          
+          {/* Action Button */}
+          {searchQuery ? (
+            <Button 
+              variant="outline" 
+              onClick={() => setSearchQuery("")}
+              className="px-6"
+            >
+              Clear Search
+            </Button>
+          ) : isCurrentUserSeller ? (
+            <Button 
+              onClick={handleCreateCommunity}
+              className="px-6"
+            >
+              Create Your First Community
+            </Button>
+          ) : null}
+        </div>
       ) : (
         filteredCommunities.map((community) => {
           // Safely access community properties with fallbacks
