@@ -89,12 +89,23 @@ export default function SignUpCommunityPage() {
 
       console.log("User created successfully:", authData.user.id);
 
+      // Determine status based on community type and price
+      let subscriptionStatus: 'active' | 'inactive' | 'pending';
+      
+      if (community.type !== 'private') {
+        // If community is not private, set as active regardless of price
+        subscriptionStatus = 'active';
+      } else {
+        // If community is private, use the existing logic
+        subscriptionStatus = (community.price && community.price > 0 ? 'pending' : 'active') as 'active' | 'inactive' | 'pending';
+      }
+
       const subscriptionData = {
         user_uuid: authData.user.id,
         community_uuid: id,
         expert_user_uuid: community.expert_uuid,
         email: email,
-        status: (community.price && community.price > 0 ? 'pending' : 'active') as 'active' | 'inactive' | 'pending',
+        status: subscriptionStatus,
         type: (community.price && community.price > 0 ? 'paid' : 'free') as 'free' | 'paid',
         amount: community.price || 0,
       };
@@ -115,7 +126,7 @@ export default function SignUpCommunityPage() {
 
       console.log("Community subscription created:", subscriptionResult);
 
-      if (community.price && community.price > 0) {
+      if (community.type === 'private' && community.price && community.price > 0) {
         toast.success("Account created! Please complete payment to access the community.");
       } else {
         toast.success("Welcome! You've successfully joined the community.");
