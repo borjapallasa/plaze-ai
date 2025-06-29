@@ -31,7 +31,6 @@ import AdminDashboardPage from "./pages/admin/AdminDashboard";
 import AdminUsersPage from "./pages/admin/AdminUsers";
 import AdminUserDetailsPage from "./pages/admin/AdminUserDetails";
 import AdminExpertsPage from "./pages/admin/AdminExperts";
-import AdminExpertDetailsPage from "./pages/admin/AdminExpertDetails";
 import AdminTransactionsPage from "./pages/admin/AdminTransactions";
 import AdminTransactionDetailsPage from "./pages/admin/AdminTransactionDetails";
 import DraftTemplatesPage from "./pages/admin/DraftTemplates";
@@ -62,7 +61,7 @@ function App() {
           <Route path="/sell" element={<SellPage />} />
           <Route path="/seller/products/new" element={<NewProductPage />} />
           <Route path="/seller/communities/new" element={<NewCommunityPage />} />
-          <Route path="/seller/:id" element={<SellerPage />} />
+          <Route path="/seller/:id" element={<SellerPage mode="seller" />} />
           <Route path="/product/:id/edit" element={<EditProductPage />} />
           <Route path="/community/:id/edit" element={<EditCommunityPage />} />
           <Route path="/community/:id/products/new" element={<NewCommunityProductPage />} />
@@ -85,7 +84,7 @@ function App() {
           <Route path="/admin/users" element={<AdminUsersPage />} />
           <Route path="/admin/users/user/:id" element={<AdminUserDetailsPage />} />
           <Route path="/admin/experts" element={<AdminExpertsPage />} />
-          <Route path="/admin/experts/expert/:id" element={<AdminExpertDetailsPage />} />
+          <Route path="/admin/experts/expert/:id" element={<SellerPage mode="admin" />} />
           <Route path="/admin/admins/admin/:id" element={<AdminUserDetailsPage />} />
           <Route path="/admin/transactions" element={<AdminTransactionsPage />} />
           <Route path="/admin/transaction/:id" element={<AdminTransactionDetailsPage />} />
