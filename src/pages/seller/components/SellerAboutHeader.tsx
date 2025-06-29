@@ -4,7 +4,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
 import { MapPin, Star, Users, Package } from "lucide-react";
 import { useExpertReviews } from "@/hooks/expert/useExpertReviews";
 import type { Expert } from "@/types/expert";
@@ -22,19 +21,6 @@ export function SellerAboutHeader({
 }: SellerAboutHeaderProps) {
   // Fetch actual reviews to calculate average rating
   const { data: reviews = [] } = useExpertReviews(seller.expert_uuid);
-
-  const getBadgeVariant = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'default';
-      case 'in review':
-        return 'warning';
-      case 'suspended':
-        return 'destructive';
-      default:
-        return 'outline';
-    }
-  };
 
   // Calculate actual average rating from reviews
   const averageRating = reviews.length > 0 
@@ -86,20 +72,10 @@ export function SellerAboutHeader({
               
               {/* Name, Title, Location, Description */}
               <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex items-center gap-3">
-                    <h1 className="text-3xl font-bold text-foreground leading-tight">
-                      {seller.name}
-                    </h1>
-                    {seller.status && (
-                      <Badge 
-                        variant={getBadgeVariant(seller.status)}
-                        className="text-xs px-2 py-1 capitalize"
-                      >
-                        {seller.status}
-                      </Badge>
-                    )}
-                  </div>
+                <div className="mb-2">
+                  <h1 className="text-3xl font-bold text-foreground leading-tight">
+                    {seller.name}
+                  </h1>
                 </div>
                 
                 {/* Role & Location */}
@@ -173,18 +149,10 @@ export function SellerAboutHeader({
               </div>
               
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
+                <div className="mb-1">
                   <h1 className="text-2xl font-bold text-foreground leading-tight">
                     {seller.name}
                   </h1>
-                  {seller.status && (
-                    <Badge 
-                      variant={getBadgeVariant(seller.status)}
-                      className="text-xs px-2 py-1 capitalize"
-                    >
-                      {seller.status}
-                    </Badge>
-                  )}
                 </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   {seller.title && <span className="font-medium">{seller.title}</span>}
