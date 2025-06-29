@@ -1,9 +1,7 @@
-
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { CircleCheckBig } from "lucide-react";
-
 export function WelcomePanel() {
   return <div className="space-y-8">
       <div className="flex items-center gap-3">
@@ -25,18 +23,18 @@ export function WelcomePanel() {
         </div>
       </div>
 
-      <div className="p-8 rounded-2xl" style={{ backgroundColor: '#EEF3FF' }}>
-        <div className="space-y-4">
+      <Card className="bg-muted/50 border-muted">
+        <div className="p-6">
           <div className="space-y-2">
-            <h3 className="text-xl font-semibold text-foreground">Are you a creator?</h3>
-            <p className="text-muted-foreground">The Operative System for Digital Creators.</p>
+            <h3 className="font-semibold text-foreground">Are you a creator?</h3>
+            <p className="text-sm text-muted-foreground">The Operative System for Digital Creators.</p>
           </div>
           <Link to="/sell">
-            <Button className="bg-white text-foreground border border-gray-200 hover:bg-gray-50 px-8 py-3 rounded-xl font-medium">
+            <Button variant="ghost" className="mt-4 p-0 h-auto font-medium text-foreground hover:text-primary">
               Sell on Plaze →
             </Button>
           </Link>
         </div>
-      </div>
+      </Card>
     </div>;
 }
