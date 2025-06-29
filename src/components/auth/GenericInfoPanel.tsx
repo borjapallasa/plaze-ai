@@ -4,10 +4,11 @@ import { ArrowRight, CheckCircle } from "lucide-react";
 
 export function GenericInfoPanel() {
   const features = [
-    "Connect with expert communities",
-    "Access premium products and services", 
-    "Join exclusive learning experiences",
-    "Build your professional network"
+    "Launch expert-led communities in minutes",
+    "Sell premium digital products with built-in upsells & affiliate tools", 
+    "Unlock new revenue through partner collaborations",
+    "Share knowledge with members through gated content",
+    "Scale without the tech hassle"
   ];
 
   return (
@@ -21,10 +22,10 @@ export function GenericInfoPanel() {
         />
         <div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Welcome to Plaze.ai
+            Welcome to Plaze
           </h1>
           <p className="text-xl text-gray-600">
-            The platform connecting experts with their communities
+            The all-in-one platform where experts build communities, sell digital products, and grow faster together.
           </p>
         </div>
       </div>
@@ -32,7 +33,7 @@ export function GenericInfoPanel() {
       {/* Features List */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900">
-          Join thousands of professionals who use Plaze.ai to:
+          Join thousands of creators, educators, and professionals using Plaze to:
         </h3>
         <ul className="space-y-3">
           {features.map((feature, index) => (
@@ -47,13 +48,13 @@ export function GenericInfoPanel() {
       {/* CTA */}
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6">
         <h4 className="font-semibold text-gray-900 mb-2">
-          Ready to get started?
+          Ready to build your creator business?
         </h4>
         <p className="text-gray-600 text-sm mb-4">
-          Create your account and start connecting with expert communities today.
+          Sign up and start creating your community, product, or both — in just a few clicks.
         </p>
         <Button variant="outline" className="group">
-          Learn More
+          Get Started
           <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
         </Button>
       </div>
