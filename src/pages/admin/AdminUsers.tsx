@@ -36,19 +36,18 @@ export default function AdminUsers() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const { 
-    data: users = [], 
+    data: usersData, 
     isLoading, 
     error, 
-    refetch,
-    hasNextPage,
-    fetchNextPage,
-    isFetchingNextPage
+    refetch
   } = useUsers({
     searchTerm,
     sortBy,
     sortOrder,
     statusFilter
   });
+
+  const users = Array.isArray(usersData) ? usersData : usersData?.users || [];
 
   const handleSort = (field: string) => {
     const typedField = field as keyof UserData;
@@ -66,9 +65,7 @@ export default function AdminUsers() {
   };
 
   const handleLoadMore = () => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
+    // Load more functionality can be implemented here if needed
   };
 
   if (isLoading) {
@@ -82,16 +79,16 @@ export default function AdminUsers() {
   return (
     <div className="container mx-auto px-4 py-8">
       <UsersHeader 
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
+        searchQuery={searchTerm}
+        setSearchQuery={setSearchTerm}
+        roleFilter={statusFilter}
+        setRoleFilter={setStatusFilter}
       />
       
       <div className="flex justify-between items-center mb-6">
         <UsersSortSelector 
-          sortBy={sortBy}
-          sortOrder={sortOrder}
+          currentSort={sortBy}
+          currentOrder={sortOrder}
           onSortChange={(field: keyof UserData) => handleSort(field)}
         />
         <UsersLayoutSwitcher layout={layout} onLayoutChange={setLayout} />
@@ -105,21 +102,21 @@ export default function AdminUsers() {
           sortOrder={sortOrder}
           onUserClick={handleUserClick}
           onLoadMore={handleLoadMore}
-          hasNextPage={hasNextPage}
-          isFetchingNextPage={isFetchingNextPage}
+          hasNextPage={false}
+          isFetchingNextPage={false}
         />
       ) : (
         <UsersGallery 
           users={users}
           onUserClick={handleUserClick}
           onLoadMore={handleLoadMore}
-          hasNextPage={hasNextPage}
-          isFetchingNextPage={isFetchingNextPage}
+          hasNextPage={false}
+          isFetchingNextPage={false}
         />
       )}
 
       <UserDetailsDialog
-        user={selectedUser}
+        selectedUser={selectedUser}
         open={showUserDialog}
         onOpenChange={setShowUserDialog}
       />

@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Copy, Check } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { CommunityDangerZone } from "./CommunityDangerZone";
-import { EditCommunityRelatedProducts } from "./EditCommunityRelatedProduts";
 import { formatNumber } from "@/lib/utils";
 
 export interface Community {
@@ -31,7 +30,7 @@ interface CommunityStatsProps {
   setShowDeleteDialog: (show: boolean) => void;
   isDeleting: boolean;
   onDeleteCommunity: (redirectUrl: string) => void;
-  communityName: string; // Add communityName as a separate prop
+  communityName: string;
 }
 
 export function CommunityStats({
@@ -45,7 +44,7 @@ export function CommunityStats({
   setShowDeleteDialog,
   isDeleting,
   onDeleteCommunity,
-  communityName // Use the new prop
+  communityName
 }: CommunityStatsProps) {
   const formatCurrency = (amount: number | null | undefined) => {
     if (amount === null || amount === undefined) return '$0';
@@ -125,12 +124,6 @@ export function CommunityStats({
         </div>
       </Card>
 
-      {/* Add community related products section here */}
-      <Card className="p-4 sm:p-6 border border-border/40 bg-card/40">
-        <h2 className="text-lg font-semibold tracking-tight mb-4">Related Community Products</h2>
-        <EditCommunityRelatedProducts community={community} />
-      </Card>
-
       <Card className="p-4 sm:p-6 border border-border/40 bg-card/40">
         <h2 className="text-lg font-semibold tracking-tight mb-4">Advanced Settings</h2>
         <div>
@@ -149,9 +142,8 @@ export function CommunityStats({
           />
         </div>
 
-        {/* Danger Zone component */}
         <CommunityDangerZone
-          communityName={communityName} // Use the communityName prop instead of community.name
+          communityName={communityName}
           isDeleting={isDeleting}
           showDeleteDialog={showDeleteDialog}
           sellerUuid={community?.expert_uuid || ""}
