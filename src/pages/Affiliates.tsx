@@ -1,160 +1,81 @@
 
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { MainHeader } from "@/components/MainHeader";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
-import { Copy, DollarSign, Users, TrendingUp, Settings } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
 import { AffiliateTable } from "@/components/affiliates/AffiliateTable";
-import { AffiliateDashboard } from "@/components/affiliates/AffiliateDashboard";
-import { PaymentSettingsDialog } from "@/components/affiliates/PaymentSettingsDialog";
-import { useAuth } from "@/lib/auth";
+import { AffiliateDetailsDialog } from "@/components/affiliates/AffiliateDetailsDialog";
+import { Button } from "@/components/ui/button";
+import { Download, Filter } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Affiliates() {
-  const { user } = useAuth();
-  const { toast } = useToast();
-  const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
+  const [selectedAffiliateId, setSelectedAffiliateId] = useState<string | null>(null);
+  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
 
-  const { data: affiliateData, isLoading, error } = useQuery({
-    queryKey: ['affiliate-data', user?.id],
+  const { data: affiliates, isLoading, error } = useQuery({
+    queryKey: ['affiliates'],
     queryFn: async () => {
-      if (!user?.id) {
-        console.error('No user ID provided for affiliate data query');
-        return null;
-      }
-
       const { data, error } = await supabase
         .from('affiliates')
         .select('*')
-        .eq('user_uuid', user.id)
-        .single();
+        .order('created_at', { ascending: false });
 
       if (error) {
-        console.error("Error fetching affiliate data:", error);
-        return null;
+        console.error("Error fetching affiliates:", error);
+        throw error;
       }
 
       return data;
     },
-    enabled: !!user?.id,
   });
 
-  const { data: referrals, isLoading: isReferralsLoading, error: referralsError } = useQuery({
-    queryKey: ['affiliate-referrals', affiliateData?.affiliate_uuid],
-    queryFn: async () => {
-      if (!affiliateData?.affiliate_uuid) {
-        console.warn('No affiliate UUID available, skipping referrals query');
-        return [];
-      }
-
-      // For now, return empty array as referrals table doesn't exist in schema
-      return [];
-    },
-    enabled: !!affiliateData?.affiliate_uuid,
-  });
-
-  const handleCopyClick = () => {
-    if (affiliateData?.affiliate_code) {
-      const referralLink = `${window.location.origin}?ref=${affiliateData.affiliate_code}`;
-      navigator.clipboard.writeText(referralLink);
-      toast({
-        title: "Referral link copied!",
-        description: "Share this link with your friends.",
-      });
-    } else {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "No affiliate code available.",
-      });
-    }
+  const handleAffiliateClick = (affiliateId: string) => {
+    setSelectedAffiliateId(affiliateId);
+    setIsDetailsDialogOpen(true);
   };
-
-  if (isLoading) {
-    return (
-      <>
-        <MainHeader />
-        <div className="container mx-auto px-4 py-8 mt-16">
-          <div className="animate-pulse space-y-4">
-            <div className="h-64 bg-muted rounded-lg"></div>
-            <div className="h-8 w-1/3 bg-muted rounded"></div>
-            <div className="h-4 w-2/3 bg-muted rounded"></div>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  if (error) {
-    return (
-      <>
-        <MainHeader />
-        <div className="container mx-auto px-4 py-8 mt-16">
-          <Card className="p-6">
-            <h1 className="text-xl font-semibold">Error</h1>
-            <p className="text-muted-foreground mt-2">
-              Failed to load affiliate data. Please try again later.
-            </p>
-          </Card>
-        </div>
-      </>
-    );
-  }
-
-  if (!affiliateData) {
-    return (
-      <>
-        <MainHeader />
-        <div className="container mx-auto px-4 py-8 mt-16">
-          <Card className="p-6">
-            <h1 className="text-xl font-semibold">Affiliate Program</h1>
-            <p className="text-muted-foreground mt-2">
-              You are not currently an affiliate. Contact support to become an affiliate.
-            </p>
-          </Card>
-        </div>
-      </>
-    );
-  }
 
   return (
     <>
       <MainHeader />
       <div className="container mx-auto px-4 py-8 mt-16">
-        <Tabs defaultValue="dashboard" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-            <TabsTrigger value="referrals">Referrals</TabsTrigger>
-            <TabsTrigger value="settings">Settings</TabsTrigger>
-          </TabsList>
-          <TabsContent value="dashboard" className="space-y-4">
-            <AffiliateDashboard />
-          </TabsContent>
-          <TabsContent value="referrals" className="space-y-4">
-            <AffiliateTable />
-          </TabsContent>
-          <TabsContent value="settings" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Payment Settings</CardTitle>
-                <CardDescription>Update your payment information.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button onClick={() => setIsPaymentDialogOpen(true)}>Update Payment Settings</Button>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Affiliates</h1>
+            <p className="text-muted-foreground">
+              Manage affiliate partnerships and track performance
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm">
+              <Filter className="h-4 w-4 mr-2" />
+              Filter
+            </Button>
+            <Button variant="outline" size="sm">
+              <Download className="h-4 w-4 mr-2" />
+              Export
+            </Button>
+          </div>
+        </div>
 
-        <PaymentSettingsDialog
-          open={isPaymentDialogOpen}
-          onOpenChange={setIsPaymentDialogOpen}
-          affiliateUuid={affiliateData?.affiliate_uuid || ''}
+        {isLoading ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        ) : error ? (
+          <div className="text-center py-8">
+            <p className="text-destructive">Error loading affiliates</p>
+          </div>
+        ) : (
+          <AffiliateTable 
+            affiliates={affiliates || []} 
+            onAffiliateClick={handleAffiliateClick}
+          />
+        )}
+
+        <AffiliateDetailsDialog
+          affiliateUuid={selectedAffiliateId}
+          isOpen={isDetailsDialogOpen}
+          onOpenChange={setIsDetailsDialogOpen}
         />
       </div>
     </>
