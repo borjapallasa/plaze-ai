@@ -78,15 +78,15 @@ export function SellerHeader({
             {/* Main Content Section */}
             <div className="flex items-start gap-6 flex-1">
               {/* Avatar */}
-              <div className="w-20 h-20 flex-shrink-0">
+              <div className="w-24 h-24 flex-shrink-0">
                 <AspectRatio ratio={1} className="overflow-hidden rounded-full">
-                  <Avatar className="h-full w-full border-4 border-gray-100">
+                  <Avatar className="h-full w-full border-4 border-gray-100 shadow-lg">
                     <AvatarImage 
                       src={seller.thumbnail} 
                       alt={seller.name}
                       className="object-cover"
                     />
-                    <AvatarFallback className="text-xl font-bold bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+                    <AvatarFallback className="text-2xl font-bold bg-gradient-to-br from-blue-500 to-purple-600 text-white">
                       {seller.name?.split(' ').map(n => n[0]).join('') || 'UN'}
                     </AvatarFallback>
                   </Avatar>
@@ -94,11 +94,11 @@ export function SellerHeader({
               </div>
               
               {/* Name, Title, Location, Description */}
-              <div className="flex-1 min-w-0 space-y-4">
+              <div className="flex-1 min-w-0 space-y-5">
                 <div className="flex items-start justify-between">
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div className="flex items-center gap-3">
-                      <h1 className="text-4xl font-bold text-gray-900 leading-tight">
+                      <h1 className="text-4xl font-bold text-gray-900 leading-tight tracking-tight">
                         {seller.name}
                       </h1>
                       {seller.status && (
@@ -112,7 +112,7 @@ export function SellerHeader({
                     </div>
                     
                     {/* Category and Location */}
-                    <div className="flex items-center gap-4 text-base text-gray-600">
+                    <div className="flex items-center gap-4 text-lg text-gray-600">
                       {seller.title && (
                         <span className="font-semibold text-gray-700">{seller.title}</span>
                       )}
@@ -121,7 +121,7 @@ export function SellerHeader({
                       )}
                       {seller.location && (
                         <div className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4 text-gray-400" />
+                          <MapPin className="h-5 w-5 text-gray-400" />
                           <span>{seller.location}</span>
                         </div>
                       )}
@@ -163,8 +163,8 @@ export function SellerHeader({
                 
                 {/* Description */}
                 {seller.description && (
-                  <div className="max-w-2xl">
-                    <p className="text-base text-gray-600 leading-relaxed">
+                  <div className="max-w-3xl">
+                    <p className="text-lg text-gray-600 leading-relaxed whitespace-pre-wrap">
                       {seller.description}
                     </p>
                   </div>
@@ -206,24 +206,24 @@ export function SellerHeader({
           <div className="lg:hidden">
             {/* Avatar and Name Row */}
             <div className="flex items-start gap-4 mb-6">
-              <div className="w-16 h-16 flex-shrink-0">
+              <div className="w-18 h-18 flex-shrink-0">
                 <AspectRatio ratio={1} className="overflow-hidden rounded-full">
-                  <Avatar className="h-full w-full border-2 border-gray-100">
+                  <Avatar className="h-full w-full border-3 border-gray-100 shadow-md">
                     <AvatarImage 
                       src={seller.thumbnail} 
                       alt={seller.name}
                       className="object-cover"
                     />
-                    <AvatarFallback className="text-lg font-bold bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+                    <AvatarFallback className="text-xl font-bold bg-gradient-to-br from-blue-500 to-purple-600 text-white">
                       {seller.name?.split(' ').map(n => n[0]).join('') || 'UN'}
                     </AvatarFallback>
                   </Avatar>
                 </AspectRatio>
               </div>
               
-              <div className="flex-1 min-w-0 space-y-2">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h1 className="text-2xl font-bold text-gray-900 leading-tight">
+              <div className="flex-1 min-w-0 space-y-3">
+                <div className="flex items-center gap-3 flex-wrap">
+                  <h1 className="text-3xl font-bold text-gray-900 leading-tight tracking-tight">
                     {seller.name}
                   </h1>
                   {seller.status && (
@@ -235,12 +235,12 @@ export function SellerHeader({
                     </Badge>
                   )}
                 </div>
-                <div className="flex items-center gap-3 text-sm text-gray-600 flex-wrap">
+                <div className="flex items-center gap-3 text-base text-gray-600 flex-wrap">
                   {seller.title && <span className="font-semibold text-gray-700">{seller.title}</span>}
                   {seller.title && seller.location && <span className="text-gray-400">•</span>}
                   {seller.location && (
-                    <div className="flex items-center gap-1">
-                      <MapPin className="h-3 w-3 text-gray-400" />
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-gray-400" />
                       <span>{seller.location}</span>
                     </div>
                   )}
@@ -251,7 +251,7 @@ export function SellerHeader({
             {/* Description */}
             {seller.description && (
               <div className="mb-6">
-                <p className="text-base text-gray-600 leading-relaxed">
+                <p className="text-base text-gray-600 leading-relaxed whitespace-pre-wrap">
                   {seller.description}
                 </p>
               </div>
