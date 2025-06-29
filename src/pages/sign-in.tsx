@@ -66,10 +66,17 @@ export default function SignIn() {
   return (
     <div className="min-h-screen flex">
       {/* Left side - Welcome section */}
-      <div className="flex-1 bg-background p-12 flex flex-col justify-center max-w-lg">
+      <div className="hidden lg:flex lg:flex-1 bg-background p-12 flex-col justify-center max-w-lg">
         <div className="space-y-8">
           <div>
-            <h1 className="text-2xl font-bold text-foreground mb-2">plaze.ai</h1>
+            <div className="flex items-center mb-4">
+              <img
+                src="/placeholder.svg"
+                alt="Plaze.ai Logo"
+                className="h-8 w-8 mr-3"
+              />
+              <h1 className="text-2xl font-bold text-foreground">plaze.ai</h1>
+            </div>
             <p className="text-muted-foreground leading-relaxed">
               Explore premium content, connect with experts, and join communities built around what you love.
             </p>
@@ -113,9 +120,21 @@ export default function SignIn() {
       </div>
 
       {/* Right side - Sign in form */}
-      <div className="flex-1 bg-muted/40 p-12 flex items-center justify-center">
-        <Card className="w-full max-w-md p-8">
-          <div className="space-y-8">
+      <div className="flex-1 bg-muted/40 p-6 lg:p-12 flex items-center justify-center">
+        <Card className="w-full max-w-md p-6 lg:p-8">
+          <div className="space-y-6 lg:space-y-8">
+            {/* Mobile logo - only shown on small screens */}
+            <div className="lg:hidden text-center">
+              <div className="flex items-center justify-center mb-2">
+                <img
+                  src="/placeholder.svg"
+                  alt="Plaze.ai Logo"
+                  className="h-8 w-8 mr-3"
+                />
+                <h1 className="text-2xl font-bold text-foreground">plaze.ai</h1>
+              </div>
+            </div>
+
             <div className="text-center space-y-2">
               <h1 className="text-2xl font-bold">Welcome back</h1>
             </div>

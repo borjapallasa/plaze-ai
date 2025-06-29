@@ -1,51 +1,39 @@
 
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { MainHeader } from "@/components/MainHeader";
-import { ExpertHeader } from "@/components/expert/ExpertHeader";
-import { ExpertContent } from "@/components/expert/layout/ExpertContent";
 import { ExpertLoadingState } from "@/components/expert/layout/ExpertLoadingState";
 import { ExpertNotFound } from "@/components/expert/layout/ExpertNotFound";
-import { useParams } from "react-router-dom";
+import { ExpertContent } from "@/components/expert/layout/ExpertContent";
 import { useExpertQuery } from "@/hooks/expert/useExpertQuery";
-import { useExpertReviews } from "@/hooks/expert/useExpertReviews";
 import { useExpertServices } from "@/hooks/expert/useExpertServices";
-import { useExpertCommunity } from "@/hooks/expert/useExpertCommunity";
-import { moreProducts } from "@/data/moreProducts";
 
 export default function Expert() {
   const { expert_uuid } = useParams();
-  
-  const { data: expert, isLoading: isLoadingExpert } = useExpertQuery(expert_uuid);
-  const { data: reviews } = useExpertReviews(expert?.expert_uuid);
-  const { data: services, isLoading: isLoadingServices } = useExpertServices(expert?.expert_uuid);
-  const { data: randomCommunity } = useExpertCommunity(expert?.expert_uuid);
+  const { data: expert, isLoading: expertLoading, error: expertError } = useExpertQuery(expert_uuid);
+  const { services, isLoading: servicesLoading } = useExpertServices(expert?.expert_uuid);
 
-  console.log("Expert page - expert_uuid from params:", expert_uuid);
-  console.log("Expert page - expert data:", expert);
-  console.log("Expert page - services (only active):", services);
-
-  if (isLoadingExpert || isLoadingServices) {
+  if (expertLoading) {
     return <ExpertLoadingState />;
   }
 
-  if (!expert) {
+  if (expertError || !expert) {
     return <ExpertNotFound />;
   }
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="pt-16">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-background">
         <MainHeader />
-        <div className="container mx-auto px-4">
-          <ExpertHeader expert={expert} />
-        </div>
+      </div>
+
+      <main className="pt-24">
         <ExpertContent 
           expert={expert} 
-          services={services || []} 
-          moreProducts={moreProducts}
-          reviews={reviews || []}
-          community={randomCommunity}
+          services={services}
+          servicesLoading={servicesLoading}
         />
-      </div>
+      </main>
     </div>
   );
 }

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Mail, Lock, User, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, Loader2, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -22,7 +22,7 @@ export default function SignUp() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
+    
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -31,9 +31,8 @@ export default function SignUp() {
           data: {
             first_name: firstName,
             last_name: lastName,
-          },
-          emailRedirectTo: `${window.location.origin}/`,
-        },
+          }
+        }
       });
 
       if (error) {
@@ -42,10 +41,10 @@ export default function SignUp() {
       }
 
       if (data.user) {
-        toast.success("Successfully signed up! Please check your email for verification.");
-        navigate("/sign-in");
+        toast.success("Account created successfully! Please check your email to verify your account.");
+        navigate("/");
       }
-    } catch (error: any) {
+    } catch (error) {
       toast.error("An unexpected error occurred");
     } finally {
       setLoading(false);
@@ -75,23 +74,30 @@ export default function SignUp() {
   return (
     <div className="min-h-screen flex">
       {/* Left side - Welcome section */}
-      <div className="flex-1 bg-background p-12 flex flex-col justify-center max-w-lg">
+      <div className="hidden lg:flex lg:flex-1 bg-background p-12 flex-col justify-center max-w-lg">
         <div className="space-y-8">
           <div>
-            <h1 className="text-2xl font-bold text-foreground mb-2">plaze.ai</h1>
+            <div className="flex items-center mb-4">
+              <img
+                src="/placeholder.svg"
+                alt="Plaze.ai Logo"
+                className="h-8 w-8 mr-3"
+              />
+              <h1 className="text-2xl font-bold text-foreground">plaze.ai</h1>
+            </div>
             <p className="text-muted-foreground leading-relaxed">
-              Explore premium content, connect with experts, and join communities built around what you love.
+              Join thousands of creators and learners. Start your journey with premium content and expert communities.
             </p>
           </div>
 
           <div className="space-y-4">
-            <h2 className="font-semibold text-foreground">Join thousands using Plaze to:</h2>
+            <h2 className="font-semibold text-foreground">Start your journey to:</h2>
             <div className="space-y-3">
               {[
-                "Discover expert-made digital products",
-                "Join private communities around your passions", 
-                "Access exclusive content and member-only perks",
-                "Learn from creators through workshops and templates"
+                "Access premium digital products and resources",
+                "Connect with like-minded community members", 
+                "Learn from industry experts and creators",
+                "Build your network and grow your skills"
               ].map((item, index) => (
                 <div key={index} className="flex items-start gap-3">
                   <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center mt-0.5 flex-shrink-0">
@@ -108,12 +114,12 @@ export default function SignUp() {
           <Card className="bg-muted/50 border-muted">
             <div className="p-6">
               <div className="space-y-2">
-                <h3 className="font-semibold text-foreground">Are you a creator?</h3>
-                <p className="text-sm text-muted-foreground">The Operative System for Digital Creators.</p>
+                <h3 className="font-semibold text-foreground">Ready to create?</h3>
+                <p className="text-sm text-muted-foreground">Turn your expertise into income.</p>
               </div>
               <Link to="/sell">
                 <Button variant="ghost" className="mt-4 p-0 h-auto font-medium text-foreground hover:text-primary">
-                  Sell on Plaze →
+                  Start Selling →
                 </Button>
               </Link>
             </div>
@@ -122,11 +128,24 @@ export default function SignUp() {
       </div>
 
       {/* Right side - Sign up form */}
-      <div className="flex-1 bg-muted/40 p-12 flex items-center justify-center">
-        <Card className="w-full max-w-md p-8">
-          <div className="space-y-8">
+      <div className="flex-1 bg-muted/40 p-6 lg:p-12 flex items-center justify-center">
+        <Card className="w-full max-w-md p-6 lg:p-8">
+          <div className="space-y-6 lg:space-y-8">
+            {/* Mobile logo - only shown on small screens */}
+            <div className="lg:hidden text-center">
+              <div className="flex items-center justify-center mb-2">
+                <img
+                  src="/placeholder.svg"
+                  alt="Plaze.ai Logo"
+                  className="h-8 w-8 mr-3"
+                />
+                <h1 className="text-2xl font-bold text-foreground">plaze.ai</h1>
+              </div>
+            </div>
+
             <div className="text-center space-y-2">
               <h1 className="text-2xl font-bold">Create your account</h1>
+              <p className="text-muted-foreground">Join the community today</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -135,7 +154,8 @@ export default function SignUp() {
                   <div className="relative">
                     <User className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
                     <Input
-                      placeholder="First Name"
+                      placeholder="First name"
+                      type="text"
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                       className="pl-10"
@@ -145,7 +165,8 @@ export default function SignUp() {
                   <div className="relative">
                     <User className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
                     <Input
-                      placeholder="Last Name"
+                      placeholder="Last name"
+                      type="text"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
                       className="pl-10"
@@ -194,7 +215,7 @@ export default function SignUp() {
                 {loading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  "Sign Up"
+                  "Create Account"
                 )}
               </Button>
             </form>
