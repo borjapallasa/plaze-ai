@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -42,6 +41,12 @@ export default function SignUpCommunityPage() {
     console.log("Sign up attempt with:", { email, password, firstName, lastName, communityId: id });
   };
 
+  const formatMemberCount = (count?: number) => {
+    if (!count) return "Join the community";
+    if (count > 1000) return `Join ${(count / 1000).toFixed(1)}k members`;
+    return `Join ${count} members`;
+  };
+
   if (isLoading) {
     return <LoadingState />;
   }
@@ -69,6 +74,9 @@ export default function SignUpCommunityPage() {
                   <h2 className="text-xl font-semibold text-gray-900 mb-2">
                     Create your account
                   </h2>
+                  <p className="text-sm text-gray-600 font-normal">
+                    {formatMemberCount(community.member_count)} and unlock exclusive content
+                  </p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
