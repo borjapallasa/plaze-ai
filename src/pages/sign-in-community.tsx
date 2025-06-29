@@ -109,10 +109,10 @@ export default function SignInCommunityPage() {
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
               <div className="space-y-8">
                 <div className="text-center">
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+                  <h2 className="text-xl font-semibold text-gray-900 mb-1">
                     Welcome back
                   </h2>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-xs text-gray-600">
                     Sign in to continue your journey
                   </p>
                 </div>
