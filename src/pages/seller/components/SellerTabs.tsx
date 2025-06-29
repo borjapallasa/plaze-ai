@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ShoppingBag, UsersRound, BarChart3, Star } from "lucide-react";
@@ -6,24 +7,19 @@ import { ProductsTab } from "./ProductsTab";
 import { CommunitiesTab } from "./CommunitiesTab";
 import { MetricsTab } from "./MetricsTab";
 import { ReviewsTab } from "./ReviewsTab";
-import type { Service } from "@/components/expert/types";
 
 interface SellerTabsProps {
   products: any[];
-  services: Service[];
   communities: any[];
   productsLoading: boolean;
-  servicesLoading: boolean;
   communitiesLoading: boolean;
   expertUuid?: string;
 }
 
 export function SellerTabs({
   products,
-  services,
   communities,
   productsLoading,
-  servicesLoading,
   communitiesLoading,
   expertUuid
 }: SellerTabsProps) {

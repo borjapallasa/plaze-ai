@@ -1,87 +1,52 @@
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
-import type { ServiceStatus, ServiceType } from "@/components/expert/types";
 
 interface ServiceData {
   name: string;
   description: string;
   price: number;
-  type: ServiceType;
+  comparePrice?: number;
+  type: 'service' | 'consultation';
   features: string[];
-  main_category: { value: string } | null;
-  subcategory: { value: string }[] | null;
-  status: ServiceStatus;
+  category: string;
+  tags: string[];
+  duration?: string;
+  deliveryTime?: string;
+  revisions?: number;
 }
 
-export const useCreateService = () => {
-  const [isCreating, setIsCreating] = useState(false);
+export function useCreateService() {
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
   const { user } = useAuth();
 
   const createService = async (serviceData: ServiceData) => {
     if (!user) {
-      throw new Error("User not authenticated");
+      toast.error("You must be logged in to create a service");
+      return;
     }
 
-    setIsCreating(true);
-    
+    setIsLoading(true);
+
     try {
-      console.log("Creating service with data:", JSON.stringify(serviceData));
-      
-      const { data: expertData, error: expertError } = await supabase
-        .from("experts")
-        .select("expert_uuid")
-        .eq("user_uuid", user.id)
-        .single();
-
-      if (expertError) {
-        console.error("Error fetching expert:", expertError);
-        throw expertError;
-      }
-
-      const expertUuid = expertData?.expert_uuid;
-      
-      if (!expertUuid) {
-        throw new Error("Expert profile not found");
-      }
-      
-      // Ensure proper structure for Supabase
-      const servicePayload = {
-        user_uuid: user.id,
-        expert_uuid: expertUuid,
-        name: serviceData.name,
-        description: serviceData.description,
-        price: serviceData.price,
-        type: serviceData.type,
-        features: serviceData.features,
-        main_category: serviceData.main_category,
-        subcategory: serviceData.subcategory,
-        status: serviceData.status
-      };
-      
-      console.log("Service payload for Supabase:", JSON.stringify(servicePayload));
-
-      const { data, error } = await supabase
-        .from("services")
-        .insert(servicePayload)
-        .select()
-        .single();
-
-      if (error) {
-        console.error("Error creating service:", error);
-        throw error;
-      }
-      
-      console.log("Service created successfully:", data);
-      return data;
-    } catch (error) {
-      console.error("Service creation failed:", error);
-      throw error;
+      // For now, just show a toast message since services table doesn't exist
+      // This can be updated when the services functionality is properly implemented
+      toast.success("Service creation is not yet implemented");
+      navigate("/");
+    } catch (error: any) {
+      console.error("Error creating service:", error);
+      toast.error("Failed to create service");
     } finally {
-      setIsCreating(false);
+      setIsLoading(false);
     }
   };
 
-  return { createService, isCreating };
-};
+  return {
+    createService,
+    isLoading
+  };
+}

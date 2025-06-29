@@ -9,7 +9,6 @@ import { SellerErrorState } from "./components/SellerErrorState";
 import { SellerTabs } from "./components/SellerTabs";
 import { useSellerData } from "@/hooks/seller/useSellerData";
 import { useSellerProducts } from "@/hooks/seller/useSellerProducts";
-import { useSellerServices } from "@/hooks/seller/useSellerServices";
 import type { Expert } from "@/types/expert";
 import { toast } from "sonner";
 
@@ -41,12 +40,6 @@ export default function SellerPage() {
     isLoading: productsLoading 
   } = useSellerProducts(currentSeller?.expert_uuid);
 
-  // Fetch services data
-  const { 
-    services = [], 
-    isLoading: servicesLoading 
-  } = useSellerServices(currentSeller?.expert_uuid);
-
   // Fetch communities data
   const { 
     data: communities = [], 
@@ -61,11 +54,6 @@ export default function SellerPage() {
     refetchSeller();
     toast.success("Expert profile updated successfully");
   };
-
-  // Calculate total earnings from services
-  const totalEarnings = services.reduce((total, service) => {
-    return total + (service.revenue_amount || 0);
-  }, 0);
 
   // Show loading state
   if (sellerLoading) {
@@ -88,16 +76,14 @@ export default function SellerPage() {
           seller={currentSeller} 
           productsCount={products?.length || 0}
           communitiesCount={communities?.length || 0}
-          totalEarnings={totalEarnings}
+          totalEarnings={0}
           onSellerUpdate={handleSellerUpdate}
         />
 
         <SellerTabs
           products={products}
-          services={services}
           communities={communities}
           productsLoading={productsLoading}
-          servicesLoading={servicesLoading}
           communitiesLoading={communitiesLoading}
         />
       </main>
