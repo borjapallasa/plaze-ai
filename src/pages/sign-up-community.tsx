@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -186,6 +185,14 @@ export default function SignUpCommunityPage() {
                   </div>
                 </form>
               </div>
+            </div>
+            
+            {/* Powered by branding */}
+            <div className="text-center mt-4">
+              <p className="text-xs text-gray-400 flex items-center justify-center gap-1">
+                Powered by 
+                <span className="font-semibold text-primary">Lovable</span>
+              </p>
             </div>
           </div>
         </div>
