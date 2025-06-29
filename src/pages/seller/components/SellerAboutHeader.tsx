@@ -53,17 +53,17 @@ export function SellerAboutHeader({
           {/* Desktop Layout */}
           <div className="hidden lg:flex items-start gap-6">
             {/* Main Content Section */}
-            <div className="flex items-start gap-5 flex-1">
+            <div className="flex items-start gap-4 flex-1">
               {/* Avatar */}
-              <div className="w-20 h-20 flex-shrink-0">
+              <div className="w-16 h-16 flex-shrink-0">
                 <AspectRatio ratio={1} className="overflow-hidden rounded-full">
-                  <Avatar className="h-full w-full border-3 border-gray-100 shadow-md">
+                  <Avatar className="h-full w-full border-2 border-gray-100 shadow-md">
                     <AvatarImage 
                       src={seller.thumbnail} 
                       alt={seller.name}
                       className="object-cover"
                     />
-                    <AvatarFallback className="text-xl font-bold bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+                    <AvatarFallback className="text-lg font-bold bg-gradient-to-br from-blue-500 to-purple-600 text-white">
                       {seller.name?.split(' ').map(n => n[0]).join('') || 'UN'}
                     </AvatarFallback>
                   </Avatar>
@@ -71,23 +71,23 @@ export function SellerAboutHeader({
               </div>
               
               {/* Name, Title, Location, Description */}
-              <div className="flex-1 min-w-0 space-y-3">
-                <div className="space-y-2">
-                  <h1 className="text-2xl font-bold text-gray-900 leading-tight tracking-tight">
+              <div className="flex-1 min-w-0 space-y-2">
+                <div className="space-y-1">
+                  <h1 className="text-xl font-bold text-gray-900 leading-tight tracking-tight">
                     {seller.name}
                   </h1>
                   
                   {/* Category and Location */}
-                  <div className="flex items-center gap-3 text-base text-gray-600">
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
                     {seller.title && (
-                      <span className="font-semibold text-gray-700">{seller.title}</span>
+                      <span className="font-medium text-gray-700">{seller.title}</span>
                     )}
                     {seller.title && seller.location && (
                       <span className="text-gray-400">•</span>
                     )}
                     {seller.location && (
                       <div className="flex items-center gap-1">
-                        <MapPin className="h-4 w-4 text-gray-400" />
+                        <MapPin className="h-3 w-3 text-gray-400" />
                         <span>{seller.location}</span>
                       </div>
                     )}
@@ -97,7 +97,7 @@ export function SellerAboutHeader({
                 {/* Description */}
                 {seller.description && (
                   <div className="max-w-3xl">
-                    <p className="text-base text-gray-600 leading-relaxed whitespace-pre-wrap">
+                    <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">
                       {seller.description}
                     </p>
                   </div>
@@ -106,7 +106,7 @@ export function SellerAboutHeader({
             </div>
 
             {/* Vertical Divider */}
-            <Separator orientation="vertical" className="h-24" />
+            <Separator orientation="vertical" className="h-20" />
 
             {/* Stats Section - Stacked Vertically */}
             <div className="flex-shrink-0">
@@ -138,8 +138,8 @@ export function SellerAboutHeader({
           {/* Mobile/Tablet Layout */}
           <div className="lg:hidden">
             {/* Avatar and Name Row */}
-            <div className="flex items-start gap-4 mb-4">
-              <div className="w-16 h-16 flex-shrink-0">
+            <div className="flex items-start gap-3 mb-3">
+              <div className="w-14 h-14 flex-shrink-0">
                 <AspectRatio ratio={1} className="overflow-hidden rounded-full">
                   <Avatar className="h-full w-full border-2 border-gray-100 shadow-md">
                     <AvatarImage 
@@ -147,19 +147,19 @@ export function SellerAboutHeader({
                       alt={seller.name}
                       className="object-cover"
                     />
-                    <AvatarFallback className="text-lg font-bold bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+                    <AvatarFallback className="text-base font-bold bg-gradient-to-br from-blue-500 to-purple-600 text-white">
                       {seller.name?.split(' ').map(n => n[0]).join('') || 'UN'}
                     </AvatarFallback>
                   </Avatar>
                 </AspectRatio>
               </div>
               
-              <div className="flex-1 min-w-0 space-y-2">
-                <h1 className="text-xl font-bold text-gray-900 leading-tight tracking-tight">
+              <div className="flex-1 min-w-0 space-y-1">
+                <h1 className="text-lg font-bold text-gray-900 leading-tight tracking-tight">
                   {seller.name}
                 </h1>
                 <div className="flex items-center gap-2 text-sm text-gray-600 flex-wrap">
-                  {seller.title && <span className="font-semibold text-gray-700">{seller.title}</span>}
+                  {seller.title && <span className="font-medium text-gray-700">{seller.title}</span>}
                   {seller.title && seller.location && <span className="text-gray-400">•</span>}
                   {seller.location && (
                     <div className="flex items-center gap-1">
@@ -173,7 +173,7 @@ export function SellerAboutHeader({
 
             {/* Description */}
             {seller.description && (
-              <div className="mb-4">
+              <div className="mb-3">
                 <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">
                   {seller.description}
                 </p>
@@ -181,7 +181,7 @@ export function SellerAboutHeader({
             )}
 
             {/* Stats Row with separators for mobile */}
-            <div className="flex items-center gap-3 overflow-x-auto pb-2 mb-4">
+            <div className="flex items-center gap-3 overflow-x-auto pb-2 mb-3">
               <div className="flex items-center gap-2 flex-shrink-0">
                 <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                 <span className="text-sm font-semibold">
