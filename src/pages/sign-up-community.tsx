@@ -51,131 +51,133 @@ export default function SignUpCommunityPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-start justify-center px-6 py-12" style={{ backgroundColor: '#ffffff' }}>
-      <div className="w-full max-w-7xl grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-        {/* Left Panel - Dynamic Community Info */}
-        <div className="w-full max-w-lg lg:max-w-none lg:w-full">
-          <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-8 lg:p-10 min-h-[400px] flex flex-col justify-start">
+    <div className="min-h-screen bg-gray-50" style={{ backgroundColor: '#fafafa' }}>
+      <div className="min-h-screen grid lg:grid-cols-5 xl:grid-cols-3">
+        {/* Left Panel - Community Info */}
+        <div className="lg:col-span-2 xl:col-span-1 bg-white border-r border-gray-200 flex items-center justify-center p-6 lg:p-8">
+          <div className="w-full max-w-md">
             <CommunityInfoPanel community={community} />
           </div>
         </div>
 
-        {/* Right Panel - Form (Sticky on larger screens) */}
-        <div className="w-full lg:sticky lg:top-8">
-          <div className="w-full max-w-md mx-auto lg:max-w-lg p-8 rounded-xl bg-white shadow-lg border border-gray-200">
-            <div className="space-y-8">
-              <div className="text-center">
-                <img
-                  src="/lovable-uploads/84b87a79-21ab-4d4e-b6fe-3af1f7e0464d.png"
-                  alt="Plaze.ai"
-                  className="h-8 mx-auto mb-6"
-                />
-                <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                  Join {community.name}
-                </h2>
-                <p className="text-sm text-gray-600">
-                  Create your account to get started
-                </p>
-              </div>
+        {/* Right Panel - Sign Up Form */}
+        <div className="lg:col-span-3 xl:col-span-2 flex items-center justify-center p-6 lg:p-8">
+          <div className="w-full max-w-md">
+            <div className="bg-white rounded-2xl shadow-sm border border-border p-8">
+              <div className="space-y-8">
+                <div className="text-center">
+                  <img
+                    src="/lovable-uploads/84b87a79-21ab-4d4e-b6fe-3af1f7e0464d.png"
+                    alt="Plaze.ai"
+                    className="h-8 mx-auto mb-6"
+                  />
+                  <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                    Join {community.name}
+                  </h2>
+                  <p className="text-sm text-gray-600">
+                    Create your account to get started
+                  </p>
+                </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="relative">
+                      <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                      <Input
+                        placeholder="First Name"
+                        type="text"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        className="pl-10 h-12"
+                        required
+                      />
+                    </div>
+                    <div className="relative">
+                      <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                      <Input
+                        placeholder="Last Name"
+                        type="text"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        className="pl-10 h-12"
+                        required
+                      />
+                    </div>
+                  </div>
+
                   <div className="relative">
-                    <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                    <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                     <Input
-                      placeholder="First Name"
-                      type="text"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
+                      placeholder="Email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       className="pl-10 h-12"
                       required
                     />
                   </div>
+
                   <div className="relative">
-                    <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                    <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                     <Input
-                      placeholder="Last Name"
-                      type="text"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      className="pl-10 h-12"
+                      placeholder="Password"
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="pl-10 pr-10 h-12"
                       required
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-3"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-5 w-5 text-gray-400" />
+                      ) : (
+                        <Eye className="h-5 w-5 text-gray-400" />
+                      )}
+                    </button>
                   </div>
-                </div>
 
-                <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                  <Input
-                    placeholder="Email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10 h-12"
-                    required
-                  />
-                </div>
+                  <div className="flex items-start space-x-3">
+                    <Checkbox
+                      id="terms"
+                      checked={agreeToTerms}
+                      onCheckedChange={(checked) => setAgreeToTerms(checked as boolean)}
+                      className="mt-1"
+                    />
+                    <label
+                      htmlFor="terms"
+                      className="text-sm text-gray-600 leading-relaxed"
+                    >
+                      I agree to the{" "}
+                      <Link to="#" className="text-primary hover:underline font-medium">
+                        Terms of Service
+                      </Link>{" "}
+                      and{" "}
+                      <Link to="#" className="text-primary hover:underline font-medium">
+                        Privacy Policy
+                      </Link>
+                    </label>
+                  </div>
 
-                <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                  <Input
-                    placeholder="Password"
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 pr-10 h-12"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3"
+                  <Button
+                    type="submit"
+                    className="w-full h-12 text-base font-medium"
+                    disabled={!agreeToTerms}
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400" />
-                    ) : (
-                      <Eye className="h-5 w-5 text-gray-400" />
-                    )}
-                  </button>
-                </div>
+                    Create Account
+                  </Button>
 
-                <div className="flex items-start space-x-3">
-                  <Checkbox
-                    id="terms"
-                    checked={agreeToTerms}
-                    onCheckedChange={(checked) => setAgreeToTerms(checked as boolean)}
-                    className="mt-1"
-                  />
-                  <label
-                    htmlFor="terms"
-                    className="text-sm text-gray-600 leading-relaxed"
-                  >
-                    I agree to the{" "}
-                    <Link to="#" className="text-primary hover:underline font-medium">
-                      Terms of Service
-                    </Link>{" "}
-                    and{" "}
-                    <Link to="#" className="text-primary hover:underline font-medium">
-                      Privacy Policy
+                  <div className="text-center text-sm border-t pt-6">
+                    <span className="text-gray-600">Already have an account? </span>
+                    <Link to={`/sign-in/community/${id}`} className="text-primary hover:underline font-medium">
+                      Sign In
                     </Link>
-                  </label>
-                </div>
-
-                <Button
-                  type="submit"
-                  className="w-full h-12 text-base font-medium"
-                  disabled={!agreeToTerms}
-                >
-                  Create Account
-                </Button>
-
-                <div className="text-center text-sm border-t pt-6">
-                  <span className="text-gray-600">Already have an account? </span>
-                  <Link to={`/sign-in/community/${id}`} className="text-primary hover:underline font-medium">
-                    Sign In
-                  </Link>
-                </div>
-              </form>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
         </div>
