@@ -1,3 +1,4 @@
+
 import React, { useState, FormEvent, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, Menu, User, ChevronDown, LogOut, Home, UserCircle, Users, Store, HelpCircle, MessageSquare } from "lucide-react";
@@ -258,7 +259,7 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                   </>
                 ) : (
                   <>
-                    <Link to="/auth">
+                    <Link to="/sign-in">
                       <DropdownMenuItem>
                         <User className="mr-2 h-4 w-4" />
                         Sign In
@@ -425,7 +426,7 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                   </>
                 ) : (
                   <>
-                    <Link to="/auth">
+                    <Link to="/sign-in">
                       <DropdownMenuItem>
                         <User className="mr-2 h-4 w-4" />
                         Sign In
