@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight, Plus, Edit, Package } from "lucide-react";
+import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight, Plus, Edit, Package, Settings } from "lucide-react";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/ProductCard";
@@ -26,6 +26,7 @@ import { ClassroomDialog } from "@/components/community/ClassroomDialog";
 import { CommunityAccessGuard } from "@/components/community/CommunityAccessGuard";
 import { CreateThreadDialog } from "@/components/community/CreateThreadDialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { MemberManagementDialog } from "@/components/community/MemberManagementDialog";
 
 interface Link {
   name: string;
@@ -71,6 +72,7 @@ export default function CommunityPage() {
   const [isProductCreationDialogOpen, setIsProductCreationDialogOpen] = useState(false);
   const [isClassroomDialogOpen, setIsClassroomDialogOpen] = useState(false);
   const [isCreateThreadDialogOpen, setIsCreateThreadDialogOpen] = useState(false);
+  const [isMemberManagementDialogOpen, setIsMemberManagementDialogOpen] = useState(false);
   const [showProductTemplateSelector, setShowProductTemplateSelector] = useState(false);
   const [activeTab, setActiveTab] = useState("threads");
   const [selectedTag, setSelectedTag] = useState<string>("all");
@@ -226,6 +228,7 @@ export default function CommunityPage() {
           community_subscription_uuid,
           created_at,
           user_uuid,
+          status,
           users!community_subscriptions_user_uuid_fkey (
             user_uuid,
             first_name,
@@ -234,7 +237,7 @@ export default function CommunityPage() {
           )
         `)
         .eq('community_uuid', communityId)
-        .eq('status', 'active')
+        .in('status', ['active', 'pending'])
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -512,6 +515,23 @@ export default function CommunityPage() {
           onClick={() => setIsClassroomDialogOpen(true)}
         >
           <span>Add Classroom</span>
+        </Button>
+      );
+    }
+    return null;
+  };
+
+  const renderManageMembersButton = () => {
+    if (isOwner && communityMembers && communityMembers.length > 0) {
+      return (
+        <Button
+          variant="outline"
+          size="sm"
+          className="flex items-center gap-2"
+          onClick={() => setIsMemberManagementDialogOpen(true)}
+        >
+          <Settings className="w-4 h-4" />
+          Manage Members
         </Button>
       );
     }
@@ -1023,6 +1043,11 @@ export default function CommunityPage() {
             </TabsContent>
 
             <TabsContent value="members" className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold">Community Members</h3>
+                {renderManageMembersButton()}
+              </div>
+              
               {isMembersLoading ? (
                 <div className="space-y-4">
                   {Array.from({ length: 5 }).map((_, index) => (
@@ -1035,9 +1060,9 @@ export default function CommunityPage() {
                     </div>
                   ))}
                 </div>
-              ) : communityMembers && communityMembers.length > 0 ? (
+              ) : communityMembers && communityMembers.filter(m => m.status === 'active').length > 0 ? (
                 <div className="space-y-4">
-                  {communityMembers.map((member) => (
+                  {communityMembers.filter(m => m.status === 'active').map((member) => (
                     <div key={member.community_subscription_uuid} className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent transition-colors">
                       <div className="flex items-center space-x-3">
                         <Avatar className="h-12 w-12">
@@ -1058,6 +1083,11 @@ export default function CommunityPage() {
                           </p>
                         </div>
                       </div>
+                      {member.status === 'pending' && (
+                        <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+                          Pending
+                        </Badge>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -1130,6 +1160,13 @@ export default function CommunityPage() {
             open={isClassroomDialogOpen}
             onOpenChange={setIsClassroomDialogOpen}
             communityUuid={communityId || ''}
+          />
+
+          <MemberManagementDialog
+            open={isMemberManagementDialogOpen}
+            onOpenChange={setIsMemberManagementDialogOpen}
+            members={communityMembers || []}
+            isOwner={isOwner}
           />
         </div>
       </CommunityAccessGuard>
