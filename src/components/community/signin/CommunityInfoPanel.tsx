@@ -1,6 +1,8 @@
+
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useExpertName } from "@/hooks/use-expert-name";
 import { useExpertQuery } from "@/hooks/expert/useExpertQuery";
+
 interface CommunityInfoPanelProps {
   community: {
     name: string;
@@ -15,18 +17,23 @@ interface CommunityInfoPanelProps {
     type?: string;
     last_activity?: string;
   };
+  mode?: 'sign-in' | 'sign-up';
 }
+
 export function CommunityInfoPanel({
-  community
+  community,
+  mode = 'sign-in'
 }: CommunityInfoPanelProps) {
   const {
     data: expert
   } = useExpertQuery(community.expert_uuid);
+
   const formatMemberCount = (count?: number) => {
     if (!count) return "New community";
     if (count > 1000) return `${(count / 1000).toFixed(1)}k+ members`;
     return `${count} members`;
   };
+
   const formatLastActivity = (lastActivity?: string) => {
     if (!lastActivity) return null;
     const date = new Date(lastActivity);
@@ -37,23 +44,52 @@ export function CommunityInfoPanel({
     if (diffInDays < 7) return `Active ${diffInDays} days ago`;
     return "Recently active";
   };
+
   const formatCount = (count?: number) => {
     if (!count || count === 0) return "0";
     if (count > 1000) return `${(count / 1000).toFixed(1)}k`;
     return count.toString();
   };
+
+  const getHeadingText = () => {
+    if (mode === 'sign-up') {
+      return (
+        <>
+          Join{" "}
+          <span className="text-primary">
+            {community.name || "our community"}
+          </span>
+        </>
+      );
+    } else {
+      return (
+        <>
+          Welcome back to{" "}
+          <span className="text-primary">
+            {community.name || "our community"}
+          </span>
+        </>
+      );
+    }
+  };
+
+  const getSubheadlineText = () => {
+    if (mode === 'sign-up') {
+      return "Create your account to connect with like-minded individuals and grow together.";
+    } else {
+      return "Sign in to the community to connect with like-minded individuals and grow together.";
+    }
+  };
+
   return <div className="space-y-8">
       {/* Main heading */}
       <div className="space-y-4">
         <h1 className="text-xl lg:text-2xl font-bold text-gray-900 leading-tight">
-          Welcome back to {" "}
-          <span className="text-primary">
-            {community.name || "our community"}
-          </span>
+          {getHeadingText()}
         </h1>
         
         <p className="text-sm text-gray-600 leading-relaxed max-w-md">
-          Sign in to the community to connect with like-minded individuals and grow together.
+          {getSubheadlineText()}
         </p>
       </div>
 

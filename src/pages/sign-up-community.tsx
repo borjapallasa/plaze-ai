@@ -153,7 +153,7 @@ export default function SignUpCommunityPage() {
         {/* Left Panel - Community Info */}
         <div className="bg-white flex items-center justify-center p-8 lg:p-12">
           <div className="w-full max-w-lg">
-            <CommunityInfoPanel community={community} />
+            <CommunityInfoPanel community={community} mode="sign-up" />
           </div>
         </div>
 
