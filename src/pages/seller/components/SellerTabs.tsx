@@ -1,44 +1,132 @@
-
-import React, { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import React, { useState, useEffect } from "react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { ShoppingBag, UsersRound, BarChart3, Star } from "lucide-react";
+import { useLocation } from "react-router-dom";
 import { ProductsTab } from "./ProductsTab";
 import { CommunitiesTab } from "./CommunitiesTab";
-import { ReviewsTab } from "./ReviewsTab";
 import { MetricsTab } from "./MetricsTab";
+import { ReviewsTab } from "./ReviewsTab";
+import type { Service } from "@/components/expert/types";
 
 interface SellerTabsProps {
-  seller: any;
-  mode?: 'seller' | 'admin';
+  products: any[];
+  services: Service[];
+  communities: any[];
+  productsLoading: boolean;
+  servicesLoading: boolean;
+  communitiesLoading: boolean;
+  expertUuid?: string;
 }
 
-export function SellerTabs({ seller, mode = 'seller' }: SellerTabsProps) {
-  const [activeTab, setActiveTab] = useState("products");
+export function SellerTabs({
+  products,
+  services,
+  communities,
+  productsLoading,
+  servicesLoading,
+  communitiesLoading,
+  expertUuid
+}: SellerTabsProps) {
+  const location = useLocation();
+  
+  const [activeTab, setActiveTab] = useState(() => {
+    const hash = window.location.hash.replace('#', '');
+    const availableTabs = ['metrics', 'products', 'communities', 'reviews'];
+    return availableTabs.includes(hash) ? hash : 'metrics';
+  });
 
-  const tabs = [
-    { id: "products", label: "Products", component: ProductsTab },
-    { id: "communities", label: "Communities", component: CommunitiesTab },
-    { id: "reviews", label: "Reviews", component: ReviewsTab },
-    { id: "metrics", label: "Metrics", component: MetricsTab },
-  ];
+  // Load hash from URL on page load
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      const availableTabs = ['metrics', 'products', 'communities', 'reviews'];
+      if (availableTabs.includes(hash)) {
+        setActiveTab(hash);
+      }
+    };
+
+    // Set hash if it doesn't exist or if current hash is not available
+    const availableTabs = ['metrics', 'products', 'communities', 'reviews'];
+    
+    if (!window.location.hash || !availableTabs.includes(window.location.hash.replace('#', ''))) {
+      window.location.hash = activeTab;
+    }
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, [activeTab]);
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    window.location.hash = value;
+  };
 
   return (
-    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="grid w-full grid-cols-4 mb-6">
-        {tabs.map((tab) => (
-          <TabsTrigger key={tab.id} value={tab.id} className="text-sm">
-            {tab.label}
-          </TabsTrigger>
-        ))}
-      </TabsList>
+    <div className="animate-fade-in">
+      <Tabs 
+        defaultValue={activeTab} 
+        value={activeTab}
+        onValueChange={handleTabChange}
+      >
+        <div className="mb-6">
+          <div className="max-w-[1400px] mx-auto px-4 border-b border-border">
+            <TabsList className="h-auto items-center bg-transparent w-auto justify-start rounded-none p-0 border-0">
+              <TabsTrigger 
+                value="metrics" 
+                className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-foreground whitespace-nowrap flex-shrink-0 rounded-none pb-3 px-4 border-b-2 border-transparent hover:border-muted-foreground/50 transition-colors"
+              >
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Metrics
+              </TabsTrigger>
+              <TabsTrigger 
+                value="products" 
+                className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-foreground whitespace-nowrap flex-shrink-0 rounded-none pb-3 px-4 border-b-2 border-transparent hover:border-muted-foreground/50 transition-colors"
+              >
+                <ShoppingBag className="h-4 w-4 mr-2" />
+                Products
+                {productsLoading && <span className="ml-2 text-xs">Loading...</span>}
+              </TabsTrigger>
+              <TabsTrigger 
+                value="communities" 
+                className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-foreground whitespace-nowrap flex-shrink-0 rounded-none pb-3 px-4 border-b-2 border-transparent hover:border-muted-foreground/50 transition-colors"
+              >
+                <UsersRound className="h-4 w-4 mr-2" />
+                Communities
+                {communitiesLoading && <span className="ml-2 text-xs">Loading...</span>}
+              </TabsTrigger>
+              <TabsTrigger 
+                value="reviews" 
+                className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-foreground whitespace-nowrap flex-shrink-0 rounded-none pb-3 px-4 border-b-2 border-transparent hover:border-muted-foreground/50 transition-colors"
+              >
+                <Star className="h-4 w-4 mr-2" />
+                Reviews
+              </TabsTrigger>
+            </TabsList>
+          </div>
+        </div>
 
-      {tabs.map((tab) => {
-        const Component = tab.component;
-        return (
-          <TabsContent key={tab.id} value={tab.id} className="mt-0">
-            <Component seller={seller} mode={mode} />
-          </TabsContent>
-        );
-      })}
-    </Tabs>
+        <TabsContent value="metrics" className="mt-0">
+          <MetricsTab />
+        </TabsContent>
+
+        <TabsContent value="products" className="mt-0">
+          <ProductsTab products={products} isLoading={productsLoading} />
+        </TabsContent>
+
+        <TabsContent value="communities" className="mt-0">
+          <CommunitiesTab 
+            communities={communities.map(community => ({
+              ...community,
+              status: community.status || 'active' // Add default status
+            }))} 
+            isLoading={communitiesLoading} 
+          />
+        </TabsContent>
+
+        <TabsContent value="reviews" className="mt-0">
+          <ReviewsTab expertUuid={expertUuid} />
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }

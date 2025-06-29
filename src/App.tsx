@@ -5,8 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./components/AuthProvider";
 import IndexPage from "./pages/index";
 import ProductPage from "./pages/Product";
-import SignInPage from "./pages/sign-in";
-import SignUpPage from "./pages/sign-up";
+import AuthPage from "./pages/auth";
 import SignInCommunityPage from "./pages/sign-in-community";
 import SignUpCommunityPage from "./pages/sign-up-community";
 import NewProductPage from "./pages/seller/NewProduct";
@@ -32,6 +31,7 @@ import AdminDashboardPage from "./pages/admin/AdminDashboard";
 import AdminUsersPage from "./pages/admin/AdminUsers";
 import AdminUserDetailsPage from "./pages/admin/AdminUserDetails";
 import AdminExpertsPage from "./pages/admin/AdminExperts";
+import AdminExpertDetailsPage from "./pages/admin/AdminExpertDetails";
 import AdminTransactionsPage from "./pages/admin/AdminTransactions";
 import AdminTransactionDetailsPage from "./pages/admin/AdminTransactionDetails";
 import DraftTemplatesPage from "./pages/admin/DraftTemplates";
@@ -52,8 +52,9 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/" element={<IndexPage />} />
-          <Route path="/sign-in" element={<SignInPage />} />
-          <Route path="/sign-up" element={<SignUpPage />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/sign-in" element={<AuthPage />} />
+          <Route path="/sign-up" element={<AuthPage />} />
           <Route path="/sign-in/community/:id" element={<SignInCommunityPage />} />
           <Route path="/sign-up/community/:id" element={<SignUpCommunityPage />} />
           <Route path="/product/:id" element={<ProductPage />} />
@@ -61,7 +62,7 @@ function App() {
           <Route path="/sell" element={<SellPage />} />
           <Route path="/seller/products/new" element={<NewProductPage />} />
           <Route path="/seller/communities/new" element={<NewCommunityPage />} />
-          <Route path="/seller/:id" element={<SellerPage mode="seller" />} />
+          <Route path="/seller/:id" element={<SellerPage />} />
           <Route path="/product/:id/edit" element={<EditProductPage />} />
           <Route path="/community/:id/edit" element={<EditCommunityPage />} />
           <Route path="/community/:id/products/new" element={<NewCommunityProductPage />} />
@@ -84,7 +85,7 @@ function App() {
           <Route path="/admin/users" element={<AdminUsersPage />} />
           <Route path="/admin/users/user/:id" element={<AdminUserDetailsPage />} />
           <Route path="/admin/experts" element={<AdminExpertsPage />} />
-          <Route path="/admin/experts/expert/:id" element={<SellerPage mode="admin" />} />
+          <Route path="/admin/experts/expert/:id" element={<AdminExpertDetailsPage />} />
           <Route path="/admin/admins/admin/:id" element={<AdminUserDetailsPage />} />
           <Route path="/admin/transactions" element={<AdminTransactionsPage />} />
           <Route path="/admin/transaction/:id" element={<AdminTransactionDetailsPage />} />
