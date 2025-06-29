@@ -1,7 +1,5 @@
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatNumber } from "@/lib/utils";
-
 interface Community {
   community_uuid: string;
   name: string;
@@ -16,47 +14,35 @@ interface Community {
     thumbnail?: string;
   };
 }
-
 interface CommunityInfoPanelProps {
   community: Community;
   mode?: 'sign-in' | 'sign-up';
 }
-
-export function CommunityInfoPanel({ community, mode = 'sign-in' }: CommunityInfoPanelProps) {
+export function CommunityInfoPanel({
+  community,
+  mode = 'sign-in'
+}: CommunityInfoPanelProps) {
   const actionText = mode === 'sign-up' ? 'Join' : 'Welcome back to';
-  
-  return (
-    <div className="space-y-3">
+  return <div className="space-y-3">
       <div className="space-y-3">
         <h1 className="text-2xl font-bold text-gray-900">
           {actionText} {community.name}
         </h1>
         
         <p className="text-sm text-gray-600 leading-relaxed">
-          {mode === 'sign-up' 
-            ? "Create your account to connect with like-minded individuals and grow together."
-            : "Sign in to continue your journey with the community."
-          }
+          {mode === 'sign-up' ? "Create your account to connect with like-minded individuals and grow together." : "Sign in to continue your journey with the community."}
         </p>
       </div>
 
       {/* Community Card */}
-      <div className="p-4 space-y-4">
+      <div className="p-4 space-y-0">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 bg-white flex items-center justify-center">
-            {community.thumbnail ? (
-              <img 
-                src={community.thumbnail} 
-                alt={community.name}
-                className="w-10 h-10 object-cover rounded-lg"
-              />
-            ) : (
-              <div className="w-10 h-10 bg-primary/10 flex items-center justify-center rounded-lg">
+            {community.thumbnail ? <img src={community.thumbnail} alt={community.name} className="w-10 h-10 object-cover rounded-lg" /> : <div className="w-10 h-10 bg-primary/10 flex items-center justify-center rounded-lg">
                 <span className="text-primary font-semibold text-base">
                   {community.name.charAt(0)}
                 </span>
-              </div>
-            )}
+              </div>}
           </div>
           
           <div className="flex-1">
@@ -64,10 +50,7 @@ export function CommunityInfoPanel({ community, mode = 'sign-in' }: CommunityInf
             <div className="flex items-center gap-2 mt-1">
               <span className="text-xs text-gray-500">By</span>
               <Avatar className="w-4 h-4">
-                <AvatarImage 
-                  src={community.expert?.thumbnail} 
-                  alt={community.expert?.name}
-                />
+                <AvatarImage src={community.expert?.thumbnail} alt={community.expert?.name} />
                 <AvatarFallback className="text-xs">
                   {community.expert?.name?.charAt(0) || 'E'}
                 </AvatarFallback>
@@ -115,6 +98,5 @@ export function CommunityInfoPanel({ community, mode = 'sign-in' }: CommunityInf
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 }
