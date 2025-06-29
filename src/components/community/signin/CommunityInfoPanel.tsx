@@ -1,4 +1,3 @@
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatNumber } from "@/lib/utils";
 
@@ -26,13 +25,13 @@ export function CommunityInfoPanel({ community, mode = 'sign-in' }: CommunityInf
   const actionText = mode === 'sign-up' ? 'Join' : 'Welcome back to';
   
   return (
-    <div className="space-y-3">
-      <div className="space-y-3">
-        <h1 className="text-2xl font-bold text-gray-900">
+    <div className="space-y-2">
+      <div className="space-y-2">
+        <h1 className="text-xl font-bold text-gray-900">
           {actionText} {community.name}
         </h1>
         
-        <p className="text-sm text-gray-600 leading-relaxed">
+        <p className="text-xs text-gray-600 leading-relaxed">
           {mode === 'sign-up' 
             ? "Create your account to connect with like-minded individuals and grow together."
             : "Sign in to continue your journey with the community."
@@ -41,7 +40,7 @@ export function CommunityInfoPanel({ community, mode = 'sign-in' }: CommunityInf
       </div>
 
       {/* Community Card */}
-      <div className="p-4 space-y-4">
+      <div className="p-3 space-y-3">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 bg-white flex items-center justify-center">
             {community.thumbnail ? (
