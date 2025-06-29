@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -47,6 +48,11 @@ export default function SignUpCommunityPage() {
     return `Join ${count} members`;
   };
 
+  const formatPrice = (price?: number) => {
+    if (!price || price === 0) return "free";
+    return `$${price}/month`;
+  };
+
   if (isLoading) {
     return <LoadingState />;
   }
@@ -75,7 +81,7 @@ export default function SignUpCommunityPage() {
                     Create your account
                   </h2>
                   <p className="text-sm text-gray-600 font-normal">
-                    {formatMemberCount(community.member_count)} and unlock exclusive content
+                    Join for {formatPrice(community.price)} and unlock exclusive content
                   </p>
                 </div>
 
