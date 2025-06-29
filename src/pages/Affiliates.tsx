@@ -6,15 +6,16 @@ import { MainHeader } from "@/components/MainHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
-import { DollarSign, Users, TrendingUp, Calendar } from "lucide-react";
+import { AffiliateDashboard } from "@/components/affiliates/AffiliateDashboard";
+import { AffiliateTable } from "@/components/affiliates/AffiliateTable";
+import { AffiliateProductSection } from "@/components/product/AffiliateProductSection";
+import { useAllAffiliateProducts } from "@/hooks/use-affiliate-products";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function AffiliatesPage() {
   const { user } = useAuth();
-  const [selectedAffiliate, setSelectedAffiliate] = useState<string | null>(null);
-  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
-  const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
 
-  // Fetch affiliate data
+  // Fetch affiliate data for current user
   const { data: affiliateData, isLoading: isLoadingAffiliate } = useQuery({
     queryKey: ['affiliate-data', user?.id],
     queryFn: async () => {
@@ -35,44 +36,33 @@ export default function AffiliatesPage() {
     enabled: !!user?.id,
   });
 
-  // Fetch all affiliates (for admin/management view)
-  const { data: allAffiliates, isLoading: isLoadingAll } = useQuery({
-    queryKey: ['all-affiliates'],
+  // Fetch user data to check if admin
+  const { data: userData } = useQuery({
+    queryKey: ['user-data', user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('affiliates')
-        .select(`
-          affiliate_uuid,
-          email,
-          affiliate_code,
-          status,
-          commissions_made,
-          commissions_paid,
-          commissions_available,
-          affiliate_count,
-          transaction_count,
-          created_at,
-          paypal
-        `)
-        .order('created_at', { ascending: false });
+      if (!user?.id) return null;
       
+      const { data, error } = await supabase
+        .from('users')
+        .select('is_admin')
+        .eq('user_uuid', user.id)
+        .single();
+
       if (error) {
-        console.error('Error fetching all affiliates:', error);
-        return [];
+        console.error('Error fetching user data:', error);
+        return null;
       }
-      return data || [];
+
+      return data;
     },
+    enabled: !!user?.id
   });
 
-  const handleViewDetails = (affiliateUuid: string) => {
-    setSelectedAffiliate(affiliateUuid);
-    setIsDetailsDialogOpen(true);
-  };
+  // Fetch all affiliate products
+  const { data: affiliateProducts = [] } = useAllAffiliateProducts();
 
-  const handleOpenPaymentSettings = (affiliateUuid: string) => {
-    setSelectedAffiliate(affiliateUuid);
-    setIsPaymentDialogOpen(true);
-  };
+  const isAdmin = userData?.is_admin || false;
+  const isAffiliate = !!affiliateData;
 
   if (isLoadingAffiliate) {
     return (
@@ -105,111 +95,106 @@ export default function AffiliatesPage() {
               Manage your affiliate partnerships and track commissions
             </p>
           </div>
-          
-          {affiliateData && (
-            <Button
-              onClick={() => handleOpenPaymentSettings(affiliateData.affiliate_uuid)}
-              variant="outline"
-            >
-              Payment Settings
-            </Button>
-          )}
         </div>
 
-        {affiliateData ? (
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Your Affiliate Dashboard</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <DollarSign className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm font-medium">Commissions Made</span>
-                    </div>
-                    <p className="text-2xl font-bold">${affiliateData.commissions_made || 0}</p>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm font-medium">Available</span>
-                    </div>
-                    <p className="text-2xl font-bold">${affiliateData.commissions_available || 0}</p>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm font-medium">Referrals</span>
-                    </div>
-                    <p className="text-2xl font-bold">{affiliateData.affiliate_count || 0}</p>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm font-medium">Transactions</span>
-                    </div>
-                    <p className="text-2xl font-bold">{affiliateData.transaction_count || 0}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+        {user ? (
+          <Tabs defaultValue={isAffiliate ? "dashboard" : "products"} className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              {isAffiliate && (
+                <TabsTrigger value="dashboard">My Dashboard</TabsTrigger>
+              )}
+              <TabsTrigger value="products">Affiliate Products</TabsTrigger>
+              {isAdmin && (
+                <TabsTrigger value="management">Management</TabsTrigger>
+              )}
+            </TabsList>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Affiliate Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <p className="text-sm text-muted-foreground">Affiliate Code</p>
-                  <p className="font-medium">{affiliateData.affiliate_code}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Status</p>
-                  <p className="font-medium">{affiliateData.status}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">PayPal Account</p>
-                  <p className="font-medium">{affiliateData.paypal || 'Not set'}</p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+            {isAffiliate && (
+              <TabsContent value="dashboard" className="space-y-6">
+                <AffiliateDashboard />
+              </TabsContent>
+            )}
+
+            <TabsContent value="products" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Available Affiliate Products</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {affiliateProducts.length > 0 ? (
+                    <div className="grid gap-4">
+                      {affiliateProducts.map((product) => (
+                        <div key={product.affiliate_products_uuid} className="p-4 border rounded-lg">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h3 className="font-semibold">{product.product_name}</h3>
+                              <p className="text-sm text-muted-foreground mt-1">
+                                {product.product_description}
+                              </p>
+                              <div className="flex items-center gap-4 mt-2">
+                                <span className="text-sm">
+                                  Price: ${product.product_price_from}
+                                </span>
+                                <span className="text-sm">
+                                  Commission: {Math.round(product.affiliate_share * 100)}%
+                                </span>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                {product.status}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-muted-foreground">No affiliate products available at the moment.</p>
+                  )}
+                </CardContent>
+              </Card>
+
+              {!isAffiliate && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Join Our Affiliate Program</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground mb-4">
+                      Start earning commissions by referring customers to our platform.
+                    </p>
+                    <Button>Apply to Become an Affiliate</Button>
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
+
+            {isAdmin && (
+              <TabsContent value="management" className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Affiliate Management</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <AffiliateTable />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            )}
+          </Tabs>
         ) : (
           <Card>
             <CardHeader>
-              <CardTitle>Join Our Affiliate Program</CardTitle>
+              <CardTitle>Sign In Required</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground mb-4">
-                Start earning commissions by referring customers to our platform.
+                Please sign in to access the affiliate program.
               </p>
-              <Button>Apply to Become an Affiliate</Button>
-            </CardContent>
-          </Card>
-        )}
-
-        {allAffiliates && allAffiliates.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>All Affiliates</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {allAffiliates.map((affiliate) => (
-                  <div key={affiliate.affiliate_uuid} className="flex items-center justify-between p-4 border rounded-lg">
-                    <div>
-                      <p className="font-medium">{affiliate.email}</p>
-                      <p className="text-sm text-muted-foreground">Code: {affiliate.affiliate_code}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-medium">${affiliate.commissions_made || 0}</p>
-                      <p className="text-sm text-muted-foreground">{affiliate.status}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <Button asChild>
+                <a href="/sign-in">Sign In</a>
+              </Button>
             </CardContent>
           </Card>
         )}
