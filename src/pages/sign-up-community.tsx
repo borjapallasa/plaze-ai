@@ -66,17 +66,9 @@ export default function SignUpCommunityPage() {
             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
               <div className="space-y-8">
                 <div className="text-center">
-                  <img
-                    src="/lovable-uploads/84b87a79-21ab-4d4e-b6fe-3af1f7e0464d.png"
-                    alt="Plaze.ai"
-                    className="h-8 mx-auto mb-6"
-                  />
                   <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                    Join {community.name}
+                    Create your account
                   </h2>
-                  <p className="text-sm text-gray-600">
-                    Create your account to get started
-                  </p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
