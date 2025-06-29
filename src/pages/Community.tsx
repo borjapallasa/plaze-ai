@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight, Plus, Edit, Package, Settings, UserX, AlertTriangle } from "lucide-react";
+import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight, Plus, Edit, Package, Settings } from "lucide-react";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/ProductCard";
@@ -26,18 +26,7 @@ import { ClassroomDialog } from "@/components/community/ClassroomDialog";
 import { CommunityAccessGuard } from "@/components/community/CommunityAccessGuard";
 import { CreateThreadDialog } from "@/components/community/CreateThreadDialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MemberRequestsDialog } from "@/components/community/MemberManagementDialog";
-import { useToast } from "@/hooks/use-toast";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { MemberManagementDialog } from "@/components/community/MemberManagementDialog";
 
 interface Link {
   name: string;
@@ -87,11 +76,8 @@ export default function CommunityPage() {
   const [showProductTemplateSelector, setShowProductTemplateSelector] = useState(false);
   const [activeTab, setActiveTab] = useState("threads");
   const [selectedTag, setSelectedTag] = useState<string>("all");
-  const [isMemberRequestsDialogOpen, setIsMemberRequestsDialogOpen] = useState(false);
-  const [memberToRemove, setMemberToRemove] = useState<string | null>(null);
   const { user } = useAuth();
   const { images } = useCommunityImages(communityId);
-  const { toast } = useToast();
 
   console.log('Community ID from params:', communityId);
 
@@ -546,23 +532,6 @@ export default function CommunityPage() {
         >
           <Settings className="w-4 h-4" />
           Manage Members
-        </Button>
-      );
-    }
-    return null;
-  };
-
-  const renderMemberRequestsButton = () => {
-    if (isOwner && pendingMembers.length > 0) {
-      return (
-        <Button
-          variant="outline"
-          size="sm"
-          className="flex items-center gap-2"
-          onClick={() => setIsMemberRequestsDialogOpen(true)}
-        >
-          <AlertTriangle className="w-4 h-4" />
-          Requests ({pendingMembers.length})
         </Button>
       );
     }
@@ -1076,9 +1045,7 @@ export default function CommunityPage() {
             <TabsContent value="members" className="space-y-6">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold">Community Members</h3>
-                <div className="flex gap-2">
-                  {renderMemberRequestsButton()}
-                </div>
+                {renderManageMembersButton()}
               </div>
               
               {isMembersLoading ? (
@@ -1093,9 +1060,9 @@ export default function CommunityPage() {
                     </div>
                   ))}
                 </div>
-              ) : activeMembers.length > 0 ? (
+              ) : communityMembers && communityMembers.filter(m => m.status === 'active').length > 0 ? (
                 <div className="space-y-4">
-                  {activeMembers.map((member) => (
+                  {communityMembers.filter(m => m.status === 'active').map((member) => (
                     <div key={member.community_subscription_uuid} className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent transition-colors">
                       <div className="flex items-center space-x-3">
                         <Avatar className="h-12 w-12">
@@ -1116,22 +1083,11 @@ export default function CommunityPage() {
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="secondary" className="bg-green-100 text-green-800">
-                          Active
+                      {member.status === 'pending' && (
+                        <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+                          Pending
                         </Badge>
-                        {isOwner && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setMemberToRemove(member.community_subscription_uuid)}
-                            className="text-destructive hover:text-destructive"
-                          >
-                            <UserX className="h-4 w-4 mr-1" />
-                            Remove
-                          </Button>
-                        )}
-                      </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -1212,33 +1168,6 @@ export default function CommunityPage() {
             members={communityMembers || []}
             isOwner={isOwner}
           />
-
-          <MemberRequestsDialog
-            open={isMemberRequestsDialogOpen}
-            onOpenChange={setIsMemberRequestsDialogOpen}
-            pendingMembers={pendingMembers}
-            isOwner={isOwner}
-          />
-
-          <AlertDialog open={!!memberToRemove} onOpenChange={() => setMemberToRemove(null)}>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Remove Member</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Are you sure you want to remove this member from the community? This action cannot be undone.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => memberToRemove && handleRemoveMember(memberToRemove)}
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                >
-                  Remove Member
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
         </div>
       </CommunityAccessGuard>
     </>

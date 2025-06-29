@@ -52,21 +52,46 @@ export default function AdminUsers() {
     <>
       <MainHeader />
       <div className="container mx-auto px-4 py-8 mt-16">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold mb-4">Users Management</h1>
-        </div>
+        <UsersHeader
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          roleFilter={roleFilter}
+          setRoleFilter={setRoleFilter}
+          refetch={refetch}
+        />
 
         <div className="flex items-center justify-between py-4">
-          <div>Layout Controls</div>
-          <div>Sort Controls</div>
+          <UsersLayoutSwitcher
+            layoutType={layoutType}
+            setLayoutType={setLayoutType}
+          />
+          <UsersSortSelector
+            sortField={sortField}
+            sortDirection={sortDirection}
+            handleSortChange={handleSortChange}
+          />
         </div>
 
         {isLoading ? (
-          <div>Loading...</div>
+          <UsersLoadingState layoutType={layoutType} />
         ) : error ? (
-          <div>Error loading users</div>
+          <UsersErrorState error={error} />
         ) : data && data.users && data.users.length > 0 ? (
-          <div>Users List</div>
+          layoutType === "table" ? (
+            <UsersTable
+              users={data.users}
+              sortField={sortField as keyof any}
+              sortDirection={sortDirection}
+              onSort={handleSortChange}
+            />
+          ) : (
+            <UsersGallery
+              users={data.users}
+              sortField={sortField as keyof any}
+              sortDirection={sortDirection}
+              onSort={handleSortChange}
+            />
+          )
         ) : (
           <div className="text-center py-8">
             <p className="text-muted-foreground">No users found.</p>
