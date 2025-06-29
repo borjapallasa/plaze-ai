@@ -19,7 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -38,19 +38,44 @@ export function ClassroomDialog({ open, onOpenChange, communityUuid, expertUuid 
   const [status, setStatus] = useState<"visible" | "not visible">("not visible");
   const [notify, setNotify] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+  const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!name.trim()) {
-      toast.error("Classroom name is required");
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Classroom name is required",
+      });
+      return;
+    }
+
+    if (!communityUuid) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Community ID is required",
+      });
       return;
     }
 
     setIsCreating(true);
     
     try {
+      console.log('Creating classroom with data:', {
+        name: name.trim(),
+        video_url: videoUrl.trim() || null,
+        summary: summary.trim() || null,
+        description: description.trim() || null,
+        community_uuid: communityUuid,
+        expert_uuid: expertUuid || null,
+        status: status,
+        notify: notify
+      });
+
       const { data, error } = await supabase
         .from('classrooms')
         .insert({
@@ -59,7 +84,7 @@ export function ClassroomDialog({ open, onOpenChange, communityUuid, expertUuid 
           summary: summary.trim() || null,
           description: description.trim() || null,
           community_uuid: communityUuid,
-          expert_uuid: expertUuid,
+          expert_uuid: expertUuid || null,
           status: status,
           notify: notify
         })
@@ -68,11 +93,20 @@ export function ClassroomDialog({ open, onOpenChange, communityUuid, expertUuid 
 
       if (error) {
         console.error('Error creating classroom:', error);
-        toast.error("Failed to create classroom");
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: `Failed to create classroom: ${error.message}`,
+        });
         return;
       }
 
-      toast.success("Classroom created successfully");
+      console.log('Classroom created successfully:', data);
+      
+      toast({
+        title: "Success",
+        description: "Classroom created successfully",
+      });
       
       // Reset form
       setName("");
@@ -90,7 +124,11 @@ export function ClassroomDialog({ open, onOpenChange, communityUuid, expertUuid 
       
     } catch (error) {
       console.error('Error creating classroom:', error);
-      toast.error("Failed to create classroom");
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to create classroom. Please try again.",
+      });
     } finally {
       setIsCreating(false);
     }
@@ -108,7 +146,7 @@ export function ClassroomDialog({ open, onOpenChange, communityUuid, expertUuid 
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="classroom-name">Classroom Name</Label>
+            <Label htmlFor="classroom-name">Classroom Name *</Label>
             <Input
               id="classroom-name"
               value={name}
