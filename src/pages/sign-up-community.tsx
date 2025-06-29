@@ -1,4 +1,5 @@
 
+
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -55,7 +56,7 @@ export default function SignUpCommunityPage() {
       <div className="w-full max-w-6xl grid md:grid-cols-2 gap-12 items-start">
         <CommunityInfoPanel community={community} />
 
-        <div className="w-full p-8 rounded-lg bg-card text-card-foreground shadow-sm">
+        <div className="w-full p-8 rounded-lg bg-card text-card-foreground shadow-sm border border-border">
           <div className="space-y-8">
             <img
               src="/placeholder.svg"
@@ -166,3 +167,4 @@ export default function SignUpCommunityPage() {
     </div>
   );
 }
+
