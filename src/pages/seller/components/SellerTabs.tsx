@@ -106,7 +106,11 @@ export function SellerTabs({
         </TabsContent>
 
         <TabsContent value="products" className="mt-0">
-          <ProductsTab products={products} isLoading={productsLoading} />
+          <ProductsTab 
+            products={products} 
+            isLoading={productsLoading} 
+            showLayoutSelector={true}
+          />
         </TabsContent>
 
         <TabsContent value="communities" className="mt-0">

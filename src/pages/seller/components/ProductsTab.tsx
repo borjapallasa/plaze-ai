@@ -4,7 +4,8 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Loader2, Plus, Package } from "lucide-react";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Search, Loader2, Plus, Package, Table, LayoutGrid } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
 import { useQuery } from "@tanstack/react-query";
@@ -25,16 +26,19 @@ interface Product {
 interface ProductsTabProps {
   products: Product[];
   isLoading?: boolean;
+  showLayoutSelector?: boolean; // New prop to control layout selector visibility
 }
 
 type SortOption = 'name-asc' | 'name-desc' | 'price-asc' | 'price-desc';
+type LayoutOption = 'cards' | 'table';
 
-export function ProductsTab({ products, isLoading = false }: ProductsTabProps) {
+export function ProductsTab({ products, isLoading = false, showLayoutSelector = false }: ProductsTabProps) {
   const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<SortOption>('name-asc');
+  const [layout, setLayout] = useState<LayoutOption>('cards');
 
   // Get current user's expert_uuid - using case insensitive email comparison
   const { data: expertData } = useQuery({
@@ -99,6 +103,90 @@ export function ProductsTab({ products, isLoading = false }: ProductsTabProps) {
   // Show search and sorting only if there are products
   const hasProducts = products && products.length > 0;
 
+  const ProductTableView = () => (
+    <div className="border rounded-lg overflow-hidden">
+      <table className="w-full">
+        <thead className="bg-muted/50 border-b">
+          <tr>
+            <th className="text-left p-4 font-medium">Product</th>
+            <th className="text-left p-4 font-medium">Status</th>
+            <th className="text-left p-4 font-medium">Price</th>
+            <th className="text-left p-4 font-medium">Variants</th>
+            <th className="text-left p-4 font-medium">Created</th>
+            <th className="text-right p-4 font-medium">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredAndSortedProducts.map((product, index) => (
+            <tr 
+              key={product.product_uuid} 
+              className={`border-b hover:bg-muted/25 cursor-pointer ${index % 2 === 0 ? 'bg-background' : 'bg-muted/10'}`}
+              onClick={() => handleProductClick(product.product_uuid)}
+            >
+              <td className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                    {product.thumbnail ? (
+                      <img 
+                        src={product.thumbnail} 
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Package className="h-5 w-5 text-muted-foreground" />
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <div className="font-medium text-foreground">{product.name}</div>
+                    {product.description && (
+                      <div className="text-sm text-muted-foreground truncate max-w-xs">
+                        {product.description}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </td>
+              <td className="p-4">
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${
+                  product.status === 'active' 
+                    ? 'bg-green-100 text-green-800' 
+                    : product.status === 'draft' 
+                    ? 'bg-gray-100 text-gray-800'
+                    : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {product.status}
+                </span>
+              </td>
+              <td className="p-4 font-medium">
+                ${product.price_from || '0.00'}
+              </td>
+              <td className="p-4 text-muted-foreground">
+                {product.variant_count || 0}
+              </td>
+              <td className="p-4 text-muted-foreground">
+                {new Date(product.created_at).toLocaleDateString()}
+              </td>
+              <td className="p-4 text-right">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleProductClick(product.product_uuid);
+                  }}
+                >
+                  {isCurrentUserSeller ? 'Edit' : 'View'}
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+
   return (
     <div className="space-y-6 mt-6">
       {hasProducts && (
@@ -125,6 +213,32 @@ export function ProductsTab({ products, isLoading = false }: ProductsTabProps) {
                 <SelectItem value="price-desc">Price (High to Low)</SelectItem>
               </SelectContent>
             </Select>
+
+            {showLayoutSelector && (
+              <ToggleGroup
+                type="single"
+                value={layout}
+                onValueChange={(value: LayoutOption) => {
+                  if (value) setLayout(value);
+                }}
+                className="inline-flex items-center gap-1"
+              >
+                <ToggleGroupItem
+                  value="cards"
+                  aria-label="Card view"
+                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-[#E5E7EB] data-[state=on]:bg-[#1A1F2C] data-[state=on]:text-white data-[state=on]:border-[#1A1F2C] hover:bg-gray-50"
+                >
+                  <LayoutGrid className="h-4 w-4" />
+                </ToggleGroupItem>
+                <ToggleGroupItem
+                  value="table"
+                  aria-label="Table view"
+                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-[#E5E7EB] data-[state=on]:bg-[#1A1F2C] data-[state=on]:text-white data-[state=on]:border-[#1A1F2C] hover:bg-gray-50"
+                >
+                  <Table className="h-4 w-4" />
+                </ToggleGroupItem>
+              </ToggleGroup>
+            )}
 
             {isCurrentUserSeller && (
               <Button onClick={handleCreateProduct} className="flex items-center gap-2">
@@ -193,22 +307,28 @@ export function ProductsTab({ products, isLoading = false }: ProductsTabProps) {
               </div>
             </Card>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredAndSortedProducts.map((product) => (
-                <ProductCard
-                  key={product.product_uuid}
-                  title={product.name}
-                  price={`$${product.price_from || '0.00'}`}
-                  image={product.thumbnail || '/placeholder.svg'}
-                  seller="Seller"
-                  description={product.description || product.name}
-                  tags={[product.status || 'Draft']}
-                  category="Product"
-                  id={product.product_uuid}
-                  onClick={() => handleProductClick(product.product_uuid)}
-                />
-              ))}
-            </div>
+            <>
+              {layout === 'table' && showLayoutSelector ? (
+                <ProductTableView />
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredAndSortedProducts.map((product) => (
+                    <ProductCard
+                      key={product.product_uuid}
+                      title={product.name}
+                      price={`$${product.price_from || '0.00'}`}
+                      image={product.thumbnail || '/placeholder.svg'}
+                      seller="Seller"
+                      description={product.description || product.name}
+                      tags={[product.status || 'Draft']}
+                      category="Product"
+                      id={product.product_uuid}
+                      onClick={() => handleProductClick(product.product_uuid)}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </div>
       )}
