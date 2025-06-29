@@ -11,6 +11,7 @@ import { NotFoundState } from "@/components/community/signin/NotFoundState";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useGoogleAuthCallback } from "@/hooks/useGoogleAuthCallback";
 
 async function fetchCommunity(communityId: string) {
   const { data, error } = await supabase
@@ -37,6 +38,9 @@ export default function SignInCommunityPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+
+  // Handle Google OAuth callback
+  const { isProcessing } = useGoogleAuthCallback();
 
   const { data: community, isLoading, error } = useQuery({
     queryKey: ['community', id],
@@ -121,7 +125,7 @@ export default function SignInCommunityPage() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || isProcessing) {
     return <LoadingState />;
   }
 

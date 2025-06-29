@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -12,6 +11,7 @@ import { NotFoundState } from "@/components/community/signin/NotFoundState";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useGoogleAuthCallback } from "@/hooks/useGoogleAuthCallback";
 
 async function fetchCommunity(communityId: string) {
   const { data, error } = await supabase
@@ -42,6 +42,9 @@ export default function SignUpCommunityPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
+  // Handle Google OAuth callback and community subscription creation
+  const { isProcessing } = useGoogleAuthCallback();
+
   const { data: community, isLoading, error } = useQuery({
     queryKey: ['community', id],
     queryFn: () => fetchCommunity(id!),
@@ -66,7 +69,7 @@ export default function SignUpCommunityPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/community/${id}`,
+          redirectTo: `${window.location.origin}/sign-up/community/${id}`,
           queryParams: {
             community_id: id,
             expert_uuid: community.expert_uuid,
@@ -177,7 +180,7 @@ export default function SignUpCommunityPage() {
     return `Join for $${price}`;
   };
 
-  if (isLoading) {
+  if (isLoading || isProcessing) {
     return <LoadingState />;
   }
 
