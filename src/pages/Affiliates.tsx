@@ -152,8 +152,8 @@ export default function Affiliates() {
         </Tabs>
 
         <PaymentSettingsDialog
-          isOpen={isPaymentDialogOpen}
-          onClose={() => setIsPaymentDialogOpen(false)}
+          open={isPaymentDialogOpen}
+          onOpenChange={setIsPaymentDialogOpen}
           affiliateUuid={affiliateData?.affiliate_uuid || ''}
         />
       </div>

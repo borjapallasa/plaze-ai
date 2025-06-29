@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useUsers } from "@/hooks/admin/useUsers";
 import { MainHeader } from "@/components/MainHeader";
@@ -14,7 +15,7 @@ export default function AdminUsers() {
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [layoutType, setLayoutType] = useState<"table" | "gallery">("table");
-  const [sortField, setSortField] = useState<string>("created_at");
+  const [sortField, setSortField] = useState("created_at");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -24,13 +25,7 @@ export default function AdminUsers() {
     isLoading,
     error,
     refetch
-  } = useUsers(1, {
-    searchQuery,
-    roleFilter,
-    sortField,
-    sortDirection,
-    limit: 50
-  });
+  } = useUsers(1);
 
   const handleSortChange = (field: string) => {
     if (field === sortField) {
@@ -51,23 +46,12 @@ export default function AdminUsers() {
       <MainHeader />
       <div className="container mx-auto px-4 py-8 mt-16">
         <UsersHeader
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          roleFilter={roleFilter}
-          setRoleFilter={setRoleFilter}
           refetch={refetch}
         />
 
         <div className="flex items-center justify-between py-4">
-          <UsersLayoutSwitcher
-            layoutType={layoutType}
-            setLayoutType={setLayoutType}
-          />
-          <UsersSortSelector
-            sortField={sortField}
-            sortDirection={sortDirection}
-            handleSortChange={handleSortChange}
-          />
+          <UsersLayoutSwitcher />
+          <UsersSortSelector />
         </div>
 
         {isLoading ? (

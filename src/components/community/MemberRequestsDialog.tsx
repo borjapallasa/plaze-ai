@@ -3,8 +3,7 @@ import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { UserX, UserCheck, Clock, X } from "lucide-react";
+import { UserX, UserCheck, Clock, Check, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Member {
@@ -57,23 +56,15 @@ export function MemberRequestsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
-        <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-          <DialogTitle className="flex items-center gap-2 text-lg font-semibold">
-            <Clock className="h-5 w-5" />
+      <DialogContent className="max-w-md">
+        <DialogHeader className="pb-6">
+          <DialogTitle className="flex items-center gap-3 text-xl font-semibold">
+            <Clock className="h-5 w-5 text-muted-foreground" />
             Member Requests ({members.length})
           </DialogTitle>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-6 w-6 p-0"
-            onClick={() => onOpenChange(false)}
-          >
-            <X className="h-4 w-4" />
-          </Button>
         </DialogHeader>
 
-        <div className="space-y-3 max-h-[60vh] overflow-y-auto">
+        <div className="space-y-4 max-h-[60vh] overflow-y-auto">
           {members.length === 0 ? (
             <div className="text-center py-12">
               <Clock className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
@@ -83,59 +74,49 @@ export function MemberRequestsDialog({
             members.map((member) => (
               <div
                 key={member.community_subscription_uuid}
-                className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/30 transition-colors"
+                className="flex items-center justify-between p-5 rounded-xl border bg-card hover:bg-accent/20 transition-colors"
               >
-                <div className="flex items-center space-x-3">
-                  <Avatar className="h-12 w-12">
+                <div className="flex items-center space-x-4">
+                  <Avatar className="h-14 w-14">
                     <AvatarImage 
                       src={member.users.user_thumbnail || "https://github.com/shadcn.png"} 
                       alt={`${member.users.first_name} ${member.users.last_name}`}
                     />
-                    <AvatarFallback className="bg-primary/10 text-primary font-medium">
+                    <AvatarFallback className="bg-primary/10 text-primary font-medium text-lg">
                       {`${member.users.first_name?.charAt(0) || ''}${member.users.last_name?.charAt(0) || ''}`}
                     </AvatarFallback>
                   </Avatar>
                   <div className="space-y-1">
-                    <p className="font-medium text-sm">
+                    <p className="font-semibold text-base">
                       {member.users.first_name} {member.users.last_name}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-sm text-muted-foreground">
                       Requested {new Date(member.created_at).toLocaleDateString('en-US', {
-                        month: '2-digit',
-                        day: '2-digit',
+                        month: 'short',
+                        day: 'numeric',
                         year: 'numeric'
                       })}
                     </p>
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-2">
-                  <Badge 
-                    variant="secondary" 
-                    className="bg-yellow-50 text-yellow-700 border-yellow-200 text-xs px-2 py-1"
+                <div className="flex items-center gap-3">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleAcceptMember(member.community_subscription_uuid)}
+                    className="h-10 w-10 p-0 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-full"
                   >
-                    Pending
-                  </Badge>
-                  <div className="flex gap-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleAcceptMember(member.community_subscription_uuid)}
-                      className="h-8 px-3 text-green-600 hover:text-green-700 hover:bg-green-50"
-                    >
-                      <UserCheck className="h-4 w-4 mr-1" />
-                      Accept
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleRejectMember(member.community_subscription_uuid)}
-                      className="h-8 px-3 text-red-600 hover:text-red-700 hover:bg-red-50"
-                    >
-                      <UserX className="h-4 w-4 mr-1" />
-                      Reject
-                    </Button>
-                  </div>
+                    <Check className="h-5 w-5" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleRejectMember(member.community_subscription_uuid)}
+                    className="h-10 w-10 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full"
+                  >
+                    <X className="h-5 w-5" />
+                  </Button>
                 </div>
               </div>
             ))
