@@ -1,4 +1,5 @@
 
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatNumber } from "@/lib/utils";
 
@@ -80,8 +81,8 @@ export function CommunityInfoPanel({ community, mode = 'sign-in' }: CommunityInf
         </div>
 
         {/* About Section */}
-        <div className="space-y-2">
-          <h3 className="text-sm font-semibold text-gray-900">About this community</h3>
+        <div className="space-y-2 pt-2">
+          <h3 className="text-base font-semibold text-gray-900">About this community</h3>
           <p className="text-sm text-gray-600 leading-relaxed">
             {community.description || "A community focused on growth and learning together."}
           </p>
@@ -118,3 +119,4 @@ export function CommunityInfoPanel({ community, mode = 'sign-in' }: CommunityInf
     </div>
   );
 }
+
