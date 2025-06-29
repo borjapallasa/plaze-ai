@@ -54,14 +54,14 @@ export function ClassroomProductsList({
 
   return (
     <div className={`${className}`}>
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="font-semibold">Products in this class</h3>
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="font-semibold text-lg">Products in this class</h3>
         {isOwner && (
           <Button
             variant="outline"
             size="sm"
             onClick={() => setIsSelectorOpen(true)}
-            className="h-8 w-8 p-0"
+            className="h-8 w-8 p-0 rounded-md border-2 border-dashed border-gray-300 hover:border-primary hover:bg-primary/5 transition-colors"
           >
             <Plus className="h-4 w-4" />
           </Button>
@@ -69,26 +69,44 @@ export function ClassroomProductsList({
       </div>
 
       {!variants || variants.length === 0 ? (
-        <div className="text-center py-8">
-          <Package className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-          <p className="text-muted-foreground">No products available in this classroom yet.</p>
-        </div>
+        <Card className="border-2 border-dashed border-gray-200 bg-gray-50/30">
+          <CardContent className="flex flex-col items-center justify-center py-12 px-6">
+            <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+              <Package className="h-8 w-8 text-gray-400" />
+            </div>
+            <h4 className="text-lg font-medium text-gray-900 mb-2">No products yet</h4>
+            <p className="text-sm text-gray-500 text-center max-w-sm leading-relaxed">
+              This classroom doesn't have any products yet. {isOwner ? "Add your first product to get started." : "Check back later for new content."}
+            </p>
+            {isOwner && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsSelectorOpen(true)}
+                className="mt-6 border-primary text-primary hover:bg-primary hover:text-white transition-colors"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Product
+              </Button>
+            )}
+          </CardContent>
+        </Card>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-3">
           {variants.map((variant) => (
-            <Card key={variant.id} className="hover:shadow-sm transition-shadow cursor-pointer border-l-4 border-l-primary/20" onClick={() => handleProductClick(variant.id)}>
-              <CardContent className="p-3">
-                <div className="flex items-center justify-between gap-3">
+            <Card key={variant.id} className="hover:shadow-md transition-all duration-200 cursor-pointer border-l-4 border-l-primary/20 hover:border-l-primary/40" onClick={() => handleProductClick(variant.id)}>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between gap-4">
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h4 className="font-medium text-sm truncate">{variant.name}</h4>
-                      <Badge variant={variant.price === 0 ? "secondary" : "default"} className="text-xs px-2 py-0.5 flex-shrink-0">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h4 className="font-medium text-base truncate">{variant.name}</h4>
+                      <Badge variant={variant.price === 0 ? "secondary" : "default"} className="text-xs px-2.5 py-0.5 flex-shrink-0 font-medium">
                         {variant.price === 0 ? "FREE" : `$${variant.price}`}
                       </Badge>
                     </div>
                     
                     {variant.features && variant.features.length > 0 && (
-                      <p className="text-xs text-muted-foreground truncate">
+                      <p className="text-sm text-muted-foreground truncate leading-relaxed">
                         {variant.features[0]}
                         {variant.features.length > 1 && ` +${variant.features.length - 1} more`}
                       </p>
@@ -104,7 +122,7 @@ export function ClassroomProductsList({
                           e.stopPropagation();
                           window.open(variant.filesLink, '_blank');
                         }}
-                        className="h-8 w-8 p-0"
+                        className="h-8 w-8 p-0 hover:bg-blue-50 hover:text-blue-600"
                         title="View Files"
                       >
                         <ExternalLink className="h-3.5 w-3.5" />
@@ -116,7 +134,7 @@ export function ClassroomProductsList({
                         variant="ghost"
                         size="sm"
                         onClick={(e) => handleDeleteClick(variant, e)}
-                        className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                        className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors"
                         title="Remove from classroom"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
@@ -130,7 +148,7 @@ export function ClassroomProductsList({
                         e.stopPropagation();
                         handleProductClick(variant.id);
                       }}
-                      className="h-8 w-8 p-0"
+                      className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary"
                       title="View Details"
                     >
                       <ArrowRight className="h-3.5 w-3.5" />
