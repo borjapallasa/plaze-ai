@@ -62,17 +62,6 @@ interface UseProductDataProps {
   productSlug?: string;
 }
 
-// Helper function to check if a string is a valid UUID
-const isUUID = (str: string): boolean => {
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  return uuidRegex.test(str);
-};
-
-// Helper function to check if a string is a valid numeric ID
-const isNumericId = (str: string): boolean => {
-  return /^\d+$/.test(str);
-};
-
 export function useProduct({ productId, productSlug }: UseProductDataProps = {}) {
   const params = useParams();
   const [product, setProduct] = useState<ProductData | null>(null);
@@ -80,20 +69,9 @@ export function useProduct({ productId, productSlug }: UseProductDataProps = {})
   const [error, setError] = useState<Error | null>(null);
   const { toast } = useToast();
   
-  // Handle different URL patterns
-  let effectiveProductId = productId || params.id;
-  let effectiveProductSlug = productSlug || params.slug;
-
-  // Handle the slug-id format
-  if (params['slug-id']) {
-    const combinedParam = params['slug-id'];
-    const parts = combinedParam.split('-');
-    if (parts.length >= 2) {
-      // Last part is the ID, everything before is the slug
-      effectiveProductId = parts[parts.length - 1];
-      effectiveProductSlug = parts.slice(0, -1).join('-');
-    }
-  }
+  // Use URL params if direct props aren't provided
+  const effectiveProductId = productId || params.id;
+  const effectiveProductSlug = productSlug || params.slug;
 
   useEffect(() => {
     const fetchProductData = async () => {
@@ -114,18 +92,8 @@ export function useProduct({ productId, productSlug }: UseProductDataProps = {})
         }
 
         if (effectiveProductId) {
-          // Check if the ID is numeric (real_id) or UUID (product_uuid)
-          if (isNumericId(effectiveProductId)) {
-            console.log("Querying by numeric ID:", effectiveProductId);
-            productQuery = productQuery.eq('id', parseInt(effectiveProductId));
-          } else if (isUUID(effectiveProductId)) {
-            console.log("Querying by UUID:", effectiveProductId);
-            productQuery = productQuery.eq('product_uuid', effectiveProductId);
-          } else {
-            throw new Error("Invalid product ID format");
-          }
+          productQuery = productQuery.eq('product_uuid', effectiveProductId);
         } else if (effectiveProductSlug) {
-          console.log("Querying by slug:", effectiveProductSlug);
           productQuery = productQuery.eq('slug', effectiveProductSlug);
         } else {
           throw new Error("Either productId or productSlug must be provided.");
