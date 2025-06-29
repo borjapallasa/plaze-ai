@@ -1,13 +1,22 @@
+
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
 export function GenericInfoPanel() {
+  const navigate = useNavigate();
   const features = ["Discover expert-made digital products", "Join private communities around your passions", "Access exclusive content and member-only perks", "Learn from creators through workshops and templates"];
+  
+  const handleSellOnPlaze = () => {
+    navigate("/sell");
+  };
+
   return <div className="space-y-8">
       {/* Logo and Title */}
       <div className="space-y-4">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            
+            <span className="text-2xl font-bold text-gray-900 italic">Welcome to</span>
             <img src="/lovable-uploads/84b87a79-21ab-4d4e-b6fe-3af1f7e0464d.png" alt="Plaze.ai" className="h-10 w-auto" />
           </div>
           
@@ -42,7 +51,7 @@ export function GenericInfoPanel() {
         <p className="text-gray-600 text-sm mb-4">
           The Operative System for Digital Creators.
         </p>
-        <Button variant="outline" className="group mb-4">
+        <Button variant="outline" className="group mb-4" onClick={handleSellOnPlaze}>
           Sell on Plaze
           <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
         </Button>
