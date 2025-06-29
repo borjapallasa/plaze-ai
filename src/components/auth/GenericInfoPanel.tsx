@@ -57,7 +57,7 @@ export function GenericInfoPanel() {
           Are you a creator?
         </h4>
         <p className="text-gray-600 text-sm mb-4">
-          Create your free account and start discovering the best creators and communities.
+          The Operative System for Digital Creators.
         </p>
         <Button variant="outline" className="group mb-4">
           Sell on Plaze
