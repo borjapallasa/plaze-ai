@@ -258,7 +258,7 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                   </>
                 ) : (
                   <>
-                    <Link to="/auth">
+                    <Link to="/sign-in">
                       <DropdownMenuItem>
                         <User className="mr-2 h-4 w-4" />
                         Sign In
@@ -425,7 +425,7 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                   </>
                 ) : (
                   <>
-                    <Link to="/auth">
+                    <Link to="/sign-in">
                       <DropdownMenuItem>
                         <User className="mr-2 h-4 w-4" />
                         Sign In
