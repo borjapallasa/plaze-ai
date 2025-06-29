@@ -3,8 +3,6 @@ import React, { useState } from "react";
 import { useUsers } from "@/hooks/admin/useUsers";
 import { MainHeader } from "@/components/MainHeader";
 import { UsersHeader } from "@/components/admin/users/UsersHeader";
-import { UsersLayoutSwitcher } from "@/components/admin/users/UsersLayoutSwitcher";
-import { UsersSortSelector } from "@/components/admin/users/UsersSortSelector";
 import { UsersLoadingState } from "@/components/admin/users/UsersLoadingState";
 import { UsersErrorState } from "@/components/admin/users/UsersErrorState";
 import { UsersTable } from "@/components/admin/users/UsersTable";
@@ -15,7 +13,7 @@ export default function AdminUsers() {
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [layoutType, setLayoutType] = useState<"table" | "gallery">("table");
-  const [sortField, setSortField] = useState("created_at");
+  const [sortField, setSortField] = useState<string>("created_at");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -45,13 +43,37 @@ export default function AdminUsers() {
     <>
       <MainHeader />
       <div className="container mx-auto px-4 py-8 mt-16">
-        <UsersHeader
-          refetch={refetch}
-        />
+        <UsersHeader />
 
         <div className="flex items-center justify-between py-4">
-          <UsersLayoutSwitcher />
-          <UsersSortSelector />
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setLayoutType("table")}
+              className={`px-3 py-2 rounded ${layoutType === "table" ? "bg-primary text-white" : "bg-gray-200"}`}
+            >
+              Table
+            </button>
+            <button
+              onClick={() => setLayoutType("gallery")}
+              className={`px-3 py-2 rounded ${layoutType === "gallery" ? "bg-primary text-white" : "bg-gray-200"}`}
+            >
+              Gallery
+            </button>
+          </div>
+          <select
+            value={`${sortField}-${sortDirection}`}
+            onChange={(e) => {
+              const [field, direction] = e.target.value.split('-');
+              setSortField(field);
+              setSortDirection(direction as "asc" | "desc");
+            }}
+            className="px-3 py-2 border rounded"
+          >
+            <option value="created_at-desc">Newest First</option>
+            <option value="created_at-asc">Oldest First</option>
+            <option value="first_name-asc">Name A-Z</option>
+            <option value="first_name-desc">Name Z-A</option>
+          </select>
         </div>
 
         {isLoading ? (
@@ -62,14 +84,14 @@ export default function AdminUsers() {
           layoutType === "table" ? (
             <UsersTable
               users={data.users}
-              sortField={sortField}
+              sortField={sortField as keyof typeof data.users[0]}
               sortDirection={sortDirection}
               onSort={handleSortChange}
             />
           ) : (
             <UsersGallery
               users={data.users}
-              sortField={sortField}
+              sortField={sortField as keyof typeof data.users[0]}
               sortDirection={sortDirection}
               onSort={handleSortChange}
             />

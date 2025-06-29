@@ -81,7 +81,13 @@ export default function CommunityPage() {
   const { user } = useAuth();
   const { images } = useCommunityImages(communityId);
 
-  console.log('Community ID from params:', communityId);
+  // Add validation for communityId
+  React.useEffect(() => {
+    console.log('Community ID from params:', communityId);
+    if (communityId === ':id' || !communityId) {
+      console.error('Invalid community ID detected:', communityId);
+    }
+  }, [communityId]);
 
   // Get current user's expert data
   const { data: currentUserExpertData } = useQuery({
@@ -108,8 +114,8 @@ export default function CommunityPage() {
   const { data: community, isLoading: isCommunityLoading } = useQuery({
     queryKey: ['community', communityId],
     queryFn: async () => {
-      if (!communityId) {
-        console.error('No community ID provided');
+      if (!communityId || communityId === ':id') {
+        console.error('No valid community ID provided');
         return null;
       }
 
@@ -136,7 +142,7 @@ export default function CommunityPage() {
       console.log('Community data fetched:', data);
       return data;
     },
-    enabled: !!communityId
+    enabled: !!communityId && communityId !== ':id'
   });
 
   const { data: threads, isLoading: isThreadsLoading } = useQuery({
@@ -217,8 +223,8 @@ export default function CommunityPage() {
   const { data: communityMembers, isLoading: isMembersLoading } = useQuery({
     queryKey: ['community-members', communityId],
     queryFn: async () => {
-      if (!communityId) {
-        console.error('No community ID provided for members query');
+      if (!communityId || communityId === ':id') {
+        console.error('No valid community ID provided for members query');
         return [];
       }
 
@@ -250,7 +256,7 @@ export default function CommunityPage() {
       console.log('Community members fetched:', data);
       return data;
     },
-    enabled: !!communityId
+    enabled: !!communityId && communityId !== ':id'
   });
 
   const videoEmbedUrl = getVideoEmbedUrl(community?.intro);
@@ -303,6 +309,8 @@ export default function CommunityPage() {
   // Handle member approval
   const handleApproveMember = async (memberUuid: string) => {
     try {
+      console.log('Approving member:', memberUuid);
+      
       const { error } = await supabase
         .from('community_subscriptions')
         .update({ status: 'active' })
@@ -338,6 +346,8 @@ export default function CommunityPage() {
   // Handle member removal/rejection
   const handleRemoveMember = async (memberUuid: string) => {
     try {
+      console.log('Removing member:', memberUuid);
+      
       const { error } = await supabase
         .from('community_subscriptions')
         .delete()
@@ -369,6 +379,23 @@ export default function CommunityPage() {
       });
     }
   };
+
+  // Early return for invalid community ID
+  if (communityId === ':id' || !communityId) {
+    return (
+      <>
+        <MainHeader />
+        <div className="container mx-auto px-4 py-8 mt-16">
+          <Card className="p-6">
+            <h1 className="text-xl font-semibold">Invalid Community URL</h1>
+            <p className="text-muted-foreground mt-2">
+              The community URL appears to be invalid. Please check the link and try again.
+            </p>
+          </Card>
+        </div>
+      </>
+    );
+  }
 
   if (isCommunityLoading) {
     return (
@@ -1124,7 +1151,17 @@ export default function CommunityPage() {
             <TabsContent value="members" className="space-y-6">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold">Community Members</h3>
-                {renderMemberRequestsButton()}
+                {isOwner && pendingMembers.length > 0 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2"
+                    onClick={() => setIsMemberRequestsDialogOpen(true)}
+                  >
+                    <Settings className="w-4 h-4" />
+                    Member Requests ({pendingMembers.length})
+                  </Button>
+                )}
               </div>
               
               {isMembersLoading ? (

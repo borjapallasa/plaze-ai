@@ -3,120 +3,92 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { MainHeader } from "@/components/MainHeader";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { Copy, DollarSign, Users, TrendingUp, Settings } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { AffiliateTable } from "@/components/affiliates/AffiliateTable";
 import { AffiliateDashboard } from "@/components/affiliates/AffiliateDashboard";
+import { AffiliateTable } from "@/components/affiliates/AffiliateTable";
+import { AffiliateDetailsDialog } from "@/components/affiliates/AffiliateDetailsDialog";
 import { PaymentSettingsDialog } from "@/components/affiliates/PaymentSettingsDialog";
 import { useAuth } from "@/lib/auth";
+import { DollarSign, Users, TrendingUp, Calendar } from "lucide-react";
 
-export default function Affiliates() {
+export default function AffiliatesPage() {
   const { user } = useAuth();
-  const { toast } = useToast();
+  const [selectedAffiliate, setSelectedAffiliate] = useState<string | null>(null);
+  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
 
-  const { data: affiliateData, isLoading, error } = useQuery({
+  // Fetch affiliate data
+  const { data: affiliateData, isLoading: isLoadingAffiliate } = useQuery({
     queryKey: ['affiliate-data', user?.id],
     queryFn: async () => {
-      if (!user?.id) {
-        console.error('No user ID provided for affiliate data query');
-        return null;
-      }
-
+      if (!user?.id) return null;
+      
       const { data, error } = await supabase
         .from('affiliates')
         .select('*')
         .eq('user_uuid', user.id)
-        .single();
-
-      if (error) {
-        console.error("Error fetching affiliate data:", error);
-        return null;
-      }
-
+        .maybeSingle();
+      
+      if (error) throw error;
       return data;
     },
     enabled: !!user?.id,
   });
 
-  const { data: referrals, isLoading: isReferralsLoading, error: referralsError } = useQuery({
-    queryKey: ['affiliate-referrals', affiliateData?.affiliate_uuid],
+  // Fetch all affiliates (for admin/management view)
+  const { data: allAffiliates, isLoading: isLoadingAll } = useQuery({
+    queryKey: ['all-affiliates'],
     queryFn: async () => {
-      if (!affiliateData?.affiliate_uuid) {
-        console.warn('No affiliate UUID available, skipping referrals query');
-        return [];
-      }
-
-      // For now, return empty array as referrals table doesn't exist in schema
-      return [];
+      const { data, error } = await supabase
+        .from('affiliates')
+        .select(`
+          affiliate_uuid,
+          email,
+          affiliate_code,
+          status,
+          commissions_made,
+          commissions_paid,
+          commissions_available,
+          affiliate_count,
+          transaction_count,
+          created_at,
+          paypal
+        `)
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      return data;
     },
-    enabled: !!affiliateData?.affiliate_uuid,
   });
 
-  const handleCopyClick = () => {
-    if (affiliateData?.affiliate_code) {
-      const referralLink = `${window.location.origin}?ref=${affiliateData.affiliate_code}`;
-      navigator.clipboard.writeText(referralLink);
-      toast({
-        title: "Referral link copied!",
-        description: "Share this link with your friends.",
-      });
-    } else {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "No affiliate code available.",
-      });
-    }
+  const handleViewDetails = (affiliateUuid: string) => {
+    setSelectedAffiliate(affiliateUuid);
+    setIsDetailsDialogOpen(true);
   };
 
-  if (isLoading) {
+  const handleOpenPaymentSettings = (affiliateUuid: string) => {
+    setSelectedAffiliate(affiliateUuid);
+    setIsPaymentDialogOpen(true);
+  };
+
+  if (isLoadingAffiliate || isLoadingAll) {
     return (
       <>
         <MainHeader />
         <div className="container mx-auto px-4 py-8 mt-16">
-          <div className="animate-pulse space-y-4">
-            <div className="h-64 bg-muted rounded-lg"></div>
-            <div className="h-8 w-1/3 bg-muted rounded"></div>
-            <div className="h-4 w-2/3 bg-muted rounded"></div>
+          <div className="space-y-6">
+            <div className="animate-pulse space-y-4">
+              <div className="h-8 bg-muted rounded w-1/4"></div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="h-32 bg-muted rounded"></div>
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
-      </>
-    );
-  }
-
-  if (error) {
-    return (
-      <>
-        <MainHeader />
-        <div className="container mx-auto px-4 py-8 mt-16">
-          <Card className="p-6">
-            <h1 className="text-xl font-semibold">Error</h1>
-            <p className="text-muted-foreground mt-2">
-              Failed to load affiliate data. Please try again later.
-            </p>
-          </Card>
-        </div>
-      </>
-    );
-  }
-
-  if (!affiliateData) {
-    return (
-      <>
-        <MainHeader />
-        <div className="container mx-auto px-4 py-8 mt-16">
-          <Card className="p-6">
-            <h1 className="text-xl font-semibold">Affiliate Program</h1>
-            <p className="text-muted-foreground mt-2">
-              You are not currently an affiliate. Contact support to become an affiliate.
-            </p>
-          </Card>
         </div>
       </>
     );
@@ -125,36 +97,64 @@ export default function Affiliates() {
   return (
     <>
       <MainHeader />
-      <div className="container mx-auto px-4 py-8 mt-16">
-        <Tabs defaultValue="dashboard" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-            <TabsTrigger value="referrals">Referrals</TabsTrigger>
-            <TabsTrigger value="settings">Settings</TabsTrigger>
-          </TabsList>
-          <TabsContent value="dashboard" className="space-y-4">
-            <AffiliateDashboard />
-          </TabsContent>
-          <TabsContent value="referrals" className="space-y-4">
-            <AffiliateTable />
-          </TabsContent>
-          <TabsContent value="settings" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Payment Settings</CardTitle>
-                <CardDescription>Update your payment information.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button onClick={() => setIsPaymentDialogOpen(true)}>Update Payment Settings</Button>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+      <div className="container mx-auto px-4 py-8 mt-16 space-y-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">Affiliate Program</h1>
+            <p className="text-muted-foreground mt-2">
+              Manage your affiliate partnerships and track commissions
+            </p>
+          </div>
+          
+          {affiliateData && (
+            <Button
+              onClick={() => handleOpenPaymentSettings(affiliateData.affiliate_uuid)}
+              variant="outline"
+            >
+              Payment Settings
+            </Button>
+          )}
+        </div>
+
+        {affiliateData ? (
+          <AffiliateDashboard affiliate={affiliateData} />
+        ) : (
+          <Card>
+            <CardHeader>
+              <CardTitle>Join Our Affiliate Program</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground mb-4">
+                Start earning commissions by referring customers to our platform.
+              </p>
+              <Button>Apply to Become an Affiliate</Button>
+            </CardContent>
+          </Card>
+        )}
+
+        <Separator />
+
+        {allAffiliates && allAffiliates.length > 0 && (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-semibold">All Affiliates</h2>
+            <AffiliateTable
+              affiliates={allAffiliates}
+              onViewDetails={handleViewDetails}
+              onManagePayment={handleOpenPaymentSettings}
+            />
+          </div>
+        )}
+
+        <AffiliateDetailsDialog
+          affiliateUuid={selectedAffiliate}
+          open={isDetailsDialogOpen}
+          onOpenChange={setIsDetailsDialogOpen}
+        />
 
         <PaymentSettingsDialog
-          open={isPaymentDialogOpen}
-          onOpenChange={setIsPaymentDialogOpen}
-          affiliateUuid={affiliateData?.affiliate_uuid || ''}
+          affiliateUuid={selectedAffiliate || ''}
+          isOpen={isPaymentDialogOpen}
+          onClose={() => setIsPaymentDialogOpen(false)}
         />
       </div>
     </>
