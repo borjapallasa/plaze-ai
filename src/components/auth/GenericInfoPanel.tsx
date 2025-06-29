@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle } from "lucide-react";
 export function GenericInfoPanel() {
@@ -13,9 +12,7 @@ export function GenericInfoPanel() {
             </h1>
             <img src="/lovable-uploads/84b87a79-21ab-4d4e-b6fe-3af1f7e0464d.png" alt="Plaze.ai" className="h-10 w-auto" />
           </div>
-          <p className="text-xl text-gray-600">
-            The Operative System for Digital Creators.
-          </p>
+          
         </div>
       </div>
 
