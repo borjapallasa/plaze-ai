@@ -26,7 +26,10 @@ export default function AffiliatesPage() {
         .eq('user_uuid', user.id)
         .maybeSingle();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching affiliate data:', error);
+        return null;
+      }
       return data;
     },
     enabled: !!user?.id,
@@ -53,8 +56,11 @@ export default function AffiliatesPage() {
         `)
         .order('created_at', { ascending: false });
       
-      if (error) throw error;
-      return data;
+      if (error) {
+        console.error('Error fetching all affiliates:', error);
+        return [];
+      }
+      return data || [];
     },
   });
 
@@ -68,7 +74,7 @@ export default function AffiliatesPage() {
     setIsPaymentDialogOpen(true);
   };
 
-  if (isLoadingAffiliate || isLoadingAll) {
+  if (isLoadingAffiliate) {
     return (
       <>
         <MainHeader />
@@ -111,43 +117,65 @@ export default function AffiliatesPage() {
         </div>
 
         {affiliateData ? (
-          <Card>
-            <CardHeader>
-              <CardTitle>Your Affiliate Dashboard</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <DollarSign className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm font-medium">Commissions Made</span>
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Your Affiliate Dashboard</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <DollarSign className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm font-medium">Commissions Made</span>
+                    </div>
+                    <p className="text-2xl font-bold">${affiliateData.commissions_made || 0}</p>
                   </div>
-                  <p className="text-2xl font-bold">${affiliateData.commissions_made || 0}</p>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm font-medium">Available</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm font-medium">Available</span>
+                    </div>
+                    <p className="text-2xl font-bold">${affiliateData.commissions_available || 0}</p>
                   </div>
-                  <p className="text-2xl font-bold">${affiliateData.commissions_available || 0}</p>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Users className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm font-medium">Referrals</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Users className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm font-medium">Referrals</span>
+                    </div>
+                    <p className="text-2xl font-bold">{affiliateData.affiliate_count || 0}</p>
                   </div>
-                  <p className="text-2xl font-bold">{affiliateData.affiliate_count || 0}</p>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm font-medium">Transactions</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm font-medium">Transactions</span>
+                    </div>
+                    <p className="text-2xl font-bold">{affiliateData.transaction_count || 0}</p>
                   </div>
-                  <p className="text-2xl font-bold">{affiliateData.transaction_count || 0}</p>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Affiliate Information</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Affiliate Code</p>
+                  <p className="font-medium">{affiliateData.affiliate_code}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Status</p>
+                  <p className="font-medium">{affiliateData.status}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">PayPal Account</p>
+                  <p className="font-medium">{affiliateData.paypal || 'Not set'}</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         ) : (
           <Card>
             <CardHeader>
@@ -158,6 +186,30 @@ export default function AffiliatesPage() {
                 Start earning commissions by referring customers to our platform.
               </p>
               <Button>Apply to Become an Affiliate</Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {allAffiliates && allAffiliates.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle>All Affiliates</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {allAffiliates.map((affiliate) => (
+                  <div key={affiliate.affiliate_uuid} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div>
+                      <p className="font-medium">{affiliate.email}</p>
+                      <p className="text-sm text-muted-foreground">Code: {affiliate.affiliate_code}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-medium">${affiliate.commissions_made || 0}</p>
+                      <p className="text-sm text-muted-foreground">{affiliate.status}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
         )}
