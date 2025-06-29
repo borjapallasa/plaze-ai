@@ -74,11 +74,11 @@ export function SellerHeader({
       <CardContent className="p-6">
         <div className="max-w-6xl mx-auto">
           {/* Desktop Layout */}
-          <div className="hidden lg:flex items-start gap-6">
-            {/* Main Content Section */}
-            <div className="flex items-start gap-4 flex-1">
+          <div className="hidden lg:flex items-start gap-8">
+            {/* Left Section - Profile */}
+            <div className="flex flex-col items-center gap-3 flex-shrink-0">
               {/* Avatar */}
-              <div className="w-16 h-16 flex-shrink-0">
+              <div className="w-16 h-16">
                 <AspectRatio ratio={1} className="overflow-hidden rounded-full">
                   <Avatar className="h-full w-full border-2 border-gray-100 shadow-md">
                     <AvatarImage 
@@ -93,151 +93,30 @@ export function SellerHeader({
                 </AspectRatio>
               </div>
               
-              {/* Name, Title, Location, Description */}
-              <div className="flex-1 min-w-0 space-y-2">
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <h1 className="text-xl font-bold text-gray-900 leading-tight tracking-tight">
-                        {seller.name}
-                      </h1>
-                      {seller.status && (
-                        <Badge 
-                          variant={getBadgeVariant(seller.status)}
-                          className="text-xs px-2 py-0.5 capitalize font-medium"
-                        >
-                          {seller.status}
-                        </Badge>
-                      )}
-                    </div>
-                    
-                    {/* Category and Location */}
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      {seller.title && (
-                        <span className="font-medium text-gray-700">{seller.title}</span>
-                      )}
-                      {seller.title && seller.location && (
-                        <span className="text-gray-400">•</span>
-                      )}
-                      {seller.location && (
-                        <div className="flex items-center gap-1">
-                          <MapPin className="h-3 w-3 text-gray-400" />
-                          <span>{seller.location}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  
-                  {isAdminView ? (
-                    <EditExpertStatusDialog
-                      expert={seller}
-                      onUpdate={onSellerUpdate}
-                      trigger={
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="flex items-center gap-2 hover:bg-gray-50"
-                        >
-                          <Edit2 className="h-4 w-4" />
-                          Edit Status
-                        </Button>
-                      }
-                    />
-                  ) : (
-                    <EditExpertDialog
-                      expert={seller}
-                      onUpdate={onSellerUpdate}
-                      trigger={
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="flex items-center gap-2 hover:bg-gray-50"
-                        >
-                          <Edit2 className="h-4 w-4" />
-                          Edit Profile
-                        </Button>
-                      }
-                    />
-                  )}
-                </div>
-                
-                {/* Description */}
-                {seller.description && (
-                  <div className="max-w-3xl">
-                    <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">
-                      {seller.description}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Vertical Divider */}
-            <Separator orientation="vertical" className="h-20" />
-
-            {/* Stats Section - Stacked Vertically */}
-            <div className="flex-shrink-0">
-              <div className="flex flex-col gap-3 text-left">
-                <div className="flex items-center gap-2">
-                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  <span className="text-sm font-semibold">
-                    {satisfactionPercentage}% Satisfaction
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-semibold">
-                    {communitiesCount} Communities
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Package className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-semibold">
-                    {productsCount} Products
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Mobile/Tablet Layout */}
-          <div className="lg:hidden">
-            {/* Avatar and Name Row */}
-            <div className="flex items-start gap-3 mb-3">
-              <div className="w-14 h-14 flex-shrink-0">
-                <AspectRatio ratio={1} className="overflow-hidden rounded-full">
-                  <Avatar className="h-full w-full border-2 border-gray-100 shadow-md">
-                    <AvatarImage 
-                      src={seller.thumbnail} 
-                      alt={seller.name}
-                      className="object-cover"
-                    />
-                    <AvatarFallback className="text-base font-bold bg-gradient-to-br from-blue-500 to-purple-600 text-white">
-                      {seller.name?.split(' ').map(n => n[0]).join('') || 'UN'}
-                    </AvatarFallback>
-                  </Avatar>
-                </AspectRatio>
-              </div>
-              
-              <div className="flex-1 min-w-0 space-y-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h1 className="text-lg font-bold text-gray-900 leading-tight tracking-tight">
+              {/* Name and Title */}
+              <div className="text-center space-y-1">
+                <div className="flex items-center gap-2 justify-center">
+                  <h1 className="text-lg font-bold text-gray-900 leading-tight">
                     {seller.name}
                   </h1>
                   {seller.status && (
                     <Badge 
                       variant={getBadgeVariant(seller.status)}
-                      className="text-xs px-2 py-0.5 capitalize"
+                      className="text-xs px-2 py-0.5 capitalize font-medium"
                     >
                       {seller.status}
                     </Badge>
                   )}
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600 flex-wrap">
-                  {seller.title && <span className="font-medium text-gray-700">{seller.title}</span>}
-                  {seller.title && seller.location && <span className="text-gray-400">•</span>}
+                
+                {/* Category and Location */}
+                <div className="flex items-center gap-2 text-sm text-gray-600 justify-center">
+                  {seller.title && (
+                    <span className="font-medium text-gray-700">{seller.title}</span>
+                  )}
+                  {seller.title && seller.location && (
+                    <span className="text-gray-400">•</span>
+                  )}
                   {seller.location && (
                     <div className="flex items-center gap-1">
                       <MapPin className="h-3 w-3 text-gray-400" />
@@ -248,36 +127,152 @@ export function SellerHeader({
               </div>
             </div>
 
+            {/* Middle Section - Description */}
+            <div className="flex-1 min-w-0">
+              {seller.description && (
+                <div className="space-y-2">
+                  <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">
+                    {seller.description}
+                  </p>
+                  
+                  {/* Edit Button */}
+                  <div className="pt-2">
+                    {isAdminView ? (
+                      <EditExpertStatusDialog
+                        expert={seller}
+                        onUpdate={onSellerUpdate}
+                        trigger={
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="flex items-center gap-2 hover:bg-gray-50"
+                          >
+                            <Edit2 className="h-4 w-4" />
+                            Edit Status
+                          </Button>
+                        }
+                      />
+                    ) : (
+                      <EditExpertDialog
+                        expert={seller}
+                        onUpdate={onSellerUpdate}
+                        trigger={
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="flex items-center gap-2 hover:bg-gray-50"
+                          >
+                            <Edit2 className="h-4 w-4" />
+                            Edit Profile
+                          </Button>
+                        }
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Right Section - Stats */}
+            <div className="flex-shrink-0">
+              <div className="flex flex-col gap-3 text-right">
+                <div className="flex items-center gap-2 justify-end">
+                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  <span className="text-sm font-semibold">
+                    {satisfactionPercentage}% Satisfaction
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2 justify-end">
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-semibold">
+                    {communitiesCount} Communities
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2 justify-end">
+                  <Package className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-semibold">
+                    {productsCount} Products
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile/Tablet Layout */}
+          <div className="lg:hidden space-y-4">
+            {/* Avatar centered */}
+            <div className="flex justify-center">
+              <div className="w-16 h-16">
+                <AspectRatio ratio={1} className="overflow-hidden rounded-full">
+                  <Avatar className="h-full w-full border-2 border-gray-100 shadow-md">
+                    <AvatarImage 
+                      src={seller.thumbnail} 
+                      alt={seller.name}
+                      className="object-cover"
+                    />
+                    <AvatarFallback className="text-lg font-bold bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+                      {seller.name?.split(' ').map(n => n[0]).join('') || 'UN'}
+                    </AvatarFallback>
+                  </Avatar>
+                </AspectRatio>
+              </div>
+            </div>
+            
+            {/* Name and Title centered */}
+            <div className="text-center space-y-1">
+              <div className="flex items-center gap-2 justify-center flex-wrap">
+                <h1 className="text-lg font-bold text-gray-900 leading-tight">
+                  {seller.name}
+                </h1>
+                {seller.status && (
+                  <Badge 
+                    variant={getBadgeVariant(seller.status)}
+                    className="text-xs px-2 py-0.5 capitalize"
+                  >
+                    {seller.status}
+                  </Badge>
+                )}
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-600 justify-center flex-wrap">
+                {seller.title && <span className="font-medium text-gray-700">{seller.title}</span>}
+                {seller.title && seller.location && <span className="text-gray-400">•</span>}
+                {seller.location && (
+                  <div className="flex items-center gap-1">
+                    <MapPin className="h-3 w-3 text-gray-400" />
+                    <span>{seller.location}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
             {/* Description */}
             {seller.description && (
-              <div className="mb-3">
+              <div className="text-center">
                 <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">
                   {seller.description}
                 </p>
               </div>
             )}
 
-            {/* Stats Row with separators for mobile */}
-            <div className="flex items-center gap-3 overflow-x-auto pb-2 mb-3">
-              <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Stats Row */}
+            <div className="flex items-center justify-center gap-6 pb-2">
+              <div className="flex items-center gap-2">
                 <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                 <span className="text-sm font-semibold">
                   {satisfactionPercentage}%
                 </span>
               </div>
 
-              <Separator orientation="vertical" className="h-4" />
-
-              <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="flex items-center gap-2">
                 <Users className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm font-semibold">
                   {communitiesCount}
                 </span>
               </div>
 
-              <Separator orientation="vertical" className="h-4" />
-
-              <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="flex items-center gap-2">
                 <Package className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm font-semibold">
                   {productsCount}
