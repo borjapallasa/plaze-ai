@@ -2,9 +2,8 @@
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Package, ArrowRight, ExternalLink, Plus, Trash2, Search } from "lucide-react";
+import { Package, ArrowRight, ExternalLink, Plus, Trash2 } from "lucide-react";
 import { Variant } from "@/components/product/types/variants";
 import { ClassroomProductSelector } from "./ClassroomProductSelector";
 import { DeleteClassroomProductDialog } from "./DeleteClassroomProductDialog";
@@ -26,7 +25,6 @@ export function ClassroomProductsList({
 }: ClassroomProductsListProps) {
   const [isSelectorOpen, setIsSelectorOpen] = useState(false);
   const [deleteRelationshipUuid, setDeleteRelationshipUuid] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
 
   const handleProductClick = (productId: string) => {
     window.open(`/community/product/${productId}`, '_blank');
@@ -45,11 +43,6 @@ export function ClassroomProductsList({
     
     setDeleteRelationshipUuid(variant.relationshipUuid);
   };
-
-  // Filter variants based on search term
-  const filteredVariants = variants.filter(variant =>
-    variant.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   const excludedProductIds = variants.map(variant => variant.id);
 
@@ -75,33 +68,14 @@ export function ClassroomProductsList({
         )}
       </div>
 
-      {variants.length > 0 && (
-        <div className="mb-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search products..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9"
-            />
-          </div>
-        </div>
-      )}
-
       {!variants || variants.length === 0 ? (
         <div className="text-center py-8">
           <Package className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
           <p className="text-muted-foreground">No products available in this classroom yet.</p>
         </div>
-      ) : filteredVariants.length === 0 ? (
-        <div className="text-center py-8">
-          <Package className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-          <p className="text-muted-foreground">No products found matching "{searchTerm}".</p>
-        </div>
       ) : (
         <div className="space-y-2">
-          {filteredVariants.map((variant) => (
+          {variants.map((variant) => (
             <Card key={variant.id} className="hover:shadow-sm transition-shadow cursor-pointer border-l-4 border-l-primary/20" onClick={() => handleProductClick(variant.id)}>
               <CardContent className="p-3">
                 <div className="flex items-center justify-between gap-3">
