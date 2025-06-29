@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight, Plus, Edit, Package, Settings, UserX } from "lucide-react";
+import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight, Plus, Edit, Package, Settings, UserX, Check, X } from "lucide-react";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/ProductCard";
@@ -300,13 +300,74 @@ export default function CommunityPage() {
     status: member.status as 'pending' | 'active' | 'cancelled' | 'rejected'
   })) || [];
 
-  // Handle member removal
+  // Handle member approval
+  const handleApproveMember = async (memberUuid: string) => {
+    try {
+      const { error } = await supabase
+        .from('community_subscriptions')
+        .update({ status: 'active' })
+        .eq('community_subscription_uuid', memberUuid);
+
+      if (error) {
+        console.error('Error approving member:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to approve member. Please try again.",
+        });
+        return;
+      }
+
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['community-members', communityId] });
+      
+      toast({
+        title: "Member approved",
+        description: "The member has been approved and added to the community.",
+      });
+    } catch (error) {
+      console.error('Error approving member:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to approve member. Please try again.",
+      });
+    }
+  };
+
+  // Handle member removal/rejection
   const handleRemoveMember = async (memberUuid: string) => {
-    // TODO: Implement API call to remove member
-    toast({
-      title: "Member removed",
-      description: "The member has been removed from the community.",
-    });
+    try {
+      const { error } = await supabase
+        .from('community_subscriptions')
+        .delete()
+        .eq('community_subscription_uuid', memberUuid);
+
+      if (error) {
+        console.error('Error removing member:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to remove member. Please try again.",
+        });
+        return;
+      }
+
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['community-members', communityId] });
+      
+      toast({
+        title: "Member removed",
+        description: "The member has been removed from the community.",
+      });
+    } catch (error) {
+      console.error('Error removing member:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to remove member. Please try again.",
+      });
+    }
   };
 
   if (isCommunityLoading) {
@@ -1069,21 +1130,22 @@ export default function CommunityPage() {
               {isMembersLoading ? (
                 <div className="space-y-4">
                   {Array.from({ length: 5 }).map((_, index) => (
-                    <div key={index} className="flex items-center space-x-4 p-5 rounded-xl border bg-card animate-pulse">
-                      <div className="w-14 h-14 bg-muted rounded-full"></div>
+                    <div key={index} className="flex items-center space-x-4 p-6 rounded-xl border bg-card animate-pulse">
+                      <div className="w-16 h-16 bg-muted rounded-full"></div>
                       <div className="flex-1 space-y-2">
-                        <div className="h-4 bg-muted rounded w-1/4"></div>
-                        <div className="h-3 bg-muted rounded w-1/6"></div>
+                        <div className="h-5 bg-muted rounded w-1/4"></div>
+                        <div className="h-4 bg-muted rounded w-1/6"></div>
                       </div>
                     </div>
                   ))}
                 </div>
-              ) : activeMembers.length > 0 ? (
+              ) : activeMembers.length > 0 || pendingMembers.length > 0 ? (
                 <div className="space-y-4">
+                  {/* Active Members */}
                   {activeMembers.map((member) => (
-                    <div key={member.community_subscription_uuid} className="flex items-center justify-between p-5 rounded-xl border bg-card hover:bg-accent/20 transition-colors">
-                      <div className="flex items-center space-x-4">
-                        <Avatar className="h-14 w-14">
+                    <div key={member.community_subscription_uuid} className="flex items-center justify-between p-6 rounded-xl border bg-card hover:bg-accent/20 transition-colors">
+                      <div className="flex items-center space-x-4 flex-1">
+                        <Avatar className="h-16 w-16">
                           <AvatarImage 
                             src={member.users.user_thumbnail || "https://github.com/shadcn.png"} 
                             alt={`${member.users.first_name} ${member.users.last_name}`}
@@ -1092,8 +1154,8 @@ export default function CommunityPage() {
                             {`${member.users.first_name?.charAt(0) || ''}${member.users.last_name?.charAt(0) || ''}`}
                           </AvatarFallback>
                         </Avatar>
-                        <div className="space-y-1">
-                          <p className="font-semibold text-base">
+                        <div className="space-y-2 flex-1">
+                          <p className="font-semibold text-lg">
                             {member.users.first_name} {member.users.last_name}
                           </p>
                           <p className="text-sm text-muted-foreground">
@@ -1105,16 +1167,73 @@ export default function CommunityPage() {
                           </p>
                         </div>
                       </div>
-                      {isOwner && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleRemoveMember(member.community_subscription_uuid)}
-                          className="h-10 w-10 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full"
-                        >
-                          <UserX className="h-5 w-5" />
-                        </Button>
-                      )}
+                      <div className="flex items-center gap-2">
+                        <Badge variant="secondary" className="bg-green-100 text-green-800 px-3 py-1">
+                          Active
+                        </Badge>
+                        {isOwner && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleRemoveMember(member.community_subscription_uuid)}
+                            className="h-10 w-10 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full ml-2"
+                          >
+                            <UserX className="h-5 w-5" />
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {/* Pending Members (only visible to owner) */}
+                  {isOwner && pendingMembers.map((member) => (
+                    <div key={member.community_subscription_uuid} className="flex items-center justify-between p-6 rounded-xl border bg-card hover:bg-accent/20 transition-colors border-yellow-200">
+                      <div className="flex items-center space-x-4 flex-1">
+                        <Avatar className="h-16 w-16">
+                          <AvatarImage 
+                            src={member.users.user_thumbnail || "https://github.com/shadcn.png"} 
+                            alt={`${member.users.first_name} ${member.users.last_name}`}
+                          />
+                          <AvatarFallback className="bg-primary/10 text-primary font-medium text-lg">
+                            {`${member.users.first_name?.charAt(0) || ''}${member.users.last_name?.charAt(0) || ''}`}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="space-y-2 flex-1">
+                          <p className="font-semibold text-lg">
+                            {member.users.first_name} {member.users.last_name}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            Requested {new Date(member.created_at).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric'
+                            })}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 px-3 py-1">
+                          Pending
+                        </Badge>
+                        <div className="flex gap-2 ml-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleApproveMember(member.community_subscription_uuid)}
+                            className="h-10 w-10 p-0 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-full"
+                          >
+                            <Check className="h-5 w-5" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleRemoveMember(member.community_subscription_uuid)}
+                            className="h-10 w-10 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full"
+                          >
+                            <X className="h-5 w-5" />
+                          </Button>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -1194,6 +1313,7 @@ export default function CommunityPage() {
             onOpenChange={setIsMemberRequestsDialogOpen}
             members={pendingMembers}
             isOwner={isOwner}
+            communityId={communityId || ''}
           />
         </div>
       </CommunityAccessGuard>

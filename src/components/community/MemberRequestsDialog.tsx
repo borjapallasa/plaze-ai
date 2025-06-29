@@ -3,8 +3,10 @@ import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { UserX, UserCheck, Clock, Check, X } from "lucide-react";
+import { Clock, Check, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Member {
   community_subscription_uuid: string;
@@ -24,30 +26,85 @@ interface MemberRequestsDialogProps {
   onOpenChange: (open: boolean) => void;
   members: Member[];
   isOwner: boolean;
+  communityId: string;
 }
 
 export function MemberRequestsDialog({ 
   open, 
   onOpenChange, 
   members = [], 
-  isOwner 
+  isOwner,
+  communityId
 }: MemberRequestsDialogProps) {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const handleAcceptMember = async (memberUuid: string) => {
-    // TODO: Implement API call to accept member
-    toast({
-      title: "Member accepted",
-      description: "The member has been accepted into the community.",
-    });
+    try {
+      const { error } = await supabase
+        .from('community_subscriptions')
+        .update({ status: 'active' })
+        .eq('community_subscription_uuid', memberUuid);
+
+      if (error) {
+        console.error('Error accepting member:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to accept member. Please try again.",
+        });
+        return;
+      }
+
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['community-members', communityId] });
+      
+      toast({
+        title: "Member accepted",
+        description: "The member has been accepted into the community.",
+      });
+    } catch (error) {
+      console.error('Error accepting member:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to accept member. Please try again.",
+      });
+    }
   };
 
   const handleRejectMember = async (memberUuid: string) => {
-    // TODO: Implement API call to reject member
-    toast({
-      title: "Member rejected",
-      description: "The member request has been rejected.",
-    });
+    try {
+      const { error } = await supabase
+        .from('community_subscriptions')
+        .delete()
+        .eq('community_subscription_uuid', memberUuid);
+
+      if (error) {
+        console.error('Error rejecting member:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to reject member. Please try again.",
+        });
+        return;
+      }
+
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['community-members', communityId] });
+      
+      toast({
+        title: "Member rejected",
+        description: "The member request has been rejected.",
+      });
+    } catch (error) {
+      console.error('Error rejecting member:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to reject member. Please try again.",
+      });
+    }
   };
 
   if (!isOwner) {
@@ -74,10 +131,10 @@ export function MemberRequestsDialog({
             members.map((member) => (
               <div
                 key={member.community_subscription_uuid}
-                className="flex items-center justify-between p-5 rounded-xl border bg-card hover:bg-accent/20 transition-colors"
+                className="flex items-center justify-between p-6 rounded-xl border bg-card hover:bg-accent/20 transition-colors"
               >
-                <div className="flex items-center space-x-4">
-                  <Avatar className="h-14 w-14">
+                <div className="flex items-center space-x-4 flex-1">
+                  <Avatar className="h-16 w-16">
                     <AvatarImage 
                       src={member.users.user_thumbnail || "https://github.com/shadcn.png"} 
                       alt={`${member.users.first_name} ${member.users.last_name}`}
@@ -86,8 +143,8 @@ export function MemberRequestsDialog({
                       {`${member.users.first_name?.charAt(0) || ''}${member.users.last_name?.charAt(0) || ''}`}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="space-y-1">
-                    <p className="font-semibold text-base">
+                  <div className="space-y-2 flex-1">
+                    <p className="font-semibold text-lg">
                       {member.users.first_name} {member.users.last_name}
                     </p>
                     <p className="text-sm text-muted-foreground">
@@ -100,12 +157,12 @@ export function MemberRequestsDialog({
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 ml-4">
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => handleAcceptMember(member.community_subscription_uuid)}
-                    className="h-10 w-10 p-0 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-full"
+                    className="h-12 w-12 p-0 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-full"
                   >
                     <Check className="h-5 w-5" />
                   </Button>
@@ -113,7 +170,7 @@ export function MemberRequestsDialog({
                     variant="ghost"
                     size="sm"
                     onClick={() => handleRejectMember(member.community_subscription_uuid)}
-                    className="h-10 w-10 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full"
+                    className="h-12 w-12 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full"
                   >
                     <X className="h-5 w-5" />
                   </Button>
