@@ -598,6 +598,7 @@ export default function Classroom() {
 
   const videoUrl = viewMode === 'lesson' ? activeLesson?.video_url : classroom?.video_url;
   const videoEmbedUrl = videoUrl ? getVideoEmbedUrl(videoUrl) : null;
+  const hasVideo = videoUrl && videoUrl.trim() !== '';
 
   useEffect(() => {
     if (videoUrl) {
@@ -816,7 +817,7 @@ export default function Classroom() {
                         )}
                       </h2>
 
-                      {videoEmbedUrl ? (
+                      {hasVideo ? (
                         <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
                           <iframe
                             src={videoEmbedUrl}
@@ -827,20 +828,7 @@ export default function Classroom() {
                             allowFullScreen
                           ></iframe>
                         </div>
-                      ) : (
-                        <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
-                          <img
-                            src={(viewMode === 'lesson' ? activeLesson?.thumbnail_url : null) || classroom?.thumbnail || "/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"}
-                            alt="Course thumbnail"
-                            className="w-full h-full object-cover"
-                          />
-                          <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                            <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center cursor-pointer hover:bg-white transition-colors">
-                              <div className="w-6 h-6 border-8 border-transparent border-l-primary ml-1" style={{ transform: 'rotate(-45deg)' }} />
-                            </div>
-                          </div>
-                        </div>
-                      )}
+                      ) : null}
                     </div>
 
                     <div className="space-y-6">
@@ -953,7 +941,7 @@ export default function Classroom() {
                     </h1>
 
                     <div className="space-y-4">
-                      {videoEmbedUrl ? (
+                      {hasVideo ? (
                         <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
                           <iframe
                             src={videoEmbedUrl}
@@ -964,20 +952,7 @@ export default function Classroom() {
                             allowFullScreen
                           ></iframe>
                         </div>
-                      ) : (
-                        <div className="aspect-video bg-muted relative rounded-lg overflow-hidden">
-                          <img
-                            src={(viewMode === 'lesson' ? activeLesson?.thumbnail_url : null) || classroom?.thumbnail || "/lovable-uploads/ecaf60f3-4e1d-4836-ab26-8d0f919503e0.png"}
-                            alt="Course thumbnail"
-                            className="w-full h-full object-cover"
-                          />
-                          <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                            <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center cursor-pointer hover:bg-white transition-colors">
-                              <div className="w-6 h-6 border-8 border-transparent border-l-primary ml-1" style={{ transform: 'rotate(-45deg)' }} />
-                            </div>
-                          </div>
-                        </div>
-                      )}
+                      ) : null}
                     </div>
 
                     <div className="space-y-6">
