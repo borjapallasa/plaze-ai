@@ -4,11 +4,10 @@ import { ArrowRight, CheckCircle } from "lucide-react";
 
 export function GenericInfoPanel() {
   const features = [
-    "Launch expert-led communities in minutes",
-    "Sell premium digital products with built-in upsells & affiliate tools", 
-    "Unlock new revenue through partner collaborations",
-    "Share knowledge with members through gated content",
-    "Scale without the tech hassle"
+    "Discover expert-made digital products",
+    "Join private communities around your passions", 
+    "Access exclusive content and member-only perks",
+    "Learn from creators through workshops and templates"
   ];
 
   return (
@@ -25,15 +24,22 @@ export function GenericInfoPanel() {
             Welcome to Plaze
           </h1>
           <p className="text-xl text-gray-600">
-            The all-in-one platform where experts build communities, sell digital products, and grow faster together.
+            Where top creators share products, tools & communities — all in one place.
           </p>
         </div>
+      </div>
+
+      {/* Subheading */}
+      <div className="space-y-4">
+        <p className="text-lg text-gray-700">
+          Explore premium content, connect with experts, and join communities built around what you love.
+        </p>
       </div>
 
       {/* Features List */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900">
-          Join thousands of creators, educators, and professionals using Plaze to:
+          Join thousands using Plaze to:
         </h3>
         <ul className="space-y-3">
           {features.map((feature, index) => (
@@ -48,15 +54,25 @@ export function GenericInfoPanel() {
       {/* CTA */}
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6">
         <h4 className="font-semibold text-gray-900 mb-2">
-          Ready to build your creator business?
+          Start exploring today
         </h4>
         <p className="text-gray-600 text-sm mb-4">
-          Sign up and start creating your community, product, or both — in just a few clicks.
+          Create your free account and start discovering the best creators and communities.
         </p>
-        <Button variant="outline" className="group">
-          Get Started
+        <Button variant="outline" className="group mb-4">
+          Create Account
           <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
         </Button>
+        
+        {/* Soft Seller CTA */}
+        <div className="text-center pt-2 border-t border-blue-100">
+          <p className="text-sm text-gray-600">
+            Are you a creator?{" "}
+            <span className="text-blue-600 hover:text-blue-700 cursor-pointer underline">
+              Start selling on Plaze →
+            </span>
+          </p>
+        </div>
       </div>
     </div>
   );
