@@ -51,19 +51,19 @@ export default function SignUpCommunityPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50" style={{ backgroundColor: '#fafafa' }}>
-      <div className="min-h-screen grid lg:grid-cols-5 xl:grid-cols-3">
+    <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen grid lg:grid-cols-2">
         {/* Left Panel - Community Info */}
-        <div className="lg:col-span-2 xl:col-span-1 bg-white border-r border-gray-200 flex items-center justify-center p-6 lg:p-8">
-          <div className="w-full max-w-md">
+        <div className="bg-white flex items-center justify-center p-8 lg:p-12">
+          <div className="w-full max-w-lg">
             <CommunityInfoPanel community={community} />
           </div>
         </div>
 
         {/* Right Panel - Sign Up Form */}
-        <div className="lg:col-span-3 xl:col-span-2 flex items-center justify-center p-6 lg:p-8">
+        <div className="flex items-center justify-center p-8 lg:p-12">
           <div className="w-full max-w-md">
-            <div className="bg-white rounded-2xl shadow-sm border border-border p-8">
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
               <div className="space-y-8">
                 <div className="text-center">
                   <img

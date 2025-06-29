@@ -33,10 +33,10 @@ export function CommunityInfoPanel({ community }: CommunityInfoPanelProps) {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-12">
       {/* Main heading */}
-      <div className="space-y-4">
-        <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
+      <div className="space-y-6">
+        <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
           Welcome to{" "}
           <span className="text-primary">
             {community.name || "our community"}
@@ -49,23 +49,23 @@ export function CommunityInfoPanel({ community }: CommunityInfoPanelProps) {
       </div>
 
       {/* Community visual and info */}
-      <div className="flex items-start gap-4">
-        <Avatar className="h-16 w-16 rounded-xl border-2 border-gray-100 flex-shrink-0">
+      <div className="flex items-start gap-6">
+        <Avatar className="h-20 w-20 rounded-2xl border-2 border-gray-100 flex-shrink-0">
           <AvatarImage 
             src={community.thumbnail} 
             alt={`${community.name} thumbnail`} 
             className="object-cover"
           />
-          <AvatarFallback className="text-lg font-semibold bg-primary/10 text-primary rounded-xl">
+          <AvatarFallback className="text-xl font-semibold bg-primary/10 text-primary rounded-2xl">
             {community.name?.substring(0, 2)?.toUpperCase() || "CO"}
           </AvatarFallback>
         </Avatar>
         
         <div className="flex-1 min-w-0">
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
             {community.name}
           </h3>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-gray-600 mb-4">
             {community.expert_name ? 
               `Hosted by ${community.expert_name}` : 
               "Expert-led community"
@@ -73,19 +73,19 @@ export function CommunityInfoPanel({ community }: CommunityInfoPanelProps) {
           </p>
           
           {/* Community stats */}
-          <div className="flex flex-wrap gap-2 mt-3">
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
+          <div className="flex flex-wrap gap-3">
+            <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-primary/10 text-primary">
               {formatMemberCount(community.member_count)}
             </span>
             
             {community.type && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 capitalize">
+              <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-700 capitalize">
                 {community.type}
               </span>
             )}
             
             {formatLastActivity(community.last_activity) && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+              <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-green-100 text-green-700">
                 {formatLastActivity(community.last_activity)}
               </span>
             )}
@@ -95,27 +95,27 @@ export function CommunityInfoPanel({ community }: CommunityInfoPanelProps) {
 
       {/* Description */}
       {community.description && (
-        <div className="space-y-2">
-          <h4 className="font-medium text-gray-900">About this community</h4>
-          <p className="text-sm text-gray-600 leading-relaxed line-clamp-3">
+        <div className="space-y-3">
+          <h4 className="text-lg font-semibold text-gray-900">About this community</h4>
+          <p className="text-gray-600 leading-relaxed line-clamp-4">
             {community.description}
           </p>
         </div>
       )}
 
       {/* Trust indicators */}
-      <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-100">
+      <div className="grid grid-cols-3 gap-6 pt-6 border-t border-gray-200">
         <div className="text-center">
-          <div className="text-2xl mb-1">🔒</div>
-          <div className="text-xs text-gray-600">Secure & Private</div>
+          <div className="text-3xl mb-2">🔒</div>
+          <div className="text-sm font-medium text-gray-600">Secure & Private</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl mb-1">✨</div>
-          <div className="text-xs text-gray-600">Premium Content</div>
+          <div className="text-3xl mb-2">✨</div>
+          <div className="text-sm font-medium text-gray-600">Premium Content</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl mb-1">🤝</div>
-          <div className="text-xs text-gray-600">Expert Support</div>
+          <div className="text-3xl mb-2">🤝</div>
+          <div className="text-sm font-medium text-gray-600">Expert Support</div>
         </div>
       </div>
     </div>
