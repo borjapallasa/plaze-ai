@@ -48,10 +48,10 @@ export function CommunityInfoPanel({ community, mode = 'sign-in' }: CommunityInf
               <img 
                 src={community.thumbnail} 
                 alt={community.name}
-                className="w-12 h-12 object-cover"
+                className="w-12 h-12 object-cover rounded-lg"
               />
             ) : (
-              <div className="w-12 h-12 bg-primary/10 flex items-center justify-center">
+              <div className="w-12 h-12 bg-primary/10 flex items-center justify-center rounded-lg">
                 <span className="text-primary font-semibold text-lg">
                   {community.name.charAt(0)}
                 </span>
