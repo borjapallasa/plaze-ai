@@ -521,6 +521,26 @@ export default function CommunityPage() {
     }
   ];
 
+  const formatDescription = (description: string | null | undefined, maxLines: number = 4) => {
+    if (!description) return '';
+    
+    // Strip HTML tags
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = description;
+    const plainText = tempDiv.textContent || tempDiv.innerText || '';
+    
+    // Split into words and approximate line limit
+    const words = plainText.split(' ');
+    const wordsPerLine = 12; // Approximate words per line
+    const maxWords = maxLines * wordsPerLine;
+    
+    if (words.length <= maxWords) {
+      return plainText;
+    }
+    
+    return words.slice(0, maxWords).join(' ') + '...';
+  };
+
   const handleThreadClick = (thread: any) => {
     setSelectedThread(thread);
     setIsThreadOpen(true);
@@ -913,7 +933,9 @@ export default function CommunityPage() {
                         </div>
                         <CardContent className="p-6 relative flex flex-col flex-1">
                           <CardTitle className="text-lg font-semibold mb-2">{classroom.name}</CardTitle>
-                          <p className="text-muted-foreground text-sm flex-1">{classroom.description || classroom.summary}</p>
+                          <p className="text-muted-foreground text-sm flex-1 line-clamp-4 leading-relaxed">
+                            {formatDescription(classroom.description || classroom.summary, 4)}
+                          </p>
                           <div className="absolute right-6 bottom-6 opacity-0 transform translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200">
                             <ArrowRight className="w-4 h-4 text-primary" />
                           </div>
