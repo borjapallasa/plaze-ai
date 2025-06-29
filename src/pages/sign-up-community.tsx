@@ -1,89 +1,47 @@
-
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Mail, Lock, User, Eye, EyeOff } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { CommunityInfoPanel } from "@/components/community/signin/CommunityInfoPanel";
 import { LoadingState } from "@/components/community/signin/LoadingState";
 import { NotFoundState } from "@/components/community/signin/NotFoundState";
-import { UnifiedAuthForm } from "@/components/auth/UnifiedAuthForm";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 
-interface Community {
-  community_uuid: string;
-  name: string;
-  description: string | null;
-  expert_name: string | null;
-  expert_thumbnail: string | null;
-  community_thumbnail: string | null;
-  member_count: number | null;
-  paid_member_count: number | null;
-  price: number | null;
+async function fetchCommunity(communityId: string) {
+  const { data, error } = await supabase
+    .from('communities')
+    .select('*')
+    .eq('community_uuid', communityId)
+    .single();
+
+  if (error) throw error;
+  return data;
 }
 
-export default function SignUpCommunity() {
+export default function SignUpCommunityPage() {
   const { id } = useParams<{ id: string }>();
-  const [community, setCommunity] = useState<Community | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
 
-  useEffect(() => {
-    const fetchCommunity = async () => {
-      if (!id) {
-        setError("Community ID is required");
-        setLoading(false);
-        return;
-      }
+  const { data: community, isLoading, error } = useQuery({
+    queryKey: ['community', id],
+    queryFn: () => fetchCommunity(id!),
+    enabled: !!id
+  });
 
-      try {
-        const { data, error } = await supabase
-          .from('communities')
-          .select(`
-            community_uuid,
-            name,
-            description,
-            member_count,
-            paid_member_count,
-            price,
-            expert:expert_uuid (
-              first_name,
-              last_name,
-              user_thumbnail
-            )
-          `)
-          .eq('community_uuid', id)
-          .single();
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Sign up attempt with:", { email, password, firstName, lastName, communityId: id });
+  };
 
-        if (error) {
-          console.error("Error fetching community:", error);
-          setError("Failed to load community");
-        } else if (data) {
-          setCommunity({
-            community_uuid: data.community_uuid,
-            name: data.name,
-            description: data.description,
-            member_count: data.member_count,
-            paid_member_count: data.paid_member_count,
-            price: data.price,
-            expert_name: data.expert 
-              ? `${data.expert.first_name || ''} ${data.expert.last_name || ''}`.trim()
-              : null,
-            expert_thumbnail: data.expert?.user_thumbnail || null,
-            community_thumbnail: null
-          });
-        } else {
-          setError("Community not found");
-        }
-      } catch (err) {
-        console.error("Unexpected error:", err);
-        setError("An unexpected error occurred");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCommunity();
-  }, [id]);
-
-  if (loading) {
+  if (isLoading) {
     return <LoadingState />;
   }
 
@@ -92,55 +50,117 @@ export default function SignUpCommunity() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <div className="container mx-auto px-4 py-12">
-        <div className="max-w-5xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Join {community.name}
-            </h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              {community.description || "Join this amazing community and start your journey."}
-            </p>
-          </div>
+    <div className="min-h-screen flex items-center justify-center px-6 py-12 bg-muted/40">
+      <div className="w-full max-w-6xl grid md:grid-cols-2 gap-12 items-start">
+        <CommunityInfoPanel community={community} />
 
-          {/* Main Content - Balanced Layout */}
-          <div className="grid lg:grid-cols-5 gap-8 items-start">
-            {/* Left side - Community Info (3 columns) */}
-            <div className="lg:col-span-3">
-              <CommunityInfoPanel 
-                community={community}
-                className="bg-white/80 backdrop-blur-sm border border-gray-200/50 shadow-lg h-fit"
-              />
-            </div>
+        <div className="w-full p-8 rounded-lg bg-card text-card-foreground shadow-sm">
+          <div className="space-y-8">
+            <img
+              src="/placeholder.svg"
+              alt="Logo"
+              className="h-8 mx-auto"
+            />
 
-            {/* Right side - Sign Up Form (2 columns) */}
-            <div className="lg:col-span-2">
-              <div className="bg-white rounded-2xl shadow-xl border border-gray-200/50 p-6 lg:p-8 sticky top-8">
-                <div className="text-center mb-6">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                    Get Started
-                  </h2>
-                  <p className="text-sm text-gray-600">
-                    Create your account to join the community
-                  </p>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="relative">
+                  <User className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                  <Input
+                    placeholder="First Name"
+                    type="text"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    className="pl-10"
+                    required
+                  />
                 </div>
-                
-                <UnifiedAuthForm 
-                  defaultMode="signup"
-                  redirectTo={`/community/${id}`}
+                <div className="relative">
+                  <User className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                  <Input
+                    placeholder="Last Name"
+                    type="text"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    className="pl-10"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="relative">
+                <Mail className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                <Input
+                  placeholder="Email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="pl-10"
+                  required
                 />
               </div>
-            </div>
+
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                <Input
+                  placeholder="Password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="pl-10 pr-10"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-3"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5 text-muted-foreground" />
+                  ) : (
+                    <Eye className="h-5 w-5 text-muted-foreground" />
+                  )}
+                </button>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="terms"
+                  checked={agreeToTerms}
+                  onCheckedChange={(checked) => setAgreeToTerms(checked as boolean)}
+                />
+                <label
+                  htmlFor="terms"
+                  className="text-sm text-muted-foreground"
+                >
+                  I agree to the{" "}
+                  <Link to="#" className="text-primary hover:underline">
+                    Terms
+                  </Link>{" "}
+                  and{" "}
+                  <Link to="#" className="text-primary hover:underline">
+                    Privacy Policy
+                  </Link>
+                </label>
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={!agreeToTerms}
+              >
+                Sign Up
+              </Button>
+
+              <div className="text-center text-sm">
+                <span className="text-muted-foreground">Already have an account? </span>
+                <Link to={`/sign-in/community/${id}`} className="text-primary hover:underline">
+                  Sign In
+                </Link>
+              </div>
+            </form>
           </div>
         </div>
-      </div>
-      
-      {/* Decorative elements */}
-      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-200/20 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-200/20 rounded-full blur-3xl"></div>
       </div>
     </div>
   );
