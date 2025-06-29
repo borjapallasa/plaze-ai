@@ -7,7 +7,8 @@ interface ProductDemoProps {
 }
 
 export function ProductDemo({ embedUrl }: ProductDemoProps) {
-  if (!embedUrl) return null;
+  // Only render if embedUrl exists and is not empty
+  if (!embedUrl || embedUrl.trim() === '') return null;
 
   return (
     <Card className="p-6">
