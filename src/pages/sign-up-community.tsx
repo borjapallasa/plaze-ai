@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -50,7 +51,7 @@ export default function SignUpCommunityPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 py-12 bg-muted/40">
+    <div className="min-h-screen flex items-center justify-center px-6 py-12" style={{ backgroundColor: '#ffffff' }}>
       <div className="w-full max-w-6xl grid md:grid-cols-2 gap-12 items-start">
         <CommunityInfoPanel community={community} />
 
