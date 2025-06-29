@@ -25,7 +25,7 @@ export function WelcomePanel() {
         </div>
       </div>
 
-      <Card className="border-muted" style={{ backgroundColor: '#EEF2FF' }}>
+      <Card className="border-muted shadow-none" style={{ backgroundColor: '#EEF2FF' }}>
         <div className="p-6">
           <div className="space-y-2">
             <h3 className="font-semibold text-foreground">Are you a creator?</h3>
