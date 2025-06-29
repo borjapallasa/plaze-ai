@@ -304,7 +304,7 @@ export default function CommunityPage() {
     isOwner
   });
 
-  // Filter members by status - fix the type issue
+  // Filter members by status - only show active members in main list
   const activeMembers = communityMembers?.filter(m => m.status === 'active') || [];
   const pendingMembers = communityMembers?.filter(m => m.status === 'pending').map(member => ({
     ...member,
@@ -1087,17 +1087,7 @@ export default function CommunityPage() {
             <TabsContent value="members" className="space-y-6">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold">Community Members</h3>
-                {isOwner && pendingMembers.length > 0 && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex items-center gap-2"
-                    onClick={() => setIsMemberRequestsDialogOpen(true)}
-                  >
-                    <Settings className="w-4 h-4" />
-                    Member Requests ({pendingMembers.length})
-                  </Button>
-                )}
+                {renderMemberRequestsButton()}
               </div>
               
               {isMembersLoading ? (
@@ -1112,9 +1102,9 @@ export default function CommunityPage() {
                     </div>
                   ))}
                 </div>
-              ) : activeMembers.length > 0 || pendingMembers.length > 0 ? (
+              ) : activeMembers.length > 0 ? (
                 <div className="space-y-4">
-                  {/* Active Members */}
+                  {/* Only Active Members - Pending members are hidden from main list */}
                   {activeMembers.map((member) => (
                     <div key={member.community_subscription_uuid} className="flex items-center justify-between p-6 rounded-xl border bg-card hover:bg-accent/20 transition-colors">
                       <div className="flex items-center space-x-4 flex-1">
@@ -1154,58 +1144,6 @@ export default function CommunityPage() {
                             <UserX className="h-5 w-5" />
                           </Button>
                         )}
-                      </div>
-                    </div>
-                  ))}
-                  
-                  {/* Pending Members (only visible to owner) */}
-                  {isOwner && pendingMembers.map((member) => (
-                    <div key={member.community_subscription_uuid} className="flex items-center justify-between p-6 rounded-xl border bg-card hover:bg-accent/20 transition-colors border-yellow-200">
-                      <div className="flex items-center space-x-4 flex-1">
-                        <Avatar className="h-16 w-16">
-                          <AvatarImage 
-                            src={member.users.user_thumbnail || "https://github.com/shadcn.png"} 
-                            alt={`${member.users.first_name} ${member.users.last_name}`}
-                          />
-                          <AvatarFallback className="bg-primary/10 text-primary font-medium text-lg">
-                            {`${member.users.first_name?.charAt(0) || ''}${member.users.last_name?.charAt(0) || ''}`}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="space-y-2 flex-1">
-                          <p className="font-semibold text-lg">
-                            {member.users.first_name} {member.users.last_name}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            Requested {new Date(member.created_at).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric'
-                            })}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 px-3 py-1">
-                          Pending
-                        </Badge>
-                        <div className="flex gap-2 ml-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleOpenApprovalDialog(member)}
-                            className="h-10 w-10 p-0 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-full"
-                          >
-                            <UserCheck className="h-5 w-5" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleOpenRejectDialog(member, false)}
-                            className="h-10 w-10 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full"
-                          >
-                            <X className="h-5 w-5" />
-                          </Button>
-                        </div>
                       </div>
                     </div>
                   ))}
