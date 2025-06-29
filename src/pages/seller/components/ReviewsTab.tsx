@@ -54,6 +54,32 @@ export function ReviewsTab({
       </div>;
   }
 
+  // If no reviews, show only the empty state
+  if (totalReviews === 0) {
+    return (
+      <div className="space-y-4 sm:space-y-6">
+        <Card className="border-dashed border-2 border-muted-foreground/30">
+          <div className="flex flex-col items-center justify-center py-20 px-6 text-center max-w-md mx-auto">
+            {/* Icon Circle */}
+            <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center mb-6">
+              <Star className="h-12 w-12 text-muted-foreground" />
+            </div>
+            
+            {/* Title */}
+            <h3 className="text-xl font-semibold mb-3 text-foreground">
+              No reviews yet
+            </h3>
+            
+            {/* Description */}
+            <p className="text-muted-foreground text-base leading-relaxed mb-6 max-w-sm">
+              This seller doesn't have any reviews yet. Check back later as customers leave feedback on their products.
+            </p>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
   return <div className="space-y-4 sm:space-y-6">
       {/* Overview Stats */}
       <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
@@ -64,7 +90,7 @@ export function ReviewsTab({
           <CardContent className="pt-0">
             <div className="flex items-center space-x-2">
               <span className="text-xl sm:text-2xl font-bold">
-                {totalReviews > 0 ? averageRating.toFixed(1) : '0.0'}
+                {averageRating.toFixed(1)}
               </span>
               <div className="flex">
                 {Array(5).fill(0).map((_, i) => <Star key={i} className={cn("h-3 w-3 sm:h-4 sm:w-4", i < Math.floor(averageRating) ? "fill-yellow-400 text-yellow-400" : "fill-gray-200 text-gray-200")} />)}
@@ -119,78 +145,59 @@ export function ReviewsTab({
           <CardDescription className="text-sm">Latest feedback from your customers</CardDescription>
         </CardHeader>
         <CardContent className="pt-0">
-          {totalReviews === 0 ? (
-            <Card className="border-dashed border-2 border-muted-foreground/30">
-              <div className="flex flex-col items-center justify-center py-20 px-6 text-center max-w-md mx-auto">
-                {/* Icon Circle */}
-                <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center mb-6">
-                  <Star className="h-12 w-12 text-muted-foreground" />
-                </div>
-                
-                {/* Title */}
-                <h3 className="text-xl font-semibold mb-3 text-foreground">
-                  No reviews yet
-                </h3>
-                
-                {/* Description */}
-                <p className="text-muted-foreground text-base leading-relaxed mb-6 max-w-sm">
-                  This seller doesn't have any reviews yet. Check back later as customers leave feedback on their products.
-                </p>
-              </div>
-            </Card>
-          ) : <div className="space-y-4 sm:space-y-6">
-              {reviews.map((review, index) => <div key={review.id}>
-                  <div className="flex items-start space-x-3 p-3 sm:p-4 rounded-lg border bg-card">
-                    <Avatar className="h-8 w-8 sm:h-9 sm:w-9 flex-shrink-0">
-                      <AvatarImage src={review.avatar || undefined} alt={review.author} />
-                      <AvatarFallback className="bg-muted">
-                        <User className="h-4 w-4 text-muted-foreground" />
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 space-y-2 min-w-0">
-                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h4 className="font-medium text-sm sm:text-base truncate">{review.author}</h4>
-                            {review.verified && (
-                              <div className="flex items-center gap-1 bg-green-50 text-green-700 px-2 py-0.5 rounded-full">
-                                <CheckCircle className="h-3 w-3" />
-                                <span className="text-xs font-medium">Verified</span>
-                              </div>
-                            )}
-                          </div>
-                          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-2">
-                            <div className="flex items-center space-x-1">
-                              {Array(5).fill(0).map((_, i) => <Star key={i} className={cn("h-3 w-3", i < review.rating ? "fill-yellow-400 text-yellow-400" : "fill-gray-200 text-gray-200")} />)}
+          <div className="space-y-4 sm:space-y-6">
+            {reviews.map((review, index) => <div key={review.id}>
+                <div className="flex items-start space-x-3 p-3 sm:p-4 rounded-lg border bg-card">
+                  <Avatar className="h-8 w-8 sm:h-9 sm:w-9 flex-shrink-0">
+                    <AvatarImage src={review.avatar || undefined} alt={review.author} />
+                    <AvatarFallback className="bg-muted">
+                      <User className="h-4 w-4 text-muted-foreground" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 space-y-2 min-w-0">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h4 className="font-medium text-sm sm:text-base truncate">{review.author}</h4>
+                          {review.verified && (
+                            <div className="flex items-center gap-1 bg-green-50 text-green-700 px-2 py-0.5 rounded-full">
+                              <CheckCircle className="h-3 w-3" />
+                              <span className="text-xs font-medium">Verified</span>
                             </div>
-                            <span className="text-xs text-muted-foreground">{review.date}</span>
-                          </div>
+                          )}
                         </div>
-                        {review.type && <Badge variant="outline" className="text-xs capitalize flex-shrink-0 self-start">
-                            {review.type}
-                          </Badge>}
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-2">
+                          <div className="flex items-center space-x-1">
+                            {Array(5).fill(0).map((_, i) => <Star key={i} className={cn("h-3 w-3", i < review.rating ? "fill-yellow-400 text-yellow-400" : "fill-gray-200 text-gray-200")} />)}
+                          </div>
+                          <span className="text-xs text-muted-foreground">{review.date}</span>
+                        </div>
                       </div>
-                      
-                      {/* Product info with icon */}
-                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-gray-50 px-2 py-1.5 rounded w-fit">
-                        <Package className="h-3 w-3 flex-shrink-0" />
-                        <span className="truncate">{review.productName}</span>
-                      </div>
-                      
-                      <div className="space-y-1">
-                        <h5 className="font-medium text-sm leading-tight">{review.content}</h5>
-                        {review.description && <p className="text-sm text-muted-foreground leading-relaxed">
-                            {review.description}
-                          </p>}
-                      </div>
-
-                      {/* Review Actions for pending reviews */}
-                      <ReviewActions reviewId={review.id} status={review.status || 'published'} />
+                      {review.type && <Badge variant="outline" className="text-xs capitalize flex-shrink-0 self-start">
+                          {review.type}
+                        </Badge>}
                     </div>
+                    
+                    {/* Product info with icon */}
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-gray-50 px-2 py-1.5 rounded w-fit">
+                      <Package className="h-3 w-3 flex-shrink-0" />
+                      <span className="truncate">{review.productName}</span>
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <h5 className="font-medium text-sm leading-tight">{review.content}</h5>
+                      {review.description && <p className="text-sm text-muted-foreground leading-relaxed">
+                          {review.description}
+                        </p>}
+                    </div>
+
+                    {/* Review Actions for pending reviews */}
+                    <ReviewActions reviewId={review.id} status={review.status || 'published'} />
                   </div>
-                  {index < reviews.length - 1 && <Separator className="my-4 sm:my-6" />}
-                </div>)}
-            </div>}
+                </div>
+                {index < reviews.length - 1 && <Separator className="my-4 sm:my-6" />}
+              </div>)}
+          </div>
         </CardContent>
       </Card>
     </div>;
