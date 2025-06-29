@@ -26,13 +26,13 @@ export function CommunityInfoPanel({ community, mode = 'sign-in' }: CommunityInf
   const actionText = mode === 'sign-up' ? 'Join' : 'Welcome back to';
   
   return (
-    <div className="space-y-6">
-      <div className="space-y-4">
-        <h1 className="text-3xl font-bold text-gray-900">
+    <div className="space-y-3">
+      <div className="space-y-3">
+        <h1 className="text-2xl font-bold text-gray-900">
           {actionText} {community.name}
         </h1>
         
-        <p className="text-base text-gray-600 leading-relaxed">
+        <p className="text-sm text-gray-600 leading-relaxed">
           {mode === 'sign-up' 
             ? "Create your account to connect with like-minded individuals and grow together."
             : "Sign in to continue your journey with the community."
