@@ -2,7 +2,7 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Check } from "lucide-react";
+import { CircleCheckBig } from "lucide-react";
 
 export function WelcomePanel() {
   return (
@@ -30,19 +30,7 @@ export function WelcomePanel() {
             "Learn from creators through workshops and templates"
           ].map((item, index) => (
             <div key={index} className="flex items-start gap-3">
-              <div className="relative w-5 h-5 mt-0.5 flex-shrink-0">
-                <svg className="w-5 h-5" viewBox="0 0 20 20" fill="none">
-                  {/* Incomplete circle - arc that leaves space for the check */}
-                  <path
-                    d="M10 2 A8 8 0 1 1 6 16"
-                    stroke="#22c55e"
-                    strokeWidth="2"
-                    fill="none"
-                    strokeLinecap="round"
-                  />
-                </svg>
-                <Check className="absolute inset-0 w-4 h-4 text-green-500 translate-x-0.5 translate-y-0.5" />
-              </div>
+              <CircleCheckBig className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
               <span className="text-muted-foreground">{item}</span>
             </div>
           ))}
