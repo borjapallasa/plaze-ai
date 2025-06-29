@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Search, Loader2, Plus, Package, Table, LayoutGrid } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Search, Loader2, Plus, Package, Table, LayoutGrid, MoreHorizontal } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
 import { useQuery } from "@tanstack/react-query";
@@ -120,8 +121,7 @@ export function ProductsTab({ products, isLoading = false, showLayoutSelector = 
           {filteredAndSortedProducts.map((product, index) => (
             <tr 
               key={product.product_uuid} 
-              className={`border-b hover:bg-muted/25 cursor-pointer ${index % 2 === 0 ? 'bg-background' : 'bg-muted/10'}`}
-              onClick={() => handleProductClick(product.product_uuid)}
+              className={`border-b hover:bg-muted/25 ${index % 2 === 0 ? 'bg-background' : 'bg-muted/10'}`}
             >
               <td className="p-4">
                 <div className="flex items-center gap-3">
@@ -169,16 +169,25 @@ export function ProductsTab({ products, isLoading = false, showLayoutSelector = 
                 {new Date(product.created_at).toLocaleDateString()}
               </td>
               <td className="p-4 text-right">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleProductClick(product.product_uuid);
-                  }}
-                >
-                  {isCurrentUserSeller ? 'Edit' : 'View'}
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      onClick={() => navigate(`/product/${product.product_uuid}`)}
+                    >
+                      View Public Page
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleProductClick(product.product_uuid)}
+                    >
+                      {isCurrentUserSeller ? 'Edit Product' : 'View Product'}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </td>
             </tr>
           ))}
