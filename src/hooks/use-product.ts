@@ -62,6 +62,17 @@ interface UseProductDataProps {
   productSlug?: string;
 }
 
+// Helper function to check if a string is a valid UUID
+const isUUID = (str: string): boolean => {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(str);
+};
+
+// Helper function to check if a string is a valid numeric ID
+const isNumericId = (str: string): boolean => {
+  return /^\d+$/.test(str);
+};
+
 export function useProduct({ productId, productSlug }: UseProductDataProps = {}) {
   const params = useParams();
   const [product, setProduct] = useState<ProductData | null>(null);
@@ -103,8 +114,18 @@ export function useProduct({ productId, productSlug }: UseProductDataProps = {})
         }
 
         if (effectiveProductId) {
-          productQuery = productQuery.eq('product_uuid', effectiveProductId);
+          // Check if the ID is numeric (real_id) or UUID (product_uuid)
+          if (isNumericId(effectiveProductId)) {
+            console.log("Querying by numeric ID:", effectiveProductId);
+            productQuery = productQuery.eq('id', parseInt(effectiveProductId));
+          } else if (isUUID(effectiveProductId)) {
+            console.log("Querying by UUID:", effectiveProductId);
+            productQuery = productQuery.eq('product_uuid', effectiveProductId);
+          } else {
+            throw new Error("Invalid product ID format");
+          }
         } else if (effectiveProductSlug) {
+          console.log("Querying by slug:", effectiveProductSlug);
           productQuery = productQuery.eq('slug', effectiveProductSlug);
         } else {
           throw new Error("Either productId or productSlug must be provided.");
