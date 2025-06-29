@@ -300,62 +300,13 @@ export default function CommunityPage() {
     status: member.status as 'pending' | 'active' | 'cancelled' | 'rejected'
   })) || [];
 
-  // Handle member removal - updated to actually remove from database
+  // Handle member removal
   const handleRemoveMember = async (memberUuid: string) => {
-    try {
-      const { error } = await supabase
-        .from('community_subscriptions')
-        .delete()
-        .eq('community_subscription_uuid', memberUuid);
-
-      if (error) {
-        throw error;
-      }
-
-      // Invalidate and refetch community members data
-      queryClient.invalidateQueries({ queryKey: ['community-members', communityId] });
-
-      toast({
-        title: "Member removed",
-        description: "The member has been removed from the community.",
-      });
-    } catch (error) {
-      console.error('Error removing member:', error);
-      toast({
-        title: "Error",
-        description: "Failed to remove the member. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  // Handle member approval from main list
-  const handleApproveMember = async (memberUuid: string) => {
-    try {
-      const { error } = await supabase
-        .from('community_subscriptions')
-        .update({ status: 'active' })
-        .eq('community_subscription_uuid', memberUuid);
-
-      if (error) {
-        throw error;
-      }
-
-      // Invalidate and refetch community members data
-      queryClient.invalidateQueries({ queryKey: ['community-members', communityId] });
-
-      toast({
-        title: "Member approved",
-        description: "The member has been approved and is now active.",
-      });
-    } catch (error) {
-      console.error('Error approving member:', error);
-      toast({
-        title: "Error",
-        description: "Failed to approve the member. Please try again.",
-        variant: "destructive",
-      });
-    }
+    // TODO: Implement API call to remove member
+    toast({
+      title: "Member removed",
+      description: "The member has been removed from the community.",
+    });
   };
 
   if (isCommunityLoading) {
@@ -1127,9 +1078,9 @@ export default function CommunityPage() {
                     </div>
                   ))}
                 </div>
-              ) : communityMembers && communityMembers.length > 0 ? (
+              ) : activeMembers.length > 0 ? (
                 <div className="space-y-4">
-                  {communityMembers.map((member) => (
+                  {activeMembers.map((member) => (
                     <div key={member.community_subscription_uuid} className="flex items-center justify-between p-5 rounded-xl border bg-card hover:bg-accent/20 transition-colors">
                       <div className="flex items-center space-x-4">
                         <Avatar className="h-14 w-14">
@@ -1146,46 +1097,23 @@ export default function CommunityPage() {
                             {member.users.first_name} {member.users.last_name}
                           </p>
                           <p className="text-sm text-muted-foreground">
-                            {member.status === 'pending' ? 'Pending approval' : `Member since ${new Date(member.created_at).toLocaleDateString('en-US', {
+                            Member since {new Date(member.created_at).toLocaleDateString('en-US', {
                               month: 'short',
                               day: 'numeric',
                               year: 'numeric'
-                            })}`}
+                            })}
                           </p>
                         </div>
                       </div>
                       {isOwner && (
-                        <div className="flex items-center gap-2">
-                          {member.status === 'pending' ? (
-                            <>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleApproveMember(member.community_subscription_uuid)}
-                                className="h-10 w-10 p-0 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-full"
-                              >
-                                <Check className="h-5 w-5" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleRemoveMember(member.community_subscription_uuid)}
-                                className="h-10 w-10 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full"
-                              >
-                                <X className="h-5 w-5" />
-                              </Button>
-                            </>
-                          ) : (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleRemoveMember(member.community_subscription_uuid)}
-                              className="h-10 w-10 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full"
-                            >
-                              <UserX className="h-5 w-5" />
-                            </Button>
-                          )}
-                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemoveMember(member.community_subscription_uuid)}
+                          className="h-10 w-10 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full"
+                        >
+                          <UserX className="h-5 w-5" />
+                        </Button>
                       )}
                     </div>
                   ))}
@@ -1266,7 +1194,6 @@ export default function CommunityPage() {
             onOpenChange={setIsMemberRequestsDialogOpen}
             members={pendingMembers}
             isOwner={isOwner}
-            communityId={communityId}
           />
         </div>
       </CommunityAccessGuard>

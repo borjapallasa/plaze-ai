@@ -3,10 +3,8 @@ import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Clock, Check, X } from "lucide-react";
+import { UserX, UserCheck, Clock, Check, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
-import { useQueryClient } from "@tanstack/react-query";
 
 interface Member {
   community_subscription_uuid: string;
@@ -26,73 +24,30 @@ interface MemberRequestsDialogProps {
   onOpenChange: (open: boolean) => void;
   members: Member[];
   isOwner: boolean;
-  communityId?: string;
 }
 
 export function MemberRequestsDialog({ 
   open, 
   onOpenChange, 
   members = [], 
-  isOwner,
-  communityId
+  isOwner 
 }: MemberRequestsDialogProps) {
   const { toast } = useToast();
-  const queryClient = useQueryClient();
 
   const handleAcceptMember = async (memberUuid: string) => {
-    try {
-      const { error } = await supabase
-        .from('community_subscriptions')
-        .update({ status: 'active' })
-        .eq('community_subscription_uuid', memberUuid);
-
-      if (error) {
-        throw error;
-      }
-
-      // Invalidate and refetch community members data
-      queryClient.invalidateQueries({ queryKey: ['community-members', communityId] });
-
-      toast({
-        title: "Member accepted",
-        description: "The member has been accepted into the community.",
-      });
-    } catch (error) {
-      console.error('Error accepting member:', error);
-      toast({
-        title: "Error",
-        description: "Failed to accept the member. Please try again.",
-        variant: "destructive",
-      });
-    }
+    // TODO: Implement API call to accept member
+    toast({
+      title: "Member accepted",
+      description: "The member has been accepted into the community.",
+    });
   };
 
   const handleRejectMember = async (memberUuid: string) => {
-    try {
-      const { error } = await supabase
-        .from('community_subscriptions')
-        .delete()
-        .eq('community_subscription_uuid', memberUuid);
-
-      if (error) {
-        throw error;
-      }
-
-      // Invalidate and refetch community members data
-      queryClient.invalidateQueries({ queryKey: ['community-members', communityId] });
-
-      toast({
-        title: "Member rejected",
-        description: "The member request has been rejected and removed.",
-      });
-    } catch (error) {
-      console.error('Error rejecting member:', error);
-      toast({
-        title: "Error",
-        description: "Failed to reject the member. Please try again.",
-        variant: "destructive",
-      });
-    }
+    // TODO: Implement API call to reject member
+    toast({
+      title: "Member rejected",
+      description: "The member request has been rejected.",
+    });
   };
 
   if (!isOwner) {
@@ -119,19 +74,19 @@ export function MemberRequestsDialog({
             members.map((member) => (
               <div
                 key={member.community_subscription_uuid}
-                className="flex items-center justify-between p-6 rounded-xl border bg-card hover:bg-accent/20 transition-colors"
+                className="flex items-center justify-between p-5 rounded-xl border bg-card hover:bg-accent/20 transition-colors"
               >
-                <div className="flex items-center space-x-4 flex-1">
-                  <Avatar className="h-12 w-12">
+                <div className="flex items-center space-x-4">
+                  <Avatar className="h-14 w-14">
                     <AvatarImage 
                       src={member.users.user_thumbnail || "https://github.com/shadcn.png"} 
                       alt={`${member.users.first_name} ${member.users.last_name}`}
                     />
-                    <AvatarFallback className="bg-primary/10 text-primary font-medium">
+                    <AvatarFallback className="bg-primary/10 text-primary font-medium text-lg">
                       {`${member.users.first_name?.charAt(0) || ''}${member.users.last_name?.charAt(0) || ''}`}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="space-y-1 flex-1">
+                  <div className="space-y-1">
                     <p className="font-semibold text-base">
                       {member.users.first_name} {member.users.last_name}
                     </p>
@@ -145,22 +100,22 @@ export function MemberRequestsDialog({
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-2 ml-4">
+                <div className="flex items-center gap-3">
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => handleAcceptMember(member.community_subscription_uuid)}
-                    className="h-9 w-9 p-0 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-full"
+                    className="h-10 w-10 p-0 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-full"
                   >
-                    <Check className="h-4 w-4" />
+                    <Check className="h-5 w-5" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => handleRejectMember(member.community_subscription_uuid)}
-                    className="h-9 w-9 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full"
+                    className="h-10 w-10 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full"
                   >
-                    <X className="h-4 w-4" />
+                    <X className="h-5 w-5" />
                   </Button>
                 </div>
               </div>

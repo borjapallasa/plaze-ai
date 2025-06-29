@@ -2,6 +2,9 @@
 import React, { useState } from "react";
 import { useUsers } from "@/hooks/admin/useUsers";
 import { MainHeader } from "@/components/MainHeader";
+import { UsersHeader } from "@/components/admin/users/UsersHeader";
+import { UsersLayoutSwitcher } from "@/components/admin/users/UsersLayoutSwitcher";
+import { UsersSortSelector } from "@/components/admin/users/UsersSortSelector";
 import { UsersLoadingState } from "@/components/admin/users/UsersLoadingState";
 import { UsersErrorState } from "@/components/admin/users/UsersErrorState";
 import { UsersTable } from "@/components/admin/users/UsersTable";
@@ -42,9 +45,13 @@ export default function AdminUsers() {
     <>
       <MainHeader />
       <div className="container mx-auto px-4 py-8 mt-16">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight">Users</h1>
-          <p className="text-muted-foreground">Manage and view all users</p>
+        <UsersHeader
+          refetch={refetch}
+        />
+
+        <div className="flex items-center justify-between py-4">
+          <UsersLayoutSwitcher />
+          <UsersSortSelector />
         </div>
 
         {isLoading ? (
