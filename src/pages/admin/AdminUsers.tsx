@@ -1,119 +1,128 @@
 
 import React, { useState } from "react";
 import { useUsers } from "@/hooks/admin/useUsers";
-import { MainHeader } from "@/components/MainHeader";
-import { UsersLoadingState } from "@/components/admin/users/UsersLoadingState";
-import { UsersErrorState } from "@/components/admin/users/UsersErrorState";
+import { UsersHeader } from "@/components/admin/users/UsersHeader";
 import { UsersTable } from "@/components/admin/users/UsersTable";
 import { UsersGallery } from "@/components/admin/users/UsersGallery";
 import { UserDetailsDialog } from "@/components/admin/users/UserDetailsDialog";
+import { UsersLoadingState } from "@/components/admin/users/UsersLoadingState";
+import { UsersErrorState } from "@/components/admin/users/UsersErrorState";
+import { UsersLayoutSwitcher } from "@/components/admin/users/UsersLayoutSwitcher";
+import { UsersSortSelector } from "@/components/admin/users/UsersSortSelector";
+
+interface UserData {
+  user_uuid: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  is_admin: boolean;
+  is_affiliate: boolean;
+  is_expert: boolean;
+  created_at: string;
+  transaction_count: number;
+  product_count: number;
+  total_spent: number;
+  total_sales_amount: number;
+  user_thumbnail: string;
+}
 
 export default function AdminUsers() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [roleFilter, setRoleFilter] = useState("all");
-  const [layoutType, setLayoutType] = useState<"table" | "gallery">("table");
-  const [sortField, setSortField] = useState("created_at");
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState<keyof UserData>("created_at");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [layout, setLayout] = useState<"table" | "gallery">("table");
+  const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
+  const [showUserDialog, setShowUserDialog] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  const {
-    data,
-    isLoading,
-    error,
-    refetch
-  } = useUsers(1);
+  const { 
+    data: users = [], 
+    isLoading, 
+    error, 
+    refetch,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage
+  } = useUsers({
+    searchTerm,
+    sortBy,
+    sortOrder,
+    statusFilter
+  });
 
-  const handleSortChange = (field: string) => {
-    if (field === sortField) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+  const handleSort = (field: string) => {
+    const typedField = field as keyof UserData;
+    if (sortBy === typedField) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
-      setSortField(field);
-      setSortDirection("desc");
+      setSortBy(typedField);
+      setSortOrder("asc");
     }
   };
 
-  const handleUserClick = (userId: string) => {
-    setSelectedUserId(userId);
-    setIsDialogOpen(true);
+  const handleUserClick = (user: UserData) => {
+    setSelectedUser(user);
+    setShowUserDialog(true);
   };
 
+  const handleLoadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
+
+  if (isLoading) {
+    return <UsersLoadingState />;
+  }
+
+  if (error) {
+    return <UsersErrorState onRetry={refetch} />;
+  }
+
   return (
-    <>
-      <MainHeader />
-      <div className="container mx-auto px-4 py-8 mt-16">
-        <div className="space-y-6">
-          <div>
-            <h1 className="text-3xl font-bold">User Management</h1>
-            <p className="text-muted-foreground mt-2">
-              Manage and monitor user accounts across the platform
-            </p>
-          </div>
-
-          <div className="flex items-center justify-between py-4">
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setLayoutType("table")}
-                className={`px-3 py-2 rounded ${layoutType === "table" ? "bg-primary text-white" : "bg-gray-200"}`}
-              >
-                Table
-              </button>
-              <button
-                onClick={() => setLayoutType("gallery")}
-                className={`px-3 py-2 rounded ${layoutType === "gallery" ? "bg-primary text-white" : "bg-gray-200"}`}
-              >
-                Gallery
-              </button>
-            </div>
-            <select
-              value={`${sortField}-${sortDirection}`}
-              onChange={(e) => {
-                const [field, direction] = e.target.value.split('-');
-                setSortField(field);
-                setSortDirection(direction as "asc" | "desc");
-              }}
-              className="px-3 py-2 border rounded"
-            >
-              <option value="created_at-desc">Newest First</option>
-              <option value="created_at-asc">Oldest First</option>
-              <option value="first_name-asc">Name A-Z</option>
-              <option value="first_name-desc">Name Z-A</option>
-            </select>
-          </div>
-
-          {isLoading ? (
-            <UsersLoadingState />
-          ) : error ? (
-            <UsersErrorState />
-          ) : data && data.users && data.users.length > 0 ? (
-            layoutType === "table" ? (
-              <UsersTable
-                users={data.users}
-                sortField={sortField}
-                sortDirection={sortDirection}
-                onSort={handleSortChange}
-              />
-            ) : (
-              <UsersGallery
-                users={data.users}
-                sortField={sortField}
-                sortDirection={sortDirection}
-                onSort={handleSortChange}
-              />
-            )
-          ) : (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">No users found.</p>
-            </div>
-          )}
-
-          <UserDetailsDialog
-            userUuid={selectedUserId}
-            open={isDialogOpen}
-            onOpenChange={setIsDialogOpen}
-          />
-        </div>
+    <div className="container mx-auto px-4 py-8">
+      <UsersHeader 
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        statusFilter={statusFilter}
+        setStatusFilter={setStatusFilter}
+      />
+      
+      <div className="flex justify-between items-center mb-6">
+        <UsersSortSelector 
+          sortBy={sortBy}
+          sortOrder={sortOrder}
+          onSortChange={(field: keyof UserData) => handleSort(field)}
+        />
+        <UsersLayoutSwitcher layout={layout} onLayoutChange={setLayout} />
       </div>
-    </>
+
+      {layout === "table" ? (
+        <UsersTable 
+          users={users}
+          onSort={handleSort}
+          sortBy={sortBy}
+          sortOrder={sortOrder}
+          onUserClick={handleUserClick}
+          onLoadMore={handleLoadMore}
+          hasNextPage={hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
+        />
+      ) : (
+        <UsersGallery 
+          users={users}
+          onUserClick={handleUserClick}
+          onLoadMore={handleLoadMore}
+          hasNextPage={hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
+        />
+      )}
+
+      <UserDetailsDialog
+        user={selectedUser}
+        open={showUserDialog}
+        onOpenChange={setShowUserDialog}
+      />
+    </div>
   );
 }

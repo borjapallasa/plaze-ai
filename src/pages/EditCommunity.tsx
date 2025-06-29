@@ -106,7 +106,7 @@ export default function EditCommunity() {
               setShowDeleteDialog={setShowDeleteDialog}
               isDeleting={isDeleting}
               onDeleteCommunity={handleDeleteCommunity}
-              communityName={communityName} // Pass the communityName from the form state
+              communityName={communityName}
             />
           </div>
         </div>
