@@ -46,14 +46,14 @@ export function CommunityInfoPanel({
       {/* Main heading */}
       <div className="space-y-4">
         <h1 className="text-xl lg:text-2xl font-bold text-gray-900 leading-tight">
-          Join{" "}
+          Welcome back to {" "}
           <span className="text-primary">
             {community.name || "our community"}
           </span>
         </h1>
         
         <p className="text-sm text-gray-600 leading-relaxed max-w-md">
-          Join our community to connect with like-minded individuals and grow together.
+          Sign in to the community to connect with like-minded individuals and grow together.
         </p>
       </div>
 
