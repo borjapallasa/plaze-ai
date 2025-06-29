@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -88,7 +87,7 @@ export default function SignIn() {
 
         {/* Right side - Sign in form - Half width on desktop */}
         <div className="lg:w-1/2 bg-muted/40 p-6 lg:p-12 flex items-center justify-center">
-          <Card className="w-full max-w-md p-8">
+          <Card className="w-full max-w-md p-8 rounded-2xl shadow-lg">
             <div className="space-y-8">
               <div className="text-center space-y-2">
                 <h1 className="text-2xl font-bold">Welcome back</h1>
