@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Loader2, Plus } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
@@ -26,11 +27,14 @@ interface ProductsTabProps {
   isLoading?: boolean;
 }
 
+type SortOption = 'name-asc' | 'name-desc' | 'price-asc' | 'price-desc';
+
 export function ProductsTab({ products, isLoading = false }: ProductsTabProps) {
   const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<SortOption>('name-asc');
 
   // Get current user's expert_uuid - using case insensitive email comparison
   const { data: expertData } = useQuery({
@@ -68,10 +72,29 @@ export function ProductsTab({ products, isLoading = false }: ProductsTabProps) {
     navigate('/seller/products/new');
   };
 
-  // Filter products using case-insensitive search
-  const filteredProducts = products.filter(product =>
-    product.name?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Filter and sort products
+  const filteredAndSortedProducts = React.useMemo(() => {
+    // First filter by search query
+    let filtered = products.filter(product =>
+      product.name?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    // Then sort based on selected option
+    return filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'name-asc':
+          return (a.name || '').localeCompare(b.name || '');
+        case 'name-desc':
+          return (b.name || '').localeCompare(a.name || '');
+        case 'price-asc':
+          return (a.price_from || 0) - (b.price_from || 0);
+        case 'price-desc':
+          return (b.price_from || 0) - (a.price_from || 0);
+        default:
+          return 0;
+      }
+    });
+  }, [products, searchQuery, sortBy]);
 
   return (
     <div className="space-y-6 mt-6">
@@ -85,12 +108,27 @@ export function ProductsTab({ products, isLoading = false }: ProductsTabProps) {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        {isCurrentUserSeller && (
-          <Button onClick={handleCreateProduct} className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            Create Product
-          </Button>
-        )}
+        
+        <div className="flex items-center gap-4">
+          <Select value={sortBy} onValueChange={(value: SortOption) => setSortBy(value)}>
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Sort by..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="name-asc">Name (A-Z)</SelectItem>
+              <SelectItem value="name-desc">Name (Z-A)</SelectItem>
+              <SelectItem value="price-asc">Price (Low to High)</SelectItem>
+              <SelectItem value="price-desc">Price (High to Low)</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {isCurrentUserSeller && (
+            <Button onClick={handleCreateProduct} className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              Create Product
+            </Button>
+          )}
+        </div>
       </div>
 
       {isLoading ? (
@@ -100,7 +138,7 @@ export function ProductsTab({ products, isLoading = false }: ProductsTabProps) {
         </div>
       ) : (
         <div>
-          {filteredProducts.length === 0 ? (
+          {filteredAndSortedProducts.length === 0 ? (
             <Card className="p-8">
               <div className="text-center text-muted-foreground">
                 {searchQuery ? `No products found matching "${searchQuery}"` : "No products found"}
@@ -108,7 +146,7 @@ export function ProductsTab({ products, isLoading = false }: ProductsTabProps) {
             </Card>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProducts.map((product) => (
+              {filteredAndSortedProducts.map((product) => (
                 <ProductCard
                   key={product.product_uuid}
                   title={product.name}
