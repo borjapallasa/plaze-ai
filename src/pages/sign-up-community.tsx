@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -50,115 +51,132 @@ export default function SignUpCommunityPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 py-12" style={{ backgroundColor: '#ffffff' }}>
-      <div className="w-full max-w-6xl grid md:grid-cols-2 gap-12 items-start">
-        <CommunityInfoPanel community={community} />
+    <div className="min-h-screen flex items-start justify-center px-6 py-12" style={{ backgroundColor: '#ffffff' }}>
+      <div className="w-full max-w-7xl grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+        {/* Left Panel - Dynamic Community Info */}
+        <div className="w-full max-w-lg lg:max-w-none lg:w-full">
+          <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-8 lg:p-10 min-h-[400px] flex flex-col justify-start">
+            <CommunityInfoPanel community={community} />
+          </div>
+        </div>
 
-        <div className="w-full p-8 rounded-lg bg-card text-card-foreground shadow-sm border border-border">
-          <div className="space-y-8">
-            <img
-              src="/lovable-uploads/84b87a79-21ab-4d4e-b6fe-3af1f7e0464d.png"
-              alt="Plaze.ai"
-              className="h-8 mx-auto"
-            />
+        {/* Right Panel - Form (Sticky on larger screens) */}
+        <div className="w-full lg:sticky lg:top-8">
+          <div className="w-full max-w-md mx-auto lg:max-w-lg p-8 rounded-xl bg-white shadow-lg border border-gray-200">
+            <div className="space-y-8">
+              <div className="text-center">
+                <img
+                  src="/lovable-uploads/84b87a79-21ab-4d4e-b6fe-3af1f7e0464d.png"
+                  alt="Plaze.ai"
+                  className="h-8 mx-auto mb-6"
+                />
+                <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                  Join {community.name}
+                </h2>
+                <p className="text-sm text-gray-600">
+                  Create your account to get started
+                </p>
+              </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="relative">
+                    <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                    <Input
+                      placeholder="First Name"
+                      type="text"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      className="pl-10 h-12"
+                      required
+                    />
+                  </div>
+                  <div className="relative">
+                    <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                    <Input
+                      placeholder="Last Name"
+                      type="text"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      className="pl-10 h-12"
+                      required
+                    />
+                  </div>
+                </div>
+
                 <div className="relative">
-                  <User className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                  <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                   <Input
-                    placeholder="First Name"
-                    type="text"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    className="pl-10"
+                    placeholder="Email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="pl-10 h-12"
                     required
                   />
                 </div>
+
                 <div className="relative">
-                  <User className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                  <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                   <Input
-                    placeholder="Last Name"
-                    type="text"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    className="pl-10"
+                    placeholder="Password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pl-10 pr-10 h-12"
                     required
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-3"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5 text-gray-400" />
+                    ) : (
+                      <Eye className="h-5 w-5 text-gray-400" />
+                    )}
+                  </button>
                 </div>
-              </div>
 
-              <div className="relative">
-                <Mail className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
-                <Input
-                  placeholder="Email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10"
-                  required
-                />
-              </div>
+                <div className="flex items-start space-x-3">
+                  <Checkbox
+                    id="terms"
+                    checked={agreeToTerms}
+                    onCheckedChange={(checked) => setAgreeToTerms(checked as boolean)}
+                    className="mt-1"
+                  />
+                  <label
+                    htmlFor="terms"
+                    className="text-sm text-gray-600 leading-relaxed"
+                  >
+                    I agree to the{" "}
+                    <Link to="#" className="text-primary hover:underline font-medium">
+                      Terms of Service
+                    </Link>{" "}
+                    and{" "}
+                    <Link to="#" className="text-primary hover:underline font-medium">
+                      Privacy Policy
+                    </Link>
+                  </label>
+                </div>
 
-              <div className="relative">
-                <Lock className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
-                <Input
-                  placeholder="Password"
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 pr-10"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3"
+                <Button
+                  type="submit"
+                  className="w-full h-12 text-base font-medium"
+                  disabled={!agreeToTerms}
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-muted-foreground" />
-                  ) : (
-                    <Eye className="h-5 w-5 text-muted-foreground" />
-                  )}
-                </button>
-              </div>
+                  Create Account
+                </Button>
 
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="terms"
-                  checked={agreeToTerms}
-                  onCheckedChange={(checked) => setAgreeToTerms(checked as boolean)}
-                />
-                <label
-                  htmlFor="terms"
-                  className="text-sm text-muted-foreground"
-                >
-                  I agree to the{" "}
-                  <Link to="#" className="text-primary hover:underline">
-                    Terms
-                  </Link>{" "}
-                  and{" "}
-                  <Link to="#" className="text-primary hover:underline">
-                    Privacy Policy
+                <div className="text-center text-sm border-t pt-6">
+                  <span className="text-gray-600">Already have an account? </span>
+                  <Link to={`/sign-in/community/${id}`} className="text-primary hover:underline font-medium">
+                    Sign In
                   </Link>
-                </label>
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={!agreeToTerms}
-              >
-                Sign Up
-              </Button>
-
-              <div className="text-center text-sm">
-                <span className="text-muted-foreground">Already have an account? </span>
-                <Link to={`/sign-in/community/${id}`} className="text-primary hover:underline">
-                  Sign In
-                </Link>
-              </div>
-            </form>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </div>
