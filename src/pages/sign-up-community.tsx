@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,13 @@ export default function SignUpCommunityPage() {
     if (!count) return "Join the community";
     if (count > 1000) return `Join ${(count / 1000).toFixed(1)}k members`;
     return `Join ${count} members`;
+  };
+
+  const formatPrice = (price?: number) => {
+    if (!price || price === 0) {
+      return "Join for free";
+    }
+    return `Join for $${price}/month`;
   };
 
   if (isLoading) {
@@ -167,7 +175,7 @@ export default function SignUpCommunityPage() {
                     className="w-full h-12 text-base font-medium"
                     disabled={!agreeToTerms}
                   >
-                    Create Account
+                    {formatPrice(community.price)}
                   </Button>
 
                   <div className="text-center text-sm border-t pt-6">
