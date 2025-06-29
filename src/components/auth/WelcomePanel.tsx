@@ -2,7 +2,7 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { CircleCheck } from "lucide-react";
+import { Check } from "lucide-react";
 
 export function WelcomePanel() {
   return (
@@ -30,7 +30,9 @@ export function WelcomePanel() {
             "Learn from creators through workshops and templates"
           ].map((item, index) => (
             <div key={index} className="flex items-start gap-3">
-              <CircleCheck className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-500" />
+              <div className="w-5 h-5 mt-0.5 flex-shrink-0 rounded-full border-2 border-green-500 flex items-center justify-center">
+                <Check className="w-3 h-3 text-green-500" />
+              </div>
               <span className="text-muted-foreground">{item}</span>
             </div>
           ))}
