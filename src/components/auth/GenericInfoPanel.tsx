@@ -69,7 +69,7 @@ export function GenericInfoPanel() {
           <p className="text-sm text-gray-600">
             Are you a creator?{" "}
             <span className="text-blue-600 hover:text-blue-700 cursor-pointer underline">
-              Start selling on Plaze →
+              Sell on Plaze
             </span>
           </p>
         </div>
