@@ -41,7 +41,7 @@ export function CommunityInfoPanel({ community, mode = 'sign-in' }: CommunityInf
       </div>
 
       {/* Community Card */}
-      <div className="bg-gray-50 rounded-2xl p-6 space-y-6">
+      <div className="rounded-2xl p-6 space-y-6">
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center shadow-sm">
             {community.thumbnail ? (

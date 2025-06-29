@@ -95,7 +95,7 @@ export default function SignUpCommunityPage() {
         expert_user_uuid: community.expert_uuid,
         email: email,
         status: (community.price && community.price > 0 ? 'pending' : 'active') as 'active' | 'inactive' | 'pending',
-        type: community.price && community.price > 0 ? 'paid' : 'free',
+        type: (community.price && community.price > 0 ? 'paid' : 'free') as 'free' | 'paid',
         amount: community.price || 0,
       };
 
