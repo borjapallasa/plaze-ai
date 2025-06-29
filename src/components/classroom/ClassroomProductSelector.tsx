@@ -9,9 +9,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Plus } from "lucide-react";
+import { Loader2, Plus, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/auth";
 
@@ -34,6 +35,7 @@ export function ClassroomProductSelector({
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const { data: availableProducts, isLoading } = useQuery({
     queryKey: ['availableCommunityProducts', communityUuid, excludedProductIds],
@@ -54,6 +56,11 @@ export function ClassroomProductSelector({
     },
     enabled: open && !!communityUuid && excludedProductIds.length >= 0
   });
+
+  // Filter products based on search query
+  const filteredProducts = availableProducts?.filter(product =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  ) || [];
 
   const addProductsMutation = useMutation({
     mutationFn: async (productIds: string[]) => {
@@ -84,6 +91,7 @@ export function ClassroomProductSelector({
         description: `${selectedProducts.length} product(s) added to classroom`,
       });
       setSelectedProducts([]);
+      setSearchQuery("");
       onOpenChange(false);
     },
     onError: (error) => {
@@ -124,56 +132,72 @@ export function ClassroomProductSelector({
           <DialogTitle>Add Products to Classroom</DialogTitle>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto space-y-3 pr-2">
-          {isLoading ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-6 w-6 animate-spin" />
-              <span className="ml-2">Loading available products...</span>
-            </div>
-          ) : !availableProducts || availableProducts.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              No additional products available to add to this classroom.
-            </div>
-          ) : (
-            availableProducts.map((product) => (
-              <Card
-                key={product.community_product_uuid}
-                className={`cursor-pointer transition-all hover:shadow-sm ${
-                  selectedProducts.includes(product.community_product_uuid)
-                    ? 'ring-2 ring-primary bg-primary/5'
-                    : 'hover:bg-muted/30'
-                }`}
-                onClick={() => handleToggleProduct(product.community_product_uuid)}
-              >
-                <CardContent className="p-3">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-medium text-sm truncate">{product.name}</h4>
-                        <Badge variant={product.price === 0 ? "secondary" : "default"} className="text-xs px-2 py-0.5 flex-shrink-0">
-                          {product.price === 0 ? "FREE" : `$${product.price}`}
-                        </Badge>
-                      </div>
-                      
-                      {product.product_type && (
-                        <p className="text-xs text-muted-foreground capitalize">
-                          {product.product_type} product
-                        </p>
-                      )}
-                    </div>
+        <div className="space-y-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input
+              placeholder="Search products by name..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
 
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      {selectedProducts.includes(product.community_product_uuid) && (
-                        <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                          <Plus className="h-3 w-3 text-primary-foreground" />
+          <div className="flex-1 overflow-y-auto space-y-3 pr-2 max-h-[400px]">
+            {isLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin" />
+                <span className="ml-2">Loading available products...</span>
+              </div>
+            ) : !availableProducts || availableProducts.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                No additional products available to add to this classroom.
+              </div>
+            ) : filteredProducts.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                No products found matching "{searchQuery}".
+              </div>
+            ) : (
+              filteredProducts.map((product) => (
+                <Card
+                  key={product.community_product_uuid}
+                  className={`cursor-pointer transition-all hover:shadow-sm ${
+                    selectedProducts.includes(product.community_product_uuid)
+                      ? 'ring-2 ring-primary bg-primary/5'
+                      : 'hover:bg-muted/30'
+                  }`}
+                  onClick={() => handleToggleProduct(product.community_product_uuid)}
+                >
+                  <CardContent className="p-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h4 className="font-medium text-sm truncate">{product.name}</h4>
+                          <Badge variant={product.price === 0 ? "secondary" : "default"} className="text-xs px-2 py-0.5 flex-shrink-0">
+                            {product.price === 0 ? "FREE" : `$${product.price}`}
+                          </Badge>
                         </div>
-                      )}
+                        
+                        {product.product_type && (
+                          <p className="text-xs text-muted-foreground capitalize">
+                            {product.product_type} product
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        {selectedProducts.includes(product.community_product_uuid) && (
+                          <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                            <Plus className="h-3 w-3 text-primary-foreground" />
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
-          )}
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </div>
         </div>
 
         <div className="flex justify-between items-center pt-4 border-t">
