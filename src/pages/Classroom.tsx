@@ -93,6 +93,7 @@ export default function Classroom() {
   const [isEditLessonOpen, setIsEditLessonOpen] = useState(false);
   const [isDeleteLessonOpen, setIsDeleteLessonOpen] = useState(false);
   const [isEditClassroomOpen, setIsEditClassroomOpen] = useState(false);
+  const [isDeleteClassroomOpen, setIsDeleteClassroomOpen] = useState(false);
   const [isProcessingPurchase, setIsProcessingPurchase] = useState(false);
   const navigate = useNavigate();
   const [newLessonData, setNewLessonData] = useState({
@@ -392,6 +393,41 @@ export default function Classroom() {
       toast({
         title: "Error",
         description: "Failed to update classroom. Please try again.",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const deleteClassroomMutation = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase
+        .from('classrooms')
+        .delete()
+        .eq('classroom_uuid', id);
+
+      if (error) {
+        console.error("Error deleting classroom:", error);
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      setIsDeleteClassroomOpen(false);
+      toast({
+        title: "Success",
+        description: "Classroom deleted successfully",
+      });
+      // Navigate back to community page
+      if (classroom?.community_uuid) {
+        navigate(`/community/${classroom.community_uuid}`);
+      } else {
+        navigate('/communities');
+      }
+    },
+    onError: (error) => {
+      console.error("Error deleting classroom:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete classroom. Please try again.",
         variant: "destructive"
       });
     }
@@ -870,21 +906,38 @@ export default function Classroom() {
                           </button>
                           <div className="flex items-center gap-1">
                             {isOwner && (
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={handleOpenEditClassroom}
-                                    className="text-muted-foreground"
-                                  >
-                                    <Pencil className="h-4 w-4" />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Edit classroom</p>
-                                </TooltipContent>
-                              </Tooltip>
+                              <>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={handleOpenEditClassroom}
+                                      className="text-muted-foreground"
+                                    >
+                                      <Pencil className="h-4 w-4" />
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Edit classroom</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => setIsDeleteClassroomOpen(true)}
+                                      className="text-muted-foreground hover:text-destructive"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Delete classroom</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </>
                             )}
                             {!isExpanded && lessons && lessons.length > 0 && (
                               <Tooltip>
@@ -1088,6 +1141,30 @@ export default function Classroom() {
                     disabled={deleteLessonMutation.isPending}
                   >
                     {deleteLessonMutation.isPending ? "Deleting..." : "Delete Lesson"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            {/* Delete Classroom Confirmation Dialog */}
+            <Dialog open={isDeleteClassroomOpen} onOpenChange={setIsDeleteClassroomOpen}>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Delete Classroom</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to delete this classroom? This action cannot be undone and will also delete all lessons within this classroom.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter className="gap-2 sm:gap-0">
+                  <DialogClose asChild>
+                    <Button variant="outline">Cancel</Button>
+                  </DialogClose>
+                  <Button
+                    variant="destructive"
+                    onClick={handleDeleteClassroom}
+                    disabled={deleteClassroomMutation.isPending}
+                  >
+                    {deleteClassroomMutation.isPending ? "Deleting..." : "Delete Classroom"}
                   </Button>
                 </DialogFooter>
               </DialogContent>
