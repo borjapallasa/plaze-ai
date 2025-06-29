@@ -188,7 +188,7 @@ export default function SignUpCommunityPage() {
 
             {/* Powered by Plaze.ai branding - moved outside the container */}
             <div className="flex items-center justify-center pt-4">
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-1">
                 <span className="text-xs text-gray-400 italic">Powered by</span>
                 <img 
                   src="/lovable-uploads/84b87a79-21ab-4d4e-b6fe-3af1f7e0464d.png" 
