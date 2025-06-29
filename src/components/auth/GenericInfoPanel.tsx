@@ -24,7 +24,7 @@ export function GenericInfoPanel() {
             Welcome to Plaze
           </h1>
           <p className="text-xl text-gray-600">
-            Where top creators share products, tools & communities — all in one place.
+            The Operative System for Digital Creators.
           </p>
         </div>
       </div>
@@ -54,13 +54,13 @@ export function GenericInfoPanel() {
       {/* CTA */}
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6">
         <h4 className="font-semibold text-gray-900 mb-2">
-          Start exploring today
+          Are you a creator?
         </h4>
         <p className="text-gray-600 text-sm mb-4">
           Create your free account and start discovering the best creators and communities.
         </p>
         <Button variant="outline" className="group mb-4">
-          Create Account
+          Sell on Plaze
           <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
         </Button>
         
