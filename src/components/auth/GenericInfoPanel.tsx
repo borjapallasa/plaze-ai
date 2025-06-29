@@ -1,24 +1,11 @@
-
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle } from "lucide-react";
-
 export function GenericInfoPanel() {
-  const features = [
-    "Discover expert-made digital products",
-    "Join private communities around your passions", 
-    "Access exclusive content and member-only perks",
-    "Learn from creators through workshops and templates"
-  ];
-
-  return (
-    <div className="space-y-8">
+  const features = ["Discover expert-made digital products", "Join private communities around your passions", "Access exclusive content and member-only perks", "Learn from creators through workshops and templates"];
+  return <div className="space-y-8">
       {/* Logo and Title */}
       <div className="space-y-4">
-        <img 
-          src="/lovable-uploads/84b87a79-21ab-4d4e-b6fe-3af1f7e0464d.png" 
-          alt="Plaze.ai" 
-          className="h-12 w-auto"
-        />
+        <img src="/lovable-uploads/84b87a79-21ab-4d4e-b6fe-3af1f7e0464d.png" alt="Plaze.ai" className="h-12 w-auto" />
         <div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Welcome to Plaze
@@ -42,12 +29,10 @@ export function GenericInfoPanel() {
           Join thousands using Plaze to:
         </h3>
         <ul className="space-y-3">
-          {features.map((feature, index) => (
-            <li key={index} className="flex items-center space-x-3">
+          {features.map((feature, index) => <li key={index} className="flex items-center space-x-3">
               <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
               <span className="text-gray-700">{feature}</span>
-            </li>
-          ))}
+            </li>)}
         </ul>
       </div>
 
@@ -65,15 +50,7 @@ export function GenericInfoPanel() {
         </Button>
         
         {/* Soft Seller CTA */}
-        <div className="text-center pt-2 border-t border-blue-100">
-          <p className="text-sm text-gray-600">
-            Are you a creator?{" "}
-            <span className="text-blue-600 hover:text-blue-700 cursor-pointer underline">
-              Sell on Plaze
-            </span>
-          </p>
-        </div>
+        
       </div>
-    </div>
-  );
+    </div>;
 }
