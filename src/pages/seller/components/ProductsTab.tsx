@@ -96,40 +96,55 @@ export function ProductsTab({ products, isLoading = false }: ProductsTabProps) {
     });
   }, [products, searchQuery, sortBy]);
 
+  // Show search and sorting only if there are products
+  const hasProducts = products && products.length > 0;
+
   return (
     <div className="space-y-6 mt-6">
-      <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 sm:items-center">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input 
-            placeholder="Search products..." 
-            className="pl-9"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-        
-        <div className="flex items-center gap-4">
-          <Select value={sortBy} onValueChange={(value: SortOption) => setSortBy(value)}>
-            <SelectTrigger className="w-48">
-              <SelectValue placeholder="Sort by..." />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="name-asc">Name (A-Z)</SelectItem>
-              <SelectItem value="name-desc">Name (Z-A)</SelectItem>
-              <SelectItem value="price-asc">Price (Low to High)</SelectItem>
-              <SelectItem value="price-desc">Price (High to Low)</SelectItem>
-            </SelectContent>
-          </Select>
+      {hasProducts && (
+        <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 sm:items-center">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input 
+              placeholder="Search products..." 
+              className="pl-9"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <Select value={sortBy} onValueChange={(value: SortOption) => setSortBy(value)}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="Sort by..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="name-asc">Name (A-Z)</SelectItem>
+                <SelectItem value="name-desc">Name (Z-A)</SelectItem>
+                <SelectItem value="price-asc">Price (Low to High)</SelectItem>
+                <SelectItem value="price-desc">Price (High to Low)</SelectItem>
+              </SelectContent>
+            </Select>
 
-          {isCurrentUserSeller && (
-            <Button onClick={handleCreateProduct} className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              Create Product
-            </Button>
-          )}
+            {isCurrentUserSeller && (
+              <Button onClick={handleCreateProduct} className="flex items-center gap-2">
+                <Plus className="h-4 w-4" />
+                Create Product
+              </Button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Show Create Product button even when no products if user is seller */}
+      {!hasProducts && isCurrentUserSeller && (
+        <div className="flex justify-end">
+          <Button onClick={handleCreateProduct} className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            Create Product
+          </Button>
+        </div>
+      )}
 
       {isLoading ? (
         <div className="flex items-center justify-center py-8">

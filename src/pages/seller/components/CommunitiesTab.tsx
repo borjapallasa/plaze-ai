@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -125,6 +126,9 @@ export function CommunitiesTab({ communities, isLoading }: CommunitiesTabProps) 
 
   console.log("Filtered communities:", filteredCommunities);
 
+  // Show search only if there are communities
+  const hasCommunities = communities && communities.length > 0;
+
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -157,24 +161,36 @@ export function CommunitiesTab({ communities, isLoading }: CommunitiesTabProps) 
 
   return (
     <div className="space-y-6">
-      {/* Search Section */}
-      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center mb-2">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search communities"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 w-full"
-          />
+      {/* Search Section - only show if there are communities */}
+      {hasCommunities && (
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center mb-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search communities"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 w-full"
+            />
+          </div>
+          {isCurrentUserSeller && (
+            <Button onClick={handleCreateCommunity} className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              Create Community
+            </Button>
+          )}
         </div>
-        {isCurrentUserSeller && (
+      )}
+
+      {/* Show Create Community button even when no communities if user is seller */}
+      {!hasCommunities && isCurrentUserSeller && (
+        <div className="flex justify-end">
           <Button onClick={handleCreateCommunity} className="flex items-center gap-2">
             <Plus className="h-4 w-4" />
             Create Community
           </Button>
-        )}
-      </div>
+        </div>
+      )}
       
       {!filteredCommunities.length ? (
         <Card className="border-dashed border-2 border-muted-foreground/30">
