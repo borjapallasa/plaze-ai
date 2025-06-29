@@ -36,18 +36,11 @@ export default function AdminUsers() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const { 
-    data: usersData, 
+    data: users = [], 
     isLoading, 
     error, 
     refetch
-  } = useUsers({
-    searchTerm,
-    sortBy,
-    sortOrder,
-    statusFilter
-  });
-
-  const users = Array.isArray(usersData) ? usersData : usersData?.users || [];
+  } = useUsers();
 
   const handleSort = (field: string) => {
     const typedField = field as keyof UserData;
@@ -79,16 +72,16 @@ export default function AdminUsers() {
   return (
     <div className="container mx-auto px-4 py-8">
       <UsersHeader 
-        searchQuery={searchTerm}
-        setSearchQuery={setSearchTerm}
-        roleFilter={statusFilter}
-        setRoleFilter={setStatusFilter}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        statusFilter={statusFilter}
+        setStatusFilter={setStatusFilter}
       />
       
       <div className="flex justify-between items-center mb-6">
         <UsersSortSelector 
-          currentSort={sortBy}
-          currentOrder={sortOrder}
+          sortBy={sortBy}
+          sortOrder={sortOrder}
           onSortChange={(field: keyof UserData) => handleSort(field)}
         />
         <UsersLayoutSwitcher layout={layout} onLayoutChange={setLayout} />
@@ -116,7 +109,7 @@ export default function AdminUsers() {
       )}
 
       <UserDetailsDialog
-        selectedUser={selectedUser}
+        user={selectedUser}
         open={showUserDialog}
         onOpenChange={setShowUserDialog}
       />
