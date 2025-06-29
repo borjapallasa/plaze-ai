@@ -39,6 +39,8 @@ import AdminTemplateDetailsPage from "./pages/admin/AdminTemplateDetails";
 import AffiliatesPage from "./pages/Affiliates";
 import SellerPage from "./pages/seller/SellerPage";
 import SellPage from "./pages/Sell";
+import ExpertsPage from "./pages/Experts";
+import ExpertPage from "./pages/Expert";
 import { SearchResults } from "./pages/search";
 import NewCommunityProductPage from "./pages/community/NewCommunityProductPage";
 
@@ -91,6 +93,8 @@ function App() {
           <Route path="/admin/product/:id" element={<AdminTemplateDetailsPage />} />
           <Route path="/affiliates" element={<AffiliatesPage />} />
           <Route path="/search" element={<SearchResults />} />
+          <Route path="/experts" element={<ExpertsPage />} />
+          <Route path="/expert/:expert_uuid" element={<ExpertPage />} />
         </Routes>
         <Toaster />
       </AuthProvider>
