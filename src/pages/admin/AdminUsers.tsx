@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useUsers } from "@/hooks/admin/useUsers";
 import { MainHeader } from "@/components/MainHeader";
@@ -25,12 +24,11 @@ export default function AdminUsers() {
     isLoading,
     error,
     refetch
-  } = useUsers({
+  } = useUsers(1, {
     searchQuery,
     roleFilter,
     sortField,
     sortDirection,
-    page: 1,
     limit: 50
   });
 
@@ -73,21 +71,21 @@ export default function AdminUsers() {
         </div>
 
         {isLoading ? (
-          <UsersLoadingState layoutType={layoutType} />
+          <UsersLoadingState />
         ) : error ? (
-          <UsersErrorState error={error} />
+          <UsersErrorState />
         ) : data && data.users && data.users.length > 0 ? (
           layoutType === "table" ? (
             <UsersTable
               users={data.users}
-              sortField={sortField as keyof any}
+              sortField={sortField}
               sortDirection={sortDirection}
               onSort={handleSortChange}
             />
           ) : (
             <UsersGallery
               users={data.users}
-              sortField={sortField as keyof any}
+              sortField={sortField}
               sortDirection={sortDirection}
               onSort={handleSortChange}
             />

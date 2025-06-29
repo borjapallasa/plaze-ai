@@ -133,10 +133,10 @@ export default function Affiliates() {
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
           <TabsContent value="dashboard" className="space-y-4">
-            <AffiliateDashboard affiliateData={affiliateData} referrals={referrals || []} />
+            <AffiliateDashboard />
           </TabsContent>
           <TabsContent value="referrals" className="space-y-4">
-            <AffiliateTable referrals={referrals || []} isLoading={isReferralsLoading} />
+            <AffiliateTable />
           </TabsContent>
           <TabsContent value="settings" className="space-y-4">
             <Card>
@@ -152,9 +152,9 @@ export default function Affiliates() {
         </Tabs>
 
         <PaymentSettingsDialog
-          open={isPaymentDialogOpen}
-          onOpenChange={setIsPaymentDialogOpen}
-          affiliateUuid={affiliateData.affiliate_uuid}
+          isOpen={isPaymentDialogOpen}
+          onClose={() => setIsPaymentDialogOpen(false)}
+          affiliateUuid={affiliateData?.affiliate_uuid || ''}
         />
       </div>
     </>

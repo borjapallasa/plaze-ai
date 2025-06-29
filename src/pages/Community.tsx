@@ -293,9 +293,12 @@ export default function CommunityPage() {
     isOwner
   });
 
-  // Filter members by status
+  // Filter members by status - fix the type issue
   const activeMembers = communityMembers?.filter(m => m.status === 'active') || [];
-  const pendingMembers = communityMembers?.filter(m => m.status === 'pending') || [];
+  const pendingMembers = communityMembers?.filter(m => m.status === 'pending').map(member => ({
+    ...member,
+    status: member.status as 'pending' | 'active' | 'cancelled' | 'rejected'
+  })) || [];
 
   // Handle member removal
   const handleRemoveMember = async (memberUuid: string) => {
