@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -14,7 +15,13 @@ import { toast } from "sonner";
 async function fetchCommunity(communityId: string) {
   const { data, error } = await supabase
     .from('communities')
-    .select('*')
+    .select(`
+      *,
+      expert:expert_uuid(
+        name,
+        thumbnail
+      )
+    `)
     .eq('community_uuid', communityId)
     .single();
 
@@ -57,7 +64,6 @@ export default function SignUpCommunityPage() {
     try {
       console.log("Starting sign up process for community:", id);
       
-      // Step 1: Create user account with Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
@@ -83,13 +89,12 @@ export default function SignUpCommunityPage() {
 
       console.log("User created successfully:", authData.user.id);
 
-      // Step 2: Create community subscription record
       const subscriptionData = {
         user_uuid: authData.user.id,
         community_uuid: id,
         expert_user_uuid: community.expert_uuid,
         email: email,
-        status: community.price && community.price > 0 ? 'pending' : 'active',
+        status: (community.price && community.price > 0 ? 'pending' : 'active') as 'active' | 'inactive' | 'pending',
         type: community.price && community.price > 0 ? 'paid' : 'free',
         amount: community.price || 0,
       };
@@ -110,14 +115,12 @@ export default function SignUpCommunityPage() {
 
       console.log("Community subscription created:", subscriptionResult);
 
-      // Success message and redirect to community page
       if (community.price && community.price > 0) {
         toast.success("Account created! Please complete payment to access the community.");
       } else {
         toast.success("Welcome! You've successfully joined the community.");
       }
       
-      // Always redirect to the community page
       navigate(`/community/${id}`);
 
     } catch (error) {
@@ -126,12 +129,6 @@ export default function SignUpCommunityPage() {
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const formatMemberCount = (count?: number) => {
-    if (!count) return "Join the community";
-    if (count > 1000) return `Join ${(count / 1000).toFixed(1)}k members`;
-    return `Join ${count} members`;
   };
 
   const formatButtonText = (price?: number) => {
@@ -148,7 +145,7 @@ export default function SignUpCommunityPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <div className="min-h-screen grid lg:grid-cols-2">
         {/* Left Panel - Community Info */}
         <div className="bg-white flex items-center justify-center p-8 lg:p-12">
@@ -158,16 +155,16 @@ export default function SignUpCommunityPage() {
         </div>
 
         {/* Right Panel - Sign Up Form */}
-        <div className="flex items-center justify-center p-8 lg:p-12">
+        <div className="bg-gray-50 flex items-center justify-center p-8 lg:p-12">
           <div className="w-full max-w-md">
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
               <div className="space-y-8">
                 <div className="text-center">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                  <h2 className="text-2xl font-semibold text-gray-900 mb-2">
                     Create your account
                   </h2>
-                  <p className="text-sm text-gray-600 font-normal">
-                    {formatMemberCount(community.member_count)} and unlock exclusive content
+                  <p className="text-sm text-gray-600">
+                    Join the community and unlock exclusive content
                   </p>
                 </div>
 
@@ -180,7 +177,7 @@ export default function SignUpCommunityPage() {
                         type="text"
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
-                        className="pl-10 h-12"
+                        className="pl-10 h-12 border-gray-200 focus:border-primary"
                         required
                         disabled={isSubmitting}
                       />
@@ -192,7 +189,7 @@ export default function SignUpCommunityPage() {
                         type="text"
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
-                        className="pl-10 h-12"
+                        className="pl-10 h-12 border-gray-200 focus:border-primary"
                         required
                         disabled={isSubmitting}
                       />
@@ -206,7 +203,7 @@ export default function SignUpCommunityPage() {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="pl-10 h-12"
+                      className="pl-10 h-12 border-gray-200 focus:border-primary"
                       required
                       disabled={isSubmitting}
                     />
@@ -219,7 +216,7 @@ export default function SignUpCommunityPage() {
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="pl-10 pr-10 h-12"
+                      className="pl-10 pr-10 h-12 border-gray-200 focus:border-primary"
                       required
                       disabled={isSubmitting}
                       minLength={6}
@@ -286,9 +283,9 @@ export default function SignUpCommunityPage() {
               </div>
             </div>
 
-            {/* Powered by Plaze.ai branding - moved outside the container */}
-            <div className="flex items-center justify-center pt-4">
-              <div className="flex items-center space-x-1">
+            {/* Powered by Plaze.ai branding */}
+            <div className="flex items-center justify-center pt-6">
+              <div className="flex items-center space-x-2">
                 <span className="text-xs text-gray-400 italic">Powered by</span>
                 <img 
                   src="/lovable-uploads/84b87a79-21ab-4d4e-b6fe-3af1f7e0464d.png" 

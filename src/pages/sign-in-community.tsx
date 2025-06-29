@@ -14,7 +14,13 @@ import { toast } from "sonner";
 async function fetchCommunity(communityId: string) {
   const { data, error } = await supabase
     .from('communities')
-    .select('*')
+    .select(`
+      *,
+      expert:expert_uuid(
+        name,
+        thumbnail
+      )
+    `)
     .eq('community_uuid', communityId)
     .single();
 
@@ -69,7 +75,6 @@ export default function SignInCommunityPage() {
 
       toast.success("Welcome back! You've successfully signed in.");
       
-      // Redirect to the community page
       navigate(`/community/${id}`);
 
     } catch (error) {
@@ -78,12 +83,6 @@ export default function SignInCommunityPage() {
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const formatMemberCount = (count?: number) => {
-    if (!count) return "Join the community";
-    if (count > 1000) return `Join ${(count / 1000).toFixed(1)}k members`;
-    return `Join ${count} members`;
   };
 
   if (isLoading) {
@@ -95,26 +94,26 @@ export default function SignInCommunityPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <div className="min-h-screen grid lg:grid-cols-2">
         {/* Left Panel - Community Info */}
         <div className="bg-white flex items-center justify-center p-8 lg:p-12">
           <div className="w-full max-w-lg">
-            <CommunityInfoPanel community={community} />
+            <CommunityInfoPanel community={community} mode="sign-in" />
           </div>
         </div>
 
         {/* Right Panel - Sign In Form */}
-        <div className="flex items-center justify-center p-8 lg:p-12">
+        <div className="bg-gray-50 flex items-center justify-center p-8 lg:p-12">
           <div className="w-full max-w-md">
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
               <div className="space-y-8">
                 <div className="text-center">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                  <h2 className="text-2xl font-semibold text-gray-900 mb-2">
                     Welcome back
                   </h2>
-                  <p className="text-sm text-gray-600 font-normal">
-                    {formatMemberCount(community.member_count)} - sign in to continue
+                  <p className="text-sm text-gray-600">
+                    Sign in to continue your journey
                   </p>
                 </div>
 
@@ -126,7 +125,7 @@ export default function SignInCommunityPage() {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="pl-10 h-12"
+                      className="pl-10 h-12 border-gray-200 focus:border-primary"
                       required
                       disabled={isSubmitting}
                     />
@@ -139,7 +138,7 @@ export default function SignInCommunityPage() {
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="pl-10 pr-10 h-12"
+                      className="pl-10 pr-10 h-12 border-gray-200 focus:border-primary"
                       required
                       disabled={isSubmitting}
                     />
@@ -183,8 +182,8 @@ export default function SignInCommunityPage() {
             </div>
 
             {/* Powered by Plaze.ai branding */}
-            <div className="flex items-center justify-center pt-4">
-              <div className="flex items-center space-x-1">
+            <div className="flex items-center justify-center pt-6">
+              <div className="flex items-center space-x-2">
                 <span className="text-xs text-gray-400 italic">Powered by</span>
                 <img 
                   src="/lovable-uploads/84b87a79-21ab-4d4e-b6fe-3af1f7e0464d.png" 
