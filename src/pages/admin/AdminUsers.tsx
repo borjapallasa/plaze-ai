@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -29,7 +30,6 @@ interface UserData {
   id: string;
   email: string;
   created_at: string;
-  role: string;
   firstName: string | null;
   lastName: string | null;
   avatarUrl: string | null;
@@ -41,8 +41,7 @@ export default function AdminUsers() {
   const [error, setError] = React.useState<Error | null>(null);
   const [sortKey, setSortKey] = React.useState<keyof UserData>('created_at');
   const [sortOrder, setSortOrder] = React.useState<'asc' | 'desc'>('desc');
-    const [searchQuery, setSearchQuery] = React.useState('');
-
+  const [searchQuery, setSearchQuery] = React.useState('');
 
   React.useEffect(() => {
     const fetchUsers = async () => {
@@ -54,7 +53,6 @@ export default function AdminUsers() {
             id,
             email,
             created_at,
-            role,
             firstName: user_metadata->>firstName,
             lastName: user_metadata->>lastName,
             avatarUrl: user_metadata->>avatarUrl
@@ -108,15 +106,15 @@ export default function AdminUsers() {
     });
   }, [users, sortKey, sortOrder]);
 
-    const filteredUsers = React.useMemo(() => {
-        if (!sortedUsers) return [];
+  const filteredUsers = React.useMemo(() => {
+    if (!sortedUsers) return [];
 
-        return sortedUsers.filter(user => {
-            const fullName = `${user.firstName || ''} ${user.lastName || ''}`.toLowerCase();
-            return user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                   fullName.includes(searchQuery.toLowerCase());
-        });
-    }, [sortedUsers, searchQuery]);
+    return sortedUsers.filter(user => {
+      const fullName = `${user.firstName || ''} ${user.lastName || ''}`.toLowerCase();
+      return user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+             fullName.includes(searchQuery.toLowerCase());
+    });
+  }, [sortedUsers, searchQuery]);
 
   if (loading) {
     return <div>Loading users...</div>;
@@ -127,17 +125,17 @@ export default function AdminUsers() {
   }
 
   return (
-      <div className="container mx-auto py-10">
-          <div className="flex items-center justify-between mb-4">
-              <h1 className="text-2xl font-bold">Users</h1>
-              <Input
-                  type="search"
-                  placeholder="Search by email or name..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="max-w-xs"
-              />
-          </div>
+    <div className="container mx-auto py-10">
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-2xl font-bold">Users</h1>
+        <Input
+          type="search"
+          placeholder="Search by email or name..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="max-w-xs"
+        />
+      </div>
       <div className="rounded-md border">
         <Table>
           <TableCaption>A list of your registered users.</TableCaption>
@@ -161,12 +159,6 @@ export default function AdminUsers() {
                   {sortKey === 'created_at' && (sortOrder === 'asc' ? <ArrowUp className="ml-2 h-4 w-4" /> : <ArrowDown className="ml-2 h-4 w-4" />)}
                 </Button>
               </TableHead>
-              <TableHead>
-                <Button variant="ghost" onClick={() => handleSort('role')}>
-                  Role
-                  {sortKey === 'role' && (sortOrder === 'asc' ? <ArrowUp className="ml-2 h-4 w-4" /> : <ArrowDown className="ml-2 h-4 w-4" />)}
-                </Button>
-              </TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -184,9 +176,6 @@ export default function AdminUsers() {
                   </div>
                 </TableCell>
                 <TableCell>{user.created_at}</TableCell>
-                <TableCell>
-                  <Badge variant="secondary">{user.role}</Badge>
-                </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
