@@ -7,9 +7,7 @@ export function GenericInfoPanel() {
       <div className="space-y-4">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <h1 className="text-4xl font-bold text-gray-900 italic">
-              Welcome to
-            </h1>
+            
             <img src="/lovable-uploads/84b87a79-21ab-4d4e-b6fe-3af1f7e0464d.png" alt="Plaze.ai" className="h-10 w-auto" />
           </div>
           
