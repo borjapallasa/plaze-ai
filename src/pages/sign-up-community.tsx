@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -111,15 +110,15 @@ export default function SignUpCommunityPage() {
 
       console.log("Community subscription created:", subscriptionResult);
 
-      // Success message and redirect
+      // Success message and redirect to community page
       if (community.price && community.price > 0) {
         toast.success("Account created! Please complete payment to access the community.");
-        // For paid communities, you might want to redirect to a payment page
-        navigate(`/community/${id}`);
       } else {
         toast.success("Welcome! You've successfully joined the community.");
-        navigate(`/community/${id}`);
       }
+      
+      // Always redirect to the community page
+      navigate(`/community/${id}`);
 
     } catch (error) {
       console.error("Unexpected error during sign up:", error);
