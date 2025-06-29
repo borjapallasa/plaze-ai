@@ -41,7 +41,7 @@ export function CommunityInfoPanel({ community, mode = 'sign-in' }: CommunityInf
       </div>
 
       {/* Community Card */}
-      <div className="rounded-2xl p-6 space-y-6">
+      <div className="bg-gray-50 rounded-2xl p-6 space-y-6">
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center shadow-sm">
             {community.thumbnail ? (
@@ -88,30 +88,30 @@ export function CommunityInfoPanel({ community, mode = 'sign-in' }: CommunityInf
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-4 gap-4 pt-4 border-t border-gray-200">
+        <div className="grid grid-cols-4 gap-6 pt-4 border-t border-gray-200">
           <div className="text-center">
             <div className="text-2xl font-bold text-gray-900">
               {formatNumber(community.member_count || 0)}
             </div>
-            <div className="text-sm text-gray-500">Members</div>
+            <div className="text-sm text-gray-500 mt-1">Members</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-gray-900">
               {formatNumber(community.product_count || 0)}
             </div>
-            <div className="text-sm text-gray-500">Products</div>
+            <div className="text-sm text-gray-500 mt-1">Products</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-gray-900">
               {formatNumber(community.post_count || 0)}
             </div>
-            <div className="text-sm text-gray-500">Posts</div>
+            <div className="text-sm text-gray-500 mt-1">Posts</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-gray-900">
               {formatNumber(community.classroom_count || 0)}
             </div>
-            <div className="text-sm text-gray-500">Classrooms</div>
+            <div className="text-sm text-gray-500 mt-1">Classrooms</div>
           </div>
         </div>
       </div>
