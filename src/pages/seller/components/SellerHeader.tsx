@@ -53,26 +53,16 @@ export function SellerHeader({
   // Calculate satisfaction percentage with granular scaling
   const calculateSatisfactionPercentage = (rating: number): number => {
     if (rating >= 4.5) {
-      // 4.5 to 5.0 maps to 100%
       return 100;
     } else if (rating >= 4.0) {
-      // 4.0 to 4.5 maps to 90-100%
-      // Linear interpolation: 90 + (rating - 4.0) / 0.5 * 10
       return Math.round(90 + ((rating - 4.0) / 0.5) * 10);
     } else if (rating >= 3.0) {
-      // 3.0 to 4.0 maps to 80-90%
-      // Linear interpolation: 80 + (rating - 3.0) / 1.0 * 10
       return Math.round(80 + ((rating - 3.0) / 1.0) * 10);
     } else if (rating >= 2.0) {
-      // 2.0 to 3.0 maps to 60-80%
-      // Linear interpolation: 60 + (rating - 2.0) / 1.0 * 20
       return Math.round(60 + ((rating - 2.0) / 1.0) * 20);
     } else if (rating >= 1.0) {
-      // 1.0 to 2.0 maps to 40-60%
-      // Linear interpolation: 40 + (rating - 1.0) / 1.0 * 20
       return Math.round(40 + ((rating - 1.0) / 1.0) * 20);
     } else {
-      // Below 1.0 or no rating
       return 0;
     }
   };
@@ -80,23 +70,23 @@ export function SellerHeader({
   const satisfactionPercentage = calculateSatisfactionPercentage(averageRating);
 
   return (
-    <Card className="mb-8 shadow-sm">
-      <CardContent className="p-6">
+    <Card className="mb-8 shadow-sm border-0 bg-white">
+      <CardContent className="p-8">
         <div className="max-w-6xl mx-auto">
           {/* Desktop Layout */}
-          <div className="hidden lg:flex items-start gap-6">
+          <div className="hidden lg:flex items-start gap-8">
             {/* Main Content Section */}
-            <div className="flex items-start gap-4 flex-1">
+            <div className="flex items-start gap-6 flex-1">
               {/* Avatar */}
-              <div className="w-16 h-16 flex-shrink-0">
+              <div className="w-20 h-20 flex-shrink-0">
                 <AspectRatio ratio={1} className="overflow-hidden rounded-full">
-                  <Avatar className="h-full w-full">
+                  <Avatar className="h-full w-full border-4 border-gray-100">
                     <AvatarImage 
                       src={seller.thumbnail} 
                       alt={seller.name}
                       className="object-cover"
                     />
-                    <AvatarFallback className="text-lg font-semibold">
+                    <AvatarFallback className="text-xl font-bold bg-gradient-to-br from-blue-500 to-purple-600 text-white">
                       {seller.name?.split(' ').map(n => n[0]).join('') || 'UN'}
                     </AvatarFallback>
                   </Avatar>
@@ -104,21 +94,40 @@ export function SellerHeader({
               </div>
               
               {/* Name, Title, Location, Description */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex items-center gap-3">
-                    <h1 className="text-3xl font-bold text-foreground leading-tight">
-                      {seller.name}
-                    </h1>
-                    {seller.status && (
-                      <Badge 
-                        variant={getBadgeVariant(seller.status)}
-                        className="text-xs px-2 py-1 capitalize"
-                      >
-                        {seller.status}
-                      </Badge>
-                    )}
+              <div className="flex-1 min-w-0 space-y-4">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <h1 className="text-4xl font-bold text-gray-900 leading-tight">
+                        {seller.name}
+                      </h1>
+                      {seller.status && (
+                        <Badge 
+                          variant={getBadgeVariant(seller.status)}
+                          className="text-sm px-3 py-1 capitalize font-medium"
+                        >
+                          {seller.status}
+                        </Badge>
+                      )}
+                    </div>
+                    
+                    {/* Category and Location */}
+                    <div className="flex items-center gap-4 text-base text-gray-600">
+                      {seller.title && (
+                        <span className="font-semibold text-gray-700">{seller.title}</span>
+                      )}
+                      {seller.title && seller.location && (
+                        <span className="text-gray-400">•</span>
+                      )}
+                      {seller.location && (
+                        <div className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4 text-gray-400" />
+                          <span>{seller.location}</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
+                  
                   {isAdminView ? (
                     <EditExpertStatusDialog
                       expert={seller}
@@ -127,7 +136,7 @@ export function SellerHeader({
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          className="flex items-center gap-2"
+                          className="flex items-center gap-2 hover:bg-gray-50"
                         >
                           <Edit2 className="h-4 w-4" />
                           Edit Status
@@ -142,7 +151,7 @@ export function SellerHeader({
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          className="flex items-center gap-2"
+                          className="flex items-center gap-2 hover:bg-gray-50"
                         >
                           <Edit2 className="h-4 w-4" />
                           Edit Profile
@@ -152,23 +161,13 @@ export function SellerHeader({
                   )}
                 </div>
                 
-                {/* Role & Location */}
-                <div className="flex items-center gap-3 text-sm text-muted-foreground mb-3">
-                  {seller.title && <span className="font-medium">{seller.title}</span>}
-                  {seller.title && seller.location && <span>•</span>}
-                  {seller.location && (
-                    <div className="flex items-center gap-1">
-                      <MapPin className="h-3 w-3" />
-                      <span>{seller.location}</span>
-                    </div>
-                  )}
-                </div>
-                
                 {/* Description */}
                 {seller.description && (
-                  <p className="text-base text-muted-foreground leading-relaxed">
-                    {seller.description}
-                  </p>
+                  <div className="max-w-2xl">
+                    <p className="text-base text-gray-600 leading-relaxed">
+                      {seller.description}
+                    </p>
+                  </div>
                 )}
               </div>
             </div>
@@ -206,25 +205,25 @@ export function SellerHeader({
           {/* Mobile/Tablet Layout */}
           <div className="lg:hidden">
             {/* Avatar and Name Row */}
-            <div className="flex items-start gap-4 mb-4">
-              <div className="w-14 h-14 flex-shrink-0">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="w-16 h-16 flex-shrink-0">
                 <AspectRatio ratio={1} className="overflow-hidden rounded-full">
-                  <Avatar className="h-full w-full">
+                  <Avatar className="h-full w-full border-2 border-gray-100">
                     <AvatarImage 
                       src={seller.thumbnail} 
                       alt={seller.name}
                       className="object-cover"
                     />
-                    <AvatarFallback className="text-sm font-semibold">
+                    <AvatarFallback className="text-lg font-bold bg-gradient-to-br from-blue-500 to-purple-600 text-white">
                       {seller.name?.split(' ').map(n => n[0]).join('') || 'UN'}
                     </AvatarFallback>
                   </Avatar>
                 </AspectRatio>
               </div>
               
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <h1 className="text-2xl font-bold text-foreground leading-tight">
+              <div className="flex-1 min-w-0 space-y-2">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h1 className="text-2xl font-bold text-gray-900 leading-tight">
                     {seller.name}
                   </h1>
                   {seller.status && (
@@ -236,12 +235,12 @@ export function SellerHeader({
                     </Badge>
                   )}
                 </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  {seller.title && <span className="font-medium">{seller.title}</span>}
-                  {seller.title && seller.location && <span>•</span>}
+                <div className="flex items-center gap-3 text-sm text-gray-600 flex-wrap">
+                  {seller.title && <span className="font-semibold text-gray-700">{seller.title}</span>}
+                  {seller.title && seller.location && <span className="text-gray-400">•</span>}
                   {seller.location && (
                     <div className="flex items-center gap-1">
-                      <MapPin className="h-3 w-3" />
+                      <MapPin className="h-3 w-3 text-gray-400" />
                       <span>{seller.location}</span>
                     </div>
                   )}
@@ -251,13 +250,15 @@ export function SellerHeader({
 
             {/* Description */}
             {seller.description && (
-              <p className="text-base text-muted-foreground leading-relaxed mb-4">
-                {seller.description}
-              </p>
+              <div className="mb-6">
+                <p className="text-base text-gray-600 leading-relaxed">
+                  {seller.description}
+                </p>
+              </div>
             )}
 
             {/* Stats Row with separators for mobile */}
-            <div className="flex items-center gap-3 overflow-x-auto pb-2 mb-4">
+            <div className="flex items-center gap-3 overflow-x-auto pb-2 mb-6">
               <div className="flex items-center gap-2 flex-shrink-0">
                 <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                 <span className="text-sm font-semibold">
@@ -293,7 +294,7 @@ export function SellerHeader({
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="w-full flex items-center justify-center gap-2"
+                    className="w-full flex items-center justify-center gap-2 hover:bg-gray-50"
                   >
                     <Edit2 className="h-4 w-4" />
                     Edit Status
@@ -308,7 +309,7 @@ export function SellerHeader({
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="w-full flex items-center justify-center gap-2"
+                    className="w-full flex items-center justify-center gap-2 hover:bg-gray-50"
                   >
                     <Edit2 className="h-4 w-4" />
                     Edit Profile
