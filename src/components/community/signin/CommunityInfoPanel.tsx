@@ -41,17 +41,17 @@ export function CommunityInfoPanel({ community, mode = 'sign-in' }: CommunityInf
       </div>
 
       {/* Community Card */}
-      <div className="rounded-2xl p-6 space-y-6">
+      <div className="p-6 space-y-6">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center shadow-sm">
+          <div className="w-16 h-16 bg-white flex items-center justify-center shadow-sm">
             {community.thumbnail ? (
               <img 
                 src={community.thumbnail} 
                 alt={community.name}
-                className="w-12 h-12 rounded-lg object-cover"
+                className="w-12 h-12 object-cover"
               />
             ) : (
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-primary/10 flex items-center justify-center">
                 <span className="text-primary font-semibold text-lg">
                   {community.name.charAt(0)}
                 </span>
