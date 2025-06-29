@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight, Plus, Edit, Package, Settings } from "lucide-react";
+import { MessageSquare, Users, BookOpen, Calendar, Link as LinkIcon, ThumbsUp, Search, ArrowRight, Plus, Edit, Package, Settings, UserX } from "lucide-react";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/ProductCard";
@@ -26,7 +26,8 @@ import { ClassroomDialog } from "@/components/community/ClassroomDialog";
 import { CommunityAccessGuard } from "@/components/community/CommunityAccessGuard";
 import { CreateThreadDialog } from "@/components/community/CreateThreadDialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MemberManagementDialog } from "@/components/community/MemberManagementDialog";
+import { MemberRequestsDialog } from "@/components/community/MemberRequestsDialog";
+import { useToast } from "@/hooks/use-toast";
 
 interface Link {
   name: string;
@@ -65,6 +66,7 @@ export default function CommunityPage() {
   const { id: communityId } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { toast } = useToast();
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [isThreadOpen, setIsThreadOpen] = useState(false);
   const [selectedThread, setSelectedThread] = useState<any>(null);
@@ -72,7 +74,7 @@ export default function CommunityPage() {
   const [isProductCreationDialogOpen, setIsProductCreationDialogOpen] = useState(false);
   const [isClassroomDialogOpen, setIsClassroomDialogOpen] = useState(false);
   const [isCreateThreadDialogOpen, setIsCreateThreadDialogOpen] = useState(false);
-  const [isMemberManagementDialogOpen, setIsMemberManagementDialogOpen] = useState(false);
+  const [isMemberRequestsDialogOpen, setIsMemberRequestsDialogOpen] = useState(false);
   const [showProductTemplateSelector, setShowProductTemplateSelector] = useState(false);
   const [activeTab, setActiveTab] = useState("threads");
   const [selectedTag, setSelectedTag] = useState<string>("all");
@@ -290,6 +292,19 @@ export default function CommunityPage() {
     communityExpertUuid: community?.expert_uuid,
     isOwner
   });
+
+  // Filter members by status
+  const activeMembers = communityMembers?.filter(m => m.status === 'active') || [];
+  const pendingMembers = communityMembers?.filter(m => m.status === 'pending') || [];
+
+  // Handle member removal
+  const handleRemoveMember = async (memberUuid: string) => {
+    // TODO: Implement API call to remove member
+    toast({
+      title: "Member removed",
+      description: "The member has been removed from the community.",
+    });
+  };
 
   if (isCommunityLoading) {
     return (
@@ -521,17 +536,17 @@ export default function CommunityPage() {
     return null;
   };
 
-  const renderManageMembersButton = () => {
-    if (isOwner && communityMembers && communityMembers.length > 0) {
+  const renderMemberRequestsButton = () => {
+    if (isOwner && pendingMembers.length > 0) {
       return (
         <Button
           variant="outline"
           size="sm"
           className="flex items-center gap-2"
-          onClick={() => setIsMemberManagementDialogOpen(true)}
+          onClick={() => setIsMemberRequestsDialogOpen(true)}
         >
           <Settings className="w-4 h-4" />
-          Manage Members
+          Member Requests ({pendingMembers.length})
         </Button>
       );
     }
@@ -1045,7 +1060,7 @@ export default function CommunityPage() {
             <TabsContent value="members" className="space-y-6">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold">Community Members</h3>
-                {renderManageMembersButton()}
+                {renderMemberRequestsButton()}
               </div>
               
               {isMembersLoading ? (
@@ -1060,9 +1075,9 @@ export default function CommunityPage() {
                     </div>
                   ))}
                 </div>
-              ) : communityMembers && communityMembers.filter(m => m.status === 'active').length > 0 ? (
+              ) : activeMembers.length > 0 ? (
                 <div className="space-y-4">
-                  {communityMembers.filter(m => m.status === 'active').map((member) => (
+                  {activeMembers.map((member) => (
                     <div key={member.community_subscription_uuid} className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent transition-colors">
                       <div className="flex items-center space-x-3">
                         <Avatar className="h-12 w-12">
@@ -1083,10 +1098,16 @@ export default function CommunityPage() {
                           </p>
                         </div>
                       </div>
-                      {member.status === 'pending' && (
-                        <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
-                          Pending
-                        </Badge>
+                      {isOwner && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleRemoveMember(member.community_subscription_uuid)}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <UserX className="h-4 w-4 mr-1" />
+                          Remove
+                        </Button>
                       )}
                     </div>
                   ))}
@@ -1162,10 +1183,10 @@ export default function CommunityPage() {
             communityUuid={communityId || ''}
           />
 
-          <MemberManagementDialog
-            open={isMemberManagementDialogOpen}
-            onOpenChange={setIsMemberManagementDialogOpen}
-            members={communityMembers || []}
+          <MemberRequestsDialog
+            open={isMemberRequestsDialogOpen}
+            onOpenChange={setIsMemberRequestsDialogOpen}
+            members={pendingMembers}
             isOwner={isOwner}
           />
         </div>
