@@ -95,8 +95,8 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
         const additionalPercentage = Math.round(additionalPercentageDecimal * 100);
         
         let originalAffiliateFees = totalAffiliateFees;
-        let baseCommissionPercentage = 5; // Default base 5%
-        let totalCommissionPercentage = baseCommissionPercentage;
+        let baseCommissionPercentage = 0; // Start with 0 instead of 5
+        let totalCommissionPercentage = 0; // Start with 0
         let boostedAmount = 0;
         
         if (isBoosted && additionalPercentage > 0 && baseAmount > 0) {
@@ -175,7 +175,7 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
   };
 
   const renderCommission = (transaction: Transaction) => {
-    const basePercentage = transaction.base_commission_percentage || 5;
+    const basePercentage = transaction.base_commission_percentage || 0;
     const additionalPercentage = transaction.additional_commission_percentage || 0;
     const originalFees = transaction.original_affiliate_fees || 0;
     

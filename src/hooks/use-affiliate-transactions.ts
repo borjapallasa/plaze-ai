@@ -85,8 +85,8 @@ export function useAffiliateTransactions() {
         
         // Calculate affiliate fees and commission percentage
         let originalAffiliateFees = totalAffiliateFees;
-        let baseCommissionPercentage = 5; // Default base 5%
-        let totalCommissionPercentage = baseCommissionPercentage;
+        let baseCommissionPercentage = 0; // Start with 0 instead of 5
+        let totalCommissionPercentage = 0; // Start with 0
         let boostedAmount = 0;
         
         if (isBoosted && additionalPercentage > 0 && baseAmount > 0) {

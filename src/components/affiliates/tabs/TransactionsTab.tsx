@@ -27,7 +27,7 @@ export function TransactionsTab() {
       case "pending":
         return <Badge variant="outline">{capitalizedStatus}</Badge>;
       case "failed":
-        return <Badge variant="destructive">{capitalizedStatus}</Badge>;
+        return <Badge variant="destructive">{capitaliredStatus}</Badge>;
       default:
         return <Badge variant="secondary">{capitalizedStatus}</Badge>;
     }
@@ -76,7 +76,7 @@ export function TransactionsTab() {
   };
 
   const renderCommission = (transaction: any) => {
-    const basePercentage = transaction.base_commission_percentage || 5;
+    const basePercentage = transaction.base_commission_percentage || 0;
     const additionalPercentage = transaction.additional_commission_percentage || 0;
     const originalFees = transaction.original_affiliate_fees || 0;
     
