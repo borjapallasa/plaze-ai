@@ -129,8 +129,8 @@ export default function SearchPage() {
         <div className="flex flex-col lg:flex-row gap-8">
           <aside className="lg:w-64 flex-shrink-0">
             <SearchFilters 
-              initialSearchTerm={searchTerm}
-              initialFilters={filters}
+              onSearch={handleSearch}
+              onFilterChange={handleFilterChange}
             />
           </aside>
 
