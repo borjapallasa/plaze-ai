@@ -7,6 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useAffiliateData } from "@/hooks/use-affiliate-data";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { PaymentSettingsDialog } from "./PaymentSettingsDialog";
+import { AffiliateTable } from "./AffiliateTable";
 
 export function AffiliateDashboard() {
   const { data: affiliateData, isLoading: affiliateLoading } = useAffiliateData();
@@ -167,6 +168,16 @@ export function AffiliateDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Affiliates Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>My Affiliates</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <AffiliateTable />
+        </CardContent>
+      </Card>
     </div>
   );
 }
