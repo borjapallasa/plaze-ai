@@ -121,47 +121,45 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-7xl max-h-[95vh] w-[95vw] flex flex-col">
-        <DialogHeader className="space-y-4 pb-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <DialogTitle className="text-2xl font-bold">{affiliate.name}</DialogTitle>
-              <p className="text-sm text-muted-foreground mt-1">{affiliate.status}</p>
-            </div>
+      <DialogContent className="max-w-4xl max-h-[90vh] w-[95vw] flex flex-col p-4 sm:p-6">
+        <DialogHeader className="space-y-3 sm:space-y-4 pb-4 sm:pb-6">
+          <div className="flex flex-col space-y-2">
+            <DialogTitle className="text-xl sm:text-2xl font-bold text-center sm:text-left">{affiliate.name}</DialogTitle>
+            <p className="text-sm text-muted-foreground text-center sm:text-left">{affiliate.status}</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/50 dark:to-blue-900/50 p-4 rounded-xl border">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/50 dark:to-blue-900/50 p-4 sm:p-6 rounded-xl border">
               <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Transactions</h3>
-              <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">{transactions.length}</p>
+              <p className="text-2xl sm:text-3xl font-bold text-blue-700 dark:text-blue-300">{transactions.length}</p>
             </div>
-            <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950/50 dark:to-emerald-900/50 p-4 rounded-xl border">
+            <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950/50 dark:to-emerald-900/50 p-4 sm:p-6 rounded-xl border">
               <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Spent</h3>
-              <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">${totalSpent.toFixed(2)}</p>
+              <p className="text-2xl sm:text-3xl font-bold text-emerald-700 dark:text-emerald-300">${totalSpent.toFixed(2)}</p>
             </div>
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/50 p-4 rounded-xl border">
+            <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/50 p-4 sm:p-6 rounded-xl border">
               <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Affiliate Fees</h3>
-              <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">${totalAffiliateFees.toFixed(2)}</p>
+              <p className="text-2xl sm:text-3xl font-bold text-purple-700 dark:text-purple-300">${totalAffiliateFees.toFixed(2)}</p>
             </div>
           </div>
         </DialogHeader>
 
-        <div className="flex-1 min-h-0 space-y-6">
+        <div className="flex-1 min-h-0 space-y-4 sm:space-y-6">
           {/* Search */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
-              placeholder="Search transactions by type, status, or partnership..."
+              placeholder="Search transactions..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 h-12"
+              className="pl-10 h-11 sm:h-12"
             />
           </div>
 
           {/* Transactions Table */}
           <div className="flex-1 min-h-0 border rounded-xl overflow-hidden bg-card">
-            {/* Table Header - Hidden on mobile, visible on tablet+ */}
-            <div className="hidden md:block bg-muted/50 border-b px-6 py-4">
+            {/* Table Header - Hidden on mobile */}
+            <div className="hidden sm:block bg-muted/50 border-b px-4 sm:px-6 py-3 sm:py-4">
               <div className="grid grid-cols-6 gap-4 text-sm font-medium text-muted-foreground">
                 <div>Transaction ID</div>
                 <div>Type</div>
@@ -173,14 +171,14 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
             </div>
 
             {/* Table Body */}
-            <div className="max-h-80 overflow-y-auto">
+            <div className="max-h-64 sm:max-h-80 overflow-y-auto">
               {isLoading ? (
-                <div className="flex items-center justify-center py-12">
+                <div className="flex items-center justify-center py-8 sm:py-12">
                   <Loader2 className="h-6 w-6 animate-spin mr-3" />
                   <span className="text-sm text-muted-foreground">Loading transactions...</span>
                 </div>
               ) : filteredTransactions.length === 0 ? (
-                <div className="flex items-center justify-center py-12">
+                <div className="flex items-center justify-center py-8 sm:py-12">
                   <div className="text-center">
                     <p className="text-sm text-muted-foreground">No transactions found</p>
                     <p className="text-xs text-muted-foreground mt-1">
@@ -191,42 +189,42 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
               ) : (
                 <div className="divide-y">
                   {filteredTransactions.map((transaction) => (
-                    <div key={transaction.transaction_uuid} className="p-4 hover:bg-muted/30 transition-colors">
+                    <div key={transaction.transaction_uuid} className="p-3 sm:p-4 hover:bg-muted/30 transition-colors">
                       {/* Mobile Layout */}
-                      <div className="md:hidden space-y-3">
+                      <div className="sm:hidden space-y-3">
                         <div className="flex justify-between items-start">
                           <div className="font-mono text-xs text-muted-foreground">
                             {transaction.transaction_uuid.slice(0, 8)}...
                           </div>
                           <div className="text-right">
-                            <div className="font-semibold">${(transaction.amount || 0).toFixed(2)}</div>
+                            <div className="font-bold text-lg">${(transaction.amount || 0).toFixed(2)}</div>
                             <div className="text-sm text-emerald-600 font-medium">
                               +${(transaction.afiliate_fees || 0).toFixed(2)}
                             </div>
                           </div>
                         </div>
-                        <div className="grid grid-cols-2 gap-4 text-sm">
-                          <div>
-                            <span className="text-muted-foreground">Type: </span>
-                            <span className="capitalize">{transaction.type}</span>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Type:</span>
+                            <span className="capitalize font-medium">{transaction.type}</span>
                           </div>
-                          <div>
-                            <span className="text-muted-foreground">Date: </span>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Date:</span>
                             <span>{new Date(transaction.created_at).toLocaleDateString('en-US', {
                               month: 'short',
                               day: 'numeric',
                               year: 'numeric'
                             })}</span>
                           </div>
-                        </div>
-                        <div className="text-sm">
-                          <span className="text-muted-foreground">Partnership: </span>
-                          <span>{transaction.partnership_name}</span>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Partnership:</span>
+                            <span className="font-medium">{transaction.partnership_name}</span>
+                          </div>
                         </div>
                       </div>
 
                       {/* Desktop Layout */}
-                      <div className="hidden md:grid grid-cols-6 gap-4 text-sm items-center">
+                      <div className="hidden sm:grid grid-cols-6 gap-4 text-sm items-center">
                         <div className="font-mono text-xs">
                           {transaction.transaction_uuid.slice(0, 8)}...
                         </div>
