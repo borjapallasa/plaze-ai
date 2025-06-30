@@ -27,7 +27,7 @@ export function TransactionsTab() {
       case "pending":
         return <Badge variant="outline">{capitalizedStatus}</Badge>;
       case "failed":
-        return <Badge variant="destructive">{capitaliredStatus}</Badge>;
+        return <Badge variant="destructive">{capitalizedStatus}</Badge>;
       default:
         return <Badge variant="secondary">{capitalizedStatus}</Badge>;
     }
