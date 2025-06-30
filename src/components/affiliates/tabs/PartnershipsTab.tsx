@@ -97,7 +97,7 @@ export function PartnershipsTab() {
           <TableRow>
             <TableHead className="w-[15%]">Name</TableHead>
             <TableHead className="w-[10%]">Type</TableHead>
-            <TableHead className="w-[12%]">Expert Split</TableHead>
+            <TableHead className="w-[12%]">Split</TableHead>
             <TableHead className="w-[10%]">Status</TableHead>
             <TableHead className="w-[12%]">Created</TableHead>
             <TableHead className="w-[12%] text-center">Revenue</TableHead>
