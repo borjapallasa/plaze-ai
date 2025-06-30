@@ -42,8 +42,8 @@ export default function AdminUsers() {
     refetch
   } = useUsers();
 
-  // Extract users array from the data structure
-  const users = Array.isArray(usersData) ? usersData : usersData?.users || [];
+  // Extract users array from the data structure and ensure proper typing
+  const users: UserData[] = Array.isArray(usersData) ? usersData : usersData?.users || [];
 
   const handleSort = (field: string) => {
     const typedField = field as keyof UserData;

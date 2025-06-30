@@ -28,6 +28,12 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
     transaction.type?.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
 
+  // Calculate affiliate fee using multiplier (0.03 = 3%)
+  const calculateAffiliateFee = (amount: number) => {
+    const multiplier = 0.03;
+    return amount * multiplier;
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col p-0">
@@ -82,30 +88,35 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
                   </div>
                   <div className="divide-y">
                     {filteredTransactions.length > 0 ? (
-                      filteredTransactions.map((transaction) => (
-                        <div key={transaction.transaction_uuid} className="grid grid-cols-5 gap-6 p-4 hover:bg-muted/50">
-                          <div className="truncate text-base">
-                            {transaction.seller_name || 'Unknown Template'}
+                      filteredTransactions.map((transaction) => {
+                        const transactionAmount = transaction.amount || 0;
+                        const calculatedAffiliateFee = calculateAffiliateFee(transactionAmount);
+                        
+                        return (
+                          <div key={transaction.transaction_uuid} className="grid grid-cols-5 gap-6 p-4 hover:bg-muted/50">
+                            <div className="truncate text-base">
+                              {transaction.seller_name || 'Unknown Template'}
+                            </div>
+                            <div className="text-right text-base">
+                              ${transactionAmount.toFixed(2)}
+                            </div>
+                            <div className="text-right text-base">0.03</div>
+                            <div className="text-right text-base">
+                              ${calculatedAffiliateFee.toFixed(2)}
+                            </div>
+                            <div className="text-right text-base">
+                              {new Date(transaction.created_at).toLocaleDateString('en-US', {
+                                month: 'numeric',
+                                day: 'numeric',
+                                year: 'numeric',
+                                hour: 'numeric',
+                                minute: 'numeric',
+                                hour12: true
+                              })}
+                            </div>
                           </div>
-                          <div className="text-right text-base">
-                            ${(transaction.amount || 0).toFixed(2)}
-                          </div>
-                          <div className="text-right text-base">0.03</div>
-                          <div className="text-right text-base">
-                            ${(transaction.afiliate_fees || 0).toFixed(2)}
-                          </div>
-                          <div className="text-right text-base">
-                            {new Date(transaction.created_at).toLocaleDateString('en-US', {
-                              month: 'numeric',
-                              day: 'numeric',
-                              year: 'numeric',
-                              hour: 'numeric',
-                              minute: 'numeric',
-                              hour12: true
-                            })}
-                          </div>
-                        </div>
-                      ))
+                        );
+                      })
                     ) : (
                       <div className="p-8 text-center text-muted-foreground">
                         {searchTerm ? 'No transactions found matching your search.' : 'No transactions found for this user.'}

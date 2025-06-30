@@ -1,13 +1,12 @@
 
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { MainHeader } from "@/components/MainHeader";
+import { SearchFilters } from "@/components/experts/SearchFilters";
 import { ProductCard } from "@/components/ProductCard";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Search, Filter } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Product {
   product_uuid: string;
@@ -15,240 +14,166 @@ interface Product {
   description: string;
   price_from: number;
   thumbnail: string;
-  slug: string;
-  status: string;
-  type: string;
+  status: "active" | "inactive" | "draft" | "review";
   expert_uuid: string;
-  user_uuid: string;
-  created_at: string;
-}
-
-interface Community {
-  community_uuid: string;
-  name: string;
-  description: string;
-  price: number;
-  thumbnail: string;
   slug: string;
   type: string;
-  expert_uuid: string;
-  created_at: string;
+  use_case: any;
+  platform: any;
+  industries: any;
+  tech_stack: string;
+  variant_count: number;
+  sales_count: number;
+  review_count: number;
+  experts?: {
+    name: string;
+    thumbnail: string;
+  };
 }
 
-interface Expert {
-  expert_uuid: string;
-  name: string;
-  description: string;
-  thumbnail: string;
-  slug: string;
-  title: string;
-  location: string;
-  areas: any;
-  created_at: string;
-}
-
-export function SearchResults() {
-  const [searchParams] = useSearchParams();
-  const query = searchParams.get('q') || '';
-  const [searchTerm, setSearchTerm] = useState(query);
-  const [activeTab, setActiveTab] = useState<'all' | 'products' | 'communities' | 'experts'>('all');
-
-  const { data: searchResults, isLoading } = useQuery({
-    queryKey: ['search', searchTerm, activeTab],
-    queryFn: async () => {
-      if (!searchTerm.trim()) return { products: [], communities: [], experts: [] };
-
-      const results: { products: Product[], communities: Community[], experts: Expert[] } = {
-        products: [],
-        communities: [],
-        experts: []
-      };
-
-      if (activeTab === 'all' || activeTab === 'products') {
-        const { data: products } = await supabase
-          .from('products')
-          .select('*')
-          .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`)
-          .eq('status', 'active')
-          .limit(20);
-        
-        results.products = products || [];
-      }
-
-      if (activeTab === 'all' || activeTab === 'communities') {
-        const { data: communities } = await supabase
-          .from('communities')
-          .select('*')
-          .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`)
-          .limit(20);
-        
-        results.communities = communities || [];
-      }
-
-      if (activeTab === 'all' || activeTab === 'experts') {
-        const { data: experts } = await supabase
-          .from('experts')
-          .select('*')
-          .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,title.ilike.%${searchTerm}%`)
-          .eq('status', 'approved')
-          .limit(20);
-        
-        results.experts = experts || [];
-      }
-
-      return results;
-    },
-    enabled: !!searchTerm.trim(),
+export default function SearchPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
+  const [filters, setFilters] = useState({
+    category: searchParams.get("category") || "",
+    priceRange: searchParams.get("priceRange") || "",
+    sortBy: searchParams.get("sortBy") || "relevance",
   });
 
-  const handleSearch = () => {
-    // The query will automatically refetch when searchTerm changes
+  // Update URL when search term or filters change
+  useEffect(() => {
+    const newParams = new URLSearchParams();
+    if (searchTerm) newParams.set("q", searchTerm);
+    if (filters.category) newParams.set("category", filters.category);
+    if (filters.priceRange) newParams.set("priceRange", filters.priceRange);
+    if (filters.sortBy) newParams.set("sortBy", filters.sortBy);
+    
+    setSearchParams(newParams, { replace: true });
+  }, [searchTerm, filters, setSearchParams]);
+
+  const { data: products = [], isLoading } = useQuery({
+    queryKey: ['search-products', searchTerm, filters],
+    queryFn: async (): Promise<Product[]> => {
+      let query = supabase
+        .from('products')
+        .select(`
+          *,
+          experts!inner(name, thumbnail)
+        `)
+        .eq('status', 'active');
+
+      // Apply search term filter
+      if (searchTerm) {
+        query = query.or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`);
+      }
+
+      // Apply category filter
+      if (filters.category) {
+        query = query.contains('use_case', [filters.category]);
+      }
+
+      // Apply price range filter
+      if (filters.priceRange) {
+        const [min, max] = filters.priceRange.split('-').map(Number);
+        query = query.gte('price_from', min);
+        if (max) {
+          query = query.lte('price_from', max);
+        }
+      }
+
+      // Apply sorting
+      switch (filters.sortBy) {
+        case 'price_low':
+          query = query.order('price_from', { ascending: true });
+          break;
+        case 'price_high':
+          query = query.order('price_from', { ascending: false });
+          break;
+        case 'newest':
+          query = query.order('created_at', { ascending: false });
+          break;
+        case 'popular':
+          query = query.order('sales_count', { ascending: false, nullsLast: true });
+          break;
+        default:
+          query = query.order('created_at', { ascending: false });
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+      return data || [];
+    }
+  });
+
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
   };
 
-  const getTotalResults = () => {
-    if (!searchResults) return 0;
-    return searchResults.products.length + searchResults.communities.length + searchResults.experts.length;
+  const handleFilterChange = (newFilters: typeof filters) => {
+    setFilters(newFilters);
   };
 
   return (
     <>
       <MainHeader />
-      <div className="container mx-auto px-4 py-8 pt-24">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex gap-4 mb-8">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-              <Input
-                placeholder="Search for products, communities, or experts..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                className="pl-10 pr-4 py-3 text-lg"
-              />
-            </div>
-            <Button onClick={handleSearch} size="lg">
-              <Search className="h-5 w-5 mr-2" />
-              Search
-            </Button>
-          </div>
+      <div className="container mx-auto px-4 py-8 mt-16">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2">
+            {searchTerm ? `Search results for "${searchTerm}"` : "All Products"}
+          </h1>
+          <p className="text-muted-foreground">
+            {isLoading ? "Loading..." : `${products.length} products found`}
+          </p>
+        </div>
 
-          <div className="flex gap-4 mb-6 border-b">
-            {(['all', 'products', 'communities', 'experts'] as const).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`pb-3 px-1 capitalize ${
-                  activeTab === tab
-                    ? 'border-b-2 border-blue-500 text-blue-600 font-medium'
-                    : 'text-gray-600 hover:text-gray-800'
-                }`}
-              >
-                {tab}
-                {searchResults && (
-                  <span className="ml-2 text-sm text-gray-500">
-                    ({tab === 'all' ? getTotalResults() : searchResults[tab as keyof typeof searchResults]?.length || 0})
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
+        <div className="flex flex-col lg:flex-row gap-8">
+          <aside className="lg:w-64 flex-shrink-0">
+            <SearchFilters 
+              onSearch={handleSearch}
+              onFilterChange={handleFilterChange}
+              initialSearchTerm={searchTerm}
+              initialFilters={filters}
+            />
+          </aside>
 
-          {isLoading ? (
-            <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-              <p className="mt-4 text-gray-600">Searching...</p>
-            </div>
-          ) : !searchTerm.trim() ? (
-            <div className="text-center py-12">
-              <Search className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-xl font-medium text-gray-900 mb-2">Search for anything</h3>
-              <p className="text-gray-600">Find products, communities, and experts that match your needs.</p>
-            </div>
-          ) : searchResults && getTotalResults() === 0 ? (
-            <div className="text-center py-12">
-              <h3 className="text-xl font-medium text-gray-900 mb-2">No results found</h3>
-              <p className="text-gray-600">Try adjusting your search terms or browse our categories.</p>
-            </div>
-          ) : (
-            <div className="space-y-8">
-              {/* Products Section */}
-              {(activeTab === 'all' || activeTab === 'products') && searchResults?.products && searchResults.products.length > 0 && (
-                <section>
-                  <h2 className="text-2xl font-bold mb-4">Products</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {searchResults.products.map((product) => (
-                      <ProductCard key={product.product_uuid} product={product} />
-                    ))}
+          <main className="flex-1">
+            {isLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="space-y-4">
+                    <Skeleton className="h-48 w-full" />
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
                   </div>
-                </section>
-              )}
-
-              {/* Communities Section */}
-              {(activeTab === 'all' || activeTab === 'communities') && searchResults?.communities && searchResults.communities.length > 0 && (
-                <section>
-                  <h2 className="text-2xl font-bold mb-4">Communities</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {searchResults.communities.map((community) => (
-                      <div key={community.community_uuid} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-                        <div className="aspect-video bg-gray-100">
-                          {community.thumbnail && (
-                            <img
-                              src={community.thumbnail}
-                              alt={community.name}
-                              className="w-full h-full object-cover"
-                            />
-                          )}
-                        </div>
-                        <div className="p-4">
-                          <h3 className="font-semibold text-lg mb-2">{community.name}</h3>
-                          <p className="text-gray-600 text-sm mb-3 line-clamp-2">{community.description}</p>
-                          <div className="flex justify-between items-center">
-                            <span className="text-lg font-bold">${community.price}</span>
-                            <span className="text-xs text-gray-500 capitalize">{community.type}</span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              )}
-
-              {/* Experts Section */}
-              {(activeTab === 'all' || activeTab === 'experts') && searchResults?.experts && searchResults.experts.length > 0 && (
-                <section>
-                  <h2 className="text-2xl font-bold mb-4">Experts</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {searchResults.experts.map((expert) => (
-                      <div key={expert.expert_uuid} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-                        <div className="p-6">
-                          <div className="flex items-center mb-4">
-                            <div className="w-12 h-12 bg-gray-100 rounded-full overflow-hidden mr-4">
-                              {expert.thumbnail && (
-                                <img
-                                  src={expert.thumbnail}
-                                  alt={expert.name}
-                                  className="w-full h-full object-cover"
-                                />
-                              )}
-                            </div>
-                            <div>
-                              <h3 className="font-semibold text-lg">{expert.name}</h3>
-                              <p className="text-gray-600 text-sm">{expert.title}</p>
-                            </div>
-                          </div>
-                          <p className="text-gray-600 text-sm mb-3 line-clamp-2">{expert.description}</p>
-                          <div className="flex justify-between items-center text-xs text-gray-500">
-                            <span>{expert.location}</span>
-                            <span>{expert.areas?.length || 0} areas</span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              )}
-            </div>
-          )}
+                ))}
+              </div>
+            ) : products.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {products.map((product) => (
+                  <ProductCard
+                    key={product.product_uuid}
+                    name={product.name}
+                    description={product.description}
+                    price={product.price_from}
+                    image={product.thumbnail}
+                    slug={product.slug}
+                    expertName={product.experts?.name}
+                    expertThumbnail={product.experts?.thumbnail}
+                    variantCount={product.variant_count}
+                    salesCount={product.sales_count}
+                    reviewCount={product.review_count}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <h2 className="text-xl font-semibold mb-2">No products found</h2>
+                <p className="text-muted-foreground">
+                  Try adjusting your search terms or filters to find what you're looking for.
+                </p>
+              </div>
+            )}
+          </main>
         </div>
       </div>
     </>
