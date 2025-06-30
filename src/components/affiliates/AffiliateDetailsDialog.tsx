@@ -42,33 +42,50 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
 
       console.log('Fetching transactions for user UUID:', userUuid);
       
-      // Fetch from transactions table with LEFT JOIN to affiliate_partnerships
-      const { data, error } = await supabase
+      // First fetch transactions
+      const { data: transactionData, error: transactionError } = await supabase
         .from('transactions')
-        .select(`
-          *,
-          affiliate_partnerships(name)
-        `)
+        .select('*')
         .eq('user_uuid', userUuid)
         .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error('Error fetching transactions:', error);
-        throw error;
+      if (transactionError) {
+        console.error('Error fetching transactions:', transactionError);
+        throw transactionError;
       }
 
-      console.log('Raw transaction data from database:', data);
+      console.log('Raw transaction data from database:', transactionData);
 
-      // Transform the data to match our Transaction interface
-      return (data || []).map(transaction => ({
-        transaction_uuid: transaction.transaction_uuid,
-        amount: transaction.amount || 0,
-        afiliate_fees: transaction.afiliate_fees || 0,
-        created_at: transaction.created_at,
-        type: transaction.type || 'unknown',
-        status: transaction.status || 'unknown',
-        partnership_name: transaction.affiliate_partnerships?.name || 'N/A'
-      }));
+      // Then fetch partnership names for transactions that have affiliate_partnership_uuid
+      const transactionPromises = (transactionData || []).map(async (transaction) => {
+        let partnership_name = 'N/A';
+        
+        if (transaction.affiliate_partnership_uuid) {
+          const { data: partnershipData } = await supabase
+            .from('affiliate_partnerships')
+            .select('name')
+            .eq('affiliate_partnership_uuid', transaction.affiliate_partnership_uuid)
+            .single();
+          
+          if (partnershipData?.name) {
+            partnership_name = partnershipData.name;
+          }
+        }
+
+        return {
+          transaction_uuid: transaction.transaction_uuid,
+          amount: transaction.amount || 0,
+          afiliate_fees: transaction.afiliate_fees || 0,
+          created_at: transaction.created_at,
+          type: transaction.type || 'unknown',
+          status: transaction.status || 'unknown',
+          partnership_name
+        };
+      });
+
+      const result = await Promise.all(transactionPromises);
+      console.log('Processed transactions with partnerships:', result);
+      return result;
     },
     enabled: !!userUuid && isOpen,
   });
