@@ -18,17 +18,33 @@ import { useUserDetails } from "@/hooks/admin/useUserDetails";
 import { useUserTransactions } from "@/hooks/admin/useUserTransactions";
 import { Loader2 } from "lucide-react";
 
+interface UserData {
+  user_uuid: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  is_admin: boolean;
+  is_affiliate: boolean;
+  is_expert: boolean;
+  created_at: string;
+  transaction_count: number;
+  product_count: number;
+  total_spent: number;
+  total_sales_amount: number;
+  user_thumbnail: string;
+}
+
 interface UserDetailsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  userUuid: string | null;
+  user: UserData | null;
 }
 
-export function UserDetailsDialog({ open, onOpenChange, userUuid }: UserDetailsDialogProps) {
-  const { data: userDetails, isLoading: userLoading } = useUserDetails(userUuid || '');
-  const { transactions, isLoading: transactionsLoading } = useUserTransactions(userUuid || '');
+export function UserDetailsDialog({ open, onOpenChange, user }: UserDetailsDialogProps) {
+  const { data: userDetails, isLoading: userLoading } = useUserDetails(user?.user_uuid || '');
+  const { transactions, isLoading: transactionsLoading } = useUserTransactions(user?.user_uuid || '');
 
-  if (!userUuid) return null;
+  if (!user) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

@@ -36,11 +36,14 @@ export default function AdminUsers() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const { 
-    data: users = [], 
+    data: usersData, 
     isLoading, 
     error, 
     refetch
   } = useUsers();
+
+  // Extract users array from the data structure
+  const users = Array.isArray(usersData) ? usersData : usersData?.users || [];
 
   const handleSort = (field: string) => {
     const typedField = field as keyof UserData;
@@ -82,7 +85,7 @@ export default function AdminUsers() {
         <UsersSortSelector 
           sortBy={sortBy}
           sortOrder={sortOrder}
-          onSortChange={(field: keyof UserData) => handleSort(field)}
+          onSortChange={handleSort}
         />
         <UsersLayoutSwitcher layout={layout} onLayoutChange={setLayout} />
       </div>

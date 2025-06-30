@@ -9,13 +9,21 @@ import {
 import { ArrowUpDown } from "lucide-react";
 
 interface UsersSortSelectorProps {
-  sortValue: string;
-  onSortChange: (value: string) => void;
+  sortBy: string;
+  sortOrder: "asc" | "desc";
+  onSortChange: (field: string) => void;
 }
 
-export function UsersSortSelector({ sortValue, onSortChange }: UsersSortSelectorProps) {
+export function UsersSortSelector({ sortBy, sortOrder, onSortChange }: UsersSortSelectorProps) {
+  const sortValue = `${sortBy}_${sortOrder}`;
+  
+  const handleSortChange = (value: string) => {
+    const [field] = value.split('_');
+    onSortChange(field);
+  };
+
   return (
-    <Select value={sortValue} onValueChange={onSortChange}>
+    <Select value={sortValue} onValueChange={handleSortChange}>
       <SelectTrigger className="w-full lg:w-[180px] border-[#E5E7EB]">
         <ArrowUpDown className="h-4 w-4 text-[#8E9196] mr-2" />
         <SelectValue placeholder="Sort by" />

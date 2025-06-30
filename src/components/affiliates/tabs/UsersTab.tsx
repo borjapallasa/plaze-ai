@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Mail } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -13,6 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { AffiliateDetailsDialog } from "../AffiliateDetailsDialog";
 
 interface AffiliateUser {
   user_uuid: string;
@@ -30,6 +31,8 @@ interface AffiliateUser {
 
 export function UsersTab() {
   const { user } = useAuth();
+  const [selectedUser, setSelectedUser] = useState<AffiliateUser | null>(null);
+  const [showDialog, setShowDialog] = useState(false);
 
   const { data: users = [], isLoading, error } = useQuery({
     queryKey: ['affiliate-referred-users', user?.id],
@@ -98,6 +101,29 @@ export function UsersTab() {
     return badges;
   };
 
+  const handleUserClick = (user: AffiliateUser) => {
+    console.log('User clicked:', user);
+    
+    // Transform user data to match AffiliateDetailsDialog format
+    const affiliateData = {
+      name: user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : 'Unnamed User',
+      status: user.is_affiliate ? 'Active Affiliate' : 'Referred User',
+      activeTemplates: user.transaction_count || 0,
+      totalSales: `$${(user.total_spent || 0).toLocaleString()}`,
+      affiliateFees: `$${(user.affiliate_fees_amount || 0).toLocaleString()}`
+    };
+    
+    setSelectedUser(user);
+    setShowDialog(true);
+    console.log('Dialog should open now with data:', affiliateData);
+  };
+
+  const handleCloseDialog = () => {
+    console.log('Closing dialog');
+    setShowDialog(false);
+    setSelectedUser(null);
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -123,53 +149,75 @@ export function UsersTab() {
   }
 
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>User</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Join Date</TableHead>
-            <TableHead className="text-right">Total Spent</TableHead>
-            <TableHead className="text-right">Commission Earned</TableHead>
-            <TableHead className="text-right">Transactions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {users.map((user) => (
-            <TableRow key={user.user_uuid}>
-              <TableCell>
-                <div className="flex items-center gap-3">
-                  <div>
-                    <div className="font-medium">
-                      {user.first_name && user.last_name 
-                        ? `${user.first_name} ${user.last_name}` 
-                        : 'Unnamed User'}
-                    </div>
-                    <div className="text-sm text-muted-foreground flex items-center gap-1">
-                      <Mail className="h-3 w-3" />
-                      {user.email}
+    <>
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>User</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Join Date</TableHead>
+              <TableHead className="text-right">Total Spent</TableHead>
+              <TableHead className="text-right">Commission Earned</TableHead>
+              <TableHead className="text-right">Transactions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {users.map((user) => (
+              <TableRow 
+                key={user.user_uuid} 
+                className="cursor-pointer hover:bg-muted/50"
+                onClick={() => handleUserClick(user)}
+              >
+                <TableCell>
+                  <div className="flex items-center gap-3">
+                    <div>
+                      <div className="font-medium">
+                        {user.first_name && user.last_name 
+                          ? `${user.first_name} ${user.last_name}` 
+                          : 'Unnamed User'}
+                      </div>
+                      <div className="text-sm text-muted-foreground flex items-center gap-1">
+                        <Mail className="h-3 w-3" />
+                        {user.email}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="flex gap-1 flex-wrap">
-                  {getStatusBadges(user)}
-                </div>
-              </TableCell>
-              <TableCell>{new Date(user.created_at).toLocaleDateString()}</TableCell>
-              <TableCell className="text-right font-mono">
-                ${(user.total_spent || 0).toLocaleString()}
-              </TableCell>
-              <TableCell className="text-right font-mono">
-                ${(user.affiliate_fees_amount || 0).toLocaleString()}
-              </TableCell>
-              <TableCell className="text-right">{user.transaction_count || 0}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex gap-1 flex-wrap">
+                    {getStatusBadges(user)}
+                  </div>
+                </TableCell>
+                <TableCell>{new Date(user.created_at).toLocaleDateString()}</TableCell>
+                <TableCell className="text-right font-mono">
+                  ${(user.total_spent || 0).toLocaleString()}
+                </TableCell>
+                <TableCell className="text-right font-mono">
+                  ${(user.affiliate_fees_amount || 0).toLocaleString()}
+                </TableCell>
+                <TableCell className="text-right">{user.transaction_count || 0}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      {selectedUser && (
+        <AffiliateDetailsDialog
+          isOpen={showDialog}
+          onClose={handleCloseDialog}
+          affiliate={{
+            name: selectedUser.first_name && selectedUser.last_name 
+              ? `${selectedUser.first_name} ${selectedUser.last_name}` 
+              : 'Unnamed User',
+            status: selectedUser.is_affiliate ? 'Active Affiliate' : 'Referred User',
+            activeTemplates: selectedUser.transaction_count || 0,
+            totalSales: `$${(selectedUser.total_spent || 0).toLocaleString()}`,
+            affiliateFees: `$${(selectedUser.affiliate_fees_amount || 0).toLocaleString()}`
+          }}
+        />
+      )}
+    </>
   );
 }

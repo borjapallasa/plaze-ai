@@ -1,415 +1,256 @@
 
-import React, { useEffect, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { MainHeader } from "@/components/MainHeader";
-import { Loader2 } from "lucide-react";
 import { ProductCard } from "@/components/ProductCard";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
-interface SearchResult {
-  id: string;
-  title: string;
-  description: string;
-  type: string;
-  // Add other relevant fields
-}
+import { Search, Filter } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 interface Product {
   product_uuid: string;
   name: string;
   description: string;
+  price_from: number;
+  thumbnail: string;
+  slug: string;
+  status: string;
   type: string;
-  tech_stack?: string;
-  slug?: string;
-  user_uuid: string;
-}
-
-// Updated Expert interface to match the actual DB schema
-interface Expert {
   expert_uuid: string;
-  name: string;
-  description: string; // Using description instead of bio
-  avatar_url?: string;
-  slug?: string;
+  user_uuid: string;
+  created_at: string;
 }
 
 interface Community {
   community_uuid: string;
   name: string;
   description: string;
-  image_url?: string;
-  slug?: string;
+  price: number;
+  thumbnail: string;
+  slug: string;
+  type: string;
+  expert_uuid: string;
+  created_at: string;
 }
 
-interface Job {
-  job_uuid: string;
-  title: string;
+interface Expert {
+  expert_uuid: string;
+  name: string;
   description: string;
-  company_name?: string;
-  salary_range?: string;
+  thumbnail: string;
+  slug: string;
+  title: string;
+  location: string;
+  areas: any;
+  created_at: string;
 }
 
-export const SearchResults = () => {
+export function SearchResults() {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
-  const query = searchParams.get("q") || "";
-  const category = searchParams.get("category") || "All";
+  const query = searchParams.get('q') || '';
+  const [searchTerm, setSearchTerm] = useState(query);
+  const [activeTab, setActiveTab] = useState<'all' | 'products' | 'communities' | 'experts'>('all');
 
-  const [results, setResults] = useState<{
-    products: Product[];
-    experts: Expert[];
-    communities: Community[];
-    jobs: Job[];
-  }>({
-    products: [],
-    experts: [],
-    communities: [],
-    jobs: [],
+  const { data: searchResults, isLoading } = useQuery({
+    queryKey: ['search', searchTerm, activeTab],
+    queryFn: async () => {
+      if (!searchTerm.trim()) return { products: [], communities: [], experts: [] };
+
+      const results: { products: Product[], communities: Community[], experts: Expert[] } = {
+        products: [],
+        communities: [],
+        experts: []
+      };
+
+      if (activeTab === 'all' || activeTab === 'products') {
+        const { data: products } = await supabase
+          .from('products')
+          .select('*')
+          .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`)
+          .eq('status', 'active')
+          .limit(20);
+        
+        results.products = products || [];
+      }
+
+      if (activeTab === 'all' || activeTab === 'communities') {
+        const { data: communities } = await supabase
+          .from('communities')
+          .select('*')
+          .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`)
+          .limit(20);
+        
+        results.communities = communities || [];
+      }
+
+      if (activeTab === 'all' || activeTab === 'experts') {
+        const { data: experts } = await supabase
+          .from('experts')
+          .select('*')
+          .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,title.ilike.%${searchTerm}%`)
+          .eq('status', 'approved')
+          .limit(20);
+        
+        results.experts = experts || [];
+      }
+
+      return results;
+    },
+    enabled: !!searchTerm.trim(),
   });
 
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<string>(category);
-
-  useEffect(() => {
-    const fetchResults = async () => {
-      setLoading(true);
-      try {
-        // Fetch products - using case insensitive search
-        const { data: products } = await supabase
-          .from("products")
-          .select("*")
-          .ilike("name", `%${query}%`)
-          .limit(8);
-
-        // Fetch experts - using case insensitive search
-        const { data: expertsData } = await supabase
-          .from("experts")
-          .select("*")
-          .ilike("name", `%${query}%`)
-          .limit(8);
-
-        // Transform experts data to match our interface
-        const experts = (expertsData || []).map((expert) => ({
-          expert_uuid: expert.expert_uuid,
-          name: expert.name || "Unknown Expert",
-          description: expert.description || "", // Use description field from DB
-          avatar_url: expert.thumbnail,
-          slug: expert.slug,
-        }));
-
-        // Fetch communities - using case insensitive search
-        const { data: communities } = await supabase
-          .from("communities")
-          .select("*")
-          .ilike("name", `%${query}%`)
-          .limit(8);
-
-        // Fetch jobs - using case insensitive search
-        const { data: jobs } = await supabase
-          .from("jobs")
-          .select("*")
-          .ilike("title", `%${query}%`)
-          .limit(8);
-
-        setResults({
-          products: products || [],
-          experts: experts || [],
-          communities: communities || [],
-          jobs: jobs || [],
-        });
-      } catch (error) {
-        console.error("Error fetching search results:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (query) {
-      fetchResults();
-    } else {
-      setLoading(false);
-    }
-  }, [query]);
-
-  // Update active tab when category changes in URL
-  useEffect(() => {
-    if (
-      category &&
-      ["Products", "Experts", "Communities", "Jobs", "All"].includes(category)
-    ) {
-      setActiveTab(category);
-    }
-  }, [category]);
-
-  const getTotalResults = () => {
-    return (
-      results.products.length +
-      results.experts.length +
-      results.communities.length +
-      results.jobs.length
-    );
+  const handleSearch = () => {
+    // The query will automatically refetch when searchTerm changes
   };
 
-  if (!query) {
-    return (
-      <div className="min-h-screen bg-background">
-        <MainHeader />
-        <div className="container mx-auto px-4 pt-24">
-          <div className="text-center text-gray-500 py-12">
-            Enter a search query to see results
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const getTotalResults = () => {
+    if (!searchResults) return 0;
+    return searchResults.products.length + searchResults.communities.length + searchResults.experts.length;
+  };
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
       <MainHeader />
-      <main className="container mx-auto px-4 pt-24">
-        <div className="max-w-[1400px] mx-auto">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-foreground mb-2">
-              Search Results for "{query}"
-            </h1>
-            <p className="text-muted-foreground text-lg">
-              Found {getTotalResults()} results
-            </p>
+      <div className="container mx-auto px-4 py-8 pt-24">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex gap-4 mb-8">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+              <Input
+                placeholder="Search for products, communities, or experts..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                className="pl-10 pr-4 py-3 text-lg"
+              />
+            </div>
+            <Button onClick={handleSearch} size="lg">
+              <Search className="h-5 w-5 mr-2" />
+              Search
+            </Button>
           </div>
 
-          {loading ? (
-            <div className="flex justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin" />
+          <div className="flex gap-4 mb-6 border-b">
+            {(['all', 'products', 'communities', 'experts'] as const).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`pb-3 px-1 capitalize ${
+                  activeTab === tab
+                    ? 'border-b-2 border-blue-500 text-blue-600 font-medium'
+                    : 'text-gray-600 hover:text-gray-800'
+                }`}
+              >
+                {tab}
+                {searchResults && (
+                  <span className="ml-2 text-sm text-gray-500">
+                    ({tab === 'all' ? getTotalResults() : searchResults[tab as keyof typeof searchResults]?.length || 0})
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+
+          {isLoading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+              <p className="mt-4 text-gray-600">Searching...</p>
+            </div>
+          ) : !searchTerm.trim() ? (
+            <div className="text-center py-12">
+              <Search className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-xl font-medium text-gray-900 mb-2">Search for anything</h3>
+              <p className="text-gray-600">Find products, communities, and experts that match your needs.</p>
+            </div>
+          ) : searchResults && getTotalResults() === 0 ? (
+            <div className="text-center py-12">
+              <h3 className="text-xl font-medium text-gray-900 mb-2">No results found</h3>
+              <p className="text-gray-600">Try adjusting your search terms or browse our categories.</p>
             </div>
           ) : (
-            <>
-              {/* Enhanced Tabs */}
-              <div className="mb-8">
-                <div className="border-b border-border bg-card/30 rounded-t-lg">
-                  <nav className="flex space-x-8 overflow-x-auto scrollbar-hide px-6" aria-label="Tabs">
-                    <button
-                      onClick={() => {
-                        setActiveTab("All");
-                        const newSearchParams = new URLSearchParams(searchParams);
-                        newSearchParams.delete("category");
-                        navigate(`/search?${newSearchParams.toString()}`);
-                      }}
-                      className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
-                        activeTab === "All"
-                          ? "border-primary text-primary"
-                          : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
-                      }`}
-                    >
-                      All ({getTotalResults()})
-                    </button>
-                    
-                    <button
-                      onClick={() => {
-                        setActiveTab("Products");
-                        const newSearchParams = new URLSearchParams(searchParams);
-                        newSearchParams.set("category", "Products");
-                        navigate(`/search?${newSearchParams.toString()}`);
-                      }}
-                      className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
-                        activeTab === "Products"
-                          ? "border-primary text-primary"
-                          : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
-                      }`}
-                    >
-                      Products ({results.products.length})
-                    </button>
-                    
-                    <button
-                      onClick={() => {
-                        setActiveTab("Experts");
-                        const newSearchParams = new URLSearchParams(searchParams);
-                        newSearchParams.set("category", "Experts");
-                        navigate(`/search?${newSearchParams.toString()}`);
-                      }}
-                      className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
-                        activeTab === "Experts"
-                          ? "border-primary text-primary"
-                          : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
-                      }`}
-                    >
-                      Experts ({results.experts.length})
-                    </button>
-                    
-                    <button
-                      onClick={() => {
-                        setActiveTab("Communities");
-                        const newSearchParams = new URLSearchParams(searchParams);
-                        newSearchParams.set("category", "Communities");
-                        navigate(`/search?${newSearchParams.toString()}`);
-                      }}
-                      className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
-                        activeTab === "Communities"
-                          ? "border-primary text-primary"
-                          : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
-                      }`}
-                    >
-                      Communities ({results.communities.length})
-                    </button>
-                    
-                    <button
-                      onClick={() => {
-                        setActiveTab("Jobs");
-                        const newSearchParams = new URLSearchParams(searchParams);
-                        newSearchParams.set("category", "Jobs");
-                        navigate(`/search?${newSearchParams.toString()}`);
-                      }}
-                      className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
-                        activeTab === "Jobs"
-                          ? "border-primary text-primary"
-                          : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
-                      }`}
-                    >
-                      Jobs ({results.jobs.length})
-                    </button>
-                  </nav>
-                </div>
-              </div>
-
-              {/* Results */}
-              <div className="space-y-12">
-                {(activeTab === "All" || activeTab === "Products") &&
-                  results.products.length > 0 && (
-                    <section>
-                      {activeTab === "All" && (
-                        <h2 className="text-2xl font-semibold mb-6 text-foreground">Products</h2>
-                      )}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {results.products.map((product) => (
-                          <ProductCard
-                            key={product.product_uuid}
-                            id={product.product_uuid}
-                            slug={product.slug}
-                            title={product.name}
-                            price="$99.99"
-                            image="https://images.unsplash.com/photo-1649972904349-6e44c42644a7"
-                            seller={product.user_uuid}
-                            description={product.description}
-                            tags={
-                              product.tech_stack
-                                ? product.tech_stack.split(",")
-                                : []
-                            }
-                            category={product.type}
-                          />
-                        ))}
-                      </div>
-                    </section>
-                  )}
-
-                {(activeTab === "All" || activeTab === "Experts") &&
-                  results.experts.length > 0 && (
-                    <section>
-                      {activeTab === "All" && (
-                        <h2 className="text-2xl font-semibold mb-6 text-foreground">Experts</h2>
-                      )}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {results.experts.map((expert) => (
-                          <div
-                            key={expert.expert_uuid}
-                            className="border border-border rounded-lg overflow-hidden bg-card hover:shadow-md transition-shadow duration-200"
-                          >
-                            <div className="p-6">
-                              <h3 className="font-semibold text-lg text-foreground mb-2">
-                                {expert.name}
-                              </h3>
-                              <p className="text-muted-foreground line-clamp-2">
-                                {expert.description}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </section>
-                  )}
-
-                {(activeTab === "All" || activeTab === "Communities") &&
-                  results.communities.length > 0 && (
-                    <section>
-                      {activeTab === "All" && (
-                        <h2 className="text-2xl font-semibold mb-6 text-foreground">Communities</h2>
-                      )}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {results.communities.map((community) => (
-                          <div
-                            key={community.community_uuid}
-                            className="border border-border rounded-lg overflow-hidden bg-card hover:shadow-md transition-shadow duration-200"
-                          >
-                            <div className="p-6">
-                              <h3 className="font-semibold text-lg text-foreground mb-2">
-                                {community.name}
-                              </h3>
-                              <p className="text-muted-foreground line-clamp-2">
-                                {community.description}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </section>
-                  )}
-
-                {(activeTab === "All" || activeTab === "Jobs") &&
-                  results.jobs.length > 0 && (
-                    <section>
-                      {activeTab === "All" && (
-                        <h2 className="text-2xl font-semibold mb-6 text-foreground">Jobs</h2>
-                      )}
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        {results.jobs.map((job) => (
-                          <div
-                            key={job.job_uuid}
-                            className="border border-border rounded-lg overflow-hidden bg-card hover:shadow-md transition-shadow duration-200"
-                          >
-                            <div className="p-6">
-                              <h3 className="font-semibold text-lg text-foreground mb-2">
-                                {job.title}
-                              </h3>
-                              {job.company_name && (
-                                <p className="text-sm font-medium text-primary mb-2">
-                                  {job.company_name}
-                                </p>
-                              )}
-                              {job.salary_range && (
-                                <p className="text-sm text-muted-foreground mb-3">
-                                  {job.salary_range}
-                                </p>
-                              )}
-                              <p className="text-muted-foreground line-clamp-2">
-                                {job.description}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </section>
-                  )}
-
-                {/* No results state */}
-                {getTotalResults() === 0 && (
-                  <div className="text-center py-16 border border-border rounded-lg bg-card">
-                    <div className="max-w-md mx-auto">
-                      <p className="text-xl font-semibold text-foreground mb-2">
-                        No results found for "{query}"
-                      </p>
-                      <p className="text-muted-foreground">
-                        Try different keywords or check your spelling
-                      </p>
-                    </div>
+            <div className="space-y-8">
+              {/* Products Section */}
+              {(activeTab === 'all' || activeTab === 'products') && searchResults?.products && searchResults.products.length > 0 && (
+                <section>
+                  <h2 className="text-2xl font-bold mb-4">Products</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {searchResults.products.map((product) => (
+                      <ProductCard key={product.product_uuid} product={product} />
+                    ))}
                   </div>
-                )}
-              </div>
-            </>
+                </section>
+              )}
+
+              {/* Communities Section */}
+              {(activeTab === 'all' || activeTab === 'communities') && searchResults?.communities && searchResults.communities.length > 0 && (
+                <section>
+                  <h2 className="text-2xl font-bold mb-4">Communities</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {searchResults.communities.map((community) => (
+                      <div key={community.community_uuid} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                        <div className="aspect-video bg-gray-100">
+                          {community.thumbnail && (
+                            <img
+                              src={community.thumbnail}
+                              alt={community.name}
+                              className="w-full h-full object-cover"
+                            />
+                          )}
+                        </div>
+                        <div className="p-4">
+                          <h3 className="font-semibold text-lg mb-2">{community.name}</h3>
+                          <p className="text-gray-600 text-sm mb-3 line-clamp-2">{community.description}</p>
+                          <div className="flex justify-between items-center">
+                            <span className="text-lg font-bold">${community.price}</span>
+                            <span className="text-xs text-gray-500 capitalize">{community.type}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* Experts Section */}
+              {(activeTab === 'all' || activeTab === 'experts') && searchResults?.experts && searchResults.experts.length > 0 && (
+                <section>
+                  <h2 className="text-2xl font-bold mb-4">Experts</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {searchResults.experts.map((expert) => (
+                      <div key={expert.expert_uuid} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                        <div className="p-6">
+                          <div className="flex items-center mb-4">
+                            <div className="w-12 h-12 bg-gray-100 rounded-full overflow-hidden mr-4">
+                              {expert.thumbnail && (
+                                <img
+                                  src={expert.thumbnail}
+                                  alt={expert.name}
+                                  className="w-full h-full object-cover"
+                                />
+                              )}
+                            </div>
+                            <div>
+                              <h3 className="font-semibold text-lg">{expert.name}</h3>
+                              <p className="text-gray-600 text-sm">{expert.title}</p>
+                            </div>
+                          </div>
+                          <p className="text-gray-600 text-sm mb-3 line-clamp-2">{expert.description}</p>
+                          <div className="flex justify-between items-center text-xs text-gray-500">
+                            <span>{expert.location}</span>
+                            <span>{expert.areas?.length || 0} areas</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
+            </div>
           )}
         </div>
-      </main>
-    </div>
+      </div>
+    </>
   );
-};
-
-export default SearchResults;
+}
