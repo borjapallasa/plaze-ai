@@ -41,10 +41,10 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
 
       console.log('Fetching transactions for user UUID:', userUuid);
       
-      // Fetch exclusively from transactions table using user_uuid field
+      // Fetch from transactions table using user_uuid - let's try a broader query first
       const { data, error } = await supabase
         .from('transactions')
-        .select('transaction_uuid, amount, afiliate_fees, created_at, type, status')
+        .select('*')
         .eq('user_uuid', userUuid)
         .order('created_at', { ascending: false });
 
@@ -53,8 +53,9 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
         throw error;
       }
 
-      console.log('Fetched transactions:', data);
+      console.log('Raw transaction data from database:', data);
 
+      // Transform the data to match our Transaction interface
       return (data || []).map(transaction => ({
         transaction_uuid: transaction.transaction_uuid,
         amount: transaction.amount || 0,
@@ -82,7 +83,7 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
             <div className="bg-muted/50 p-3 rounded-lg">
               <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Transactions</h3>
-              <p className="text-lg font-semibold mt-1">{affiliate.activeTemplates}</p>
+              <p className="text-lg font-semibold mt-1">{transactions.length}</p>
             </div>
             <div className="bg-muted/50 p-3 rounded-lg">
               <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Total Sales</h3>
@@ -132,7 +133,7 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
                   <div className="text-center">
                     <p className="text-sm text-muted-foreground">No transactions found</p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {searchTerm ? 'Try adjusting your search terms' : 'This user has no transactions yet'}
+                      {searchTerm ? 'Try adjusting your search terms' : `This user (${userUuid}) has no transactions yet`}
                     </p>
                   </div>
                 </div>

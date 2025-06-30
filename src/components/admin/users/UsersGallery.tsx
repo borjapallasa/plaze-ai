@@ -16,7 +16,6 @@ interface UserData {
   commissions_generated: number;
   transaction_count: number;
   product_count: number;
-  total_sales_amount: number;
   user_thumbnail: string;
 }
 

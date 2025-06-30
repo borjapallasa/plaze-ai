@@ -17,7 +17,6 @@ interface UserData {
   is_expert: boolean;
   transaction_count: number;
   product_count: number;
-  total_sales_amount: number;
   user_thumbnail: string;
 }
 
