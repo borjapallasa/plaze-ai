@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
@@ -19,6 +18,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { LayoutSelector } from "@/components/transactions/LayoutSelector";
 import { TransactionListView } from "@/components/transactions/TransactionListView";
+import { AffiliateTransactionsTable } from "@/components/affiliates/AffiliateTransactionsTable";
+import { useAffiliateTransactions, type AffiliateTransaction } from "@/hooks/use-affiliate-transactions";
 
 interface UserTransaction {
   id: string;
@@ -37,10 +38,30 @@ export default function Transactions() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [sortField, setSortField] = useState<keyof UserTransaction>("createdAt");
+  const [sortField, setSortField] = useState<keyof UserTransaction | keyof AffiliateTransaction>("createdAt");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
   const [activeTab, setActiveTab] = useState("all");
   const [layout, setLayout] = useState<"table" | "list">("table");
+
+  // Check if user is an affiliate
+  const { data: isAffiliate = false } = useQuery({
+    queryKey: ['user-is-affiliate', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return false;
+      
+      const { data, error } = await supabase
+        .from('affiliates')
+        .select('affiliate_uuid')
+        .eq('user_uuid', user.id)
+        .single();
+
+      return !error && !!data;
+    },
+    enabled: !!user?.id,
+  });
+
+  // Fetch affiliate transactions if user is an affiliate
+  const { data: affiliateTransactions = [], isLoading: isLoadingAffiliate } = useAffiliateTransactions();
 
   // Fetch all user's transactions from the transactions table
   const { data: allTransactions = [], isLoading: isLoadingAll } = useQuery({
@@ -183,7 +204,7 @@ export default function Transactions() {
     }
   };
 
-  const handleSort = (field: keyof UserTransaction) => {
+  const handleSort = (field: keyof UserTransaction | keyof AffiliateTransaction) => {
     if (sortField === field) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
@@ -193,18 +214,52 @@ export default function Transactions() {
   };
 
   const handleSortChange = (value: string) => {
-    const [field, direction] = value.split('-') as [keyof UserTransaction, "asc" | "desc"];
+    const [field, direction] = value.split('-') as [keyof UserTransaction | keyof AffiliateTransaction, "asc" | "desc"];
     setSortField(field);
     setSortDirection(direction);
   };
 
-  const getSortIcon = (field: keyof UserTransaction) => {
+  const getSortIcon = (field: keyof UserTransaction | keyof AffiliateTransaction) => {
     if (sortField !== field) return null;
     return sortDirection === "asc" ? 
       <ArrowUp className="h-4 w-4" /> : 
       <ArrowDown className="h-4 w-4" />;
   };
 
+  // Filter and sort affiliate transactions
+  const getFilteredAffiliateTransactions = () => {
+    return affiliateTransactions
+      .filter(transaction => {
+        const matchesSearch = transaction.user_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            transaction.user_email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            transaction.partnership_name.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesStatus = statusFilter === "all" || transaction.status.toLowerCase() === statusFilter.toLowerCase();
+        return matchesSearch && matchesStatus;
+      })
+      .sort((a, b) => {
+        const aValue = a[sortField as keyof AffiliateTransaction];
+        const bValue = b[sortField as keyof AffiliateTransaction];
+        const multiplier = sortDirection === "asc" ? 1 : -1;
+        
+        if (sortField === "created_at") {
+          const aDate = new Date(aValue as string);
+          const bDate = new Date(bValue as string);
+          return (aDate.getTime() - bDate.getTime()) * multiplier;
+        }
+        
+        if (typeof aValue === "number" && typeof bValue === "number") {
+          return (aValue - bValue) * multiplier;
+        }
+        
+        if (typeof aValue === "string" && typeof bValue === "string") {
+          return aValue.localeCompare(bValue) * multiplier;
+        }
+        
+        return 0;
+      });
+  };
+
+  // Filter and sort regular transactions
   const getFilteredTransactions = (type?: 'product' | 'community') => {
     let transactions: UserTransaction[] = [];
     
@@ -262,7 +317,7 @@ export default function Transactions() {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
           <Input
-            placeholder={activeTab === "communities" ? "Search by ID or community" : "Search by ID or seller"}
+            placeholder={isAffiliate && activeTab === "affiliate" ? "Search by user, email or partnership" : activeTab === "communities" ? "Search by ID or community" : "Search by ID or seller"}
             className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C]"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -281,6 +336,7 @@ export default function Transactions() {
             <SelectItem value="pending">Pending</SelectItem>
             <SelectItem value="failed">Failed</SelectItem>
             <SelectItem value="cancelled">Cancelled</SelectItem>
+            {isAffiliate && <SelectItem value="chargeback">Chargeback</SelectItem>}
           </SelectContent>
         </Select>
         
@@ -291,14 +347,29 @@ export default function Transactions() {
               <SelectValue placeholder="Sort By" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="createdAt-desc">Date (Newest First)</SelectItem>
-              <SelectItem value="createdAt-asc">Date (Oldest First)</SelectItem>
-              <SelectItem value="amount-desc">Amount (High to Low)</SelectItem>
-              <SelectItem value="amount-asc">Amount (Low to High)</SelectItem>
+              {isAffiliate && activeTab === "affiliate" ? (
+                <>
+                  <SelectItem value="created_at-desc">Date (Newest First)</SelectItem>
+                  <SelectItem value="created_at-asc">Date (Oldest First)</SelectItem>
+                  <SelectItem value="amount-desc">Amount (High to Low)</SelectItem>
+                  <SelectItem value="amount-asc">Amount (Low to High)</SelectItem>
+                  <SelectItem value="affiliate_fees-desc">Fees (High to Low)</SelectItem>
+                  <SelectItem value="affiliate_fees-asc">Fees (Low to High)</SelectItem>
+                </>
+              ) : (
+                <>
+                  <SelectItem value="createdAt-desc">Date (Newest First)</SelectItem>
+                  <SelectItem value="createdAt-asc">Date (Oldest First)</SelectItem>
+                  <SelectItem value="amount-desc">Amount (High to Low)</SelectItem>
+                  <SelectItem value="amount-asc">Amount (Low to High)</SelectItem>
+                </>
+              )}
             </SelectContent>
           </Select>
           
-          <LayoutSelector layout={layout} onLayoutChange={setLayout} />
+          {(!isAffiliate || activeTab !== "affiliate") && (
+            <LayoutSelector layout={layout} onLayoutChange={setLayout} />
+          )}
         </div>
       </div>
 
@@ -308,7 +379,7 @@ export default function Transactions() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
           <Input
-            placeholder={activeTab === "communities" ? "Search by ID or community" : "Search by ID or seller"}
+            placeholder={isAffiliate && activeTab === "affiliate" ? "Search by user, email or partnership" : activeTab === "communities" ? "Search by ID or community" : "Search by ID or seller"}
             className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C]"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -327,6 +398,7 @@ export default function Transactions() {
             <SelectItem value="pending">Pending</SelectItem>
             <SelectItem value="failed">Failed</SelectItem>
             <SelectItem value="cancelled">Cancelled</SelectItem>
+            {isAffiliate && <SelectItem value="chargeback">Chargeback</SelectItem>}
           </SelectContent>
         </Select>
         
@@ -336,15 +408,30 @@ export default function Transactions() {
             <SelectValue placeholder="Sort By" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="createdAt-desc">Date (Newest First)</SelectItem>
-            <SelectItem value="createdAt-asc">Date (Oldest First)</SelectItem>
-            <SelectItem value="amount-desc">Amount (High to Low)</SelectItem>
-            <SelectItem value="amount-asc">Amount (Low to High)</SelectItem>
+            {isAffiliate && activeTab === "affiliate" ? (
+              <>
+                <SelectItem value="created_at-desc">Date (Newest First)</SelectItem>
+                <SelectItem value="created_at-asc">Date (Oldest First)</SelectItem>
+                <SelectItem value="amount-desc">Amount (High to Low)</SelectItem>
+                <SelectItem value="amount-asc">Amount (Low to High)</SelectItem>
+                <SelectItem value="affiliate_fees-desc">Fees (High to Low)</SelectItem>
+                <SelectItem value="affiliate_fees-asc">Fees (Low to High)</SelectItem>
+              </>
+            ) : (
+              <>
+                <SelectItem value="createdAt-desc">Date (Newest First)</SelectItem>
+                <SelectItem value="createdAt-asc">Date (Oldest First)</SelectItem>
+                <SelectItem value="amount-desc">Amount (High to Low)</SelectItem>
+                <SelectItem value="amount-asc">Amount (Low to High)</SelectItem>
+              </>
+            )}
           </SelectContent>
         </Select>
         
         {/* Layout selector */}
-        <LayoutSelector layout={layout} onLayoutChange={setLayout} />
+        {(!isAffiliate || activeTab !== "affiliate") && (
+          <LayoutSelector layout={layout} onLayoutChange={setLayout} />
+        )}
       </div>
     </div>
   );
@@ -548,6 +635,10 @@ export default function Transactions() {
   };
 
   const getCurrentData = () => {
+    if (isAffiliate && activeTab === "affiliate") {
+      return { data: getFilteredAffiliateTransactions(), loading: isLoadingAffiliate };
+    }
+    
     switch (activeTab) {
       case "products":
         return { data: getFilteredTransactions('product'), loading: isLoadingProducts };
@@ -567,55 +658,95 @@ export default function Transactions() {
       </div>
       <div className="pt-24 [backface-visibility:hidden]">
         <div className="container mx-auto px-4 py-4 max-w-[1400px]">
-          <h1 className="text-2xl font-semibold mb-6">All Your Purchases</h1>
+          <h1 className="text-2xl font-semibold mb-6">
+            {isAffiliate && activeTab === "affiliate" ? "Affiliate Transactions" : "All Your Purchases"}
+          </h1>
 
           {/* Custom tabs styling to match the admin design */}
           <div className="w-full mb-6">
             <div className="flex space-x-8 border-b border-gray-200">
-              <button
-                onClick={() => setActiveTab("all")}
-                className={`pb-4 text-sm font-medium transition-colors relative ${
-                  activeTab === "all"
-                    ? "text-black border-b-2 border-black"
-                    : "text-gray-500 hover:text-gray-700"
-                }`}
-              >
-                All
-              </button>
-              <button
-                onClick={() => setActiveTab("products")}
-                className={`pb-4 text-sm font-medium transition-colors relative ${
-                  activeTab === "products"
-                    ? "text-black border-b-2 border-black"
-                    : "text-gray-500 hover:text-gray-700"
-                }`}
-              >
-                Products
-              </button>
-              <button
-                onClick={() => setActiveTab("communities")}
-                className={`pb-4 text-sm font-medium transition-colors relative ${
-                  activeTab === "communities"
-                    ? "text-black border-b-2 border-black"
-                    : "text-gray-500 hover:text-gray-700"
-                }`}
-              >
-                Communities
-              </button>
+              {!isAffiliate && (
+                <>
+                  <button
+                    onClick={() => setActiveTab("all")}
+                    className={`pb-4 text-sm font-medium transition-colors relative ${
+                      activeTab === "all"
+                        ? "text-black border-b-2 border-black"
+                        : "text-gray-500 hover:text-gray-700"
+                    }`}
+                  >
+                    All
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("products")}
+                    className={`pb-4 text-sm font-medium transition-colors relative ${
+                      activeTab === "products"
+                        ? "text-black border-b-2 border-black"
+                        : "text-gray-500 hover:text-gray-700"
+                    }`}
+                  >
+                    Products
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("communities")}
+                    className={`pb-4 text-sm font-medium transition-colors relative ${
+                      activeTab === "communities"
+                        ? "text-black border-b-2 border-black"
+                        : "text-gray-500 hover:text-gray-700"
+                    }`}
+                  >
+                    Communities
+                  </button>
+                </>
+              )}
+              {isAffiliate && (
+                <>
+                  <button
+                    onClick={() => setActiveTab("all")}
+                    className={`pb-4 text-sm font-medium transition-colors relative ${
+                      activeTab === "all"
+                        ? "text-black border-b-2 border-black"
+                        : "text-gray-500 hover:text-gray-700"
+                    }`}
+                  >
+                    My Purchases
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("affiliate")}
+                    className={`pb-4 text-sm font-medium transition-colors relative ${
+                      activeTab === "affiliate"
+                        ? "text-black border-b-2 border-black"
+                        : "text-gray-500 hover:text-gray-700"
+                    }`}
+                  >
+                    Affiliate Transactions
+                  </button>
+                </>
+              )}
             </div>
           </div>
           
           <div className="space-y-0">
             {renderSearchAndFilter()}
-            {layout === "list" ? (
-              <TransactionListView
-                transactions={currentData.data}
+            {isAffiliate && activeTab === "affiliate" ? (
+              <AffiliateTransactionsTable
+                transactions={currentData.data as AffiliateTransaction[]}
                 loading={currentData.loading}
-                onRowClick={handleRowClick}
-                activeTab={activeTab}
+                sortField={sortField as keyof AffiliateTransaction}
+                sortDirection={sortDirection}
+                onSort={handleSort as (field: keyof AffiliateTransaction) => void}
               />
             ) : (
-              renderTransactionTable(currentData.data, currentData.loading)
+              layout === "list" ? (
+                <TransactionListView
+                  transactions={currentData.data as UserTransaction[]}
+                  loading={currentData.loading}
+                  onRowClick={handleRowClick}
+                  activeTab={activeTab}
+                />
+              ) : (
+                renderTransactionTable(currentData.data as UserTransaction[], currentData.loading)
+              )
             )}
           </div>
         </div>
