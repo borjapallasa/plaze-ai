@@ -75,6 +75,9 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
 
   // Calculate total affiliate fees from all transactions
   const totalAffiliateFees = transactions.reduce((sum, transaction) => sum + (transaction.afiliate_fees || 0), 0);
+  
+  // Calculate total sales as the sum of all transaction amounts
+  const totalSales = transactions.reduce((sum, transaction) => sum + (transaction.amount || 0), 0);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -90,7 +93,7 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
             </div>
             <div className="bg-muted/50 p-3 rounded-lg">
               <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Total Sales</h3>
-              <p className="text-lg font-semibold text-green-600 mt-1">{affiliate.totalSales}</p>
+              <p className="text-lg font-semibold text-green-600 mt-1">${totalSales.toFixed(2)}</p>
             </div>
             <div className="bg-muted/50 p-3 rounded-lg">
               <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Affiliate Fees</h3>
