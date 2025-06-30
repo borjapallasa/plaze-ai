@@ -2,6 +2,9 @@
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Mail } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth";
 import {
   Table,
   TableBody,
@@ -12,72 +15,112 @@ import {
 } from "@/components/ui/table";
 
 interface AffiliateUser {
-  id: string;
-  name: string;
+  user_uuid: string;
+  first_name: string;
+  last_name: string;
   email: string;
-  status: "active" | "inactive" | "pending";
-  joinDate: string;
-  totalSales: number;
-  commissionEarned: number;
-  referrals: number;
+  created_at: string;
+  total_spent: number;
+  affiliate_fees_amount: number;
+  transaction_count: number;
+  is_affiliate: boolean;
+  is_admin: boolean;
+  is_expert: boolean;
 }
 
-const mockUsers: AffiliateUser[] = [
-  {
-    id: "1",
-    name: "John Smith",
-    email: "john@example.com",
-    status: "active",
-    joinDate: "2024-01-15",
-    totalSales: 15420.50,
-    commissionEarned: 1542.05,
-    referrals: 23
-  },
-  {
-    id: "2",
-    name: "Sarah Johnson",
-    email: "sarah@example.com",
-    status: "active",
-    joinDate: "2024-02-20",
-    totalSales: 8750.00,
-    commissionEarned: 875.00,
-    referrals: 12
-  },
-  {
-    id: "3",
-    name: "Mike Wilson",
-    email: "mike@example.com",
-    status: "pending",
-    joinDate: "2024-06-10",
-    totalSales: 0,
-    commissionEarned: 0,
-    referrals: 0
-  },
-  {
-    id: "4",
-    name: "Emma Davis",
-    email: "emma@example.com",
-    status: "inactive",
-    joinDate: "2023-11-05",
-    totalSales: 3200.00,
-    commissionEarned: 320.00,
-    referrals: 5
-  }
-];
-
 export function UsersTab() {
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "active":
-        return <Badge variant="default">Active</Badge>;
-      case "inactive":
-        return <Badge variant="secondary">Inactive</Badge>;
-      case "pending":
-        return <Badge variant="outline">Pending</Badge>;
-      default:
-        return <Badge variant="secondary">{status}</Badge>;
-    }
+  const { user } = useAuth();
+
+  const { data: users = [], isLoading, error } = useQuery({
+    queryKey: ['affiliate-referred-users', user?.id],
+    queryFn: async () => {
+      if (!user?.id) {
+        throw new Error('No authenticated user');
+      }
+
+      console.log('Fetching referred users for user:', user.id);
+      
+      // First, get the current user's affiliate code
+      const { data: affiliateData, error: affiliateError } = await supabase
+        .from('affiliates')
+        .select('affiliate_code')
+        .eq('user_uuid', user.id)
+        .maybeSingle();
+
+      if (affiliateError) {
+        console.error('Error fetching affiliate data:', affiliateError);
+        throw affiliateError;
+      }
+
+      if (!affiliateData?.affiliate_code) {
+        console.log('No affiliate code found for user');
+        return [];
+      }
+
+      console.log('Found affiliate code:', affiliateData.affiliate_code);
+
+      // Then, get users who have this affiliate code as their referral code
+      const { data: usersData, error: usersError } = await supabase
+        .from('users')
+        .select(`
+          user_uuid,
+          first_name,
+          last_name,
+          email,
+          created_at,
+          total_spent,
+          affiliate_fees_amount,
+          transaction_count,
+          is_affiliate,
+          is_admin,
+          is_expert
+        `)
+        .eq('referral_affiliate_code', affiliateData.affiliate_code)
+        .order('created_at', { ascending: false });
+
+      if (usersError) {
+        console.error('Error fetching referred users:', usersError);
+        throw usersError;
+      }
+
+      console.log('Found referred users:', usersData);
+      return usersData || [];
+    },
+    enabled: !!user?.id,
+  });
+
+  const getStatusBadges = (user: AffiliateUser) => {
+    const badges = [];
+    if (user.is_admin) badges.push(<Badge key="admin" variant="secondary">Admin</Badge>);
+    if (user.is_expert) badges.push(<Badge key="expert" variant="default">Expert</Badge>);
+    if (user.is_affiliate) badges.push(<Badge key="affiliate" variant="outline">Affiliate</Badge>);
+    if (badges.length === 0) badges.push(<Badge key="user" variant="secondary">User</Badge>);
+    return badges;
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="text-muted-foreground">Loading referred users...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="text-red-500">Error loading users: {error.message}</div>
+      </div>
+    );
+  }
+
+  if (users.length === 0) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="text-muted-foreground">No referred users found</div>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-md border">
@@ -87,18 +130,22 @@ export function UsersTab() {
             <TableHead>User</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Join Date</TableHead>
-            <TableHead className="text-right">Total Sales</TableHead>
+            <TableHead className="text-right">Total Spent</TableHead>
             <TableHead className="text-right">Commission Earned</TableHead>
-            <TableHead className="text-right">Referrals</TableHead>
+            <TableHead className="text-right">Transactions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {mockUsers.map((user) => (
-            <TableRow key={user.id}>
+          {users.map((user) => (
+            <TableRow key={user.user_uuid}>
               <TableCell>
                 <div className="flex items-center gap-3">
                   <div>
-                    <div className="font-medium">{user.name}</div>
+                    <div className="font-medium">
+                      {user.first_name && user.last_name 
+                        ? `${user.first_name} ${user.last_name}` 
+                        : 'Unnamed User'}
+                    </div>
                     <div className="text-sm text-muted-foreground flex items-center gap-1">
                       <Mail className="h-3 w-3" />
                       {user.email}
@@ -106,15 +153,19 @@ export function UsersTab() {
                   </div>
                 </div>
               </TableCell>
-              <TableCell>{getStatusBadge(user.status)}</TableCell>
-              <TableCell>{new Date(user.joinDate).toLocaleDateString()}</TableCell>
+              <TableCell>
+                <div className="flex gap-1 flex-wrap">
+                  {getStatusBadges(user)}
+                </div>
+              </TableCell>
+              <TableCell>{new Date(user.created_at).toLocaleDateString()}</TableCell>
               <TableCell className="text-right font-mono">
-                ${user.totalSales.toLocaleString()}
+                ${(user.total_spent || 0).toLocaleString()}
               </TableCell>
               <TableCell className="text-right font-mono">
-                ${user.commissionEarned.toLocaleString()}
+                ${(user.affiliate_fees_amount || 0).toLocaleString()}
               </TableCell>
-              <TableCell className="text-right">{user.referrals}</TableCell>
+              <TableCell className="text-right">{user.transaction_count || 0}</TableCell>
             </TableRow>
           ))}
         </TableBody>
