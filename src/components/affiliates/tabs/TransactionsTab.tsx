@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useAffiliateTransactions } from "@/hooks/use-affiliate-transactions";
-import { Copy } from "lucide-react";
+import { Copy, TrendingUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export function TransactionsTab() {
@@ -107,7 +107,12 @@ export function TransactionsTab() {
                   ${transaction.amount.toFixed(2)}
                 </TableCell>
                 <TableCell className="text-right whitespace-nowrap">
-                  {transaction.commission_percentage}%
+                  <div className="flex items-center justify-end gap-1">
+                    {transaction.commission_percentage}%
+                    {transaction.is_boosted && (
+                      <TrendingUp className="h-3 w-3 text-green-600" title="Boosted Commission (5% + 3%)" />
+                    )}
+                  </div>
                 </TableCell>
                 <TableCell className="text-right font-mono whitespace-nowrap">
                   ${transaction.affiliate_fees.toFixed(2)}

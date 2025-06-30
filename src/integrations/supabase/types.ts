@@ -1821,6 +1821,8 @@ export type Database = {
       }
       transactions: {
         Row: {
+          affiliate_amount_boosted: number | null
+          affiliate_boosted: boolean | null
           affiliate_partnership_uuid: string | null
           affiliate_uuid: string | null
           afiliate_fees: number | null
@@ -1841,6 +1843,8 @@ export type Database = {
           user_uuid: string | null
         }
         Insert: {
+          affiliate_amount_boosted?: number | null
+          affiliate_boosted?: boolean | null
           affiliate_partnership_uuid?: string | null
           affiliate_uuid?: string | null
           afiliate_fees?: number | null
@@ -1861,6 +1865,8 @@ export type Database = {
           user_uuid?: string | null
         }
         Update: {
+          affiliate_amount_boosted?: number | null
+          affiliate_boosted?: boolean | null
           affiliate_partnership_uuid?: string | null
           affiliate_uuid?: string | null
           afiliate_fees?: number | null
