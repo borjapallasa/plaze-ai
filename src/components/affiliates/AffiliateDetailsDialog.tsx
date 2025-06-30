@@ -14,6 +14,13 @@ interface Transaction {
   type: string;
   status: string;
   partnership_name?: string;
+  affiliate_boosted?: boolean;
+  affiliate_amount_boosted?: number;
+  original_affiliate_fees?: number;
+  boosted_amount?: number;
+  commission_percentage?: number;
+  base_commission_percentage?: number;
+  additional_commission_percentage?: number;
 }
 
 interface AffiliateDetailsDialogProps {
@@ -56,16 +63,6 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
 
       console.log('Raw transaction data from database:', transactionData);
 
-      // Debug: Let's also check what's in the affiliate_partnerships table
-      const { data: allPartnerships, error: partnershipListError } = await supabase
-        .from('affiliate_partnerships')
-        .select('*');
-      
-      console.log('All partnerships in database:', allPartnerships);
-      if (partnershipListError) {
-        console.error('Error fetching all partnerships:', partnershipListError);
-      }
-
       // Then fetch partnership names for transactions that have affiliate_partnership_uuid
       const transactionPromises = (transactionData || []).map(async (transaction) => {
         let partnership_name = 'N/A';
@@ -89,14 +86,47 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
           }
         }
 
+        // Calculate affiliate fee breakdown similar to useAffiliateTransactions
+        const baseAmount = transaction.amount || 0;
+        const isBoosted = transaction.affiliate_boosted || false;
+        const totalAffiliateFees = transaction.afiliate_fees || 0;
+        
+        const additionalPercentageDecimal = transaction.affiliate_amount_boosted || 0;
+        const additionalPercentage = Math.round(additionalPercentageDecimal * 100);
+        
+        let originalAffiliateFees = totalAffiliateFees;
+        let baseCommissionPercentage = 5; // Default base 5%
+        let totalCommissionPercentage = baseCommissionPercentage;
+        let boostedAmount = 0;
+        
+        if (isBoosted && additionalPercentage > 0 && baseAmount > 0) {
+          boostedAmount = baseAmount * additionalPercentageDecimal;
+          originalAffiliateFees = totalAffiliateFees - boostedAmount;
+          
+          if (originalAffiliateFees > 0) {
+            baseCommissionPercentage = Math.round((originalAffiliateFees / baseAmount) * 100);
+          }
+          totalCommissionPercentage = baseCommissionPercentage + additionalPercentage;
+        } else if (baseAmount > 0 && totalAffiliateFees > 0) {
+          totalCommissionPercentage = Math.round((totalAffiliateFees / baseAmount) * 100);
+          baseCommissionPercentage = totalCommissionPercentage;
+        }
+
         return {
           transaction_uuid: transaction.transaction_uuid,
-          amount: transaction.amount || 0,
-          afiliate_fees: transaction.afiliate_fees || 0,
+          amount: baseAmount,
+          afiliate_fees: totalAffiliateFees,
           created_at: transaction.created_at,
           type: transaction.type || 'unknown',
           status: transaction.status || 'unknown',
-          partnership_name
+          partnership_name,
+          affiliate_boosted: isBoosted,
+          affiliate_amount_boosted: additionalPercentageDecimal,
+          original_affiliate_fees: originalAffiliateFees,
+          boosted_amount: boostedAmount,
+          commission_percentage: totalCommissionPercentage,
+          base_commission_percentage: baseCommissionPercentage,
+          additional_commission_percentage: additionalPercentage
         };
       });
 
@@ -121,7 +151,7 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] w-[95vw] flex flex-col p-4 sm:p-6">
+      <DialogContent className="max-w-6xl max-h-[90vh] w-[95vw] flex flex-col p-4 sm:p-6">
         <DialogHeader className="space-y-3 sm:space-y-4 pb-4 sm:pb-6">
           <div className="flex flex-col space-y-2">
             <DialogTitle className="text-xl sm:text-2xl font-bold text-center sm:text-left">{affiliate.name}</DialogTitle>
@@ -160,12 +190,14 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
           <div className="flex-1 min-h-0 border rounded-xl overflow-hidden bg-card">
             {/* Table Header - Hidden on mobile */}
             <div className="hidden sm:block bg-muted/50 border-b px-4 sm:px-6 py-3 sm:py-4">
-              <div className="grid grid-cols-6 gap-4 text-sm font-medium text-muted-foreground">
+              <div className="grid grid-cols-8 gap-4 text-sm font-medium text-muted-foreground">
                 <div>Transaction ID</div>
                 <div>Type</div>
                 <div>Partnership</div>
                 <div className="text-right">Amount</div>
-                <div className="text-right">Affiliate Fee</div>
+                <div className="text-right">Base Fee</div>
+                <div className="text-right">Boost</div>
+                <div className="text-right">Total Fee</div>
                 <div className="text-right">Date</div>
               </div>
             </div>
@@ -220,11 +252,30 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
                             <span className="text-muted-foreground">Partnership:</span>
                             <span className="font-medium">{transaction.partnership_name}</span>
                           </div>
+                          {transaction.affiliate_boosted && (
+                            <div className="grid grid-cols-3 gap-2 text-xs bg-muted/50 p-2 rounded">
+                              <div className="text-center">
+                                <div className="text-muted-foreground">Base Fee</div>
+                                <div className="font-medium">${(transaction.original_affiliate_fees || 0).toFixed(2)}</div>
+                                <div className="text-blue-600">{transaction.base_commission_percentage}%</div>
+                              </div>
+                              <div className="text-center">
+                                <div className="text-muted-foreground">Boost</div>
+                                <div className="font-medium text-green-600">+${(transaction.boosted_amount || 0).toFixed(2)}</div>
+                                <div className="text-green-600">+{transaction.additional_commission_percentage}%</div>
+                              </div>
+                              <div className="text-center">
+                                <div className="text-muted-foreground">Total</div>
+                                <div className="font-medium">${(transaction.afiliate_fees || 0).toFixed(2)}</div>
+                                <div className="text-emerald-600">{transaction.commission_percentage}%</div>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
 
                       {/* Desktop Layout */}
-                      <div className="hidden sm:grid grid-cols-6 gap-4 text-sm items-center">
+                      <div className="hidden sm:grid grid-cols-8 gap-4 text-sm items-center">
                         <div className="font-mono text-xs">
                           {transaction.transaction_uuid.slice(0, 8)}...
                         </div>
@@ -237,8 +288,43 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
                         <div className="text-right font-semibold">
                           ${(transaction.amount || 0).toFixed(2)}
                         </div>
-                        <div className="text-right font-semibold text-emerald-600">
-                          ${(transaction.afiliate_fees || 0).toFixed(2)}
+                        <div className="text-right">
+                          {transaction.affiliate_boosted ? (
+                            <div>
+                              <div className="font-semibold text-blue-600">
+                                ${(transaction.original_affiliate_fees || 0).toFixed(2)}
+                              </div>
+                              <div className="text-xs text-blue-600">
+                                {transaction.base_commission_percentage}%
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="font-semibold">
+                              ${(transaction.original_affiliate_fees || 0).toFixed(2)}
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-right">
+                          {transaction.affiliate_boosted && transaction.boosted_amount ? (
+                            <div>
+                              <div className="font-semibold text-green-600">
+                                +${transaction.boosted_amount.toFixed(2)}
+                              </div>
+                              <div className="text-xs text-green-600">
+                                +{transaction.additional_commission_percentage}%
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="text-muted-foreground text-xs">-</div>
+                          )}
+                        </div>
+                        <div className="text-right">
+                          <div className="font-semibold text-emerald-600">
+                            ${(transaction.afiliate_fees || 0).toFixed(2)}
+                          </div>
+                          <div className="text-xs text-emerald-600">
+                            {transaction.commission_percentage}%
+                          </div>
                         </div>
                         <div className="text-right text-muted-foreground">
                           {new Date(transaction.created_at).toLocaleDateString('en-US', {
