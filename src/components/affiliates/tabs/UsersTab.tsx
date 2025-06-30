@@ -121,11 +121,13 @@ export function UsersTab() {
   };
 
   const handleUserClick = (user: AffiliateUser) => {
+    console.log('User clicked:', user);
     setSelectedUser(user);
     setIsDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
+    console.log('Closing dialog');
     setIsDialogOpen(false);
     setSelectedUser(null);
   };
