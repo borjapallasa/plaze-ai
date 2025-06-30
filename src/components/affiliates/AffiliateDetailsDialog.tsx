@@ -1,3 +1,4 @@
+
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Search, Loader2 } from "lucide-react";
@@ -12,8 +13,6 @@ interface Transaction {
   created_at: string;
   type: string;
   status: string;
-  product_name?: string;
-  community_name?: string;
 }
 
 interface AffiliateDetailsDialogProps {
@@ -42,18 +41,10 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
 
       console.log('Fetching transactions for user UUID:', userUuid);
       
-      // Fetch transactions with related product and community information
+      // Fetch from transactions table using user_uuid - let's try a broader query first
       const { data, error } = await supabase
         .from('transactions')
-        .select(`
-          *,
-          products_transactions!inner(
-            products!inner(name)
-          ),
-          community_subscriptions_transactions!inner(
-            communities!inner(name)
-          )
-        `)
+        .select('*')
         .eq('user_uuid', userUuid)
         .order('created_at', { ascending: false });
 
@@ -64,46 +55,22 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
 
       console.log('Raw transaction data from database:', data);
 
-      // Transform the data to include product and community names
-      const transformedTransactions: Transaction[] = [];
-      
-      for (const transaction of data || []) {
-        let productName = null;
-        let communityName = null;
-        
-        // Get product name for product transactions
-        if (transaction.type === 'product' && transaction.products_transactions?.products?.name) {
-          productName = transaction.products_transactions.products.name;
-        }
-        
-        // Get community name for community transactions
-        if (transaction.type === 'community' && transaction.community_subscriptions_transactions?.communities?.name) {
-          communityName = transaction.community_subscriptions_transactions.communities.name;
-        }
-
-        transformedTransactions.push({
-          transaction_uuid: transaction.transaction_uuid,
-          amount: transaction.amount || 0,
-          afiliate_fees: transaction.afiliate_fees || 0,
-          created_at: transaction.created_at,
-          type: transaction.type || 'unknown',
-          status: transaction.status || 'unknown',
-          product_name: productName,
-          community_name: communityName
-        });
-      }
-
-      console.log('Transformed transaction data:', transformedTransactions);
-      return transformedTransactions;
+      // Transform the data to match our Transaction interface
+      return (data || []).map(transaction => ({
+        transaction_uuid: transaction.transaction_uuid,
+        amount: transaction.amount || 0,
+        afiliate_fees: transaction.afiliate_fees || 0,
+        created_at: transaction.created_at,
+        type: transaction.type || 'unknown',
+        status: transaction.status || 'unknown'
+      }));
     },
     enabled: !!userUuid && isOpen,
   });
 
   const filteredTransactions = transactions.filter(transaction =>
     transaction.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    transaction.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (transaction.product_name && transaction.product_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (transaction.community_name && transaction.community_name.toLowerCase().includes(searchTerm.toLowerCase()))
+    transaction.status.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Calculate total affiliate fees from all transactions
@@ -114,7 +81,7 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col">
+      <DialogContent className="max-w-5xl max-h-[90vh] flex flex-col">
         <DialogHeader className="pb-4">
           <DialogTitle className="text-xl font-semibold">{affiliate.name}</DialogTitle>
           <p className="text-sm text-muted-foreground">{affiliate.status}</p>
@@ -140,7 +107,7 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
-              placeholder="Search transactions by type, status, product, or community..."
+              placeholder="Search transactions by type or status..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -151,10 +118,9 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
           <div className="flex-1 overflow-hidden border rounded-lg">
             {/* Table Header */}
             <div className="bg-muted/50 border-b px-4 py-3">
-              <div className="grid grid-cols-6 gap-4 text-sm font-medium">
+              <div className="grid grid-cols-5 gap-4 text-sm font-medium">
                 <div>Transaction ID</div>
                 <div>Type</div>
-                <div>Partnership</div>
                 <div className="text-right">Amount</div>
                 <div className="text-right">Affiliate Fee</div>
                 <div className="text-right">Date</div>
@@ -180,15 +146,12 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
               ) : (
                 <div className="divide-y">
                   {filteredTransactions.map((transaction) => (
-                    <div key={transaction.transaction_uuid} className="grid grid-cols-6 gap-4 px-4 py-3 hover:bg-muted/50 transition-colors text-sm">
+                    <div key={transaction.transaction_uuid} className="grid grid-cols-5 gap-4 px-4 py-3 hover:bg-muted/50 transition-colors text-sm">
                       <div className="font-mono text-xs truncate">
                         {transaction.transaction_uuid.slice(0, 8)}...
                       </div>
                       <div className="capitalize">
                         {transaction.type}
-                      </div>
-                      <div className="truncate">
-                        {transaction.product_name || transaction.community_name || 'N/A'}
                       </div>
                       <div className="text-right font-medium">
                         ${(transaction.amount || 0).toFixed(2)}
