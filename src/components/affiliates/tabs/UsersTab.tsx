@@ -1,11 +1,10 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Mail } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { AffiliateDetailsDialog } from "../AffiliateDetailsDialog";
 import {
   Table,
   TableBody,
@@ -31,8 +30,6 @@ interface AffiliateUser {
 
 export function UsersTab() {
   const { user } = useAuth();
-  const [selectedUser, setSelectedUser] = useState<AffiliateUser | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const { data: users = [], isLoading, error } = useQuery({
     queryKey: ['affiliate-referred-users', user?.id],
@@ -101,35 +98,6 @@ export function UsersTab() {
     return badges;
   };
 
-  const getUserStatus = (user: AffiliateUser) => {
-    if (user.is_admin) return "Admin";
-    if (user.is_expert) return "Expert";
-    if (user.is_affiliate) return "Affiliate";
-    return "User";
-  };
-
-  const transformUserForDialog = (user: AffiliateUser) => {
-    return {
-      name: user.first_name && user.last_name 
-        ? `${user.first_name} ${user.last_name}` 
-        : 'Unnamed User',
-      status: getUserStatus(user),
-      activeTemplates: user.transaction_count || 0,
-      totalSales: `$${(user.total_spent || 0).toLocaleString()}`,
-      affiliateFees: `$${(user.affiliate_fees_amount || 0).toLocaleString()}`,
-    };
-  };
-
-  const handleUserClick = (user: AffiliateUser) => {
-    setSelectedUser(user);
-    setIsDialogOpen(true);
-  };
-
-  const handleCloseDialog = () => {
-    setIsDialogOpen(false);
-    setSelectedUser(null);
-  };
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -155,67 +123,53 @@ export function UsersTab() {
   }
 
   return (
-    <>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>User</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Join Date</TableHead>
-              <TableHead className="text-right">Total Spent</TableHead>
-              <TableHead className="text-right">Commission Earned</TableHead>
-              <TableHead className="text-right">Transactions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {users.map((user) => (
-              <TableRow 
-                key={user.user_uuid}
-                className="cursor-pointer hover:bg-muted/50 transition-colors"
-                onClick={() => handleUserClick(user)}
-              >
-                <TableCell>
-                  <div className="flex items-center gap-3">
-                    <div>
-                      <div className="font-medium">
-                        {user.first_name && user.last_name 
-                          ? `${user.first_name} ${user.last_name}` 
-                          : 'Unnamed User'}
-                      </div>
-                      <div className="text-sm text-muted-foreground flex items-center gap-1">
-                        <Mail className="h-3 w-3" />
-                        {user.email}
-                      </div>
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>User</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Join Date</TableHead>
+            <TableHead className="text-right">Total Spent</TableHead>
+            <TableHead className="text-right">Commission Earned</TableHead>
+            <TableHead className="text-right">Transactions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {users.map((user) => (
+            <TableRow key={user.user_uuid}>
+              <TableCell>
+                <div className="flex items-center gap-3">
+                  <div>
+                    <div className="font-medium">
+                      {user.first_name && user.last_name 
+                        ? `${user.first_name} ${user.last_name}` 
+                        : 'Unnamed User'}
+                    </div>
+                    <div className="text-sm text-muted-foreground flex items-center gap-1">
+                      <Mail className="h-3 w-3" />
+                      {user.email}
                     </div>
                   </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex gap-1 flex-wrap">
-                    {getStatusBadges(user)}
-                  </div>
-                </TableCell>
-                <TableCell>{new Date(user.created_at).toLocaleDateString()}</TableCell>
-                <TableCell className="text-right font-mono">
-                  ${(user.total_spent || 0).toLocaleString()}
-                </TableCell>
-                <TableCell className="text-right font-mono">
-                  ${(user.affiliate_fees_amount || 0).toLocaleString()}
-                </TableCell>
-                <TableCell className="text-right">{user.transaction_count || 0}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-
-      {selectedUser && (
-        <AffiliateDetailsDialog
-          isOpen={isDialogOpen}
-          onClose={handleCloseDialog}
-          affiliate={transformUserForDialog(selectedUser)}
-        />
-      )}
-    </>
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex gap-1 flex-wrap">
+                  {getStatusBadges(user)}
+                </div>
+              </TableCell>
+              <TableCell>{new Date(user.created_at).toLocaleDateString()}</TableCell>
+              <TableCell className="text-right font-mono">
+                ${(user.total_spent || 0).toLocaleString()}
+              </TableCell>
+              <TableCell className="text-right font-mono">
+                ${(user.affiliate_fees_amount || 0).toLocaleString()}
+              </TableCell>
+              <TableCell className="text-right">{user.transaction_count || 0}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
