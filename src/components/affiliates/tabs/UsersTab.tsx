@@ -1,8 +1,7 @@
 
-import React, { useState } from "react";
-import { Input } from "@/components/ui/input";
+import React from "react";
 import { Badge } from "@/components/ui/badge";
-import { Search, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -67,13 +66,6 @@ const mockUsers: AffiliateUser[] = [
 ];
 
 export function UsersTab() {
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const filteredUsers = mockUsers.filter(user =>
-    user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "active":
@@ -88,60 +80,45 @@ export function UsersTab() {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Affiliate Users</h2>
-        <div className="relative w-80">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input
-            placeholder="Search users..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-      </div>
-
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>User</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Join Date</TableHead>
-              <TableHead className="text-right">Total Sales</TableHead>
-              <TableHead className="text-right">Commission Earned</TableHead>
-              <TableHead className="text-right">Referrals</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredUsers.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell>
-                  <div className="flex items-center gap-3">
-                    <div>
-                      <div className="font-medium">{user.name}</div>
-                      <div className="text-sm text-muted-foreground flex items-center gap-1">
-                        <Mail className="h-3 w-3" />
-                        {user.email}
-                      </div>
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>User</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Join Date</TableHead>
+            <TableHead className="text-right">Total Sales</TableHead>
+            <TableHead className="text-right">Commission Earned</TableHead>
+            <TableHead className="text-right">Referrals</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {mockUsers.map((user) => (
+            <TableRow key={user.id}>
+              <TableCell>
+                <div className="flex items-center gap-3">
+                  <div>
+                    <div className="font-medium">{user.name}</div>
+                    <div className="text-sm text-muted-foreground flex items-center gap-1">
+                      <Mail className="h-3 w-3" />
+                      {user.email}
                     </div>
                   </div>
-                </TableCell>
-                <TableCell>{getStatusBadge(user.status)}</TableCell>
-                <TableCell>{new Date(user.joinDate).toLocaleDateString()}</TableCell>
-                <TableCell className="text-right font-mono">
-                  ${user.totalSales.toLocaleString()}
-                </TableCell>
-                <TableCell className="text-right font-mono">
-                  ${user.commissionEarned.toLocaleString()}
-                </TableCell>
-                <TableCell className="text-right">{user.referrals}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+                </div>
+              </TableCell>
+              <TableCell>{getStatusBadge(user.status)}</TableCell>
+              <TableCell>{new Date(user.joinDate).toLocaleDateString()}</TableCell>
+              <TableCell className="text-right font-mono">
+                ${user.totalSales.toLocaleString()}
+              </TableCell>
+              <TableCell className="text-right font-mono">
+                ${user.commissionEarned.toLocaleString()}
+              </TableCell>
+              <TableCell className="text-right">{user.referrals}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 }

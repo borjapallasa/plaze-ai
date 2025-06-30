@@ -1,9 +1,6 @@
 
-import React, { useState } from "react";
-import { Input } from "@/components/ui/input";
+import React from "react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Search, Download, DollarSign } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -63,13 +60,6 @@ const mockPayouts: Payout[] = [
 ];
 
 export function PayoutsTab() {
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const filteredPayouts = mockPayouts.filter(payout =>
-    payout.referenceId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    payout.description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "completed":
@@ -98,39 +88,16 @@ export function PayoutsTab() {
     }
   };
 
-  const totalPending = filteredPayouts
+  const totalPending = mockPayouts
     .filter(p => p.status === "pending")
     .reduce((sum, p) => sum + p.amount, 0);
 
-  const totalCompleted = filteredPayouts
+  const totalCompleted = mockPayouts
     .filter(p => p.status === "completed")
     .reduce((sum, p) => sum + p.amount, 0);
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Payouts</h2>
-        <div className="flex items-center gap-4">
-          <div className="relative w-80">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              placeholder="Search payouts..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <Button variant="outline" className="flex items-center gap-2">
-            <Download className="h-4 w-4" />
-            Export
-          </Button>
-          <Button className="flex items-center gap-2">
-            <DollarSign className="h-4 w-4" />
-            Request Payout
-          </Button>
-        </div>
-      </div>
-
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-card rounded-lg border p-4">
@@ -160,7 +127,7 @@ export function PayoutsTab() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredPayouts.map((payout) => (
+            {mockPayouts.map((payout) => (
               <TableRow key={payout.id}>
                 <TableCell>{new Date(payout.date).toLocaleDateString()}</TableCell>
                 <TableCell className="text-right font-mono">

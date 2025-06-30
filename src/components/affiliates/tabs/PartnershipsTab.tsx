@@ -1,9 +1,6 @@
 
-import React, { useState } from "react";
-import { Input } from "@/components/ui/input";
+import React from "react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Search, Plus } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -73,13 +70,6 @@ const mockPartnerships: Partnership[] = [
 ];
 
 export function PartnershipsTab() {
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const filteredPartnerships = mockPartnerships.filter(partnership =>
-    partnership.partnerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    partnership.partnerEmail.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "active":
@@ -107,63 +97,42 @@ export function PartnershipsTab() {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Partnerships</h2>
-        <div className="flex items-center gap-4">
-          <div className="relative w-80">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              placeholder="Search partnerships..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <Button className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            New Partnership
-          </Button>
-        </div>
-      </div>
-
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Partner</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead className="text-right">Commission Rate</TableHead>
-              <TableHead>Start Date</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Revenue</TableHead>
-              <TableHead className="text-right">Products</TableHead>
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Partner</TableHead>
+            <TableHead>Type</TableHead>
+            <TableHead className="text-right">Commission Rate</TableHead>
+            <TableHead>Start Date</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead className="text-right">Revenue</TableHead>
+            <TableHead className="text-right">Products</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {mockPartnerships.map((partnership) => (
+            <TableRow key={partnership.id}>
+              <TableCell>
+                <div>
+                  <div className="font-medium">{partnership.partnerName}</div>
+                  <div className="text-sm text-muted-foreground">{partnership.partnerEmail}</div>
+                </div>
+              </TableCell>
+              <TableCell>{getTypeBadge(partnership.partnershipType)}</TableCell>
+              <TableCell className="text-right">
+                {(partnership.commissionRate * 100).toFixed(0)}%
+              </TableCell>
+              <TableCell>{new Date(partnership.startDate).toLocaleDateString()}</TableCell>
+              <TableCell>{getStatusBadge(partnership.status)}</TableCell>
+              <TableCell className="text-right font-mono">
+                ${partnership.revenueGenerated.toLocaleString()}
+              </TableCell>
+              <TableCell className="text-right">{partnership.productsCount}</TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredPartnerships.map((partnership) => (
-              <TableRow key={partnership.id}>
-                <TableCell>
-                  <div>
-                    <div className="font-medium">{partnership.partnerName}</div>
-                    <div className="text-sm text-muted-foreground">{partnership.partnerEmail}</div>
-                  </div>
-                </TableCell>
-                <TableCell>{getTypeBadge(partnership.partnershipType)}</TableCell>
-                <TableCell className="text-right">
-                  {(partnership.commissionRate * 100).toFixed(0)}%
-                </TableCell>
-                <TableCell>{new Date(partnership.startDate).toLocaleDateString()}</TableCell>
-                <TableCell>{getStatusBadge(partnership.status)}</TableCell>
-                <TableCell className="text-right font-mono">
-                  ${partnership.revenueGenerated.toLocaleString()}
-                </TableCell>
-                <TableCell className="text-right">{partnership.productsCount}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 }
