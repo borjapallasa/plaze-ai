@@ -77,28 +77,32 @@ export function useAffiliateTransactions() {
       return data?.map(transaction => {
         const baseAmount = transaction.amount || 0;
         const isBoosted = transaction.affiliate_boosted || false;
-        const finalAffiliateFees = transaction.afiliate_fees || 0;
+        const totalAffiliateFees = transaction.afiliate_fees || 0; // This is the final total amount
         
         // Get the additional percentage from affiliate_amount_boosted (stored as 0-1 in DB)
         const additionalPercentageDecimal = transaction.affiliate_amount_boosted || 0;
         const additionalPercentage = Math.round(additionalPercentageDecimal * 100); // Convert to percentage
         
         // Calculate affiliate fees and commission percentage
-        let originalAffiliateFees = finalAffiliateFees;
-        let baseCommissionPercentage = 5; // Base 5%
+        let originalAffiliateFees = totalAffiliateFees;
+        let baseCommissionPercentage = 5; // Default base 5%
         let totalCommissionPercentage = baseCommissionPercentage;
         let boostedAmount = 0;
         
         if (isBoosted && additionalPercentage > 0 && baseAmount > 0) {
-          // Reverse engineer: if final fee includes boost, calculate original fee
-          // finalFee = originalFee + (baseAmount * additionalPercentage)
-          // So: originalFee = finalFee - (baseAmount * additionalPercentage)
+          // Calculate the boosted amount from the base amount and additional percentage
           boostedAmount = baseAmount * additionalPercentageDecimal;
-          originalAffiliateFees = finalAffiliateFees - boostedAmount;
+          // Reverse engineer: subtract the boosted amount from total to get original base fee
+          originalAffiliateFees = totalAffiliateFees - boostedAmount;
+          
+          // Calculate base commission percentage from the original fee
+          if (originalAffiliateFees > 0) {
+            baseCommissionPercentage = Math.round((originalAffiliateFees / baseAmount) * 100);
+          }
           totalCommissionPercentage = baseCommissionPercentage + additionalPercentage;
-        } else if (baseAmount > 0 && finalAffiliateFees > 0) {
-          // Calculate actual commission percentage from existing data
-          totalCommissionPercentage = Math.round((finalAffiliateFees / baseAmount) * 100);
+        } else if (baseAmount > 0 && totalAffiliateFees > 0) {
+          // For non-boosted transactions, calculate actual commission percentage from existing data
+          totalCommissionPercentage = Math.round((totalAffiliateFees / baseAmount) * 100);
           baseCommissionPercentage = totalCommissionPercentage;
         }
 
@@ -106,7 +110,7 @@ export function useAffiliateTransactions() {
           transaction_uuid: transaction.transaction_uuid,
           created_at: new Date(transaction.created_at).toLocaleDateString(),
           amount: baseAmount,
-          affiliate_fees: finalAffiliateFees,
+          affiliate_fees: totalAffiliateFees,
           original_affiliate_fees: originalAffiliateFees,
           boosted_amount: boostedAmount,
           status: transaction.status || 'unknown',
