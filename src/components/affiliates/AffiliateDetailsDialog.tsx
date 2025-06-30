@@ -56,6 +56,16 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
 
       console.log('Raw transaction data from database:', transactionData);
 
+      // Debug: Let's also check what's in the affiliate_partnerships table
+      const { data: allPartnerships, error: partnershipListError } = await supabase
+        .from('affiliate_partnerships')
+        .select('*');
+      
+      console.log('All partnerships in database:', allPartnerships);
+      if (partnershipListError) {
+        console.error('Error fetching all partnerships:', partnershipListError);
+      }
+
       // Then fetch partnership names for transactions that have affiliate_partnership_uuid
       const transactionPromises = (transactionData || []).map(async (transaction) => {
         let partnership_name = 'N/A';
