@@ -162,7 +162,7 @@ export function AffiliateDashboard() {
               </Button>
             </div>
             <p className="text-xs text-muted-foreground">
-              Share this link to earn 3% commission on referrals' spending in their first year, then 1% lifetime commission
+              Share this link to earn commission from people who sign up through your link: 3% of their spending during the first 12 months after signup, then 1% of all their spending for life
             </p>
           </CardContent>
         </Card>
