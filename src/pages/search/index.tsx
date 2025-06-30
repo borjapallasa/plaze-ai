@@ -1,263 +1,256 @@
 
-import React, { useState, useEffect, useMemo } from "react";
-import { CategoryHeader } from "@/components/CategoryHeader";
-import { ProductCard } from "@/components/ProductCard";
-import { CommunitySubscriptionCard } from "@/components/communities/CommunitySubscriptionCard";
-import { CommunitySubscriptionListView } from "@/components/communities/CommunitySubscriptionListView";
-import { CommunitySubscriptionSortSelector } from "@/components/communities/CommunitySubscriptionSortSelector";
-import { LayoutSelector } from "@/components/transactions/LayoutSelector";
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { MainHeader } from "@/components/MainHeader";
+import { ProductCard } from "@/components/ProductCard";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Search, Filter } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { useLocation } from "react-router-dom";
 
 interface Product {
   product_uuid: string;
   name: string;
-  short_description: string;
-  thumbnail: string;
+  description: string;
   price_from: number;
+  thumbnail: string;
+  slug: string;
   status: string;
   type: string;
-  expert_uuid?: string;
-  user_uuid?: string;
+  expert_uuid: string;
+  user_uuid: string;
   created_at: string;
-  sales_count: number;
-  review_count: number;
-  variant_count: number;
-  slug: string;
 }
 
 interface Community {
   community_uuid: string;
   name: string;
-  intro: string;
-  thumbnail: string;
+  description: string;
   price: number;
-  type: string;
-  expert_uuid?: string;
-  user_uuid?: string;
-  created_at: string;
-  member_count: number;
+  thumbnail: string;
   slug: string;
-  expert_thumbnail?: string;
+  type: string;
+  expert_uuid: string;
+  created_at: string;
 }
 
 interface Expert {
   expert_uuid: string;
   name: string;
+  description: string;
   thumbnail: string;
-  status: string;
+  slug: string;
+  title: string;
+  location: string;
+  areas: any;
+  created_at: string;
 }
 
-export default function SearchPage() {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<"products" | "communities">("products");
-  const [layout, setLayout] = useState<"grid" | "list">("grid");
-  const [sortBy, setSortBy] = useState("newest");
-  const location = useLocation();
+export function SearchResults() {
+  const [searchParams] = useSearchParams();
+  const query = searchParams.get('q') || '';
+  const [searchTerm, setSearchTerm] = useState(query);
+  const [activeTab, setActiveTab] = useState<'all' | 'products' | 'communities' | 'experts'>('all');
 
-  // Parse URL hash to determine initial view mode
-  useEffect(() => {
-    const hash = location.hash;
-    if (hash === "#communities") {
-      setViewMode("communities");
-    } else {
-      setViewMode("products");
-    }
-  }, [location.hash]);
+  const { data: searchResults, isLoading } = useQuery({
+    queryKey: ['search', searchTerm, activeTab],
+    queryFn: async () => {
+      if (!searchTerm.trim()) return { products: [], communities: [], experts: [] };
 
-  // Fetch products with expert data
-  const { data: products = [], isLoading: isLoadingProducts } = useQuery({
-    queryKey: ['search-products', selectedCategory, sortBy],
-    queryFn: async (): Promise<Product[]> => {
-      let query = supabase
-        .from('products')
-        .select(`
-          product_uuid,
-          name,
-          short_description,
-          thumbnail,
-          price_from,
-          status,
-          type,
-          expert_uuid,
-          user_uuid,
-          created_at,
-          sales_count,
-          review_count,
-          variant_count,
-          slug
-        `)
-        .eq('status', 'active');
+      const results: { products: Product[], communities: Community[], experts: Expert[] } = {
+        products: [],
+        communities: [],
+        experts: []
+      };
 
-      // Apply category filters
-      if (selectedCategory === 'newest') {
-        query = query.order('created_at', { ascending: false });
-      } else if (selectedCategory === 'top-seller') {
-        query = query.order('sales_count', { ascending: false, nullsLast: true });
-      } else if (selectedCategory === 'best-reviews') {
-        query = query.order('review_count', { ascending: false, nullsLast: true });
-      } else {
-        query = query.order('created_at', { ascending: false });
+      if (activeTab === 'all' || activeTab === 'products') {
+        const { data: products } = await supabase
+          .from('products')
+          .select('*')
+          .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`)
+          .eq('status', 'active')
+          .limit(20);
+        
+        results.products = products || [];
       }
 
-      const { data, error } = await query;
-      if (error) throw error;
-      return data || [];
-    },
-  });
-
-  // Fetch experts
-  const { data: experts = [] } = useQuery({
-    queryKey: ['search-experts'],
-    queryFn: async (): Promise<Expert[]> => {
-      const { data, error } = await supabase
-        .from('experts')
-        .select('expert_uuid, name, thumbnail, status')
-        .eq('status', 'accepted');
-
-      if (error) throw error;
-      return data || [];
-    },
-  });
-
-  // Fetch communities with expert data
-  const { data: communities = [], isLoading: isLoadingCommunities } = useQuery({
-    queryKey: ['search-communities', selectedCategory, sortBy],
-    queryFn: async (): Promise<Community[]> => {
-      let query = supabase
-        .from('communities')
-        .select(`
-          community_uuid,
-          name,
-          intro,
-          thumbnail,
-          price,
-          type,
-          expert_uuid,
-          user_uuid,
-          created_at,
-          member_count,
-          slug,
-          expert_thumbnail
-        `)
-        .eq('visibility', 'public');
-
-      // Apply category filters
-      if (selectedCategory === 'newest') {
-        query = query.order('created_at', { ascending: false });
-      } else if (selectedCategory === 'top-seller') {
-        query = query.order('member_count', { ascending: false, nullsLast: true });
-      } else {
-        query = query.order('created_at', { ascending: false });
+      if (activeTab === 'all' || activeTab === 'communities') {
+        const { data: communities } = await supabase
+          .from('communities')
+          .select('*')
+          .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`)
+          .limit(20);
+        
+        results.communities = communities || [];
       }
 
-      const { data, error } = await query;
-      if (error) throw error;
-      return data || [];
+      if (activeTab === 'all' || activeTab === 'experts') {
+        const { data: experts } = await supabase
+          .from('experts')
+          .select('*')
+          .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,title.ilike.%${searchTerm}%`)
+          .eq('status', 'approved')
+          .limit(20);
+        
+        results.experts = experts || [];
+      }
+
+      return results;
     },
+    enabled: !!searchTerm.trim(),
   });
 
-  // Create expert lookup for enriching data
-  const expertLookup = useMemo(() => {
-    const lookup: Record<string, Expert> = {};
-    experts.forEach(expert => {
-      lookup[expert.expert_uuid] = expert;
-    });
-    return lookup;
-  }, [experts]);
+  const handleSearch = () => {
+    // The query will automatically refetch when searchTerm changes
+  };
 
-  // Enrich products with expert data
-  const enrichedProducts = useMemo(() => {
-    return products.map(product => ({
-      ...product,
-      expert: product.expert_uuid ? expertLookup[product.expert_uuid] : undefined
-    }));
-  }, [products, expertLookup]);
-
-  // Enrich communities with expert data
-  const enrichedCommunities = useMemo(() => {
-    return communities.map(community => ({
-      ...community,
-      expert: community.expert_uuid ? expertLookup[community.expert_uuid] : undefined
-    }));
-  }, [communities, expertLookup]);
-
-  const isLoading = viewMode === "products" ? isLoadingProducts : isLoadingCommunities;
-  const currentData = viewMode === "products" ? enrichedProducts : enrichedCommunities;
+  const getTotalResults = () => {
+    if (!searchResults) return 0;
+    return searchResults.products.length + searchResults.communities.length + searchResults.experts.length;
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <CategoryHeader 
-        selectedCategory={selectedCategory}
-        onCategoryChange={setSelectedCategory}
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
-      />
-      
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">
-              {viewMode === "products" ? "Discover Products" : "Join Communities"}
-            </h1>
-            <p className="text-gray-600 mt-2">
-              {viewMode === "products" 
-                ? `${enrichedProducts.length} products found`
-                : `${enrichedCommunities.length} communities found`
-              }
-            </p>
-          </div>
-          
-          <div className="flex gap-3">
-            {viewMode === "communities" && (
-              <CommunitySubscriptionSortSelector 
-                sortBy={sortBy}
-                onSortChange={setSortBy}
+    <>
+      <MainHeader />
+      <div className="container mx-auto px-4 py-8 pt-24">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex gap-4 mb-8">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+              <Input
+                placeholder="Search for products, communities, or experts..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                className="pl-10 pr-4 py-3 text-lg"
               />
-            )}
-            <LayoutSelector layout={layout} onLayoutChange={setLayout} />
+            </div>
+            <Button onClick={handleSearch} size="lg">
+              <Search className="h-5 w-5 mr-2" />
+              Search
+            </Button>
           </div>
-        </div>
 
-        {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-lg border border-gray-200 p-6 animate-pulse">
-                <div className="h-48 bg-gray-200 rounded-lg mb-4"></div>
-                <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-              </div>
+          <div className="flex gap-4 mb-6 border-b">
+            {(['all', 'products', 'communities', 'experts'] as const).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`pb-3 px-1 capitalize ${
+                  activeTab === tab
+                    ? 'border-b-2 border-blue-500 text-blue-600 font-medium'
+                    : 'text-gray-600 hover:text-gray-800'
+                }`}
+              >
+                {tab}
+                {searchResults && (
+                  <span className="ml-2 text-sm text-gray-500">
+                    ({tab === 'all' ? getTotalResults() : searchResults[tab as keyof typeof searchResults]?.length || 0})
+                  </span>
+                )}
+              </button>
             ))}
           </div>
-        ) : currentData.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">
-              No {viewMode} found matching your criteria.
-            </p>
-          </div>
-        ) : viewMode === "products" ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {enrichedProducts.map((product) => (
-              <ProductCard 
-                key={product.product_uuid}
-                {...product}
-              />
-            ))}
-          </div>
-        ) : layout === "grid" ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {enrichedCommunities.map((community) => (
-              <CommunitySubscriptionCard 
-                key={community.community_uuid}
-                community={community}
-              />
-            ))}
-          </div>
-        ) : (
-          <CommunitySubscriptionListView communities={enrichedCommunities} />
-        )}
+
+          {isLoading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+              <p className="mt-4 text-gray-600">Searching...</p>
+            </div>
+          ) : !searchTerm.trim() ? (
+            <div className="text-center py-12">
+              <Search className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-xl font-medium text-gray-900 mb-2">Search for anything</h3>
+              <p className="text-gray-600">Find products, communities, and experts that match your needs.</p>
+            </div>
+          ) : searchResults && getTotalResults() === 0 ? (
+            <div className="text-center py-12">
+              <h3 className="text-xl font-medium text-gray-900 mb-2">No results found</h3>
+              <p className="text-gray-600">Try adjusting your search terms or browse our categories.</p>
+            </div>
+          ) : (
+            <div className="space-y-8">
+              {/* Products Section */}
+              {(activeTab === 'all' || activeTab === 'products') && searchResults?.products && searchResults.products.length > 0 && (
+                <section>
+                  <h2 className="text-2xl font-bold mb-4">Products</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {searchResults.products.map((product) => (
+                      <ProductCard key={product.product_uuid} product={product} />
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* Communities Section */}
+              {(activeTab === 'all' || activeTab === 'communities') && searchResults?.communities && searchResults.communities.length > 0 && (
+                <section>
+                  <h2 className="text-2xl font-bold mb-4">Communities</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {searchResults.communities.map((community) => (
+                      <div key={community.community_uuid} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                        <div className="aspect-video bg-gray-100">
+                          {community.thumbnail && (
+                            <img
+                              src={community.thumbnail}
+                              alt={community.name}
+                              className="w-full h-full object-cover"
+                            />
+                          )}
+                        </div>
+                        <div className="p-4">
+                          <h3 className="font-semibold text-lg mb-2">{community.name}</h3>
+                          <p className="text-gray-600 text-sm mb-3 line-clamp-2">{community.description}</p>
+                          <div className="flex justify-between items-center">
+                            <span className="text-lg font-bold">${community.price}</span>
+                            <span className="text-xs text-gray-500 capitalize">{community.type}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* Experts Section */}
+              {(activeTab === 'all' || activeTab === 'experts') && searchResults?.experts && searchResults.experts.length > 0 && (
+                <section>
+                  <h2 className="text-2xl font-bold mb-4">Experts</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {searchResults.experts.map((expert) => (
+                      <div key={expert.expert_uuid} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                        <div className="p-6">
+                          <div className="flex items-center mb-4">
+                            <div className="w-12 h-12 bg-gray-100 rounded-full overflow-hidden mr-4">
+                              {expert.thumbnail && (
+                                <img
+                                  src={expert.thumbnail}
+                                  alt={expert.name}
+                                  className="w-full h-full object-cover"
+                                />
+                              )}
+                            </div>
+                            <div>
+                              <h3 className="font-semibold text-lg">{expert.name}</h3>
+                              <p className="text-gray-600 text-sm">{expert.title}</p>
+                            </div>
+                          </div>
+                          <p className="text-gray-600 text-sm mb-3 line-clamp-2">{expert.description}</p>
+                          <div className="flex justify-between items-center text-xs text-gray-500">
+                            <span>{expert.location}</span>
+                            <span>{expert.areas?.length || 0} areas</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

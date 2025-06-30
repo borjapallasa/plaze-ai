@@ -1,127 +1,131 @@
 
-import React from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Star, ShoppingCart, Eye } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ArrowRight, DollarSign, Percent } from "lucide-react";
 
 interface ProductCardProps {
-  product_uuid: string;
-  name: string;
-  short_description?: string;
-  thumbnail?: string;
-  price_from: number;
-  status: string;
-  type?: string;
-  expert_uuid?: string;
-  user_uuid?: string;
-  created_at: string;
-  sales_count?: number;
-  review_count?: number;
-  variant_count?: number;
+  title: string;
+  price: string;
+  image: string;
+  seller: string;
+  description: string;
+  tags: string[];
+  fromPrice?: string;
+  category: string;
+  split?: string;
+  id?: string;
   slug?: string;
-  expert?: {
-    expert_uuid: string;
-    name: string;
-    thumbnail?: string;
-    status: string;
-  };
+  onClick?: () => void;
+  href?: string;
 }
 
-export const ProductCard = ({
-  product_uuid,
-  name,
-  short_description,
-  thumbnail,
-  price_from,
-  status,
-  type,
-  sales_count = 0,
-  review_count = 0,
-  variant_count = 0,
+export const ProductCard = ({ 
+  title, 
+  price, 
+  image, 
+  seller, 
+  description, 
+  tags, 
+  fromPrice, 
+  category, 
+  split, 
+  id,
   slug,
-  expert
+  onClick,
+  href
 }: ProductCardProps) => {
-  const productUrl = slug ? `/product/${slug}` : `/product/${product_uuid}`;
+  const getHref = () => {
+    if (href) return href;
+    if (id && slug) {
+      return `https://plaze.ai/product/${slug}/${id}`;
+    } else if (id) {
+      return `https://plaze.ai/product/${id}`;
+    } else {
+      return 'https://plaze.ai/product';
+    }
+  };
 
-  return (
-    <Card className="group hover:shadow-lg transition-all duration-300 overflow-hidden">
-      <div className="relative">
-        <img
-          src={thumbnail || "/placeholder.svg"}
-          alt={name}
-          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-        />
-        <div className="absolute top-3 left-3">
-          <Badge variant={status === 'active' ? 'default' : 'secondary'}>
-            {status}
+  const cardContent = (
+    <Card className="group relative flex flex-col p-4 lg:p-6 hover:bg-accent transition-colors cursor-pointer h-full">
+      <div className="flex items-start gap-3 lg:gap-4">
+        <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg bg-accent flex items-center justify-center overflow-hidden flex-shrink-0">
+          <img
+            src={image}
+            alt={title}
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="flex-1 min-w-0">
+          <h3 className="font-semibold text-base leading-tight truncate">{title}</h3>
+          <Badge 
+            variant="secondary" 
+            className="font-medium capitalize bg-blue-50 text-blue-600 hover:bg-blue-50 text-xs mt-1.5"
+          >
+            {category}
           </Badge>
         </div>
-        {type && (
-          <div className="absolute top-3 right-3">
-            <Badge variant="outline">
-              {type}
-            </Badge>
-          </div>
-        )}
       </div>
-      
-      <CardContent className="p-4">
-        <div className="space-y-3">
-          <div>
-            <h3 className="font-semibold text-lg line-clamp-2 group-hover:text-primary transition-colors">
-              <Link to={productUrl}>
-                {name}
-              </Link>
-            </h3>
-            {short_description && (
-              <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
-                {short_description}
-              </p>
+
+      <p className="text-base text-foreground line-clamp-2 mt-4 mb-6 flex-1">{description}</p>
+
+      <div className="flex gap-2 flex-wrap mb-4">
+        {tags.slice(0, 2).map((tag, index) => (
+          <span
+            key={index}
+            className="text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full text-sm"
+          >
+            #{tag}
+          </span>
+        ))}
+      </div>
+
+      <div className="border-t border-border mt-auto pt-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-1.5">
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm font-medium">From {price}</span>
+            </div>
+            {split && (
+              <div className="flex items-center gap-1.5">
+                <Percent className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">{split}</span>
+              </div>
             )}
           </div>
-
-          {expert && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <img
-                src={expert.thumbnail || "/placeholder.svg"}
-                alt={expert.name}
-                className="w-5 h-5 rounded-full"
-              />
-              <span>by {expert.name}</span>
-            </div>
-          )}
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <div className="flex items-center gap-1">
-                <Star className="w-4 h-4" />
-                <span>{review_count}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <ShoppingCart className="w-4 h-4" />
-                <span>{sales_count}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Eye className="w-4 h-4" />
-                <span>{variant_count}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between pt-2">
-            <div className="text-2xl font-bold text-primary">
-              ${price_from}
-            </div>
-            <Button asChild size="sm">
-              <Link to={productUrl}>
-                View Details
-              </Link>
-            </Button>
-          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+          >
+            <ArrowRight className="h-4 w-4" />
+          </Button>
         </div>
-      </CardContent>
+      </div>
     </Card>
+  );
+
+  // If onClick is provided, use an anchor tag that handles the click
+  if (onClick) {
+    return (
+      <a 
+        href="#" 
+        onClick={(e) => {
+          e.preventDefault();
+          onClick();
+        }}
+        className="h-full block"
+      >
+        {cardContent}
+      </a>
+    );
+  }
+
+  // Default behavior with anchor tag
+  return (
+    <a href={getHref()} className="h-full">
+      {cardContent}
+    </a>
   );
 };
