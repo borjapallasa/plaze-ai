@@ -95,13 +95,13 @@ export function PartnershipsTab() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead>Expert Split</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Created</TableHead>
-            <TableHead className="text-right">Revenue</TableHead>
-            <TableHead>Affiliate Link</TableHead>
+            <TableHead className="w-1/7">Name</TableHead>
+            <TableHead className="w-1/7">Type</TableHead>
+            <TableHead className="w-1/7">Expert Split</TableHead>
+            <TableHead className="w-1/7">Status</TableHead>
+            <TableHead className="w-1/7">Created</TableHead>
+            <TableHead className="w-1/7 text-right">Revenue</TableHead>
+            <TableHead className="w-1/7">Affiliate Link</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -114,21 +114,21 @@ export function PartnershipsTab() {
           ) : (
             partnerships.map((partnership) => (
               <TableRow key={partnership.affiliate_partnership_uuid}>
-                <TableCell>
+                <TableCell className="w-1/7">
                   <div className="font-medium">{partnership.name}</div>
                 </TableCell>
-                <TableCell>{getTypeBadge(partnership.type)}</TableCell>
-                <TableCell>
+                <TableCell className="w-1/7">{getTypeBadge(partnership.type)}</TableCell>
+                <TableCell className="w-1/7">
                   <div className="font-mono text-sm">
                     {partnership.expert_split ? `${(partnership.expert_split * 100).toFixed(0)}%` : 'N/A'}
                   </div>
                 </TableCell>
-                <TableCell>{getStatusBadge(partnership.status)}</TableCell>
-                <TableCell>{partnership.created_at}</TableCell>
-                <TableCell className="text-right font-mono">
+                <TableCell className="w-1/7">{getStatusBadge(partnership.status)}</TableCell>
+                <TableCell className="w-1/7">{partnership.created_at}</TableCell>
+                <TableCell className="w-1/7 text-right font-mono">
                   ${partnership.revenue.toLocaleString()}
                 </TableCell>
-                <TableCell>
+                <TableCell className="w-1/7">
                   {partnership.affiliate_link ? (
                     <div className="flex items-center gap-2">
                       <code className="text-xs bg-muted px-2 py-1 rounded max-w-32 truncate">
