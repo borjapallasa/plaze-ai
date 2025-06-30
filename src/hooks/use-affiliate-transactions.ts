@@ -77,26 +77,28 @@ export function useAffiliateTransactions() {
       return data?.map(transaction => {
         const baseAmount = transaction.amount || 0;
         const isBoosted = transaction.affiliate_boosted || false;
-        const originalFees = transaction.afiliate_fees || 0;
+        const finalAffiliateFees = transaction.afiliate_fees || 0;
         
         // Get the additional percentage from affiliate_amount_boosted (stored as 0-1 in DB)
         const additionalPercentageDecimal = transaction.affiliate_amount_boosted || 0;
         const additionalPercentage = Math.round(additionalPercentageDecimal * 100); // Convert to percentage
         
         // Calculate affiliate fees and commission percentage
-        let finalAffiliateFees = originalFees;
+        let originalAffiliateFees = finalAffiliateFees;
         let baseCommissionPercentage = 5; // Base 5%
         let totalCommissionPercentage = baseCommissionPercentage;
         let boostedAmount = 0;
         
-        if (isBoosted && additionalPercentage > 0) {
-          // Calculate boosted amount from the additional percentage
+        if (isBoosted && additionalPercentage > 0 && baseAmount > 0) {
+          // Reverse engineer: if final fee includes boost, calculate original fee
+          // finalFee = originalFee + (baseAmount * additionalPercentage)
+          // So: originalFee = finalFee - (baseAmount * additionalPercentage)
           boostedAmount = baseAmount * additionalPercentageDecimal;
-          finalAffiliateFees = originalFees + boostedAmount;
+          originalAffiliateFees = finalAffiliateFees - boostedAmount;
           totalCommissionPercentage = baseCommissionPercentage + additionalPercentage;
-        } else if (baseAmount > 0 && originalFees > 0) {
+        } else if (baseAmount > 0 && finalAffiliateFees > 0) {
           // Calculate actual commission percentage from existing data
-          totalCommissionPercentage = Math.round((originalFees / baseAmount) * 100);
+          totalCommissionPercentage = Math.round((finalAffiliateFees / baseAmount) * 100);
           baseCommissionPercentage = totalCommissionPercentage;
         }
 
@@ -105,7 +107,7 @@ export function useAffiliateTransactions() {
           created_at: new Date(transaction.created_at).toLocaleDateString(),
           amount: baseAmount,
           affiliate_fees: finalAffiliateFees,
-          original_affiliate_fees: originalFees,
+          original_affiliate_fees: originalAffiliateFees,
           boosted_amount: boostedAmount,
           status: transaction.status || 'unknown',
           user_name: `${transaction.users?.first_name || ''} ${transaction.users?.last_name || ''}`.trim() || 'Unknown User',
