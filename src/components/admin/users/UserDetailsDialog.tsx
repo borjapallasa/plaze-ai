@@ -30,7 +30,6 @@ interface UserData {
   transaction_count: number;
   product_count: number;
   total_spent: number;
-  total_sales_amount: number;
   user_thumbnail: string;
 }
 
