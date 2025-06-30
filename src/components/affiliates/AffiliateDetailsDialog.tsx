@@ -48,11 +48,11 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
         .from('transactions')
         .select(`
           *,
-          products_transactions!inner(
-            products!inner(name)
+          products_transactions(
+            products(name)
           ),
-          community_subscriptions_transactions!inner(
-            communities!inner(name)
+          community_subscriptions_transactions(
+            communities(name)
           )
         `)
         .eq('user_uuid', userUuid)
@@ -155,7 +155,7 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
               <div className="grid grid-cols-6 gap-4 text-sm font-medium">
                 <div>Transaction ID</div>
                 <div>Type</div>
-                <div>Product/Community</div>
+                <div>Partnership</div>
                 <div className="text-right">Amount</div>
                 <div className="text-right">Affiliate Fee</div>
                 <div className="text-right">Date</div>
