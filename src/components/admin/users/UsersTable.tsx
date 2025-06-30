@@ -12,6 +12,13 @@ interface UserData {
   created_at: string;
   total_spent: number;
   commissions_generated: number;
+  is_admin: boolean;
+  is_affiliate: boolean;
+  is_expert: boolean;
+  transaction_count: number;
+  product_count: number;
+  total_sales_amount: number;
+  user_thumbnail: string;
 }
 
 interface UsersTableProps {

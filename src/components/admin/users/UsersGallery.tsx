@@ -12,6 +12,12 @@ interface UserData {
   is_expert: boolean;
   is_affiliate: boolean;
   is_admin: boolean;
+  total_spent: number;
+  commissions_generated: number;
+  transaction_count: number;
+  product_count: number;
+  total_sales_amount: number;
+  user_thumbnail: string;
 }
 
 interface UsersGalleryProps {
