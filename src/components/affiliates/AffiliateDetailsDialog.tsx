@@ -1,7 +1,7 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Search, Loader2 } from "lucide-react";
+import { Search, Loader2, TrendingUp } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
@@ -149,6 +149,63 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
   // Calculate total sales as the sum of all transaction amounts
   const totalSpent = transactions.reduce((sum, transaction) => sum + (transaction.amount || 0), 0);
 
+  const renderAffiliateFees = (transaction: Transaction) => {
+    const originalFees = transaction.original_affiliate_fees || 0;
+    const boostedAmount = transaction.boosted_amount || 0;
+    const finalAmount = transaction.afiliate_fees;
+    
+    if (transaction.affiliate_boosted && boostedAmount > 0) {
+      return (
+        <div className="text-right font-mono whitespace-nowrap">
+          <div className="text-xs text-muted-foreground">
+            ${originalFees.toFixed(2)} + ${boostedAmount.toFixed(2)}
+          </div>
+          <div className="text-green-600 font-medium">
+            ${finalAmount.toFixed(2)}
+          </div>
+        </div>
+      );
+    }
+    
+    return (
+      <div className="text-right font-mono whitespace-nowrap text-green-600 font-medium">
+        ${finalAmount.toFixed(2)}
+      </div>
+    );
+  };
+
+  const renderCommission = (transaction: Transaction) => {
+    const basePercentage = transaction.base_commission_percentage || 5;
+    const additionalPercentage = transaction.additional_commission_percentage || 0;
+    
+    if (transaction.affiliate_boosted && additionalPercentage > 0) {
+      return (
+        <div className="text-right whitespace-nowrap">
+          <div className="flex items-center justify-end gap-1">
+            <span className="text-xs text-muted-foreground">
+              {basePercentage}% + {additionalPercentage}%
+            </span>
+            <TrendingUp className="h-3 w-3 text-green-600" />
+          </div>
+          <div className="font-medium">
+            {transaction.commission_percentage}%
+          </div>
+        </div>
+      );
+    }
+    
+    return (
+      <div className="text-right whitespace-nowrap">
+        <div className="flex items-center justify-end gap-1">
+          {transaction.commission_percentage}%
+          {transaction.affiliate_boosted && (
+            <TrendingUp className="h-3 w-3 text-green-600" />
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-6xl max-h-[90vh] w-[95vw] flex flex-col p-4 sm:p-6">
@@ -195,10 +252,10 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
                 <div>Type</div>
                 <div>Partnership</div>
                 <div className="text-right">Amount</div>
+                <div className="text-right">Commission %</div>
                 <div className="text-right">Base Fee</div>
                 <div className="text-right">Boost</div>
                 <div className="text-right">Total Fee</div>
-                <div className="text-right">Date</div>
               </div>
             </div>
 
@@ -241,14 +298,6 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
                             <span className="capitalize font-medium">{transaction.type}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-muted-foreground">Date:</span>
-                            <span>{new Date(transaction.created_at).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric'
-                            })}</span>
-                          </div>
-                          <div className="flex justify-between">
                             <span className="text-muted-foreground">Partnership:</span>
                             <span className="font-medium">{transaction.partnership_name}</span>
                           </div>
@@ -288,6 +337,9 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
                         <div className="text-right font-semibold">
                           ${(transaction.amount || 0).toFixed(2)}
                         </div>
+                        <div>
+                          {renderCommission(transaction)}
+                        </div>
                         <div className="text-right">
                           {transaction.affiliate_boosted ? (
                             <div>
@@ -325,13 +377,6 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
                           <div className="text-xs text-emerald-600">
                             {transaction.commission_percentage}%
                           </div>
-                        </div>
-                        <div className="text-right text-muted-foreground">
-                          {new Date(transaction.created_at).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric'
-                          })}
                         </div>
                       </div>
                     </div>
