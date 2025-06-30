@@ -41,7 +41,7 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
 
       console.log('Fetching transactions for user UUID:', userUuid);
       
-      // Fetch exclusively from transactions table
+      // Fetch exclusively from transactions table using user_uuid field
       const { data, error } = await supabase
         .from('transactions')
         .select('transaction_uuid, amount, afiliate_fees, created_at, type, status')
