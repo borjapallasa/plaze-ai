@@ -120,7 +120,7 @@ export function PartnershipsTab() {
                 <TableCell>{getTypeBadge(partnership.type)}</TableCell>
                 <TableCell>
                   <div className="font-mono text-sm">
-                    {partnership.expert_split ? `${partnership.expert_split}%` : 'N/A'}
+                    {partnership.expert_split ? `${(partnership.expert_split * 100).toFixed(0)}%` : 'N/A'}
                   </div>
                 </TableCell>
                 <TableCell>{getStatusBadge(partnership.status)}</TableCell>
