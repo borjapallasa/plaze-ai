@@ -1,7 +1,6 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { useNavigate } from "react-router-dom";
 import { User, Calendar } from "lucide-react";
 
 interface UserData {
@@ -17,14 +16,13 @@ interface UserData {
 
 interface UsersGalleryProps {
   users: UserData[];
-  sortField: keyof UserData;
-  sortDirection: "asc" | "desc";
-  onSort: (field: keyof UserData) => void;
+  onUserClick: (user: UserData) => void;
+  onLoadMore: () => void;
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
 }
 
-export function UsersGallery({ users }: UsersGalleryProps) {
-  const navigate = useNavigate();
-
+export function UsersGallery({ users, onUserClick }: UsersGalleryProps) {
   const getUserRoleBadges = (user: UserData) => {
     const badges = [];
     if (user.is_admin) badges.push(<Badge key="admin" variant="secondary" className="bg-purple-100 text-purple-800">Admin</Badge>);
@@ -33,8 +31,8 @@ export function UsersGallery({ users }: UsersGalleryProps) {
     return badges;
   };
 
-  const handleUserClick = (userUuid: string) => {
-    navigate(`/admin/users/user/${userUuid}`);
+  const handleUserClick = (user: UserData) => {
+    onUserClick(user);
   };
 
   return (
@@ -48,7 +46,7 @@ export function UsersGallery({ users }: UsersGalleryProps) {
           <Card 
             key={user.user_uuid}
             className="cursor-pointer hover:shadow-lg transition-shadow"
-            onClick={() => handleUserClick(user.user_uuid)}
+            onClick={() => handleUserClick(user)}
           >
             <CardContent className="p-0">
               <div className="aspect-video w-full overflow-hidden rounded-t-lg bg-gray-100 flex items-center justify-center relative">

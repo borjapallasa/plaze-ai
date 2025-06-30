@@ -16,25 +16,30 @@ interface UserData {
 
 interface UsersTableProps {
   users: UserData[];
-  sortField: keyof UserData;
-  sortDirection: "asc" | "desc";
   onSort: (field: keyof UserData) => void;
+  sortBy: keyof UserData;
+  sortOrder: "asc" | "desc";
+  onUserClick: (user: UserData) => void;
+  onLoadMore: () => void;
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
 }
 
-export function UsersTable({ users, sortField, sortDirection, onSort }: UsersTableProps) {
-  const [selectedUserUuid, setSelectedUserUuid] = useState<string | null>(null);
+export function UsersTable({ users, sortBy, sortOrder, onSort, onUserClick }: UsersTableProps) {
+  const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const getSortIcon = (field: keyof UserData) => {
-    if (sortField !== field) return null;
-    return sortDirection === "asc" ? 
+    if (sortBy !== field) return null;
+    return sortOrder === "asc" ? 
       <ArrowUp className="h-4 w-4" /> : 
       <ArrowDown className="h-4 w-4" />;
   };
 
-  const handleUserClick = (userUuid: string) => {
-    setSelectedUserUuid(userUuid);
+  const handleUserClick = (user: UserData) => {
+    setSelectedUser(user);
     setDialogOpen(true);
+    onUserClick(user);
   };
 
   return (
@@ -67,7 +72,7 @@ export function UsersTable({ users, sortField, sortDirection, onSort }: UsersTab
                   <div
                     key={user.user_uuid}
                     className="grid grid-cols-[2fr,2fr,1.5fr,1.5fr] px-6 py-4 hover:bg-[#F8F9FC] transition-colors duration-200 cursor-pointer"
-                    onClick={() => handleUserClick(user.user_uuid)}
+                    onClick={() => handleUserClick(user)}
                   >
                     <div className="text-sm text-[#1A1F2C] truncate pr-4">
                       <div className="font-medium">{`${user.first_name} ${user.last_name}` || 'Unnamed User'}</div>
@@ -94,7 +99,7 @@ export function UsersTable({ users, sortField, sortDirection, onSort }: UsersTab
       <UserDetailsDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
-        userUuid={selectedUserUuid}
+        user={selectedUser}
       />
     </>
   );

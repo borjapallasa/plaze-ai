@@ -34,7 +34,10 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
   const { data: transactions = [], isLoading } = useQuery({
     queryKey: ['user-affiliate-transactions', userUuid],
     queryFn: async (): Promise<Transaction[]> => {
-      if (!userUuid) return [];
+      if (!userUuid) {
+        console.log('No userUuid provided');
+        return [];
+      }
 
       console.log('Fetching transactions for user UUID:', userUuid);
       
@@ -85,41 +88,41 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-7xl max-h-[90vh] flex flex-col p-0">
+      <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col p-0">
         {/* Header */}
-        <div className="p-8 border-b bg-gradient-to-r from-blue-50 to-indigo-50">
-          <div className="space-y-3">
-            <h2 className="text-3xl font-bold text-gray-900">{affiliate.name}</h2>
+        <div className="p-6 border-b bg-gradient-to-r from-blue-50 to-indigo-50">
+          <div className="space-y-2">
+            <h2 className="text-2xl font-bold text-gray-900">{affiliate.name}</h2>
             <p className="text-lg text-gray-600">{affiliate.status}</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+            <div className="bg-white p-4 rounded-lg shadow-sm border">
               <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">Active Templates</h3>
-              <p className="text-2xl font-bold text-gray-900 mt-2">{affiliate.activeTemplates}</p>
+              <p className="text-xl font-bold text-gray-900 mt-1">{affiliate.activeTemplates}</p>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
+            <div className="bg-white p-4 rounded-lg shadow-sm border">
               <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">Total Sales</h3>
-              <p className="text-2xl font-bold text-green-600 mt-2">{affiliate.totalSales}</p>
+              <p className="text-xl font-bold text-green-600 mt-1">{affiliate.totalSales}</p>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
+            <div className="bg-white p-4 rounded-lg shadow-sm border">
               <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">Affiliate Fees Earned</h3>
-              <p className="text-2xl font-bold text-blue-600 mt-2">{affiliate.affiliateFees}</p>
+              <p className="text-xl font-bold text-blue-600 mt-1">{affiliate.affiliateFees}</p>
             </div>
           </div>
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-hidden p-8">
-          <div className="space-y-6 h-full flex flex-col">
+        <div className="flex-1 overflow-hidden p-6">
+          <div className="space-y-4 h-full flex flex-col">
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
                 placeholder="Search transactions..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-12 py-3 text-base border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                className="pl-10 py-2 text-base border-gray-200 focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
 
@@ -127,9 +130,9 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
             <div className="flex-1 overflow-hidden">
               <div className="bg-white border border-gray-200 rounded-lg shadow-sm h-full flex flex-col">
                 {/* Table Header */}
-                <div className="bg-gray-50 border-b border-gray-200 px-6 py-4">
-                  <div className="grid grid-cols-4 gap-6">
-                    <div className="font-semibold text-gray-700">Product</div>
+                <div className="bg-gray-50 border-b border-gray-200 px-4 py-3">
+                  <div className="grid grid-cols-4 gap-4">
+                    <div className="font-semibold text-gray-700">Template</div>
                     <div className="font-semibold text-gray-700 text-right">Transaction Amount</div>
                     <div className="font-semibold text-gray-700 text-right">Affiliate Fee</div>
                     <div className="font-semibold text-gray-700 text-right">Date</div>
@@ -155,7 +158,7 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
                   ) : (
                     <div className="divide-y divide-gray-100">
                       {filteredTransactions.map((transaction) => (
-                        <div key={transaction.transaction_uuid} className="grid grid-cols-4 gap-6 px-6 py-4 hover:bg-gray-50 transition-colors">
+                        <div key={transaction.transaction_uuid} className="grid grid-cols-4 gap-4 px-4 py-3 hover:bg-gray-50 transition-colors">
                           <div className="flex flex-col">
                             <span className="font-medium text-gray-900 truncate">
                               {transaction.product_name}
