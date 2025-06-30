@@ -51,6 +51,9 @@ export type Database = {
           id: number
           name: string | null
           revenue: number | null
+          status:
+            | Database["public"]["Enums"]["affiliate_partnership_status"]
+            | null
           type: Database["public"]["Enums"]["affiliate_partnership_type"] | null
         }
         Insert: {
@@ -65,6 +68,9 @@ export type Database = {
           id?: number
           name?: string | null
           revenue?: number | null
+          status?:
+            | Database["public"]["Enums"]["affiliate_partnership_status"]
+            | null
           type?:
             | Database["public"]["Enums"]["affiliate_partnership_type"]
             | null
@@ -81,6 +87,9 @@ export type Database = {
           id?: number
           name?: string | null
           revenue?: number | null
+          status?:
+            | Database["public"]["Enums"]["affiliate_partnership_status"]
+            | null
           type?:
             | Database["public"]["Enums"]["affiliate_partnership_type"]
             | null

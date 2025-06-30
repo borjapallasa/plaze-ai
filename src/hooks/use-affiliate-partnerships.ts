@@ -7,7 +7,8 @@ interface AffiliatePartnership {
   affiliate_partnership_uuid: string;
   name: string;
   type: string;
-  expert_uuid: string;
+  expert_split: number;
+  status: string;
   created_at: string;
   revenue: number;
   affiliate_link: string;
@@ -55,7 +56,8 @@ export function useAffiliatePartnerships() {
         affiliate_partnership_uuid: partnership.affiliate_partnership_uuid,
         name: partnership.name || 'Unnamed Partnership',
         type: partnership.type || 'product',
-        expert_uuid: partnership.expert_uuid || '',
+        expert_split: partnership.expert_split || 0,
+        status: partnership.status || 'unknown',
         created_at: new Date(partnership.created_at).toLocaleDateString(),
         revenue: partnership.revenue || 0,
         affiliate_link: partnership.affiliate_link || ''

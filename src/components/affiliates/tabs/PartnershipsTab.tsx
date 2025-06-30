@@ -31,6 +31,19 @@ export function PartnershipsTab() {
     }
   };
 
+  const getStatusBadge = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case "active":
+        return <Badge variant="default">Active</Badge>;
+      case "pending":
+        return <Badge variant="warning">Pending</Badge>;
+      case "inactive":
+        return <Badge variant="secondary">Inactive</Badge>;
+      default:
+        return <Badge variant="secondary">{status || 'Unknown'}</Badge>;
+    }
+  };
+
   const copyAffiliateLink = async (link: string) => {
     if (!link) {
       toast({
@@ -84,7 +97,8 @@ export function PartnershipsTab() {
           <TableRow>
             <TableHead>Name</TableHead>
             <TableHead>Type</TableHead>
-            <TableHead>Expert UUID</TableHead>
+            <TableHead>Expert Split</TableHead>
+            <TableHead>Status</TableHead>
             <TableHead>Created</TableHead>
             <TableHead className="text-right">Revenue</TableHead>
             <TableHead>Affiliate Link</TableHead>
@@ -93,7 +107,7 @@ export function PartnershipsTab() {
         <TableBody>
           {partnerships.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+              <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
                 No partnerships found
               </TableCell>
             </TableRow>
@@ -105,25 +119,30 @@ export function PartnershipsTab() {
                 </TableCell>
                 <TableCell>{getTypeBadge(partnership.type)}</TableCell>
                 <TableCell>
-                  <code className="text-xs font-mono bg-muted px-2 py-1 rounded">
-                    {partnership.expert_uuid ? partnership.expert_uuid.slice(0, 8) + '...' : 'N/A'}
-                  </code>
+                  <div className="font-mono text-sm">
+                    {partnership.expert_split ? `${partnership.expert_split}%` : 'N/A'}
+                  </div>
                 </TableCell>
+                <TableCell>{getStatusBadge(partnership.status)}</TableCell>
                 <TableCell>{partnership.created_at}</TableCell>
                 <TableCell className="text-right font-mono">
                   ${partnership.revenue.toLocaleString()}
                 </TableCell>
                 <TableCell>
                   {partnership.affiliate_link ? (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => copyAffiliateLink(partnership.affiliate_link)}
-                      className="flex items-center gap-2"
-                    >
-                      <Copy className="h-4 w-4" />
-                      Copy Link
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <code className="text-xs bg-muted px-2 py-1 rounded max-w-32 truncate">
+                        {partnership.affiliate_link}
+                      </code>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => copyAffiliateLink(partnership.affiliate_link)}
+                        className="flex items-center gap-1 px-2"
+                      >
+                        <Copy className="h-3 w-3" />
+                      </Button>
+                    </div>
                   ) : (
                     <span className="text-muted-foreground text-sm">No link</span>
                   )}
