@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -9,8 +9,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { AffiliateLayoutSwitcher } from "../AffiliateLayoutSwitcher";
-import { PartnershipsGrid } from "../grids/PartnershipsGrid";
 
 interface Partnership {
   id: string;
@@ -72,8 +70,6 @@ const mockPartnerships: Partnership[] = [
 ];
 
 export function PartnershipsTab() {
-  const [layout, setLayout] = useState<"table" | "grid">("table");
-
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "active":
@@ -101,52 +97,42 @@ export function PartnershipsTab() {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-end">
-        <AffiliateLayoutSwitcher layout={layout} onLayoutChange={setLayout} />
-      </div>
-
-      {layout === "table" ? (
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Partner</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead className="text-right">Commission Rate</TableHead>
-                <TableHead>Start Date</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Revenue</TableHead>
-                <TableHead className="text-right">Products</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {mockPartnerships.map((partnership) => (
-                <TableRow key={partnership.id}>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">{partnership.partnerName}</div>
-                      <div className="text-sm text-muted-foreground">{partnership.partnerEmail}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>{getTypeBadge(partnership.partnershipType)}</TableCell>
-                  <TableCell className="text-right">
-                    {(partnership.commissionRate * 100).toFixed(0)}%
-                  </TableCell>
-                  <TableCell>{new Date(partnership.startDate).toLocaleDateString()}</TableCell>
-                  <TableCell>{getStatusBadge(partnership.status)}</TableCell>
-                  <TableCell className="text-right font-mono">
-                    ${partnership.revenueGenerated.toLocaleString()}
-                  </TableCell>
-                  <TableCell className="text-right">{partnership.productsCount}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      ) : (
-        <PartnershipsGrid partnerships={mockPartnerships} />
-      )}
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Partner</TableHead>
+            <TableHead>Type</TableHead>
+            <TableHead className="text-right">Commission Rate</TableHead>
+            <TableHead>Start Date</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead className="text-right">Revenue</TableHead>
+            <TableHead className="text-right">Products</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {mockPartnerships.map((partnership) => (
+            <TableRow key={partnership.id}>
+              <TableCell>
+                <div>
+                  <div className="font-medium">{partnership.partnerName}</div>
+                  <div className="text-sm text-muted-foreground">{partnership.partnerEmail}</div>
+                </div>
+              </TableCell>
+              <TableCell>{getTypeBadge(partnership.partnershipType)}</TableCell>
+              <TableCell className="text-right">
+                {(partnership.commissionRate * 100).toFixed(0)}%
+              </TableCell>
+              <TableCell>{new Date(partnership.startDate).toLocaleDateString()}</TableCell>
+              <TableCell>{getStatusBadge(partnership.status)}</TableCell>
+              <TableCell className="text-right font-mono">
+                ${partnership.revenueGenerated.toLocaleString()}
+              </TableCell>
+              <TableCell className="text-right">{partnership.productsCount}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 }
