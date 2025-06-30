@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -9,6 +9,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { AffiliateLayoutSwitcher } from "../AffiliateLayoutSwitcher";
+import { PayoutsGrid } from "../grids/PayoutsGrid";
 
 interface Payout {
   id: string;
@@ -60,6 +62,8 @@ const mockPayouts: Payout[] = [
 ];
 
 export function PayoutsTab() {
+  const [layout, setLayout] = useState<"table" | "grid">("table");
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "completed":
@@ -98,6 +102,10 @@ export function PayoutsTab() {
 
   return (
     <div className="space-y-4">
+      <div className="flex justify-end">
+        <AffiliateLayoutSwitcher layout={layout} onLayoutChange={setLayout} />
+      </div>
+
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-card rounded-lg border p-4">
@@ -114,36 +122,40 @@ export function PayoutsTab() {
         </div>
       </div>
 
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Payment Method</TableHead>
-              <TableHead>Reference ID</TableHead>
-              <TableHead>Description</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {mockPayouts.map((payout) => (
-              <TableRow key={payout.id}>
-                <TableCell>{new Date(payout.date).toLocaleDateString()}</TableCell>
-                <TableCell className="text-right font-mono">
-                  ${payout.amount.toFixed(2)}
-                </TableCell>
-                <TableCell>{getStatusBadge(payout.status)}</TableCell>
-                <TableCell>{getPaymentMethodDisplay(payout.paymentMethod)}</TableCell>
-                <TableCell>
-                  <span className="font-mono text-sm">{payout.referenceId}</span>
-                </TableCell>
-                <TableCell>{payout.description}</TableCell>
+      {layout === "table" ? (
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Date</TableHead>
+                <TableHead className="text-right">Amount</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Payment Method</TableHead>
+                <TableHead>Reference ID</TableHead>
+                <TableHead>Description</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+            </TableHeader>
+            <TableBody>
+              {mockPayouts.map((payout) => (
+                <TableRow key={payout.id}>
+                  <TableCell>{new Date(payout.date).toLocaleDateString()}</TableCell>
+                  <TableCell className="text-right font-mono">
+                    ${payout.amount.toFixed(2)}
+                  </TableCell>
+                  <TableCell>{getStatusBadge(payout.status)}</TableCell>
+                  <TableCell>{getPaymentMethodDisplay(payout.paymentMethod)}</TableCell>
+                  <TableCell>
+                    <span className="font-mono text-sm">{payout.referenceId}</span>
+                  </TableCell>
+                  <TableCell>{payout.description}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      ) : (
+        <PayoutsGrid payouts={mockPayouts} />
+      )}
     </div>
   );
 }

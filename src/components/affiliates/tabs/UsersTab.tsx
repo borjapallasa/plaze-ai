@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Mail } from "lucide-react";
 import {
@@ -10,6 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { AffiliateLayoutSwitcher } from "../AffiliateLayoutSwitcher";
+import { UsersGrid } from "../grids/UsersGrid";
 
 interface AffiliateUser {
   id: string;
@@ -66,6 +68,8 @@ const mockUsers: AffiliateUser[] = [
 ];
 
 export function UsersTab() {
+  const [layout, setLayout] = useState<"table" | "grid">("table");
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "active":
@@ -80,45 +84,55 @@ export function UsersTab() {
   };
 
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>User</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Join Date</TableHead>
-            <TableHead className="text-right">Total Sales</TableHead>
-            <TableHead className="text-right">Commission Earned</TableHead>
-            <TableHead className="text-right">Referrals</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {mockUsers.map((user) => (
-            <TableRow key={user.id}>
-              <TableCell>
-                <div className="flex items-center gap-3">
-                  <div>
-                    <div className="font-medium">{user.name}</div>
-                    <div className="text-sm text-muted-foreground flex items-center gap-1">
-                      <Mail className="h-3 w-3" />
-                      {user.email}
+    <div className="space-y-4">
+      <div className="flex justify-end">
+        <AffiliateLayoutSwitcher layout={layout} onLayoutChange={setLayout} />
+      </div>
+
+      {layout === "table" ? (
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>User</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Join Date</TableHead>
+                <TableHead className="text-right">Total Sales</TableHead>
+                <TableHead className="text-right">Commission Earned</TableHead>
+                <TableHead className="text-right">Referrals</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {mockUsers.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell>
+                    <div className="flex items-center gap-3">
+                      <div>
+                        <div className="font-medium">{user.name}</div>
+                        <div className="text-sm text-muted-foreground flex items-center gap-1">
+                          <Mail className="h-3 w-3" />
+                          {user.email}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </TableCell>
-              <TableCell>{getStatusBadge(user.status)}</TableCell>
-              <TableCell>{new Date(user.joinDate).toLocaleDateString()}</TableCell>
-              <TableCell className="text-right font-mono">
-                ${user.totalSales.toLocaleString()}
-              </TableCell>
-              <TableCell className="text-right font-mono">
-                ${user.commissionEarned.toLocaleString()}
-              </TableCell>
-              <TableCell className="text-right">{user.referrals}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+                  </TableCell>
+                  <TableCell>{getStatusBadge(user.status)}</TableCell>
+                  <TableCell>{new Date(user.joinDate).toLocaleDateString()}</TableCell>
+                  <TableCell className="text-right font-mono">
+                    ${user.totalSales.toLocaleString()}
+                  </TableCell>
+                  <TableCell className="text-right font-mono">
+                    ${user.commissionEarned.toLocaleString()}
+                  </TableCell>
+                  <TableCell className="text-right">{user.referrals}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      ) : (
+        <UsersGrid users={mockUsers} />
+      )}
     </div>
   );
 }

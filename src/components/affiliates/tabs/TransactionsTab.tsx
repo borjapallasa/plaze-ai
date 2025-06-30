@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { ExternalLink } from "lucide-react";
 import {
@@ -10,6 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { AffiliateLayoutSwitcher } from "../AffiliateLayoutSwitcher";
+import { TransactionsGrid } from "../grids/TransactionsGrid";
 
 interface AffiliateTransaction {
   id: string;
@@ -76,6 +78,8 @@ const mockTransactions: AffiliateTransaction[] = [
 ];
 
 export function TransactionsTab() {
+  const [layout, setLayout] = useState<"table" | "grid">("table");
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "completed":
@@ -90,51 +94,61 @@ export function TransactionsTab() {
   };
 
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Date</TableHead>
-            <TableHead>User</TableHead>
-            <TableHead>Product</TableHead>
-            <TableHead className="text-right">Amount</TableHead>
-            <TableHead className="text-right">Rate</TableHead>
-            <TableHead className="text-right">Commission</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Reference</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {mockTransactions.map((transaction) => (
-            <TableRow key={transaction.id}>
-              <TableCell>{new Date(transaction.date).toLocaleDateString()}</TableCell>
-              <TableCell>
-                <div>
-                  <div className="font-medium">{transaction.userName}</div>
-                  <div className="text-sm text-muted-foreground">{transaction.userEmail}</div>
-                </div>
-              </TableCell>
-              <TableCell>{transaction.productName}</TableCell>
-              <TableCell className="text-right font-mono">
-                ${transaction.amount.toFixed(2)}
-              </TableCell>
-              <TableCell className="text-right">
-                {(transaction.commissionRate * 100).toFixed(0)}%
-              </TableCell>
-              <TableCell className="text-right font-mono">
-                ${transaction.commissionEarned.toFixed(2)}
-              </TableCell>
-              <TableCell>{getStatusBadge(transaction.status)}</TableCell>
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  <span className="font-mono text-sm">{transaction.referenceId}</span>
-                  <ExternalLink className="h-3 w-3 text-muted-foreground" />
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+    <div className="space-y-4">
+      <div className="flex justify-end">
+        <AffiliateLayoutSwitcher layout={layout} onLayoutChange={setLayout} />
+      </div>
+
+      {layout === "table" ? (
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Date</TableHead>
+                <TableHead>User</TableHead>
+                <TableHead>Product</TableHead>
+                <TableHead className="text-right">Amount</TableHead>
+                <TableHead className="text-right">Rate</TableHead>
+                <TableHead className="text-right">Commission</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Reference</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {mockTransactions.map((transaction) => (
+                <TableRow key={transaction.id}>
+                  <TableCell>{new Date(transaction.date).toLocaleDateString()}</TableCell>
+                  <TableCell>
+                    <div>
+                      <div className="font-medium">{transaction.userName}</div>
+                      <div className="text-sm text-muted-foreground">{transaction.userEmail}</div>
+                    </div>
+                  </TableCell>
+                  <TableCell>{transaction.productName}</TableCell>
+                  <TableCell className="text-right font-mono">
+                    ${transaction.amount.toFixed(2)}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {(transaction.commissionRate * 100).toFixed(0)}%
+                  </TableCell>
+                  <TableCell className="text-right font-mono">
+                    ${transaction.commissionEarned.toFixed(2)}
+                  </TableCell>
+                  <TableCell>{getStatusBadge(transaction.status)}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-sm">{transaction.referenceId}</span>
+                      <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      ) : (
+        <TransactionsGrid transactions={mockTransactions} />
+      )}
     </div>
   );
 }
