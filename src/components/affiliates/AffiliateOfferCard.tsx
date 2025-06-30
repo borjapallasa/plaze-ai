@@ -40,9 +40,12 @@ export function AffiliateOfferCard({ offer }: AffiliateOfferCardProps) {
 
   return (
     <Card className="h-full flex flex-col hover:shadow-lg transition-shadow duration-200">
-      <div className="aspect-video bg-gradient-to-br from-blue-50 to-purple-50 rounded-t-lg flex items-center justify-center">
+      <div className="aspect-video bg-gradient-to-br from-blue-50 to-purple-50 rounded-t-lg flex items-center justify-center relative">
         <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center shadow-sm">
           <DollarSign className="w-8 h-8 text-blue-600" />
+        </div>
+        <div className="absolute top-2 right-2">
+          {getStatusBadge(offer.status)}
         </div>
       </div>
       
@@ -52,7 +55,6 @@ export function AffiliateOfferCard({ offer }: AffiliateOfferCardProps) {
             <h3 className="font-semibold text-lg leading-tight">{offer.title}</h3>
             <p className="text-sm text-muted-foreground">{offer.partnerName}</p>
           </div>
-          {getStatusBadge(offer.status)}
         </div>
         
         <p className="text-sm text-muted-foreground line-clamp-2">{offer.description}</p>
