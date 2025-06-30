@@ -1,4 +1,3 @@
-
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Search, Loader2 } from "lucide-react";
@@ -48,11 +47,11 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
         .from('transactions')
         .select(`
           *,
-          products_transactions(
-            products(name)
+          products_transactions!inner(
+            products!inner(name)
           ),
-          community_subscriptions_transactions(
-            communities(name)
+          community_subscriptions_transactions!inner(
+            communities!inner(name)
           )
         `)
         .eq('user_uuid', userUuid)
