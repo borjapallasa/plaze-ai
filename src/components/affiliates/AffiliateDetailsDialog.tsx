@@ -129,17 +129,17 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/50 dark:to-blue-900/50 p-4 sm:p-6 rounded-xl border">
-              <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Transactions</h3>
-              <p className="text-2xl sm:text-3xl font-bold text-blue-700 dark:text-blue-300">{transactions.length}</p>
+            <div className="bg-card border rounded-lg p-4 sm:p-6">
+              <div className="text-2xl sm:text-3xl font-bold text-foreground">{transactions.length}</div>
+              <div className="text-sm text-muted-foreground">Transactions</div>
             </div>
-            <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950/50 dark:to-emerald-900/50 p-4 sm:p-6 rounded-xl border">
-              <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Spent</h3>
-              <p className="text-2xl sm:text-3xl font-bold text-emerald-700 dark:text-emerald-300">${totalSpent.toFixed(2)}</p>
+            <div className="bg-card border rounded-lg p-4 sm:p-6">
+              <div className="text-2xl sm:text-3xl font-bold text-foreground">${totalSpent.toFixed(2)}</div>
+              <div className="text-sm text-muted-foreground">Spent</div>
             </div>
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/50 p-4 sm:p-6 rounded-xl border">
-              <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Affiliate Fees</h3>
-              <p className="text-2xl sm:text-3xl font-bold text-purple-700 dark:text-purple-300">${totalAffiliateFees.toFixed(2)}</p>
+            <div className="bg-card border rounded-lg p-4 sm:p-6">
+              <div className="text-2xl sm:text-3xl font-bold text-foreground">${totalAffiliateFees.toFixed(2)}</div>
+              <div className="text-sm text-muted-foreground">Affiliate Fees</div>
             </div>
           </div>
         </DialogHeader>
