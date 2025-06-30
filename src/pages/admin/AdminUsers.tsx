@@ -24,6 +24,7 @@ interface UserData {
   total_spent: number;
   total_sales_amount: number;
   user_thumbnail: string;
+  commissions_generated: number;
 }
 
 export default function AdminUsers() {
@@ -42,8 +43,16 @@ export default function AdminUsers() {
     refetch
   } = useUsers();
 
-  // Extract users array from the data structure
-  const users = Array.isArray(usersData) ? usersData : usersData?.users || [];
+  // Extract users array from the data structure and ensure proper typing
+  const users: UserData[] = Array.isArray(usersData) ? usersData.map(user => ({
+    ...user,
+    total_sales_amount: user.total_sales_amount || 0,
+    commissions_generated: user.commissions_generated || 0
+  })) : (usersData?.users || []).map(user => ({
+    ...user,
+    total_sales_amount: user.total_sales_amount || 0,
+    commissions_generated: user.commissions_generated || 0
+  }));
 
   const handleSort = (field: string) => {
     const typedField = field as keyof UserData;
