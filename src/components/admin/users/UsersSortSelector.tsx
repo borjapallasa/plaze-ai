@@ -1,35 +1,62 @@
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { ArrowUpDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-interface UsersSortSelectorProps {
-  sortValue: string;
-  onSortChange: (value: string) => void;
+interface UserData {
+  user_uuid: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  created_at: string;
+  total_spent: number;
+  is_admin: boolean;
+  is_expert: boolean;
+  is_affiliate: boolean;
 }
 
-export function UsersSortSelector({ sortValue, onSortChange }: UsersSortSelectorProps) {
+interface UsersSortSelectorProps {
+  sortBy: keyof UserData;
+  sortOrder: "asc" | "desc";
+  onSortChange: (field: keyof UserData) => void;
+}
+
+export function UsersSortSelector({ sortBy, sortOrder, onSortChange }: UsersSortSelectorProps) {
+  const sortOptions = [
+    { value: 'created_at', label: 'Join Date' },
+    { value: 'first_name', label: 'First Name' },
+    { value: 'last_name', label: 'Last Name' },
+    { value: 'email', label: 'Email' },
+    { value: 'total_spent', label: 'Total Spent' },
+  ];
+
   return (
-    <Select value={sortValue} onValueChange={onSortChange}>
-      <SelectTrigger className="w-full lg:w-[180px] border-[#E5E7EB]">
-        <ArrowUpDown className="h-4 w-4 text-[#8E9196] mr-2" />
-        <SelectValue placeholder="Sort by" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="created_at_desc">Newest First</SelectItem>
-        <SelectItem value="created_at_asc">Oldest First</SelectItem>
-        <SelectItem value="first_name_asc">First Name A-Z</SelectItem>
-        <SelectItem value="first_name_desc">First Name Z-A</SelectItem>
-        <SelectItem value="email_asc">Email A-Z</SelectItem>
-        <SelectItem value="email_desc">Email Z-A</SelectItem>
-        <SelectItem value="total_spent_desc">Highest Spent</SelectItem>
-        <SelectItem value="total_spent_asc">Lowest Spent</SelectItem>
-      </SelectContent>
-    </Select>
+    <div className="flex items-center gap-2">
+      <Select value={sortBy} onValueChange={(value) => onSortChange(value as keyof UserData)}>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {sortOptions.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => onSortChange(sortBy)}
+        className="px-3"
+      >
+        {sortOrder === "asc" ? (
+          <ChevronUp className="h-4 w-4" />
+        ) : (
+          <ChevronDown className="h-4 w-4" />
+        )}
+      </Button>
+    </div>
   );
 }

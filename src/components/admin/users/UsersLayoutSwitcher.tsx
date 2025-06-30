@@ -1,40 +1,32 @@
 
+import { LayoutGrid, List } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { LayoutGrid, Grid3X3, LayoutList } from "lucide-react";
 
-type LayoutType = 'gallery' | 'grid' | 'list';
+export type LayoutType = "table" | "gallery";
 
 interface UsersLayoutSwitcherProps {
   layout: LayoutType;
-  setLayout: (layout: LayoutType) => void;
+  onLayoutChange: (layout: LayoutType) => void;
 }
 
-export function UsersLayoutSwitcher({ layout, setLayout }: UsersLayoutSwitcherProps) {
+export function UsersLayoutSwitcher({ layout, onLayoutChange }: UsersLayoutSwitcherProps) {
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-1 border rounded-md p-1">
       <Button
-        variant={layout === 'gallery' ? 'default' : 'outline'}
+        variant={layout === "table" ? "default" : "ghost"}
         size="sm"
-        onClick={() => setLayout('gallery')}
-        className="p-2"
+        onClick={() => onLayoutChange("table")}
+        className="h-8 px-3"
+      >
+        <List className="h-4 w-4" />
+      </Button>
+      <Button
+        variant={layout === "gallery" ? "default" : "ghost"}
+        size="sm"
+        onClick={() => onLayoutChange("gallery")}
+        className="h-8 px-3"
       >
         <LayoutGrid className="h-4 w-4" />
-      </Button>
-      <Button
-        variant={layout === 'grid' ? 'default' : 'outline'}
-        size="sm"
-        onClick={() => setLayout('grid')}
-        className="p-2"
-      >
-        <Grid3X3 className="h-4 w-4" />
-      </Button>
-      <Button
-        variant={layout === 'list' ? 'default' : 'outline'}
-        size="sm"
-        onClick={() => setLayout('list')}
-        className="p-2 hidden sm:flex"
-      >
-        <LayoutList className="h-4 w-4" />
       </Button>
     </div>
   );
