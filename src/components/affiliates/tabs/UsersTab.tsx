@@ -121,21 +121,13 @@ export function UsersTab() {
   };
 
   const handleUserClick = (user: AffiliateUser) => {
-    console.log('=== USER CLICK EVENT ===');
-    console.log('User clicked:', user);
-    console.log('Setting selectedUser:', user);
-    console.log('Opening dialog...');
     setSelectedUser(user);
     setIsDialogOpen(true);
-    console.log('Dialog state should now be:', true);
   };
 
   const handleCloseDialog = () => {
-    console.log('=== CLOSE DIALOG EVENT ===');
-    console.log('Closing dialog');
     setIsDialogOpen(false);
     setSelectedUser(null);
-    console.log('Dialog closed and selectedUser cleared');
   };
 
   if (isLoading) {
@@ -162,11 +154,6 @@ export function UsersTab() {
     );
   }
 
-  console.log('=== RENDER STATE ===');
-  console.log('Selected user:', selectedUser);
-  console.log('Dialog open:', isDialogOpen);
-  console.log('Users count:', users.length);
-
   return (
     <>
       <div className="rounded-md border">
@@ -186,11 +173,7 @@ export function UsersTab() {
               <TableRow 
                 key={user.user_uuid}
                 className="cursor-pointer hover:bg-muted/50 transition-colors"
-                onClick={() => {
-                  console.log('=== TABLE ROW CLICKED ===');
-                  console.log('Row clicked for user:', user.user_uuid);
-                  handleUserClick(user);
-                }}
+                onClick={() => handleUserClick(user)}
               >
                 <TableCell>
                   <div className="flex items-center gap-3">

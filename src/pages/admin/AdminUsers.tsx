@@ -36,20 +36,18 @@ export default function AdminUsers() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const { 
-    data: usersData, 
+    data: users = [], 
     isLoading, 
     error, 
     refetch
   } = useUsers();
 
-  // Extract users array from the response
-  const users = Array.isArray(usersData) ? usersData : (usersData?.users || []);
-
-  const handleSort = (field: keyof UserData) => {
-    if (sortBy === field) {
+  const handleSort = (field: string) => {
+    const typedField = field as keyof UserData;
+    if (sortBy === typedField) {
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
-      setSortBy(field);
+      setSortBy(typedField);
       setSortOrder("asc");
     }
   };
@@ -84,7 +82,7 @@ export default function AdminUsers() {
         <UsersSortSelector 
           sortBy={sortBy}
           sortOrder={sortOrder}
-          onSortChange={handleSort}
+          onSortChange={(field: keyof UserData) => handleSort(field)}
         />
         <UsersLayoutSwitcher layout={layout} onLayoutChange={setLayout} />
       </div>
@@ -111,9 +109,9 @@ export default function AdminUsers() {
       )}
 
       <UserDetailsDialog
+        user={selectedUser}
         open={showUserDialog}
         onOpenChange={setShowUserDialog}
-        userUuid={selectedUser?.user_uuid || null}
       />
     </div>
   );
