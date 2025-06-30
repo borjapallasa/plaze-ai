@@ -15,6 +15,8 @@ interface AffiliateTransaction {
   user_email: string;
   partnership_name: string;
   commission_percentage: number;
+  base_commission_percentage: number;
+  additional_commission_percentage: number;
   is_boosted: boolean;
 }
 
@@ -80,16 +82,20 @@ export function useAffiliateTransactions() {
         
         // Calculate affiliate fees and commission percentage
         let finalAffiliateFees = originalFees;
-        let commissionPercentage = 5; // Base 5%
+        let baseCommissionPercentage = 5; // Base 5%
+        let additionalCommissionPercentage = 0;
+        let totalCommissionPercentage = baseCommissionPercentage;
         
         if (isBoosted && boostedAmount > 0) {
           // For boosted transactions, the final amount is original + boosted
           finalAffiliateFees = originalFees + boostedAmount;
-          // Calculate actual commission percentage from final amount
-          commissionPercentage = baseAmount > 0 ? Math.round((finalAffiliateFees / baseAmount) * 100) : 0;
+          // Calculate additional commission percentage from boosted amount
+          additionalCommissionPercentage = baseAmount > 0 ? Math.round((boostedAmount / baseAmount) * 100) : 0;
+          totalCommissionPercentage = baseCommissionPercentage + additionalCommissionPercentage;
         } else if (baseAmount > 0 && originalFees > 0) {
           // Calculate actual commission percentage from existing data
-          commissionPercentage = Math.round((originalFees / baseAmount) * 100);
+          totalCommissionPercentage = Math.round((originalFees / baseAmount) * 100);
+          baseCommissionPercentage = totalCommissionPercentage;
         }
 
         return {
@@ -103,7 +109,9 @@ export function useAffiliateTransactions() {
           user_name: `${transaction.users?.first_name || ''} ${transaction.users?.last_name || ''}`.trim() || 'Unknown User',
           user_email: transaction.users?.email || 'Unknown Email',
           partnership_name: transaction.affiliate_partnerships?.name || 'Unknown Partnership',
-          commission_percentage: commissionPercentage,
+          commission_percentage: totalCommissionPercentage,
+          base_commission_percentage: baseCommissionPercentage,
+          additional_commission_percentage: additionalCommissionPercentage,
           is_boosted: isBoosted
         };
       }) || [];

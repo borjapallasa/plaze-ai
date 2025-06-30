@@ -75,6 +75,38 @@ export function TransactionsTab() {
     );
   };
 
+  const renderCommission = (transaction: any) => {
+    const basePercentage = transaction.base_commission_percentage || 5;
+    const additionalPercentage = transaction.additional_commission_percentage || 0;
+    
+    if (transaction.is_boosted && additionalPercentage > 0) {
+      return (
+        <div className="text-right whitespace-nowrap">
+          <div className="flex items-center justify-end gap-1">
+            <span className="text-xs text-muted-foreground">
+              {basePercentage}% + {additionalPercentage}%
+            </span>
+            <TrendingUp className="h-3 w-3 text-green-600" />
+          </div>
+          <div className="font-medium">
+            {transaction.commission_percentage}%
+          </div>
+        </div>
+      );
+    }
+    
+    return (
+      <div className="text-right whitespace-nowrap">
+        <div className="flex items-center justify-end gap-1">
+          {transaction.commission_percentage}%
+          {transaction.is_boosted && (
+            <TrendingUp className="h-3 w-3 text-green-600" />
+          )}
+        </div>
+      </div>
+    );
+  };
+
   if (isLoading) {
     return (
       <div className="rounded-md border">
@@ -131,13 +163,8 @@ export function TransactionsTab() {
                 <TableCell className="text-right font-mono whitespace-nowrap">
                   ${transaction.amount.toFixed(2)}
                 </TableCell>
-                <TableCell className="text-right whitespace-nowrap">
-                  <div className="flex items-center justify-end gap-1">
-                    {transaction.commission_percentage}%
-                    {transaction.is_boosted && (
-                      <TrendingUp className="h-3 w-3 text-green-600" />
-                    )}
-                  </div>
+                <TableCell>
+                  {renderCommission(transaction)}
                 </TableCell>
                 <TableCell>
                   {renderAffiliateFees(transaction)}
