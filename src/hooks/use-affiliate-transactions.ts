@@ -77,21 +77,23 @@ export function useAffiliateTransactions() {
       return data?.map(transaction => {
         const baseAmount = transaction.amount || 0;
         const isBoosted = transaction.affiliate_boosted || false;
-        const boostedAmount = transaction.affiliate_amount_boosted || 0;
         const originalFees = transaction.afiliate_fees || 0;
+        
+        // Get the additional percentage from affiliate_amount_boosted (stored as 0-1 in DB)
+        const additionalPercentageDecimal = transaction.affiliate_amount_boosted || 0;
+        const additionalPercentage = Math.round(additionalPercentageDecimal * 100); // Convert to percentage
         
         // Calculate affiliate fees and commission percentage
         let finalAffiliateFees = originalFees;
         let baseCommissionPercentage = 5; // Base 5%
-        let additionalCommissionPercentage = 0;
         let totalCommissionPercentage = baseCommissionPercentage;
+        let boostedAmount = 0;
         
-        if (isBoosted && boostedAmount > 0) {
-          // For boosted transactions, the final amount is original + boosted
+        if (isBoosted && additionalPercentage > 0) {
+          // Calculate boosted amount from the additional percentage
+          boostedAmount = baseAmount * additionalPercentageDecimal;
           finalAffiliateFees = originalFees + boostedAmount;
-          // Calculate additional commission percentage from boosted amount
-          additionalCommissionPercentage = baseAmount > 0 ? Math.round((boostedAmount / baseAmount) * 100) : 0;
-          totalCommissionPercentage = baseCommissionPercentage + additionalCommissionPercentage;
+          totalCommissionPercentage = baseCommissionPercentage + additionalPercentage;
         } else if (baseAmount > 0 && originalFees > 0) {
           // Calculate actual commission percentage from existing data
           totalCommissionPercentage = Math.round((originalFees / baseAmount) * 100);
@@ -111,7 +113,7 @@ export function useAffiliateTransactions() {
           partnership_name: transaction.affiliate_partnerships?.name || 'Unknown Partnership',
           commission_percentage: totalCommissionPercentage,
           base_commission_percentage: baseCommissionPercentage,
-          additional_commission_percentage: additionalCommissionPercentage,
+          additional_commission_percentage: additionalPercentage,
           is_boosted: isBoosted
         };
       }) || [];
