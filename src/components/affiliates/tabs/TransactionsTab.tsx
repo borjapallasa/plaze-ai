@@ -110,7 +110,7 @@ export function TransactionsTab() {
                   <div className="flex items-center justify-end gap-1">
                     {transaction.commission_percentage}%
                     {transaction.is_boosted && (
-                      <TrendingUp className="h-3 w-3 text-green-600" title="Boosted Commission (5% + 3%)" />
+                      <TrendingUp className="h-3 w-3 text-green-600" />
                     )}
                   </div>
                 </TableCell>
@@ -122,7 +122,6 @@ export function TransactionsTab() {
                   <button
                     onClick={() => copyTransactionId(transaction.transaction_uuid)}
                     className="flex items-center gap-1 font-mono text-sm hover:bg-muted/50 rounded px-1 py-0.5 transition-colors"
-                    title="Click to copy"
                   >
                     <span className="truncate max-w-[120px]">{transaction.transaction_uuid}</span>
                     <Copy className="h-3 w-3 opacity-50" />

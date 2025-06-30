@@ -75,15 +75,15 @@ export function useAffiliateTransactions() {
         const isBoosted = transaction.affiliate_boosted || false;
         const boostedAmount = transaction.affiliate_amount_boosted || 0;
         
-        // Calculate commission percentage and affiliate fees
-        let commissionPercentage = 5; // Base 5%
+        // Calculate affiliate fees and commission percentage
         let affiliateFees = transaction.afiliate_fees || 0;
+        let commissionPercentage = 5; // Base 5%
         
-        if (isBoosted) {
-          // If boosted, add 3% to make it 8% total
-          commissionPercentage = 8;
-          // Recalculate affiliate fees with boosted rate
-          affiliateFees = (baseAmount * 0.08);
+        if (isBoosted && boostedAmount > 0) {
+          // Use the actual boosted amount from database
+          affiliateFees = boostedAmount;
+          // Calculate actual commission percentage from boosted amount
+          commissionPercentage = baseAmount > 0 ? Math.round((boostedAmount / baseAmount) * 100) : 0;
         } else if (baseAmount > 0 && transaction.afiliate_fees) {
           // Calculate actual commission percentage from existing data
           commissionPercentage = Math.round((transaction.afiliate_fees / baseAmount) * 100);
