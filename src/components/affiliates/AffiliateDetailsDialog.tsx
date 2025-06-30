@@ -13,6 +13,7 @@ interface Transaction {
   created_at: string;
   type: string;
   status: string;
+  partnership_name?: string;
 }
 
 interface AffiliateDetailsDialogProps {
@@ -41,10 +42,13 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
 
       console.log('Fetching transactions for user UUID:', userUuid);
       
-      // Fetch from transactions table using user_uuid - let's try a broader query first
+      // Fetch from transactions table with LEFT JOIN to affiliate_partnerships
       const { data, error } = await supabase
         .from('transactions')
-        .select('*')
+        .select(`
+          *,
+          affiliate_partnerships(name)
+        `)
         .eq('user_uuid', userUuid)
         .order('created_at', { ascending: false });
 
@@ -62,7 +66,8 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
         afiliate_fees: transaction.afiliate_fees || 0,
         created_at: transaction.created_at,
         type: transaction.type || 'unknown',
-        status: transaction.status || 'unknown'
+        status: transaction.status || 'unknown',
+        partnership_name: transaction.affiliate_partnerships?.name || 'N/A'
       }));
     },
     enabled: !!userUuid && isOpen,
@@ -70,7 +75,8 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
 
   const filteredTransactions = transactions.filter(transaction =>
     transaction.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    transaction.status.toLowerCase().includes(searchTerm.toLowerCase())
+    transaction.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (transaction.partnership_name && transaction.partnership_name.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   // Calculate total affiliate fees from all transactions
@@ -81,7 +87,7 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl max-h-[90vh] flex flex-col">
+      <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col">
         <DialogHeader className="pb-4">
           <DialogTitle className="text-xl font-semibold">{affiliate.name}</DialogTitle>
           <p className="text-sm text-muted-foreground">{affiliate.status}</p>
@@ -107,7 +113,7 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
-              placeholder="Search transactions by type or status..."
+              placeholder="Search transactions by type, status, or partnership..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -118,9 +124,10 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
           <div className="flex-1 overflow-hidden border rounded-lg">
             {/* Table Header */}
             <div className="bg-muted/50 border-b px-4 py-3">
-              <div className="grid grid-cols-5 gap-4 text-sm font-medium">
+              <div className="grid grid-cols-6 gap-4 text-sm font-medium">
                 <div>Transaction ID</div>
                 <div>Type</div>
+                <div>Partnership</div>
                 <div className="text-right">Amount</div>
                 <div className="text-right">Affiliate Fee</div>
                 <div className="text-right">Date</div>
@@ -146,12 +153,15 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
               ) : (
                 <div className="divide-y">
                   {filteredTransactions.map((transaction) => (
-                    <div key={transaction.transaction_uuid} className="grid grid-cols-5 gap-4 px-4 py-3 hover:bg-muted/50 transition-colors text-sm">
+                    <div key={transaction.transaction_uuid} className="grid grid-cols-6 gap-4 px-4 py-3 hover:bg-muted/50 transition-colors text-sm">
                       <div className="font-mono text-xs truncate">
                         {transaction.transaction_uuid.slice(0, 8)}...
                       </div>
                       <div className="capitalize">
                         {transaction.type}
+                      </div>
+                      <div className="truncate">
+                        {transaction.partnership_name}
                       </div>
                       <div className="text-right font-medium">
                         ${(transaction.amount || 0).toFixed(2)}
