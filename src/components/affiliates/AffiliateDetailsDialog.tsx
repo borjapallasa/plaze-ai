@@ -28,12 +28,6 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
     transaction.type?.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
 
-  // Calculate affiliate fee using multiplier (0.03 = 3%)
-  const calculateAffiliateFee = (amount: number) => {
-    const multiplier = 0.03;
-    return amount * multiplier;
-  };
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col p-0">
@@ -78,10 +72,9 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
               <div className="overflow-auto border rounded-lg">
                 <div className="min-w-[800px]">
                   <div className="sticky top-0 bg-muted/50 z-10">
-                    <div className="grid grid-cols-5 gap-6 p-4">
+                    <div className="grid grid-cols-4 gap-6 p-4">
                       <div className="font-medium text-base">Template</div>
                       <div className="font-medium text-right text-base">Transaction Amount</div>
-                      <div className="font-medium text-right text-base">Multiplier</div>
                       <div className="font-medium text-right text-base">Affiliate Fee</div>
                       <div className="font-medium text-right text-base">Transaction Date</div>
                     </div>
@@ -90,19 +83,18 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
                     {filteredTransactions.length > 0 ? (
                       filteredTransactions.map((transaction) => {
                         const transactionAmount = transaction.amount || 0;
-                        const calculatedAffiliateFee = calculateAffiliateFee(transactionAmount);
+                        const affiliateFee = transaction.afiliate_fees || 0;
                         
                         return (
-                          <div key={transaction.transaction_uuid} className="grid grid-cols-5 gap-6 p-4 hover:bg-muted/50">
+                          <div key={transaction.transaction_uuid} className="grid grid-cols-4 gap-6 p-4 hover:bg-muted/50">
                             <div className="truncate text-base">
                               {transaction.seller_name || 'Unknown Template'}
                             </div>
                             <div className="text-right text-base">
                               ${transactionAmount.toFixed(2)}
                             </div>
-                            <div className="text-right text-base">0.03</div>
                             <div className="text-right text-base">
-                              ${calculatedAffiliateFee.toFixed(2)}
+                              ${affiliateFee.toFixed(2)}
                             </div>
                             <div className="text-right text-base">
                               {new Date(transaction.created_at).toLocaleDateString('en-US', {

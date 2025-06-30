@@ -93,7 +93,7 @@ export default function SearchPage() {
           query = query.order('created_at', { ascending: false });
           break;
         case 'popular':
-          query = query.order('sales_count', { ascending: false, nullsLast: true });
+          query = query.order('sales_count', { ascending: false, nullsFirst: false });
           break;
         default:
           query = query.order('created_at', { ascending: false });
@@ -129,8 +129,6 @@ export default function SearchPage() {
         <div className="flex flex-col lg:flex-row gap-8">
           <aside className="lg:w-64 flex-shrink-0">
             <SearchFilters 
-              onSearch={handleSearch}
-              onFilterChange={handleFilterChange}
               initialSearchTerm={searchTerm}
               initialFilters={filters}
             />
