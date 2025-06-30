@@ -33,12 +33,21 @@ export function TransactionsTab() {
     }
   };
 
-  const copyTransactionId = (transactionId: string) => {
-    navigator.clipboard.writeText(transactionId);
-    toast({
-      title: "Copied!",
-      description: "Transaction ID copied to clipboard",
-    });
+  const copyTransactionId = async (transactionId: string) => {
+    try {
+      await navigator.clipboard.writeText(transactionId);
+      toast({
+        title: "Transaction ID copied!",
+        description: "Transaction ID has been copied to your clipboard",
+      });
+    } catch (err) {
+      console.error('Failed to copy transaction ID:', err);
+      toast({
+        title: "Copy failed",
+        description: "Failed to copy transaction ID to clipboard",
+        variant: "destructive",
+      });
+    }
   };
 
   if (isLoading) {
