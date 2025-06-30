@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -90,7 +89,7 @@ export function SearchResults() {
           .from('experts')
           .select('*')
           .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,title.ilike.%${searchTerm}%`)
-          .eq('status', 'approved')
+          .eq('status', 'active')
           .limit(20);
         
         results.experts = experts || [];
@@ -101,14 +100,14 @@ export function SearchResults() {
     enabled: !!searchTerm.trim(),
   });
 
-  const handleSearch = () => {
+  function handleSearch() {
     // The query will automatically refetch when searchTerm changes
-  };
+  }
 
-  const getTotalResults = () => {
+  function getTotalResults() {
     if (!searchResults) return 0;
     return searchResults.products.length + searchResults.communities.length + searchResults.experts.length;
-  };
+  }
 
   return (
     <>

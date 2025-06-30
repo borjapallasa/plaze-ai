@@ -78,13 +78,14 @@ export function TransactionsTab() {
   const renderCommission = (transaction: any) => {
     const basePercentage = transaction.base_commission_percentage || 5;
     const additionalPercentage = transaction.additional_commission_percentage || 0;
+    const originalFees = transaction.original_affiliate_fees || 0;
     
     if (transaction.is_boosted && additionalPercentage > 0) {
       return (
         <div className="text-right whitespace-nowrap">
           <div className="flex items-center justify-end gap-1">
             <span className="text-xs text-muted-foreground">
-              {basePercentage}% + {additionalPercentage}%
+              {originalFees > 0 ? `${basePercentage}%` : '0%'} + {additionalPercentage}%
             </span>
             <TrendingUp className="h-3 w-3 text-green-600" />
           </div>

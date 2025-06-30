@@ -177,13 +177,14 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
   const renderCommission = (transaction: Transaction) => {
     const basePercentage = transaction.base_commission_percentage || 5;
     const additionalPercentage = transaction.additional_commission_percentage || 0;
+    const originalFees = transaction.original_affiliate_fees || 0;
     
     if (transaction.affiliate_boosted && additionalPercentage > 0) {
       return (
         <div className="text-right whitespace-nowrap">
           <div className="flex items-center justify-end gap-1">
             <span className="text-xs text-muted-foreground">
-              {basePercentage}% + {additionalPercentage}%
+              {originalFees > 0 ? `${basePercentage}%` : '0%'} + {additionalPercentage}%
             </span>
             <TrendingUp className="h-3 w-3 text-green-600" />
           </div>
@@ -306,7 +307,9 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
                               <div className="text-center">
                                 <div className="text-muted-foreground">Base Fee</div>
                                 <div className="font-medium">${(transaction.original_affiliate_fees || 0).toFixed(2)}</div>
-                                <div className="text-blue-600">{transaction.base_commission_percentage}%</div>
+                                <div className="text-blue-600">
+                                  {(transaction.original_affiliate_fees || 0) > 0 ? `${transaction.base_commission_percentage}%` : '0%'}
+                                </div>
                               </div>
                               <div className="text-center">
                                 <div className="text-muted-foreground">Boost</div>
@@ -347,7 +350,7 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
                                 ${(transaction.original_affiliate_fees || 0).toFixed(2)}
                               </div>
                               <div className="text-xs text-blue-600">
-                                {transaction.base_commission_percentage}%
+                                {(transaction.original_affiliate_fees || 0) > 0 ? `${transaction.base_commission_percentage}%` : '0%'}
                               </div>
                             </div>
                           ) : (
