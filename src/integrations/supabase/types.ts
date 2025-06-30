@@ -1822,6 +1822,7 @@ export type Database = {
       transactions: {
         Row: {
           affiliate_partnership_uuid: string | null
+          affiliate_uuid: string | null
           afiliate_fees: number | null
           amount: number | null
           amount_taxes: number | null
@@ -1841,6 +1842,7 @@ export type Database = {
         }
         Insert: {
           affiliate_partnership_uuid?: string | null
+          affiliate_uuid?: string | null
           afiliate_fees?: number | null
           amount?: number | null
           amount_taxes?: number | null
@@ -1860,6 +1862,7 @@ export type Database = {
         }
         Update: {
           affiliate_partnership_uuid?: string | null
+          affiliate_uuid?: string | null
           afiliate_fees?: number | null
           amount?: number | null
           amount_taxes?: number | null
@@ -1884,6 +1887,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "affiliate_partnerships"
             referencedColumns: ["affiliate_partnership_uuid"]
+          },
+          {
+            foreignKeyName: "transactions_affiliate_uuid_fkey"
+            columns: ["affiliate_uuid"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["affiliate_uuid"]
           },
           {
             foreignKeyName: "transactions_community_subscriptions_transactions_uuid_fkey"
