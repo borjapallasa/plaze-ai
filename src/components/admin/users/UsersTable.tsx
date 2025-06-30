@@ -1,113 +1,101 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Mail } from "lucide-react";
+
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { ArrowDown, ArrowUp } from "lucide-react";
+import { UserDetailsDialog } from "./UserDetailsDialog";
+import { useState } from "react";
 
 interface UserData {
   user_uuid: string;
+  email: string;
   first_name: string;
   last_name: string;
-  email: string;
-  is_admin: boolean;
-  is_affiliate: boolean;
-  is_expert: boolean;
   created_at: string;
-  transaction_count: number;
-  product_count: number;
   total_spent: number;
-  total_sales_amount: number;
-  user_thumbnail: string;
+  commissions_generated: number;
 }
 
 interface UsersTableProps {
   users: UserData[];
-  onSort?: (field: string) => void;
-  sortBy?: keyof UserData;
-  sortOrder?: "asc" | "desc";
-  onUserClick: (user: UserData) => void;
-  onLoadMore: () => void;
-  hasNextPage: boolean;
-  isFetchingNextPage: boolean;
+  sortField: keyof UserData;
+  sortDirection: "asc" | "desc";
+  onSort: (field: keyof UserData) => void;
 }
 
-export function UsersTable({ 
-  users, 
-  onSort, 
-  sortBy, 
-  sortOrder, 
-  onUserClick, 
-  onLoadMore, 
-  hasNextPage, 
-  isFetchingNextPage 
-}: UsersTableProps) {
-  const getStatusBadges = (user: UserData) => {
-    const badges = [];
-    if (user.is_admin) badges.push(<Badge key="admin" variant="secondary">Admin</Badge>);
-    if (user.is_expert) badges.push(<Badge key="expert" variant="default">Expert</Badge>);
-    if (user.is_affiliate) badges.push(<Badge key="affiliate" variant="outline">Affiliate</Badge>);
-    if (badges.length === 0) badges.push(<Badge key="user" variant="secondary">User</Badge>);
-    return badges;
+export function UsersTable({ users, sortField, sortDirection, onSort }: UsersTableProps) {
+  const [selectedUserUuid, setSelectedUserUuid] = useState<string | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const getSortIcon = (field: keyof UserData) => {
+    if (sortField !== field) return null;
+    return sortDirection === "asc" ? 
+      <ArrowUp className="h-4 w-4" /> : 
+      <ArrowDown className="h-4 w-4" />;
   };
 
-  const handleSort = (field: string) => {
-    if (onSort) {
-      onSort(field);
-    }
+  const handleUserClick = (userUuid: string) => {
+    setSelectedUserUuid(userUuid);
+    setDialogOpen(true);
   };
 
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>User</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Join Date</TableHead>
-            <TableHead className="text-right">Total Spent</TableHead>
-            <TableHead className="text-right">Total Sales</TableHead>
-            <TableHead className="text-right">Products</TableHead>
-            <TableHead className="text-right">Transactions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {users.map((user) => (
-            <TableRow key={user.user_uuid} className="cursor-pointer hover:bg-muted/50" onClick={() => onUserClick(user)}>
-              <TableCell>
-                <div className="flex items-center gap-3">
-                  <Avatar>
-                    <AvatarImage src={user.user_thumbnail} alt={user.first_name} />
-                    <AvatarFallback>{user.first_name?.charAt(0)}{user.last_name?.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <div className="font-medium">{user.first_name} {user.last_name}</div>
-                    <div className="text-sm text-muted-foreground flex items-center gap-1">
-                      <Mail className="h-3 w-3" />
-                      {user.email}
+    <>
+      <div className="rounded-lg border border-[#E5E7EB] bg-white">
+        <ScrollArea className="h-[600px] w-full" type="always">
+          <div className="min-w-[800px]">
+            <div className="grid grid-cols-[2fr,2fr,1.5fr,1.5fr] px-6 py-4 bg-[#F8F9FC] border-b border-[#E5E7EB]">
+              <button onClick={() => onSort("first_name")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
+                <span className="truncate">User</span> {getSortIcon("first_name")}
+              </button>
+              <button onClick={() => onSort("created_at")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
+                <span className="truncate">Created @</span> {getSortIcon("created_at")}
+              </button>
+              <button onClick={() => onSort("total_spent")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
+                <span className="truncate">Amount Spent</span> {getSortIcon("total_spent")}
+              </button>
+              <button onClick={() => onSort("commissions_generated")} className="flex items-center gap-2 font-medium text-sm text-[#8E9196] hover:text-[#1A1F2C] truncate pr-4">
+                <span className="truncate">Commissions</span> {getSortIcon("commissions_generated")}
+              </button>
+            </div>
+
+            <div className="divide-y divide-[#E5E7EB]">
+              {users.length === 0 ? (
+                <div className="p-8 text-center text-[#8E9196]">
+                  No users found matching your criteria
+                </div>
+              ) : (
+                users.map((user) => (
+                  <div
+                    key={user.user_uuid}
+                    className="grid grid-cols-[2fr,2fr,1.5fr,1.5fr] px-6 py-4 hover:bg-[#F8F9FC] transition-colors duration-200 cursor-pointer"
+                    onClick={() => handleUserClick(user.user_uuid)}
+                  >
+                    <div className="text-sm text-[#1A1F2C] truncate pr-4">
+                      <div className="font-medium">{`${user.first_name} ${user.last_name}` || 'Unnamed User'}</div>
+                      <div className="text-[#8E9196] text-xs">{user.email || 'No email'}</div>
+                    </div>
+                    <div className="text-sm text-[#8E9196] truncate pr-4">
+                      {new Date(user.created_at).toLocaleString()}
+                    </div>
+                    <div className="text-sm text-[#1A1F2C] font-medium truncate pr-4">
+                      ${(user.total_spent || 0).toFixed(2)}
+                    </div>
+                    <div className="text-sm text-[#1A1F2C] font-medium truncate pr-4">
+                      ${(user.commissions_generated || 0).toFixed(2)}
                     </div>
                   </div>
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="flex gap-1 flex-wrap">
-                  {getStatusBadges(user)}
-                </div>
-              </TableCell>
-              <TableCell>{new Date(user.created_at).toLocaleDateString()}</TableCell>
-              <TableCell className="text-right font-mono">${user.total_spent?.toLocaleString()}</TableCell>
-              <TableCell className="text-right font-mono">${user.total_sales_amount?.toLocaleString()}</TableCell>
-              <TableCell className="text-right">{user.product_count}</TableCell>
-              <TableCell className="text-right">{user.transaction_count}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+                ))
+              )}
+            </div>
+          </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+      </div>
+
+      <UserDetailsDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        userUuid={selectedUserUuid}
+      />
+    </>
   );
 }

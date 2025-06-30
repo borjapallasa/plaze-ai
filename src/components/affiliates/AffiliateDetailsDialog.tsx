@@ -1,9 +1,15 @@
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Search, Loader2 } from "lucide-react";
-import { useUserTransactions } from "@/hooks/admin/useUserTransactions";
-import { useState } from "react";
+import { Search } from "lucide-react";
+
+interface Transaction {
+  template: string;
+  amount: string;
+  multiplier: number;
+  affiliateFee: string;
+  date: string;
+}
 
 interface AffiliateDetailsDialogProps {
   isOpen: boolean;
@@ -15,29 +21,50 @@ interface AffiliateDetailsDialogProps {
     totalSales: string;
     affiliateFees: string;
   };
-  userUuid?: string;
 }
 
-export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }: AffiliateDetailsDialogProps) {
-  const [searchTerm, setSearchTerm] = useState("");
-  const { transactions, isLoading } = useUserTransactions(userUuid || '');
+const transactions: Transaction[] = [
+  {
+    template: "Zoom Meeting Summarizer & Transcripter",
+    amount: "$39.95",
+    multiplier: 0.03,
+    affiliateFee: "$1.20",
+    date: "2/11/2024, 3:58 PM"
+  },
+  {
+    template: "Automated Onboarding (Contract, Payments & Channels) Process to Discord",
+    amount: "$59.95",
+    multiplier: 0.03,
+    affiliateFee: "$1.80",
+    date: "2/16/2024, 5:33 PM"
+  },
+  {
+    template: "Automated SEO Article Writer to Shopify And Wordpress With Airtable Interface",
+    amount: "$99.95",
+    multiplier: 0.03,
+    affiliateFee: "$3.00",
+    date: "3/28/2024, 9:58 AM"
+  },
+  {
+    template: "IG Lead Qualification Chatbot With Manychat Poll",
+    amount: "$59.95",
+    multiplier: 0.03,
+    affiliateFee: "$1.80",
+    date: "3/28/2024, 10:41 PM"
+  }
+];
 
-  // Filter transactions based on search term
-  const filteredTransactions = transactions?.filter(transaction =>
-    transaction.seller_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    transaction.type?.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
-
+export function AffiliateDetailsDialog({ isOpen, onClose, affiliate }: AffiliateDetailsDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col p-0">
-        <DialogHeader className="p-8 pb-6">
-          <DialogTitle className="text-4xl font-bold">{affiliate.name}</DialogTitle>
-          <p className="text-muted-foreground text-lg">{affiliate.status}</p>
-        </DialogHeader>
+      <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col p-8">
+        <div className="space-y-12 flex-1 overflow-y-auto">
+          <div className="space-y-2">
+            <h2 className="text-4xl font-bold">{affiliate.name}</h2>
+            <p className="text-muted-foreground text-lg">{affiliate.status}</p>
+          </div>
 
-        <div className="px-8 pb-8 flex-1 overflow-y-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <div className="space-y-2">
               <h3 className="text-sm font-medium text-muted-foreground">Active Templates</h3>
               <p className="text-3xl font-semibold">{affiliate.activeTemplates}</p>
@@ -58,66 +85,33 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
               <Input
                 placeholder="Type here to search"
                 className="pl-12 py-4 text-base"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
 
-            {isLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-6 w-6 animate-spin mr-2" />
-                <span>Loading transactions...</span>
-              </div>
-            ) : (
-              <div className="overflow-auto border rounded-lg">
-                <div className="min-w-[800px]">
-                  <div className="sticky top-0 bg-muted/50 z-10">
-                    <div className="grid grid-cols-4 gap-6 p-4">
-                      <div className="font-medium text-base">Template</div>
-                      <div className="font-medium text-right text-base">Transaction Amount</div>
-                      <div className="font-medium text-right text-base">Affiliate Fee</div>
-                      <div className="font-medium text-right text-base">Transaction Date</div>
-                    </div>
-                  </div>
-                  <div className="divide-y">
-                    {filteredTransactions.length > 0 ? (
-                      filteredTransactions.map((transaction) => {
-                        const transactionAmount = transaction.amount || 0;
-                        const affiliateFee = transaction.afiliate_fees || 0;
-                        
-                        return (
-                          <div key={transaction.transaction_uuid} className="grid grid-cols-4 gap-6 p-4 hover:bg-muted/50">
-                            <div className="truncate text-base">
-                              {transaction.seller_name || 'Unknown Template'}
-                            </div>
-                            <div className="text-right text-base">
-                              ${transactionAmount.toFixed(2)}
-                            </div>
-                            <div className="text-right text-base">
-                              ${affiliateFee.toFixed(2)}
-                            </div>
-                            <div className="text-right text-base">
-                              {new Date(transaction.created_at).toLocaleDateString('en-US', {
-                                month: 'numeric',
-                                day: 'numeric',
-                                year: 'numeric',
-                                hour: 'numeric',
-                                minute: 'numeric',
-                                hour12: true
-                              })}
-                            </div>
-                          </div>
-                        );
-                      })
-                    ) : (
-                      <div className="p-8 text-center text-muted-foreground">
-                        {searchTerm ? 'No transactions found matching your search.' : 'No transactions found for this user.'}
-                      </div>
-                    )}
+            <div className="overflow-auto border rounded-lg">
+              <div className="min-w-[800px]">
+                <div className="sticky top-0 bg-muted/50 z-10">
+                  <div className="grid grid-cols-5 gap-6 p-4">
+                    <div className="font-medium text-base">Template</div>
+                    <div className="font-medium text-right text-base">Transaction Amount</div>
+                    <div className="font-medium text-right text-base">Multiplier</div>
+                    <div className="font-medium text-right text-base">Affiliate Fee</div>
+                    <div className="font-medium text-right text-base">Transaction Date</div>
                   </div>
                 </div>
+                <div className="divide-y">
+                  {transactions.map((transaction, index) => (
+                    <div key={index} className="grid grid-cols-5 gap-6 p-4 hover:bg-muted/50">
+                      <div className="truncate text-base">{transaction.template}</div>
+                      <div className="text-right text-base">{transaction.amount}</div>
+                      <div className="text-right text-base">{transaction.multiplier}</div>
+                      <div className="text-right text-base">{transaction.affiliateFee}</div>
+                      <div className="text-right text-base">{transaction.date}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            )}
+            </div>
           </div>
         </div>
       </DialogContent>

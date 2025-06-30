@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Mail } from "lucide-react";
@@ -102,8 +103,19 @@ export function UsersTab() {
 
   const handleUserClick = (user: AffiliateUser) => {
     console.log('User clicked:', user);
+    
+    // Transform user data to match AffiliateDetailsDialog format
+    const affiliateData = {
+      name: user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : 'Unnamed User',
+      status: user.is_affiliate ? 'Active Affiliate' : 'Referred User',
+      activeTemplates: user.transaction_count || 0,
+      totalSales: `$${(user.total_spent || 0).toLocaleString()}`,
+      affiliateFees: `$${(user.affiliate_fees_amount || 0).toLocaleString()}`
+    };
+    
     setSelectedUser(user);
     setShowDialog(true);
+    console.log('Dialog should open now with data:', affiliateData);
   };
 
   const handleCloseDialog = () => {
@@ -195,7 +207,6 @@ export function UsersTab() {
         <AffiliateDetailsDialog
           isOpen={showDialog}
           onClose={handleCloseDialog}
-          userUuid={selectedUser.user_uuid}
           affiliate={{
             name: selectedUser.first_name && selectedUser.last_name 
               ? `${selectedUser.first_name} ${selectedUser.last_name}` 
