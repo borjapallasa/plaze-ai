@@ -1,6 +1,7 @@
 
 import React from "react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -9,128 +10,127 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-interface Partnership {
-  id: string;
-  partnerName: string;
-  partnerEmail: string;
-  partnershipType: "standard" | "premium" | "enterprise";
-  commissionRate: number;
-  startDate: string;
-  status: "active" | "inactive" | "pending";
-  revenueGenerated: number;
-  productsCount: number;
-}
-
-const mockPartnerships: Partnership[] = [
-  {
-    id: "1",
-    partnerName: "TechCorp Solutions",
-    partnerEmail: "partnerships@techcorp.com",
-    partnershipType: "enterprise",
-    commissionRate: 0.20,
-    startDate: "2024-01-01",
-    status: "active",
-    revenueGenerated: 45000.00,
-    productsCount: 15
-  },
-  {
-    id: "2",
-    partnerName: "Digital Marketing Pro",
-    partnerEmail: "hello@digitalmarketingpro.com",
-    partnershipType: "premium",
-    commissionRate: 0.15,
-    startDate: "2024-03-15",
-    status: "active",
-    revenueGenerated: 28500.00,
-    productsCount: 8
-  },
-  {
-    id: "3",
-    partnerName: "StartupHub",
-    partnerEmail: "partners@startuphub.io",
-    partnershipType: "standard",
-    commissionRate: 0.10,
-    startDate: "2024-05-20",
-    status: "pending",
-    revenueGenerated: 0,
-    productsCount: 0
-  },
-  {
-    id: "4",
-    partnerName: "Creative Agency",
-    partnerEmail: "info@creativeagency.com",
-    partnershipType: "premium",
-    commissionRate: 0.12,
-    startDate: "2023-12-10",
-    status: "inactive",
-    revenueGenerated: 12300.00,
-    productsCount: 5
-  }
-];
+import { Copy } from "lucide-react";
+import { useAffiliatePartnerships } from "@/hooks/use-affiliate-partnerships";
+import { useToast } from "@/hooks/use-toast";
 
 export function PartnershipsTab() {
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "active":
-        return <Badge variant="default">Active</Badge>;
-      case "inactive":
-        return <Badge variant="secondary">Inactive</Badge>;
-      case "pending":
-        return <Badge variant="outline">Pending</Badge>;
-      default:
-        return <Badge variant="secondary">{status}</Badge>;
-    }
-  };
+  const { data: partnerships = [], isLoading, error } = useAffiliatePartnerships();
+  const { toast } = useToast();
 
   const getTypeBadge = (type: string) => {
-    switch (type) {
-      case "enterprise":
-        return <Badge variant="default">Enterprise</Badge>;
-      case "premium":
-        return <Badge variant="secondary">Premium</Badge>;
-      case "standard":
-        return <Badge variant="outline">Standard</Badge>;
+    switch (type.toLowerCase()) {
+      case "product":
+        return <Badge variant="default">Product</Badge>;
+      case "service":
+        return <Badge variant="secondary">Service</Badge>;
+      case "expert":
+        return <Badge variant="outline">Expert</Badge>;
       default:
         return <Badge variant="secondary">{type}</Badge>;
     }
   };
+
+  const copyAffiliateLink = async (link: string) => {
+    if (!link) {
+      toast({
+        title: "No link available",
+        description: "This partnership doesn't have an affiliate link yet",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(link);
+      toast({
+        title: "Link copied!",
+        description: "Affiliate link has been copied to your clipboard",
+      });
+    } catch (err) {
+      console.error('Failed to copy affiliate link:', err);
+      toast({
+        title: "Copy failed",
+        description: "Failed to copy affiliate link to clipboard",
+        variant: "destructive",
+      });
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="rounded-md border">
+        <div className="p-8 text-center text-muted-foreground">
+          Loading partnerships...
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="rounded-md border">
+        <div className="p-8 text-center text-red-500">
+          Error loading partnerships: {error.message}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-md border">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Partner</TableHead>
+            <TableHead>Name</TableHead>
             <TableHead>Type</TableHead>
-            <TableHead className="text-right">Commission Rate</TableHead>
-            <TableHead>Start Date</TableHead>
-            <TableHead>Status</TableHead>
+            <TableHead>Expert UUID</TableHead>
+            <TableHead>Created</TableHead>
             <TableHead className="text-right">Revenue</TableHead>
-            <TableHead className="text-right">Products</TableHead>
+            <TableHead>Affiliate Link</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {mockPartnerships.map((partnership) => (
-            <TableRow key={partnership.id}>
-              <TableCell>
-                <div>
-                  <div className="font-medium">{partnership.partnerName}</div>
-                  <div className="text-sm text-muted-foreground">{partnership.partnerEmail}</div>
-                </div>
+          {partnerships.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                No partnerships found
               </TableCell>
-              <TableCell>{getTypeBadge(partnership.partnershipType)}</TableCell>
-              <TableCell className="text-right">
-                {(partnership.commissionRate * 100).toFixed(0)}%
-              </TableCell>
-              <TableCell>{new Date(partnership.startDate).toLocaleDateString()}</TableCell>
-              <TableCell>{getStatusBadge(partnership.status)}</TableCell>
-              <TableCell className="text-right font-mono">
-                ${partnership.revenueGenerated.toLocaleString()}
-              </TableCell>
-              <TableCell className="text-right">{partnership.productsCount}</TableCell>
             </TableRow>
-          ))}
+          ) : (
+            partnerships.map((partnership) => (
+              <TableRow key={partnership.affiliate_partnership_uuid}>
+                <TableCell>
+                  <div className="font-medium">{partnership.name}</div>
+                </TableCell>
+                <TableCell>{getTypeBadge(partnership.type)}</TableCell>
+                <TableCell>
+                  <code className="text-xs font-mono bg-muted px-2 py-1 rounded">
+                    {partnership.expert_uuid ? partnership.expert_uuid.slice(0, 8) + '...' : 'N/A'}
+                  </code>
+                </TableCell>
+                <TableCell>{partnership.created_at}</TableCell>
+                <TableCell className="text-right font-mono">
+                  ${partnership.revenue.toLocaleString()}
+                </TableCell>
+                <TableCell>
+                  {partnership.affiliate_link ? (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => copyAffiliateLink(partnership.affiliate_link)}
+                      className="flex items-center gap-2"
+                    >
+                      <Copy className="h-4 w-4" />
+                      Copy Link
+                    </Button>
+                  ) : (
+                    <span className="text-muted-foreground text-sm">No link</span>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
     </div>

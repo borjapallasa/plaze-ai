@@ -40,24 +40,74 @@ export type Database = {
       }
       affiliate_partnerships: {
         Row: {
+          affiliate_link: string | null
           affiliate_partnership_uuid: string
+          affiliate_product_uuid: string | null
+          affiliate_split: number | null
+          affiliate_uuid: string | null
           created_at: string
+          expert_split: number | null
+          expert_uuid: string | null
           id: number
           name: string | null
+          revenue: number | null
+          type: Database["public"]["Enums"]["affiliate_partnership_type"] | null
         }
         Insert: {
+          affiliate_link?: string | null
           affiliate_partnership_uuid?: string
+          affiliate_product_uuid?: string | null
+          affiliate_split?: number | null
+          affiliate_uuid?: string | null
           created_at?: string
+          expert_split?: number | null
+          expert_uuid?: string | null
           id?: number
           name?: string | null
+          revenue?: number | null
+          type?:
+            | Database["public"]["Enums"]["affiliate_partnership_type"]
+            | null
         }
         Update: {
+          affiliate_link?: string | null
           affiliate_partnership_uuid?: string
+          affiliate_product_uuid?: string | null
+          affiliate_split?: number | null
+          affiliate_uuid?: string | null
           created_at?: string
+          expert_split?: number | null
+          expert_uuid?: string | null
           id?: number
           name?: string | null
+          revenue?: number | null
+          type?:
+            | Database["public"]["Enums"]["affiliate_partnership_type"]
+            | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_partnerships_affiliate_product_uuid_fkey"
+            columns: ["affiliate_product_uuid"]
+            isOneToOne: false
+            referencedRelation: "affiliate_products"
+            referencedColumns: ["affiliate_products_uuid"]
+          },
+          {
+            foreignKeyName: "affiliate_partnerships_affiliate_uuid_fkey"
+            columns: ["affiliate_uuid"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["affiliate_uuid"]
+          },
+          {
+            foreignKeyName: "affiliate_partnerships_expert_uuid_fkey"
+            columns: ["expert_uuid"]
+            isOneToOne: false
+            referencedRelation: "experts"
+            referencedColumns: ["expert_uuid"]
+          },
+        ]
       }
       affiliate_products: {
         Row: {
@@ -2168,6 +2218,12 @@ export type Database = {
       }
     }
     Enums: {
+      affiliate_partnership_status:
+        | "inactive"
+        | "active"
+        | "pending"
+        | "rejected"
+      affiliate_partnership_type: "community" | "product"
       affiliate_product_status: "active" | "inactive"
       affiliate_product_type: "product" | "community"
       affiliate_status: "new" | "accepted" | "needs attention" | "rejected"
@@ -2378,6 +2434,13 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      affiliate_partnership_status: [
+        "inactive",
+        "active",
+        "pending",
+        "rejected",
+      ],
+      affiliate_partnership_type: ["community", "product"],
       affiliate_product_status: ["active", "inactive"],
       affiliate_product_type: ["product", "community"],
       affiliate_status: ["new", "accepted", "needs attention", "rejected"],
