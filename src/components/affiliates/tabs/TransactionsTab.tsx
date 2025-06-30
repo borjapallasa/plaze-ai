@@ -10,22 +10,35 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useAffiliateTransactions } from "@/hooks/use-affiliate-transactions";
+import { Copy } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export function TransactionsTab() {
   const { data: transactions = [], isLoading, error } = useAffiliateTransactions();
+  const { toast } = useToast();
 
   const getStatusBadge = (status: string) => {
+    const capitalizedStatus = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+    
     switch (status.toLowerCase()) {
       case "paid":
       case "completed":
-        return <Badge variant="default">Completed</Badge>;
+        return <Badge variant="default">{capitalizedStatus}</Badge>;
       case "pending":
-        return <Badge variant="outline">Pending</Badge>;
+        return <Badge variant="outline">{capitalizedStatus}</Badge>;
       case "failed":
-        return <Badge variant="destructive">Failed</Badge>;
+        return <Badge variant="destructive">{capitalizedStatus}</Badge>;
       default:
-        return <Badge variant="secondary">{status}</Badge>;
+        return <Badge variant="secondary">{capitalizedStatus}</Badge>;
     }
+  };
+
+  const copyTransactionId = (transactionId: string) => {
+    navigator.clipboard.writeText(transactionId);
+    toast({
+      title: "Copied!",
+      description: "Transaction ID copied to clipboard",
+    });
   };
 
   if (isLoading) {
@@ -53,14 +66,14 @@ export function TransactionsTab() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Date</TableHead>
-            <TableHead>User</TableHead>
-            <TableHead>Partnership</TableHead>
-            <TableHead className="text-right">Amount</TableHead>
-            <TableHead className="text-right">Commission %</TableHead>
-            <TableHead className="text-right">Affiliate Fees</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Transaction ID</TableHead>
+            <TableHead className="whitespace-nowrap">Date</TableHead>
+            <TableHead className="whitespace-nowrap">User</TableHead>
+            <TableHead className="whitespace-nowrap">Partnership</TableHead>
+            <TableHead className="text-right whitespace-nowrap">Amount</TableHead>
+            <TableHead className="text-right whitespace-nowrap">Commission %</TableHead>
+            <TableHead className="text-right whitespace-nowrap">Affiliate Fees</TableHead>
+            <TableHead className="whitespace-nowrap">Status</TableHead>
+            <TableHead className="whitespace-nowrap">Transaction ID</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -73,26 +86,33 @@ export function TransactionsTab() {
           ) : (
             transactions.map((transaction) => (
               <TableRow key={transaction.transaction_uuid}>
-                <TableCell>{transaction.created_at}</TableCell>
+                <TableCell className="whitespace-nowrap">{transaction.created_at}</TableCell>
                 <TableCell>
                   <div>
                     <div className="font-medium">{transaction.user_name}</div>
                     <div className="text-sm text-muted-foreground">{transaction.user_email}</div>
                   </div>
                 </TableCell>
-                <TableCell>{transaction.partnership_name}</TableCell>
-                <TableCell className="text-right font-mono">
+                <TableCell className="whitespace-nowrap">{transaction.partnership_name}</TableCell>
+                <TableCell className="text-right font-mono whitespace-nowrap">
                   ${transaction.amount.toFixed(2)}
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-right whitespace-nowrap">
                   {transaction.commission_percentage}%
                 </TableCell>
-                <TableCell className="text-right font-mono">
+                <TableCell className="text-right font-mono whitespace-nowrap">
                   ${transaction.affiliate_fees.toFixed(2)}
                 </TableCell>
                 <TableCell>{getStatusBadge(transaction.status)}</TableCell>
                 <TableCell>
-                  <span className="font-mono text-sm">{transaction.transaction_uuid}</span>
+                  <button
+                    onClick={() => copyTransactionId(transaction.transaction_uuid)}
+                    className="flex items-center gap-1 font-mono text-sm hover:bg-muted/50 rounded px-1 py-0.5 transition-colors"
+                    title="Click to copy"
+                  >
+                    <span className="truncate max-w-[120px]">{transaction.transaction_uuid}</span>
+                    <Copy className="h-3 w-3 opacity-50" />
+                  </button>
                 </TableCell>
               </TableRow>
             ))
