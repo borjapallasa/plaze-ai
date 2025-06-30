@@ -61,14 +61,21 @@ export function AffiliateDetailsDialog({ isOpen, onClose, affiliate, userUuid }:
         let partnership_name = 'N/A';
         
         if (transaction.affiliate_partnership_uuid) {
-          const { data: partnershipData } = await supabase
+          console.log('Fetching partnership for UUID:', transaction.affiliate_partnership_uuid);
+          
+          const { data: partnershipData, error: partnershipError } = await supabase
             .from('affiliate_partnerships')
             .select('name')
             .eq('affiliate_partnership_uuid', transaction.affiliate_partnership_uuid)
-            .single();
+            .maybeSingle();
           
-          if (partnershipData?.name) {
+          if (partnershipError) {
+            console.error('Error fetching partnership:', partnershipError);
+          } else if (partnershipData?.name) {
             partnership_name = partnershipData.name;
+            console.log('Found partnership name:', partnership_name);
+          } else {
+            console.log('No partnership data found for UUID:', transaction.affiliate_partnership_uuid);
           }
         }
 
