@@ -50,6 +50,31 @@ export function TransactionsTab() {
     }
   };
 
+  const renderAffiliateFees = (transaction: any) => {
+    const originalFees = transaction.original_affiliate_fees || 0;
+    const boostedAmount = transaction.boosted_amount || 0;
+    const finalAmount = transaction.affiliate_fees;
+    
+    if (transaction.is_boosted && boostedAmount > 0) {
+      return (
+        <div className="text-right font-mono whitespace-nowrap">
+          <div className="text-xs text-muted-foreground">
+            ${originalFees.toFixed(2)} + ${boostedAmount.toFixed(2)}
+          </div>
+          <div className="text-green-600 font-medium">
+            ${finalAmount.toFixed(2)}
+          </div>
+        </div>
+      );
+    }
+    
+    return (
+      <div className="text-right font-mono whitespace-nowrap text-green-600 font-medium">
+        ${finalAmount.toFixed(2)}
+      </div>
+    );
+  };
+
   if (isLoading) {
     return (
       <div className="rounded-md border">
@@ -114,8 +139,8 @@ export function TransactionsTab() {
                     )}
                   </div>
                 </TableCell>
-                <TableCell className="text-right font-mono whitespace-nowrap">
-                  ${transaction.affiliate_fees.toFixed(2)}
+                <TableCell>
+                  {renderAffiliateFees(transaction)}
                 </TableCell>
                 <TableCell>{getStatusBadge(transaction.status)}</TableCell>
                 <TableCell>

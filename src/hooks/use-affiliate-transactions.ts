@@ -8,6 +8,8 @@ interface AffiliateTransaction {
   created_at: string;
   amount: number;
   affiliate_fees: number;
+  original_affiliate_fees: number;
+  boosted_amount: number;
   status: string;
   user_name: string;
   user_email: string;
@@ -74,26 +76,29 @@ export function useAffiliateTransactions() {
         const baseAmount = transaction.amount || 0;
         const isBoosted = transaction.affiliate_boosted || false;
         const boostedAmount = transaction.affiliate_amount_boosted || 0;
+        const originalFees = transaction.afiliate_fees || 0;
         
         // Calculate affiliate fees and commission percentage
-        let affiliateFees = transaction.afiliate_fees || 0;
+        let finalAffiliateFees = originalFees;
         let commissionPercentage = 5; // Base 5%
         
         if (isBoosted && boostedAmount > 0) {
-          // Use the actual boosted amount from database
-          affiliateFees = boostedAmount;
-          // Calculate actual commission percentage from boosted amount
-          commissionPercentage = baseAmount > 0 ? Math.round((boostedAmount / baseAmount) * 100) : 0;
-        } else if (baseAmount > 0 && transaction.afiliate_fees) {
+          // For boosted transactions, the final amount is original + boosted
+          finalAffiliateFees = originalFees + boostedAmount;
+          // Calculate actual commission percentage from final amount
+          commissionPercentage = baseAmount > 0 ? Math.round((finalAffiliateFees / baseAmount) * 100) : 0;
+        } else if (baseAmount > 0 && originalFees > 0) {
           // Calculate actual commission percentage from existing data
-          commissionPercentage = Math.round((transaction.afiliate_fees / baseAmount) * 100);
+          commissionPercentage = Math.round((originalFees / baseAmount) * 100);
         }
 
         return {
           transaction_uuid: transaction.transaction_uuid,
           created_at: new Date(transaction.created_at).toLocaleDateString(),
           amount: baseAmount,
-          affiliate_fees: affiliateFees,
+          affiliate_fees: finalAffiliateFees,
+          original_affiliate_fees: originalFees,
+          boosted_amount: boostedAmount,
           status: transaction.status || 'unknown',
           user_name: `${transaction.users?.first_name || ''} ${transaction.users?.last_name || ''}`.trim() || 'Unknown User',
           user_email: transaction.users?.email || 'Unknown Email',
