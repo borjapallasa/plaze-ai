@@ -125,6 +125,7 @@ export type Database = {
         Row: {
           affiliate_products_uuid: string
           affiliate_share: number | null
+          community_uuid: string | null
           created_at: string
           expert_share: number | null
           id: number
@@ -136,6 +137,7 @@ export type Database = {
         Insert: {
           affiliate_products_uuid?: string
           affiliate_share?: number | null
+          community_uuid?: string | null
           created_at?: string
           expert_share?: number | null
           id?: number
@@ -149,6 +151,7 @@ export type Database = {
         Update: {
           affiliate_products_uuid?: string
           affiliate_share?: number | null
+          community_uuid?: string | null
           created_at?: string
           expert_share?: number | null
           id?: number
@@ -160,6 +163,13 @@ export type Database = {
           type?: Database["public"]["Enums"]["affiliate_product_type"] | null
         }
         Relationships: [
+          {
+            foreignKeyName: "affiliate_products_community_uuid_fkey"
+            columns: ["community_uuid"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["community_uuid"]
+          },
           {
             foreignKeyName: "affiliate_products_product_uuid_fkey"
             columns: ["product_uuid"]

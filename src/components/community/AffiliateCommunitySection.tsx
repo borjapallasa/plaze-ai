@@ -476,27 +476,41 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Confirm Affiliate Program</DialogTitle>
+            <DialogTitle>Enable Affiliate Program?</DialogTitle>
           </DialogHeader>
-          <div className="py-4">
-            <p>This will enable affiliate program for this community with a {sellerPercentage}%/{affiliatePercentage}% seller/affiliate split</p>
-            {questions.length > 0 && (
-              <div className="mt-4 p-3 border rounded-lg bg-muted/50">
-                <p className="font-medium">Questions for affiliates:</p>
-                <ul className="text-sm text-muted-foreground mt-2 space-y-1">
-                  {questions.map((q) => (
-                    <li key={q.id}>• {q.question}</li>
-                  ))}
-                </ul>
+          <div className="py-4 space-y-4">
+            <div className="p-4 border rounded-lg bg-blue-50/50 border-blue-200">
+              <p className="font-medium text-blue-900 mb-2">Are you sure?</p>
+              <p className="text-sm text-blue-800">
+                This will add your community to the affiliate program and affiliates will be able to request partnerships.
+              </p>
+            </div>
+            
+            <div className="space-y-2">
+              <p className="font-medium">Configuration:</p>
+              <div className="p-3 border rounded-lg bg-muted/50">
+                <p className="text-sm">
+                  <span className="font-medium">Revenue Split:</span> {sellerPercentage}% (You) / {affiliatePercentage}% (Affiliate)
+                </p>
+                {questions.length > 0 && (
+                  <div className="mt-2">
+                    <p className="text-sm font-medium">Questions for affiliates:</p>
+                    <ul className="text-sm text-muted-foreground mt-1 space-y-1">
+                      {questions.filter(q => q.question.trim()).map((q) => (
+                        <li key={q.id}>• {q.question}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>
               Cancel
             </Button>
             <Button onClick={handleDialogConfirm} disabled={isLoading}>
-              {isLoading ? "Enabling..." : "Confirm"}
+              {isLoading ? "Enabling..." : "Yes, Enable Affiliate Program"}
             </Button>
           </DialogFooter>
         </DialogContent>
