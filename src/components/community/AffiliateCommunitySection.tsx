@@ -10,8 +10,7 @@ import { Input } from "@/components/ui/input";
 import { useAffiliateCommunities } from "@/hooks/use-affiliate-communities";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Edit, Trash2, Plus, Info, AlertTriangle } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Edit, Trash2, Plus } from "lucide-react";
 
 interface AffiliateCommunityProps {
   communityUuid?: string;
@@ -230,15 +229,15 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
     try {
       setIsLoading(true);
 
-      // Update status to inactive instead of deleting
+      // Delete from affiliate_products table
       const { error: affiliateError } = await supabase
         .from('affiliate_products')
-        .update({ status: 'inactive' })
+        .delete()
         .eq('affiliate_products_uuid', editingCommunity.affiliate_products_uuid);
 
       if (affiliateError) {
-        console.error('Error deactivating affiliate community:', affiliateError);
-        toast.error("Failed to remove community from affiliate program");
+        console.error('Error deleting affiliate community:', affiliateError);
+        toast.error("Failed to disable affiliate program");
         return;
       }
 
@@ -254,7 +253,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
         return;
       }
 
-      toast.success("Community removed from affiliate program successfully");
+      toast.success("Affiliate program disabled successfully");
       setShowDeleteDialog(false);
       setEditingCommunity(null);
       setQuestions([]);
@@ -262,8 +261,8 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
       refetchAffiliateCommunities();
 
     } catch (error) {
-      console.error('Error removing community from affiliate program:', error);
-      toast.error("Failed to remove community from affiliate program");
+      console.error('Error disabling affiliate program:', error);
+      toast.error("Failed to disable affiliate program");
     } finally {
       setIsLoading(false);
     }
@@ -435,13 +434,6 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
             <DialogTitle>Edit Affiliate Program</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <Alert>
-              <Info className="h-4 w-4" />
-              <AlertDescription>
-                Changes to the revenue split and questions will only apply to new partnership requests. Existing partnerships and pending requests will not be affected.
-              </AlertDescription>
-            </Alert>
-
             <div className="space-y-3">
               <Label>Split</Label>
               <div className="space-y-3">
@@ -478,77 +470,29 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
         </DialogContent>
       </Dialog>
 
-      {/* Redesigned Delete Dialog with improved spacing */}
+      {/* Delete Dialog */}
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <DialogContent className="max-w-md">
-          <DialogHeader className="text-center pb-2">
-            <div className="mx-auto w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-3">
-              <AlertTriangle className="h-6 w-6 text-red-600" />
-            </div>
-            <DialogTitle className="text-xl font-semibold text-gray-900">
-              Remove from Affiliate Program?
-            </DialogTitle>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Disable Affiliate Program</DialogTitle>
           </DialogHeader>
-          
-          <div className="space-y-5">
-            <p className="text-left text-gray-600 text-sm leading-relaxed">
-              This will remove your community from the affiliate marketplace and stop new partnership requests.
-            </p>
-            
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4">
-              <div className="flex items-start gap-3">
-                <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                <div>
-                  <h4 className="font-medium text-blue-900 mb-2">Fair Play Policy</h4>
-                  <div className="space-y-2 text-sm text-blue-800">
-                    <div className="flex items-start gap-2">
-                      <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
-                      <span>Partners will still receive commissions for sales in the next 90 days</span>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
-                      <span>Your community won't appear in affiliate deals anymore</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
+          <div className="py-4">
+            <p>Are you sure you want to disable the affiliate program for this community? This action cannot be undone.</p>
             {editingCommunity && (
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                <div className="text-center">
-                  <p className="text-sm font-medium text-gray-700 mb-1">Current Revenue Split</p>
-                  <p className="text-lg font-semibold text-gray-900">
-                    You: {Math.round(editingCommunity.expert_share * 100)}% • 
-                    Partners: {Math.round(editingCommunity.affiliate_share * 100)}%
-                  </p>
-                </div>
+              <div className="mt-4 p-3 border rounded-lg bg-muted/50">
+                <p className="font-medium">Current Split:</p>
+                <p className="text-sm text-muted-foreground">
+                  Expert: {Math.round(editingCommunity.expert_share * 100)}% | Affiliate: {Math.round(editingCommunity.affiliate_share * 100)}%
+                </p>
               </div>
             )}
           </div>
-
-          <DialogFooter className="gap-3 pt-5">
-            <Button 
-              variant="outline" 
-              onClick={() => setShowDeleteDialog(false)}
-              className="flex-1"
-            >
-              Keep in Program
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowDeleteDialog(false)}>
+              Cancel
             </Button>
-            <Button 
-              variant="destructive" 
-              onClick={handleDeleteConfirm} 
-              disabled={isLoading}
-              className="flex-1 bg-red-600 hover:bg-red-700"
-            >
-              {isLoading ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Removing...
-                </div>
-              ) : (
-                "Remove from Program"
-              )}
+            <Button variant="destructive" onClick={handleDeleteConfirm} disabled={isLoading}>
+              {isLoading ? "Disabling..." : "Disable"}
             </Button>
           </DialogFooter>
         </DialogContent>
