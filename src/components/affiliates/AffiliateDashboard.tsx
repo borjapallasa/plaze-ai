@@ -6,11 +6,48 @@ import { MoreHorizontal, Copy, DollarSign, Users, TrendingUp, CreditCard, Extern
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useAffiliateData } from "@/hooks/use-affiliate-data";
 import { useUserProfile } from "@/hooks/use-user-profile";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth";
 import { PaymentSettingsDialog } from "./PaymentSettingsDialog";
 
 export function AffiliateDashboard() {
+  const { user } = useAuth();
   const { data: affiliateData, isLoading: affiliateLoading } = useAffiliateData();
   const { data: userProfile } = useUserProfile();
+
+  // Fetch referred users count
+  const { data: referredUsersCount = 0 } = useQuery({
+    queryKey: ['referred-users-count', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return 0;
+
+      // First, get the current user's affiliate code
+      const { data: affiliateData, error: affiliateError } = await supabase
+        .from('affiliates')
+        .select('affiliate_code')
+        .eq('user_uuid', user.id)
+        .maybeSingle();
+
+      if (affiliateError || !affiliateData?.affiliate_code) {
+        return 0;
+      }
+
+      // Then, count users who have this affiliate code as their referral code
+      const { count, error: countError } = await supabase
+        .from('users')
+        .select('user_uuid', { count: 'exact', head: true })
+        .eq('referral_affiliate_code', affiliateData.affiliate_code);
+
+      if (countError) {
+        console.error('Error counting referred users:', countError);
+        return 0;
+      }
+
+      return count || 0;
+    },
+    enabled: !!user?.id,
+  });
 
   const handleCopyLink = () => {
     const affiliateCode = affiliateData?.affiliate_code || 'DEFAULT';
@@ -94,12 +131,12 @@ export function AffiliateDashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Affiliates</CardTitle>
+            <CardTitle className="text-sm font-medium">Sign Ups</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {affiliateData?.affiliate_count || 0}
+              {referredUsersCount}
             </div>
             <p className="text-xs text-muted-foreground">
               Active referrals
