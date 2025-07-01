@@ -1,32 +1,62 @@
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { AffiliateOffersLayoutSwitcher, LayoutType } from "./AffiliateOffersLayoutSwitcher";
+import { AffiliateOffersSortSelector, SortOption } from "./AffiliateOffersSortSelector";
 import { AffiliateOffersGrid } from "./AffiliateOffersGrid";
 import { AffiliateOffersList } from "./AffiliateOffersList";
 import { useAllAffiliateProducts } from "@/hooks/use-affiliate-products";
 
 export function AffiliateOffersSection() {
   const [layout, setLayout] = useState<LayoutType>("grid");
+  const [sortBy, setSortBy] = useState<SortOption>({ 
+    field: "earnings", 
+    direction: "desc", 
+    label: "Earnings (High to Low)" 
+  });
+  
   const { data: affiliateProducts = [], isLoading, error } = useAllAffiliateProducts();
 
-  // Transform the data to match the expected interface and filter by active status
-  const offers = affiliateProducts
-    .filter(product => product.status === "active")
-    .map(product => ({
-      id: product.affiliate_products_uuid,
-      title: product.product_name || "Unnamed Product",
-      description: product.product_description || "No description available",
-      category: product.type || "General",
-      // Convert commission from 0-1 range to percentage
-      commissionRate: Math.round((product.affiliate_share || 0) * 100),
-      commissionType: "percentage" as const,
-      rating: 4.5, // Default rating since we don't have this data
-      totalAffiliates: 100, // Default value since we don't have this data
-      monthlyEarnings: 100, // Default as requested
-      thumbnail: product.product_thumbnail || "",
-      status: product.status === "active" ? "active" as const : "pending" as const,
-      partnerName: product.expert_name || "Unknown Expert"
-    }));
+  // Transform and sort the data
+  const offers = useMemo(() => {
+    const transformedOffers = affiliateProducts
+      .filter(product => product.status === "active")
+      .map(product => ({
+        id: product.affiliate_products_uuid,
+        title: product.product_name || "Unnamed Product",
+        description: product.product_description || "No description available",
+        category: product.type || "General",
+        // Convert commission from 0-1 range to percentage
+        commissionRate: Math.round((product.affiliate_share || 0) * 100),
+        commissionType: "percentage" as const,
+        rating: 4.5, // Default rating since we don't have this data
+        totalAffiliates: 100, // Default value since we don't have this data
+        monthlyEarnings: 100, // Default as requested
+        thumbnail: product.product_thumbnail || "",
+        status: product.status === "active" ? "active" as const : "pending" as const,
+        partnerName: product.expert_name || "Unknown Expert"
+      }));
+
+    // Sort the offers based on selected criteria
+    return transformedOffers.sort((a, b) => {
+      let compareValue = 0;
+      
+      switch (sortBy.field) {
+        case "earnings":
+          compareValue = a.monthlyEarnings - b.monthlyEarnings;
+          break;
+        case "commission":
+          compareValue = a.commissionRate - b.commissionRate;
+          break;
+        case "name":
+          compareValue = a.title.localeCompare(b.title);
+          break;
+        default:
+          compareValue = 0;
+      }
+      
+      return sortBy.direction === "desc" ? -compareValue : compareValue;
+    });
+  }, [affiliateProducts, sortBy]);
 
   if (isLoading) {
     return (
@@ -36,7 +66,10 @@ export function AffiliateOffersSection() {
             <h2 className="text-2xl font-bold">Available Affiliate Offers</h2>
             <p className="text-muted-foreground">Discover new products to promote and earn commissions</p>
           </div>
-          <AffiliateOffersLayoutSwitcher layout={layout} onLayoutChange={setLayout} />
+          <div className="flex items-center gap-4">
+            <AffiliateOffersSortSelector sortBy={sortBy} onSortChange={setSortBy} />
+            <AffiliateOffersLayoutSwitcher layout={layout} onLayoutChange={setLayout} />
+          </div>
         </div>
         <div className="flex items-center justify-center py-12">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -53,7 +86,10 @@ export function AffiliateOffersSection() {
             <h2 className="text-2xl font-bold">Available Affiliate Offers</h2>
             <p className="text-muted-foreground">Discover new products to promote and earn commissions</p>
           </div>
-          <AffiliateOffersLayoutSwitcher layout={layout} onLayoutChange={setLayout} />
+          <div className="flex items-center gap-4">
+            <AffiliateOffersSortSelector sortBy={sortBy} onSortChange={setSortBy} />
+            <AffiliateOffersLayoutSwitcher layout={layout} onLayoutChange={setLayout} />
+          </div>
         </div>
         <div className="text-center py-12">
           <p className="text-muted-foreground">Failed to load affiliate offers. Please try again later.</p>
@@ -69,7 +105,10 @@ export function AffiliateOffersSection() {
           <h2 className="text-2xl font-bold">Available Affiliate Offers</h2>
           <p className="text-muted-foreground">Discover new products to promote and earn commissions</p>
         </div>
-        <AffiliateOffersLayoutSwitcher layout={layout} onLayoutChange={setLayout} />
+        <div className="flex items-center gap-4">
+          <AffiliateOffersSortSelector sortBy={sortBy} onSortChange={setSortBy} />
+          <AffiliateOffersLayoutSwitcher layout={layout} onLayoutChange={setLayout} />
+        </div>
       </div>
 
       {offers.length === 0 ? (
