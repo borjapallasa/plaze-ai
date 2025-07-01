@@ -1,3 +1,4 @@
+
 import { Route, Routes } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -92,7 +93,7 @@ function App() {
           <Route path="/admin/transaction/:id" element={<AdminTransactionDetailsPage />} />
           <Route path="/admin/products/draft" element={<DraftTemplatesPage />} />
           <Route path="/admin/product/:id" element={<AdminTemplateDetailsPage />} />
-          <Route path="/affiliates" element={<AffiliatesPage />} />
+          <Route path="/affiliates/dashboard" element={<AffiliatesPage />} />
           <Route path="/search" element={<SearchResults />} />
           <Route path="/experts" element={<ExpertsPage />} />
           <Route path="/expert/:expert_uuid" element={<ExpertPage />} />
