@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { useAffiliateProducts } from "@/hooks/use-affiliate-products";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Edit, Trash2, Info, Plus, X } from "lucide-react";
+import { Edit, Trash2, Info, Plus, Trash } from "lucide-react";
 
 interface AffiliateProductSectionProps {
   expertUuid?: string;
@@ -303,7 +303,7 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
                             onClick={() => removeQuestion(index)}
                             className="h-10 w-10 flex-shrink-0"
                           >
-                            <X className="h-4 w-4" />
+                            <Trash className="h-4 w-4" />
                           </Button>
                         </div>
                       ))}
@@ -402,7 +402,7 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
                       onClick={() => removeQuestion(index)}
                       className="h-10 w-10 flex-shrink-0"
                     >
-                      <X className="h-4 w-4" />
+                      <Trash className="h-4 w-4" />
                     </Button>
                   </div>
                 ))}
