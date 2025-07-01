@@ -86,8 +86,6 @@ export default function EditCommunity() {
                 onRemoveLink={handleRemoveLink}
               />
               
-              <AffiliateCommunitySection communityUuid={id} />
-              
               <div className="border rounded-lg p-6">
                 <h2 className="text-lg font-semibold mb-4">Community Media</h2>
                 <CommunityMediaUpload
@@ -99,19 +97,23 @@ export default function EditCommunity() {
           </div>
 
           <div className="lg:col-span-4">
-            <CommunityStats
-              paymentLink={paymentLink}
-              onCopyPaymentLink={handleCopyPaymentLink}
-              hasCopied={hasCopied}
-              webhook={webhook}
-              setWebhook={setWebhook}
-              community={community}
-              showDeleteDialog={showDeleteDialog}
-              setShowDeleteDialog={setShowDeleteDialog}
-              isDeleting={isDeleting}
-              onDeleteCommunity={handleDeleteCommunity}
-              communityName={communityName}
-            />
+            <div className="space-y-6">
+              <CommunityStats
+                paymentLink={paymentLink}
+                onCopyPaymentLink={handleCopyPaymentLink}
+                hasCopied={hasCopied}
+                webhook={webhook}
+                setWebhook={setWebhook}
+                community={community}
+                showDeleteDialog={showDeleteDialog}
+                setShowDeleteDialog={setShowDeleteDialog}
+                isDeleting={isDeleting}
+                onDeleteCommunity={handleDeleteCommunity}
+                communityName={communityName}
+              />
+              
+              <AffiliateCommunitySection communityUuid={id} />
+            </div>
           </div>
         </div>
       </div>
