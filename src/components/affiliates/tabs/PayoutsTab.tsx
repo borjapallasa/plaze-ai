@@ -145,14 +145,21 @@ export function PayoutsTab() {
 
       <div className="rounded-md border">
         <div className="w-full overflow-auto">
-          <table className="w-full table-fixed">
+          <table className="w-full border-collapse" style={{ tableLayout: 'fixed' }}>
+            <colgroup>
+              <col style={{ width: '20%' }} />
+              <col style={{ width: '20%' }} />
+              <col style={{ width: '20%' }} />
+              <col style={{ width: '20%' }} />
+              <col style={{ width: '20%' }} />
+            </colgroup>
             <thead className="[&_tr]:border-b">
               <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground w-1/5">Date</th>
-                <th className="h-12 px-4 text-right align-middle font-medium text-muted-foreground w-1/5">Amount</th>
-                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground w-1/5">Status</th>
-                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground w-1/5">Method</th>
-                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground w-1/5">Payout ID</th>
+                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Date</th>
+                <th className="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Amount</th>
+                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Status</th>
+                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Method</th>
+                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Payout ID</th>
               </tr>
             </thead>
             <tbody className="[&_tr:last-child]:border-0">
@@ -165,13 +172,13 @@ export function PayoutsTab() {
               ) : (
                 payouts.map((payout) => (
                   <tr key={payout.payout_uuid} className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                    <td className="p-4 align-middle w-1/5">{payout.created_at}</td>
-                    <td className="p-4 align-middle text-right font-mono w-1/5">
+                    <td className="p-4 align-middle">{payout.created_at}</td>
+                    <td className="p-4 align-middle text-right font-mono">
                       ${payout.amount.toFixed(2)}
                     </td>
-                    <td className="p-4 align-middle w-1/5">{getStatusBadge(payout.status)}</td>
-                    <td className="p-4 align-middle w-1/5">{getPaymentMethodDisplay(payout.method)}</td>
-                    <td className="p-4 align-middle w-1/5">
+                    <td className="p-4 align-middle">{getStatusBadge(payout.status)}</td>
+                    <td className="p-4 align-middle">{getPaymentMethodDisplay(payout.method)}</td>
+                    <td className="p-4 align-middle">
                       <div className="flex items-center gap-2">
                         <span className="font-mono text-sm truncate flex-1">{payout.payout_uuid}</span>
                         <Button
