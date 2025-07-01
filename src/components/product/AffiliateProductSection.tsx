@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { useAffiliateProducts } from "@/hooks/use-affiliate-products";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Edit, Trash2, Info, Plus, Trash } from "lucide-react";
+import { Edit, Trash2, Info, Plus } from "lucide-react";
 
 interface AffiliateProductSectionProps {
   expertUuid?: string;
@@ -276,7 +276,7 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
 
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <Label>Questions for Affiliates</Label>
+                      <Label>Questions for Partners</Label>
                       <Button
                         type="button"
                         variant="outline"
@@ -291,7 +291,7 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
                       {questions.map((question, index) => (
                         <div key={index} className="flex gap-2">
                           <Input
-                            placeholder="Enter question for affiliates"
+                            placeholder="Enter question for partners"
                             value={question}
                             onChange={(e) => updateQuestion(index, e.target.value)}
                             className="flex-1"
@@ -303,13 +303,13 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
                             onClick={() => removeQuestion(index)}
                             className="h-10 w-10 flex-shrink-0"
                           >
-                            <Trash className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
                       ))}
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Add questions that affiliates must answer when applying to promote this product.
+                      Add questions that partners must answer when applying to promote this product.
                     </p>
                   </div>
 
@@ -375,7 +375,7 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
 
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <Label>Questions for Affiliates</Label>
+                <Label>Questions for Partners</Label>
                 <Button
                   type="button"
                   variant="outline"
@@ -390,7 +390,7 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
                 {questions.map((question, index) => (
                   <div key={index} className="flex gap-2">
                     <Input
-                      placeholder="Enter question for affiliates"
+                      placeholder="Enter question for partners"
                       value={question}
                       onChange={(e) => updateQuestion(index, e.target.value)}
                       className="flex-1"
@@ -402,13 +402,13 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
                       onClick={() => removeQuestion(index)}
                       className="h-10 w-10 flex-shrink-0"
                     >
-                      <Trash className="h-4 w-4" />
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
                 ))}
               </div>
               <p className="text-sm text-muted-foreground">
-                Add questions that affiliates must answer when applying to promote this product.
+                Add questions that partners must answer when applying to promote this product.
               </p>
               {questions.length === 0 && (
                 <p className="text-sm text-muted-foreground">No questions configured. Add questions to help you evaluate potential partners.</p>
