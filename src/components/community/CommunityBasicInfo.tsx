@@ -100,6 +100,7 @@ export function CommunityBasicInfo({
             <SelectContent>
               <SelectItem value="free">Free</SelectItem>
               <SelectItem value="paid">Paid</SelectItem>
+              <SelectItem value="private">Private</SelectItem>
             </SelectContent>
           </Select>
         </div>
