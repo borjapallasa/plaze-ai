@@ -48,9 +48,8 @@ export function PartnershipsTab({ expertUuid }: PartnershipsTabProps) {
           <div className="flex gap-2">
             <Button
               size="sm"
-              variant="default"
               onClick={() => handleAcceptPartnership(partnership.affiliate_partnership_uuid)}
-              className="bg-green-600 hover:bg-green-700 text-white"
+              className="bg-green-600 hover:bg-green-700 text-white border-0"
             >
               <Check className="h-4 w-4 mr-1" />
               Accept
@@ -59,7 +58,7 @@ export function PartnershipsTab({ expertUuid }: PartnershipsTabProps) {
               size="sm"
               variant="outline"
               onClick={() => handleRejectPartnership(partnership.affiliate_partnership_uuid)}
-              className="border-red-200 text-red-600 hover:bg-red-50"
+              className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
             >
               <X className="h-4 w-4 mr-1" />
               Reject
@@ -74,7 +73,7 @@ export function PartnershipsTab({ expertUuid }: PartnershipsTabProps) {
               size="sm"
               variant="outline"
               onClick={() => handlePausePartnership(partnership.affiliate_partnership_uuid)}
-              className="border-orange-200 text-orange-600 hover:bg-orange-50"
+              className="text-orange-600 border-orange-200 hover:bg-orange-50 hover:text-orange-700"
             >
               <Pause className="h-4 w-4 mr-1" />
               Pause
@@ -83,7 +82,7 @@ export function PartnershipsTab({ expertUuid }: PartnershipsTabProps) {
               size="sm"
               variant="outline"
               onClick={() => handleDeletePartnership(partnership.affiliate_partnership_uuid)}
-              className="border-red-200 text-red-600 hover:bg-red-50"
+              className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
             >
               <Trash2 className="h-4 w-4 mr-1" />
               Delete
@@ -96,9 +95,8 @@ export function PartnershipsTab({ expertUuid }: PartnershipsTabProps) {
           <div className="flex gap-2">
             <Button
               size="sm"
-              variant="default"
               onClick={() => handleResumePartnership(partnership.affiliate_partnership_uuid)}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="bg-blue-600 hover:bg-blue-700 text-white border-0"
             >
               <Play className="h-4 w-4 mr-1" />
               Resume
@@ -107,7 +105,7 @@ export function PartnershipsTab({ expertUuid }: PartnershipsTabProps) {
               size="sm"
               variant="outline"
               onClick={() => handleDeletePartnership(partnership.affiliate_partnership_uuid)}
-              className="border-red-200 text-red-600 hover:bg-red-50"
+              className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
             >
               <Trash2 className="h-4 w-4 mr-1" />
               Delete
@@ -122,7 +120,7 @@ export function PartnershipsTab({ expertUuid }: PartnershipsTabProps) {
               size="sm"
               variant="outline"
               onClick={() => handleDeletePartnership(partnership.affiliate_partnership_uuid)}
-              className="border-red-200 text-red-600 hover:bg-red-50"
+              className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
             >
               <Trash2 className="h-4 w-4 mr-1" />
               Delete
@@ -137,17 +135,21 @@ export function PartnershipsTab({ expertUuid }: PartnershipsTabProps) {
 
   if (isLoading) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-6">
         {[...Array(3)].map((_, i) => (
-          <Card key={i}>
-            <CardHeader>
+          <Card key={i} className="border border-border">
+            <CardHeader className="space-y-2">
               <Skeleton className="h-6 w-48" />
-              <Skeleton className="h-4 w-24" />
+              <div className="flex gap-2">
+                <Skeleton className="h-6 w-20" />
+                <Skeleton className="h-6 w-16" />
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-3/4" />
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-3 gap-4">
+                <Skeleton className="h-16 w-full" />
+                <Skeleton className="h-16 w-full" />
+                <Skeleton className="h-16 w-full" />
               </div>
             </CardContent>
           </Card>
@@ -158,140 +160,145 @@ export function PartnershipsTab({ expertUuid }: PartnershipsTabProps) {
 
   if (partnerships.length === 0) {
     return (
-      <div className="text-center py-12">
-        <Users className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-        <h3 className="text-lg font-medium text-gray-900 mb-2">No partnerships yet</h3>
-        <p className="text-gray-500">
+      <div className="text-center py-16">
+        <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+          <Users className="h-8 w-8 text-muted-foreground" />
+        </div>
+        <h3 className="text-lg font-semibold text-foreground mb-2">No partnerships yet</h3>
+        <p className="text-muted-foreground max-w-sm mx-auto">
           No affiliate partnerships have been created for this expert yet.
         </p>
       </div>
     );
   }
 
-  const getStatusColor = (status: string) => {
+  const getStatusBadge = (status: string) => {
     switch (status.toLowerCase()) {
       case 'active':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return <Badge variant="default" className="bg-green-100 text-green-700 hover:bg-green-100">Active</Badge>;
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        return <Badge variant="warning" className="bg-yellow-100 text-yellow-700 hover:bg-yellow-100">Pending</Badge>;
       case 'paused':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return <Badge variant="secondary" className="bg-gray-100 text-gray-700 hover:bg-gray-100">Paused</Badge>;
       case 'rejected':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return <Badge variant="outline" className="bg-red-100 text-red-700 border-red-200 hover:bg-red-100">Rejected</Badge>;
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return <Badge variant="secondary">{status}</Badge>;
     }
+  };
+
+  const getTypeBadge = (type: string) => {
+    return <Badge variant="outline" className="capitalize">{type}</Badge>;
   };
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-6">
-        {partnerships.map((partnership) => (
-          <Card key={partnership.affiliate_partnership_uuid} className="border border-gray-200 hover:shadow-lg transition-all duration-200">
-            <CardHeader className="pb-4">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <CardTitle className="text-xl font-bold text-gray-900 mb-2">
+      {partnerships.map((partnership) => (
+        <Card key={partnership.affiliate_partnership_uuid} className="border border-border hover:shadow-md transition-shadow">
+          <CardHeader className="pb-4">
+            <div className="flex items-start justify-between">
+              <div className="space-y-3">
+                <div>
+                  <CardTitle className="text-lg font-semibold text-foreground mb-2">
                     {partnership.name}
                   </CardTitle>
-                  <div className="flex items-center gap-3">
-                    <Badge variant="outline" className="capitalize font-medium px-3 py-1">
-                      {partnership.type}
-                    </Badge>
-                    <Badge className={`${getStatusColor(partnership.status)} font-medium px-3 py-1 border`}>
-                      {partnership.status}
-                    </Badge>
-                  </div>
-                </div>
-                <div className="flex flex-col items-end gap-3">
-                  <div className="text-right">
-                    <div className="flex items-center gap-1 text-sm text-gray-500 mb-1">
-                      <Calendar className="h-3 w-3" />
-                      <span>Created</span>
-                    </div>
-                    <div className="text-sm font-semibold text-gray-900">
-                      {new Date(partnership.created_at).toLocaleDateString()}
-                    </div>
-                  </div>
-                  {renderActionButtons(partnership)}
-                </div>
-              </div>
-            </CardHeader>
-            
-            <CardContent className="space-y-6">
-              {/* Revenue and Commission Split - Enhanced Layout */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-green-100 p-2 rounded-lg">
-                      <DollarSign className="h-5 w-5 text-green-600" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-gray-600">Total Revenue</div>
-                      <div className="text-2xl font-bold text-gray-900">${partnership.revenue.toFixed(2)}</div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-3">
-                    <div className="bg-blue-100 p-2 rounded-lg">
-                      <Users className="h-5 w-5 text-blue-600" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-gray-600">Expert Split</div>
-                      <div className="text-2xl font-bold text-blue-600">{Math.round(partnership.expert_split * 100)}%</div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-3">
-                    <div className="bg-purple-100 p-2 rounded-lg">
-                      <Users className="h-5 w-5 text-purple-600" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-gray-600">Affiliate Split</div>
-                      <div className="text-2xl font-bold text-purple-600">{Math.round(partnership.affiliate_split * 100)}%</div>
-                    </div>
+                  <div className="flex items-center gap-2">
+                    {getTypeBadge(partnership.type)}
+                    {getStatusBadge(partnership.status)}
                   </div>
                 </div>
               </div>
+              <div className="flex flex-col items-end gap-3">
+                <div className="text-right">
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground mb-1">
+                    <Calendar className="h-3 w-3" />
+                    Created {new Date(partnership.created_at).toLocaleDateString()}
+                  </div>
+                </div>
+                {renderActionButtons(partnership)}
+              </div>
+            </div>
+          </CardHeader>
+          
+          <CardContent className="space-y-6">
+            {/* Revenue and Split Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-muted/50 rounded-lg p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                    <DollarSign className="h-4 w-4 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Total Revenue</p>
+                    <p className="text-lg font-semibold text-foreground">${partnership.revenue.toFixed(2)}</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-muted/50 rounded-lg p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <Users className="h-4 w-4 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Expert Split</p>
+                    <p className="text-lg font-semibold text-blue-600">{Math.round(partnership.expert_split * 100)}%</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-muted/50 rounded-lg p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <Users className="h-4 w-4 text-purple-600" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Affiliate Split</p>
+                    <p className="text-lg font-semibold text-purple-600">{Math.round(partnership.affiliate_split * 100)}%</p>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-              {/* Additional Information */}
-              <div className="space-y-4">
-                {/* Affiliate Link */}
-                {partnership.affiliate_link && (
-                  <div className="border border-blue-200 rounded-lg p-4 bg-blue-50">
-                    <div className="flex items-start gap-3">
-                      <div className="bg-blue-100 p-2 rounded-lg mt-0.5">
-                        <Link className="h-4 w-4 text-blue-600" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-semibold text-blue-900 mb-2">Affiliate Link</div>
-                        <div className="text-sm font-mono text-blue-700 bg-white border border-blue-200 rounded px-3 py-2 break-all">
+            {/* Additional Information */}
+            <div className="space-y-4">
+              {/* Affiliate Link */}
+              {partnership.affiliate_link && (
+                <div className="border border-border rounded-lg p-4 bg-muted/30">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Link className="h-4 w-4 text-blue-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground mb-2">Affiliate Link</p>
+                      <div className="bg-background border border-border rounded px-3 py-2">
+                        <code className="text-xs text-muted-foreground break-all font-mono">
                           {partnership.affiliate_link}
-                        </div>
+                        </code>
                       </div>
                     </div>
                   </div>
-                )}
+                </div>
+              )}
 
-                {/* Partner Message */}
-                {partnership.message && (
-                  <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                    <div className="flex items-start gap-3">
-                      <div className="bg-gray-100 p-2 rounded-lg mt-0.5">
-                        <MessageSquare className="h-4 w-4 text-gray-600" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="text-sm font-semibold text-gray-900 mb-2">Partner Message</div>
-                        <div className="text-sm text-gray-700 leading-relaxed">{partnership.message}</div>
-                      </div>
+              {/* Partner Message */}
+              {partnership.message && (
+                <div className="border border-border rounded-lg p-4 bg-muted/30">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <MessageSquare className="h-4 w-4 text-gray-600" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-foreground mb-2">Partner Message</p>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{partnership.message}</p>
                     </div>
                   </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 }
