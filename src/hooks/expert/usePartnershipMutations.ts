@@ -7,7 +7,7 @@ export function usePartnershipMutations() {
   const queryClient = useQueryClient();
 
   const updatePartnershipStatus = useMutation({
-    mutationFn: async ({ partnershipUuid, status }: { partnershipUuid: string; status: string }) => {
+    mutationFn: async ({ partnershipUuid, status }: { partnershipUuid: string; status: "active" | "pending" | "rejected" | "inactive" }) => {
       const { data, error } = await supabase
         .from('affiliate_partnerships')
         .update({ status })
@@ -30,11 +30,11 @@ export function usePartnershipMutations() {
       const actionMessages = {
         'active': 'Partnership accepted successfully',
         'rejected': 'Partnership rejected successfully',
-        'paused': 'Partnership paused successfully',
-        'pending': 'Partnership resumed successfully'
+        'inactive': 'Partnership revoked successfully',
+        'pending': 'Partnership status updated successfully'
       };
       
-      toast.success(actionMessages[variables.status as keyof typeof actionMessages] || 'Partnership updated successfully');
+      toast.success(actionMessages[variables.status] || 'Partnership updated successfully');
     },
     onError: (error) => {
       console.error('Partnership update failed:', error);
