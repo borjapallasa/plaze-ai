@@ -105,7 +105,7 @@ export function AffiliateOffersList({ offers }: AffiliateOffersListProps) {
               </TableCell>
               <TableCell className="text-right">
                 <div className="text-xs text-gray-500">
-                  ${offer.monthlyEarnings} {offer.category === "product" ? "per transaction" : "per month"}
+                  ${offer.monthlyEarnings} <span className="font-medium text-gray-700">{offer.category === "product" ? "per transaction" : "per month"}</span>
                 </div>
               </TableCell>
               <TableCell>
