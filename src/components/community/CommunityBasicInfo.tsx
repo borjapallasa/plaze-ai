@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ProductEditor } from "@/components/product/ProductEditor";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import { PlusCircle, Trash2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import type { CommunityType } from "@/hooks/use-create-community";
@@ -29,8 +28,6 @@ interface CommunityBasicInfoProps {
   onLinkChange: (index: number, field: keyof { name: string; url: string }, value: string) => void;
   onAddLink: () => void;
   onRemoveLink: (index: number) => void;
-  affiliateProgram?: boolean;
-  setAffiliateProgram?: (value: boolean) => void;
 }
 
 export function CommunityBasicInfo({
@@ -51,8 +48,6 @@ export function CommunityBasicInfo({
   onLinkChange,
   onAddLink,
   onRemoveLink,
-  affiliateProgram = false,
-  setAffiliateProgram,
 }: CommunityBasicInfoProps) {
   return (
     <Card>
@@ -141,22 +136,6 @@ export function CommunityBasicInfo({
             </div>
           </div>
         )}
-
-        {/* Affiliate Program Toggle */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <div>
-              <Label className="text-base font-medium">Affiliate Program</Label>
-              <p className="text-sm text-muted-foreground">
-                Enable affiliates to promote your community and earn commissions
-              </p>
-            </div>
-            <Switch
-              checked={affiliateProgram}
-              onCheckedChange={setAffiliateProgram}
-            />
-          </div>
-        </div>
 
         <div>
           <div className="flex items-center justify-between mb-4">
