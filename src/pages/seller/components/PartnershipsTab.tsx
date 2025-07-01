@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,9 +8,11 @@ import { Users, DollarSign, Link, MessageSquare, Calendar, Check, X, AlertTriang
 import { useExpertPartnerships } from "@/hooks/expert/useExpertPartnerships";
 import { usePartnershipMutations } from "@/hooks/expert/usePartnershipMutations";
 import { RevokePartnershipDialog } from "@/components/partnerships/RevokePartnershipDialog";
+
 interface PartnershipsTabProps {
   expertUuid?: string;
 }
+
 export function PartnershipsTab({
   expertUuid
 }: PartnershipsTabProps) {
@@ -22,22 +25,26 @@ export function PartnershipsTab({
   } = usePartnershipMutations();
   const [revokeDialogOpen, setRevokeDialogOpen] = useState(false);
   const [selectedPartnership, setSelectedPartnership] = useState<any>(null);
+
   const handleAcceptPartnership = (partnershipUuid: string) => {
     updatePartnershipStatus.mutate({
       partnershipUuid,
       status: 'active'
     });
   };
+
   const handleRejectPartnership = (partnershipUuid: string) => {
     updatePartnershipStatus.mutate({
       partnershipUuid,
       status: 'rejected'
     });
   };
+
   const handleRevokePartnership = (partnership: any) => {
     setSelectedPartnership(partnership);
     setRevokeDialogOpen(true);
   };
+
   const confirmRevokePartnership = () => {
     if (selectedPartnership) {
       updatePartnershipStatus.mutate({
@@ -48,33 +55,59 @@ export function PartnershipsTab({
       setSelectedPartnership(null);
     }
   };
+
   const renderActionButtons = (partnership: any) => {
     const status = partnership.status?.toLowerCase();
     const isUpdating = updatePartnershipStatus.isPending;
+
     switch (status) {
       case 'pending':
-        return <div className="flex gap-2">
-            <Button size="sm" onClick={() => handleAcceptPartnership(partnership.affiliate_partnership_uuid)} disabled={isUpdating} className="bg-green-600 hover:bg-green-700 text-white border-0">
+        return (
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              onClick={() => handleAcceptPartnership(partnership.affiliate_partnership_uuid)}
+              disabled={isUpdating}
+              className="bg-green-600 hover:bg-green-700 text-white border-0"
+            >
               <Check className="h-4 w-4 mr-1" />
               Accept
             </Button>
-            <Button size="sm" variant="outline" onClick={() => handleRejectPartnership(partnership.affiliate_partnership_uuid)} disabled={isUpdating} className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => handleRejectPartnership(partnership.affiliate_partnership_uuid)}
+              disabled={isUpdating}
+              className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
+            >
               <X className="h-4 w-4 mr-1" />
               Reject
             </Button>
-          </div>;
+          </div>
+        );
       case 'active':
-        return <Button size="sm" variant="outline" onClick={() => handleRevokePartnership(partnership)} disabled={isUpdating} className="text-orange-600 border-orange-200 hover:bg-orange-50 hover:text-orange-700">
+        return (
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => handleRevokePartnership(partnership)}
+            disabled={isUpdating}
+            className="text-orange-600 border-orange-200 hover:bg-orange-50 hover:text-orange-700"
+          >
             <AlertTriangle className="h-4 w-4 mr-1" />
             Revoke
-          </Button>;
+          </Button>
+        );
       default:
         return null;
     }
   };
+
   if (isLoading) {
-    return <div className="space-y-6">
-        {[...Array(3)].map((_, i) => <Card key={i} className="border border-border">
+    return (
+      <div className="space-y-6">
+        {[...Array(3)].map((_, i) => (
+          <Card key={i} className="border border-border">
             <CardHeader className="space-y-2">
               <Skeleton className="h-6 w-48" />
               <div className="flex gap-2">
@@ -89,31 +122,33 @@ export function PartnershipsTab({
                 <Skeleton className="h-16 w-full" />
               </div>
             </CardContent>
-          </Card>)}
-      </div>;
+          </Card>
+        ))}
+      </div>
+    );
   }
+
   if (partnerships.length === 0) {
-    return <div className="space-y-6">
+    return (
+      <div className="space-y-6">
         {/* Informational Card */}
-        <Card className="border border-border bg-muted/30">
+        <Card className="border-dashed border-2 border-border bg-muted/30">
           <CardContent className="p-6">
             <div className="text-center py-8">
               <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
                 <Edit className="h-8 w-8 text-muted-foreground" />
               </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">Looking for new partnerships?</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-2">No partnerships yet</h3>
               <p className="text-muted-foreground max-w-md mx-auto leading-relaxed">
-                To find new partnership opportunities, you can enable affiliate partnerships through your products or communities edit pages. 
-                This will allow other affiliates to discover and request partnerships with your offerings.
+                Enable affiliate partnerships on your products or communities to allow others to promote your offerings and earn commissions.
               </p>
             </div>
           </CardContent>
         </Card>
-
-        {/* Empty State */}
-        
-      </div>;
+      </div>
+    );
   }
+
   const getStatusBadge = (status: string) => {
     switch (status.toLowerCase()) {
       case 'active':
@@ -128,10 +163,13 @@ export function PartnershipsTab({
         return <Badge variant="secondary">{status}</Badge>;
     }
   };
+
   const getTypeBadge = (type: string) => {
     return <Badge variant="outline" className="capitalize">{type}</Badge>;
   };
-  return <>
+
+  return (
+    <>
       <div className="space-y-6">
         {/* Informational Card for when there are partnerships */}
         <Card className="border border-border bg-muted/30">
@@ -150,7 +188,8 @@ export function PartnershipsTab({
           </CardContent>
         </Card>
 
-        {partnerships.map(partnership => <Card key={partnership.affiliate_partnership_uuid} className="border border-border hover:shadow-md transition-shadow">
+        {partnerships.map(partnership => (
+          <Card key={partnership.affiliate_partnership_uuid} className="border border-border hover:shadow-md transition-shadow">
             <CardHeader className="pb-4">
               <div className="flex items-start justify-between">
                 <div className="space-y-3">
@@ -219,7 +258,8 @@ export function PartnershipsTab({
               {/* Additional Information */}
               <div className="space-y-4">
                 {/* Affiliate Link */}
-                {partnership.affiliate_link && <div className="border border-border rounded-lg p-4 bg-muted/30">
+                {partnership.affiliate_link && (
+                  <div className="border border-border rounded-lg p-4 bg-muted/30">
                     <div className="flex items-start gap-3">
                       <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
                         <Link className="h-4 w-4 text-blue-600" />
@@ -233,10 +273,12 @@ export function PartnershipsTab({
                         </div>
                       </div>
                     </div>
-                  </div>}
+                  </div>
+                )}
 
                 {/* Partner Message */}
-                {partnership.message && <div className="border border-border rounded-lg p-4 bg-muted/30">
+                {partnership.message && (
+                  <div className="border border-border rounded-lg p-4 bg-muted/30">
                     <div className="flex items-start gap-3">
                       <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
                         <MessageSquare className="h-4 w-4 text-gray-600" />
@@ -246,12 +288,21 @@ export function PartnershipsTab({
                         <p className="text-sm text-muted-foreground leading-relaxed">{partnership.message}</p>
                       </div>
                     </div>
-                  </div>}
+                  </div>
+                )}
               </div>
             </CardContent>
-          </Card>)}
+          </Card>
+        ))}
       </div>
 
-      <RevokePartnershipDialog open={revokeDialogOpen} onOpenChange={setRevokeDialogOpen} onConfirm={confirmRevokePartnership} partnershipName={selectedPartnership?.name || ''} isLoading={updatePartnershipStatus.isPending} />
-    </>;
+      <RevokePartnershipDialog
+        open={revokeDialogOpen}
+        onOpenChange={setRevokeDialogOpen}
+        onConfirm={confirmRevokePartnership}
+        partnershipName={selectedPartnership?.name || ''}
+        isLoading={updatePartnershipStatus.isPending}
+      />
+    </>
+  );
 }
