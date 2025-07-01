@@ -69,13 +69,6 @@ export default function EditCommunity() {
         <div className="space-y-4 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-8">
             <div className="space-y-6">
-              <CommunityStatusSection
-                status={communityStatus}
-                onStatusChange={setCommunityStatus}
-                onSave={handleSave}
-                isSaving={isSaving}
-              />
-
               <CommunityBasicInfo
                 communityName={communityName}
                 setCommunityName={setCommunityName}
@@ -108,6 +101,13 @@ export default function EditCommunity() {
 
           <div className="lg:col-span-4">
             <div className="space-y-6">
+              <CommunityStatusSection
+                status={communityStatus}
+                onStatusChange={setCommunityStatus}
+                onSave={handleSave}
+                isSaving={isSaving}
+              />
+
               <CommunityStats
                 paymentLink={paymentLink}
                 onCopyPaymentLink={handleCopyPaymentLink}

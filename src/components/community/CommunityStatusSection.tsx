@@ -5,9 +5,11 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 
+type CommunityStatus = "visible" | "not visible" | "draft";
+
 interface CommunityStatusSectionProps {
-  status: string;
-  onStatusChange: (status: string) => void;
+  status: CommunityStatus;
+  onStatusChange: (status: CommunityStatus) => void;
   onSave: () => void;
   isSaving: boolean;
 }
@@ -25,7 +27,7 @@ export function CommunityStatusSection({
           <Label htmlFor="community-status" className="text-base font-medium">
             Community Status
           </Label>
-          <Select value={status} onValueChange={onStatusChange}>
+          <Select value={status} onValueChange={(value) => onStatusChange(value as CommunityStatus)}>
             <SelectTrigger className="w-full sm:w-48">
               <SelectValue placeholder="Select status" />
             </SelectTrigger>
