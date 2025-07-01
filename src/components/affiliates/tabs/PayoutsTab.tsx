@@ -12,7 +12,6 @@ export function PayoutsTab() {
   const { toast } = useToast();
 
   const payouts = data?.payouts || [];
-  const totalPaidOut = data?.totalPaidOut || 0;
 
   const getStatusBadge = (status: string) => {
     const displayStatus = toStartCase(status);
@@ -86,17 +85,6 @@ export function PayoutsTab() {
 
   return (
     <div className="space-y-6">
-      {/* Total Paid Out Summary */}
-      <div className="rounded-md border p-6">
-        <div className="text-center">
-          <h3 className="text-lg font-semibold mb-2">Total Paid Out</h3>
-          <p className="text-3xl font-bold text-green-600">${totalPaidOut.toFixed(2)}</p>
-          <p className="text-sm text-muted-foreground mt-1">
-            Sum of all completed payouts
-          </p>
-        </div>
-      </div>
-
       {/* Payouts Table */}
       <div className="rounded-md border">
         <div className="w-full overflow-auto">
