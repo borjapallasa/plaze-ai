@@ -6,6 +6,7 @@ import { AffiliateOffersTypeFilter, FilterType } from "./AffiliateOffersTypeFilt
 import { AffiliateOffersGrid } from "./AffiliateOffersGrid";
 import { AffiliateOffersList } from "./AffiliateOffersList";
 import { useAllAffiliateProducts } from "@/hooks/use-affiliate-products";
+import { useExistingPartnerships } from "@/hooks/use-existing-partnerships";
 
 export function AffiliateOffersSection() {
   const [layout, setLayout] = useState<LayoutType>("grid");
@@ -17,11 +18,14 @@ export function AffiliateOffersSection() {
   const [filterType, setFilterType] = useState<FilterType>("all");
   
   const { data: affiliateProducts = [], isLoading, error } = useAllAffiliateProducts();
+  const { data: existingPartnerships = [] } = useExistingPartnerships();
 
   // Transform and sort the data
   const offers = useMemo(() => {
     const transformedOffers = affiliateProducts
       .filter(product => product.status === "active")
+      // Filter out products where partnerships already exist
+      .filter(product => !existingPartnerships.includes(product.affiliate_products_uuid))
       .map(product => ({
         id: product.affiliate_products_uuid,
         title: product.product_name || "Unnamed Product",
@@ -64,7 +68,7 @@ export function AffiliateOffersSection() {
       
       return sortBy.direction === "desc" ? -compareValue : compareValue;
     });
-  }, [affiliateProducts, sortBy, filterType]);
+  }, [affiliateProducts, sortBy, filterType, existingPartnerships]);
 
   if (isLoading) {
     return (
@@ -126,8 +130,8 @@ export function AffiliateOffersSection() {
         <div className="text-center py-12">
           <p className="text-muted-foreground">
             {filterType === "all" 
-              ? "No active affiliate offers available at the moment." 
-              : `No ${filterType} offers available at the moment.`}
+              ? "No new affiliate offers available at the moment." 
+              : `No new ${filterType} offers available at the moment.`}
           </p>
         </div>
       ) : (
