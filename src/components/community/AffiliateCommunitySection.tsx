@@ -6,20 +6,25 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
-import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { useAffiliateCommunities } from "@/hooks/use-affiliate-communities";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2, Plus } from "lucide-react";
 
 interface AffiliateCommunityProps {
   communityUuid?: string;
 }
 
+interface Question {
+  id: string;
+  question: string;
+}
+
 export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityProps) {
   const [isAffiliateProgram, setIsAffiliateProgram] = useState(false);
   const [split, setSplit] = useState([70]); // Default 70% seller, 30% affiliate
-  const [questions, setQuestions] = useState("");
+  const [questions, setQuestions] = useState<Question[]>([]);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -31,12 +36,22 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
   // Check if community is already in affiliate program
   const isAlreadyAffiliate = affiliateCommunities.length > 0;
 
-  // Load existing split if community is already in affiliate program
+  // Load existing split and questions if community is already in affiliate program
   useEffect(() => {
     if (affiliateCommunities.length > 0) {
       const existingCommunity = affiliateCommunities[0];
       setSplit([Math.round(existingCommunity.expert_share * 100)]);
-      setQuestions(JSON.stringify(existingCommunity.questions || {}, null, 2));
+      
+      // Parse questions from JSONB
+      if (existingCommunity.questions) {
+        const questionsArray = Array.isArray(existingCommunity.questions) 
+          ? existingCommunity.questions 
+          : Object.entries(existingCommunity.questions || {}).map(([id, question]) => ({
+              id,
+              question: typeof question === 'string' ? question : String(question)
+            }));
+        setQuestions(questionsArray);
+      }
     }
   }, [affiliateCommunities]);
 
@@ -53,7 +68,17 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
   const handleEdit = (affiliateCommunity: any) => {
     setEditingCommunity(affiliateCommunity);
     setSplit([Math.round(affiliateCommunity.expert_share * 100)]);
-    setQuestions(JSON.stringify(affiliateCommunity.questions || {}, null, 2));
+    
+    // Parse questions for editing
+    if (affiliateCommunity.questions) {
+      const questionsArray = Array.isArray(affiliateCommunity.questions) 
+        ? affiliateCommunity.questions 
+        : Object.entries(affiliateCommunity.questions || {}).map(([id, question]) => ({
+            id,
+            question: typeof question === 'string' ? question : String(question)
+          }));
+      setQuestions(questionsArray);
+    }
     setShowEditDialog(true);
   };
 
@@ -62,13 +87,30 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
     setShowDeleteDialog(true);
   };
 
-  const parseQuestions = (questionsText: string) => {
-    try {
-      return questionsText ? JSON.parse(questionsText) : {};
-    } catch (e) {
-      console.error('Error parsing questions:', e);
-      return {};
-    }
+  const addQuestion = () => {
+    const newQuestion: Question = {
+      id: `question_${Date.now()}`,
+      question: ""
+    };
+    setQuestions([...questions, newQuestion]);
+  };
+
+  const updateQuestion = (id: string, question: string) => {
+    setQuestions(questions.map(q => q.id === id ? { ...q, question } : q));
+  };
+
+  const removeQuestion = (id: string) => {
+    setQuestions(questions.filter(q => q.id !== id));
+  };
+
+  const formatQuestionsForStorage = (questionsArray: Question[]) => {
+    const questionsObj: Record<string, string> = {};
+    questionsArray.forEach(q => {
+      if (q.question.trim()) {
+        questionsObj[q.id] = q.question.trim();
+      }
+    });
+    return questionsObj;
   };
 
   const handleDialogConfirm = async () => {
@@ -82,7 +124,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
 
       const expertShare = split[0] / 100;
       const affiliateShare = (100 - split[0]) / 100;
-      const parsedQuestions = parseQuestions(questions);
+      const formattedQuestions = formatQuestionsForStorage(questions);
 
       const { error } = await supabase
         .from('affiliate_products')
@@ -92,7 +134,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
           affiliate_share: affiliateShare,
           status: 'active',
           type: 'community',
-          questions: parsedQuestions
+          questions: formattedQuestions
         });
 
       if (error) {
@@ -104,7 +146,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
       toast.success("Affiliate program enabled successfully");
       setShowConfirmDialog(false);
       setIsAffiliateProgram(false);
-      setQuestions("");
+      setQuestions([]);
       refetchAffiliateCommunities();
 
     } catch (error) {
@@ -123,14 +165,14 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
 
       const expertShare = split[0] / 100;
       const affiliateShare = (100 - split[0]) / 100;
-      const parsedQuestions = parseQuestions(questions);
+      const formattedQuestions = formatQuestionsForStorage(questions);
 
       const { error } = await supabase
         .from('affiliate_products')
         .update({
           expert_share: expertShare,
           affiliate_share: affiliateShare,
-          questions: parsedQuestions
+          questions: formattedQuestions
         })
         .eq('affiliate_products_uuid', editingCommunity.affiliate_products_uuid);
 
@@ -143,7 +185,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
       toast.success("Affiliate program updated successfully");
       setShowEditDialog(false);
       setEditingCommunity(null);
-      setQuestions("");
+      setQuestions([]);
       refetchAffiliateCommunities();
 
     } catch (error) {
@@ -174,7 +216,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
       toast.success("Affiliate program disabled successfully");
       setShowDeleteDialog(false);
       setEditingCommunity(null);
-      setQuestions("");
+      setQuestions([]);
       refetchAffiliateCommunities();
 
     } catch (error) {
@@ -187,6 +229,47 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
 
   const sellerPercentage = split[0];
   const affiliatePercentage = 100 - split[0];
+
+  const QuestionsSection = ({ questions, onUpdate, onAdd, onRemove }: {
+    questions: Question[];
+    onUpdate: (id: string, question: string) => void;
+    onAdd: () => void;
+    onRemove: (id: string) => void;
+  }) => (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <Label>Questions for Affiliates</Label>
+        <Button type="button" variant="outline" size="sm" onClick={onAdd}>
+          <Plus className="h-4 w-4 mr-1" />
+          Add Question
+        </Button>
+      </div>
+      <div className="space-y-2">
+        {questions.map((q) => (
+          <div key={q.id} className="flex gap-2">
+            <Input
+              value={q.question}
+              onChange={(e) => onUpdate(q.id, e.target.value)}
+              placeholder="Enter question for affiliates"
+              className="flex-1"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              onClick={() => onRemove(q.id)}
+              className="h-10 w-10 flex-shrink-0"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        ))}
+      </div>
+      <p className="text-sm text-muted-foreground">
+        Add questions that affiliates must answer when applying to promote this community.
+      </p>
+    </div>
+  );
 
   return (
     <>
@@ -273,18 +356,12 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
                     </div>
                   </div>
 
-                  <div className="space-y-3">
-                    <Label>Questions for Affiliates (JSON format)</Label>
-                    <Textarea
-                      value={questions}
-                      onChange={(e) => setQuestions(e.target.value)}
-                      placeholder='{"question1": "What is your experience?", "question2": "How will you promote this?"}'
-                      className="min-h-[100px]"
-                    />
-                    <p className="text-sm text-muted-foreground">
-                      Enter questions in JSON format that affiliates must answer when applying.
-                    </p>
-                  </div>
+                  <QuestionsSection
+                    questions={questions}
+                    onUpdate={updateQuestion}
+                    onAdd={addQuestion}
+                    onRemove={removeQuestion}
+                  />
 
                   <div className="pt-4 border-t">
                     <Button 
@@ -334,18 +411,12 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
               </div>
             </div>
 
-            <div className="space-y-3">
-              <Label>Questions for Affiliates (JSON format)</Label>
-              <Textarea
-                value={questions}
-                onChange={(e) => setQuestions(e.target.value)}
-                placeholder='{"question1": "What is your experience?", "question2": "How will you promote this?"}'
-                className="min-h-[100px]"
-              />
-              <p className="text-sm text-muted-foreground">
-                Enter questions in JSON format that affiliates must answer when applying.
-              </p>
-            </div>
+            <QuestionsSection
+              questions={questions}
+              onUpdate={updateQuestion}
+              onAdd={addQuestion}
+              onRemove={removeQuestion}
+            />
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowEditDialog(false)}>
@@ -394,10 +465,14 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
           </DialogHeader>
           <div className="py-4">
             <p>This will enable affiliate program for this community with a {sellerPercentage}%/{affiliatePercentage}% seller/affiliate split</p>
-            {questions && (
+            {questions.length > 0 && (
               <div className="mt-4 p-3 border rounded-lg bg-muted/50">
                 <p className="font-medium">Questions for affiliates:</p>
-                <pre className="text-sm text-muted-foreground mt-2 whitespace-pre-wrap">{questions}</pre>
+                <ul className="text-sm text-muted-foreground mt-2 space-y-1">
+                  {questions.map((q) => (
+                    <li key={q.id}>• {q.question}</li>
+                  ))}
+                </ul>
               </div>
             )}
           </div>

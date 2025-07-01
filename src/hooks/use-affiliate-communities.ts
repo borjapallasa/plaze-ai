@@ -24,27 +24,36 @@ export function useAffiliateCommunities(communityUuid?: string) {
     queryFn: async (): Promise<AffiliateCommunityData[]> => {
       if (!communityUuid) return [];
 
-      const { data, error } = await supabase
+      // First get the affiliate products
+      const { data: affiliateData, error: affiliateError } = await supabase
         .from('affiliate_products')
-        .select(`
-          *,
-          communities!inner(
-            name,
-            price,
-            description,
-            user_uuid,
-            experts(name)
-          )
-        `)
+        .select('*')
         .eq('product_uuid', communityUuid)
         .eq('type', 'community');
 
-      if (error) {
-        console.error('Error fetching affiliate communities:', error);
-        throw error;
+      if (affiliateError) {
+        console.error('Error fetching affiliate products:', affiliateError);
+        throw affiliateError;
       }
 
-      return (data || []).map(item => ({
+      // Then get community details separately
+      const { data: communityData, error: communityError } = await supabase
+        .from('communities')
+        .select(`
+          name,
+          price,
+          description,
+          user_uuid,
+          experts(name)
+        `)
+        .eq('community_uuid', communityUuid)
+        .single();
+
+      if (communityError) {
+        console.error('Error fetching community details:', communityError);
+      }
+
+      return (affiliateData || []).map(item => ({
         affiliate_products_uuid: item.affiliate_products_uuid,
         product_uuid: item.product_uuid,
         expert_share: item.expert_share,
@@ -53,10 +62,10 @@ export function useAffiliateCommunities(communityUuid?: string) {
         type: item.type,
         questions: item.questions,
         created_at: item.created_at,
-        community_name: item.communities?.name,
-        community_price: item.communities?.price,
-        expert_name: item.communities?.experts?.name,
-        community_description: item.communities?.description
+        community_name: communityData?.name,
+        community_price: communityData?.price,
+        expert_name: communityData?.experts?.name,
+        community_description: communityData?.description
       }));
     },
     enabled: !!communityUuid
