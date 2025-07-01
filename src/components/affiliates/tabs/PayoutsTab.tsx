@@ -144,50 +144,52 @@ export function PayoutsTab() {
       </div>
 
       <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-1/5">Date</TableHead>
-              <TableHead className="w-1/5 text-right">Amount</TableHead>
-              <TableHead className="w-1/5">Status</TableHead>
-              <TableHead className="w-1/5">Method</TableHead>
-              <TableHead className="w-1/5">Payout ID</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {payouts.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
-                  No payouts found
-                </TableCell>
-              </TableRow>
-            ) : (
-              payouts.map((payout) => (
-                <TableRow key={payout.payout_uuid}>
-                  <TableCell className="w-1/5">{payout.created_at}</TableCell>
-                  <TableCell className="w-1/5 text-right font-mono">
-                    ${payout.amount.toFixed(2)}
-                  </TableCell>
-                  <TableCell className="w-1/5">{getStatusBadge(payout.status)}</TableCell>
-                  <TableCell className="w-1/5">{getPaymentMethodDisplay(payout.method)}</TableCell>
-                  <TableCell className="w-1/5">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-sm">{payout.payout_uuid}</span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => copyPayoutId(payout.payout_uuid)}
-                        className="flex items-center gap-1 px-2 shrink-0"
-                      >
-                        <Copy className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+        <div className="w-full overflow-auto">
+          <table className="w-full table-fixed">
+            <thead className="[&_tr]:border-b">
+              <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground w-1/5">Date</th>
+                <th className="h-12 px-4 text-right align-middle font-medium text-muted-foreground w-1/5">Amount</th>
+                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground w-1/5">Status</th>
+                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground w-1/5">Method</th>
+                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground w-1/5">Payout ID</th>
+              </tr>
+            </thead>
+            <tbody className="[&_tr:last-child]:border-0">
+              {payouts.length === 0 ? (
+                <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                  <td colSpan={5} className="p-4 align-middle text-center text-muted-foreground py-8">
+                    No payouts found
+                  </td>
+                </tr>
+              ) : (
+                payouts.map((payout) => (
+                  <tr key={payout.payout_uuid} className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                    <td className="p-4 align-middle w-1/5">{payout.created_at}</td>
+                    <td className="p-4 align-middle text-right font-mono w-1/5">
+                      ${payout.amount.toFixed(2)}
+                    </td>
+                    <td className="p-4 align-middle w-1/5">{getStatusBadge(payout.status)}</td>
+                    <td className="p-4 align-middle w-1/5">{getPaymentMethodDisplay(payout.method)}</td>
+                    <td className="p-4 align-middle w-1/5">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-sm truncate flex-1">{payout.payout_uuid}</span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => copyPayoutId(payout.payout_uuid)}
+                          className="flex items-center gap-1 px-2 shrink-0"
+                        >
+                          <Copy className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
