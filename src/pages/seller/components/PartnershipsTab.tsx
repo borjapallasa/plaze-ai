@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -67,12 +68,12 @@ export function PartnershipsTab({
     switch (status) {
       case 'pending':
         return (
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             <Button
               size="sm"
               onClick={() => handleAcceptPartnership(partnership.affiliate_partnership_uuid)}
               disabled={isUpdating}
-              className="bg-green-600 hover:bg-green-700 text-white border-0"
+              className="bg-green-600 hover:bg-green-700 text-white border-0 w-full sm:w-auto"
             >
               <Check className="h-4 w-4 mr-1" />
               Accept
@@ -82,7 +83,7 @@ export function PartnershipsTab({
               variant="outline"
               onClick={() => handleRejectPartnership(partnership.affiliate_partnership_uuid)}
               disabled={isUpdating}
-              className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
+              className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 w-full sm:w-auto"
             >
               <X className="h-4 w-4 mr-1" />
               Reject
@@ -96,7 +97,7 @@ export function PartnershipsTab({
             variant="outline"
             onClick={() => handleRevokePartnership(partnership)}
             disabled={isUpdating}
-            className="text-orange-600 border-orange-200 hover:bg-orange-50 hover:text-orange-700"
+            className="text-orange-600 border-orange-200 hover:bg-orange-50 hover:text-orange-700 w-full sm:w-auto"
           >
             <AlertTriangle className="h-4 w-4 mr-1" />
             Revoke
@@ -130,14 +131,14 @@ export function PartnershipsTab({
         <CollapsibleContent className="mt-4">
           <div className="space-y-4">
             {questionsAnswered.map((qa, index) => (
-              <div key={index} className="border border-border rounded-lg p-4 bg-background">
+              <div key={index} className="border border-border rounded-lg p-3 sm:p-4 bg-background">
                 <div className="space-y-3">
                   <div className="flex items-start gap-2">
                     <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                       <span className="text-xs font-medium text-blue-600">Q</span>
                     </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-foreground leading-relaxed">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground leading-relaxed break-words">
                         {qa.question}
                       </p>
                     </div>
@@ -146,8 +147,8 @@ export function PartnershipsTab({
                     <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                       <span className="text-xs font-medium text-green-600">A</span>
                     </div>
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground leading-relaxed">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-muted-foreground leading-relaxed break-words">
                         {qa.answer || 'No answer provided'}
                       </p>
                     </div>
@@ -174,7 +175,7 @@ export function PartnershipsTab({
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <Skeleton className="h-16 w-full" />
                 <Skeleton className="h-16 w-full" />
                 <Skeleton className="h-16 w-full" />
@@ -191,13 +192,13 @@ export function PartnershipsTab({
       <div className="space-y-6">
         {/* Informational Card */}
         <Card className="border-dashed border-2 border-border bg-muted/30">
-          <CardContent className="p-6">
-            <div className="text-center py-12">
+          <CardContent className="p-4 sm:p-6">
+            <div className="text-center py-8 sm:py-12">
               <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
                 <Edit className="h-8 w-8 text-muted-foreground" />
               </div>
               <h3 className="text-lg font-semibold text-foreground mb-2">No partnerships yet</h3>
-              <p className="text-muted-foreground max-w-md mx-auto leading-relaxed">
+              <p className="text-muted-foreground max-w-md mx-auto leading-relaxed text-sm sm:text-base">
                 Enable affiliate partnerships on your products or communities to allow others to promote your offerings and earn commissions.
               </p>
             </div>
@@ -231,12 +232,12 @@ export function PartnershipsTab({
       <div className="space-y-6">
         {/* Informational Card for when there are partnerships */}
         <Card className="border border-border bg-muted/30">
-          <CardContent className="p-4">
+          <CardContent className="p-3 sm:p-4">
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
                 <Edit className="h-4 w-4 text-blue-600" />
               </div>
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground mb-1">Looking for new partnerships?</p>
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   Enable affiliate partnerships through your products or communities edit pages.
@@ -249,20 +250,20 @@ export function PartnershipsTab({
         {partnerships.map(partnership => (
           <Card key={partnership.affiliate_partnership_uuid} className="border border-border hover:shadow-md transition-shadow">
             <CardHeader className="pb-4">
-              <div className="flex items-start justify-between">
-                <div className="space-y-3">
+              <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-start sm:justify-between">
+                <div className="space-y-3 flex-1 min-w-0">
                   <div>
-                    <CardTitle className="text-lg font-semibold text-foreground mb-2">
+                    <CardTitle className="text-lg font-semibold text-foreground mb-2 break-words">
                       {partnership.name}
                     </CardTitle>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       {getTypeBadge(partnership.type)}
                       {getStatusBadge(partnership.status)}
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-col items-end gap-3">
-                  <div className="text-right">
+                <div className="flex flex-col sm:items-end gap-3 w-full sm:w-auto">
+                  <div className="text-left sm:text-right">
                     <div className="flex items-center gap-1 text-xs text-muted-foreground mb-1">
                       <Calendar className="h-3 w-3" />
                       Created {new Date(partnership.created_at).toLocaleDateString()}
@@ -275,15 +276,15 @@ export function PartnershipsTab({
             
             <CardContent className="space-y-6">
               {/* Revenue and Split Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="bg-muted/50 rounded-lg p-4">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
                       <DollarSign className="h-4 w-4 text-green-600" />
                     </div>
-                    <div>
+                    <div className="min-w-0 flex-1">
                       <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Total Revenue</p>
-                      <p className="text-lg font-semibold text-foreground">${partnership.revenue.toFixed(2)}</p>
+                      <p className="text-lg font-semibold text-foreground break-all">${partnership.revenue.toFixed(2)}</p>
                     </div>
                   </div>
                 </div>
@@ -293,7 +294,7 @@ export function PartnershipsTab({
                     <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
                       <Users className="h-4 w-4 text-blue-600" />
                     </div>
-                    <div>
+                    <div className="min-w-0 flex-1">
                       <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Expert Split</p>
                       <p className="text-lg font-semibold text-blue-600">{Math.round(partnership.expert_split * 100)}%</p>
                     </div>
@@ -305,7 +306,7 @@ export function PartnershipsTab({
                     <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
                       <Users className="h-4 w-4 text-purple-600" />
                     </div>
-                    <div>
+                    <div className="min-w-0 flex-1">
                       <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Affiliate Split</p>
                       <p className="text-lg font-semibold text-purple-600">{Math.round(partnership.affiliate_split * 100)}%</p>
                     </div>
@@ -317,14 +318,14 @@ export function PartnershipsTab({
               <div className="space-y-4">
                 {/* Partner Message */}
                 {partnership.message && (
-                  <div className="border border-border rounded-lg p-4 bg-muted/30">
+                  <div className="border border-border rounded-lg p-3 sm:p-4 bg-muted/30">
                     <div className="flex items-start gap-3">
                       <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
                         <MessageSquare className="h-4 w-4 text-gray-600" />
                       </div>
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-foreground mb-2">Partner Message</p>
-                        <p className="text-sm text-muted-foreground leading-relaxed">{partnership.message}</p>
+                        <p className="text-sm text-muted-foreground leading-relaxed break-words">{partnership.message}</p>
                       </div>
                     </div>
                   </div>
@@ -332,12 +333,12 @@ export function PartnershipsTab({
 
                 {/* Questions & Answers */}
                 {(partnership.questions_answered && partnership.questions_answered.length > 0) && (
-                  <div className="border border-border rounded-lg p-4 bg-muted/30">
+                  <div className="border border-border rounded-lg p-3 sm:p-4 bg-muted/30">
                     <div className="flex items-start gap-3">
                       <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
                         <HelpCircle className="h-4 w-4 text-blue-600" />
                       </div>
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-foreground mb-3">Partnership Application</p>
                         {renderQuestionsAnswers(partnership.questions_answered)}
                       </div>
@@ -347,7 +348,7 @@ export function PartnershipsTab({
 
                 {/* Affiliate Link */}
                 {partnership.affiliate_link && (
-                  <div className="border border-border rounded-lg p-4 bg-muted/30">
+                  <div className="border border-border rounded-lg p-3 sm:p-4 bg-muted/30">
                     <div className="flex items-start gap-3">
                       <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
                         <Link className="h-4 w-4 text-blue-600" />
