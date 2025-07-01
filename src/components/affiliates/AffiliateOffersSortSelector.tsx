@@ -58,7 +58,7 @@ export function AffiliateOffersSortSelector({
             <SelectItem 
               key={`${option.field}-${option.direction}`} 
               value={`${option.field}-${option.direction}`}
-              className="cursor-pointer hover:bg-gray-50 px-3 py-2 text-sm text-gray-900"
+              className="cursor-pointer hover:bg-gray-50 px-3 py-2 text-sm text-gray-900 [&>span:first-child]:hidden"
             >
               {option.label}
             </SelectItem>
