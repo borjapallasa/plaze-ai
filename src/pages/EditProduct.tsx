@@ -495,22 +495,17 @@ export default function EditProduct() {
                   setDemo={setDemo}
                 />
 
-                <Card className="p-3 sm:p-6">
-                  <h2 className="text-lg font-medium mb-3 sm:mb-4">Product Organization</h2>
-                  <div className="space-y-4">
-                    <ProductOrganization
-                      industries={industries}
-                      useCases={useCases}
-                      platform={platform}
-                      team={team}
-                      onIndustryChange={handleIndustryChange}
-                      onUseCaseChange={handleUseCaseChange}
-                      onPlatformChange={handlePlatformChange}
-                      onTeamChange={handleTeamChange}
-                      renderSelectedTags={renderSelectedTags}
-                    />
-                  </div>
-                </Card>
+                <ProductOrganization
+                  industries={industries}
+                  useCases={useCases}
+                  platform={platform}
+                  team={team}
+                  onIndustryChange={handleIndustryChange}
+                  onUseCaseChange={handleUseCaseChange}
+                  onPlatformChange={handlePlatformChange}
+                  onTeamChange={handleTeamChange}
+                  renderSelectedTags={renderSelectedTags}
+                />
 
                 <ProductMediaSection productUuid={id} />
               </div>
