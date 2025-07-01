@@ -166,7 +166,6 @@ export type Database = {
       affiliates: {
         Row: {
           affiliate_code: string | null
-          affiliate_count: number | null
           affiliate_uuid: string
           commissions_available: number | null
           commissions_made: number | null
@@ -176,12 +175,10 @@ export type Database = {
           id: number
           paypal: string | null
           status: Database["public"]["Enums"]["affiliate_status"] | null
-          transaction_count: number | null
           user_uuid: string | null
         }
         Insert: {
           affiliate_code?: string | null
-          affiliate_count?: number | null
           affiliate_uuid?: string
           commissions_available?: number | null
           commissions_made?: number | null
@@ -191,12 +188,10 @@ export type Database = {
           id?: number
           paypal?: string | null
           status?: Database["public"]["Enums"]["affiliate_status"] | null
-          transaction_count?: number | null
           user_uuid?: string | null
         }
         Update: {
           affiliate_code?: string | null
-          affiliate_count?: number | null
           affiliate_uuid?: string
           commissions_available?: number | null
           commissions_made?: number | null
@@ -206,7 +201,6 @@ export type Database = {
           id?: number
           paypal?: string | null
           status?: Database["public"]["Enums"]["affiliate_status"] | null
-          transaction_count?: number | null
           user_uuid?: string | null
         }
         Relationships: [
