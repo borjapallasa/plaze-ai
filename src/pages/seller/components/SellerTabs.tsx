@@ -14,7 +14,8 @@ interface SellerTabsProps {
   productsLoading: boolean;
   communitiesLoading: boolean;
   expertUuid?: string;
-  services?: any[]; // Add services property as optional
+  services?: any[];
+  servicesLoading?: boolean; // Add this missing property
 }
 
 export function SellerTabs({
@@ -23,7 +24,8 @@ export function SellerTabs({
   productsLoading,
   communitiesLoading,
   expertUuid,
-  services = [] // Default to empty array
+  services = [],
+  servicesLoading = false // Default to false
 }: SellerTabsProps) {
   const location = useLocation();
   
@@ -126,7 +128,7 @@ export function SellerTabs({
           <CommunitiesTab 
             communities={communities.map(community => ({
               ...community,
-              status: community.status || 'active' // Add default status
+              status: community.status || 'active'
             }))} 
             isLoading={communitiesLoading} 
           />
