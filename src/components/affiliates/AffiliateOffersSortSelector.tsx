@@ -49,24 +49,27 @@ export function AffiliateOffersSortSelector({
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-sm text-muted-foreground">Sort by:</span>
+      <span className="text-sm text-muted-foreground whitespace-nowrap">Sort by:</span>
       <Select value={currentValue} onValueChange={handleSortChange}>
-        <SelectTrigger className="w-[200px]">
+        <SelectTrigger className="w-[200px] bg-white border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           <SelectValue />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="bg-white border border-gray-200 shadow-lg rounded-lg z-50">
           {sortOptions.map((option) => (
             <SelectItem 
               key={`${option.field}-${option.direction}`} 
               value={`${option.field}-${option.direction}`}
+              className="flex items-center justify-between cursor-pointer hover:bg-gray-50 px-3 py-2.5 text-sm"
             >
-              <div className="flex items-center gap-2">
-                <span>{option.label}</span>
-                {option.direction === "asc" ? (
-                  <ArrowUp className="w-3 h-3" />
-                ) : (
-                  <ArrowDown className="w-3 h-3" />
-                )}
+              <div className="flex items-center justify-between w-full">
+                <span className="text-gray-900">{option.label}</span>
+                <div className="ml-2 flex-shrink-0">
+                  {option.direction === "asc" ? (
+                    <ArrowUp className="w-3 h-3 text-gray-400" />
+                  ) : (
+                    <ArrowDown className="w-3 h-3 text-gray-400" />
+                  )}
+                </div>
               </div>
             </SelectItem>
           ))}
