@@ -352,6 +352,7 @@ export type Database = {
         Row: {
           active_price_id: string | null
           active_product_id: string | null
+          affiliate_program: boolean | null
           billing_period:
             | Database["public"]["Enums"]["community_billing_period"]
             | null
@@ -387,6 +388,7 @@ export type Database = {
         Insert: {
           active_price_id?: string | null
           active_product_id?: string | null
+          affiliate_program?: boolean | null
           billing_period?:
             | Database["public"]["Enums"]["community_billing_period"]
             | null
@@ -424,6 +426,7 @@ export type Database = {
         Update: {
           active_price_id?: string | null
           active_product_id?: string | null
+          affiliate_program?: boolean | null
           billing_period?:
             | Database["public"]["Enums"]["community_billing_period"]
             | null

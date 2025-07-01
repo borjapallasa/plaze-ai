@@ -1,44 +1,15 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { MainHeader } from "@/components/MainHeader";
 import { ServiceForm } from "@/components/service/ServiceForm";
-import { useCreateService, ServiceData } from "@/hooks/use-create-service";
-import { ServiceStatus } from "@/types/service";
 
 export default function NewServicePage() {
   const navigate = useNavigate();
-  const { createService, isLoading } = useCreateService();
 
-  const handleSubmit = async (formData: {
-    name: string;
-    description: string;
-    price: number;
-    type: "monthly" | "one time";
-    features: string[];
-    main_category: { value: string };
-    subcategory: { value: string }[];
-    status: ServiceStatus;
-  }) => {
-    try {
-      const serviceData: ServiceData = {
-        name: formData.name,
-        description: formData.description,
-        price: formData.price,
-        type: formData.type,
-        features: formData.features,
-        category: formData.main_category.value,
-        tags: formData.subcategory.map(sub => sub.value),
-        status: formData.status
-      };
-
-      const service = await createService(serviceData);
-      if (service?.service_uuid) {
-        navigate(`/service/${service.service_uuid}/edit`);
-      }
-    } catch (error) {
-      console.error('Failed to create service:', error);
-    }
+  const handleSubmit = async () => {
+    // Service creation functionality to be implemented
+    console.log("Service creation not yet implemented");
   };
 
   return (
@@ -57,8 +28,7 @@ export default function NewServicePage() {
           </div>
 
           <ServiceForm
-            onSubmit={handleSubmit}
-            isLoading={isLoading}
+            isLoading={false}
             submitButtonText="Create Service"
           />
         </div>

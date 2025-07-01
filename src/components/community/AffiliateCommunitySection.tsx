@@ -138,10 +138,11 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
       const affiliateShare = (100 - split[0]) / 100;
       const formattedQuestions = formatQuestionsForStorage(questions);
 
-      const { error } = await supabase
+      // Insert into affiliate_products table
+      const { error: affiliateError } = await supabase
         .from('affiliate_products')
         .insert({
-          community_uuid: communityUuid, // Changed from product_uuid to community_uuid
+          community_uuid: communityUuid,
           expert_share: expertShare,
           affiliate_share: affiliateShare,
           status: 'active',
@@ -149,9 +150,21 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
           questions: formattedQuestions
         });
 
-      if (error) {
-        console.error('Error creating affiliate community:', error);
+      if (affiliateError) {
+        console.error('Error creating affiliate community:', affiliateError);
         toast.error("Failed to enable affiliate program");
+        return;
+      }
+
+      // Update the communities table to set affiliate_program = true
+      const { error: communityError } = await supabase
+        .from('communities')
+        .update({ affiliate_program: true })
+        .eq('community_uuid', communityUuid);
+
+      if (communityError) {
+        console.error('Error updating community affiliate flag:', communityError);
+        toast.error("Failed to update community settings");
         return;
       }
 
@@ -211,19 +224,32 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
   };
 
   const handleDeleteConfirm = async () => {
-    if (!editingCommunity) return;
+    if (!editingCommunity || !communityUuid) return;
 
     try {
       setIsLoading(true);
 
-      const { error } = await supabase
+      // Delete from affiliate_products table
+      const { error: affiliateError } = await supabase
         .from('affiliate_products')
         .delete()
         .eq('affiliate_products_uuid', editingCommunity.affiliate_products_uuid);
 
-      if (error) {
-        console.error('Error deleting affiliate community:', error);
+      if (affiliateError) {
+        console.error('Error deleting affiliate community:', affiliateError);
         toast.error("Failed to disable affiliate program");
+        return;
+      }
+
+      // Update the communities table to set affiliate_program = false
+      const { error: communityError } = await supabase
+        .from('communities')
+        .update({ affiliate_program: false })
+        .eq('community_uuid', communityUuid);
+
+      if (communityError) {
+        console.error('Error updating community affiliate flag:', communityError);
+        toast.error("Failed to update community settings");
         return;
       }
 
