@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -477,65 +478,60 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
         </DialogContent>
       </Dialog>
 
-      {/* Improved Delete Dialog */}
+      {/* Redesigned Delete Dialog with improved spacing */}
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <DialogContent className="max-w-lg p-0 overflow-hidden">
-          {/* Header Section */}
-          <div className="px-6 pt-6 pb-4 text-center">
-            <div className="mx-auto w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-4">
-              <AlertTriangle className="h-8 w-8 text-red-500" />
+        <DialogContent className="max-w-md">
+          <DialogHeader className="text-center pb-2">
+            <div className="mx-auto w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-3">
+              <AlertTriangle className="h-6 w-6 text-red-600" />
             </div>
-            <DialogTitle className="text-2xl font-semibold text-gray-900 mb-2">
+            <DialogTitle className="text-xl font-semibold text-gray-900">
               Remove from Affiliate Program?
             </DialogTitle>
-            <p className="text-gray-600 text-base leading-relaxed">
+          </DialogHeader>
+          
+          <div className="space-y-5">
+            <p className="text-center text-gray-600 text-sm leading-relaxed">
               This will remove your community from the affiliate marketplace and stop new partnership requests.
             </p>
-          </div>
-          
-          {/* Content Section */}
-          <div className="px-6 space-y-6">
-            {/* Fair Play Policy Section */}
-            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5">
-              <div className="flex items-start gap-4">
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Info className="h-4 w-4 text-blue-600" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-semibold text-blue-900 text-lg mb-3">Fair Play Policy</h4>
-                  <div className="space-y-3">
-                    <div className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-blue-600 rounded-full mt-2.5 flex-shrink-0"></div>
-                      <span className="text-blue-800 text-base leading-relaxed">Partners will still receive commissions for sales in the next 90 days</span>
+            
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4">
+              <div className="flex items-start gap-3">
+                <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                <div>
+                  <h4 className="font-medium text-blue-900 mb-2">Fair Play Policy</h4>
+                  <div className="space-y-2 text-sm text-blue-800">
+                    <div className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
+                      <span>Partners will still receive commissions for sales in the next 90 days</span>
                     </div>
-                    <div className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-blue-600 rounded-full mt-2.5 flex-shrink-0"></div>
-                      <span className="text-blue-800 text-base leading-relaxed">Your community won't appear in affiliate deals anymore</span>
+                    <div className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
+                      <span>Your community won't appear in affiliate deals anymore</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Current Revenue Split Section */}
             {editingCommunity && (
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                 <div className="text-center">
-                  <p className="text-gray-700 font-medium text-base mb-2">Current Revenue Split</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    You: {Math.round(editingCommunity.expert_share * 100)}% • Partners: {Math.round(editingCommunity.affiliate_share * 100)}%
+                  <p className="text-sm font-medium text-gray-700 mb-1">Current Revenue Split</p>
+                  <p className="text-lg font-semibold text-gray-900">
+                    You: {Math.round(editingCommunity.expert_share * 100)}% • 
+                    Partners: {Math.round(editingCommunity.affiliate_share * 100)}%
                   </p>
                 </div>
               </div>
             )}
           </div>
 
-          {/* Footer Section */}
-          <div className="px-6 py-6 bg-gray-50 border-t border-gray-100 flex gap-3">
+          <DialogFooter className="gap-3 pt-5">
             <Button 
               variant="outline" 
               onClick={() => setShowDeleteDialog(false)}
-              className="flex-1 h-12 text-base font-medium border-gray-300 hover:bg-gray-50"
+              className="flex-1"
             >
               Keep in Program
             </Button>
@@ -543,18 +539,18 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
               variant="destructive" 
               onClick={handleDeleteConfirm} 
               disabled={isLoading}
-              className="flex-1 h-12 text-base font-medium bg-red-600 hover:bg-red-700 shadow-sm"
+              className="flex-1 bg-red-600 hover:bg-red-700"
             >
               {isLoading ? (
-                <div className="flex items-center gap-3">
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   Removing...
                 </div>
               ) : (
                 "Remove from Program"
               )}
             </Button>
-          </div>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
