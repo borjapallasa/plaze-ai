@@ -85,6 +85,7 @@ export default function SellerPage() {
           communities={communities}
           productsLoading={productsLoading}
           communitiesLoading={communitiesLoading}
+          expertUuid={currentSeller.expert_uuid}
         />
       </main>
     </div>

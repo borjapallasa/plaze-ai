@@ -1,12 +1,13 @@
 
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { ShoppingBag, UsersRound, BarChart3, Star } from "lucide-react";
+import { ShoppingBag, UsersRound, BarChart3, Star, Handshake } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { ProductsTab } from "./ProductsTab";
 import { CommunitiesTab } from "./CommunitiesTab";
 import { MetricsTab } from "./MetricsTab";
 import { ReviewsTab } from "./ReviewsTab";
+import { PartnershipsTab } from "./PartnershipsTab";
 
 interface SellerTabsProps {
   products: any[];
@@ -27,7 +28,7 @@ export function SellerTabs({
   
   const [activeTab, setActiveTab] = useState(() => {
     const hash = window.location.hash.replace('#', '');
-    const availableTabs = ['metrics', 'products', 'communities', 'reviews'];
+    const availableTabs = ['metrics', 'products', 'communities', 'partnerships', 'reviews'];
     return availableTabs.includes(hash) ? hash : 'metrics';
   });
 
@@ -35,14 +36,14 @@ export function SellerTabs({
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '');
-      const availableTabs = ['metrics', 'products', 'communities', 'reviews'];
+      const availableTabs = ['metrics', 'products', 'communities', 'partnerships', 'reviews'];
       if (availableTabs.includes(hash)) {
         setActiveTab(hash);
       }
     };
 
     // Set hash if it doesn't exist or if current hash is not available
-    const availableTabs = ['metrics', 'products', 'communities', 'reviews'];
+    const availableTabs = ['metrics', 'products', 'communities', 'partnerships', 'reviews'];
     
     if (!window.location.hash || !availableTabs.includes(window.location.hash.replace('#', ''))) {
       window.location.hash = activeTab;
@@ -91,6 +92,13 @@ export function SellerTabs({
                 {communitiesLoading && <span className="ml-2 text-xs">Loading...</span>}
               </TabsTrigger>
               <TabsTrigger 
+                value="partnerships" 
+                className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-foreground whitespace-nowrap flex-shrink-0 rounded-none pb-3 px-4 border-b-2 border-transparent hover:border-muted-foreground/50 transition-colors"
+              >
+                <Handshake className="h-4 w-4 mr-2" />
+                Partnerships
+              </TabsTrigger>
+              <TabsTrigger 
                 value="reviews" 
                 className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-foreground whitespace-nowrap flex-shrink-0 rounded-none pb-3 px-4 border-b-2 border-transparent hover:border-muted-foreground/50 transition-colors"
               >
@@ -121,6 +129,10 @@ export function SellerTabs({
             }))} 
             isLoading={communitiesLoading} 
           />
+        </TabsContent>
+
+        <TabsContent value="partnerships" className="mt-0">
+          <PartnershipsTab expertUuid={expertUuid} />
         </TabsContent>
 
         <TabsContent value="reviews" className="mt-0">
