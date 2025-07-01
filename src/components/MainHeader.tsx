@@ -163,8 +163,8 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
       <div className="container mx-auto px-4 h-full">
         {/* Mobile Header */}
         <div className="flex md:hidden items-center justify-between h-full">
-          {/* Menu on the left - with consistent width */}
-          <div className="w-12 flex justify-start">
+          {/* Menu on the left - with smaller width */}
+          <div className="w-10 flex justify-start">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -247,8 +247,8 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
             </DropdownMenu>
           </div>
 
-          {/* Search bar in the middle - with equal flex space */}
-          <div className="flex-1 px-4">
+          {/* Search bar in the middle - with more space */}
+          <div className="flex-1 px-3">
             <form onSubmit={(e) => handleSearch(e, true)} className={`flex items-center gap-1 px-3 ${isHomePage ? 'py-1.5' : 'py-1.5'} rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background`}>
               <div className="relative flex-1">
                 <Input
@@ -298,8 +298,8 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
             </form>
           </div>
           
-          {/* Cart on the right - with consistent width */}
-          <div className="w-12 flex justify-end">
+          {/* Cart on the right - with smaller width */}
+          <div className="w-10 flex justify-end">
             <CartDrawerTrigger />
           </div>
         </div>
