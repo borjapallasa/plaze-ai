@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -146,11 +147,11 @@ export function PayoutsTab() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Method</TableHead>
-              <TableHead>Payout ID</TableHead>
+              <TableHead className="w-1/5">Date</TableHead>
+              <TableHead className="w-1/5 text-right">Amount</TableHead>
+              <TableHead className="w-1/5">Status</TableHead>
+              <TableHead className="w-1/5">Method</TableHead>
+              <TableHead className="w-1/5">Payout ID</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -163,13 +164,13 @@ export function PayoutsTab() {
             ) : (
               payouts.map((payout) => (
                 <TableRow key={payout.payout_uuid}>
-                  <TableCell>{payout.created_at}</TableCell>
-                  <TableCell className="text-right font-mono">
+                  <TableCell className="w-1/5">{payout.created_at}</TableCell>
+                  <TableCell className="w-1/5 text-right font-mono">
                     ${payout.amount.toFixed(2)}
                   </TableCell>
-                  <TableCell>{getStatusBadge(payout.status)}</TableCell>
-                  <TableCell>{getPaymentMethodDisplay(payout.method)}</TableCell>
-                  <TableCell>
+                  <TableCell className="w-1/5">{getStatusBadge(payout.status)}</TableCell>
+                  <TableCell className="w-1/5">{getPaymentMethodDisplay(payout.method)}</TableCell>
+                  <TableCell className="w-1/5">
                     <div className="flex items-center gap-2">
                       <span className="font-mono text-sm">{payout.payout_uuid}</span>
                       <Button
