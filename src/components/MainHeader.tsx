@@ -1,3 +1,4 @@
+
 import React, { useState, FormEvent, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, Menu, User, ChevronDown, LogOut, Home, UserCircle, Users, Store, HelpCircle, MessageSquare } from "lucide-react";
@@ -169,7 +170,7 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
-                  className="rounded-full px-2.5 py-1.5 h-8 border hover:border-muted-foreground/70 transition-colors"
+                  className="rounded-full px-2.5 py-1.5 h-8 border-[0.5px] border-muted-foreground/30 hover:border-muted-foreground/50 transition-colors"
                 >
                   <Menu className="h-3.5 w-3.5" />
                 </Button>
@@ -391,7 +392,7 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
-                  className="rounded-full px-2.5 py-1.5 h-8 border hover:border-muted-foreground/70 transition-colors"
+                  className="rounded-full px-2.5 py-1.5 h-8 border-[0.5px] border-muted-foreground/30 hover:border-muted-foreground/50 transition-colors"
                 >
                   <Menu className="h-3.5 w-3.5 mr-1.5" />
                   <User className="h-3.5 w-3.5" />
