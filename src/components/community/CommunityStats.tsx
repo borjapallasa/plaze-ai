@@ -31,6 +31,7 @@ interface CommunityStatsProps {
   isDeleting: boolean;
   onDeleteCommunity: (redirectUrl: string) => void;
   communityName: string;
+  affiliateSection?: React.ReactNode;
 }
 
 export function CommunityStats({
@@ -44,7 +45,8 @@ export function CommunityStats({
   setShowDeleteDialog,
   isDeleting,
   onDeleteCommunity,
-  communityName
+  communityName,
+  affiliateSection
 }: CommunityStatsProps) {
   const formatCurrency = (amount: number | null | undefined) => {
     if (amount === null || amount === undefined) return '$0';
@@ -123,6 +125,8 @@ export function CommunityStats({
           </div>
         </div>
       </Card>
+
+      {affiliateSection}
 
       <Card className="p-4 sm:p-6 border border-border/40 bg-card/40">
         <h2 className="text-lg font-semibold tracking-tight mb-4">Advanced Settings</h2>

@@ -98,8 +98,6 @@ export default function EditCommunity() {
 
           <div className="lg:col-span-4">
             <div className="space-y-6">
-              <AffiliateCommunitySection communityUuid={id} />
-              
               <CommunityStats
                 paymentLink={paymentLink}
                 onCopyPaymentLink={handleCopyPaymentLink}
@@ -112,6 +110,7 @@ export default function EditCommunity() {
                 isDeleting={isDeleting}
                 onDeleteCommunity={handleDeleteCommunity}
                 communityName={communityName}
+                affiliateSection={<AffiliateCommunitySection communityUuid={id} />}
               />
             </div>
           </div>
