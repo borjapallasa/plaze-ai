@@ -47,10 +47,10 @@ export function AffiliateOffersSortSelector({
   const currentValue = `${sortBy.field}-${sortBy.direction}`;
 
   return (
-    <div className="flex items-center gap-2">
-      <span className="text-sm text-muted-foreground whitespace-nowrap">Sort by:</span>
+    <div className="flex items-center gap-1">
+      <span className="text-xs text-muted-foreground whitespace-nowrap">Sort by:</span>
       <Select value={currentValue} onValueChange={handleSortChange}>
-        <SelectTrigger className="w-[200px] bg-white border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        <SelectTrigger className="w-[160px] h-8 text-xs bg-white border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           <SelectValue />
         </SelectTrigger>
         <SelectContent className="bg-white border border-gray-200 shadow-lg rounded-lg z-50">
@@ -58,7 +58,7 @@ export function AffiliateOffersSortSelector({
             <SelectItem 
               key={`${option.field}-${option.direction}`} 
               value={`${option.field}-${option.direction}`}
-              className="cursor-pointer hover:bg-gray-50 px-3 py-2 text-sm text-gray-900 [&>span:first-child]:hidden"
+              className="cursor-pointer hover:bg-gray-50 px-3 py-1.5 text-xs text-gray-900 [&>span:first-child]:hidden"
             >
               {option.label}
             </SelectItem>

@@ -12,22 +12,22 @@ interface AffiliateOffersLayoutSwitcherProps {
 
 export function AffiliateOffersLayoutSwitcher({ layout, onLayoutChange }: AffiliateOffersLayoutSwitcherProps) {
   return (
-    <div className="flex gap-1 border rounded-md p-1">
+    <div className="flex gap-0.5 border rounded-md p-0.5">
       <Button
         variant={layout === "grid" ? "default" : "ghost"}
         size="sm"
         onClick={() => onLayoutChange("grid")}
-        className="h-8 px-3"
+        className="h-7 px-2"
       >
-        <LayoutGrid className="h-4 w-4" />
+        <LayoutGrid className="h-3 w-3" />
       </Button>
       <Button
         variant={layout === "list" ? "default" : "ghost"}
         size="sm"
         onClick={() => onLayoutChange("list")}
-        className="h-8 px-3"
+        className="h-7 px-2"
       >
-        <List className="h-4 w-4" />
+        <List className="h-3 w-3" />
       </Button>
     </div>
   );

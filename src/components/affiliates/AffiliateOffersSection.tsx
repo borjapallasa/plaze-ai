@@ -68,13 +68,13 @@ export function AffiliateOffersSection() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold">Available Affiliate Offers</h2>
             <p className="text-muted-foreground">Discover new products to promote and earn commissions</p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             <AffiliateOffersTypeFilter filterType={filterType} onFilterChange={setFilterType} />
             <AffiliateOffersSortSelector sortBy={sortBy} onSortChange={setSortBy} />
             <AffiliateOffersLayoutSwitcher layout={layout} onLayoutChange={setLayout} />
@@ -89,13 +89,13 @@ export function AffiliateOffersSection() {
 
   if (error) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold">Available Affiliate Offers</h2>
             <p className="text-muted-foreground">Discover new products to promote and earn commissions</p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             <AffiliateOffersTypeFilter filterType={filterType} onFilterChange={setFilterType} />
             <AffiliateOffersSortSelector sortBy={sortBy} onSortChange={setSortBy} />
             <AffiliateOffersLayoutSwitcher layout={layout} onLayoutChange={setLayout} />
@@ -109,13 +109,13 @@ export function AffiliateOffersSection() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">Available Affiliate Offers</h2>
           <p className="text-muted-foreground">Discover new products to promote and earn commissions</p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
           <AffiliateOffersTypeFilter filterType={filterType} onFilterChange={setFilterType} />
           <AffiliateOffersSortSelector sortBy={sortBy} onSortChange={setSortBy} />
           <AffiliateOffersLayoutSwitcher layout={layout} onLayoutChange={setLayout} />
