@@ -69,8 +69,8 @@ export function AffiliateOfferCard({ offer }: AffiliateOfferCardProps) {
         
         <p className="text-sm text-muted-foreground line-clamp-2">{offer.description}</p>
         
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-gray-700">Type:</span>
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-muted-foreground">Type</span>
           <Badge variant="outline" className="text-xs border-gray-200 text-gray-600 bg-gray-50">
             {toStartCase(offer.type || offer.category)}
           </Badge>
