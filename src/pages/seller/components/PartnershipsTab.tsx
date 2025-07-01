@@ -1,9 +1,10 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, DollarSign, Link, MessageSquare, Calendar, Check, X, AlertTriangle } from "lucide-react";
+import { Users, DollarSign, Link, MessageSquare, Calendar, Check, X, AlertTriangle, Edit } from "lucide-react";
 import { useExpertPartnerships } from "@/hooks/expert/useExpertPartnerships";
 import { usePartnershipMutations } from "@/hooks/expert/usePartnershipMutations";
 import { RevokePartnershipDialog } from "@/components/partnerships/RevokePartnershipDialog";
@@ -124,14 +125,33 @@ export function PartnershipsTab({ expertUuid }: PartnershipsTabProps) {
 
   if (partnerships.length === 0) {
     return (
-      <div className="text-center py-16">
-        <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
-          <Users className="h-8 w-8 text-muted-foreground" />
+      <div className="space-y-6">
+        {/* Informational Card */}
+        <Card className="border border-border bg-muted/30">
+          <CardContent className="p-6">
+            <div className="text-center py-8">
+              <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+                <Edit className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <h3 className="text-lg font-semibold text-foreground mb-2">Looking for new partnerships?</h3>
+              <p className="text-muted-foreground max-w-md mx-auto leading-relaxed">
+                To find new partnership opportunities, you can enable affiliate partnerships through your products or communities edit pages. 
+                This will allow other affiliates to discover and request partnerships with your offerings.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Empty State */}
+        <div className="text-center py-16">
+          <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+            <Users className="h-8 w-8 text-muted-foreground" />
+          </div>
+          <h3 className="text-lg font-semibold text-foreground mb-2">No partnerships yet</h3>
+          <p className="text-muted-foreground max-w-sm mx-auto">
+            No affiliate partnerships have been created for this expert yet.
+          </p>
         </div>
-        <h3 className="text-lg font-semibold text-foreground mb-2">No partnerships yet</h3>
-        <p className="text-muted-foreground max-w-sm mx-auto">
-          No affiliate partnerships have been created for this expert yet.
-        </p>
       </div>
     );
   }
@@ -158,6 +178,23 @@ export function PartnershipsTab({ expertUuid }: PartnershipsTabProps) {
   return (
     <>
       <div className="space-y-6">
+        {/* Informational Card for when there are partnerships */}
+        <Card className="border border-border bg-muted/30">
+          <CardContent className="p-4">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                <Edit className="h-4 w-4 text-blue-600" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-foreground mb-1">Looking for new partnerships?</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Enable affiliate partnerships through your products or communities edit pages to allow other affiliates to discover and request partnerships.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {partnerships.map((partnership) => (
           <Card key={partnership.affiliate_partnership_uuid} className="border border-border hover:shadow-md transition-shadow">
             <CardHeader className="pb-4">
