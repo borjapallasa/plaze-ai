@@ -134,7 +134,7 @@ export function PartnershipsTab({
         {/* Informational Card */}
         <Card className="border-dashed border-2 border-border bg-muted/30">
           <CardContent className="p-6">
-            <div className="text-center py-8">
+            <div className="text-center py-12">
               <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
                 <Edit className="h-8 w-8 text-muted-foreground" />
               </div>
@@ -181,7 +181,7 @@ export function PartnershipsTab({
               <div className="flex-1">
                 <p className="text-sm font-medium text-foreground mb-1">Looking for new partnerships?</p>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Enable affiliate partnerships through your products or communities edit pages to allow other affiliates to discover and request partnerships.
+                  Enable affiliate partnerships through your products or communities edit pages.
                 </p>
               </div>
             </div>
