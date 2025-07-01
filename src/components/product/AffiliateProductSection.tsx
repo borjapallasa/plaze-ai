@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -6,10 +5,11 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
+import { Textarea } from "@/components/ui/textarea";
 import { useAffiliateProducts } from "@/hooks/use-affiliate-products";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Edit, Trash2, Info } from "lucide-react";
+import { Edit, Trash2, Info, Plus, X } from "lucide-react";
 
 interface AffiliateProductSectionProps {
   expertUuid?: string;
@@ -19,6 +19,7 @@ interface AffiliateProductSectionProps {
 export function AffiliateProductSection({ expertUuid, productUuid }: AffiliateProductSectionProps) {
   const [isAffiliateProgram, setIsAffiliateProgram] = useState(false);
   const [split, setSplit] = useState([70]); // Default 70% seller, 30% affiliate
+  const [questions, setQuestions] = useState<string[]>([]);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -30,11 +31,12 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
   // Check if product is already in affiliate program
   const isAlreadyAffiliate = affiliateProducts.length > 0;
 
-  // Load existing split if product is already in affiliate program
+  // Load existing split and questions if product is already in affiliate program
   useEffect(() => {
     if (affiliateProducts.length > 0) {
       const existingProduct = affiliateProducts[0];
       setSplit([Math.round(existingProduct.expert_share * 100)]);
+      setQuestions(Array.isArray(existingProduct.questions) ? existingProduct.questions : []);
     }
   }, [affiliateProducts]);
 
@@ -51,12 +53,28 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
   const handleEdit = (affiliateProduct: any) => {
     setEditingProduct(affiliateProduct);
     setSplit([Math.round(affiliateProduct.expert_share * 100)]);
+    setQuestions(Array.isArray(affiliateProduct.questions) ? affiliateProduct.questions : []);
     setShowEditDialog(true);
   };
 
   const handleDelete = (affiliateProduct: any) => {
     setEditingProduct(affiliateProduct);
     setShowDeleteDialog(true);
+  };
+
+  const addQuestion = () => {
+    setQuestions([...questions, ""]);
+  };
+
+  const updateQuestion = (index: number, value: string) => {
+    const newQuestions = [...questions];
+    newQuestions[index] = value;
+    setQuestions(newQuestions);
+  };
+
+  const removeQuestion = (index: number) => {
+    const newQuestions = questions.filter((_, i) => i !== index);
+    setQuestions(newQuestions);
   };
 
   const handleDialogConfirm = async () => {
@@ -78,7 +96,8 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
           expert_share: expertShare,
           affiliate_share: affiliateShare,
           status: 'active',
-          type: 'product'
+          type: 'product',
+          questions: questions.filter(q => q.trim() !== '')
         });
 
       if (error) {
@@ -113,7 +132,8 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
         .from('affiliate_products')
         .update({
           expert_share: expertShare,
-          affiliate_share: affiliateShare
+          affiliate_share: affiliateShare,
+          questions: questions.filter(q => q.trim() !== '')
         })
         .eq('affiliate_products_uuid', editingProduct.affiliate_products_uuid);
 
@@ -188,6 +208,11 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
                         <p className="text-sm text-muted-foreground">
                           Expert: {Math.round(ap.expert_share * 100)}% | Affiliate: {Math.round(ap.affiliate_share * 100)}%
                         </p>
+                        {ap.questions && Array.isArray(ap.questions) && ap.questions.length > 0 && (
+                          <p className="text-sm text-muted-foreground">
+                            Questions: {ap.questions.length} configured
+                          </p>
+                        )}
                       </div>
                       <div className="flex gap-2 ml-4">
                         <Button
@@ -249,6 +274,42 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
                     </div>
                   </div>
 
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label>Partnership Questions</Label>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={addQuestion}
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Question
+                      </Button>
+                    </div>
+                    <div className="space-y-2">
+                      {questions.map((question, index) => (
+                        <div key={index} className="flex gap-2">
+                          <Textarea
+                            placeholder="Enter partnership question..."
+                            value={question}
+                            onChange={(e) => updateQuestion(index, e.target.value)}
+                            className="flex-1 min-h-[60px]"
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            onClick={() => removeQuestion(index)}
+                            className="h-10 w-10 flex-shrink-0"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
                   <div className="pt-4 border-t">
                     <Button 
                       onClick={handleConfirm} 
@@ -272,9 +333,9 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
         </div>
       </Card>
 
-      {/* Edit Dialog - Updated with partnership notice */}
+      {/* Edit Dialog - Updated with partnership notice and questions */}
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit Affiliate Program</DialogTitle>
           </DialogHeader>
@@ -307,6 +368,45 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
                   <span>Affiliate: {100 - split[0]}%</span>
                 </div>
               </div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label>Partnership Questions</Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={addQuestion}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Question
+                </Button>
+              </div>
+              <div className="space-y-2">
+                {questions.map((question, index) => (
+                  <div key={index} className="flex gap-2">
+                    <Textarea
+                      placeholder="Enter partnership question..."
+                      value={question}
+                      onChange={(e) => updateQuestion(index, e.target.value)}
+                      className="flex-1 min-h-[60px]"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={() => removeQuestion(index)}
+                      className="h-10 w-10 flex-shrink-0"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+              {questions.length === 0 && (
+                <p className="text-sm text-muted-foreground">No questions configured. Add questions to help you evaluate potential partners.</p>
+              )}
             </div>
           </div>
           <DialogFooter>
@@ -385,6 +485,14 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
                   Expert: {sellerPercentage}% | Affiliate: {affiliatePercentage}%
                 </p>
               </div>
+              {questions.length > 0 && (
+                <div className="p-3 border rounded-lg bg-muted/50">
+                  <p className="font-medium mb-2">Partnership Questions:</p>
+                  <p className="text-sm text-muted-foreground">
+                    {questions.length} question{questions.length !== 1 ? 's' : ''} configured
+                  </p>
+                </div>
+              )}
             </div>
           </div>
           <DialogFooter>
