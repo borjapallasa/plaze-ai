@@ -1,6 +1,7 @@
-
 import React from "react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Copy } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -10,22 +11,26 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useAffiliatePayouts } from "@/hooks/use-affiliate-payouts";
+import { useToast } from "@/hooks/use-toast";
+import { toStartCase } from "@/lib/utils";
 
 export function PayoutsTab() {
   const { data: payouts = [], isLoading, error } = useAffiliatePayouts();
+  const { toast } = useToast();
 
   const getStatusBadge = (status: string) => {
+    const displayStatus = toStartCase(status);
     switch (status.toLowerCase()) {
       case "completed":
-        return <Badge variant="default">Completed</Badge>;
+        return <Badge variant="default">{displayStatus}</Badge>;
       case "processing":
-        return <Badge variant="secondary">Processing</Badge>;
+        return <Badge variant="secondary">{displayStatus}</Badge>;
       case "pending":
-        return <Badge variant="outline">Pending</Badge>;
+        return <Badge variant="outline">{displayStatus}</Badge>;
       case "failed":
-        return <Badge variant="destructive">Failed</Badge>;
+        return <Badge variant="destructive">{displayStatus}</Badge>;
       default:
-        return <Badge variant="secondary">{status}</Badge>;
+        return <Badge variant="secondary">{displayStatus}</Badge>;
     }
   };
 
@@ -39,6 +44,23 @@ export function PayoutsTab() {
         return "Stripe";
       default:
         return method || "Unknown";
+    }
+  };
+
+  const copyPayoutId = async (payoutId: string) => {
+    try {
+      await navigator.clipboard.writeText(payoutId);
+      toast({
+        title: "Copied!",
+        description: "Payout ID has been copied to your clipboard",
+      });
+    } catch (err) {
+      console.error('Failed to copy payout ID:', err);
+      toast({
+        title: "Copy failed",
+        description: "Failed to copy payout ID to clipboard",
+        variant: "destructive",
+      });
     }
   };
 
@@ -127,8 +149,8 @@ export function PayoutsTab() {
               <TableHead>Date</TableHead>
               <TableHead className="text-right">Amount</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Payment Method</TableHead>
-              <TableHead>Reference ID</TableHead>
+              <TableHead>Method</TableHead>
+              <TableHead>Payout ID</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -148,7 +170,17 @@ export function PayoutsTab() {
                   <TableCell>{getStatusBadge(payout.status)}</TableCell>
                   <TableCell>{getPaymentMethodDisplay(payout.method)}</TableCell>
                   <TableCell>
-                    <span className="font-mono text-sm">{payout.payout_uuid}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-sm">{payout.payout_uuid}</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => copyPayoutId(payout.payout_uuid)}
+                        className="flex items-center gap-1 px-2 shrink-0"
+                      >
+                        <Copy className="h-3 w-3" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
