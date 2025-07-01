@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -86,31 +85,35 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
   };
 
   const addQuestion = () => {
-    setQuestions([...questions, ""]);
+    setQuestions(prev => [...prev, ""]);
   };
 
   const updateQuestion = (index: number, question: string) => {
-    const updatedQuestions = [...questions];
-    updatedQuestions[index] = question;
-    setQuestions(updatedQuestions);
+    setQuestions(prev => {
+      const newQuestions = [...prev];
+      newQuestions[index] = question;
+      return newQuestions;
+    });
   };
 
   const removeQuestion = (index: number) => {
-    setQuestions(questions.filter((_, i) => i !== index));
+    setQuestions(prev => prev.filter((_, i) => i !== index));
   };
 
   const addEditQuestion = () => {
-    setEditQuestions([...editQuestions, ""]);
+    setEditQuestions(prev => [...prev, ""]);
   };
 
   const updateEditQuestion = (index: number, question: string) => {
-    const updatedQuestions = [...editQuestions];
-    updatedQuestions[index] = question;
-    setEditQuestions(updatedQuestions);
+    setEditQuestions(prev => {
+      const newQuestions = [...prev];
+      newQuestions[index] = question;
+      return newQuestions;
+    });
   };
 
   const removeEditQuestion = (index: number) => {
-    setEditQuestions(editQuestions.filter((_, i) => i !== index));
+    setEditQuestions(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleDialogConfirm = async () => {
@@ -274,7 +277,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
       </div>
       <div className="space-y-2">
         {questions.map((question, index) => (
-          <div key={index} className="flex gap-2">
+          <div key={`question-${index}-${question.slice(0, 10)}`} className="flex gap-2">
             <Input
               value={question}
               onChange={(e) => onUpdate(index, e.target.value)}
