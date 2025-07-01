@@ -141,7 +141,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
       const { error } = await supabase
         .from('affiliate_products')
         .insert({
-          product_uuid: communityUuid,
+          community_uuid: communityUuid, // Changed from product_uuid to community_uuid
           expert_share: expertShare,
           affiliate_share: affiliateShare,
           status: 'active',
