@@ -50,11 +50,11 @@ export function AffiliateOfferCard({ offer }: AffiliateOfferCardProps) {
             className="w-full h-full object-cover"
           />
         ) : (
-          <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center shadow-sm">
-            <DollarSign className="w-6 h-6 text-blue-600" />
+          <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
+            <DollarSign className="w-5 h-5 text-blue-600" />
           </div>
         )}
-        <div className="absolute top-3 right-3">
+        <div className="absolute top-2 right-2">
           {getStatusBadge(offer.status)}
         </div>
       </div>
@@ -62,27 +62,27 @@ export function AffiliateOfferCard({ offer }: AffiliateOfferCardProps) {
       <CardContent className="flex-1 p-4 space-y-4">
         {/* Header Section */}
         <div className="space-y-1">
-          <h3 className="font-semibold text-lg leading-tight text-black">{offer.title}</h3>
+          <h3 className="font-semibold text-lg leading-tight text-gray-900">{offer.title}</h3>
           <p className="text-sm text-gray-600">{offer.partnerName}</p>
         </div>
         
         {/* Description */}
         <p className="text-sm text-gray-600 line-clamp-2">{offer.description}</p>
         
-        {/* Metrics Row */}
-        <div className="grid grid-cols-2 gap-3 py-2">
-          <div className="flex items-center gap-1.5">
-            <Tag className="w-3.5 h-3.5 text-gray-500" />
-            <div className="text-xs">
-              <span className="font-medium text-black">Type:</span>
-              <span className="text-gray-600 ml-1">{toStartCase(offer.type || offer.category)}</span>
-            </div>
+        {/* Type */}
+        <div className="flex justify-end">
+          <div className="text-xs text-gray-500">
+            <span className="font-medium text-gray-700">Type:</span>
+            <span className="ml-1">{toStartCase(offer.type || offer.category)}</span>
           </div>
-          
+        </div>
+        
+        {/* Metrics Row */}
+        <div className="grid grid-cols-3 gap-4 py-3 border-t border-gray-100">
           <div className="flex items-center gap-1.5">
             <Percent className="w-3.5 h-3.5 text-gray-500" />
             <div className="text-xs">
-              <span className="font-medium text-black">Commission:</span>
+              <span className="font-medium text-gray-700">Commission:</span>
               <span className="text-gray-600 ml-1">
                 {offer.commissionType === "percentage" 
                   ? `${offer.commissionRate}%` 
@@ -94,7 +94,7 @@ export function AffiliateOfferCard({ offer }: AffiliateOfferCardProps) {
           <div className="flex items-center gap-1.5">
             <Star className="w-3.5 h-3.5 text-yellow-500 fill-current" />
             <div className="text-xs">
-              <span className="font-medium text-black">Rating:</span>
+              <span className="font-medium text-gray-700">Rating:</span>
               <span className="text-gray-600 ml-1">{offer.rating}</span>
             </div>
           </div>
@@ -102,28 +102,26 @@ export function AffiliateOfferCard({ offer }: AffiliateOfferCardProps) {
           <div className="flex items-center gap-1.5">
             <Users className="w-3.5 h-3.5 text-gray-500" />
             <div className="text-xs">
-              <span className="font-medium text-black">Users:</span>
+              <span className="font-medium text-gray-700">Users:</span>
               <span className="text-gray-600 ml-1">{offer.totalAffiliates}</span>
             </div>
           </div>
         </div>
-      </CardContent>
-      
-      {/* Earnings Highlight */}
-      <div className="px-4 pb-4">
-        <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
-          <div className="text-center">
-            <span className="text-sm text-gray-600">Earnings: </span>
-            <span className="text-xl font-bold text-green-600">${offer.monthlyEarnings}</span>
-            <span className="text-sm text-gray-600 ml-1">
+        
+        {/* Earnings - Subtle Integration */}
+        <div className="text-center py-2 border-t border-gray-100">
+          <div className="text-sm text-gray-600">
+            <span>Earnings: </span>
+            <span className="font-semibold text-green-600">${offer.monthlyEarnings}</span>
+            <span className="text-gray-500 ml-1">
               {(offer.type || offer.category) === "product" ? "per transaction" : "per month"}
             </span>
           </div>
         </div>
-      </div>
+      </CardContent>
       
       <CardFooter className="p-4 pt-0">
-        <Button className="w-full h-11 font-medium" size="default">
+        <Button className="w-full h-11 font-medium">
           <ExternalLink className="w-4 h-4 mr-2" />
           View Details
         </Button>
