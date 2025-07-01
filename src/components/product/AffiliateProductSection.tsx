@@ -276,7 +276,7 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
 
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <Label>Partnership Questions</Label>
+                      <Label>Questions for Affiliates</Label>
                       <Button
                         type="button"
                         variant="outline"
@@ -287,11 +287,14 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
                         Add Question
                       </Button>
                     </div>
+                    <p className="text-sm text-muted-foreground">
+                      Add questions that affiliates must answer when applying to promote this product.
+                    </p>
                     <div className="space-y-2">
                       {questions.map((question, index) => (
                         <div key={index} className="flex gap-2">
                           <Textarea
-                            placeholder="Enter partnership question..."
+                            placeholder="Enter question for affiliates"
                             value={question}
                             onChange={(e) => updateQuestion(index, e.target.value)}
                             className="flex-1 min-h-[60px]"
@@ -372,7 +375,7 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
 
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <Label>Partnership Questions</Label>
+                <Label>Questions for Affiliates</Label>
                 <Button
                   type="button"
                   variant="outline"
@@ -383,11 +386,14 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
                   Add Question
                 </Button>
               </div>
+              <p className="text-sm text-muted-foreground">
+                Add questions that affiliates must answer when applying to promote this product.
+              </p>
               <div className="space-y-2">
                 {questions.map((question, index) => (
                   <div key={index} className="flex gap-2">
                     <Textarea
-                      placeholder="Enter partnership question..."
+                      placeholder="Enter question for affiliates"
                       value={question}
                       onChange={(e) => updateQuestion(index, e.target.value)}
                       className="flex-1 min-h-[60px]"
