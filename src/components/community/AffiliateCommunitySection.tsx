@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -230,15 +229,15 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
     try {
       setIsLoading(true);
 
-      // Delete from affiliate_products table
+      // Update status to inactive instead of deleting
       const { error: affiliateError } = await supabase
         .from('affiliate_products')
-        .delete()
+        .update({ status: 'inactive' })
         .eq('affiliate_products_uuid', editingCommunity.affiliate_products_uuid);
 
       if (affiliateError) {
-        console.error('Error deleting affiliate community:', affiliateError);
-        toast.error("Failed to disable affiliate program");
+        console.error('Error deactivating affiliate community:', affiliateError);
+        toast.error("Failed to remove community from affiliate program");
         return;
       }
 
@@ -254,7 +253,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
         return;
       }
 
-      toast.success("Affiliate program disabled successfully");
+      toast.success("Community removed from affiliate program successfully");
       setShowDeleteDialog(false);
       setEditingCommunity(null);
       setQuestions([]);
@@ -262,8 +261,8 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
       refetchAffiliateCommunities();
 
     } catch (error) {
-      console.error('Error disabling affiliate program:', error);
-      toast.error("Failed to disable affiliate program");
+      console.error('Error removing community from affiliate program:', error);
+      toast.error("Failed to remove community from affiliate program");
     } finally {
       setIsLoading(false);
     }
@@ -482,12 +481,23 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Disable Affiliate Program</DialogTitle>
+            <DialogTitle>Remove from Affiliate Program</DialogTitle>
           </DialogHeader>
-          <div className="py-4">
-            <p>Are you sure you want to disable the affiliate program for this community? This action cannot be undone.</p>
+          <div className="py-4 space-y-4">
+            <p className="text-sm">
+              Are you sure you want to remove this community from the affiliate program?
+            </p>
+            
+            <div className="p-4 border rounded-lg bg-blue-50/50 border-blue-200">
+              <p className="font-medium text-blue-900 mb-2">In order to keep it fair:</p>
+              <ul className="text-sm text-blue-800 space-y-1">
+                <li>• Sales generated in the next 90 days from your partners they will still receive their commissions.</li>
+                <li>• This partnership won't be shown anymore in affiliate deals.</li>
+              </ul>
+            </div>
+
             {editingCommunity && (
-              <div className="mt-4 p-3 border rounded-lg bg-muted/50">
+              <div className="p-3 border rounded-lg bg-muted/50">
                 <p className="font-medium">Current Split:</p>
                 <p className="text-sm text-muted-foreground">
                   Expert: {Math.round(editingCommunity.expert_share * 100)}% | Affiliate: {Math.round(editingCommunity.affiliate_share * 100)}%
@@ -500,7 +510,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
               Cancel
             </Button>
             <Button variant="destructive" onClick={handleDeleteConfirm} disabled={isLoading}>
-              {isLoading ? "Disabling..." : "Disable"}
+              {isLoading ? "Removing..." : "Remove from Program"}
             </Button>
           </DialogFooter>
         </DialogContent>
