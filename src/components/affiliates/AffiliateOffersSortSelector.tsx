@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export type SortField = "earnings" | "commission" | "name";
+export type SortField = "earnings" | "commission" | "name" | "added";
 export type SortDirection = "asc" | "desc";
 
 export interface SortOption {
@@ -24,6 +24,8 @@ const sortOptions: SortOption[] = [
   { field: "commission", direction: "asc", label: "Commission (Low to High)" },
   { field: "name", direction: "asc", label: "Name (A to Z)" },
   { field: "name", direction: "desc", label: "Name (Z to A)" },
+  { field: "added", direction: "desc", label: "Added (Newest First)" },
+  { field: "added", direction: "asc", label: "Added (Oldest First)" },
 ];
 
 interface AffiliateOffersSortSelectorProps {

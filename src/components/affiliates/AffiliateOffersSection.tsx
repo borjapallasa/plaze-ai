@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from "react";
 import { AffiliateOffersLayoutSwitcher, LayoutType } from "./AffiliateOffersLayoutSwitcher";
 import { AffiliateOffersSortSelector, SortOption } from "./AffiliateOffersSortSelector";
@@ -40,7 +39,8 @@ export function AffiliateOffersSection() {
         thumbnail: product.product_thumbnail || "",
         status: product.status === "active" ? "active" as const : "pending" as const,
         partnerName: product.expert_name || "Unknown Expert",
-        type: product.type || "product" // Add type for filtering
+        type: product.type || "product", // Add type for filtering
+        createdAt: product.created_at // Add created_at for sorting
       }));
 
     // Filter by type
@@ -61,6 +61,9 @@ export function AffiliateOffersSection() {
           break;
         case "name":
           compareValue = a.title.localeCompare(b.title);
+          break;
+        case "added":
+          compareValue = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
           break;
         default:
           compareValue = 0;
