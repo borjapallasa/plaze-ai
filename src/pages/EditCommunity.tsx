@@ -64,7 +64,7 @@ export default function EditCommunity() {
       </div>
 
       <div className="container mx-auto px-4 pt-24 pb-8">
-        <CommunityHeader onSave={handleSave} isSaving={isSaving} />
+        <CommunityHeader />
 
         <div className="space-y-4 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-8">
