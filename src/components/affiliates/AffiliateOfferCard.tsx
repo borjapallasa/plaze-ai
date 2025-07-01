@@ -80,8 +80,8 @@ export function AffiliateOfferCard({ offer }: AffiliateOfferCardProps) {
             </div>
           </div>
           
-          <div className="text-sm text-muted-foreground">
-            Potential earnings: <span className="font-bold text-green-600">${offer.monthlyEarnings}</span> <span className="font-medium text-gray-700">{offer.category === "product" ? "per transaction" : "per month"}</span>
+          <div className="text-base text-muted-foreground">
+            Potential earnings: <span className="font-bold text-green-600">${offer.monthlyEarnings}</span> <span className="text-xs font-medium text-gray-700">{offer.category === "product" ? "per transaction" : "per month"}</span>
           </div>
         </div>
       </CardContent>
