@@ -65,35 +65,11 @@ export function PayoutsTab() {
     }
   };
 
-  const totalPending = payouts
-    .filter(p => p.status.toLowerCase() === "pending")
-    .reduce((sum, p) => sum + p.amount, 0);
-
-  const totalCompleted = payouts
-    .filter(p => p.status.toLowerCase() === "completed")
-    .reduce((sum, p) => sum + p.amount, 0);
-
   if (isLoading) {
     return (
-      <div className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-card rounded-lg border p-4">
-            <div className="text-sm text-muted-foreground">Pending Payouts</div>
-            <div className="text-2xl font-bold">Loading...</div>
-          </div>
-          <div className="bg-card rounded-lg border p-4">
-            <div className="text-sm text-muted-foreground">Completed This Month</div>
-            <div className="text-2xl font-bold">Loading...</div>
-          </div>
-          <div className="bg-card rounded-lg border p-4">
-            <div className="text-sm text-muted-foreground">Total Payouts</div>
-            <div className="text-2xl font-bold">Loading...</div>
-          </div>
-        </div>
-        <div className="rounded-md border">
-          <div className="p-8 text-center text-muted-foreground">
-            Loading payouts...
-          </div>
+      <div className="rounded-md border">
+        <div className="p-8 text-center text-muted-foreground">
+          Loading payouts...
         </div>
       </div>
     );
@@ -101,102 +77,68 @@ export function PayoutsTab() {
 
   if (error) {
     return (
-      <div className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-card rounded-lg border p-4">
-            <div className="text-sm text-muted-foreground">Pending Payouts</div>
-            <div className="text-2xl font-bold">$0.00</div>
-          </div>
-          <div className="bg-card rounded-lg border p-4">
-            <div className="text-sm text-muted-foreground">Completed This Month</div>
-            <div className="text-2xl font-bold">$0.00</div>
-          </div>
-          <div className="bg-card rounded-lg border p-4">
-            <div className="text-sm text-muted-foreground">Total Payouts</div>
-            <div className="text-2xl font-bold">$0.00</div>
-          </div>
-        </div>
-        <div className="rounded-md border">
-          <div className="p-8 text-center text-red-500">
-            Error loading payouts: {error.message}
-          </div>
+      <div className="rounded-md border">
+        <div className="p-8 text-center text-red-500">
+          Error loading payouts: {error.message}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-card rounded-lg border p-4">
-          <div className="text-sm text-muted-foreground">Pending Payouts</div>
-          <div className="text-2xl font-bold">${totalPending.toFixed(2)}</div>
-        </div>
-        <div className="bg-card rounded-lg border p-4">
-          <div className="text-sm text-muted-foreground">Completed This Month</div>
-          <div className="text-2xl font-bold">${totalCompleted.toFixed(2)}</div>
-        </div>
-        <div className="bg-card rounded-lg border p-4">
-          <div className="text-sm text-muted-foreground">Total Payouts</div>
-          <div className="text-2xl font-bold">${(totalPending + totalCompleted).toFixed(2)}</div>
-        </div>
-      </div>
-
-      <div className="rounded-md border">
-        <div className="w-full overflow-auto">
-          <table className="w-full border-collapse" style={{ tableLayout: 'fixed' }}>
-            <colgroup>
-              <col style={{ width: '20%' }} />
-              <col style={{ width: '20%' }} />
-              <col style={{ width: '20%' }} />
-              <col style={{ width: '20%' }} />
-              <col style={{ width: '20%' }} />
-            </colgroup>
-            <thead className="[&_tr]:border-b">
+    <div className="rounded-md border">
+      <div className="w-full overflow-auto">
+        <table className="w-full border-collapse" style={{ tableLayout: 'fixed' }}>
+          <colgroup>
+            <col style={{ width: '20%' }} />
+            <col style={{ width: '20%' }} />
+            <col style={{ width: '20%' }} />
+            <col style={{ width: '20%' }} />
+            <col style={{ width: '20%' }} />
+          </colgroup>
+          <thead className="[&_tr]:border-b">
+            <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Date</th>
+              <th className="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Amount</th>
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Status</th>
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Method</th>
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Payout ID</th>
+            </tr>
+          </thead>
+          <tbody className="[&_tr:last-child]:border-0">
+            {payouts.length === 0 ? (
               <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Date</th>
-                <th className="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Amount</th>
-                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Status</th>
-                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Method</th>
-                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Payout ID</th>
+                <td colSpan={5} className="p-4 align-middle text-center text-muted-foreground py-8">
+                  No payouts found
+                </td>
               </tr>
-            </thead>
-            <tbody className="[&_tr:last-child]:border-0">
-              {payouts.length === 0 ? (
-                <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                  <td colSpan={5} className="p-4 align-middle text-center text-muted-foreground py-8">
-                    No payouts found
+            ) : (
+              payouts.map((payout) => (
+                <tr key={payout.payout_uuid} className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                  <td className="p-4 align-middle">{payout.created_at}</td>
+                  <td className="p-4 align-middle text-right font-mono">
+                    ${payout.amount.toFixed(2)}
+                  </td>
+                  <td className="p-4 align-middle">{getStatusBadge(payout.status)}</td>
+                  <td className="p-4 align-middle">{getPaymentMethodDisplay(payout.method)}</td>
+                  <td className="p-4 align-middle">
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-sm truncate flex-1">{payout.payout_uuid}</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => copyPayoutId(payout.payout_uuid)}
+                        className="flex items-center gap-1 px-2 shrink-0"
+                      >
+                        <Copy className="h-3 w-3" />
+                      </Button>
+                    </div>
                   </td>
                 </tr>
-              ) : (
-                payouts.map((payout) => (
-                  <tr key={payout.payout_uuid} className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                    <td className="p-4 align-middle">{payout.created_at}</td>
-                    <td className="p-4 align-middle text-right font-mono">
-                      ${payout.amount.toFixed(2)}
-                    </td>
-                    <td className="p-4 align-middle">{getStatusBadge(payout.status)}</td>
-                    <td className="p-4 align-middle">{getPaymentMethodDisplay(payout.method)}</td>
-                    <td className="p-4 align-middle">
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-sm truncate flex-1">{payout.payout_uuid}</span>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => copyPayoutId(payout.payout_uuid)}
-                          className="flex items-center gap-1 px-2 shrink-0"
-                        >
-                          <Copy className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );
