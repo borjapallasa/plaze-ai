@@ -495,6 +495,23 @@ export default function EditProduct() {
                   setDemo={setDemo}
                 />
 
+                <Card className="p-3 sm:p-6">
+                  <h2 className="text-lg font-medium mb-3 sm:mb-4">Product Organization</h2>
+                  <div className="space-y-4">
+                    <ProductOrganization
+                      industries={industries}
+                      useCases={useCases}
+                      platform={platform}
+                      team={team}
+                      onIndustryChange={handleIndustryChange}
+                      onUseCaseChange={handleUseCaseChange}
+                      onPlatformChange={handlePlatformChange}
+                      onTeamChange={handleTeamChange}
+                      renderSelectedTags={renderSelectedTags}
+                    />
+                  </div>
+                </Card>
+
                 <ProductMediaSection productUuid={id} />
               </div>
             </div>
@@ -555,24 +572,12 @@ export default function EditProduct() {
               )}
 
               <Card className="p-3 sm:p-6">
-                <h2 className="text-lg font-medium mb-3 sm:mb-4">Product Organization</h2>
+                <h2 className="text-lg font-medium mb-3 sm:mb-4">Related Products</h2>
                 <div className="space-y-4">
-                  <ProductOrganization
-                    industries={industries}
-                    useCases={useCases}
-                    platform={platform}
-                    team={team}
-                    onIndustryChange={handleIndustryChange}
-                    onUseCaseChange={handleUseCaseChange}
-                    onPlatformChange={handlePlatformChange}
-                    onTeamChange={handleTeamChange}
-                    renderSelectedTags={renderSelectedTags}
-                  />
-
                   <RelatedProducts
                     productId={id || ""}
                     userUuid={product?.user_uuid || ""}
-                    className="mt-6 pt-4 border-t"
+                    className=""
                   />
                 </div>
               </Card>

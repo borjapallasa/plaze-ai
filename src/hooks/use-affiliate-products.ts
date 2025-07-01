@@ -10,6 +10,7 @@ export interface AffiliateProductData {
   status: string;
   type: string;
   created_at: string;
+  questions?: string[];
   // Extended fields for display
   product_name?: string;
   product_price_from?: number;
