@@ -45,6 +45,8 @@ export function useAffiliateProducts(productUuid?: string) {
         throw error;
       }
 
+      console.log('Raw affiliate products from database:', data);
+
       return (data || []).map(item => ({
         affiliate_products_uuid: item.affiliate_products_uuid,
         product_uuid: item.product_uuid,
@@ -53,6 +55,7 @@ export function useAffiliateProducts(productUuid?: string) {
         status: item.status,
         type: item.type,
         created_at: item.created_at,
+        questions: item.questions || [], // Fix: properly map the questions field
         product_name: item.products?.name,
         product_price_from: item.products?.price_from,
         product_thumbnail: item.products?.thumbnail,

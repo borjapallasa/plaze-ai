@@ -37,15 +37,8 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
       const existingProduct = affiliateProducts[0];
       setSplit([Math.round(existingProduct.expert_share * 100)]);
       
-      // Fix: Properly access the questions field
-      console.log('Raw affiliate product data:', existingProduct);
-      console.log('Questions field:', existingProduct.questions);
-      
-      if (existingProduct.questions && Array.isArray(existingProduct.questions)) {
-        setQuestions(existingProduct.questions);
-      } else {
-        setQuestions([]);
-      }
+      console.log('Loading questions from affiliate product:', existingProduct.questions);
+      setQuestions(existingProduct.questions || []);
     }
   }, [affiliateProducts]);
 
@@ -60,18 +53,10 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
   };
 
   const handleEdit = (affiliateProduct: any) => {
-    console.log('Editing affiliate product:', affiliateProduct);
+    console.log('Editing affiliate product - questions:', affiliateProduct.questions);
     setEditingProduct(affiliateProduct);
     setSplit([Math.round(affiliateProduct.expert_share * 100)]);
-    
-    // Fix: Properly load questions for editing
-    if (affiliateProduct.questions && Array.isArray(affiliateProduct.questions)) {
-      setQuestions(affiliateProduct.questions);
-    } else {
-      setQuestions([]);
-    }
-    
-    console.log('Loaded questions for editing:', affiliateProduct.questions);
+    setQuestions(affiliateProduct.questions || []);
     setShowEditDialog(true);
   };
 
