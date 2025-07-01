@@ -11,12 +11,17 @@ interface AffiliatePayout {
   method: string;
 }
 
+interface AffiliatePayoutsResult {
+  payouts: AffiliatePayout[];
+  totalPaidOut: number;
+}
+
 export function useAffiliatePayouts() {
   const { user } = useAuth();
 
   return useQuery({
     queryKey: ['affiliate-payouts', user?.id],
-    queryFn: async (): Promise<AffiliatePayout[]> => {
+    queryFn: async (): Promise<AffiliatePayoutsResult> => {
       if (!user?.id) {
         throw new Error('No authenticated user');
       }
@@ -34,7 +39,7 @@ export function useAffiliatePayouts() {
       }
 
       if (!affiliateData?.affiliate_uuid) {
-        return [];
+        return { payouts: [], totalPaidOut: 0 };
       }
 
       // Fetch payouts for this affiliate
@@ -50,13 +55,20 @@ export function useAffiliatePayouts() {
         throw error;
       }
 
-      return data?.map(payout => ({
+      const payouts = data?.map(payout => ({
         payout_uuid: payout.payout_uuid,
         created_at: new Date(payout.created_at).toLocaleDateString(),
         amount: payout.amount || 0,
         status: payout.status || 'unknown',
         method: payout.method || 'unknown'
       })) || [];
+
+      // Calculate total paid out from completed payouts
+      const totalPaidOut = payouts
+        .filter(payout => payout.status.toLowerCase() === 'completed')
+        .reduce((sum, payout) => sum + payout.amount, 0);
+
+      return { payouts, totalPaidOut };
     },
     enabled: !!user?.id,
   });
