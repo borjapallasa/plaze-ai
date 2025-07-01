@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { MainHeader } from "@/components/MainHeader";
 import { Toaster } from "@/components/ui/toaster";
 import { CommunityHeader } from "@/components/community/CommunityHeader";
+import { CommunityStatusSection } from "@/components/community/CommunityStatusSection";
 import { CommunityBasicInfo } from "@/components/community/CommunityBasicInfo";
 import { CommunityStats } from "@/components/community/CommunityStats";
 import { useCommunityImages } from "@/hooks/use-community-images";
@@ -27,6 +28,8 @@ export default function EditCommunity() {
     setPricePeriod,
     communityType,
     setCommunityType,
+    communityStatus,
+    setCommunityStatus,
     paymentLink,
     webhook,
     setWebhook,
@@ -66,6 +69,13 @@ export default function EditCommunity() {
         <div className="space-y-4 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-8">
             <div className="space-y-6">
+              <CommunityStatusSection
+                status={communityStatus}
+                onStatusChange={setCommunityStatus}
+                onSave={handleSave}
+                isSaving={isSaving}
+              />
+
               <CommunityBasicInfo
                 communityName={communityName}
                 setCommunityName={setCommunityName}
