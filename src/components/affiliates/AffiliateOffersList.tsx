@@ -57,7 +57,7 @@ export function AffiliateOffersList({ offers }: AffiliateOffersListProps) {
             <TableHead className="text-right font-semibold text-gray-900">Commission</TableHead>
             <TableHead className="text-right font-semibold text-gray-900">Rating</TableHead>
             <TableHead className="text-right font-semibold text-gray-900">Affiliates</TableHead>
-            <TableHead className="text-right font-semibold text-gray-900">Potential earnings</TableHead>
+            <TableHead className="text-right font-semibold text-gray-900">Earnings</TableHead>
             <TableHead className="font-semibold text-gray-900">Status</TableHead>
             <TableHead className="text-right font-semibold text-gray-900">Action</TableHead>
           </TableRow>
@@ -104,8 +104,8 @@ export function AffiliateOffersList({ offers }: AffiliateOffersListProps) {
                 </div>
               </TableCell>
               <TableCell className="text-right">
-                <div className="text-base text-gray-500">
-                  <span className="font-bold text-green-600">${offer.monthlyEarnings}</span> <span className="text-xs font-medium text-gray-700">{offer.category === "product" ? "per transaction" : "per month"}</span>
+                <div className="text-sm text-gray-500">
+                  <span className="text-base font-bold text-green-600">${offer.monthlyEarnings}</span> <span className="text-xs font-medium text-gray-700">{offer.category === "product" ? "per transaction" : "per month"}</span>
                 </div>
               </TableCell>
               <TableCell>
