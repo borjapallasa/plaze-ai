@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export interface AffiliateCommunityData {
   affiliate_products_uuid: string;
-  community_uuid: string;
+  product_uuid: string;
   expert_share: number;
   affiliate_share: number;
   status: string;
@@ -24,11 +24,11 @@ export function useAffiliateCommunities(communityUuid?: string) {
     queryFn: async (): Promise<AffiliateCommunityData[]> => {
       if (!communityUuid) return [];
 
-      // Get the affiliate products for this community
+      // First get the affiliate products
       const { data: affiliateData, error: affiliateError } = await supabase
         .from('affiliate_products')
         .select('*')
-        .eq('community_uuid', communityUuid)
+        .eq('product_uuid', communityUuid)
         .eq('type', 'community');
 
       if (affiliateError) {
@@ -55,7 +55,7 @@ export function useAffiliateCommunities(communityUuid?: string) {
 
       return (affiliateData || []).map(item => ({
         affiliate_products_uuid: item.affiliate_products_uuid,
-        community_uuid: item.community_uuid || item.product_uuid, // Handle both cases
+        product_uuid: item.product_uuid,
         expert_share: item.expert_share,
         affiliate_share: item.affiliate_share,
         status: item.status,

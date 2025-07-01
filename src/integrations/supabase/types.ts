@@ -125,7 +125,6 @@ export type Database = {
         Row: {
           affiliate_products_uuid: string
           affiliate_share: number | null
-          community_uuid: string | null
           created_at: string
           expert_share: number | null
           id: number
@@ -137,7 +136,6 @@ export type Database = {
         Insert: {
           affiliate_products_uuid?: string
           affiliate_share?: number | null
-          community_uuid?: string | null
           created_at?: string
           expert_share?: number | null
           id?: number
@@ -151,7 +149,6 @@ export type Database = {
         Update: {
           affiliate_products_uuid?: string
           affiliate_share?: number | null
-          community_uuid?: string | null
           created_at?: string
           expert_share?: number | null
           id?: number
@@ -163,13 +160,6 @@ export type Database = {
           type?: Database["public"]["Enums"]["affiliate_product_type"] | null
         }
         Relationships: [
-          {
-            foreignKeyName: "affiliate_products_community_uuid_fkey"
-            columns: ["community_uuid"]
-            isOneToOne: false
-            referencedRelation: "communities"
-            referencedColumns: ["community_uuid"]
-          },
           {
             foreignKeyName: "affiliate_products_product_uuid_fkey"
             columns: ["product_uuid"]
@@ -352,7 +342,6 @@ export type Database = {
         Row: {
           active_price_id: string | null
           active_product_id: string | null
-          affiliate_program: boolean | null
           billing_period:
             | Database["public"]["Enums"]["community_billing_period"]
             | null
@@ -388,7 +377,6 @@ export type Database = {
         Insert: {
           active_price_id?: string | null
           active_product_id?: string | null
-          affiliate_program?: boolean | null
           billing_period?:
             | Database["public"]["Enums"]["community_billing_period"]
             | null
@@ -426,7 +414,6 @@ export type Database = {
         Update: {
           active_price_id?: string | null
           active_product_id?: string | null
-          affiliate_program?: boolean | null
           billing_period?:
             | Database["public"]["Enums"]["community_billing_period"]
             | null

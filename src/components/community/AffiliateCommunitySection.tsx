@@ -30,7 +30,6 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [editingCommunity, setEditingCommunity] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [nextQuestionId, setNextQuestionId] = useState(1);
 
   const { data: affiliateCommunities = [], refetch: refetchAffiliateCommunities } = useAffiliateCommunities(communityUuid);
 
@@ -43,19 +42,15 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
       const existingCommunity = affiliateCommunities[0];
       setSplit([Math.round(existingCommunity.expert_share * 100)]);
       
-      // Parse questions from JSONB with stable IDs
+      // Parse questions from JSONB
       if (existingCommunity.questions) {
         const questionsArray = Array.isArray(existingCommunity.questions) 
-          ? existingCommunity.questions.map((q: any, index: number) => ({
-              id: q.id || `existing_question_${index + 1}`,
-              question: typeof q.question === 'string' ? q.question : String(q.question || q)
-            }))
-          : Object.entries(existingCommunity.questions || {}).map(([key, question], index) => ({
-              id: `existing_question_${index + 1}`,
+          ? existingCommunity.questions 
+          : Object.entries(existingCommunity.questions || {}).map(([id, question]) => ({
+              id,
               question: typeof question === 'string' ? question : String(question)
             }));
         setQuestions(questionsArray);
-        setNextQuestionId(questionsArray.length + 1);
       }
     }
   }, [affiliateCommunities]);
@@ -74,19 +69,15 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
     setEditingCommunity(affiliateCommunity);
     setSplit([Math.round(affiliateCommunity.expert_share * 100)]);
     
-    // Parse questions for editing with stable IDs
+    // Parse questions for editing
     if (affiliateCommunity.questions) {
       const questionsArray = Array.isArray(affiliateCommunity.questions) 
-        ? affiliateCommunity.questions.map((q: any, index: number) => ({
-            id: q.id || `edit_question_${index + 1}`,
-            question: typeof q.question === 'string' ? q.question : String(q.question || q)
-          }))
-        : Object.entries(affiliateCommunity.questions || {}).map(([key, question], index) => ({
-            id: `edit_question_${index + 1}`,
+        ? affiliateCommunity.questions 
+        : Object.entries(affiliateCommunity.questions || {}).map(([id, question]) => ({
+            id,
             question: typeof question === 'string' ? question : String(question)
           }));
       setQuestions(questionsArray);
-      setNextQuestionId(questionsArray.length + 1);
     }
     setShowEditDialog(true);
   };
@@ -98,31 +89,28 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
 
   const addQuestion = () => {
     const newQuestion: Question = {
-      id: `new_question_${nextQuestionId}_${Date.now()}`, // More unique ID
+      id: `question_${Date.now()}`,
       question: ""
     };
-    setQuestions(prev => [...prev, newQuestion]);
-    setNextQuestionId(prev => prev + 1);
+    setQuestions([...questions, newQuestion]);
   };
 
   const updateQuestion = (id: string, question: string) => {
-    setQuestions(prevQuestions => 
-      prevQuestions.map(q => q.id === id ? { ...q, question } : q)
-    );
+    setQuestions(questions.map(q => q.id === id ? { ...q, question } : q));
   };
 
   const removeQuestion = (id: string) => {
-    setQuestions(prevQuestions => prevQuestions.filter(q => q.id !== id));
+    setQuestions(questions.filter(q => q.id !== id));
   };
 
   const formatQuestionsForStorage = (questionsArray: Question[]) => {
-    // Store as array to preserve IDs and order
-    return questionsArray
-      .filter(q => q.question.trim())
-      .map(q => ({
-        id: q.id,
-        question: q.question.trim()
-      }));
+    const questionsObj: Record<string, string> = {};
+    questionsArray.forEach(q => {
+      if (q.question.trim()) {
+        questionsObj[q.id] = q.question.trim();
+      }
+    });
+    return questionsObj;
   };
 
   const handleDialogConfirm = async () => {
@@ -138,11 +126,10 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
       const affiliateShare = (100 - split[0]) / 100;
       const formattedQuestions = formatQuestionsForStorage(questions);
 
-      // Insert into affiliate_products table
-      const { error: affiliateError } = await supabase
+      const { error } = await supabase
         .from('affiliate_products')
         .insert({
-          community_uuid: communityUuid,
+          product_uuid: communityUuid,
           expert_share: expertShare,
           affiliate_share: affiliateShare,
           status: 'active',
@@ -150,21 +137,9 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
           questions: formattedQuestions
         });
 
-      if (affiliateError) {
-        console.error('Error creating affiliate community:', affiliateError);
+      if (error) {
+        console.error('Error creating affiliate community:', error);
         toast.error("Failed to enable affiliate program");
-        return;
-      }
-
-      // Update the communities table to set affiliate_program = true
-      const { error: communityError } = await supabase
-        .from('communities')
-        .update({ affiliate_program: true })
-        .eq('community_uuid', communityUuid);
-
-      if (communityError) {
-        console.error('Error updating community affiliate flag:', communityError);
-        toast.error("Failed to update community settings");
         return;
       }
 
@@ -172,7 +147,6 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
       setShowConfirmDialog(false);
       setIsAffiliateProgram(false);
       setQuestions([]);
-      setNextQuestionId(1);
       refetchAffiliateCommunities();
 
     } catch (error) {
@@ -212,7 +186,6 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
       setShowEditDialog(false);
       setEditingCommunity(null);
       setQuestions([]);
-      setNextQuestionId(1);
       refetchAffiliateCommunities();
 
     } catch (error) {
@@ -224,32 +197,19 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
   };
 
   const handleDeleteConfirm = async () => {
-    if (!editingCommunity || !communityUuid) return;
+    if (!editingCommunity) return;
 
     try {
       setIsLoading(true);
 
-      // Delete from affiliate_products table
-      const { error: affiliateError } = await supabase
+      const { error } = await supabase
         .from('affiliate_products')
         .delete()
         .eq('affiliate_products_uuid', editingCommunity.affiliate_products_uuid);
 
-      if (affiliateError) {
-        console.error('Error deleting affiliate community:', affiliateError);
+      if (error) {
+        console.error('Error deleting affiliate community:', error);
         toast.error("Failed to disable affiliate program");
-        return;
-      }
-
-      // Update the communities table to set affiliate_program = false
-      const { error: communityError } = await supabase
-        .from('communities')
-        .update({ affiliate_program: false })
-        .eq('community_uuid', communityUuid);
-
-      if (communityError) {
-        console.error('Error updating community affiliate flag:', communityError);
-        toast.error("Failed to update community settings");
         return;
       }
 
@@ -257,7 +217,6 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
       setShowDeleteDialog(false);
       setEditingCommunity(null);
       setQuestions([]);
-      setNextQuestionId(1);
       refetchAffiliateCommunities();
 
     } catch (error) {
@@ -333,7 +292,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
                         </p>
                         {ac.questions && Object.keys(ac.questions).length > 0 && (
                           <p className="text-sm text-muted-foreground">
-                            Questions configured: {Array.isArray(ac.questions) ? ac.questions.length : Object.keys(ac.questions).length}
+                            Questions configured: {Object.keys(ac.questions).length}
                           </p>
                         )}
                       </div>
@@ -502,41 +461,27 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Enable Affiliate Program?</DialogTitle>
+            <DialogTitle>Confirm Affiliate Program</DialogTitle>
           </DialogHeader>
-          <div className="py-4 space-y-4">
-            <div className="p-4 border rounded-lg bg-blue-50/50 border-blue-200">
-              <p className="font-medium text-blue-900 mb-2">Are you sure?</p>
-              <p className="text-sm text-blue-800">
-                This will add your community to the affiliate program and affiliates will be able to request partnerships.
-              </p>
-            </div>
-            
-            <div className="space-y-2">
-              <p className="font-medium">Configuration:</p>
-              <div className="p-3 border rounded-lg bg-muted/50">
-                <p className="text-sm">
-                  <span className="font-medium">Revenue Split:</span> {sellerPercentage}% (You) / {affiliatePercentage}% (Affiliate)
-                </p>
-                {questions.length > 0 && (
-                  <div className="mt-2">
-                    <p className="text-sm font-medium">Questions for affiliates:</p>
-                    <ul className="text-sm text-muted-foreground mt-1 space-y-1">
-                      {questions.filter(q => q.question.trim()).map((q) => (
-                        <li key={q.id}>• {q.question}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+          <div className="py-4">
+            <p>This will enable affiliate program for this community with a {sellerPercentage}%/{affiliatePercentage}% seller/affiliate split</p>
+            {questions.length > 0 && (
+              <div className="mt-4 p-3 border rounded-lg bg-muted/50">
+                <p className="font-medium">Questions for affiliates:</p>
+                <ul className="text-sm text-muted-foreground mt-2 space-y-1">
+                  {questions.map((q) => (
+                    <li key={q.id}>• {q.question}</li>
+                  ))}
+                </ul>
               </div>
-            </div>
+            )}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>
               Cancel
             </Button>
             <Button onClick={handleDialogConfirm} disabled={isLoading}>
-              {isLoading ? "Enabling..." : "Yes, Enable Affiliate Program"}
+              {isLoading ? "Enabling..." : "Confirm"}
             </Button>
           </DialogFooter>
         </DialogContent>
