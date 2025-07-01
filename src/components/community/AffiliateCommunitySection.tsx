@@ -491,7 +491,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
           </DialogHeader>
           
           <div className="space-y-5">
-            <p className="text-center text-gray-600 text-sm leading-relaxed">
+            <p className="text-left text-gray-600 text-sm leading-relaxed">
               This will remove your community from the affiliate marketplace and stop new partnership requests.
             </p>
             
