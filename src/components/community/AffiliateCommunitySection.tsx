@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -25,7 +24,6 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
   const [isAffiliateProgram, setIsAffiliateProgram] = useState(false);
   const [split, setSplit] = useState([70]); // Default 70% seller, 30% affiliate
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [editQuestions, setEditQuestions] = useState<Question[]>([]);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -70,7 +68,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
     setEditingCommunity(affiliateCommunity);
     setSplit([Math.round(affiliateCommunity.expert_share * 100)]);
     
-    // Parse questions for editing and set them in editQuestions state
+    // Parse questions for editing
     if (affiliateCommunity.questions) {
       const questionsArray = Array.isArray(affiliateCommunity.questions) 
         ? affiliateCommunity.questions 
@@ -78,9 +76,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
             id,
             question: typeof question === 'string' ? question : String(question)
           }));
-      setEditQuestions([...questionsArray]);
-    } else {
-      setEditQuestions([]);
+      setQuestions(questionsArray);
     }
     setShowEditDialog(true);
   };
@@ -98,28 +94,12 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
     setQuestions([...questions, newQuestion]);
   };
 
-  const addEditQuestion = () => {
-    const newQuestion: Question = {
-      id: `question_${Date.now()}`,
-      question: ""
-    };
-    setEditQuestions([...editQuestions, newQuestion]);
-  };
-
   const updateQuestion = (id: string, question: string) => {
     setQuestions(questions.map(q => q.id === id ? { ...q, question } : q));
   };
 
-  const updateEditQuestion = (id: string, question: string) => {
-    setEditQuestions(editQuestions.map(q => q.id === id ? { ...q, question } : q));
-  };
-
   const removeQuestion = (id: string) => {
     setQuestions(questions.filter(q => q.id !== id));
-  };
-
-  const removeEditQuestion = (id: string) => {
-    setEditQuestions(editQuestions.filter(q => q.id !== id));
   };
 
   const formatQuestionsForStorage = (questionsArray: Question[]) => {
@@ -197,7 +177,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
 
       const expertShare = split[0] / 100;
       const affiliateShare = (100 - split[0]) / 100;
-      const formattedQuestions = formatQuestionsForStorage(editQuestions);
+      const formattedQuestions = formatQuestionsForStorage(questions);
 
       const { error } = await supabase
         .from('affiliate_products')
@@ -217,7 +197,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
       toast.success("Affiliate program updated successfully");
       setShowEditDialog(false);
       setEditingCommunity(null);
-      setEditQuestions([]);
+      setQuestions([]);
       refetchAffiliateCommunities();
 
     } catch (error) {
@@ -469,10 +449,10 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
             </div>
 
             <QuestionsSection
-              questions={editQuestions}
-              onUpdate={updateEditQuestion}
-              onAdd={addEditQuestion}
-              onRemove={removeEditQuestion}
+              questions={questions}
+              onUpdate={updateQuestion}
+              onAdd={addQuestion}
+              onRemove={removeQuestion}
             />
           </div>
           <DialogFooter>
