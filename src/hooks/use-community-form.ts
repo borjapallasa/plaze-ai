@@ -11,8 +11,6 @@ interface Link {
   url: string;
 }
 
-type CommunityStatus = "visible" | "not visible" | "draft";
-
 function isValidLink(link: unknown): link is Link {
   if (typeof link !== 'object' || link === null) return false;
   const l = link as any;
@@ -50,7 +48,6 @@ export function useCommunityForm(id: string | undefined) {
   const [price, setPrice] = useState("");
   const [pricePeriod, setPricePeriod] = useState<"monthly" | "yearly">("monthly");
   const [communityType, setCommunityType] = useState<CommunityType>("free");
-  const [communityStatus, setCommunityStatus] = useState<CommunityStatus>("draft");
   const [paymentLink, setPaymentLink] = useState("");
   const [webhook, setWebhook] = useState("");
   const [hasCopied, setHasCopied] = useState(false);
@@ -74,7 +71,6 @@ export function useCommunityForm(id: string | undefined) {
         setPrice(data.price?.toString() || "");
         setPricePeriod(data.billing_period || "monthly");
         setCommunityType(data.type || "free");
-        setCommunityStatus((data.status as CommunityStatus) || "draft");
         setPaymentLink(data.payment_link || "");
         setWebhook(data.webhook || "");
         
@@ -104,7 +100,6 @@ export function useCommunityForm(id: string | undefined) {
           type: communityType,
           price: parseFloat(price) || 0,
           billing_period: pricePeriod,
-          status: communityStatus,
           webhook: webhook,
           links: JSON.stringify(links.filter(link => link.name && link.url))
         })
@@ -208,8 +203,6 @@ export function useCommunityForm(id: string | undefined) {
     setPricePeriod,
     communityType,
     setCommunityType,
-    communityStatus,
-    setCommunityStatus,
     paymentLink,
     webhook,
     setWebhook,
