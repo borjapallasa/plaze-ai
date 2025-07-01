@@ -51,6 +51,7 @@ export type Database = {
           id: number
           message: string | null
           name: string | null
+          questions_answered: Json | null
           revenue: number | null
           status:
             | Database["public"]["Enums"]["affiliate_partnership_status"]
@@ -69,6 +70,7 @@ export type Database = {
           id?: number
           message?: string | null
           name?: string | null
+          questions_answered?: Json | null
           revenue?: number | null
           status?:
             | Database["public"]["Enums"]["affiliate_partnership_status"]
@@ -89,6 +91,7 @@ export type Database = {
           id?: number
           message?: string | null
           name?: string | null
+          questions_answered?: Json | null
           revenue?: number | null
           status?:
             | Database["public"]["Enums"]["affiliate_partnership_status"]

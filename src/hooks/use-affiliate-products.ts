@@ -55,7 +55,7 @@ export function useAffiliateProducts(productUuid?: string) {
         status: item.status,
         type: item.type,
         created_at: item.created_at,
-        questions: item.questions || [], // Fix: properly map the questions field
+        questions: Array.isArray(item.questions) ? item.questions : [],
         product_name: item.products?.name,
         product_price_from: item.products?.price_from,
         product_thumbnail: item.products?.thumbnail,
@@ -99,6 +99,7 @@ export function useAllAffiliateProducts() {
         status: item.status,
         type: item.type,
         created_at: item.created_at,
+        questions: Array.isArray(item.questions) ? item.questions : [],
         product_name: item.products?.name,
         product_price_from: item.products?.price_from,
         product_thumbnail: item.products?.thumbnail,

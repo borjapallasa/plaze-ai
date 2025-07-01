@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -11,9 +11,11 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Star, Users, DollarSign, Percent, User, Handshake } from "lucide-react";
+import { Star, Users, DollarSign, Percent, User, Handshake, HelpCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
@@ -43,9 +45,45 @@ interface RequestPartnershipDialogProps {
 export function RequestPartnershipDialog({ offer, children }: RequestPartnershipDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
+  const [questions, setQuestions] = useState<string[]>([]);
+  const [answers, setAnswers] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
+
+  // Fetch questions when dialog opens
+  useEffect(() => {
+    if (isOpen && offer.id) {
+      fetchQuestions();
+    }
+  }, [isOpen, offer.id]);
+
+  const fetchQuestions = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('affiliate_products')
+        .select('questions')
+        .eq('affiliate_products_uuid', offer.id)
+        .single();
+
+      if (error) {
+        console.error('Error fetching questions:', error);
+        return;
+      }
+
+      const questionsList = Array.isArray(data.questions) ? data.questions : [];
+      setQuestions(questionsList);
+      setAnswers(new Array(questionsList.length).fill(''));
+    } catch (error) {
+      console.error('Error fetching questions:', error);
+    }
+  };
+
+  const updateAnswer = (index: number, value: string) => {
+    const newAnswers = [...answers];
+    newAnswers[index] = value;
+    setAnswers(newAnswers);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,6 +140,13 @@ export function RequestPartnershipDialog({ offer, children }: RequestPartnership
         return;
       }
 
+      // Prepare questions and answers for storage
+      const questionsAnswered = questions.length > 0 ? 
+        questions.map((question, index) => ({
+          question,
+          answer: answers[index] || ''
+        })) : null;
+
       // Create the partnership request
       const { error } = await supabase
         .from('affiliate_partnerships')
@@ -115,6 +160,7 @@ export function RequestPartnershipDialog({ offer, children }: RequestPartnership
           message: message.trim() || null,
           affiliate_split: productData.affiliate_share,
           expert_split: productData.expert_share,
+          questions_answered: questionsAnswered
         });
 
       if (error) {
@@ -127,6 +173,7 @@ export function RequestPartnershipDialog({ offer, children }: RequestPartnership
       });
 
       setMessage("");
+      setAnswers(new Array(questions.length).fill(''));
       setIsOpen(false);
     } catch (error) {
       console.error('Error requesting partnership:', error);
@@ -145,7 +192,7 @@ export function RequestPartnershipDialog({ offer, children }: RequestPartnership
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Handshake className="w-5 h-5" />
@@ -156,7 +203,7 @@ export function RequestPartnershipDialog({ offer, children }: RequestPartnership
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* Product Information */}
           <Card>
             <CardContent className="p-4">
@@ -195,11 +242,37 @@ export function RequestPartnershipDialog({ offer, children }: RequestPartnership
             </CardContent>
           </Card>
 
+          {/* Partnership Questions */}
+          {questions.length > 0 && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <HelpCircle className="w-4 h-4 text-blue-600" />
+                <Label className="text-sm font-medium">Partnership Questions</Label>
+              </div>
+              <div className="space-y-4">
+                {questions.map((question, index) => (
+                  <div key={index} className="space-y-2">
+                    <Label className="text-sm text-gray-700">
+                      {index + 1}. {question}
+                    </Label>
+                    <Textarea
+                      placeholder="Enter your answer..."
+                      value={answers[index] || ''}
+                      onChange={(e) => updateAnswer(index, e.target.value)}
+                      rows={3}
+                      className="resize-none"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Message */}
           <div className="space-y-2">
-            <label htmlFor="message" className="text-sm font-medium">
-              Message (Optional)
-            </label>
+            <Label htmlFor="message" className="text-sm font-medium">
+              Additional Message (Optional)
+            </Label>
             <Textarea
               id="message"
               placeholder="Tell the product owner why you'd like to partner with them and how you plan to promote their product..."
