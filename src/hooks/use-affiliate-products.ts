@@ -9,11 +9,11 @@ export interface AffiliateProductData {
   affiliate_share: number;
   status: string;
   type: string;
+  questions: any;
   created_at: string;
   // Extended fields for display
   product_name?: string;
-  product_price_from?: number;
-  product_thumbnail?: string;
+  product_price?: number;
   expert_name?: string;
   product_description?: string;
 }
@@ -24,83 +24,50 @@ export function useAffiliateProducts(productUuid?: string) {
     queryFn: async (): Promise<AffiliateProductData[]> => {
       if (!productUuid) return [];
 
-      const { data, error } = await supabase
+      // Fetch affiliate products using product_uuid
+      const { data: affiliateData, error: affiliateError } = await supabase
         .from('affiliate_products')
-        .select(`
-          *,
-          products!inner(
-            name,
-            price_from,
-            thumbnail,
-            description,
-            expert_uuid,
-            experts(name)
-          )
-        `)
-        .eq('product_uuid', productUuid);
+        .select('*')
+        .eq('product_uuid', productUuid)
+        .eq('type', 'product');
 
-      if (error) {
-        console.error('Error fetching affiliate products:', error);
-        throw error;
+      if (affiliateError) {
+        console.error('Error fetching affiliate products:', affiliateError);
+        throw affiliateError;
       }
 
-      return (data || []).map(item => ({
+      // Then get product details separately
+      const { data: productData, error: productError } = await supabase
+        .from('products')
+        .select(`
+          name,
+          tech_stack_price,
+          description,
+          user_uuid,
+          experts(name)
+        `)
+        .eq('product_uuid', productUuid)
+        .single();
+
+      if (productError) {
+        console.error('Error fetching product details:', productError);
+      }
+
+      return (affiliateData || []).map(item => ({
         affiliate_products_uuid: item.affiliate_products_uuid,
         product_uuid: item.product_uuid,
         expert_share: item.expert_share,
         affiliate_share: item.affiliate_share,
         status: item.status,
         type: item.type,
+        questions: item.questions,
         created_at: item.created_at,
-        product_name: item.products?.name,
-        product_price_from: item.products?.price_from,
-        product_thumbnail: item.products?.thumbnail,
-        expert_name: item.products?.experts?.name,
-        product_description: item.products?.description
+        product_name: productData?.name,
+        product_price: productData?.tech_stack_price,
+        expert_name: productData?.experts?.name,
+        product_description: productData?.description
       }));
     },
     enabled: !!productUuid
-  });
-}
-
-// Hook for fetching all affiliate products (for affiliates page)
-export function useAllAffiliateProducts() {
-  return useQuery({
-    queryKey: ['all-affiliate-products'],
-    queryFn: async (): Promise<AffiliateProductData[]> => {
-      const { data, error } = await supabase
-        .from('affiliate_products')
-        .select(`
-          *,
-          products!inner(
-            name,
-            price_from,
-            thumbnail,
-            description,
-            expert_uuid,
-            experts(name)
-          )
-        `);
-
-      if (error) {
-        console.error('Error fetching all affiliate products:', error);
-        throw error;
-      }
-
-      return (data || []).map(item => ({
-        affiliate_products_uuid: item.affiliate_products_uuid,
-        product_uuid: item.product_uuid,
-        expert_share: item.expert_share,
-        affiliate_share: item.affiliate_share,
-        status: item.status,
-        type: item.type,
-        created_at: item.created_at,
-        product_name: item.products?.name,
-        product_price_from: item.products?.price_from,
-        product_thumbnail: item.products?.thumbnail,
-        expert_name: item.products?.experts?.name,
-        product_description: item.products?.description
-      }));
-    }
   });
 }
