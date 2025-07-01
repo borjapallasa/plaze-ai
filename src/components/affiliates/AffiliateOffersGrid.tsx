@@ -15,6 +15,7 @@ interface AffiliateOffer {
   thumbnail: string;
   status: "active" | "pending" | "paused";
   partnerName: string;
+  type?: string;
 }
 
 interface AffiliateOffersGridProps {

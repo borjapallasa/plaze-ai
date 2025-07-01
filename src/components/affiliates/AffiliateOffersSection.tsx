@@ -2,6 +2,7 @@
 import React, { useState, useMemo } from "react";
 import { AffiliateOffersLayoutSwitcher, LayoutType } from "./AffiliateOffersLayoutSwitcher";
 import { AffiliateOffersSortSelector, SortOption } from "./AffiliateOffersSortSelector";
+import { AffiliateOffersTypeFilter, FilterType } from "./AffiliateOffersTypeFilter";
 import { AffiliateOffersGrid } from "./AffiliateOffersGrid";
 import { AffiliateOffersList } from "./AffiliateOffersList";
 import { useAllAffiliateProducts } from "@/hooks/use-affiliate-products";
@@ -13,6 +14,7 @@ export function AffiliateOffersSection() {
     direction: "desc", 
     label: "Earnings (High to Low)" 
   });
+  const [filterType, setFilterType] = useState<FilterType>("all");
   
   const { data: affiliateProducts = [], isLoading, error } = useAllAffiliateProducts();
 
@@ -33,11 +35,17 @@ export function AffiliateOffersSection() {
         monthlyEarnings: 100, // Default as requested
         thumbnail: product.product_thumbnail || "",
         status: product.status === "active" ? "active" as const : "pending" as const,
-        partnerName: product.expert_name || "Unknown Expert"
+        partnerName: product.expert_name || "Unknown Expert",
+        type: product.type || "product" // Add type for filtering
       }));
 
+    // Filter by type
+    const filteredOffers = filterType === "all" 
+      ? transformedOffers 
+      : transformedOffers.filter(offer => offer.type === filterType);
+
     // Sort the offers based on selected criteria
-    return transformedOffers.sort((a, b) => {
+    return filteredOffers.sort((a, b) => {
       let compareValue = 0;
       
       switch (sortBy.field) {
@@ -56,7 +64,7 @@ export function AffiliateOffersSection() {
       
       return sortBy.direction === "desc" ? -compareValue : compareValue;
     });
-  }, [affiliateProducts, sortBy]);
+  }, [affiliateProducts, sortBy, filterType]);
 
   if (isLoading) {
     return (
@@ -67,6 +75,7 @@ export function AffiliateOffersSection() {
             <p className="text-muted-foreground">Discover new products to promote and earn commissions</p>
           </div>
           <div className="flex items-center gap-4">
+            <AffiliateOffersTypeFilter filterType={filterType} onFilterChange={setFilterType} />
             <AffiliateOffersSortSelector sortBy={sortBy} onSortChange={setSortBy} />
             <AffiliateOffersLayoutSwitcher layout={layout} onLayoutChange={setLayout} />
           </div>
@@ -87,6 +96,7 @@ export function AffiliateOffersSection() {
             <p className="text-muted-foreground">Discover new products to promote and earn commissions</p>
           </div>
           <div className="flex items-center gap-4">
+            <AffiliateOffersTypeFilter filterType={filterType} onFilterChange={setFilterType} />
             <AffiliateOffersSortSelector sortBy={sortBy} onSortChange={setSortBy} />
             <AffiliateOffersLayoutSwitcher layout={layout} onLayoutChange={setLayout} />
           </div>
@@ -106,6 +116,7 @@ export function AffiliateOffersSection() {
           <p className="text-muted-foreground">Discover new products to promote and earn commissions</p>
         </div>
         <div className="flex items-center gap-4">
+          <AffiliateOffersTypeFilter filterType={filterType} onFilterChange={setFilterType} />
           <AffiliateOffersSortSelector sortBy={sortBy} onSortChange={setSortBy} />
           <AffiliateOffersLayoutSwitcher layout={layout} onLayoutChange={setLayout} />
         </div>
@@ -113,7 +124,11 @@ export function AffiliateOffersSection() {
 
       {offers.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-muted-foreground">No active affiliate offers available at the moment.</p>
+          <p className="text-muted-foreground">
+            {filterType === "all" 
+              ? "No active affiliate offers available at the moment." 
+              : `No ${filterType} offers available at the moment.`}
+          </p>
         </div>
       ) : (
         <>
