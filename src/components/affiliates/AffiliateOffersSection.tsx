@@ -15,7 +15,8 @@ export function AffiliateOffersSection() {
     title: product.product_name || "Unnamed Product",
     description: product.product_description || "No description available",
     category: product.type || "General",
-    commissionRate: product.affiliate_share || 0,
+    // Convert commission from 0-1 range to percentage
+    commissionRate: Math.round((product.affiliate_share || 0) * 100),
     commissionType: "percentage" as const,
     rating: 4.5, // Default rating since we don't have this data
     totalAffiliates: 100, // Default value since we don't have this data

@@ -14,8 +14,6 @@ interface AffiliateData {
   commissions_made: number;
   commissions_available: number;
   commissions_paid: number;
-  affiliate_count: number;
-  transaction_count: number;
   user_uuid: string;
 }
 
