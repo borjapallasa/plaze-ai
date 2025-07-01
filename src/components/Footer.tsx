@@ -1,3 +1,4 @@
+
 import { Separator } from "@/components/ui/separator";
 import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
@@ -15,9 +16,9 @@ const FooterSection = ({
     <h3 className="font-semibold text-[16px] text-foreground">{title}</h3>
     <ul className="space-y-2">
       {links.map((link, index) => <li key={index}>
-          <Link to={link.href} className="text-muted-foreground hover:text-foreground transition-colors text-[14px]">
+          <a href={link.href} className="text-muted-foreground hover:text-foreground transition-colors text-[14px]">
             {link.label}
-          </Link>
+          </a>
         </li>)}
     </ul>
   </div>;
@@ -31,10 +32,10 @@ export function Footer() {
 
   const shopLinks = [{
     label: "Products",
-    href: "/products"
+    href: "https://plaze.ai/#products"
   }, {
     label: "Communities",
-    href: "/communities"
+    href: "https://plaze.ai/#communities"
   }, {
     label: "Sitemap",
     href: "/sitemap"
@@ -45,13 +46,13 @@ export function Footer() {
 
   const sellLinks = [{
     label: "Sell on Plaze",
-    href: "/sell"
+    href: "https://plaze.ai/sell"
   }, {
     label: "Plaze University",
-    href: "/university"
+    href: "https://plaze.ai/community/plaze-university"
   }, {
     label: "Affiliates",
-    href: "/affiliates"
+    href: "https://plaze.ai/affiliates"
   }];
 
   const aboutLinks = [{
