@@ -126,10 +126,11 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
       const affiliateShare = (100 - split[0]) / 100;
       const formattedQuestions = formatQuestionsForStorage(questions);
 
-      const { error } = await supabase
+      // Insert into affiliate_products table with community_uuid
+      const { error: affiliateError } = await supabase
         .from('affiliate_products')
         .insert({
-          product_uuid: communityUuid,
+          community_uuid: communityUuid, // Use community_uuid instead of product_uuid
           expert_share: expertShare,
           affiliate_share: affiliateShare,
           status: 'active',
@@ -137,9 +138,21 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
           questions: formattedQuestions
         });
 
-      if (error) {
-        console.error('Error creating affiliate community:', error);
+      if (affiliateError) {
+        console.error('Error creating affiliate community:', affiliateError);
         toast.error("Failed to enable affiliate program");
+        return;
+      }
+
+      // Update the community to set affiliate_program = true
+      const { error: communityError } = await supabase
+        .from('communities')
+        .update({ affiliate_program: true })
+        .eq('community_uuid', communityUuid);
+
+      if (communityError) {
+        console.error('Error updating community affiliate program status:', communityError);
+        toast.error("Failed to update community affiliate program status");
         return;
       }
 
@@ -202,14 +215,27 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
     try {
       setIsLoading(true);
 
-      const { error } = await supabase
+      // Delete from affiliate_products
+      const { error: affiliateError } = await supabase
         .from('affiliate_products')
         .delete()
         .eq('affiliate_products_uuid', editingCommunity.affiliate_products_uuid);
 
-      if (error) {
-        console.error('Error deleting affiliate community:', error);
+      if (affiliateError) {
+        console.error('Error deleting affiliate community:', affiliateError);
         toast.error("Failed to disable affiliate program");
+        return;
+      }
+
+      // Update community to set affiliate_program = false
+      const { error: communityError } = await supabase
+        .from('communities')
+        .update({ affiliate_program: false })
+        .eq('community_uuid', communityUuid);
+
+      if (communityError) {
+        console.error('Error updating community affiliate program status:', communityError);
+        toast.error("Failed to update community affiliate program status");
         return;
       }
 
@@ -436,7 +462,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
             <DialogTitle>Disable Affiliate Program</DialogTitle>
           </DialogHeader>
           <div className="py-4">
-            <p>Are you sure you want to disable the affiliate program for this community? This action cannot be undone.</p>
+            <p className="text-left">Are you sure you want to disable the affiliate program for this community? This action cannot be undone.</p>
             {editingCommunity && (
               <div className="mt-4 p-3 border rounded-lg bg-muted/50">
                 <p className="font-medium">Current Split:</p>
@@ -457,31 +483,43 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
         </DialogContent>
       </Dialog>
 
-      {/* Confirm Dialog */}
+      {/* NEW: Confirmation Dialog for Adding to Affiliate Program */}
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Confirm Affiliate Program</DialogTitle>
+            <DialogTitle>Add to Affiliate Program?</DialogTitle>
           </DialogHeader>
           <div className="py-4">
-            <p>This will enable affiliate program for this community with a {sellerPercentage}%/{affiliatePercentage}% seller/affiliate split</p>
-            {questions.length > 0 && (
-              <div className="mt-4 p-3 border rounded-lg bg-muted/50">
-                <p className="font-medium">Questions for affiliates:</p>
-                <ul className="text-sm text-muted-foreground mt-2 space-y-1">
-                  {questions.map((q) => (
-                    <li key={q.id}>• {q.question}</li>
-                  ))}
-                </ul>
+            <p className="text-left mb-4">
+              Are you sure? This will add your community to the affiliate program and affiliates will be able to request partnerships.
+            </p>
+            
+            <div className="space-y-3">
+              <div className="p-3 border rounded-lg bg-muted/50">
+                <p className="font-medium mb-2">Revenue Split:</p>
+                <p className="text-sm text-muted-foreground">
+                  Expert: {sellerPercentage}% | Affiliate: {affiliatePercentage}%
+                </p>
               </div>
-            )}
+              
+              {questions.length > 0 && (
+                <div className="p-3 border rounded-lg bg-muted/50">
+                  <p className="font-medium mb-2">Questions for affiliates:</p>
+                  <ul className="text-sm text-muted-foreground space-y-1">
+                    {questions.filter(q => q.question.trim()).map((q) => (
+                      <li key={q.id}>• {q.question}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>
               Cancel
             </Button>
             <Button onClick={handleDialogConfirm} disabled={isLoading}>
-              {isLoading ? "Enabling..." : "Confirm"}
+              {isLoading ? "Adding..." : "Confirm"}
             </Button>
           </DialogFooter>
         </DialogContent>
