@@ -3,6 +3,7 @@ import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Star, Users, ExternalLink, DollarSign } from "lucide-react";
+import { toStartCase } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -80,7 +81,7 @@ export function AffiliateOffersList({ offers }: AffiliateOffersListProps) {
               </TableCell>
               <TableCell>
                 <Badge variant="outline" className="text-xs border-gray-200 text-gray-600 bg-gray-50">
-                  {offer.category}
+                  {toStartCase(offer.category)}
                 </Badge>
               </TableCell>
               <TableCell className="text-right">
