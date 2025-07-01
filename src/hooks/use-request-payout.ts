@@ -15,6 +15,8 @@ export function useRequestPayout() {
         throw new Error('No authenticated user');
       }
 
+      console.log('Starting payout request for user:', user.id);
+
       // First, get the affiliate data for the authenticated user
       const { data: affiliateData, error: affiliateError } = await supabase
         .from('affiliates')
@@ -52,6 +54,8 @@ export function useRequestPayout() {
         throw new Error('No available balance to request payout');
       }
 
+      console.log('Creating payout request with amount:', affiliateData.commissions_available);
+
       // Insert the payout request
       const { data: payoutData, error: payoutError } = await supabase
         .from('payouts')
@@ -73,6 +77,8 @@ export function useRequestPayout() {
         throw new Error('Failed to create payout request');
       }
 
+      console.log('Payout request created successfully:', payoutData);
+
       // Deduct the payout amount from commissions_available
       const { error: updateError } = await supabase
         .from('affiliates')
@@ -86,9 +92,11 @@ export function useRequestPayout() {
         throw new Error('Failed to update affiliate balance');
       }
 
+      console.log('Affiliate balance updated successfully');
       return payoutData;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('Payout request mutation succeeded, showing toast');
       toast({
         title: "Payout Requested Successfully!",
         description: "Your payout request has been submitted and will be processed soon.",
@@ -99,6 +107,7 @@ export function useRequestPayout() {
       queryClient.invalidateQueries({ queryKey: ['affiliate-payouts'] });
     },
     onError: (error: Error) => {
+      console.error('Payout request failed:', error);
       toast({
         title: "Payout Request Failed",
         description: error.message,
