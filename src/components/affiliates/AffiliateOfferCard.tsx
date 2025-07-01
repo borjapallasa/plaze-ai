@@ -1,9 +1,8 @@
-
 import React from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Star, ExternalLink, Users, DollarSign, Percent, Tag } from "lucide-react";
+import { Star, ExternalLink, Users, DollarSign, Percent, Tag, User } from "lucide-react";
 import { toStartCase } from "@/lib/utils";
 
 interface AffiliateOffer {
@@ -63,7 +62,10 @@ export function AffiliateOfferCard({ offer }: AffiliateOfferCardProps) {
         {/* Header Section */}
         <div className="space-y-1">
           <h3 className="font-semibold text-lg leading-tight text-gray-900">{offer.title}</h3>
-          <p className="text-sm text-gray-600">{offer.partnerName}</p>
+          <div className="flex items-center gap-1.5">
+            <User className="w-3.5 h-3.5 text-gray-500" />
+            <p className="text-sm text-gray-600">{offer.partnerName}</p>
+          </div>
         </div>
         
         {/* Description */}
