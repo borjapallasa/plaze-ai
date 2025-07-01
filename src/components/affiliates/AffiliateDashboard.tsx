@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,11 +9,13 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { PaymentSettingsDialog } from "./PaymentSettingsDialog";
+import { useRequestPayout } from "@/hooks/use-request-payout";
 
 export function AffiliateDashboard() {
   const { user } = useAuth();
   const { data: affiliateData, isLoading: affiliateLoading } = useAffiliateData();
   const { data: userProfile } = useUserProfile();
+  const requestPayout = useRequestPayout();
 
   // Fetch referred users count
   const { data: referredUsersCount = 0 } = useQuery({
@@ -54,6 +55,10 @@ export function AffiliateDashboard() {
     navigator.clipboard.writeText(`https://plaze.ai/sign-up?ref=${affiliateCode}`);
   };
 
+  const handleRequestPayout = () => {
+    requestPayout.mutate();
+  };
+
   if (affiliateLoading) {
     return (
       <div className="space-y-6">
@@ -74,7 +79,12 @@ export function AffiliateDashboard() {
           <p className="text-muted-foreground">Track your performance and manage your affiliate network</p>
         </div>
         <div className="flex items-center gap-2 md:self-start">
-          <Button>Request Payout</Button>
+          <Button 
+            onClick={handleRequestPayout}
+            disabled={requestPayout.isPending || !affiliateData?.commissions_available || affiliateData.commissions_available <= 0}
+          >
+            {requestPayout.isPending ? "Requesting..." : "Request Payout"}
+          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon">

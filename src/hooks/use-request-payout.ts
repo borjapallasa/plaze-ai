@@ -1,0 +1,96 @@
+
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth";
+import { useToast } from "@/hooks/use-toast";
+
+export function useRequestPayout() {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      if (!user?.id) {
+        throw new Error('No authenticated user');
+      }
+
+      // First, get the affiliate data for the authenticated user
+      const { data: affiliateData, error: affiliateError } = await supabase
+        .from('affiliates')
+        .select('affiliate_uuid, paypal, commissions_available')
+        .eq('user_uuid', user.id)
+        .maybeSingle();
+
+      if (affiliateError) {
+        console.error('Error fetching affiliate data:', affiliateError);
+        throw new Error('Failed to fetch affiliate data');
+      }
+
+      if (!affiliateData) {
+        throw new Error('No affiliate data found');
+      }
+
+      // Get the user's email from the users table
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('email')
+        .eq('user_uuid', user.id)
+        .maybeSingle();
+
+      if (userError) {
+        console.error('Error fetching user data:', userError);
+        throw new Error('Failed to fetch user data');
+      }
+
+      if (!userData?.email) {
+        throw new Error('No user email found');
+      }
+
+      // Check if there's an available balance to request
+      if (!affiliateData.commissions_available || affiliateData.commissions_available <= 0) {
+        throw new Error('No available balance to request payout');
+      }
+
+      // Insert the payout request
+      const { data, error } = await supabase
+        .from('payouts')
+        .insert({
+          status: 'requested',
+          user_uuid: user.id,
+          amount: affiliateData.commissions_available,
+          paypal: affiliateData.paypal,
+          email: userData.email,
+          method: 'paypal',
+          affiliate_uuid: affiliateData.affiliate_uuid,
+          type: 'affiliate'
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error creating payout request:', error);
+        throw new Error('Failed to create payout request');
+      }
+
+      return data;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Payout Requested",
+        description: "Your payout request has been submitted successfully.",
+      });
+      
+      // Invalidate queries to refresh the data
+      queryClient.invalidateQueries({ queryKey: ['affiliate-data'] });
+      queryClient.invalidateQueries({ queryKey: ['affiliate-payouts'] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Payout Request Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+}
