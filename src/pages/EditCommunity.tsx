@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { MainHeader } from "@/components/MainHeader";
 import { Toaster } from "@/components/ui/toaster";
 import { CommunityHeader } from "@/components/community/CommunityHeader";
+import { CommunityStatusSection } from "@/components/community/CommunityStatusSection";
 import { CommunityBasicInfo } from "@/components/community/CommunityBasicInfo";
 import { CommunityStats } from "@/components/community/CommunityStats";
 import { useCommunityImages } from "@/hooks/use-community-images";
@@ -100,6 +101,13 @@ export default function EditCommunity() {
 
           <div className="lg:col-span-4">
             <div className="space-y-6">
+              <CommunityStatusSection
+                status={communityStatus}
+                onStatusChange={setCommunityStatus}
+                onSave={handleSave}
+                isSaving={isSaving}
+              />
+
               <CommunityStats
                 paymentLink={paymentLink}
                 onCopyPaymentLink={handleCopyPaymentLink}
@@ -112,10 +120,6 @@ export default function EditCommunity() {
                 isDeleting={isDeleting}
                 onDeleteCommunity={handleDeleteCommunity}
                 communityName={communityName}
-                communityStatus={communityStatus}
-                setCommunityStatus={setCommunityStatus}
-                onSave={handleSave}
-                isSaving={isSaving}
                 affiliateSection={<AffiliateCommunitySection communityUuid={id} />}
               />
             </div>

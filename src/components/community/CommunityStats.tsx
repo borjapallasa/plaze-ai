@@ -1,30 +1,37 @@
 
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Copy, Check } from "lucide-react";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Copy, ExternalLink, Settings, Trash2 } from "lucide-react";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/dialog";
+import { CommunityDangerZone } from "./CommunityDangerZone";
+import { formatNumber } from "@/lib/utils";
 
+export interface Community {
+  user_uuid: string | null
+  community_uuid: string | null
+  product_count?: number | null;
+  classroom_count?: number | null;
+  post_count?: number | null;
+  monthly_recurring_revenue?: number | null;
+  total_revenue?: number | null;
+  paid_member_count?: number | null;
+  member_count?: number | null;
+  expert_uuid?: string | null;
+}
 interface CommunityStatsProps {
   paymentLink: string;
   onCopyPaymentLink: () => void;
   hasCopied: boolean;
   webhook: string;
   setWebhook: (value: string) => void;
-  community: any;
+  community: Community;
   showDeleteDialog: boolean;
   setShowDeleteDialog: (show: boolean) => void;
   isDeleting: boolean;
   onDeleteCommunity: (redirectUrl: string) => void;
   communityName: string;
-  affiliateSection: React.ReactNode;
-  communityStatus?: string;
-  setCommunityStatus?: (status: string) => void;
-  onSave?: () => void;
-  isSaving?: boolean;
+  affiliateSection?: React.ReactNode;
 }
 
 export function CommunityStats({
@@ -39,182 +46,114 @@ export function CommunityStats({
   isDeleting,
   onDeleteCommunity,
   communityName,
-  affiliateSection,
-  communityStatus,
-  setCommunityStatus,
-  onSave,
-  isSaving
+  affiliateSection
 }: CommunityStatsProps) {
+  const formatCurrency = (amount: number | null | undefined) => {
+    if (amount === null || amount === undefined) return '$0';
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(amount);
+  };
+
   return (
-    <div className="space-y-6">
-      {/* Community Status Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold">Community Status</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div className="flex-1">
-              <Label htmlFor="status" className="text-sm font-medium">
-                Status
-              </Label>
-              <Select value={communityStatus || "visible"} onValueChange={setCommunityStatus}>
-                <SelectTrigger className="mt-1">
-                  <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="visible">Visible</SelectItem>
-                  <SelectItem value="not visible">Not Visible</SelectItem>
-                  <SelectItem value="draft">Draft</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="flex-shrink-0 sm:ml-3">
-              <Button
-                onClick={onSave}
-                disabled={isSaving}
-                className="w-full sm:w-auto"
-              >
-                {isSaving ? "Saving..." : "Save Changes"}
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Community Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold">Community Information</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-muted-foreground">Members</p>
-              <p className="text-2xl font-bold">{community?.member_count || 0}</p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Revenue</p>
-              <p className="text-2xl font-bold">${community?.total_revenue || 0}</p>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-muted-foreground">Products</p>
-              <p className="text-2xl font-bold">{community?.product_count || 0}</p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Classrooms</p>
-              <p className="text-2xl font-bold">{community?.classroom_count || 0}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Payment Link Section */}
-      {paymentLink && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold">Payment Link</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex gap-2">
+    <div className="space-y-4">
+      <Card className="p-4 sm:p-6 border border-border/40 bg-card/40">
+        <h2 className="text-lg font-semibold tracking-tight mb-4">Community Information</h2>
+        <div className="space-y-6">
+          <div>
+            <p className="text-sm text-muted-foreground mb-2">Payment Link</p>
+            <div className="flex items-center gap-2">
               <Input
                 value={paymentLink}
                 readOnly
-                className="flex-1"
+                className="h-9 text-sm font-medium bg-muted"
               />
               <Button
+                size="sm"
                 variant="outline"
-                size="icon"
+                className="shrink-0"
                 onClick={onCopyPaymentLink}
-                className="flex-shrink-0"
               >
-                <Copy className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => window.open(paymentLink, '_blank')}
-                className="flex-shrink-0"
-              >
-                <ExternalLink className="h-4 w-4" />
+                {hasCopied ? (
+                  <Check className="h-4 w-4 text-green-500" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
               </Button>
             </div>
-            {hasCopied && (
-              <p className="text-sm text-green-600">Payment link copied to clipboard!</p>
-            )}
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Webhook Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold">Webhook URL</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <Label htmlFor="webhook">Webhook URL</Label>
-            <Input
-              id="webhook"
-              value={webhook}
-              onChange={(e) => setWebhook(e.target.value)}
-              placeholder="Enter webhook URL"
-            />
-            <p className="text-sm text-muted-foreground">
-              This URL will receive notifications about community events.
-            </p>
           </div>
-        </CardContent>
+
+          <div className="grid grid-cols-3 gap-2">
+            <div>
+              <p className="text-sm text-muted-foreground">Products</p>
+              <p className="text-xl font-semibold">{formatNumber(community?.product_count)}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Classrooms</p>
+              <p className="text-xl font-semibold">{formatNumber(community?.classroom_count)}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Posts</p>
+              <p className="text-xl font-semibold">{formatNumber(community?.post_count)}</p>
+            </div>
+          </div>
+
+          <div className="pt-2 border-t">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+              <div>
+                <p className="text-sm text-muted-foreground">Monthly Revenue</p>
+                <p className="text-xl font-semibold">
+                  {formatCurrency(community?.monthly_recurring_revenue)}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Total Revenue</p>
+                <p className="text-xl font-semibold">
+                  {formatCurrency(community?.total_revenue)}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Paid Members</p>
+                <p className="text-xl font-semibold">{formatNumber(community?.paid_member_count)}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Total Members</p>
+                <p className="text-xl font-semibold">{formatNumber(community?.member_count)}</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </Card>
 
-      {/* Affiliate Section */}
       {affiliateSection}
 
-      {/* Danger Zone */}
-      <Card className="border-destructive">
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold text-destructive">Danger Zone</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between">
-            <div>
-              <h4 className="font-medium">Delete Community</h4>
-              <p className="text-sm text-muted-foreground">
-                Permanently delete this community and all its data.
-              </p>
-            </div>
-            <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive" size="sm">
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Delete
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Delete Community</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Are you sure you want to delete "{communityName}"? This action cannot be undone and will permanently remove all community data, members, and content.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={() => onDeleteCommunity('/account/communities')}
-                    disabled={isDeleting}
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  >
-                    {isDeleting ? "Deleting..." : "Delete Community"}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
-        </CardContent>
+      <Card className="p-4 sm:p-6 border border-border/40 bg-card/40">
+        <h2 className="text-lg font-semibold tracking-tight mb-4">Advanced Settings</h2>
+        <div>
+          <Label htmlFor="webhook" className="text-sm font-medium mb-1 block">
+            Webhook URL
+          </Label>
+          <p className="text-sm text-muted-foreground mb-2">
+            We'll send notifications about new members to this webhook URL
+          </p>
+          <Input
+            id="webhook"
+            placeholder="Enter webhook URL"
+            value={webhook}
+            onChange={(e) => setWebhook(e.target.value)}
+            className="h-9"
+          />
+        </div>
+
+        <CommunityDangerZone
+          communityName={communityName}
+          isDeleting={isDeleting}
+          showDeleteDialog={showDeleteDialog}
+          sellerUuid={community?.expert_uuid || ""}
+          setShowDeleteDialog={setShowDeleteDialog}
+          onDeleteCommunity={onDeleteCommunity}
+        />
       </Card>
     </div>
   );

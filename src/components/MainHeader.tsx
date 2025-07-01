@@ -163,70 +163,19 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
     <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-background border-b">
       <div className="container mx-auto px-4 h-full">
         {/* Mobile Header */}
-        <div className="flex md:hidden items-center justify-between h-full gap-2">
-          <div className="flex-1 max-w-[calc(100%-120px)]">
-            <form onSubmit={(e) => handleSearch(e, true)} className={`flex items-center gap-1 px-3 ${isHomePage ? 'py-1.5' : 'py-1.5'} rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background`}>
-              <div className="relative flex-1">
-                <Input
-                  className={`border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent ${isHomePage ? 'h-8 text-sm' : 'h-7 text-sm'} flex-1`}
-                  placeholder={isHomePage ? "Search..." : "Search..."}
-                  type="search"
-                  value={mobileSearchQuery}
-                  onChange={(e) => setMobileSearchQuery(e.target.value)}
-                  onFocus={() => searchHistory.length > 0 && setShowSearchHistory(true)}
-                  onBlur={() => setTimeout(() => setShowSearchHistory(false), 200)}
-                />
-
-                {/* Search History Dropdown (Mobile) */}
-                {showSearchHistory && searchHistory.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-background border rounded-md shadow-md z-10 search-history-dropdown">
-                    <div className="p-1 text-xs text-muted-foreground border-b">Recent searches</div>
-                    <ul>
-                      {searchHistory.map((item, index) => (
-                        <li
-                          key={index}
-                          className="px-3 py-2 hover:bg-muted cursor-pointer text-sm"
-                          onClick={() => {
-                            setMobileSearchQuery(item);
-                            setShowSearchHistory(false);
-                            navigate(`/search?q=${encodeURIComponent(item)}`);
-                          }}
-                        >
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                    <div
-                      className="p-1 text-xs text-primary hover:underline cursor-pointer text-center border-t"
-                      onClick={() => {
-                        setSearchHistory([]);
-                        setShowSearchHistory(false);
-                      }}
-                    >
-                      Clear history
-                    </div>
-                  </div>
-                )}
-              </div>
-              <Button type="submit" size="icon" variant="default" className={`rounded-full bg-primary hover:bg-primary/90 ${isHomePage ? 'h-8 w-8' : 'h-7 w-7'}`}>
-                <Search className={isHomePage ? "h-4 w-4" : "h-3.5 w-3.5"} />
-              </Button>
-            </form>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <CartDrawerTrigger />
-            
+        <div className="flex md:hidden items-center justify-between h-full">
+          {/* Menu on the left - with smaller width */}
+          <div className="w-10 flex justify-start">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
-                  className="rounded-full px-2.5 py-1.5 h-8 border-2 hover:border-primary/20 transition-colors"
+                  className="rounded-full px-2.5 py-1.5 h-8 border-[0.5px] border-muted-foreground/30 hover:border-muted-foreground/50 transition-colors"
                 >
                   <Menu className="h-3.5 w-3.5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent align="start" className="w-56">
                 <Link to="/">
                   <DropdownMenuItem>
                     <Home className="mr-2 h-4 w-4" />
@@ -297,6 +246,62 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                 )}
               </DropdownMenuContent>
             </DropdownMenu>
+          </div>
+
+          {/* Search bar in the middle - with more space */}
+          <div className="flex-1 px-3">
+            <form onSubmit={(e) => handleSearch(e, true)} className={`flex items-center gap-1 px-3 ${isHomePage ? 'py-1.5' : 'py-1.5'} rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background`}>
+              <div className="relative flex-1">
+                <Input
+                  className={`border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent ${isHomePage ? 'h-8 text-sm' : 'h-7 text-sm'} flex-1`}
+                  placeholder={isHomePage ? "Search..." : "Search..."}
+                  type="search"
+                  value={mobileSearchQuery}
+                  onChange={(e) => setMobileSearchQuery(e.target.value)}
+                  onFocus={() => searchHistory.length > 0 && setShowSearchHistory(true)}
+                  onBlur={() => setTimeout(() => setShowSearchHistory(false), 200)}
+                />
+
+                {/* Search History Dropdown (Mobile) */}
+                {showSearchHistory && searchHistory.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-background border rounded-md shadow-md z-10 search-history-dropdown">
+                    <div className="p-1 text-xs text-muted-foreground border-b">Recent searches</div>
+                    <ul>
+                      {searchHistory.map((item, index) => (
+                        <li
+                          key={index}
+                          className="px-3 py-2 hover:bg-muted cursor-pointer text-sm"
+                          onClick={() => {
+                            setMobileSearchQuery(item);
+                            setShowSearchHistory(false);
+                            navigate(`/search?q=${encodeURIComponent(item)}`);
+                          }}
+                        >
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                    <div
+                      className="p-1 text-xs text-primary hover:underline cursor-pointer text-center border-t"
+                      onClick={() => {
+                        setSearchHistory([]);
+                        setShowSearchHistory(false);
+                      }}
+                    >
+                      Clear history
+                    </div>
+                  </div>
+                )}
+              </div>
+              <Button type="submit" size="icon" variant="default" className={`rounded-full bg-primary hover:bg-primary/90 ${isHomePage ? 'h-8 w-8' : 'h-7 w-7'}`}>
+                <Search className={isHomePage ? "h-4 w-4" : "h-3.5 w-3.5"} />
+              </Button>
+            </form>
+          </div>
+          
+          {/* Cart on the right - with smaller width */}
+          <div className="w-10 flex justify-end">
+            <CartDrawerTrigger />
           </div>
         </div>
 
@@ -387,7 +392,7 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
-                  className="rounded-full px-2.5 py-1.5 h-8 border-2 hover:border-primary/20 transition-colors"
+                  className="rounded-full px-2.5 py-1.5 h-8 border-[0.5px] border-muted-foreground/30 hover:border-muted-foreground/50 transition-colors"
                 >
                   <Menu className="h-3.5 w-3.5 mr-1.5" />
                   <User className="h-3.5 w-3.5" />

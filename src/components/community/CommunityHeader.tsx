@@ -4,9 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
-interface CommunityHeaderProps {
-  // Remove the save-related props since they're now in the status section
-}
+interface CommunityHeaderProps {}
 
 export function CommunityHeader({}: CommunityHeaderProps) {
   const { id } = useParams();
