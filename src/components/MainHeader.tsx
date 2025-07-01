@@ -162,91 +162,93 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
     <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-background border-b">
       <div className="container mx-auto px-4 h-full">
         {/* Mobile Header */}
-        <div className="flex md:hidden items-center justify-between h-full gap-2">
-          {/* Menu on the left */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                className="rounded-full px-2.5 py-1.5 h-8 border-2 hover:border-primary/20 transition-colors"
-              >
-                <Menu className="h-3.5 w-3.5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-56">
-              <Link to="/">
-                <DropdownMenuItem>
-                  <Home className="mr-2 h-4 w-4" />
-                  Home
-                </DropdownMenuItem>
-              </Link>
-              {user ? (
-                <>
-                  <Link to="/personal-area">
-                    <DropdownMenuItem>
-                      <UserCircle className="mr-2 h-4 w-4" />
-                      Personal Area
-                    </DropdownMenuItem>
-                  </Link>
-                  {isExpert && (
-                    <Link to={expertData?.expert_uuid ? `/seller/${expertData.expert_uuid}` : "/sell"}>
-                      <DropdownMenuItem>
-                        <Store className="mr-2 h-4 w-4" />
-                        Seller Area
-                      </DropdownMenuItem>
-                    </Link>
-                  )}
-                  <Link to="/account/chats">
-                    <DropdownMenuItem>
-                      <MessageSquare className="mr-2 h-4 w-4" />
-                      Chats
-                    </DropdownMenuItem>
-                  </Link>
-                  <DropdownMenuSeparator />
-                </>
-              ) : (
-                <>
-                  <Link to="/sign-in">
-                    <DropdownMenuItem>
-                      <User className="mr-2 h-4 w-4" />
-                      Sign In
-                    </DropdownMenuItem>
-                  </Link>
-                  <DropdownMenuSeparator />
-                </>
-              )}
-              <Link to="/affiliates">
-                <DropdownMenuItem>
-                  <Users className="mr-2 h-4 w-4" />
-                  Affiliates
-                </DropdownMenuItem>
-              </Link>
-              {!isExpert && (
-                <Link to="/sell">
+        <div className="flex md:hidden items-center justify-between h-full">
+          {/* Menu on the left - with consistent width */}
+          <div className="w-12 flex justify-start">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="rounded-full px-2.5 py-1.5 h-8 border-2 hover:border-primary/20 transition-colors"
+                >
+                  <Menu className="h-3.5 w-3.5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                <Link to="/">
                   <DropdownMenuItem>
-                    <Store className="mr-2 h-4 w-4" />
-                    Sell on Plaze
+                    <Home className="mr-2 h-4 w-4" />
+                    Home
                   </DropdownMenuItem>
                 </Link>
-              )}
-              <DropdownMenuItem>
-                <HelpCircle className="mr-2 h-4 w-4" />
-                Help Center
-              </DropdownMenuItem>
-              {user && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Sign Out
+                {user ? (
+                  <>
+                    <Link to="/personal-area">
+                      <DropdownMenuItem>
+                        <UserCircle className="mr-2 h-4 w-4" />
+                        Personal Area
+                      </DropdownMenuItem>
+                    </Link>
+                    {isExpert && (
+                      <Link to={expertData?.expert_uuid ? `/seller/${expertData.expert_uuid}` : "/sell"}>
+                        <DropdownMenuItem>
+                          <Store className="mr-2 h-4 w-4" />
+                          Seller Area
+                        </DropdownMenuItem>
+                      </Link>
+                    )}
+                    <Link to="/account/chats">
+                      <DropdownMenuItem>
+                        <MessageSquare className="mr-2 h-4 w-4" />
+                        Chats
+                      </DropdownMenuItem>
+                    </Link>
+                    <DropdownMenuSeparator />
+                  </>
+                ) : (
+                  <>
+                    <Link to="/sign-in">
+                      <DropdownMenuItem>
+                        <User className="mr-2 h-4 w-4" />
+                        Sign In
+                      </DropdownMenuItem>
+                    </Link>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
+                <Link to="/affiliates">
+                  <DropdownMenuItem>
+                    <Users className="mr-2 h-4 w-4" />
+                    Affiliates
                   </DropdownMenuItem>
-                </>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+                </Link>
+                {!isExpert && (
+                  <Link to="/sell">
+                    <DropdownMenuItem>
+                      <Store className="mr-2 h-4 w-4" />
+                      Sell on Plaze
+                    </DropdownMenuItem>
+                  </Link>
+                )}
+                <DropdownMenuItem>
+                  <HelpCircle className="mr-2 h-4 w-4" />
+                  Help Center
+                </DropdownMenuItem>
+                {user && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleSignOut}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Sign Out
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
 
-          {/* Search bar in the middle */}
-          <div className="flex-1 mx-2">
+          {/* Search bar in the middle - with equal flex space */}
+          <div className="flex-1 px-4">
             <form onSubmit={(e) => handleSearch(e, true)} className={`flex items-center gap-1 px-3 ${isHomePage ? 'py-1.5' : 'py-1.5'} rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background`}>
               <div className="relative flex-1">
                 <Input
@@ -296,8 +298,10 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
             </form>
           </div>
           
-          {/* Cart on the right */}
-          <CartDrawerTrigger />
+          {/* Cart on the right - with consistent width */}
+          <div className="w-12 flex justify-end">
+            <CartDrawerTrigger />
+          </div>
         </div>
 
         {/* Desktop Header */}
