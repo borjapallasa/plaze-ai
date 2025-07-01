@@ -1,4 +1,3 @@
-
 import React, { useState, FormEvent, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, Menu, User, ChevronDown, LogOut, Home, UserCircle, Users, Store, HelpCircle, MessageSquare } from "lucide-react";
@@ -164,7 +163,90 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
       <div className="container mx-auto px-4 h-full">
         {/* Mobile Header */}
         <div className="flex md:hidden items-center justify-between h-full gap-2">
-          <div className="flex-1 max-w-[calc(100%-120px)]">
+          {/* Menu on the left */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                className="rounded-full px-2.5 py-1.5 h-8 border-2 hover:border-primary/20 transition-colors"
+              >
+                <Menu className="h-3.5 w-3.5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-56">
+              <Link to="/">
+                <DropdownMenuItem>
+                  <Home className="mr-2 h-4 w-4" />
+                  Home
+                </DropdownMenuItem>
+              </Link>
+              {user ? (
+                <>
+                  <Link to="/personal-area">
+                    <DropdownMenuItem>
+                      <UserCircle className="mr-2 h-4 w-4" />
+                      Personal Area
+                    </DropdownMenuItem>
+                  </Link>
+                  {isExpert && (
+                    <Link to={expertData?.expert_uuid ? `/seller/${expertData.expert_uuid}` : "/sell"}>
+                      <DropdownMenuItem>
+                        <Store className="mr-2 h-4 w-4" />
+                        Seller Area
+                      </DropdownMenuItem>
+                    </Link>
+                  )}
+                  <Link to="/account/chats">
+                    <DropdownMenuItem>
+                      <MessageSquare className="mr-2 h-4 w-4" />
+                      Chats
+                    </DropdownMenuItem>
+                  </Link>
+                  <DropdownMenuSeparator />
+                </>
+              ) : (
+                <>
+                  <Link to="/sign-in">
+                    <DropdownMenuItem>
+                      <User className="mr-2 h-4 w-4" />
+                      Sign In
+                    </DropdownMenuItem>
+                  </Link>
+                  <DropdownMenuSeparator />
+                </>
+              )}
+              <Link to="/affiliates">
+                <DropdownMenuItem>
+                  <Users className="mr-2 h-4 w-4" />
+                  Affiliates
+                </DropdownMenuItem>
+              </Link>
+              {!isExpert && (
+                <Link to="/sell">
+                  <DropdownMenuItem>
+                    <Store className="mr-2 h-4 w-4" />
+                    Sell on Plaze
+                  </DropdownMenuItem>
+                </Link>
+              )}
+              <DropdownMenuItem>
+                <HelpCircle className="mr-2 h-4 w-4" />
+                Help Center
+              </DropdownMenuItem>
+              {user && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Search bar in the middle */}
+          <div className="flex-1 mx-2">
             <form onSubmit={(e) => handleSearch(e, true)} className={`flex items-center gap-1 px-3 ${isHomePage ? 'py-1.5' : 'py-1.5'} rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background`}>
               <div className="relative flex-1">
                 <Input
@@ -214,90 +296,8 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
             </form>
           </div>
           
-          <div className="flex items-center gap-2">
-            <CartDrawerTrigger />
-            
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="rounded-full px-2.5 py-1.5 h-8 border-2 hover:border-primary/20 transition-colors"
-                >
-                  <Menu className="h-3.5 w-3.5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <Link to="/">
-                  <DropdownMenuItem>
-                    <Home className="mr-2 h-4 w-4" />
-                    Home
-                  </DropdownMenuItem>
-                </Link>
-                {user ? (
-                  <>
-                    <Link to="/personal-area">
-                      <DropdownMenuItem>
-                        <UserCircle className="mr-2 h-4 w-4" />
-                        Personal Area
-                      </DropdownMenuItem>
-                    </Link>
-                    {isExpert && (
-                      <Link to={expertData?.expert_uuid ? `/seller/${expertData.expert_uuid}` : "/sell"}>
-                        <DropdownMenuItem>
-                          <Store className="mr-2 h-4 w-4" />
-                          Seller Area
-                        </DropdownMenuItem>
-                      </Link>
-                    )}
-                    <Link to="/account/chats">
-                      <DropdownMenuItem>
-                        <MessageSquare className="mr-2 h-4 w-4" />
-                        Chats
-                      </DropdownMenuItem>
-                    </Link>
-                    <DropdownMenuSeparator />
-                  </>
-                ) : (
-                  <>
-                    <Link to="/sign-in">
-                      <DropdownMenuItem>
-                        <User className="mr-2 h-4 w-4" />
-                        Sign In
-                      </DropdownMenuItem>
-                    </Link>
-                    <DropdownMenuSeparator />
-                  </>
-                )}
-                <Link to="/affiliates">
-                  <DropdownMenuItem>
-                    <Users className="mr-2 h-4 w-4" />
-                    Affiliates
-                  </DropdownMenuItem>
-                </Link>
-                {!isExpert && (
-                  <Link to="/sell">
-                    <DropdownMenuItem>
-                      <Store className="mr-2 h-4 w-4" />
-                      Sell on Plaze
-                    </DropdownMenuItem>
-                  </Link>
-                )}
-                <DropdownMenuItem>
-                  <HelpCircle className="mr-2 h-4 w-4" />
-                  Help Center
-                </DropdownMenuItem>
-                {user && (
-                  <>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleSignOut}>
-                      <LogOut className="mr-2 h-4 w-4" />
-                      Sign Out
-                    </DropdownMenuItem>
-                  </>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          {/* Cart on the right */}
+          <CartDrawerTrigger />
         </div>
 
         {/* Desktop Header */}
