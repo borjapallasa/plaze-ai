@@ -54,7 +54,7 @@ export function AffiliateOffersList({ offers }: AffiliateOffersListProps) {
           <TableRow className="bg-gray-50/50 hover:bg-gray-50/50">
             <TableHead className="font-semibold text-gray-900 py-4">Product</TableHead>
             <TableHead className="font-semibold text-gray-900">Expert</TableHead>
-            <TableHead className="font-semibold text-gray-900">Category</TableHead>
+            <TableHead className="font-semibold text-gray-900">Type</TableHead>
             <TableHead className="text-right font-semibold text-gray-900">Commission</TableHead>
             <TableHead className="text-right font-semibold text-gray-900">Rating</TableHead>
             <TableHead className="text-right font-semibold text-gray-900">Affiliates</TableHead>
@@ -82,7 +82,7 @@ export function AffiliateOffersList({ offers }: AffiliateOffersListProps) {
               </TableCell>
               <TableCell>
                 <Badge variant="outline" className="text-xs border-gray-200 text-gray-600 bg-gray-50">
-                  {toStartCase(offer.category)}
+                  {toStartCase(offer.type || offer.category)}
                 </Badge>
               </TableCell>
               <TableCell className="text-right">
@@ -106,7 +106,7 @@ export function AffiliateOffersList({ offers }: AffiliateOffersListProps) {
               </TableCell>
               <TableCell className="text-right">
                 <div className="text-sm text-gray-500">
-                  <span className="text-base font-bold text-green-600">${offer.monthlyEarnings}</span> <span className="text-xs font-medium text-gray-700">{offer.category === "product" ? "per transaction" : "per month"}</span>
+                  <span className="text-base font-bold text-green-600">${offer.monthlyEarnings}</span> <span className="text-xs font-medium text-gray-700">{(offer.type || offer.category) === "product" ? "per transaction" : "per month"}</span>
                 </div>
               </TableCell>
               <TableCell>

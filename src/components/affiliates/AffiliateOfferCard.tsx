@@ -4,6 +4,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Star, ExternalLink, Users, DollarSign } from "lucide-react";
+import { toStartCase } from "@/lib/utils";
 
 interface AffiliateOffer {
   id: string;
@@ -18,6 +19,7 @@ interface AffiliateOffer {
   thumbnail: string;
   status: "active" | "pending" | "paused";
   partnerName: string;
+  type?: string;
 }
 
 interface AffiliateOfferCardProps {
@@ -57,6 +59,12 @@ export function AffiliateOfferCard({ offer }: AffiliateOfferCardProps) {
           </div>
         </div>
         
+        <div className="flex items-center gap-2">
+          <Badge variant="outline" className="text-xs border-gray-200 text-gray-600 bg-gray-50">
+            {toStartCase(offer.type || offer.category)}
+          </Badge>
+        </div>
+        
         <p className="text-sm text-muted-foreground line-clamp-2">{offer.description}</p>
         
         <div className="space-y-2">
@@ -81,7 +89,7 @@ export function AffiliateOfferCard({ offer }: AffiliateOfferCardProps) {
           </div>
           
           <div className="text-sm text-muted-foreground">
-            Earnings: <span className="text-base font-bold text-green-600">${offer.monthlyEarnings}</span> <span className="text-xs font-medium text-gray-700">{offer.category === "product" ? "per transaction" : "per month"}</span>
+            Earnings: <span className="text-base font-bold text-green-600">${offer.monthlyEarnings}</span> <span className="text-xs font-medium text-gray-700">{(offer.type || offer.category) === "product" ? "per transaction" : "per month"}</span>
           </div>
         </div>
       </CardContent>
