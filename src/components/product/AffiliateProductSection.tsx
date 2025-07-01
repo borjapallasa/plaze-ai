@@ -5,7 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
-import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { useAffiliateProducts } from "@/hooks/use-affiliate-products";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -287,17 +287,14 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
                         Add Question
                       </Button>
                     </div>
-                    <p className="text-sm text-muted-foreground">
-                      Add questions that affiliates must answer when applying to promote this product.
-                    </p>
                     <div className="space-y-2">
                       {questions.map((question, index) => (
                         <div key={index} className="flex gap-2">
-                          <Textarea
+                          <Input
                             placeholder="Enter question for affiliates"
                             value={question}
                             onChange={(e) => updateQuestion(index, e.target.value)}
-                            className="flex-1 min-h-[60px]"
+                            className="flex-1"
                           />
                           <Button
                             type="button"
@@ -311,6 +308,9 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
                         </div>
                       ))}
                     </div>
+                    <p className="text-sm text-muted-foreground">
+                      Add questions that affiliates must answer when applying to promote this product.
+                    </p>
                   </div>
 
                   <div className="pt-4 border-t">
@@ -386,17 +386,14 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
                   Add Question
                 </Button>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Add questions that affiliates must answer when applying to promote this product.
-              </p>
               <div className="space-y-2">
                 {questions.map((question, index) => (
                   <div key={index} className="flex gap-2">
-                    <Textarea
+                    <Input
                       placeholder="Enter question for affiliates"
                       value={question}
                       onChange={(e) => updateQuestion(index, e.target.value)}
-                      className="flex-1 min-h-[60px]"
+                      className="flex-1"
                     />
                     <Button
                       type="button"
@@ -410,6 +407,9 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
                   </div>
                 ))}
               </div>
+              <p className="text-sm text-muted-foreground">
+                Add questions that affiliates must answer when applying to promote this product.
+              </p>
               {questions.length === 0 && (
                 <p className="text-sm text-muted-foreground">No questions configured. Add questions to help you evaluate potential partners.</p>
               )}
