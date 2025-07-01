@@ -27,6 +27,8 @@ export default function EditCommunity() {
     setPricePeriod,
     communityType,
     setCommunityType,
+    communityStatus,
+    setCommunityStatus,
     paymentLink,
     webhook,
     setWebhook,
@@ -61,7 +63,7 @@ export default function EditCommunity() {
       </div>
 
       <div className="container mx-auto px-4 pt-24 pb-8">
-        <CommunityHeader onSave={handleSave} isSaving={isSaving} />
+        <CommunityHeader />
 
         <div className="space-y-4 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-8">
@@ -110,6 +112,10 @@ export default function EditCommunity() {
                 isDeleting={isDeleting}
                 onDeleteCommunity={handleDeleteCommunity}
                 communityName={communityName}
+                communityStatus={communityStatus}
+                setCommunityStatus={setCommunityStatus}
+                onSave={handleSave}
+                isSaving={isSaving}
                 affiliateSection={<AffiliateCommunitySection communityUuid={id} />}
               />
             </div>

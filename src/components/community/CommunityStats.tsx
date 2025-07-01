@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Copy, Check } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CommunityDangerZone } from "./CommunityDangerZone";
 import { formatNumber } from "@/lib/utils";
 
@@ -18,7 +19,9 @@ export interface Community {
   paid_member_count?: number | null;
   member_count?: number | null;
   expert_uuid?: string | null;
+  status?: string | null;
 }
+
 interface CommunityStatsProps {
   paymentLink: string;
   onCopyPaymentLink: () => void;
@@ -32,6 +35,10 @@ interface CommunityStatsProps {
   onDeleteCommunity: (redirectUrl: string) => void;
   communityName: string;
   affiliateSection?: React.ReactNode;
+  communityStatus: string;
+  setCommunityStatus: (status: string) => void;
+  onSave: () => void;
+  isSaving: boolean;
 }
 
 export function CommunityStats({
@@ -46,7 +53,11 @@ export function CommunityStats({
   isDeleting,
   onDeleteCommunity,
   communityName,
-  affiliateSection
+  affiliateSection,
+  communityStatus,
+  setCommunityStatus,
+  onSave,
+  isSaving
 }: CommunityStatsProps) {
   const formatCurrency = (amount: number | null | undefined) => {
     if (amount === null || amount === undefined) return '$0';
@@ -58,6 +69,36 @@ export function CommunityStats({
 
   return (
     <div className="space-y-4">
+      {/* Community Status Section */}
+      <Card className="p-4 sm:p-6 border border-border/40 bg-card/40">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            <Label htmlFor="status" className="text-sm font-medium mb-2 block">
+              Community Status
+            </Label>
+            <Select value={communityStatus} onValueChange={setCommunityStatus}>
+              <SelectTrigger className="h-9">
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="visible">Visible</SelectItem>
+                <SelectItem value="not visible">Not Visible</SelectItem>
+                <SelectItem value="draft">Draft</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex-shrink-0">
+            <Button
+              onClick={onSave}
+              disabled={isSaving}
+              className="mt-6"
+            >
+              {isSaving ? "Saving..." : "Save Changes"}
+            </Button>
+          </div>
+        </div>
+      </Card>
+
       <Card className="p-4 sm:p-6 border border-border/40 bg-card/40">
         <h2 className="text-lg font-semibold tracking-tight mb-4">Community Information</h2>
         <div className="space-y-6">
