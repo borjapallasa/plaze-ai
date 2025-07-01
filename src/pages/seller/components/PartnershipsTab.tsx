@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Users, DollarSign, Link, MessageSquare, Calendar, Check, X, Pause, Play, Trash2 } from "lucide-react";
 import { useExpertPartnerships } from "@/hooks/expert/useExpertPartnerships";
+import { usePartnershipMutations } from "@/hooks/expert/usePartnershipMutations";
 
 interface PartnershipsTabProps {
   expertUuid?: string;
@@ -13,34 +13,44 @@ interface PartnershipsTabProps {
 
 export function PartnershipsTab({ expertUuid }: PartnershipsTabProps) {
   const { data: partnerships = [], isLoading } = useExpertPartnerships(expertUuid);
+  const { updatePartnershipStatus, deletePartnership } = usePartnershipMutations();
 
   const handleAcceptPartnership = (partnershipUuid: string) => {
-    console.log("Accept partnership:", partnershipUuid);
-    // TODO: Implement accept functionality
+    updatePartnershipStatus.mutate({ 
+      partnershipUuid, 
+      status: 'active' 
+    });
   };
 
   const handleRejectPartnership = (partnershipUuid: string) => {
-    console.log("Reject partnership:", partnershipUuid);
-    // TODO: Implement reject functionality
+    updatePartnershipStatus.mutate({ 
+      partnershipUuid, 
+      status: 'rejected' 
+    });
   };
 
   const handlePausePartnership = (partnershipUuid: string) => {
-    console.log("Pause partnership:", partnershipUuid);
-    // TODO: Implement pause functionality
+    updatePartnershipStatus.mutate({ 
+      partnershipUuid, 
+      status: 'paused' 
+    });
   };
 
   const handleResumePartnership = (partnershipUuid: string) => {
-    console.log("Resume partnership:", partnershipUuid);
-    // TODO: Implement resume functionality
+    updatePartnershipStatus.mutate({ 
+      partnershipUuid, 
+      status: 'active' 
+    });
   };
 
   const handleDeletePartnership = (partnershipUuid: string) => {
-    console.log("Delete partnership:", partnershipUuid);
-    // TODO: Implement delete functionality
+    deletePartnership.mutate(partnershipUuid);
   };
 
   const renderActionButtons = (partnership: any) => {
     const status = partnership.status?.toLowerCase();
+    const isUpdating = updatePartnershipStatus.isPending;
+    const isDeleting = deletePartnership.isPending;
 
     switch (status) {
       case 'pending':
@@ -49,6 +59,7 @@ export function PartnershipsTab({ expertUuid }: PartnershipsTabProps) {
             <Button
               size="sm"
               onClick={() => handleAcceptPartnership(partnership.affiliate_partnership_uuid)}
+              disabled={isUpdating}
               className="bg-green-600 hover:bg-green-700 text-white border-0"
             >
               <Check className="h-4 w-4 mr-1" />
@@ -58,6 +69,7 @@ export function PartnershipsTab({ expertUuid }: PartnershipsTabProps) {
               size="sm"
               variant="outline"
               onClick={() => handleRejectPartnership(partnership.affiliate_partnership_uuid)}
+              disabled={isUpdating}
               className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
             >
               <X className="h-4 w-4 mr-1" />
@@ -73,6 +85,7 @@ export function PartnershipsTab({ expertUuid }: PartnershipsTabProps) {
               size="sm"
               variant="outline"
               onClick={() => handlePausePartnership(partnership.affiliate_partnership_uuid)}
+              disabled={isUpdating}
               className="text-orange-600 border-orange-200 hover:bg-orange-50 hover:text-orange-700"
             >
               <Pause className="h-4 w-4 mr-1" />
@@ -82,6 +95,7 @@ export function PartnershipsTab({ expertUuid }: PartnershipsTabProps) {
               size="sm"
               variant="outline"
               onClick={() => handleDeletePartnership(partnership.affiliate_partnership_uuid)}
+              disabled={isDeleting}
               className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
             >
               <Trash2 className="h-4 w-4 mr-1" />
@@ -96,6 +110,7 @@ export function PartnershipsTab({ expertUuid }: PartnershipsTabProps) {
             <Button
               size="sm"
               onClick={() => handleResumePartnership(partnership.affiliate_partnership_uuid)}
+              disabled={isUpdating}
               className="bg-blue-600 hover:bg-blue-700 text-white border-0"
             >
               <Play className="h-4 w-4 mr-1" />
@@ -105,6 +120,7 @@ export function PartnershipsTab({ expertUuid }: PartnershipsTabProps) {
               size="sm"
               variant="outline"
               onClick={() => handleDeletePartnership(partnership.affiliate_partnership_uuid)}
+              disabled={isDeleting}
               className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
             >
               <Trash2 className="h-4 w-4 mr-1" />
@@ -120,6 +136,7 @@ export function PartnershipsTab({ expertUuid }: PartnershipsTabProps) {
               size="sm"
               variant="outline"
               onClick={() => handleDeletePartnership(partnership.affiliate_partnership_uuid)}
+              disabled={isDeleting}
               className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
             >
               <Trash2 className="h-4 w-4 mr-1" />
