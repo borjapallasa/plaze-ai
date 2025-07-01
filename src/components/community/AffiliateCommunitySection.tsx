@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { useAffiliateCommunities } from "@/hooks/use-affiliate-communities";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Edit, Trash2, Plus, Info } from "lucide-react";
+import { Edit, Trash2, Plus, Info, AlertTriangle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface AffiliateCommunityProps {
@@ -477,40 +477,77 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
         </DialogContent>
       </Dialog>
 
-      {/* Delete Dialog */}
+      {/* Redesigned Delete Dialog */}
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Remove from Affiliate Program</DialogTitle>
+        <DialogContent className="max-w-md">
+          <DialogHeader className="text-center pb-4">
+            <div className="mx-auto w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
+              <AlertTriangle className="h-6 w-6 text-red-600" />
+            </div>
+            <DialogTitle className="text-xl font-semibold text-gray-900">
+              Remove from Affiliate Program?
+            </DialogTitle>
           </DialogHeader>
-          <div className="py-4 space-y-4">
-            <p className="text-sm">
-              Are you sure you want to remove this community from the affiliate program?
+          
+          <div className="space-y-6">
+            <p className="text-center text-gray-600 text-sm leading-relaxed">
+              This will remove your community from the affiliate marketplace and stop new partnership requests.
             </p>
             
-            <div className="p-4 border rounded-lg bg-blue-50/50 border-blue-200">
-              <p className="font-medium text-blue-900 mb-2">In order to keep it fair:</p>
-              <ul className="text-sm text-blue-800 space-y-1">
-                <li>• Sales generated in the next 90 days from your partners they will still receive their commissions.</li>
-                <li>• This partnership won't be shown anymore in affiliate deals.</li>
-              </ul>
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4">
+              <div className="flex items-start gap-3">
+                <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                <div>
+                  <h4 className="font-medium text-blue-900 mb-2">Fair Play Policy</h4>
+                  <div className="space-y-2 text-sm text-blue-800">
+                    <div className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
+                      <span>Partners will still receive commissions for sales in the next 90 days</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
+                      <span>Your community won't appear in affiliate deals anymore</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {editingCommunity && (
-              <div className="p-3 border rounded-lg bg-muted/50">
-                <p className="font-medium">Current Split:</p>
-                <p className="text-sm text-muted-foreground">
-                  Expert: {Math.round(editingCommunity.expert_share * 100)}% | Affiliate: {Math.round(editingCommunity.affiliate_share * 100)}%
-                </p>
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <div className="text-center">
+                  <p className="text-sm font-medium text-gray-700 mb-1">Current Revenue Split</p>
+                  <p className="text-lg font-semibold text-gray-900">
+                    You: {Math.round(editingCommunity.expert_share * 100)}% • 
+                    Partners: {Math.round(editingCommunity.affiliate_share * 100)}%
+                  </p>
+                </div>
               </div>
             )}
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowDeleteDialog(false)}>
-              Cancel
+
+          <DialogFooter className="gap-3 pt-6">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowDeleteDialog(false)}
+              className="flex-1"
+            >
+              Keep in Program
             </Button>
-            <Button variant="destructive" onClick={handleDeleteConfirm} disabled={isLoading}>
-              {isLoading ? "Removing..." : "Remove from Program"}
+            <Button 
+              variant="destructive" 
+              onClick={handleDeleteConfirm} 
+              disabled={isLoading}
+              className="flex-1 bg-red-600 hover:bg-red-700"
+            >
+              {isLoading ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Removing...
+                </div>
+              ) : (
+                "Remove from Program"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
