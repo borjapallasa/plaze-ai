@@ -43,12 +43,15 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
       const existingCommunity = affiliateCommunities[0];
       setSplit([Math.round(existingCommunity.expert_share * 100)]);
       
-      // Parse questions from JSONB
+      // Parse questions from JSONB with stable IDs
       if (existingCommunity.questions) {
         const questionsArray = Array.isArray(existingCommunity.questions) 
-          ? existingCommunity.questions 
-          : Object.entries(existingCommunity.questions || {}).map(([id, question], index) => ({
-              id: `question_${index + 1}`,
+          ? existingCommunity.questions.map((q: any, index: number) => ({
+              id: q.id || `existing_question_${index + 1}`,
+              question: typeof q.question === 'string' ? q.question : String(q.question || q)
+            }))
+          : Object.entries(existingCommunity.questions || {}).map(([key, question], index) => ({
+              id: `existing_question_${index + 1}`,
               question: typeof question === 'string' ? question : String(question)
             }));
         setQuestions(questionsArray);
@@ -71,12 +74,15 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
     setEditingCommunity(affiliateCommunity);
     setSplit([Math.round(affiliateCommunity.expert_share * 100)]);
     
-    // Parse questions for editing
+    // Parse questions for editing with stable IDs
     if (affiliateCommunity.questions) {
       const questionsArray = Array.isArray(affiliateCommunity.questions) 
-        ? affiliateCommunity.questions 
-        : Object.entries(affiliateCommunity.questions || {}).map(([id, question], index) => ({
-            id: `question_${index + 1}`,
+        ? affiliateCommunity.questions.map((q: any, index: number) => ({
+            id: q.id || `edit_question_${index + 1}`,
+            question: typeof q.question === 'string' ? q.question : String(q.question || q)
+          }))
+        : Object.entries(affiliateCommunity.questions || {}).map(([key, question], index) => ({
+            id: `edit_question_${index + 1}`,
             question: typeof question === 'string' ? question : String(question)
           }));
       setQuestions(questionsArray);
@@ -92,11 +98,11 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
 
   const addQuestion = () => {
     const newQuestion: Question = {
-      id: `question_${nextQuestionId}`,
+      id: `new_question_${nextQuestionId}_${Date.now()}`, // More unique ID
       question: ""
     };
-    setQuestions([...questions, newQuestion]);
-    setNextQuestionId(nextQuestionId + 1);
+    setQuestions(prev => [...prev, newQuestion]);
+    setNextQuestionId(prev => prev + 1);
   };
 
   const updateQuestion = (id: string, question: string) => {
@@ -110,13 +116,13 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
   };
 
   const formatQuestionsForStorage = (questionsArray: Question[]) => {
-    const questionsObj: Record<string, string> = {};
-    questionsArray.forEach(q => {
-      if (q.question.trim()) {
-        questionsObj[q.id] = q.question.trim();
-      }
-    });
-    return questionsObj;
+    // Store as array to preserve IDs and order
+    return questionsArray
+      .filter(q => q.question.trim())
+      .map(q => ({
+        id: q.id,
+        question: q.question.trim()
+      }));
   };
 
   const handleDialogConfirm = async () => {
@@ -301,7 +307,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
                         </p>
                         {ac.questions && Object.keys(ac.questions).length > 0 && (
                           <p className="text-sm text-muted-foreground">
-                            Questions configured: {Object.keys(ac.questions).length}
+                            Questions configured: {Array.isArray(ac.questions) ? ac.questions.length : Object.keys(ac.questions).length}
                           </p>
                         )}
                       </div>
