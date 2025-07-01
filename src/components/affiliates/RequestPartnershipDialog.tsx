@@ -71,7 +71,9 @@ export function RequestPartnershipDialog({ offer, children }: RequestPartnership
         return;
       }
 
-      const questionsList = Array.isArray(data.questions) ? data.questions : [];
+      const questionsList = Array.isArray(data.questions) 
+        ? data.questions.map((q: any) => typeof q === 'string' ? q : String(q))
+        : [];
       setQuestions(questionsList);
       setAnswers(new Array(questionsList.length).fill(''));
     } catch (error) {

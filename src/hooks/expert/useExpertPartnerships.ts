@@ -13,7 +13,10 @@ interface ExpertPartnership {
   revenue: number;
   affiliate_link: string;
   message: string;
-  questions_answered: any[];
+  questions_answered: Array<{
+    question: string;
+    answer: string;
+  }>;
 }
 
 export function useExpertPartnerships(expertUuid: string | undefined) {
@@ -46,7 +49,12 @@ export function useExpertPartnerships(expertUuid: string | undefined) {
         revenue: partnership.revenue || 0,
         affiliate_link: partnership.affiliate_link || '',
         message: partnership.message || '',
-        questions_answered: partnership.questions_answered || []
+        questions_answered: Array.isArray(partnership.questions_answered) 
+          ? partnership.questions_answered.map((qa: any) => ({
+              question: qa.question || '',
+              answer: qa.answer || ''
+            }))
+          : []
       })) || [];
     },
     enabled: !!expertUuid,

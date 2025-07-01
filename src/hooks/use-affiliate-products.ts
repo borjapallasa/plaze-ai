@@ -10,7 +10,7 @@ export interface AffiliateProductData {
   status: string;
   type: string;
   created_at: string;
-  questions?: string[];
+  questions: string[];
   // Extended fields for display
   product_name?: string;
   product_price_from?: number;
@@ -55,7 +55,9 @@ export function useAffiliateProducts(productUuid?: string) {
         status: item.status,
         type: item.type,
         created_at: item.created_at,
-        questions: Array.isArray(item.questions) ? item.questions : [],
+        questions: Array.isArray(item.questions) 
+          ? item.questions.map((q: any) => typeof q === 'string' ? q : String(q))
+          : [],
         product_name: item.products?.name,
         product_price_from: item.products?.price_from,
         product_thumbnail: item.products?.thumbnail,
@@ -99,7 +101,9 @@ export function useAllAffiliateProducts() {
         status: item.status,
         type: item.type,
         created_at: item.created_at,
-        questions: Array.isArray(item.questions) ? item.questions : [],
+        questions: Array.isArray(item.questions) 
+          ? item.questions.map((q: any) => typeof q === 'string' ? q : String(q))
+          : [],
         product_name: item.products?.name,
         product_price_from: item.products?.price_from,
         product_thumbnail: item.products?.thumbnail,

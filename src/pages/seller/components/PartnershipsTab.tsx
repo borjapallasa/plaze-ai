@@ -107,36 +107,50 @@ export function PartnershipsTab({
     }
   };
 
-  const renderQuestionsAnswers = (questionsAnswered: any) => {
-    if (!questionsAnswered || !Array.isArray(questionsAnswered) || questionsAnswered.length === 0) {
-      return null;
+  const renderQuestionsAnswers = (questionsAnswered: Array<{question: string; answer: string}>) => {
+    if (!questionsAnswered || questionsAnswered.length === 0) {
+      return (
+        <div className="text-sm text-muted-foreground">
+          No questions were answered for this partnership.
+        </div>
+      );
     }
 
     return (
       <Collapsible>
         <CollapsibleTrigger asChild>
-          <Button variant="ghost" className="w-full justify-between p-0 h-auto">
+          <Button variant="ghost" className="w-full justify-between p-0 h-auto hover:bg-transparent">
             <div className="flex items-center gap-2">
               <HelpCircle className="h-4 w-4 text-blue-600" />
               <span className="text-sm font-medium">Questions & Answers ({questionsAnswered.length})</span>
             </div>
-            <ChevronDown className="h-4 w-4" />
+            <ChevronDown className="h-4 w-4 transition-transform duration-200" />
           </Button>
         </CollapsibleTrigger>
-        <CollapsibleContent className="mt-3">
-          <div className="space-y-3">
-            {questionsAnswered.map((qa: any, index: number) => (
-              <div key={index} className="border border-border rounded-lg p-3 bg-muted/30">
-                <div className="space-y-2">
-                  <div>
-                    <p className="text-sm font-medium text-foreground">
-                      Q{index + 1}: {qa.question}
-                    </p>
+        <CollapsibleContent className="mt-4">
+          <div className="space-y-4">
+            {questionsAnswered.map((qa, index) => (
+              <div key={index} className="border border-border rounded-lg p-4 bg-background">
+                <div className="space-y-3">
+                  <div className="flex items-start gap-2">
+                    <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-xs font-medium text-blue-600">Q</span>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-foreground leading-relaxed">
+                        {qa.question}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">
-                      <span className="font-medium">Answer:</span> {qa.answer || 'No answer provided'}
-                    </p>
+                  <div className="flex items-start gap-2">
+                    <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-xs font-medium text-green-600">A</span>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {qa.answer || 'No answer provided'}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -301,8 +315,23 @@ export function PartnershipsTab({
 
               {/* Additional Information */}
               <div className="space-y-4">
+                {/* Partner Message */}
+                {partnership.message && (
+                  <div className="border border-border rounded-lg p-4 bg-muted/30">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <MessageSquare className="h-4 w-4 text-gray-600" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-foreground mb-2">Partner Message</p>
+                        <p className="text-sm text-muted-foreground leading-relaxed">{partnership.message}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Questions & Answers */}
-                {partnership.questions_answered && (
+                {(partnership.questions_answered && partnership.questions_answered.length > 0) && (
                   <div className="border border-border rounded-lg p-4 bg-muted/30">
                     <div className="flex items-start gap-3">
                       <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -330,21 +359,6 @@ export function PartnershipsTab({
                             {partnership.affiliate_link}
                           </code>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Partner Message */}
-                {partnership.message && (
-                  <div className="border border-border rounded-lg p-4 bg-muted/30">
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <MessageSquare className="h-4 w-4 text-gray-600" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-foreground mb-2">Partner Message</p>
-                        <p className="text-sm text-muted-foreground leading-relaxed">{partnership.message}</p>
                       </div>
                     </div>
                   </div>
