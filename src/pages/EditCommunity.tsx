@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useParams } from "react-router-dom";
 import { MainHeader } from "@/components/MainHeader";
@@ -10,10 +9,13 @@ import { useCommunityImages } from "@/hooks/use-community-images";
 import { useCommunityForm } from "@/hooks/use-community-form";
 import { CommunityMediaUpload } from "@/components/community/CommunityMediaUpload";
 import { AffiliateCommunitySection } from "@/components/community/AffiliateCommunitySection";
+import { CommunityMainForm } from "@/components/community/CommunityMainForm";
+import { CommunitySocialLinks } from "@/components/community/CommunitySocialLinks";
+import { CommunityImageCard } from "@/components/community/CommunityImageCard";
+import { CommunityDangerZone } from "@/components/community/CommunityDangerZone";
 
 export default function EditCommunity() {
   const { id } = useParams();
-  const { images: communityImages } = useCommunityImages(id);
   const {
     communityName,
     setCommunityName,
@@ -58,71 +60,64 @@ export default function EditCommunity() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="fixed top-0 left-0 right-0 z-50 bg-background">
-        <MainHeader />
-      </div>
-
-      <div className="container mx-auto px-4 pt-24 pb-8">
-        <CommunityHeader />
-
-        <div className="space-y-4 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-8">
-          <div className="lg:col-span-8">
-            <div className="space-y-6">
-              <CommunityBasicInfo
+      <MainHeader />
+      
+      <div className="pt-16">
+        <div className="container mx-auto px-4 py-6">
+          <CommunityHeader />
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left Column - Main Form */}
+            <div className="lg:col-span-2 space-y-6">
+              <CommunityMainForm
                 communityName={communityName}
                 setCommunityName={setCommunityName}
-                communityIntro={communityIntro}
-                setCommunityIntro={setCommunityIntro}
                 communityDescription={communityDescription}
                 setCommunityDescription={setCommunityDescription}
+                communityIntro={communityIntro}
+                setCommunityIntro={setCommunityIntro}
                 price={price}
                 setPrice={setPrice}
                 pricePeriod={pricePeriod}
                 setPricePeriod={setPricePeriod}
                 communityType={communityType}
                 setCommunityType={setCommunityType}
-                communityUuid={id || ''}
-                links={links}
-                onLinkChange={handleLinkChange}
-                onAddLink={handleAddLink}
-                onRemoveLink={handleRemoveLink}
-              />
-              
-              <div className="border rounded-lg p-6">
-                <h2 className="text-lg font-semibold mb-4">Community Media</h2>
-                <CommunityMediaUpload
-                  communityUuid={id || ''}
-                  initialImages={communityImages}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="lg:col-span-4">
-            <div className="space-y-6">
-              <CommunityStats
-                paymentLink={paymentLink}
-                onCopyPaymentLink={handleCopyPaymentLink}
-                hasCopied={hasCopied}
                 webhook={webhook}
                 setWebhook={setWebhook}
+              />
+
+              <CommunitySocialLinks
+                links={links}
+                onAddLink={handleAddLink}
+                onLinkChange={handleLinkChange}
+                onRemoveLink={handleRemoveLink}
+              />
+
+              <CommunityMediaUpload communityId={id} />
+            </div>
+
+            {/* Right Column - Stats and Actions */}
+            <div className="space-y-6">
+              <CommunityStats 
                 community={community}
-                showDeleteDialog={showDeleteDialog}
-                setShowDeleteDialog={setShowDeleteDialog}
-                isDeleting={isDeleting}
-                onDeleteCommunity={handleDeleteCommunity}
-                communityName={communityName}
                 communityStatus={communityStatus}
                 setCommunityStatus={setCommunityStatus}
                 onSave={handleSave}
                 isSaving={isSaving}
-                affiliateSection={<AffiliateCommunitySection communityUuid={id} />}
+              />
+              
+              <CommunityImageCard communityId={id} />
+              
+              <CommunityDangerZone
+                isDeleting={isDeleting}
+                showDeleteDialog={showDeleteDialog}
+                setShowDeleteDialog={setShowDeleteDialog}
+                onDeleteCommunity={handleDeleteCommunity}
               />
             </div>
           </div>
         </div>
       </div>
-      <Toaster />
     </div>
   );
 }
