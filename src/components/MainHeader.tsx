@@ -1,3 +1,4 @@
+
 import React, { useState, FormEvent, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, Menu, User, ChevronDown, LogOut, Home, UserCircle, Users, Store, HelpCircle, MessageSquare } from "lucide-react";
@@ -249,10 +250,10 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
 
           {/* Search Bar - Takes up most of the space */}
           <div className="flex-1 mx-2">
-            <form onSubmit={(e) => handleSearch(e, true)} className={`flex items-center gap-1 px-3 ${isHomePage ? 'py-1.5' : 'py-1.5'} rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background`}>
+            <form onSubmit={(e) => handleSearch(e, true)} className={`flex items-center gap-1 px-3 ${isHomePage ? 'py-1' : 'py-1'} rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background`}>
               <div className="relative flex-1">
                 <Input
-                  className={`border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent ${isHomePage ? 'h-8 text-sm' : 'h-7 text-sm'} flex-1`}
+                  className={`border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 bg-transparent ${isHomePage ? 'h-7 text-sm' : 'h-6 text-sm'} flex-1`}
                   placeholder={isHomePage ? "Search..." : "Search..."}
                   type="search"
                   value={mobileSearchQuery}
@@ -292,8 +293,8 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
                   </div>
                 )}
               </div>
-              <Button type="submit" size="icon" variant="default" className={`rounded-full bg-primary hover:bg-primary/90 ${isHomePage ? 'h-8 w-8' : 'h-7 w-7'}`}>
-                <Search className={isHomePage ? "h-4 w-4" : "h-3.5 w-3.5"} />
+              <Button type="submit" size="icon" variant="default" className={`rounded-full bg-primary hover:bg-primary/90 ${isHomePage ? 'h-7 w-7' : 'h-6 w-6'}`}>
+                <Search className={isHomePage ? "h-3.5 w-3.5" : "h-3 w-3"} />
               </Button>
             </form>
           </div>
