@@ -69,16 +69,16 @@ export function AffiliateOfferCard({ offer }: AffiliateOfferCardProps) {
         {/* Description */}
         <p className="text-sm text-gray-600 line-clamp-2">{offer.description}</p>
         
-        {/* Type */}
-        <div className="flex justify-end">
-          <div className="text-xs text-gray-500">
-            <span className="font-medium text-gray-700">Type:</span>
-            <span className="ml-1">{toStartCase(offer.type || offer.category)}</span>
-          </div>
-        </div>
-        
         {/* Metrics Row */}
-        <div className="grid grid-cols-3 gap-4 py-3 border-t border-gray-100">
+        <div className="grid grid-cols-2 gap-3 py-2">
+          <div className="flex items-center gap-1.5">
+            <Tag className="w-3.5 h-3.5 text-gray-500" />
+            <div className="text-xs">
+              <span className="font-medium text-gray-700">Type:</span>
+              <span className="text-gray-600 ml-1">{toStartCase(offer.type || offer.category)}</span>
+            </div>
+          </div>
+          
           <div className="flex items-center gap-1.5">
             <Percent className="w-3.5 h-3.5 text-gray-500" />
             <div className="text-xs">
