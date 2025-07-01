@@ -162,7 +162,7 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
     <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-background border-b">
       <div className="container mx-auto px-4 h-full">
         {/* Mobile Header */}
-        <div className="flex md:hidden items-center justify-between h-full gap-2">
+        <div className="flex md:hidden items-center justify-between h-full gap-3">
           {/* Menu Button */}
           <div className="flex-shrink-0">
             <DropdownMenu>
@@ -248,7 +248,7 @@ export const MainHeader = ({ children }: { children?: React.ReactNode }) => {
           </div>
 
           {/* Search Bar - Takes up most of the space */}
-          <div className="flex-1 mx-2">
+          <div className="flex-1 mx-3">
             <form onSubmit={(e) => handleSearch(e, true)} className={`flex items-center gap-1 px-3 ${isHomePage ? 'py-1.5' : 'py-1.5'} rounded-full border shadow-sm hover:shadow-md transition-shadow bg-background`}>
               <div className="relative flex-1">
                 <Input
