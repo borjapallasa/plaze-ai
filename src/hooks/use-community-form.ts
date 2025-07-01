@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -52,6 +51,7 @@ export function useCommunityForm(id: string | undefined) {
   const [webhook, setWebhook] = useState("");
   const [hasCopied, setHasCopied] = useState(false);
   const [links, setLinks] = useState<Link[]>([{ name: "", url: "" }]);
+  const [affiliateProgram, setAffiliateProgram] = useState(false);
 
   const { data: community, isLoading } = useQuery({
     queryKey: ['community', id],
@@ -73,6 +73,7 @@ export function useCommunityForm(id: string | undefined) {
         setCommunityType(data.type || "free");
         setPaymentLink(data.payment_link || "");
         setWebhook(data.webhook || "");
+        setAffiliateProgram(data.affiliate_program || false);
         
         const parsedLinks = parseLinks(data.links);
         setLinks(parsedLinks);
@@ -101,6 +102,7 @@ export function useCommunityForm(id: string | undefined) {
           price: parseFloat(price) || 0,
           billing_period: pricePeriod,
           webhook: webhook,
+          affiliate_program: affiliateProgram,
           links: JSON.stringify(links.filter(link => link.name && link.url))
         })
         .eq('community_uuid', id);
@@ -208,6 +210,8 @@ export function useCommunityForm(id: string | undefined) {
     setWebhook,
     hasCopied,
     links,
+    affiliateProgram,
+    setAffiliateProgram,
     community,
     isLoading,
     isSaving,

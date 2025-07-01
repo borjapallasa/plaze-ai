@@ -31,6 +31,8 @@ export default function EditCommunity() {
     setWebhook,
     hasCopied,
     links,
+    affiliateProgram,
+    setAffiliateProgram,
     community,
     isLoading,
     isSaving,
@@ -83,6 +85,8 @@ export default function EditCommunity() {
                 onLinkChange={handleLinkChange}
                 onAddLink={handleAddLink}
                 onRemoveLink={handleRemoveLink}
+                affiliateProgram={affiliateProgram}
+                setAffiliateProgram={setAffiliateProgram}
               />
               <div className="border rounded-lg p-6">
                 <h2 className="text-lg font-semibold mb-4">Community Media</h2>
