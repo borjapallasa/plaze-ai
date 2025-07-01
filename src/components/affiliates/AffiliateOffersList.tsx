@@ -57,7 +57,7 @@ export function AffiliateOffersList({ offers }: AffiliateOffersListProps) {
             <TableHead className="text-right font-semibold text-gray-900">Commission</TableHead>
             <TableHead className="text-right font-semibold text-gray-900">Rating</TableHead>
             <TableHead className="text-right font-semibold text-gray-900">Affiliates</TableHead>
-            <TableHead className="text-right font-semibold text-gray-900">Monthly Avg</TableHead>
+            <TableHead className="text-right font-semibold text-gray-900">Potential earnings</TableHead>
             <TableHead className="font-semibold text-gray-900">Status</TableHead>
             <TableHead className="text-right font-semibold text-gray-900">Action</TableHead>
           </TableRow>
