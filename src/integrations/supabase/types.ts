@@ -379,13 +379,13 @@ export type Database = {
           price: number | null
           product_count: number | null
           slug: string | null
-          status: Database["public"]["Enums"]["community_status"] | null
           threads_tags: Json | null
           thumbnail: string | null
           title: string | null
           total_revenue: number | null
           type: Database["public"]["Enums"]["community_type"] | null
           user_uuid: string | null
+          visibility: Database["public"]["Enums"]["community_visibility"] | null
           webhook: string | null
         }
         Insert: {
@@ -415,13 +415,15 @@ export type Database = {
           price?: number | null
           product_count?: number | null
           slug?: string | null
-          status?: Database["public"]["Enums"]["community_status"] | null
           threads_tags?: Json | null
           thumbnail?: string | null
           title?: string | null
           total_revenue?: number | null
           type?: Database["public"]["Enums"]["community_type"] | null
           user_uuid?: string | null
+          visibility?:
+            | Database["public"]["Enums"]["community_visibility"]
+            | null
           webhook?: string | null
         }
         Update: {
@@ -451,13 +453,15 @@ export type Database = {
           price?: number | null
           product_count?: number | null
           slug?: string | null
-          status?: Database["public"]["Enums"]["community_status"] | null
           threads_tags?: Json | null
           thumbnail?: string | null
           title?: string | null
           total_revenue?: number | null
           type?: Database["public"]["Enums"]["community_type"] | null
           user_uuid?: string | null
+          visibility?:
+            | Database["public"]["Enums"]["community_visibility"]
+            | null
           webhook?: string | null
         }
         Relationships: [
@@ -2274,7 +2278,6 @@ export type Database = {
       community_digest: "Daily" | "Weekly" | "Bi-Weekly" | "Monthly" | "None"
       community_price_status: "active" | "inactive"
       community_product_type: "free" | "paid"
-      community_status: "visible" | "not visible" | "draft"
       community_subscription_status: "active" | "inactive" | "pending"
       community_type: "free" | "paid" | "private"
       community_visibility: "draft" | "private" | "public"
@@ -2495,7 +2498,6 @@ export const Constants = {
       community_digest: ["Daily", "Weekly", "Bi-Weekly", "Monthly", "None"],
       community_price_status: ["active", "inactive"],
       community_product_type: ["free", "paid"],
-      community_status: ["visible", "not visible", "draft"],
       community_subscription_status: ["active", "inactive", "pending"],
       community_type: ["free", "paid", "private"],
       community_visibility: ["draft", "private", "public"],

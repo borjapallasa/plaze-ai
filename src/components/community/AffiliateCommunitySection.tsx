@@ -15,11 +15,15 @@ interface AffiliateCommunityProps {
   communityUuid?: string;
 }
 
+interface Question {
+  id: string;
+  question: string;
+}
+
 export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityProps) {
   const [isAffiliateProgram, setIsAffiliateProgram] = useState(false);
   const [split, setSplit] = useState([70]); // Default 70% seller, 30% affiliate
-  const [questions, setQuestions] = useState<string[]>([]);
-  const [editQuestions, setEditQuestions] = useState<string[]>([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -37,15 +41,15 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
       const existingCommunity = affiliateCommunities[0];
       setSplit([Math.round(existingCommunity.expert_share * 100)]);
       
-      // Parse questions from JSONB - convert to simple array
+      // Parse questions from JSONB
       if (existingCommunity.questions) {
-        if (Array.isArray(existingCommunity.questions)) {
-          setQuestions(existingCommunity.questions);
-        } else {
-          // Convert object format to array
-          const questionsArray = Object.values(existingCommunity.questions || {}).filter(q => typeof q === 'string') as string[];
-          setQuestions(questionsArray);
-        }
+        const questionsArray = Array.isArray(existingCommunity.questions) 
+          ? existingCommunity.questions 
+          : Object.entries(existingCommunity.questions || {}).map(([id, question]) => ({
+              id,
+              question: typeof question === 'string' ? question : String(question)
+            }));
+        setQuestions(questionsArray);
       }
     }
   }, [affiliateCommunities]);
@@ -64,17 +68,15 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
     setEditingCommunity(affiliateCommunity);
     setSplit([Math.round(affiliateCommunity.expert_share * 100)]);
     
-    // Parse questions for editing - convert to simple array
+    // Parse questions for editing
     if (affiliateCommunity.questions) {
-      if (Array.isArray(affiliateCommunity.questions)) {
-        setEditQuestions([...affiliateCommunity.questions]);
-      } else {
-        // Convert object format to array
-        const questionsArray = Object.values(affiliateCommunity.questions || {}).filter(q => typeof q === 'string') as string[];
-        setEditQuestions([...questionsArray]);
-      }
-    } else {
-      setEditQuestions([]);
+      const questionsArray = Array.isArray(affiliateCommunity.questions) 
+        ? affiliateCommunity.questions 
+        : Object.entries(affiliateCommunity.questions || {}).map(([id, question]) => ({
+            id,
+            question: typeof question === 'string' ? question : String(question)
+          }));
+      setQuestions(questionsArray);
     }
     setShowEditDialog(true);
   };
@@ -85,35 +87,29 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
   };
 
   const addQuestion = () => {
-    setQuestions(prev => [...prev, ""]);
+    const newQuestion: Question = {
+      id: `question_${Date.now()}`,
+      question: ""
+    };
+    setQuestions([...questions, newQuestion]);
   };
 
-  const updateQuestion = (index: number, question: string) => {
-    setQuestions(prev => {
-      const newQuestions = [...prev];
-      newQuestions[index] = question;
-      return newQuestions;
+  const updateQuestion = (id: string, question: string) => {
+    setQuestions(questions.map(q => q.id === id ? { ...q, question } : q));
+  };
+
+  const removeQuestion = (id: string) => {
+    setQuestions(questions.filter(q => q.id !== id));
+  };
+
+  const formatQuestionsForStorage = (questionsArray: Question[]) => {
+    const questionsObj: Record<string, string> = {};
+    questionsArray.forEach(q => {
+      if (q.question.trim()) {
+        questionsObj[q.id] = q.question.trim();
+      }
     });
-  };
-
-  const removeQuestion = (index: number) => {
-    setQuestions(prev => prev.filter((_, i) => i !== index));
-  };
-
-  const addEditQuestion = () => {
-    setEditQuestions(prev => [...prev, ""]);
-  };
-
-  const updateEditQuestion = (index: number, question: string) => {
-    setEditQuestions(prev => {
-      const newQuestions = [...prev];
-      newQuestions[index] = question;
-      return newQuestions;
-    });
-  };
-
-  const removeEditQuestion = (index: number) => {
-    setEditQuestions(prev => prev.filter((_, i) => i !== index));
+    return questionsObj;
   };
 
   const handleDialogConfirm = async () => {
@@ -127,19 +123,18 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
 
       const expertShare = split[0] / 100;
       const affiliateShare = (100 - split[0]) / 100;
-      // Filter out empty questions and store as simple array
-      const filteredQuestions = questions.filter(q => q.trim() !== '');
+      const formattedQuestions = formatQuestionsForStorage(questions);
 
       // Insert into affiliate_products table with community_uuid
       const { error: affiliateError } = await supabase
         .from('affiliate_products')
         .insert({
-          community_uuid: communityUuid,
+          community_uuid: communityUuid, // Use community_uuid instead of product_uuid
           expert_share: expertShare,
           affiliate_share: affiliateShare,
           status: 'active',
           type: 'community',
-          questions: filteredQuestions
+          questions: formattedQuestions
         });
 
       if (affiliateError) {
@@ -182,15 +177,14 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
 
       const expertShare = split[0] / 100;
       const affiliateShare = (100 - split[0]) / 100;
-      // Filter out empty questions and store as simple array
-      const filteredQuestions = editQuestions.filter(q => q.trim() !== '');
+      const formattedQuestions = formatQuestionsForStorage(questions);
 
       const { error } = await supabase
         .from('affiliate_products')
         .update({
           expert_share: expertShare,
           affiliate_share: affiliateShare,
-          questions: filteredQuestions
+          questions: formattedQuestions
         })
         .eq('affiliate_products_uuid', editingCommunity.affiliate_products_uuid);
 
@@ -203,7 +197,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
       toast.success("Affiliate program updated successfully");
       setShowEditDialog(false);
       setEditingCommunity(null);
-      setEditQuestions([]);
+      setQuestions([]);
       refetchAffiliateCommunities();
 
     } catch (error) {
@@ -247,7 +241,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
       toast.success("Affiliate program disabled successfully");
       setShowDeleteDialog(false);
       setEditingCommunity(null);
-      setEditQuestions([]);
+      setQuestions([]);
       refetchAffiliateCommunities();
 
     } catch (error) {
@@ -262,10 +256,10 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
   const affiliatePercentage = 100 - split[0];
 
   const QuestionsSection = ({ questions, onUpdate, onAdd, onRemove }: {
-    questions: string[];
-    onUpdate: (index: number, question: string) => void;
+    questions: Question[];
+    onUpdate: (id: string, question: string) => void;
     onAdd: () => void;
-    onRemove: (index: number) => void;
+    onRemove: (id: string) => void;
   }) => (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
@@ -276,11 +270,11 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
         </Button>
       </div>
       <div className="space-y-2">
-        {questions.map((question, index) => (
-          <div key={`question-${index}-${question.slice(0, 10)}`} className="flex gap-2">
+        {questions.map((q) => (
+          <div key={q.id} className="flex gap-2">
             <Input
-              value={question}
-              onChange={(e) => onUpdate(index, e.target.value)}
+              value={q.question}
+              onChange={(e) => onUpdate(q.id, e.target.value)}
               placeholder="Enter question for affiliates"
               className="flex-1"
             />
@@ -288,7 +282,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
               type="button"
               variant="outline"
               size="icon"
-              onClick={() => onRemove(index)}
+              onClick={() => onRemove(q.id)}
               className="h-10 w-10 flex-shrink-0"
             >
               <Trash2 className="h-4 w-4" />
@@ -321,9 +315,9 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
                         <p className="text-sm text-muted-foreground">
                           Expert: {Math.round(ac.expert_share * 100)}% | Affiliate: {Math.round(ac.affiliate_share * 100)}%
                         </p>
-                        {ac.questions && (
+                        {ac.questions && Object.keys(ac.questions).length > 0 && (
                           <p className="text-sm text-muted-foreground">
-                            Questions configured: {Array.isArray(ac.questions) ? ac.questions.length : Object.keys(ac.questions).length}
+                            Questions configured: {Object.keys(ac.questions).length}
                           </p>
                         )}
                       </div>
@@ -455,10 +449,10 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
             </div>
 
             <QuestionsSection
-              questions={editQuestions}
-              onUpdate={updateEditQuestion}
-              onAdd={addEditQuestion}
-              onRemove={removeEditQuestion}
+              questions={questions}
+              onUpdate={updateQuestion}
+              onAdd={addQuestion}
+              onRemove={removeQuestion}
             />
           </div>
           <DialogFooter>
@@ -538,12 +532,12 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
                 </p>
               </div>
               
-              {questions.filter(q => q.trim()).length > 0 && (
+              {questions.length > 0 && (
                 <div className="p-3 border rounded-lg bg-muted/50">
                   <p className="font-medium mb-2">Questions for affiliates:</p>
                   <ul className="text-sm text-muted-foreground space-y-1">
-                    {questions.filter(q => q.trim()).map((question, index) => (
-                      <li key={index}>• {question}</li>
+                    {questions.filter(q => q.question.trim()).map((q) => (
+                      <li key={q.id}>• {q.question}</li>
                     ))}
                   </ul>
                 </div>
