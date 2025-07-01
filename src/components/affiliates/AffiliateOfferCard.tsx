@@ -4,7 +4,6 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Star, ExternalLink, Users, DollarSign } from "lucide-react";
-import { toStartCase } from "@/lib/utils";
 
 interface AffiliateOffer {
   id: string;
@@ -40,6 +39,34 @@ export function AffiliateOfferCard({ offer }: AffiliateOfferCardProps) {
     }
   };
 
+  const getTypeLabel = (type?: string) => {
+    switch (type?.toLowerCase()) {
+      case "product":
+        return "Digital Product";
+      case "community":
+        return "Community Access";
+      case "service":
+        return "Service";
+      case "course":
+        return "Online Course";
+      default:
+        return type ? type.charAt(0).toUpperCase() + type.slice(1) : "Product";
+    }
+  };
+
+  const getTypeBadgeVariant = (type?: string) => {
+    switch (type?.toLowerCase()) {
+      case "product":
+        return "default";
+      case "community":
+        return "secondary";
+      case "service":
+        return "outline";
+      default:
+        return "outline";
+    }
+  };
+
   return (
     <Card className="h-full flex flex-col hover:shadow-lg transition-shadow duration-200">
       <div className="aspect-video bg-gradient-to-br from-blue-50 to-purple-50 rounded-t-lg flex items-center justify-center relative overflow-hidden">
@@ -68,8 +95,11 @@ export function AffiliateOfferCard({ offer }: AffiliateOfferCardProps) {
         </div>
         
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-xs border-gray-200 text-gray-600 bg-gray-50">
-            {toStartCase(offer.type || offer.category)}
+          <Badge 
+            variant={getTypeBadgeVariant(offer.type)} 
+            className="text-xs font-medium"
+          >
+            {getTypeLabel(offer.type)}
           </Badge>
         </div>
         

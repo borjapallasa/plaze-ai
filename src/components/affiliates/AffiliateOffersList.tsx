@@ -3,7 +3,6 @@ import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Star, Users, ExternalLink, DollarSign } from "lucide-react";
-import { toStartCase } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -44,6 +43,34 @@ export function AffiliateOffersList({ offers }: AffiliateOffersListProps) {
         return <Badge variant="secondary" className="bg-gray-100 text-gray-600">Paused</Badge>;
       default:
         return <Badge variant="secondary">{status}</Badge>;
+    }
+  };
+
+  const getTypeLabel = (type?: string) => {
+    switch (type?.toLowerCase()) {
+      case "product":
+        return "Digital Product";
+      case "community":
+        return "Community Access";
+      case "service":
+        return "Service";
+      case "course":
+        return "Online Course";
+      default:
+        return type ? type.charAt(0).toUpperCase() + type.slice(1) : "Product";
+    }
+  };
+
+  const getTypeBadgeVariant = (type?: string) => {
+    switch (type?.toLowerCase()) {
+      case "product":
+        return "default";
+      case "community":
+        return "secondary";
+      case "service":
+        return "outline";
+      default:
+        return "outline";
     }
   };
 
@@ -89,8 +116,11 @@ export function AffiliateOffersList({ offers }: AffiliateOffersListProps) {
                 <div className="text-sm font-medium text-gray-700">{offer.partnerName}</div>
               </TableCell>
               <TableCell>
-                <Badge variant="outline" className="text-xs border-gray-200 text-gray-600 bg-gray-50">
-                  {toStartCase(offer.type || offer.category)}
+                <Badge 
+                  variant={getTypeBadgeVariant(offer.type)} 
+                  className="text-xs font-medium"
+                >
+                  {getTypeLabel(offer.type)}
                 </Badge>
               </TableCell>
               <TableCell className="text-right">
