@@ -53,7 +53,7 @@ export function useRequestPayout() {
       }
 
       // Insert the payout request
-      const { data, error } = await supabase
+      const { data: payoutData, error: payoutError } = await supabase
         .from('payouts')
         .insert({
           status: 'requested',
@@ -68,17 +68,30 @@ export function useRequestPayout() {
         .select()
         .single();
 
-      if (error) {
-        console.error('Error creating payout request:', error);
+      if (payoutError) {
+        console.error('Error creating payout request:', payoutError);
         throw new Error('Failed to create payout request');
       }
 
-      return data;
+      // Deduct the payout amount from commissions_available
+      const { error: updateError } = await supabase
+        .from('affiliates')
+        .update({
+          commissions_available: 0
+        })
+        .eq('affiliate_uuid', affiliateData.affiliate_uuid);
+
+      if (updateError) {
+        console.error('Error updating affiliate commissions:', updateError);
+        throw new Error('Failed to update affiliate balance');
+      }
+
+      return payoutData;
     },
     onSuccess: () => {
       toast({
-        title: "Payout Requested",
-        description: "Your payout request has been submitted successfully.",
+        title: "Payout Requested Successfully!",
+        description: "Your payout request has been submitted and will be processed soon.",
       });
       
       // Invalidate queries to refresh the data
