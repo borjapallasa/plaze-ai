@@ -49,6 +49,7 @@ export type Database = {
           expert_split: number | null
           expert_uuid: string | null
           id: number
+          message: string | null
           name: string | null
           revenue: number | null
           status:
@@ -66,6 +67,7 @@ export type Database = {
           expert_split?: number | null
           expert_uuid?: string | null
           id?: number
+          message?: string | null
           name?: string | null
           revenue?: number | null
           status?:
@@ -85,6 +87,7 @@ export type Database = {
           expert_split?: number | null
           expert_uuid?: string | null
           id?: number
+          message?: string | null
           name?: string | null
           revenue?: number | null
           status?:

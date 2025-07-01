@@ -2,8 +2,9 @@ import React from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Star, ExternalLink, Users, DollarSign, Percent, Tag, User } from "lucide-react";
+import { Star, Users, DollarSign, Percent, Tag, User, Handshake } from "lucide-react";
 import { toStartCase } from "@/lib/utils";
+import { RequestPartnershipDialog } from "./RequestPartnershipDialog";
 
 interface AffiliateOffer {
   id: string;
@@ -123,10 +124,12 @@ export function AffiliateOfferCard({ offer }: AffiliateOfferCardProps) {
       </CardContent>
       
       <CardFooter className="p-4 pt-0">
-        <Button className="w-full h-11 font-medium">
-          <ExternalLink className="w-4 h-4 mr-2" />
-          View Details
-        </Button>
+        <RequestPartnershipDialog offer={offer}>
+          <Button className="w-full h-11 font-medium">
+            <Handshake className="w-4 h-4 mr-2" />
+            Request Partnership
+          </Button>
+        </RequestPartnershipDialog>
       </CardFooter>
     </Card>
   );
