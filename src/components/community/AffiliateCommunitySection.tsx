@@ -10,7 +10,8 @@ import { Input } from "@/components/ui/input";
 import { useAffiliateCommunities } from "@/hooks/use-affiliate-communities";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Edit, Trash2, Plus } from "lucide-react";
+import { Edit, Trash2, Plus, Info } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface AffiliateCommunityProps {
   communityUuid?: string;
@@ -434,6 +435,13 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
             <DialogTitle>Edit Affiliate Program</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
+            <Alert>
+              <Info className="h-4 w-4" />
+              <AlertDescription>
+                Changes to the revenue split and questions will only apply to new partnership requests. Existing partnerships and pending requests will not be affected.
+              </AlertDescription>
+            </Alert>
+
             <div className="space-y-3">
               <Label>Split</Label>
               <div className="space-y-3">
