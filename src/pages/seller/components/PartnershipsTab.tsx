@@ -2,8 +2,9 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, DollarSign, Link, MessageSquare, Calendar } from "lucide-react";
+import { Users, DollarSign, Link, MessageSquare, Calendar, Check, X, Pause, Play, Trash2 } from "lucide-react";
 import { useExpertPartnerships } from "@/hooks/expert/useExpertPartnerships";
 
 interface PartnershipsTabProps {
@@ -12,6 +13,127 @@ interface PartnershipsTabProps {
 
 export function PartnershipsTab({ expertUuid }: PartnershipsTabProps) {
   const { data: partnerships = [], isLoading } = useExpertPartnerships(expertUuid);
+
+  const handleAcceptPartnership = (partnershipUuid: string) => {
+    console.log("Accept partnership:", partnershipUuid);
+    // TODO: Implement accept functionality
+  };
+
+  const handleRejectPartnership = (partnershipUuid: string) => {
+    console.log("Reject partnership:", partnershipUuid);
+    // TODO: Implement reject functionality
+  };
+
+  const handlePausePartnership = (partnershipUuid: string) => {
+    console.log("Pause partnership:", partnershipUuid);
+    // TODO: Implement pause functionality
+  };
+
+  const handleResumePartnership = (partnershipUuid: string) => {
+    console.log("Resume partnership:", partnershipUuid);
+    // TODO: Implement resume functionality
+  };
+
+  const handleDeletePartnership = (partnershipUuid: string) => {
+    console.log("Delete partnership:", partnershipUuid);
+    // TODO: Implement delete functionality
+  };
+
+  const renderActionButtons = (partnership: any) => {
+    const status = partnership.status?.toLowerCase();
+
+    switch (status) {
+      case 'pending':
+        return (
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant="default"
+              onClick={() => handleAcceptPartnership(partnership.affiliate_partnership_uuid)}
+              className="bg-green-600 hover:bg-green-700 text-white"
+            >
+              <Check className="h-4 w-4 mr-1" />
+              Accept
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => handleRejectPartnership(partnership.affiliate_partnership_uuid)}
+              className="border-red-200 text-red-600 hover:bg-red-50"
+            >
+              <X className="h-4 w-4 mr-1" />
+              Reject
+            </Button>
+          </div>
+        );
+      
+      case 'active':
+        return (
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => handlePausePartnership(partnership.affiliate_partnership_uuid)}
+              className="border-orange-200 text-orange-600 hover:bg-orange-50"
+            >
+              <Pause className="h-4 w-4 mr-1" />
+              Pause
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => handleDeletePartnership(partnership.affiliate_partnership_uuid)}
+              className="border-red-200 text-red-600 hover:bg-red-50"
+            >
+              <Trash2 className="h-4 w-4 mr-1" />
+              Delete
+            </Button>
+          </div>
+        );
+      
+      case 'paused':
+        return (
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant="default"
+              onClick={() => handleResumePartnership(partnership.affiliate_partnership_uuid)}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              <Play className="h-4 w-4 mr-1" />
+              Resume
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => handleDeletePartnership(partnership.affiliate_partnership_uuid)}
+              className="border-red-200 text-red-600 hover:bg-red-50"
+            >
+              <Trash2 className="h-4 w-4 mr-1" />
+              Delete
+            </Button>
+          </div>
+        );
+      
+      case 'rejected':
+        return (
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => handleDeletePartnership(partnership.affiliate_partnership_uuid)}
+              className="border-red-200 text-red-600 hover:bg-red-50"
+            >
+              <Trash2 className="h-4 w-4 mr-1" />
+              Delete
+            </Button>
+          </div>
+        );
+      
+      default:
+        return null;
+    }
+  };
 
   if (isLoading) {
     return (
@@ -81,14 +203,17 @@ export function PartnershipsTab({ expertUuid }: PartnershipsTabProps) {
                     </Badge>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="flex items-center gap-1 text-sm text-gray-500 mb-1">
-                    <Calendar className="h-3 w-3" />
-                    <span>Created</span>
+                <div className="flex flex-col items-end gap-3">
+                  <div className="text-right">
+                    <div className="flex items-center gap-1 text-sm text-gray-500 mb-1">
+                      <Calendar className="h-3 w-3" />
+                      <span>Created</span>
+                    </div>
+                    <div className="text-sm font-semibold text-gray-900">
+                      {new Date(partnership.created_at).toLocaleDateString()}
+                    </div>
                   </div>
-                  <div className="text-sm font-semibold text-gray-900">
-                    {new Date(partnership.created_at).toLocaleDateString()}
-                  </div>
+                  {renderActionButtons(partnership)}
                 </div>
               </div>
             </CardHeader>
