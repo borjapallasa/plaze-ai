@@ -47,7 +47,7 @@ export function useCommunityForm(id: string | undefined) {
   const [price, setPrice] = useState("");
   const [pricePeriod, setPricePeriod] = useState<"monthly" | "yearly">("monthly");
   const [communityType, setCommunityType] = useState<CommunityType>("free");
-  const [communityStatus, setCommunityStatus] = useState<string>("visible");
+  const [communityStatus, setCommunityStatus] = useState<"visible" | "not visible" | "draft">("visible");
   const [paymentLink, setPaymentLink] = useState("");
   const [webhook, setWebhook] = useState("");
   const [hasCopied, setHasCopied] = useState(false);
@@ -71,7 +71,7 @@ export function useCommunityForm(id: string | undefined) {
         setPrice(data.price?.toString() || "");
         setPricePeriod(data.billing_period || "monthly");
         setCommunityType(data.type || "free");
-        setCommunityStatus(data.status || "visible");
+        setCommunityStatus((data.status as "visible" | "not visible" | "draft") || "visible");
         setPaymentLink(data.payment_link || "");
         setWebhook(data.webhook || "");
         
