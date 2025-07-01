@@ -129,6 +129,7 @@ export type Database = {
           expert_share: number | null
           id: number
           product_uuid: string | null
+          questions: Json | null
           status: Database["public"]["Enums"]["affiliate_product_status"] | null
           type: Database["public"]["Enums"]["affiliate_product_type"] | null
         }
@@ -139,6 +140,7 @@ export type Database = {
           expert_share?: number | null
           id?: number
           product_uuid?: string | null
+          questions?: Json | null
           status?:
             | Database["public"]["Enums"]["affiliate_product_status"]
             | null
@@ -151,6 +153,7 @@ export type Database = {
           expert_share?: number | null
           id?: number
           product_uuid?: string | null
+          questions?: Json | null
           status?:
             | Database["public"]["Enums"]["affiliate_product_status"]
             | null

@@ -9,6 +9,7 @@ import { CommunityStats } from "@/components/community/CommunityStats";
 import { useCommunityImages } from "@/hooks/use-community-images";
 import { useCommunityForm } from "@/hooks/use-community-form";
 import { CommunityMediaUpload } from "@/components/community/CommunityMediaUpload";
+import { AffiliateCommunitySection } from "@/components/community/AffiliateCommunitySection";
 
 export default function EditCommunity() {
   const { id } = useParams();
@@ -84,6 +85,9 @@ export default function EditCommunity() {
                 onAddLink={handleAddLink}
                 onRemoveLink={handleRemoveLink}
               />
+              
+              <AffiliateCommunitySection communityUuid={id} />
+              
               <div className="border rounded-lg p-6">
                 <h2 className="text-lg font-semibold mb-4">Community Media</h2>
                 <CommunityMediaUpload
