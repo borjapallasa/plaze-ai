@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -477,11 +478,11 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
         </DialogContent>
       </Dialog>
 
-      {/* Redesigned Delete Dialog */}
+      {/* Redesigned Delete Dialog with improved spacing */}
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <DialogContent className="max-w-md">
-          <DialogHeader className="text-center pb-4">
-            <div className="mx-auto w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
+          <DialogHeader className="text-center pb-2">
+            <div className="mx-auto w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-3">
               <AlertTriangle className="h-6 w-6 text-red-600" />
             </div>
             <DialogTitle className="text-xl font-semibold text-gray-900">
@@ -489,7 +490,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
             </DialogTitle>
           </DialogHeader>
           
-          <div className="space-y-6">
+          <div className="space-y-5">
             <p className="text-center text-gray-600 text-sm leading-relaxed">
               This will remove your community from the affiliate marketplace and stop new partnership requests.
             </p>
@@ -526,7 +527,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
             )}
           </div>
 
-          <DialogFooter className="gap-3 pt-6">
+          <DialogFooter className="gap-3 pt-5">
             <Button 
               variant="outline" 
               onClick={() => setShowDeleteDialog(false)}
