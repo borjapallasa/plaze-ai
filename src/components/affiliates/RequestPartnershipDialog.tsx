@@ -32,6 +32,7 @@ interface AffiliateOffer {
   status: "active" | "pending" | "paused";
   partnerName: string;
   type?: string;
+  expertUuid?: string;
 }
 
 interface RequestPartnershipDialogProps {
@@ -81,18 +82,39 @@ export function RequestPartnershipDialog({ offer, children }: RequestPartnership
         return;
       }
 
+      // Get the expert_uuid from the affiliate product
+      const { data: productData, error: productError } = await supabase
+        .from('affiliate_products')
+        .select('expert_share, affiliate_share, products!inner(expert_uuid)')
+        .eq('affiliate_products_uuid', offer.id)
+        .maybeSingle();
+
+      if (productError) {
+        throw productError;
+      }
+
+      if (!productData) {
+        toast({
+          title: "Product Not Found",
+          description: "The affiliate product could not be found.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       // Create the partnership request
       const { error } = await supabase
         .from('affiliate_partnerships')
         .insert({
           affiliate_uuid: affiliateData.affiliate_uuid,
           affiliate_product_uuid: offer.id,
-          name: `Partnership Request - ${offer.title}`,
-          type: offer.type || 'product',
+          expert_uuid: productData.products.expert_uuid,
+          name: offer.title,
+          type: (offer.type || 'product') as 'product' | 'community',
           status: 'pending',
           message: message.trim() || null,
-          affiliate_split: offer.commissionRate / 100, // Convert percentage to decimal
-          expert_split: (100 - offer.commissionRate) / 100,
+          affiliate_split: productData.affiliate_share,
+          expert_split: productData.expert_share,
         });
 
       if (error) {
