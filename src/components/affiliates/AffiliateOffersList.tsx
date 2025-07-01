@@ -68,8 +68,16 @@ export function AffiliateOffersList({ offers }: AffiliateOffersListProps) {
             <TableRow key={offer.id} className="hover:bg-gray-50/30 transition-colors duration-150">
               <TableCell className="py-4">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg flex items-center justify-center flex-shrink-0 border border-gray-100">
-                    <DollarSign className="w-5 h-5 text-blue-600" />
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg flex items-center justify-center flex-shrink-0 border border-gray-100 overflow-hidden">
+                    {offer.thumbnail ? (
+                      <img
+                        src={offer.thumbnail}
+                        alt={offer.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <DollarSign className="w-5 h-5 text-blue-600" />
+                    )}
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="font-semibold text-gray-900 text-sm leading-tight truncate">{offer.title}</div>

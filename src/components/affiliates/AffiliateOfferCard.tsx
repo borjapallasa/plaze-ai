@@ -42,10 +42,18 @@ export function AffiliateOfferCard({ offer }: AffiliateOfferCardProps) {
 
   return (
     <Card className="h-full flex flex-col hover:shadow-lg transition-shadow duration-200">
-      <div className="aspect-video bg-gradient-to-br from-blue-50 to-purple-50 rounded-t-lg flex items-center justify-center relative">
-        <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center shadow-sm">
-          <DollarSign className="w-8 h-8 text-blue-600" />
-        </div>
+      <div className="aspect-video bg-gradient-to-br from-blue-50 to-purple-50 rounded-t-lg flex items-center justify-center relative overflow-hidden">
+        {offer.thumbnail ? (
+          <img
+            src={offer.thumbnail}
+            alt={offer.title}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center shadow-sm">
+            <DollarSign className="w-8 h-8 text-blue-600" />
+          </div>
+        )}
         <div className="absolute top-2 right-2">
           {getStatusBadge(offer.status)}
         </div>
