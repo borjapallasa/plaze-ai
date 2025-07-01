@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ShoppingBag, UsersRound, BarChart3, Star, Handshake } from "lucide-react";
@@ -15,6 +14,7 @@ interface SellerTabsProps {
   productsLoading: boolean;
   communitiesLoading: boolean;
   expertUuid?: string;
+  services?: any[]; // Add services property as optional
 }
 
 export function SellerTabs({
@@ -22,7 +22,8 @@ export function SellerTabs({
   communities,
   productsLoading,
   communitiesLoading,
-  expertUuid
+  expertUuid,
+  services = [] // Default to empty array
 }: SellerTabsProps) {
   const location = useLocation();
   

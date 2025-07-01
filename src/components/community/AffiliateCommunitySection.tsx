@@ -462,9 +462,10 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
             <DialogTitle>Disable Affiliate Program</DialogTitle>
           </DialogHeader>
           <div className="py-4">
-            <p className="text-left">Are you sure you want to disable the affiliate program for this community? This action cannot be undone.</p>
+            <p className="text-left mb-4">Are you sure you want to disable the affiliate program for this community?</p>
+            <p className="text-left text-sm text-muted-foreground mb-4">This will remove your community from the affiliate marketplace and stop new partnership requests.</p>
             {editingCommunity && (
-              <div className="mt-4 p-3 border rounded-lg bg-muted/50">
+              <div className="p-3 border rounded-lg bg-muted/50">
                 <p className="font-medium">Current Split:</p>
                 <p className="text-sm text-muted-foreground">
                   Expert: {Math.round(editingCommunity.expert_share * 100)}% | Affiliate: {Math.round(editingCommunity.affiliate_share * 100)}%
@@ -483,7 +484,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
         </DialogContent>
       </Dialog>
 
-      {/* NEW: Confirmation Dialog for Adding to Affiliate Program */}
+      {/* Confirmation Dialog for Adding to Affiliate Program */}
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <DialogContent>
           <DialogHeader>
