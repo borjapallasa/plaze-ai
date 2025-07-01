@@ -113,7 +113,7 @@ export default function EditCommunity() {
                 onDeleteCommunity={handleDeleteCommunity}
                 communityName={communityName}
                 communityStatus={communityStatus}
-                setCommunityStatus={setCommunityStatus}
+                setCommunityStatus={(status: "visible" | "not visible" | "draft") => setCommunityStatus(status)}
                 onSave={handleSave}
                 isSaving={isSaving}
                 affiliateSection={<AffiliateCommunitySection communityUuid={id} />}
