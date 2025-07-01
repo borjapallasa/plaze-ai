@@ -1,10 +1,14 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, DollarSign, Link, MessageSquare, Calendar, Check, X, AlertTriangle, Edit } from "lucide-react";
+import { 
+  Collapsible, 
+  CollapsibleContent, 
+  CollapsibleTrigger 
+} from "@/components/ui/collapsible";
+import { Users, DollarSign, Link, MessageSquare, Calendar, Check, X, AlertTriangle, Edit, ChevronDown, HelpCircle } from "lucide-react";
 import { useExpertPartnerships } from "@/hooks/expert/useExpertPartnerships";
 import { usePartnershipMutations } from "@/hooks/expert/usePartnershipMutations";
 import { RevokePartnershipDialog } from "@/components/partnerships/RevokePartnershipDialog";
@@ -101,6 +105,46 @@ export function PartnershipsTab({
       default:
         return null;
     }
+  };
+
+  const renderQuestionsAnswers = (questionsAnswered: any) => {
+    if (!questionsAnswered || !Array.isArray(questionsAnswered) || questionsAnswered.length === 0) {
+      return null;
+    }
+
+    return (
+      <Collapsible>
+        <CollapsibleTrigger asChild>
+          <Button variant="ghost" className="w-full justify-between p-0 h-auto">
+            <div className="flex items-center gap-2">
+              <HelpCircle className="h-4 w-4 text-blue-600" />
+              <span className="text-sm font-medium">Questions & Answers ({questionsAnswered.length})</span>
+            </div>
+            <ChevronDown className="h-4 w-4" />
+          </Button>
+        </CollapsibleTrigger>
+        <CollapsibleContent className="mt-3">
+          <div className="space-y-3">
+            {questionsAnswered.map((qa: any, index: number) => (
+              <div key={index} className="border border-border rounded-lg p-3 bg-muted/30">
+                <div className="space-y-2">
+                  <div>
+                    <p className="text-sm font-medium text-foreground">
+                      Q{index + 1}: {qa.question}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">
+                      <span className="font-medium">Answer:</span> {qa.answer || 'No answer provided'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
+    );
   };
 
   if (isLoading) {
@@ -257,6 +301,21 @@ export function PartnershipsTab({
 
               {/* Additional Information */}
               <div className="space-y-4">
+                {/* Questions & Answers */}
+                {partnership.questions_answered && (
+                  <div className="border border-border rounded-lg p-4 bg-muted/30">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <HelpCircle className="h-4 w-4 text-blue-600" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-foreground mb-3">Partnership Application</p>
+                        {renderQuestionsAnswers(partnership.questions_answered)}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Affiliate Link */}
                 {partnership.affiliate_link && (
                   <div className="border border-border rounded-lg p-4 bg-muted/30">
