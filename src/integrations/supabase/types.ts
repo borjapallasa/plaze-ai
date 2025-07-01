@@ -1178,39 +1178,52 @@ export type Database = {
       }
       payouts: {
         Row: {
+          affiliate_uuid: string | null
           amount: number | null
           created_at: string
+          email: string | null
           id: number
+          method: Database["public"]["Enums"]["payout_method"] | null
           payout_uuid: string
           paypal: string | null
           status: Database["public"]["Enums"]["payout_status"] | null
-          user_email: string | null
-          user_name: string | null
+          type: Database["public"]["Enums"]["payout_type"] | null
           user_uuid: string | null
         }
         Insert: {
+          affiliate_uuid?: string | null
           amount?: number | null
           created_at?: string
+          email?: string | null
           id?: number
-          payout_uuid: string
-          paypal?: string | null
-          status?: Database["public"]["Enums"]["payout_status"] | null
-          user_email?: string | null
-          user_name?: string | null
-          user_uuid?: string | null
-        }
-        Update: {
-          amount?: number | null
-          created_at?: string
-          id?: number
+          method?: Database["public"]["Enums"]["payout_method"] | null
           payout_uuid?: string
           paypal?: string | null
           status?: Database["public"]["Enums"]["payout_status"] | null
-          user_email?: string | null
-          user_name?: string | null
+          type?: Database["public"]["Enums"]["payout_type"] | null
+          user_uuid?: string | null
+        }
+        Update: {
+          affiliate_uuid?: string | null
+          amount?: number | null
+          created_at?: string
+          email?: string | null
+          id?: number
+          method?: Database["public"]["Enums"]["payout_method"] | null
+          payout_uuid?: string
+          paypal?: string | null
+          status?: Database["public"]["Enums"]["payout_status"] | null
+          type?: Database["public"]["Enums"]["payout_type"] | null
           user_uuid?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "payouts_affiliate_uuid_fkey"
+            columns: ["affiliate_uuid"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["affiliate_uuid"]
+          },
           {
             foreignKeyName: "payouts_user_uuid_fkey"
             columns: ["user_uuid"]
@@ -2264,7 +2277,9 @@ export type Database = {
         | "pending payment"
         | "disputed"
       payment_provider: "stripe"
+      payout_method: "paypal"
       payout_status: "requested" | "paid out"
+      payout_type: "affiliate" | "expert"
       product_free_or_paid: "free" | "paid"
       product_status: "active" | "draft" | "inactive" | "review"
       product_transaction_status:
@@ -2483,7 +2498,9 @@ export const Constants = {
         "disputed",
       ],
       payment_provider: ["stripe"],
+      payout_method: ["paypal"],
       payout_status: ["requested", "paid out"],
+      payout_type: ["affiliate", "expert"],
       product_free_or_paid: ["free", "paid"],
       product_status: ["active", "draft", "inactive", "review"],
       product_transaction_status: [
