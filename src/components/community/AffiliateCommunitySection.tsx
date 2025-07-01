@@ -30,6 +30,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [editingCommunity, setEditingCommunity] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [nextQuestionId, setNextQuestionId] = useState(1);
 
   const { data: affiliateCommunities = [], refetch: refetchAffiliateCommunities } = useAffiliateCommunities(communityUuid);
 
@@ -46,11 +47,12 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
       if (existingCommunity.questions) {
         const questionsArray = Array.isArray(existingCommunity.questions) 
           ? existingCommunity.questions 
-          : Object.entries(existingCommunity.questions || {}).map(([id, question]) => ({
-              id,
+          : Object.entries(existingCommunity.questions || {}).map(([id, question], index) => ({
+              id: `question_${index + 1}`,
               question: typeof question === 'string' ? question : String(question)
             }));
         setQuestions(questionsArray);
+        setNextQuestionId(questionsArray.length + 1);
       }
     }
   }, [affiliateCommunities]);
@@ -73,11 +75,12 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
     if (affiliateCommunity.questions) {
       const questionsArray = Array.isArray(affiliateCommunity.questions) 
         ? affiliateCommunity.questions 
-        : Object.entries(affiliateCommunity.questions || {}).map(([id, question]) => ({
-            id,
+        : Object.entries(affiliateCommunity.questions || {}).map(([id, question], index) => ({
+            id: `question_${index + 1}`,
             question: typeof question === 'string' ? question : String(question)
           }));
       setQuestions(questionsArray);
+      setNextQuestionId(questionsArray.length + 1);
     }
     setShowEditDialog(true);
   };
@@ -89,18 +92,21 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
 
   const addQuestion = () => {
     const newQuestion: Question = {
-      id: `question_${Date.now()}`,
+      id: `question_${nextQuestionId}`,
       question: ""
     };
     setQuestions([...questions, newQuestion]);
+    setNextQuestionId(nextQuestionId + 1);
   };
 
   const updateQuestion = (id: string, question: string) => {
-    setQuestions(questions.map(q => q.id === id ? { ...q, question } : q));
+    setQuestions(prevQuestions => 
+      prevQuestions.map(q => q.id === id ? { ...q, question } : q)
+    );
   };
 
   const removeQuestion = (id: string) => {
-    setQuestions(questions.filter(q => q.id !== id));
+    setQuestions(prevQuestions => prevQuestions.filter(q => q.id !== id));
   };
 
   const formatQuestionsForStorage = (questionsArray: Question[]) => {
@@ -147,6 +153,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
       setShowConfirmDialog(false);
       setIsAffiliateProgram(false);
       setQuestions([]);
+      setNextQuestionId(1);
       refetchAffiliateCommunities();
 
     } catch (error) {
@@ -186,6 +193,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
       setShowEditDialog(false);
       setEditingCommunity(null);
       setQuestions([]);
+      setNextQuestionId(1);
       refetchAffiliateCommunities();
 
     } catch (error) {
@@ -217,6 +225,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
       setShowDeleteDialog(false);
       setEditingCommunity(null);
       setQuestions([]);
+      setNextQuestionId(1);
       refetchAffiliateCommunities();
 
     } catch (error) {
