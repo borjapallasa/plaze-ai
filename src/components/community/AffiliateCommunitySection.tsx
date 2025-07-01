@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -107,11 +106,11 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
   };
 
   const updateQuestion = (id: string, question: string) => {
-    setQuestions(questions.map(q => q.id === id ? { ...q, question } : q));
+    setQuestions(prev => prev.map(q => q.id === id ? { ...q, question } : q));
   };
 
   const updateEditQuestion = (id: string, question: string) => {
-    setEditQuestions(editQuestions.map(q => q.id === id ? { ...q, question } : q));
+    setEditQuestions(prev => prev.map(q => q.id === id ? { ...q, question } : q));
   };
 
   const removeQuestion = (id: string) => {
