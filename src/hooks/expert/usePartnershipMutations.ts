@@ -42,31 +42,7 @@ export function usePartnershipMutations() {
     },
   });
 
-  const deletePartnership = useMutation({
-    mutationFn: async (partnershipUuid: string) => {
-      const { error } = await supabase
-        .from('affiliate_partnerships')
-        .delete()
-        .eq('affiliate_partnership_uuid', partnershipUuid);
-
-      if (error) {
-        console.error('Error deleting partnership:', error);
-        throw error;
-      }
-    },
-    onSuccess: () => {
-      // Invalidate and refetch partnerships data
-      queryClient.invalidateQueries({ queryKey: ['expert-partnerships'] });
-      toast.success('Partnership deleted successfully');
-    },
-    onError: (error) => {
-      console.error('Partnership deletion failed:', error);
-      toast.error('Failed to delete partnership. Please try again.');
-    },
-  });
-
   return {
     updatePartnershipStatus,
-    deletePartnership,
   };
 }

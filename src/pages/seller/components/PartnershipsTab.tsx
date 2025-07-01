@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, DollarSign, Link, MessageSquare, Calendar, Check, X, AlertTriangle, Trash2 } from "lucide-react";
+import { Users, DollarSign, Link, MessageSquare, Calendar, Check, X, AlertTriangle } from "lucide-react";
 import { useExpertPartnerships } from "@/hooks/expert/useExpertPartnerships";
 import { usePartnershipMutations } from "@/hooks/expert/usePartnershipMutations";
 import { RevokePartnershipDialog } from "@/components/partnerships/RevokePartnershipDialog";
@@ -14,7 +14,7 @@ interface PartnershipsTabProps {
 
 export function PartnershipsTab({ expertUuid }: PartnershipsTabProps) {
   const { data: partnerships = [], isLoading } = useExpertPartnerships(expertUuid);
-  const { updatePartnershipStatus, deletePartnership } = usePartnershipMutations();
+  const { updatePartnershipStatus } = usePartnershipMutations();
   const [revokeDialogOpen, setRevokeDialogOpen] = useState(false);
   const [selectedPartnership, setSelectedPartnership] = useState<any>(null);
 
@@ -48,14 +48,9 @@ export function PartnershipsTab({ expertUuid }: PartnershipsTabProps) {
     }
   };
 
-  const handleDeletePartnership = (partnershipUuid: string) => {
-    deletePartnership.mutate(partnershipUuid);
-  };
-
   const renderActionButtons = (partnership: any) => {
     const status = partnership.status?.toLowerCase();
     const isUpdating = updatePartnershipStatus.isPending;
-    const isDeleting = deletePartnership.isPending;
 
     switch (status) {
       case 'pending':
@@ -85,45 +80,16 @@ export function PartnershipsTab({ expertUuid }: PartnershipsTabProps) {
       
       case 'active':
         return (
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => handleRevokePartnership(partnership)}
-              disabled={isUpdating}
-              className="text-orange-600 border-orange-200 hover:bg-orange-50 hover:text-orange-700"
-            >
-              <AlertTriangle className="h-4 w-4 mr-1" />
-              Revoke
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => handleDeletePartnership(partnership.affiliate_partnership_uuid)}
-              disabled={isDeleting}
-              className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
-            >
-              <Trash2 className="h-4 w-4 mr-1" />
-              Delete
-            </Button>
-          </div>
-        );
-      
-      case 'inactive':
-      case 'rejected':
-        return (
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => handleDeletePartnership(partnership.affiliate_partnership_uuid)}
-              disabled={isDeleting}
-              className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
-            >
-              <Trash2 className="h-4 w-4 mr-1" />
-              Delete
-            </Button>
-          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => handleRevokePartnership(partnership)}
+            disabled={isUpdating}
+            className="text-orange-600 border-orange-200 hover:bg-orange-50 hover:text-orange-700"
+          >
+            <AlertTriangle className="h-4 w-4 mr-1" />
+            Revoke
+          </Button>
         );
       
       default:
