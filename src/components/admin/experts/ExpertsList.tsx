@@ -1,7 +1,8 @@
+
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
-import { User, Calendar, Link as LinkIcon } from "lucide-react";
+import { User, Calendar, Link as LinkIcon, Package, Users } from "lucide-react";
 import { Expert } from "../../../types/expert";
 
 interface ExpertsListProps {
@@ -29,7 +30,7 @@ export function ExpertsList({ experts }: ExpertsListProps) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {experts.length === 0 ? (
         <div className="text-center py-8 text-[#8E9196]">
           No experts found matching your criteria
@@ -42,59 +43,81 @@ export function ExpertsList({ experts }: ExpertsListProps) {
             onClick={() => handleExpertClick(expert.expert_uuid)}
           >
             <CardContent className="p-6">
-              <div className="flex gap-6">
-                <div className="w-32 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
-                  {expert.thumbnail ? (
-                    <img
-                      src={expert.thumbnail}
-                      alt={expert.name || 'Expert'}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <User className="h-12 w-12 text-gray-400" />
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                {/* Avatar and basic info */}
+                <div className="lg:col-span-3 flex items-start gap-4">
+                  <div className="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+                    {expert.thumbnail ? (
+                      <img
+                        src={expert.thumbnail}
+                        alt={expert.name || 'Expert'}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <User className="h-8 w-8 text-gray-400" />
+                    )}
+                  </div>
+                  
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-lg mb-1 truncate">{expert.name || 'Unnamed Expert'}</h3>
+                    <p className="text-[#8E9196] text-sm mb-2 truncate">{expert.title || 'No title'}</p>
+                    {getStatusBadge(expert.status)}
+                  </div>
+                </div>
+
+                {/* Contact and profile info */}
+                <div className="lg:col-span-4 space-y-3">
+                  <div className="flex items-center gap-2 text-sm">
+                    <User className="h-4 w-4 text-[#8E9196] flex-shrink-0" />
+                    <span className="text-[#8E9196] flex-shrink-0">Email:</span>
+                    <span className="font-medium truncate">{expert.email || 'No email'}</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 text-sm">
+                    <LinkIcon className="h-4 w-4 text-[#8E9196] flex-shrink-0" />
+                    <span className="text-[#8E9196] flex-shrink-0">Profile:</span>
+                    <Link 
+                      to={`/expert/${expert.slug || expert.expert_uuid}`}
+                      className="text-blue-600 hover:text-blue-800 truncate"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      View Public Profile
+                    </Link>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 text-sm">
+                    <Calendar className="h-4 w-4 text-[#8E9196] flex-shrink-0" />
+                    <span className="text-[#8E9196] flex-shrink-0">Created:</span>
+                    <span className="font-medium">{new Date(expert.created_at).toLocaleDateString()}</span>
+                  </div>
+                </div>
+
+                {/* Stats and metrics */}
+                <div className="lg:col-span-3 space-y-3">
+                  <div className="flex items-center gap-2 text-sm">
+                    <Package className="h-4 w-4 text-[#8E9196] flex-shrink-0" />
+                    <span className="text-[#8E9196]">Products:</span>
+                    <span className="font-medium">{expert.totalTemplates || 0}</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 text-sm">
+                    <Users className="h-4 w-4 text-[#8E9196] flex-shrink-0" />
+                    <span className="text-[#8E9196]">Communities:</span>
+                    <span className="font-medium">{expert.activeTemplates || 0}</span>
+                  </div>
+                  
+                  {expert.location && (
+                    <div className="text-sm text-[#8E9196] truncate">
+                      📍 {expert.location}
+                    </div>
                   )}
                 </div>
-                
-                <div className="flex-1 space-y-3">
-                  <div>
-                    <h3 className="font-semibold text-xl mb-1">{expert.name || 'Unnamed Expert'}</h3>
-                    <p className="text-lg text-[#8E9196] mb-2">{expert.title || 'No title'}</p>
-                    <p className="text-[#8E9196] line-clamp-2">{expert.description || 'No description available'}</p>
-                  </div>
-                  
-                  <div className="flex flex-wrap gap-6 text-sm">
-                    <div className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-[#8E9196]" />
-                      <span className="text-[#8E9196]">Email:</span>
-                      <span className="font-medium">{expert.email || 'No email'}</span>
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                      <LinkIcon className="h-4 w-4 text-[#8E9196]" />
-                      <span className="text-[#8E9196]">Profile:</span>
-                      <Link 
-                        to={`/expert/${expert.slug || expert.expert_uuid}`}
-                        className="text-blue-600 hover:text-blue-800"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        View Public Profile
-                      </Link>
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-[#8E9196]" />
-                      <span className="text-[#8E9196]">Created:</span>
-                      <span className="font-medium">{new Date(expert.created_at).toLocaleString()}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    {getStatusBadge(expert.status)}
-                    <div className="flex gap-4 text-sm">
-                      <span className="text-[#8E9196]">Templates: <span className="font-medium">{expert.totalTemplates || 0}</span></span>
-                      <span className="text-[#8E9196]">Active: <span className="font-medium">{expert.activeTemplates || 0}</span></span>
-                    </div>
-                  </div>
+
+                {/* Description */}
+                <div className="lg:col-span-2 flex items-center">
+                  <p className="text-[#8E9196] text-sm line-clamp-3 leading-relaxed">
+                    {expert.description || 'No description available'}
+                  </p>
                 </div>
               </div>
             </CardContent>
