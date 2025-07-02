@@ -1,6 +1,8 @@
 
 import React, { useState, useMemo } from "react";
+import { Navigate } from "react-router-dom";
 import { useUsers } from "@/hooks/admin/useUsers";
+import { useAdminCheck } from "@/hooks/use-admin-check";
 import { UsersHeader } from "@/components/admin/users/UsersHeader";
 import { UsersTable } from "@/components/admin/users/UsersTable";
 import { UsersGallery } from "@/components/admin/users/UsersGallery";
@@ -33,12 +35,25 @@ export default function AdminUsers() {
   const [showUserDialog, setShowUserDialog] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
+  // Check admin status
+  const { data: adminCheck, isLoading: adminLoading } = useAdminCheck();
+
   const { 
     data: usersData, 
     isLoading, 
     error, 
     refetch
   } = useUsers();
+
+  // If still checking admin status, show loading
+  if (adminLoading) {
+    return <UsersLoadingState />;
+  }
+
+  // If not admin, redirect to home page
+  if (!adminCheck?.isAdmin) {
+    return <Navigate to="/" replace />;
+  }
 
   // Extract users array from the data structure and ensure proper typing
   const users: UserData[] = Array.isArray(usersData) ? usersData.map(user => ({
