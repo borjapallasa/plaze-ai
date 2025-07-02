@@ -47,7 +47,7 @@ export function ExpertsList({ experts }: ExpertsListProps) {
               <div className="flex items-start">
                 {/* Avatar and basic info - Fixed width */}
                 <div className="flex items-start gap-4 w-80 flex-shrink-0">
-                  <div className="w-16 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+                  <div className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
                     {expert.thumbnail ? (
                       <img
                         src={expert.thumbnail}
