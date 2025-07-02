@@ -1,8 +1,6 @@
 
 import React, { useState, useMemo } from "react";
-import { Navigate } from "react-router-dom";
 import { useUsers } from "@/hooks/admin/useUsers";
-import { useAdminCheck } from "@/hooks/use-admin-check";
 import { UsersHeader } from "@/components/admin/users/UsersHeader";
 import { UsersTable } from "@/components/admin/users/UsersTable";
 import { UsersGallery } from "@/components/admin/users/UsersGallery";
@@ -35,18 +33,12 @@ export default function AdminUsers() {
   const [showUserDialog, setShowUserDialog] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  // Check admin status and fetch users data - MUST be at the top
-  const { data: adminCheck, isLoading: adminLoading, error: adminError } = useAdminCheck();
   const { 
     data: usersData, 
     isLoading, 
     error, 
     refetch
   } = useUsers();
-
-  console.log('AdminUsers component - Admin check:', adminCheck);
-  console.log('AdminUsers component - Admin loading:', adminLoading);
-  console.log('AdminUsers component - Admin error:', adminError);
 
   // Extract users array from the data structure and ensure proper typing
   const users: UserData[] = Array.isArray(usersData) ? usersData.map(user => ({
@@ -70,26 +62,6 @@ export default function AdminUsers() {
       `${user.first_name} ${user.last_name}`.toLowerCase().includes(searchLower)
     );
   }, [users, searchTerm]);
-
-  // If still checking admin status, show loading
-  if (adminLoading) {
-    console.log('Still loading admin status...');
-    return <UsersLoadingState />;
-  }
-
-  // If there was an error checking admin status, show error
-  if (adminError) {
-    console.log('Error checking admin status:', adminError);
-    return <UsersErrorState onRetry={() => window.location.reload()} />;
-  }
-
-  // If not admin, redirect to home page
-  if (!adminCheck?.isAdmin) {
-    console.log('User is not admin, redirecting to home...');
-    return <Navigate to="/" replace />;
-  }
-
-  console.log('User is admin, showing admin panel...');
 
   const handleSort = (field: string) => {
     const typedField = field as keyof UserData;
