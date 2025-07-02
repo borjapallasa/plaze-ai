@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { Navigate } from "react-router-dom";
 import { MainHeader } from "@/components/MainHeader";
 import { UsersHeader } from "@/components/admin/users/UsersHeader";
 import { UsersTable } from "@/components/admin/users/UsersTable";
@@ -8,6 +9,7 @@ import { UsersGallery } from "@/components/admin/users/UsersGallery";
 import { UsersLoadingState } from "@/components/admin/users/UsersLoadingState";
 import { UsersErrorState } from "@/components/admin/users/UsersErrorState";
 import { useUsers } from "@/hooks/admin/useUsers";
+import { useAdminCheck } from "@/hooks/use-admin-check";
 
 type LayoutType = "table" | "list" | "gallery";
 
@@ -15,6 +17,9 @@ export default function AdminUsersPage() {
   const [layout, setLayout] = useState<LayoutType>("table");
   const [page, setPage] = useState(1);
   const limit = 10;
+
+  // Check if user is admin
+  const { data: adminCheck, isLoading: adminLoading, error: adminError } = useAdminCheck();
 
   const {
     users,
@@ -46,6 +51,25 @@ export default function AdminUsersPage() {
     }
   };
 
+  // Show loading while checking admin status
+  if (adminLoading) {
+    return (
+      <>
+        <MainHeader />
+        <div className="min-h-screen bg-white pt-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <UsersLoadingState />
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // Redirect if not admin or admin check failed
+  if (adminError || !adminCheck?.isAdmin) {
+    return <Navigate to="/" replace />;
+  }
+
   if (error) {
     return (
       <>
@@ -71,7 +95,7 @@ export default function AdminUsersPage() {
             setStatusFilter={setRoleFilter}
             sortBy={sortField as string}
             sortOrder={sortDirection}
-            onSortChange={(field: string) => handleSort(field as keyof import("@/hooks/admin/useUsers").UserData)}
+            onSortChange={(field: string) => handleSort(field as any)}
             layout={layout}
             onLayoutChange={handleLayoutChange}
           />
@@ -83,7 +107,7 @@ export default function AdminUsersPage() {
               {layout === "table" && (
                 <UsersTable
                   users={users}
-                  onSort={(field: string) => handleSort(field as keyof import("@/hooks/admin/useUsers").UserData)}
+                  onSort={(field: string) => handleSort(field as any)}
                   sortBy={sortField as string}
                   sortOrder={sortDirection}
                   onUserClick={handleUserClick}
@@ -98,7 +122,7 @@ export default function AdminUsersPage() {
                   users={users}
                   sortField={sortField as string}
                   sortDirection={sortDirection}
-                  onSort={(field: string) => handleSort(field as keyof import("@/hooks/admin/useUsers").UserData)}
+                  onSort={(field: string) => handleSort(field as any)}
                 />
               )}
 
