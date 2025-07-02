@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { useExperts } from "@/hooks/admin/useExperts";
 import { ExpertsHeader } from "@/components/admin/experts/ExpertsHeader";
@@ -12,7 +11,7 @@ import { ExpertsErrorState } from "@/components/admin/experts/ExpertsErrorState"
 import { ExpertsLayoutSwitcher } from "@/components/admin/experts/ExpertsLayoutSwitcher";
 import { ExpertsSortSelector } from "@/components/admin/experts/ExpertsSortSelector";
 import { useState, useEffect } from "react";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile, useIsTablet } from "@/hooks/use-mobile";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useAdminCheck } from "@/hooks/use-admin-check";
@@ -55,21 +54,29 @@ export default function AdminExperts() {
     handleSort
   } = useExperts();
 
-  const [layout, setLayout] = useState<LayoutType>('grid');
+  const [layout, setLayout] = useState<LayoutType>('gallery');
   const [sortValue, setSortValue] = useState("created_at_desc");
   const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
 
   // Set default status filter to "pending" (In Review) on initial load
   useEffect(() => {
     setStatusFilter("pending");
   }, [setStatusFilter]);
 
-  // Switch to gallery view if currently on list view and on mobile
+  // Switch to gallery view if currently on list view and on mobile or tablet
   useEffect(() => {
-    if (isMobile && layout === 'list') {
+    if ((isMobile || isTablet) && layout === 'list') {
       setLayout('gallery');
     }
-  }, [isMobile, layout]);
+  }, [isMobile, isTablet, layout]);
+
+  // Set default layout to gallery for tablet devices
+  useEffect(() => {
+    if (isTablet && layout === 'grid') {
+      setLayout('gallery');
+    }
+  }, [isTablet, layout]);
 
   const handleLoadMore = () => {
     // This would be implemented if pagination is added
