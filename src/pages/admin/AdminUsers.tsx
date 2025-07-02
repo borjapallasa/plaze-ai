@@ -35,25 +35,14 @@ export default function AdminUsers() {
   const [showUserDialog, setShowUserDialog] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  // Check admin status
+  // Check admin status and fetch users data - MUST be at the top
   const { data: adminCheck, isLoading: adminLoading } = useAdminCheck();
-
   const { 
     data: usersData, 
     isLoading, 
     error, 
     refetch
   } = useUsers();
-
-  // If still checking admin status, show loading
-  if (adminLoading) {
-    return <UsersLoadingState />;
-  }
-
-  // If not admin, redirect to home page
-  if (!adminCheck?.isAdmin) {
-    return <Navigate to="/" replace />;
-  }
 
   // Extract users array from the data structure and ensure proper typing
   const users: UserData[] = Array.isArray(usersData) ? usersData.map(user => ({
@@ -77,6 +66,16 @@ export default function AdminUsers() {
       `${user.first_name} ${user.last_name}`.toLowerCase().includes(searchLower)
     );
   }, [users, searchTerm]);
+
+  // If still checking admin status, show loading
+  if (adminLoading) {
+    return <UsersLoadingState />;
+  }
+
+  // If not admin, redirect to home page
+  if (!adminCheck?.isAdmin) {
+    return <Navigate to="/" replace />;
+  }
 
   const handleSort = (field: string) => {
     const typedField = field as keyof UserData;
