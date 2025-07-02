@@ -44,9 +44,9 @@ export function ExpertsList({ experts }: ExpertsListProps) {
             onClick={() => handleExpertClick(expert.expert_uuid)}
           >
             <CardContent className="p-6">
-              <div className="flex items-start">
-                {/* Avatar and basic info - Reduced width */}
-                <div className="flex items-start gap-4 w-72 flex-shrink-0">
+              <div className="flex items-start justify-between w-full">
+                {/* Avatar and basic info */}
+                <div className="flex items-start gap-4 flex-shrink-0">
                   <div className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
                     {expert.thumbnail ? (
                       <img
@@ -68,10 +68,10 @@ export function ExpertsList({ experts }: ExpertsListProps) {
                   </div>
                 </div>
 
-                <Separator orientation="vertical" className="h-20 mx-4" />
+                <Separator orientation="vertical" className="h-20 mx-6" />
 
-                {/* Contact and profile info - Reduced width */}
-                <div className="space-y-3 w-64 flex-shrink-0">
+                {/* Contact and profile info */}
+                <div className="space-y-3 flex-1 min-w-0 max-w-sm">
                   <div className="flex items-center gap-2 text-sm">
                     <User className="h-4 w-4 text-[#8E9196] flex-shrink-0" />
                     <span className="text-[#8E9196] flex-shrink-0">Email:</span>
@@ -97,10 +97,10 @@ export function ExpertsList({ experts }: ExpertsListProps) {
                   </div>
                 </div>
 
-                <Separator orientation="vertical" className="h-20 mx-4" />
+                <Separator orientation="vertical" className="h-20 mx-6" />
 
-                {/* Stats and metrics - Reduced width */}
-                <div className="space-y-3 w-48 flex-shrink-0">
+                {/* Stats and metrics */}
+                <div className="space-y-3 flex-shrink-0 min-w-0">
                   <div className="flex items-center gap-2 text-sm">
                     <Package className="h-4 w-4 text-[#8E9196] flex-shrink-0" />
                     <span className="text-[#8E9196]">Products:</span>
