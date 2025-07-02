@@ -1,3 +1,4 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { useExperts } from "@/hooks/admin/useExperts";
 import { ExpertsHeader } from "@/components/admin/experts/ExpertsHeader";
@@ -42,6 +43,7 @@ export default function AdminExperts() {
 
   const {
     experts,
+    allExperts,
     isLoading,
     error,
     searchQuery,
@@ -56,6 +58,11 @@ export default function AdminExperts() {
   const [layout, setLayout] = useState<LayoutType>('grid');
   const [sortValue, setSortValue] = useState("created_at_desc");
   const isMobile = useIsMobile();
+
+  // Set default status filter to "pending" (In Review) on initial load
+  useEffect(() => {
+    setStatusFilter("pending");
+  }, [setStatusFilter]);
 
   // Switch to gallery view if currently on list view and on mobile
   useEffect(() => {
@@ -79,13 +86,13 @@ export default function AdminExperts() {
 
   // Get counts for each status from the unfiltered experts data
   const getStatusCounts = () => {
-    if (!experts) return { all: 0, active: 0, inactive: 0, pending: 0 };
+    if (!allExperts) return { all: 0, active: 0, inactive: 0, pending: 0 };
     
     const counts = {
-      all: experts.length,
-      active: experts.filter(expert => expert.status === 'active').length,
-      inactive: experts.filter(expert => expert.status === 'inactive').length,
-      pending: experts.filter(expert => expert.status === 'in review').length
+      all: allExperts.length,
+      active: allExperts.filter(expert => expert.status === 'active').length,
+      inactive: allExperts.filter(expert => expert.status === 'inactive').length,
+      pending: allExperts.filter(expert => expert.status === 'in review').length
     };
     
     return counts;
@@ -94,10 +101,10 @@ export default function AdminExperts() {
   const statusCounts = getStatusCounts();
 
   const tabs = [
-    { id: "all", label: "All" },
-    { id: "active", label: "Active" },
-    { id: "inactive", label: "Inactive" },
-    { id: "pending", label: "In review" }
+    { id: "all", label: "All", count: statusCounts.all },
+    { id: "active", label: "Active", count: statusCounts.active },
+    { id: "inactive", label: "Inactive", count: statusCounts.inactive },
+    { id: "pending", label: "In review", count: statusCounts.pending }
   ];
 
   // Show loading while checking authentication and admin status
@@ -177,7 +184,7 @@ export default function AdminExperts() {
           subtitle="Manage and review all expert profiles" 
         />
 
-        {/* Custom styled tabs */}
+        {/* Custom styled tabs with counts */}
         <div className="mb-6">
           <div className="flex items-center gap-8 border-b border-[#E5E7EB] overflow-x-auto scrollbar-hide">
             {tabs.map((tab) => {
@@ -193,6 +200,13 @@ export default function AdminExperts() {
                   }`}
                 >
                   <span>{tab.label}</span>
+                  <span className={`ml-2 px-2 py-1 text-xs rounded-full ${
+                    isActive 
+                      ? 'bg-[#1A1F2C] text-white' 
+                      : 'bg-[#F3F4F6] text-[#8E9196]'
+                  }`}>
+                    {tab.count}
+                  </span>
                 </button>
               );
             })}

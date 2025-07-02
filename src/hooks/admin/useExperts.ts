@@ -6,12 +6,12 @@ import { Expert } from "@/types/expert";
 
 export function useExperts() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("pending"); // Default to "pending" (In Review)
   const [sortField, setSortField] = useState<keyof Expert>("created_at");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
   // Fetch experts from Supabase
-  const { data: experts, isLoading, error } = useQuery({
+  const { data: allExpertsData, isLoading, error } = useQuery({
     queryKey: ['admin-experts'],
     queryFn: async () => {
       console.log('Fetching experts for admin panel...');
@@ -58,8 +58,8 @@ export function useExperts() {
     }
   };
 
-  const filteredExperts = experts
-    ? experts
+  const filteredExperts = allExpertsData
+    ? allExpertsData
         .filter(expert => {
           const matchesSearch = 
             (expert.email?.toLowerCase().includes(searchQuery.toLowerCase()) || false) ||
@@ -96,6 +96,7 @@ export function useExperts() {
 
   return {
     experts: filteredExperts,
+    allExperts: allExpertsData || [], // Return all experts for counting
     isLoading,
     error,
     searchQuery,
