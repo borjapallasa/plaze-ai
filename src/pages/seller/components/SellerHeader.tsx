@@ -311,8 +311,8 @@ export function SellerHeader({
               </div>
             </div>
 
-            {/* Edit Buttons */}
-            <div className="flex gap-2">
+            {/* Edit Buttons - Stacked vertically on mobile */}
+            <div className="flex flex-col gap-2 w-full">
               {/* Admin Manage Button */}
               {isAdmin && (
                 <EditExpertStatusDialog
@@ -322,7 +322,7 @@ export function SellerHeader({
                     <Button 
                       variant="outline" 
                       size="sm" 
-                      className="flex items-center justify-center gap-2 hover:bg-gray-50 flex-1"
+                      className="flex items-center justify-center gap-2 hover:bg-gray-50 w-full"
                     >
                       <Settings className="h-4 w-4" />
                       Manage
@@ -340,7 +340,7 @@ export function SellerHeader({
                     <Button 
                       variant="outline" 
                       size="sm" 
-                      className="flex items-center justify-center gap-2 hover:bg-gray-50 flex-1"
+                      className="flex items-center justify-center gap-2 hover:bg-gray-50 w-full"
                     >
                       <Edit2 className="h-4 w-4" />
                       Edit Status
@@ -348,17 +348,20 @@ export function SellerHeader({
                   }
                 />
               ) : (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className={`flex items-center justify-center gap-2 hover:bg-gray-50 ${isAdmin ? 'flex-1' : 'w-full'}`}
-                  onClick={() => {
-                    // Open edit dialog logic here
-                  }}
-                >
-                  <Edit2 className="h-4 w-4" />
-                  Edit Profile
-                </Button>
+                <EditExpertDialog
+                  expert={seller}
+                  onUpdate={onSellerUpdate}
+                  trigger={
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex items-center justify-center gap-2 hover:bg-gray-50 w-full"
+                    >
+                      <Edit2 className="h-4 w-4" />
+                      Edit Profile
+                    </Button>
+                  }
+                />
               )}
             </div>
           </div>
