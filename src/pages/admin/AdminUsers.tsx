@@ -67,6 +67,7 @@ export default function AdminUsersPage() {
 
   // Redirect if not admin or admin check failed
   if (adminError || !adminCheck?.isAdmin) {
+    console.log('Admin check failed:', { adminError, adminCheck });
     return <Navigate to="/" replace />;
   }
 

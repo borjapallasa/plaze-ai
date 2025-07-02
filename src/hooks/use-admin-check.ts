@@ -10,6 +10,7 @@ export function useAdminCheck() {
     queryKey: ['admin-check', user?.id],
     queryFn: async () => {
       if (!user?.id) {
+        console.log('No user ID found');
         return { isAdmin: false };
       }
 
@@ -27,7 +28,9 @@ export function useAdminCheck() {
       }
 
       console.log('Admin check result:', data);
-      return { isAdmin: data?.is_admin || false };
+      const isAdmin = data?.is_admin === true;
+      console.log('Final isAdmin value:', isAdmin);
+      return { isAdmin };
     },
     enabled: !!user?.id,
   });
