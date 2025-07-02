@@ -7,8 +7,6 @@ import { UsersGallery } from "@/components/admin/users/UsersGallery";
 import { UserDetailsDialog } from "@/components/admin/users/UserDetailsDialog";
 import { UsersLoadingState } from "@/components/admin/users/UsersLoadingState";
 import { UsersErrorState } from "@/components/admin/users/UsersErrorState";
-import { UsersLayoutSwitcher } from "@/components/admin/users/UsersLayoutSwitcher";
-import { UsersSortSelector } from "@/components/admin/users/UsersSortSelector";
 
 interface UserData {
   user_uuid: string;
@@ -99,34 +97,12 @@ export default function AdminUsers() {
         setSearchTerm={setSearchTerm}
         statusFilter={statusFilter}
         setStatusFilter={setStatusFilter}
+        sortBy={sortBy}
+        sortOrder={sortOrder}
+        onSortChange={handleSort}
+        layout={layout}
+        onLayoutChange={setLayout}
       />
-      
-      {/* Controls Layout - Responsive */}
-      <div className="mb-6">
-        {/* Desktop: Single row */}
-        <div className="hidden lg:flex justify-between items-center gap-4">
-          <UsersSortSelector 
-            sortBy={sortBy}
-            sortOrder={sortOrder}
-            onSortChange={handleSort}
-          />
-          <UsersLayoutSwitcher layout={layout} onLayoutChange={setLayout} />
-        </div>
-
-        {/* Tablet and Mobile: Two rows */}
-        <div className="lg:hidden space-y-4">
-          <div className="flex justify-between items-center">
-            <UsersSortSelector 
-              sortBy={sortBy}
-              sortOrder={sortOrder}
-              onSortChange={handleSort}
-            />
-          </div>
-          <div className="flex justify-end">
-            <UsersLayoutSwitcher layout={layout} onLayoutChange={setLayout} />
-          </div>
-        </div>
-      </div>
 
       {layout === "table" ? (
         <UsersTable 
