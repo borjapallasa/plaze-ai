@@ -6,10 +6,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Star, Users, Package, Edit2 } from "lucide-react";
+import { MapPin, Star, Users, Package, Edit2, Settings } from "lucide-react";
 import { EditExpertDialog } from "./EditExpertDialog";
 import { EditExpertStatusDialog } from "./EditExpertStatusDialog";
 import { useExpertReviews } from "@/hooks/expert/useExpertReviews";
+import { useAdminCheck } from "@/hooks/use-admin-check";
 import type { Expert } from "@/types/expert";
 
 interface SellerHeaderProps {
@@ -31,6 +32,10 @@ export function SellerHeader({
 }: SellerHeaderProps) {
   // Fetch actual reviews to calculate average rating
   const { data: reviews = [] } = useExpertReviews(seller.expert_uuid);
+  
+  // Check if current user is admin
+  const { data: adminData } = useAdminCheck();
+  const isAdmin = adminData?.isAdmin || false;
 
   const getBadgeVariant = (status: string) => {
     switch (status) {
@@ -128,37 +133,58 @@ export function SellerHeader({
                     </div>
                   </div>
                   
-                  {isAdminView ? (
-                    <EditExpertStatusDialog
-                      expert={seller}
-                      onUpdate={onSellerUpdate}
-                      trigger={
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="flex items-center gap-2 hover:bg-gray-50"
-                        >
-                          <Edit2 className="h-4 w-4" />
-                          Edit Status
-                        </Button>
-                      }
-                    />
-                  ) : (
-                    <EditExpertDialog
-                      expert={seller}
-                      onUpdate={onSellerUpdate}
-                      trigger={
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="flex items-center gap-2 hover:bg-gray-50"
-                        >
-                          <Edit2 className="h-4 w-4" />
-                          Edit Profile
-                        </Button>
-                      }
-                    />
-                  )}
+                  <div className="flex items-center gap-2">
+                    {/* Admin Manage Button */}
+                    {isAdmin && (
+                      <EditExpertStatusDialog
+                        expert={seller}
+                        onUpdate={onSellerUpdate}
+                        trigger={
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="flex items-center gap-2 hover:bg-gray-50"
+                          >
+                            <Settings className="h-4 w-4" />
+                            Manage
+                          </Button>
+                        }
+                      />
+                    )}
+                    
+                    {/* Regular Edit Button */}
+                    {isAdminView ? (
+                      <EditExpertStatusDialog
+                        expert={seller}
+                        onUpdate={onSellerUpdate}
+                        trigger={
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="flex items-center gap-2 hover:bg-gray-50"
+                          >
+                            <Edit2 className="h-4 w-4" />
+                            Edit Status
+                          </Button>
+                        }
+                      />
+                    ) : (
+                      <EditExpertDialog
+                        expert={seller}
+                        onUpdate={onSellerUpdate}
+                        trigger={
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="flex items-center gap-2 hover:bg-gray-50"
+                          >
+                            <Edit2 className="h-4 w-4" />
+                            Edit Profile
+                          </Button>
+                        }
+                      />
+                    )}
+                  </div>
                 </div>
                 
                 {/* Description */}
@@ -285,38 +311,56 @@ export function SellerHeader({
               </div>
             </div>
 
-            {/* Edit Button */}
-            {isAdminView ? (
-              <EditExpertStatusDialog
-                expert={seller}
-                onUpdate={onSellerUpdate}
-                trigger={
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full flex items-center justify-center gap-2 hover:bg-gray-50"
-                  >
-                    <Edit2 className="h-4 w-4" />
-                    Edit Status
-                  </Button>
-                }
-              />
-            ) : (
-              <EditExpertDialog
-                expert={seller}
-                onUpdate={onSellerUpdate}
-                trigger={
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full flex items-center justify-center gap-2 hover:bg-gray-50"
-                  >
-                    <Edit2 className="h-4 w-4" />
-                    Edit Profile
-                  </Button>
-                }
-              />
-            )}
+            {/* Edit Buttons */}
+            <div className="flex gap-2">
+              {/* Admin Manage Button */}
+              {isAdmin && (
+                <EditExpertStatusDialog
+                  expert={seller}
+                  onUpdate={onSellerUpdate}
+                  trigger={
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex items-center justify-center gap-2 hover:bg-gray-50 flex-1"
+                    >
+                      <Settings className="h-4 w-4" />
+                      Manage
+                    </Button>
+                  }
+                />
+              )}
+              
+              {/* Regular Edit Button */}
+              {isAdminView ? (
+                <EditExpertStatusDialog
+                  expert={seller}
+                  onUpdate={onSellerUpdate}
+                  trigger={
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex items-center justify-center gap-2 hover:bg-gray-50 flex-1"
+                    >
+                      <Edit2 className="h-4 w-4" />
+                      Edit Status
+                    </Button>
+                  }
+                />
+              ) : (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className={`flex items-center justify-center gap-2 hover:bg-gray-50 ${isAdmin ? 'flex-1' : 'w-full'}`}
+                  onClick={() => {
+                    // Open edit dialog logic here
+                  }}
+                >
+                  <Edit2 className="h-4 w-4" />
+                  Edit Profile
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </CardContent>
