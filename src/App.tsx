@@ -29,6 +29,7 @@ import UserTransactionItemDetails from "./pages/UserTransactionItemDetails";
 import ThankYouPage from "./pages/ThankYou";
 import RecoverPasswordPage from "./pages/RecoverPassword";
 import AdminDashboardPage from "./pages/admin/AdminDashboard";
+import AdminUsersPage from "./pages/admin/AdminUsers";
 import AdminUserDetailsPage from "./pages/admin/AdminUserDetails";
 import AdminExpertsPage from "./pages/admin/AdminExperts";
 import AdminExpertDetailsPage from "./pages/admin/AdminExpertDetails";
@@ -83,6 +84,7 @@ function App() {
           <Route path="/thank-you" element={<ThankYouPage />} />
           <Route path="/recover-password" element={<RecoverPasswordPage />} />
           <Route path="/admin" element={<AdminDashboardPage />} />
+          <Route path="/admin/users" element={<AdminUsersPage />} />
           <Route path="/admin/users/user/:id" element={<AdminUserDetailsPage />} />
           <Route path="/admin/experts" element={<AdminExpertsPage />} />
           <Route path="/admin/experts/expert/:id" element={<AdminExpertDetailsPage />} />
