@@ -16,6 +16,15 @@ export function useAdminCheck() {
 
       console.log('Checking admin status for user:', user.id);
       
+      // Let's first check what's in the users table
+      const { data: allData, error: debugError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('user_uuid', user.id);
+        
+      console.log('All user data:', allData);
+      console.log('Debug error:', debugError);
+      
       const { data, error } = await supabase
         .from('users')
         .select('is_admin')

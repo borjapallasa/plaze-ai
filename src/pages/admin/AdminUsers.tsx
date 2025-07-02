@@ -94,9 +94,9 @@ export default function AdminUsersPage() {
             setSearchTerm={setSearchQuery}
             statusFilter={roleFilter}
             setStatusFilter={setRoleFilter}
-            sortBy={sortField as string}
+            sortBy={sortField}
             sortOrder={sortDirection}
-            onSortChange={(field: string) => handleSort(field as any)}
+            onSortChange={(field: string) => handleSort(field)}
             layout={layout}
             onLayoutChange={handleLayoutChange}
           />
@@ -108,8 +108,8 @@ export default function AdminUsersPage() {
               {layout === "table" && (
                 <UsersTable
                   users={users}
-                  onSort={(field: string) => handleSort(field as any)}
-                  sortBy={sortField as string}
+                  onSort={(field: string) => handleSort(field)}
+                  sortBy={sortField}
                   sortOrder={sortDirection}
                   onUserClick={handleUserClick}
                   onLoadMore={handleLoadMore}
@@ -121,9 +121,9 @@ export default function AdminUsersPage() {
               {layout === "list" && (
                 <UsersList
                   users={users}
-                  sortField={sortField as string}
+                  sortField={sortField}
                   sortDirection={sortDirection}
-                  onSort={(field: string) => handleSort(field as any)}
+                  onSort={(field: string) => handleSort(field)}
                 />
               )}
 
@@ -149,7 +149,7 @@ export default function AdminUsersPage() {
                     >
                       Load More
                     </button>
-                  )}
+                    )}
                 </div>
               )}
             </>
