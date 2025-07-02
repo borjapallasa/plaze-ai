@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useUsers } from "@/hooks/admin/useUsers";
 import { UsersHeader } from "@/components/admin/users/UsersHeader";
 import { UsersTable } from "@/components/admin/users/UsersTable";
@@ -51,6 +51,22 @@ export default function AdminUsers() {
     commissions_generated: user.commissions_generated || 0
   }));
 
+  // Filter users based on search term
+  const filteredUsers = useMemo(() => {
+    if (!searchTerm.trim()) return users;
+    
+    const searchLower = searchTerm.toLowerCase();
+    return users.filter(user => {
+      const fullName = `${user.first_name} ${user.last_name}`.toLowerCase();
+      const email = user.email?.toLowerCase() || '';
+      const userUuid = user.user_uuid.toLowerCase();
+      
+      return fullName.includes(searchLower) || 
+             email.includes(searchLower) || 
+             userUuid.includes(searchLower);
+    });
+  }, [users, searchTerm]);
+
   const handleSort = (field: string) => {
     const typedField = field as keyof UserData;
     if (sortBy === typedField) {
@@ -98,7 +114,7 @@ export default function AdminUsers() {
 
       {layout === "table" ? (
         <UsersTable 
-          users={users}
+          users={filteredUsers}
           onSort={handleSort}
           sortBy={sortBy}
           sortOrder={sortOrder}
@@ -109,7 +125,7 @@ export default function AdminUsers() {
         />
       ) : (
         <UsersGallery 
-          users={users}
+          users={filteredUsers}
           onUserClick={handleUserClick}
           onLoadMore={handleLoadMore}
           hasNextPage={false}
