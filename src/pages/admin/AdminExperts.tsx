@@ -14,10 +14,32 @@ import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useAdminCheck } from "@/hooks/use-admin-check";
+import { useAuth } from "@/lib/auth";
+import { useNavigate } from "react-router-dom";
 
 type LayoutType = 'gallery' | 'grid' | 'list';
 
 export default function AdminExperts() {
+  const { user, loading: authLoading } = useAuth();
+  const { data: adminData, isLoading: adminLoading } = useAdminCheck();
+  const navigate = useNavigate();
+
+  // Redirect if not authenticated or not admin
+  useEffect(() => {
+    if (!authLoading && !adminLoading) {
+      if (!user) {
+        navigate('/sign-in');
+        return;
+      }
+      
+      if (adminData && !adminData.isAdmin) {
+        navigate('/');
+        return;
+      }
+    }
+  }, [user, adminData, authLoading, adminLoading, navigate]);
+
   const {
     experts,
     isLoading,
@@ -77,6 +99,28 @@ export default function AdminExperts() {
     { id: "inactive", label: "Inactive" },
     { id: "pending", label: "In review" }
   ];
+
+  // Show loading while checking authentication and admin status
+  if (authLoading || adminLoading) {
+    return (
+      <>
+        <MainHeader />
+        <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Checking permissions...</p>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // Don't render anything if user is not admin (redirect will happen)
+  if (!user || (adminData && !adminData.isAdmin)) {
+    return null;
+  }
 
   const renderExpertsContent = () => {
     if (isLoading) {
