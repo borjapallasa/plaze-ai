@@ -66,7 +66,7 @@ export function UsersHeader({
             className="pl-10 border-[#E5E7EB] focus:border-[#3B82F6] focus:ring-[#3B82F6] w-full"
           />
         </div>
-        <div className="flex justify-between items-center w-full">
+        <div className="flex justify-between items-center w-full gap-4">
           <UsersSortSelector 
             sortBy={sortBy}
             sortOrder={sortOrder}
