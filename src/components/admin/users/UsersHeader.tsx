@@ -4,6 +4,8 @@ import { Search } from "lucide-react";
 import { UsersSortSelector } from "./UsersSortSelector";
 import { UsersLayoutSwitcher } from "./UsersLayoutSwitcher";
 
+type LayoutType = "table" | "list" | "gallery";
+
 interface UsersHeaderProps {
   searchTerm: string;
   setSearchTerm: (value: string) => void;
@@ -12,8 +14,8 @@ interface UsersHeaderProps {
   sortBy: string;
   sortOrder: "asc" | "desc";
   onSortChange: (field: string) => void;
-  layout: "table" | "list" | "gallery";
-  onLayoutChange: (layout: "table" | "list" | "gallery") => void;
+  layout: LayoutType;
+  onLayoutChange: (layout: LayoutType) => void;
 }
 
 export function UsersHeader({ 

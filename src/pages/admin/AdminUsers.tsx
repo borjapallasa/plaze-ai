@@ -50,7 +50,7 @@ export default function AdminUsersPage() {
     return (
       <>
         <MainHeader />
-        <div className="min-h-screen bg-gray-50 pt-16">
+        <div className="min-h-screen bg-white pt-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <UsersErrorState onRetry={refetch} />
           </div>
@@ -62,7 +62,7 @@ export default function AdminUsersPage() {
   return (
     <>
       <MainHeader />
-      <div className="min-h-screen bg-gray-50 pt-16">
+      <div className="min-h-screen bg-white pt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <UsersHeader
             searchTerm={searchQuery}
@@ -72,12 +72,8 @@ export default function AdminUsersPage() {
             sortBy={sortField as string}
             sortOrder={sortDirection}
             onSortChange={(field: string) => handleSort(field as keyof import("@/hooks/admin/useUsers").UserData)}
-            layout={layout as "table" | "gallery"}
-            onLayoutChange={(newLayout: "table" | "gallery") => {
-              if (newLayout === "table" || newLayout === "gallery") {
-                setLayout(newLayout);
-              }
-            }}
+            layout={layout}
+            onLayoutChange={handleLayoutChange}
           />
 
           {isLoading ? (
