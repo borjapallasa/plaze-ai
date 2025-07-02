@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useUsers } from "@/hooks/admin/useUsers";
 import { UsersHeader } from "@/components/admin/users/UsersHeader";
 import { UsersTable } from "@/components/admin/users/UsersTable";
@@ -51,6 +51,20 @@ export default function AdminUsers() {
     commissions_generated: user.commissions_generated || 0
   }));
 
+  // Filter users based on search term
+  const filteredUsers = useMemo(() => {
+    if (!searchTerm.trim()) return users;
+    
+    const searchLower = searchTerm.toLowerCase();
+    return users.filter(user => 
+      user.first_name?.toLowerCase().includes(searchLower) ||
+      user.last_name?.toLowerCase().includes(searchLower) ||
+      user.email?.toLowerCase().includes(searchLower) ||
+      user.user_uuid?.toLowerCase().includes(searchLower) ||
+      `${user.first_name} ${user.last_name}`.toLowerCase().includes(searchLower)
+    );
+  }, [users, searchTerm]);
+
   const handleSort = (field: string) => {
     const typedField = field as keyof UserData;
     if (sortBy === typedField) {
@@ -87,18 +101,36 @@ export default function AdminUsers() {
         setStatusFilter={setStatusFilter}
       />
       
-      <div className="flex justify-between items-center mb-6">
-        <UsersSortSelector 
-          sortBy={sortBy}
-          sortOrder={sortOrder}
-          onSortChange={handleSort}
-        />
-        <UsersLayoutSwitcher layout={layout} onLayoutChange={setLayout} />
+      {/* Controls Layout - Responsive */}
+      <div className="mb-6">
+        {/* Desktop: Single row */}
+        <div className="hidden lg:flex justify-between items-center gap-4">
+          <UsersSortSelector 
+            sortBy={sortBy}
+            sortOrder={sortOrder}
+            onSortChange={handleSort}
+          />
+          <UsersLayoutSwitcher layout={layout} onLayoutChange={setLayout} />
+        </div>
+
+        {/* Tablet and Mobile: Two rows */}
+        <div className="lg:hidden space-y-4">
+          <div className="flex justify-between items-center">
+            <UsersSortSelector 
+              sortBy={sortBy}
+              sortOrder={sortOrder}
+              onSortChange={handleSort}
+            />
+          </div>
+          <div className="flex justify-end">
+            <UsersLayoutSwitcher layout={layout} onLayoutChange={setLayout} />
+          </div>
+        </div>
       </div>
 
       {layout === "table" ? (
         <UsersTable 
-          users={users}
+          users={filteredUsers}
           onSort={handleSort}
           sortBy={sortBy}
           sortOrder={sortOrder}
@@ -109,7 +141,7 @@ export default function AdminUsers() {
         />
       ) : (
         <UsersGallery 
-          users={users}
+          users={filteredUsers}
           onUserClick={handleUserClick}
           onLoadMore={handleLoadMore}
           hasNextPage={false}
