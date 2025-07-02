@@ -27,7 +27,7 @@ export function ExpertsList({ experts }: ExpertsListProps) {
   };
 
   const handleExpertClick = (expertUuid: string) => {
-    navigate(`/admin/experts/expert/${expertUuid}`);
+    navigate(`/seller/${expertUuid}`);
   };
 
   return (

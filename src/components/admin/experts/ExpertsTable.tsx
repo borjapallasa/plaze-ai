@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
@@ -33,7 +34,7 @@ export function ExpertsTable({ experts, sortField, sortDirection, onSort }: Expe
   };
 
   const handleExpertClick = (expertUuid: string) => {
-    navigate(`/admin/experts/expert/${expertUuid}`);
+    navigate(`/seller/${expertUuid}`);
   };
 
   return (
