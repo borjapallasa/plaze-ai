@@ -45,7 +45,7 @@ export function ExpertsList({ experts }: ExpertsListProps) {
             <CardContent className="p-6">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 {/* Avatar and basic info */}
-                <div className="lg:col-span-3 flex items-start gap-4">
+                <div className="lg:col-span-4 flex items-start gap-4">
                   <div className="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
                     {expert.thumbnail ? (
                       <img
@@ -59,9 +59,18 @@ export function ExpertsList({ experts }: ExpertsListProps) {
                   </div>
                   
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-lg mb-1 truncate">{expert.name || 'Unnamed Expert'}</h3>
-                    <p className="text-[#8E9196] text-sm mb-2 truncate">{expert.title || 'No title'}</p>
-                    {getStatusBadge(expert.status)}
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-lg mb-1 truncate">{expert.name || 'Unnamed Expert'}</h3>
+                        <p className="text-[#8E9196] text-sm mb-2 truncate">{expert.title || 'No title'}</p>
+                        <p className="text-[#8E9196] text-sm line-clamp-2 leading-relaxed">
+                          {expert.description || 'No description available'}
+                        </p>
+                      </div>
+                      <div className="flex-shrink-0">
+                        {getStatusBadge(expert.status)}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -93,7 +102,7 @@ export function ExpertsList({ experts }: ExpertsListProps) {
                 </div>
 
                 {/* Stats and metrics */}
-                <div className="lg:col-span-3 space-y-3">
+                <div className="lg:col-span-4 space-y-3">
                   <div className="flex items-center gap-2 text-sm">
                     <Package className="h-4 w-4 text-[#8E9196] flex-shrink-0" />
                     <span className="text-[#8E9196]">Products:</span>
@@ -111,13 +120,6 @@ export function ExpertsList({ experts }: ExpertsListProps) {
                       📍 {expert.location}
                     </div>
                   )}
-                </div>
-
-                {/* Description */}
-                <div className="lg:col-span-2 flex items-center">
-                  <p className="text-[#8E9196] text-sm line-clamp-3 leading-relaxed">
-                    {expert.description || 'No description available'}
-                  </p>
                 </div>
               </div>
             </CardContent>
