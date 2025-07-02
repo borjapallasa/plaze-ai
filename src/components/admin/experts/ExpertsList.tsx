@@ -62,10 +62,8 @@ export function ExpertsList({ experts }: ExpertsListProps) {
                     
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold text-lg mb-1 truncate">{expert.name || 'Unnamed Expert'}</h3>
-                      <p className="text-[#8E9196] text-sm mb-2 truncate">{expert.title || 'No title'}</p>
-                      <p className="text-[#8E9196] text-sm line-clamp-2 leading-relaxed">
-                        {expert.description || 'No description available'}
-                      </p>
+                      {getStatusBadge(expert.status)}
+                      <p className="text-[#8E9196] text-sm mt-2 truncate">{expert.title || 'No title'}</p>
                     </div>
                   </div>
 
@@ -120,11 +118,6 @@ export function ExpertsList({ experts }: ExpertsListProps) {
                       </div>
                     )}
                   </div>
-                </div>
-
-                {/* Status badge on the right */}
-                <div className="flex-shrink-0 ml-6">
-                  {getStatusBadge(expert.status)}
                 </div>
               </div>
             </CardContent>
