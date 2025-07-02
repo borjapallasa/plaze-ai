@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { DefaultHeader } from "@/components/DefaultHeader";
+import { MainHeader } from "@/components/MainHeader";
 import { UsersHeader } from "@/components/admin/users/UsersHeader";
 import { UsersTable } from "@/components/admin/users/UsersTable";
 import { UsersList } from "@/components/admin/users/UsersList";
@@ -48,86 +48,93 @@ export default function AdminUsersPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <DefaultHeader title="Users" backLink="/admin" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <UsersErrorState onRetry={refetch} />
+      <>
+        <MainHeader />
+        <div className="min-h-screen bg-gray-50 pt-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <UsersErrorState onRetry={refetch} />
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <DefaultHeader title="Users" backLink="/admin" />
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <UsersHeader
-          searchTerm={searchQuery}
-          setSearchTerm={setSearchQuery}
-          statusFilter={roleFilter}
-          setStatusFilter={setRoleFilter}
-          sortBy={sortField}
-          sortOrder={sortDirection}
-          onSortChange={handleSort}
-          layout={layout}
-          onLayoutChange={handleLayoutChange}
-        />
+    <>
+      <MainHeader />
+      <div className="min-h-screen bg-gray-50 pt-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <UsersHeader
+            searchTerm={searchQuery}
+            setSearchTerm={setSearchQuery}
+            statusFilter={roleFilter}
+            setStatusFilter={setRoleFilter}
+            sortBy={sortField as string}
+            sortOrder={sortDirection}
+            onSortChange={(field: string) => handleSort(field as keyof import("@/hooks/admin/useUsers").UserData)}
+            layout={layout as "table" | "gallery"}
+            onLayoutChange={(newLayout: "table" | "gallery") => {
+              if (newLayout === "table" || newLayout === "gallery") {
+                setLayout(newLayout);
+              }
+            }}
+          />
 
-        {isLoading ? (
-          <UsersLoadingState />
-        ) : (
-          <>
-            {layout === "table" && (
-              <UsersTable
-                users={users}
-                onSort={handleSort}
-                sortBy={sortField}
-                sortOrder={sortDirection}
-                onUserClick={handleUserClick}
-                onLoadMore={handleLoadMore}
-                hasNextPage={page < totalPages}
-                isFetchingNextPage={false}
-              />
-            )}
+          {isLoading ? (
+            <UsersLoadingState />
+          ) : (
+            <>
+              {layout === "table" && (
+                <UsersTable
+                  users={users}
+                  onSort={(field: string) => handleSort(field as keyof import("@/hooks/admin/useUsers").UserData)}
+                  sortBy={sortField as string}
+                  sortOrder={sortDirection}
+                  onUserClick={handleUserClick}
+                  onLoadMore={handleLoadMore}
+                  hasNextPage={page < totalPages}
+                  isFetchingNextPage={false}
+                />
+              )}
 
-            {layout === "list" && (
-              <UsersList
-                users={users}
-                sortField={sortField}
-                sortDirection={sortDirection}
-                onSort={handleSort}
-              />
-            )}
+              {layout === "list" && (
+                <UsersList
+                  users={users}
+                  sortField={sortField as string}
+                  sortDirection={sortDirection}
+                  onSort={(field: string) => handleSort(field as keyof import("@/hooks/admin/useUsers").UserData)}
+                />
+              )}
 
-            {layout === "gallery" && (
-              <UsersGallery
-                users={users}
-                onUserClick={handleUserClick}
-                onLoadMore={handleLoadMore}
-                hasNextPage={page < totalPages}
-                isFetchingNextPage={false}
-              />
-            )}
+              {layout === "gallery" && (
+                <UsersGallery
+                  users={users}
+                  onUserClick={handleUserClick}
+                  onLoadMore={handleLoadMore}
+                  hasNextPage={page < totalPages}
+                  isFetchingNextPage={false}
+                />
+              )}
 
-            {totalCount > 0 && (
-              <div className="mt-6 flex justify-between items-center">
-                <p className="text-sm text-gray-700">
-                  Showing {users.length} of {totalCount} users
-                </p>
-                {page < totalPages && (
-                  <button
-                    onClick={handleLoadMore}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                  >
-                    Load More
-                  </button>
-                )}
-              </div>
-            )}
-          </>
-        )}
+              {totalCount > 0 && (
+                <div className="mt-6 flex justify-between items-center">
+                  <p className="text-sm text-gray-700">
+                    Showing {users.length} of {totalCount} users
+                  </p>
+                  {page < totalPages && (
+                    <button
+                      onClick={handleLoadMore}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                    >
+                      Load More
+                    </button>
+                  )}
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

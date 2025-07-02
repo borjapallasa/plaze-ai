@@ -12,8 +12,8 @@ interface UsersHeaderProps {
   sortBy: string;
   sortOrder: "asc" | "desc";
   onSortChange: (field: string) => void;
-  layout: "table" | "gallery";
-  onLayoutChange: (layout: "table" | "gallery") => void;
+  layout: "table" | "list" | "gallery";
+  onLayoutChange: (layout: "table" | "list" | "gallery") => void;
 }
 
 export function UsersHeader({ 
