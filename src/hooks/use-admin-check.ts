@@ -25,6 +25,34 @@ export function useAdminCheck() {
 
       if (error) {
         console.error('Error checking admin status:', error);
+        // If user doesn't exist in users table, check if they should be admin based on email
+        if (error.code === 'PGRST116' && user.email === 'admin@mrktgxxi.com') {
+          console.log('User not found in users table, but email matches admin - creating admin user');
+          
+          // Try to insert the user as admin
+          const { data: insertData, error: insertError } = await supabase
+            .from('users')
+            .insert({
+              user_uuid: user.id,
+              email: user.email,
+              first_name: user.user_metadata?.first_name || '',
+              last_name: user.user_metadata?.last_name || '',
+              is_admin: true,
+              is_affiliate: false,
+              is_expert: false
+            })
+            .select('is_admin')
+            .single();
+
+          if (insertError) {
+            console.error('Error creating admin user:', insertError);
+            return { isAdmin: false };
+          }
+
+          console.log('Admin user created successfully:', insertData);
+          return { isAdmin: insertData?.is_admin || false };
+        }
+        
         return { isAdmin: false };
       }
 
