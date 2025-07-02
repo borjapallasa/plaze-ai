@@ -91,45 +91,47 @@ export default function AdminUsers() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <UsersHeader 
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
-        sortBy={sortBy}
-        sortOrder={sortOrder}
-        onSortChange={handleSort}
-        layout={layout}
-        onLayoutChange={setLayout}
-      />
-
-      {layout === "table" ? (
-        <UsersTable 
-          users={filteredUsers}
-          onSort={handleSort}
+    <div className="w-full min-h-screen">
+      <div className="w-full max-w-none px-4 py-8">
+        <UsersHeader 
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          statusFilter={statusFilter}
+          setStatusFilter={setStatusFilter}
           sortBy={sortBy}
           sortOrder={sortOrder}
-          onUserClick={handleUserClick}
-          onLoadMore={handleLoadMore}
-          hasNextPage={false}
-          isFetchingNextPage={false}
+          onSortChange={handleSort}
+          layout={layout}
+          onLayoutChange={setLayout}
         />
-      ) : (
-        <UsersGallery 
-          users={filteredUsers}
-          onUserClick={handleUserClick}
-          onLoadMore={handleLoadMore}
-          hasNextPage={false}
-          isFetchingNextPage={false}
-        />
-      )}
 
-      <UserDetailsDialog
-        user={selectedUser}
-        open={showUserDialog}
-        onOpenChange={setShowUserDialog}
-      />
+        {layout === "table" ? (
+          <UsersTable 
+            users={filteredUsers}
+            onSort={handleSort}
+            sortBy={sortBy}
+            sortOrder={sortOrder}
+            onUserClick={handleUserClick}
+            onLoadMore={handleLoadMore}
+            hasNextPage={false}
+            isFetchingNextPage={false}
+          />
+        ) : (
+          <UsersGallery 
+            users={filteredUsers}
+            onUserClick={handleUserClick}
+            onLoadMore={handleLoadMore}
+            hasNextPage={false}
+            isFetchingNextPage={false}
+          />
+        )}
+
+        <UserDetailsDialog
+          user={selectedUser}
+          open={showUserDialog}
+          onOpenChange={setShowUserDialog}
+        />
+      </div>
     </div>
   );
 }
