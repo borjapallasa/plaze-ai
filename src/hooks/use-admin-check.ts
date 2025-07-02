@@ -10,14 +10,16 @@ export function useAdminCheck() {
     queryKey: ['admin-check', user?.id],
     queryFn: async () => {
       if (!user?.id) {
+        console.log('No user ID found for admin check');
         return { isAdmin: false };
       }
 
       console.log('Checking admin status for user:', user.id);
+      console.log('User email:', user.email);
       
       const { data, error } = await supabase
         .from('users')
-        .select('is_admin')
+        .select('is_admin, email')
         .eq('user_uuid', user.id)
         .single();
 
@@ -27,6 +29,8 @@ export function useAdminCheck() {
       }
 
       console.log('Admin check result:', data);
+      console.log('Is admin:', data?.is_admin);
+      
       return { isAdmin: data?.is_admin || false };
     },
     enabled: !!user?.id,
