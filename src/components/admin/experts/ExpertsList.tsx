@@ -44,10 +44,10 @@ export function ExpertsList({ experts }: ExpertsListProps) {
             onClick={() => handleExpertClick(expert.expert_uuid)}
           >
             <CardContent className="p-6">
-              <div className="flex items-center">
+              <div className="flex items-start">
                 {/* Avatar and basic info - Fixed width */}
                 <div className="flex items-start gap-4 w-80 flex-shrink-0">
-                  <div className="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+                  <div className="w-16 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
                     {expert.thumbnail ? (
                       <img
                         src={expert.thumbnail}
@@ -59,10 +59,12 @@ export function ExpertsList({ experts }: ExpertsListProps) {
                     )}
                   </div>
                   
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-lg mb-1 truncate">{expert.name || 'Unnamed Expert'}</h3>
-                    {getStatusBadge(expert.status)}
-                    <p className="text-[#8E9196] text-sm mt-2 truncate">{expert.title || 'No title'}</p>
+                  <div className="flex-1 min-w-0 h-20 flex flex-col justify-between">
+                    <div>
+                      <h3 className="font-semibold text-lg mb-1 truncate">{expert.name || 'Unnamed Expert'}</h3>
+                      {getStatusBadge(expert.status)}
+                    </div>
+                    <p className="text-[#8E9196] text-sm truncate">{expert.title || 'No title'}</p>
                   </div>
                 </div>
 
