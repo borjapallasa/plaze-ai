@@ -1,6 +1,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { Link, useNavigate } from "react-router-dom";
 import { User, Calendar, Link as LinkIcon, Package, Users } from "lucide-react";
 import { Expert } from "../../../types/expert";
@@ -43,83 +44,87 @@ export function ExpertsList({ experts }: ExpertsListProps) {
             onClick={() => handleExpertClick(expert.expert_uuid)}
           >
             <CardContent className="p-6">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                {/* Avatar and basic info */}
-                <div className="lg:col-span-4 flex items-start gap-4">
-                  <div className="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
-                    {expert.thumbnail ? (
-                      <img
-                        src={expert.thumbnail}
-                        alt={expert.name || 'Expert'}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <User className="h-8 w-8 text-gray-400" />
+              <div className="flex items-center justify-between">
+                <div className="flex items-start gap-6 flex-1">
+                  {/* Avatar and basic info */}
+                  <div className="flex items-start gap-4">
+                    <div className="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+                      {expert.thumbnail ? (
+                        <img
+                          src={expert.thumbnail}
+                          alt={expert.name || 'Expert'}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <User className="h-8 w-8 text-gray-400" />
+                      )}
+                    </div>
+                    
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-lg mb-1 truncate">{expert.name || 'Unnamed Expert'}</h3>
+                      <p className="text-[#8E9196] text-sm mb-2 truncate">{expert.title || 'No title'}</p>
+                      <p className="text-[#8E9196] text-sm line-clamp-2 leading-relaxed">
+                        {expert.description || 'No description available'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <Separator orientation="vertical" className="h-20" />
+
+                  {/* Contact and profile info */}
+                  <div className="space-y-3 min-w-0 flex-1">
+                    <div className="flex items-center gap-2 text-sm">
+                      <User className="h-4 w-4 text-[#8E9196] flex-shrink-0" />
+                      <span className="text-[#8E9196] flex-shrink-0">Email:</span>
+                      <span className="font-medium truncate">{expert.email || 'No email'}</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 text-sm">
+                      <LinkIcon className="h-4 w-4 text-[#8E9196] flex-shrink-0" />
+                      <span className="text-[#8E9196] flex-shrink-0">Profile:</span>
+                      <Link 
+                        to={`/expert/${expert.slug || expert.expert_uuid}`}
+                        className="text-blue-600 hover:text-blue-800 truncate"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        View Public Profile
+                      </Link>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 text-sm">
+                      <Calendar className="h-4 w-4 text-[#8E9196] flex-shrink-0" />
+                      <span className="text-[#8E9196] flex-shrink-0">Created:</span>
+                      <span className="font-medium">{new Date(expert.created_at).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+
+                  <Separator orientation="vertical" className="h-20" />
+
+                  {/* Stats and metrics */}
+                  <div className="space-y-3 min-w-0">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Package className="h-4 w-4 text-[#8E9196] flex-shrink-0" />
+                      <span className="text-[#8E9196]">Products:</span>
+                      <span className="font-medium">{expert.totalTemplates || 0}</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 text-sm">
+                      <Users className="h-4 w-4 text-[#8E9196] flex-shrink-0" />
+                      <span className="text-[#8E9196]">Communities:</span>
+                      <span className="font-medium">{expert.activeTemplates || 0}</span>
+                    </div>
+                    
+                    {expert.location && (
+                      <div className="text-sm text-[#8E9196] truncate">
+                        📍 {expert.location}
+                      </div>
                     )}
                   </div>
-                  
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-lg mb-1 truncate">{expert.name || 'Unnamed Expert'}</h3>
-                        <p className="text-[#8E9196] text-sm mb-2 truncate">{expert.title || 'No title'}</p>
-                        <p className="text-[#8E9196] text-sm line-clamp-2 leading-relaxed">
-                          {expert.description || 'No description available'}
-                        </p>
-                      </div>
-                      <div className="flex-shrink-0">
-                        {getStatusBadge(expert.status)}
-                      </div>
-                    </div>
-                  </div>
                 </div>
 
-                {/* Contact and profile info */}
-                <div className="lg:col-span-4 space-y-3">
-                  <div className="flex items-center gap-2 text-sm">
-                    <User className="h-4 w-4 text-[#8E9196] flex-shrink-0" />
-                    <span className="text-[#8E9196] flex-shrink-0">Email:</span>
-                    <span className="font-medium truncate">{expert.email || 'No email'}</span>
-                  </div>
-                  
-                  <div className="flex items-center gap-2 text-sm">
-                    <LinkIcon className="h-4 w-4 text-[#8E9196] flex-shrink-0" />
-                    <span className="text-[#8E9196] flex-shrink-0">Profile:</span>
-                    <Link 
-                      to={`/expert/${expert.slug || expert.expert_uuid}`}
-                      className="text-blue-600 hover:text-blue-800 truncate"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      View Public Profile
-                    </Link>
-                  </div>
-                  
-                  <div className="flex items-center gap-2 text-sm">
-                    <Calendar className="h-4 w-4 text-[#8E9196] flex-shrink-0" />
-                    <span className="text-[#8E9196] flex-shrink-0">Created:</span>
-                    <span className="font-medium">{new Date(expert.created_at).toLocaleDateString()}</span>
-                  </div>
-                </div>
-
-                {/* Stats and metrics */}
-                <div className="lg:col-span-4 space-y-3">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Package className="h-4 w-4 text-[#8E9196] flex-shrink-0" />
-                    <span className="text-[#8E9196]">Products:</span>
-                    <span className="font-medium">{expert.totalTemplates || 0}</span>
-                  </div>
-                  
-                  <div className="flex items-center gap-2 text-sm">
-                    <Users className="h-4 w-4 text-[#8E9196] flex-shrink-0" />
-                    <span className="text-[#8E9196]">Communities:</span>
-                    <span className="font-medium">{expert.activeTemplates || 0}</span>
-                  </div>
-                  
-                  {expert.location && (
-                    <div className="text-sm text-[#8E9196] truncate">
-                      📍 {expert.location}
-                    </div>
-                  )}
+                {/* Status badge on the right */}
+                <div className="flex-shrink-0 ml-6">
+                  {getStatusBadge(expert.status)}
                 </div>
               </div>
             </CardContent>
