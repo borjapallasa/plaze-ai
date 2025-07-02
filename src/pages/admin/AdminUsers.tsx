@@ -1,161 +1,137 @@
 
-import { useState } from "react";
-import { Navigate } from "react-router-dom";
-import { MainHeader } from "@/components/MainHeader";
+import React, { useState, useMemo } from "react";
+import { useUsers } from "@/hooks/admin/useUsers";
 import { UsersHeader } from "@/components/admin/users/UsersHeader";
 import { UsersTable } from "@/components/admin/users/UsersTable";
-import { UsersList } from "@/components/admin/users/UsersList";
 import { UsersGallery } from "@/components/admin/users/UsersGallery";
+import { UserDetailsDialog } from "@/components/admin/users/UserDetailsDialog";
 import { UsersLoadingState } from "@/components/admin/users/UsersLoadingState";
 import { UsersErrorState } from "@/components/admin/users/UsersErrorState";
-import { useUsers } from "@/hooks/admin/useUsers";
-import { useAdminCheck } from "@/hooks/use-admin-check";
 
-type LayoutType = "table" | "list" | "gallery";
+interface UserData {
+  user_uuid: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  is_admin: boolean;
+  is_affiliate: boolean;
+  is_expert: boolean;
+  created_at: string;
+  transaction_count: number;
+  product_count: number;
+  total_spent: number;
+  user_thumbnail: string;
+  commissions_generated: number;
+}
 
-export default function AdminUsersPage() {
-  const [layout, setLayout] = useState<LayoutType>("table");
-  const [page, setPage] = useState(1);
-  const limit = 10;
+export default function AdminUsers() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState<keyof UserData>("created_at");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [layout, setLayout] = useState<"table" | "gallery">("table");
+  const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
+  const [showUserDialog, setShowUserDialog] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  // Check if user is admin
-  const { data: adminCheck, isLoading: adminLoading, error: adminError } = useAdminCheck();
-
-  const {
-    users,
-    totalCount,
-    totalPages,
-    searchQuery,
-    setSearchQuery,
-    roleFilter,
-    setRoleFilter,
-    sortField,
-    sortDirection,
-    handleSort,
-    isLoading,
-    error,
+  const { 
+    data: usersData, 
+    isLoading, 
+    error, 
     refetch
-  } = useUsers(page, limit);
+  } = useUsers();
 
-  const handleUserClick = (user: any) => {
-    console.log('User clicked:', user);
-  };
+  // Extract users array from the data structure and ensure proper typing
+  const users: UserData[] = Array.isArray(usersData) ? usersData.map(user => ({
+    ...user,
+    commissions_generated: user.commissions_generated || 0
+  })) : (usersData?.users || []).map(user => ({
+    ...user,
+    commissions_generated: user.commissions_generated || 0
+  }));
 
-  const handleLayoutChange = (newLayout: LayoutType) => {
-    setLayout(newLayout);
-  };
+  // Filter users based on search term
+  const filteredUsers = useMemo(() => {
+    if (!searchTerm.trim()) return users;
+    
+    const searchLower = searchTerm.toLowerCase();
+    return users.filter(user => 
+      user.first_name?.toLowerCase().includes(searchLower) ||
+      user.last_name?.toLowerCase().includes(searchLower) ||
+      user.email?.toLowerCase().includes(searchLower) ||
+      user.user_uuid?.toLowerCase().includes(searchLower) ||
+      `${user.first_name} ${user.last_name}`.toLowerCase().includes(searchLower)
+    );
+  }, [users, searchTerm]);
 
-  const handleLoadMore = () => {
-    if (page < totalPages) {
-      setPage(prev => prev + 1);
+  const handleSort = (field: string) => {
+    const typedField = field as keyof UserData;
+    if (sortBy === typedField) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortBy(typedField);
+      setSortOrder("asc");
     }
   };
 
-  // Show loading while checking admin status
-  if (adminLoading) {
-    return (
-      <>
-        <MainHeader />
-        <div className="min-h-screen bg-white pt-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <UsersLoadingState />
-          </div>
-        </div>
-      </>
-    );
-  }
+  const handleUserClick = (user: UserData) => {
+    setSelectedUser(user);
+    setShowUserDialog(true);
+  };
 
-  // Redirect if not admin or admin check failed
-  if (adminError || !adminCheck?.isAdmin) {
-    console.log('Admin check failed:', { adminError, adminCheck });
-    return <Navigate to="/" replace />;
+  const handleLoadMore = () => {
+    // Load more functionality can be implemented here if needed
+  };
+
+  if (isLoading) {
+    return <UsersLoadingState />;
   }
 
   if (error) {
-    return (
-      <>
-        <MainHeader />
-        <div className="min-h-screen bg-white pt-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <UsersErrorState onRetry={refetch} />
-          </div>
-        </div>
-      </>
-    );
+    return <UsersErrorState onRetry={refetch} />;
   }
 
   return (
-    <>
-      <MainHeader />
-      <div className="min-h-screen bg-white pt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <UsersHeader
-            searchTerm={searchQuery}
-            setSearchTerm={setSearchQuery}
-            statusFilter={roleFilter}
-            setStatusFilter={setRoleFilter}
-            sortBy={sortField}
-            sortOrder={sortDirection}
-            onSortChange={handleSort}
-            layout={layout}
-            onLayoutChange={handleLayoutChange}
+    <div className="w-full min-h-screen">
+      <div className="w-full max-w-none px-4 py-8">
+        <UsersHeader 
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          statusFilter={statusFilter}
+          setStatusFilter={setStatusFilter}
+          sortBy={sortBy}
+          sortOrder={sortOrder}
+          onSortChange={handleSort}
+          layout={layout}
+          onLayoutChange={setLayout}
+        />
+
+        {layout === "table" ? (
+          <UsersTable 
+            users={filteredUsers}
+            onSort={handleSort}
+            sortBy={sortBy}
+            sortOrder={sortOrder}
+            onUserClick={handleUserClick}
+            onLoadMore={handleLoadMore}
+            hasNextPage={false}
+            isFetchingNextPage={false}
           />
+        ) : (
+          <UsersGallery 
+            users={filteredUsers}
+            onUserClick={handleUserClick}
+            onLoadMore={handleLoadMore}
+            hasNextPage={false}
+            isFetchingNextPage={false}
+          />
+        )}
 
-          {isLoading ? (
-            <UsersLoadingState />
-          ) : (
-            <>
-              {layout === "table" && (
-                <UsersTable
-                  users={users}
-                  onSort={handleSort}
-                  sortBy={sortField}
-                  sortOrder={sortDirection}
-                  onUserClick={handleUserClick}
-                  onLoadMore={handleLoadMore}
-                  hasNextPage={page < totalPages}
-                  isFetchingNextPage={false}
-                />
-              )}
-
-              {layout === "list" && (
-                <UsersList
-                  users={users}
-                  sortField={sortField}
-                  sortDirection={sortDirection}
-                  onSort={handleSort}
-                />
-              )}
-
-              {layout === "gallery" && (
-                <UsersGallery
-                  users={users}
-                  onUserClick={handleUserClick}
-                  onLoadMore={handleLoadMore}
-                  hasNextPage={page < totalPages}
-                  isFetchingNextPage={false}
-                />
-              )}
-
-              {totalCount > 0 && (
-                <div className="mt-6 flex justify-between items-center">
-                  <p className="text-sm text-gray-700">
-                    Showing {users.length} of {totalCount} users
-                  </p>
-                  {page < totalPages && (
-                    <button
-                      onClick={handleLoadMore}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                    >
-                      Load More
-                    </button>
-                  )}
-                </div>
-              )}
-            </>
-          )}
-        </div>
+        <UserDetailsDialog
+          user={selectedUser}
+          open={showUserDialog}
+          onOpenChange={setShowUserDialog}
+        />
       </div>
-    </>
+    </div>
   );
 }
