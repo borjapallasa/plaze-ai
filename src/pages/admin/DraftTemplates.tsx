@@ -1,4 +1,3 @@
-
 import { Search, User, DollarSign, Calendar, LayoutGrid, LayoutList, Grid3X3, ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -186,14 +185,14 @@ export default function DraftTemplates() {
 
   // Get counts for each status from the unfiltered templates data
   const getStatusCounts = () => {
-    if (!allTemplates) return { all: 0, draft: 0, review: 0, active: 0, rejected: 0 };
+    if (!allTemplates) return { all: 0, draft: 0, review: 0, active: 0, inactive: 0 };
     
     const counts = {
       all: allTemplates.length,
       draft: allTemplates.filter(template => template.status === 'draft').length,
       review: allTemplates.filter(template => template.status === 'review').length,
       active: allTemplates.filter(template => template.status === 'active').length,
-      rejected: allTemplates.filter(template => template.status === 'rejected').length
+      inactive: allTemplates.filter(template => template.status === 'inactive').length
     };
     
     return counts;
@@ -206,7 +205,7 @@ export default function DraftTemplates() {
     { id: "draft", label: "Draft", count: statusCounts.draft },
     { id: "review", label: "In Review", count: statusCounts.review },
     { id: "active", label: "Active", count: statusCounts.active },
-    { id: "rejected", label: "Rejected", count: statusCounts.rejected }
+    { id: "inactive", label: "Inactive", count: statusCounts.inactive }
   ];
 
   if (isLoading) {

@@ -91,7 +91,7 @@ function App() {
           <Route path="/admin/admins/admin/:id" element={<AdminUserDetailsPage />} />
           <Route path="/admin/transactions" element={<AdminTransactionsPage />} />
           <Route path="/admin/transactions/transaction/:id" element={<AdminTransactionDetailsPage />} />
-          <Route path="/admin/products/draft" element={<DraftTemplatesPage />} />
+          <Route path="/admin/products" element={<DraftTemplatesPage />} />
           <Route path="/admin/products/product/:id" element={<AdminTemplateDetailsPage />} />
           <Route path="/affiliates/dashboard" element={<AffiliatesPage />} />
           <Route path="/search" element={<SearchResults />} />
