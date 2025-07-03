@@ -302,15 +302,15 @@ export default function AdminUserDetails() {
             </CardContent>
           </Card>
 
-          {/* Communities & Activity Card */}
+          {/* Financial Activity Card */}
           <Card className="shadow-sm">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold">Communities & Activity</CardTitle>
+              <CardTitle className="text-lg font-semibold">Financial Activity</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Communities Joined */}
+              {/* Communities Activity */}
               <div>
-                <h4 className="text-md font-medium mb-4">Communities Joined</h4>
+                <h4 className="text-md font-medium mb-4">Communities Activity</h4>
                 {isLoadingCommunities ? (
                   <div className="text-center py-4 text-[#8E9196]">
                     Loading communities...
