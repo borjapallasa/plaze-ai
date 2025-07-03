@@ -11,7 +11,12 @@ export function TemplateHeader({ productName, publicLink }: TemplateHeaderProps)
   const navigate = useNavigate();
 
   const handleBack = () => {
-    navigate(-1);
+    // Try to go back to the previous page, but fallback to admin products if no history
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/admin/products');
+    }
   };
 
   const handlePublicLinkClick = () => {
