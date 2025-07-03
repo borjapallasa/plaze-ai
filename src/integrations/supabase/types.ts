@@ -1349,6 +1349,7 @@ export type Database = {
           affiliate_information: string | null
           affiliate_program: boolean | null
           affiliation_amount: number | null
+          category: Json | null
           change_reasons: string | null
           changes_neeeded: string | null
           community_product_uuid: string | null
@@ -1358,9 +1359,6 @@ export type Database = {
           difficulty_level: string | null
           expert_uuid: string | null
           fees_amount: number | null
-          free_or_paid:
-            | Database["public"]["Enums"]["product_free_or_paid"]
-            | null
           id: number
           industries: Json | null
           name: string | null
@@ -1382,15 +1380,8 @@ export type Database = {
           tech_stack: string | null
           tech_stack_price: string | null
           thumbnail: string | null
-          type: Database["public"]["Enums"]["product_type"] | null
           use_case: Json | null
           user_uuid: string | null
-          utm_campaign: string | null
-          utm_content: string | null
-          utm_id: string | null
-          utm_medium: string | null
-          utm_source: string | null
-          utm_term: string | null
           variant_count: number | null
         }
         Insert: {
@@ -1398,6 +1389,7 @@ export type Database = {
           affiliate_information?: string | null
           affiliate_program?: boolean | null
           affiliation_amount?: number | null
+          category?: Json | null
           change_reasons?: string | null
           changes_neeeded?: string | null
           community_product_uuid?: string | null
@@ -1407,9 +1399,6 @@ export type Database = {
           difficulty_level?: string | null
           expert_uuid?: string | null
           fees_amount?: number | null
-          free_or_paid?:
-            | Database["public"]["Enums"]["product_free_or_paid"]
-            | null
           id?: number
           industries?: Json | null
           name?: string | null
@@ -1431,15 +1420,8 @@ export type Database = {
           tech_stack?: string | null
           tech_stack_price?: string | null
           thumbnail?: string | null
-          type?: Database["public"]["Enums"]["product_type"] | null
           use_case?: Json | null
           user_uuid?: string | null
-          utm_campaign?: string | null
-          utm_content?: string | null
-          utm_id?: string | null
-          utm_medium?: string | null
-          utm_source?: string | null
-          utm_term?: string | null
           variant_count?: number | null
         }
         Update: {
@@ -1447,6 +1429,7 @@ export type Database = {
           affiliate_information?: string | null
           affiliate_program?: boolean | null
           affiliation_amount?: number | null
+          category?: Json | null
           change_reasons?: string | null
           changes_neeeded?: string | null
           community_product_uuid?: string | null
@@ -1456,9 +1439,6 @@ export type Database = {
           difficulty_level?: string | null
           expert_uuid?: string | null
           fees_amount?: number | null
-          free_or_paid?:
-            | Database["public"]["Enums"]["product_free_or_paid"]
-            | null
           id?: number
           industries?: Json | null
           name?: string | null
@@ -1480,15 +1460,8 @@ export type Database = {
           tech_stack?: string | null
           tech_stack_price?: string | null
           thumbnail?: string | null
-          type?: Database["public"]["Enums"]["product_type"] | null
           use_case?: Json | null
           user_uuid?: string | null
-          utm_campaign?: string | null
-          utm_content?: string | null
-          utm_id?: string | null
-          utm_medium?: string | null
-          utm_source?: string | null
-          utm_term?: string | null
           variant_count?: number | null
         }
         Relationships: [
