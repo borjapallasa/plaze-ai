@@ -13,6 +13,9 @@ export interface CommunitySubscription {
     name: string;
     title: string;
   };
+  experts?: {
+    name: string;
+  };
 }
 
 export function useUserCommunitySubscriptions(userId: string | undefined) {
@@ -33,6 +36,9 @@ export function useUserCommunitySubscriptions(userId: string | undefined) {
           communities:community_uuid (
             name,
             title
+          ),
+          experts:expert_user_uuid (
+            name
           )
         `)
         .eq('user_uuid', userId)
