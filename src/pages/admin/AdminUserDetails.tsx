@@ -99,7 +99,6 @@ export default function AdminUserDetails() {
 
   const fullName = user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : user.first_name || user.last_name || 'Unnamed User';
 
-  // Filter transactions based on active tab
   const getFilteredTransactions = () => {
     switch (activeTab) {
       case "products":
@@ -421,7 +420,6 @@ export default function AdminUserDetails() {
                           </TableRow>
                         ) : (
                           filteredTransactions.map((transaction) => {
-                            // Determine the correct ID for navigation based on transaction type
                             let linkId = transaction.transaction_uuid;
                             
                             if (transaction.type === 'product' && transaction.products_transactions_uuid) {
