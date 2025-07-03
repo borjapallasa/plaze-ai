@@ -2,6 +2,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { User, Calendar } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface UserData {
   user_uuid: string;
@@ -28,6 +29,8 @@ interface UsersGalleryProps {
 }
 
 export function UsersGallery({ users, onUserClick }: UsersGalleryProps) {
+  const navigate = useNavigate();
+
   const getUserRoleBadges = (user: UserData) => {
     const badges = [];
     if (user.is_admin) badges.push(<Badge key="admin" variant="secondary" className="bg-purple-100 text-purple-800">Admin</Badge>);
@@ -38,6 +41,7 @@ export function UsersGallery({ users, onUserClick }: UsersGalleryProps) {
 
   const handleUserClick = (user: UserData) => {
     onUserClick(user);
+    navigate(`/admin/users/user/${user.user_uuid}`);
   };
 
   return (
