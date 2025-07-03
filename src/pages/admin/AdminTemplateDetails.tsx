@@ -1,8 +1,11 @@
 
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useProduct } from "@/hooks/use-product";
+import { useAdminCheck } from "@/hooks/use-admin-check";
+import { useAuth } from "@/lib/auth";
 import { TemplateHeader } from "@/components/admin/template/TemplateHeader";
 import { TemplateStatusCard } from "@/components/admin/template/TemplateStatusCard";
 import { TemplateHeroImage } from "@/components/admin/template/TemplateHeroImage";
@@ -16,11 +19,48 @@ import { TemplateDemoCard } from "@/components/admin/template/TemplateDemoCard";
 
 export default function AdminTemplateDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
+  const { data: adminCheck, isLoading: adminLoading } = useAdminCheck();
   
   // Pass the id parameter explicitly as productId to the useProduct hook
   const { product, isLoading, error } = useProduct({
     productId: id
   });
+
+  // Redirect if not admin or not authenticated
+  useEffect(() => {
+    if (!authLoading && !adminLoading) {
+      if (!user) {
+        navigate('/sign-in');
+        return;
+      }
+      
+      if (!adminCheck?.isAdmin) {
+        navigate('/');
+        return;
+      }
+    }
+  }, [user, adminCheck, authLoading, adminLoading, navigate]);
+
+  // Show loading state while checking authentication
+  if (authLoading || adminLoading) {
+    return (
+      <>
+        <MainHeader />
+        <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16">
+          <div className="text-center py-8">
+            <p className="text-[#8E9196]">Loading...</p>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // Don't render anything if redirecting
+  if (!user || !adminCheck?.isAdmin) {
+    return null;
+  }
 
   if (isLoading) {
     return (
