@@ -3,11 +3,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+type CommunitySubscriptionStatus = "active" | "inactive" | "pending";
+
 export function useUpdateCommunitySubscriptionStatus() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ subscriptionId, status }: { subscriptionId: string; status: string }) => {
+    mutationFn: async ({ subscriptionId, status }: { subscriptionId: string; status: CommunitySubscriptionStatus }) => {
       const { error } = await supabase
         .from('community_subscriptions')
         .update({ 

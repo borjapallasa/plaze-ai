@@ -55,7 +55,7 @@ export default function AdminUserDetails() {
   const confirmDeactivation = () => {
     if (selectedSubscription) {
       updateSubscriptionStatus.mutate(
-        { subscriptionId: selectedSubscription.id, status: 'inactive' },
+        { subscriptionId: selectedSubscription.id, status: 'inactive' as const },
         {
           onSuccess: () => {
             setSelectedSubscription(null);
