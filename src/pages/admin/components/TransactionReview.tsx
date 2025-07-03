@@ -1,5 +1,4 @@
-
-import { Star } from "lucide-react";
+import { Star, MessageCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTransactionItemReview } from "@/hooks/use-transaction-item-review";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,9 +11,10 @@ interface TransactionReviewProps {
   transactionUuid: string;
   productUuid?: string;
   expertUuid?: string;
+  isAdminView?: boolean;
 }
 
-export function TransactionReview({ transactionUuid, productUuid, expertUuid }: TransactionReviewProps) {
+export function TransactionReview({ transactionUuid, productUuid, expertUuid, isAdminView = false }: TransactionReviewProps) {
   const { user } = useAuth();
   console.log('TransactionReview - transactionUuid:', transactionUuid);
   console.log('TransactionReview - productUuid:', productUuid);
@@ -50,7 +50,7 @@ export function TransactionReview({ transactionUuid, productUuid, expertUuid }: 
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Customer Reviews</CardTitle>
+          <CardTitle className="text-lg">Review</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -66,7 +66,7 @@ export function TransactionReview({ transactionUuid, productUuid, expertUuid }: 
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Customer Reviews</CardTitle>
+          <CardTitle className="text-lg">Review</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
@@ -78,18 +78,54 @@ export function TransactionReview({ transactionUuid, productUuid, expertUuid }: 
     );
   }
 
+  // If admin view and no reviews, show empty state without action buttons
+  if (isAdminView && (!reviews || reviews.length === 0)) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Review</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="p-12 text-center">
+            <div className="flex flex-col items-center space-y-4">
+              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
+                <MessageCircle className="w-8 h-8 text-gray-400" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-lg font-medium text-gray-900">
+                  No review yet
+                </h3>
+                <p className="text-gray-600 max-w-md">
+                  This transaction doesn't have a review from the customer.
+                </p>
+              </div>
+              <div className="flex gap-1.5 mt-4">
+                {Array(5).fill(0).map((_, i) => (
+                  <Star 
+                    key={i} 
+                    className="h-6 w-6 fill-gray-200 text-gray-200"
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   if (reviews && reviews.length > 0) {
     return (
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">
-            Customer Reviews ({reviews.length})
+            Review ({reviews.length})
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
             {reviews.map((review, index) => {
-              const isUserReview = user && (
+              const isUserReview = !isAdminView && user && (
                 review.buyer_email === user.email || 
                 review.buyer_name === `${user.user_metadata?.first_name || ''} ${user.user_metadata?.last_name || ''}`.trim()
               );
@@ -141,12 +177,29 @@ export function TransactionReview({ transactionUuid, productUuid, expertUuid }: 
     );
   }
 
+  // For non-admin views, show the add review form
+  if (!isAdminView) {
+    return (
+      <AddReviewForm 
+        transactionUuid={transactionUuid} 
+        productUuid={productUuid}
+        expertUuid={expertUuid}
+        onReviewAdded={handleReviewUpdated} 
+      />
+    );
+  }
+
+  // Admin view with no reviews - this should be handled above, but keeping as fallback
   return (
-    <AddReviewForm 
-      transactionUuid={transactionUuid} 
-      productUuid={productUuid}
-      expertUuid={expertUuid}
-      onReviewAdded={handleReviewUpdated} 
-    />
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-lg">Review</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="text-center py-8 text-[#8E9196]">
+          No review available
+        </div>
+      </CardContent>
+    </Card>
   );
 }

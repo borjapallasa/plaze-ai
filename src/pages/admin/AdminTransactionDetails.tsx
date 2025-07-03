@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { MainHeader } from "@/components/MainHeader";
 import { ArrowLeft, Copy } from "lucide-react";
@@ -235,7 +234,10 @@ export default function AdminTransactionDetails() {
 
                 {/* Only render TransactionReview when we have the actual transaction_uuid */}
                 {actualTransactionUuid && (
-                  <TransactionReview transactionUuid={actualTransactionUuid} />
+                  <TransactionReview 
+                    transactionUuid={actualTransactionUuid} 
+                    isAdminView={true}
+                  />
                 )}
               </>
             )}
