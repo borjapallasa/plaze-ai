@@ -333,7 +333,7 @@ export default function AdminUserDetails() {
                               </Badge>
                             </div>
                             
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm text-[#8E9196]">
+                            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-sm text-[#8E9196]">
                               <div>
                                 <span className="block font-medium">Joined:</span>
                                 <span>{new Date(subscription.created_at).toLocaleDateString()}</span>
@@ -345,8 +345,12 @@ export default function AdminUserDetails() {
                                 </div>
                               )}
                               <div>
-                                <span className="block font-medium">Amount:</span>
+                                <span className="block font-medium">Price:</span>
                                 <span className="font-semibold text-[#1A1F2C]">${(subscription.amount || 0).toFixed(2)}</span>
+                              </div>
+                              <div>
+                                <span className="block font-medium">Spent:</span>
+                                <span className="font-semibold text-[#1A1F2C]">${(subscription.total_amount || 0).toFixed(2)}</span>
                               </div>
                             </div>
                           </div>
