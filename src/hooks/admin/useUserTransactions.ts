@@ -28,12 +28,7 @@ export function useUserTransactions(userUuid: string) {
           created_at,
           expert_uuid,
           products_transactions_uuid,
-          afiliate_fees,
-          experts!inner(name),
-          products_transactions!left(
-            expert_uuid,
-            experts_product_transactions:experts!inner(name)
-          )
+          afiliate_fees
         `)
         .eq('user_uuid', userUuid)
         .order('created_at', { ascending: false });
@@ -45,20 +40,24 @@ export function useUserTransactions(userUuid: string) {
 
       console.log('Raw transaction data:', data);
 
-      // For community transactions, we need to fetch the community_transaction_uuid separately
+      // Transform the data and fetch seller names and community transaction UUIDs
       const transformedData: UserTransaction[] = [];
       
       for (const transaction of data || []) {
         let sellerName = null;
         let communityTransactionUuid = null;
         
-        // For product transactions, get seller name from products_transactions -> experts join
-        if (transaction.type === 'product' && transaction.products_transactions?.experts_product_transactions?.name) {
-          sellerName = transaction.products_transactions.experts_product_transactions.name;
-        } 
-        // For other transaction types, use the direct expert relationship
-        else if (transaction.experts?.name) {
-          sellerName = transaction.experts.name;
+        // For transactions with expert_uuid, fetch the expert name
+        if (transaction.expert_uuid) {
+          const { data: expertData, error: expertError } = await supabase
+            .from('experts')
+            .select('name')
+            .eq('expert_uuid', transaction.expert_uuid)
+            .maybeSingle();
+
+          if (!expertError && expertData) {
+            sellerName = expertData.name;
+          }
         }
 
         // For community transactions, fetch community_transaction_uuid
@@ -69,9 +68,7 @@ export function useUserTransactions(userUuid: string) {
             .eq('transaction_uuid', transaction.transaction_uuid)
             .maybeSingle();
 
-          if (communityError) {
-            console.error('Error fetching community transaction:', communityError);
-          } else if (communityTransactionData) {
+          if (!communityError && communityTransactionData) {
             communityTransactionUuid = communityTransactionData.community_subscription_transaction_uuid;
           }
         }
