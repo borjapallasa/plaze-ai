@@ -132,7 +132,13 @@ export function AffiliateOffersSection() {
       </div>
 
       {offers.length === 0 ? (
-        <div className="border border-dashed border-gray-200 rounded-lg bg-gray-50/50 py-16 px-8">
+        <div 
+          className="rounded-lg bg-gray-50/50 py-16 px-8"
+          style={{
+            border: '3px dashed #d1d5db',
+            borderRadius: '8px'
+          }}
+        >
           <div className="text-center">
             <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
               <Star className="w-8 h-8 text-gray-400" strokeWidth={1.5} />
