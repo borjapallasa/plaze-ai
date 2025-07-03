@@ -1,3 +1,4 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -315,30 +316,41 @@ export default function AdminUserDetails() {
                     Loading communities...
                   </div>
                 ) : communitySubscriptions && communitySubscriptions.length > 0 ? (
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {communitySubscriptions.map((subscription) => (
-                      <div key={subscription.community_subscription_uuid} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div className="flex flex-col gap-1">
-                          <span className="font-medium">
-                            {subscription.communities?.title || subscription.communities?.name || 'Unknown Community'}
-                          </span>
-                          <span className="text-sm text-[#8E9196]">
-                            Joined: {new Date(subscription.created_at).toLocaleDateString()}
-                          </span>
-                          {subscription.experts?.name && (
-                            <span className="text-sm text-[#8E9196]">
-                              Expert: {subscription.experts.name}
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <span className="font-medium">${(subscription.amount || 0).toFixed(2)}</span>
-                          <Badge
-                            variant="secondary"
-                            className={subscription.status === 'active' ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}
-                          >
-                            {subscription.status}
-                          </Badge>
+                      <div key={subscription.community_subscription_uuid} className="border border-gray-200 rounded-lg p-4 bg-white">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-3 mb-2">
+                              <h5 className="font-semibold text-lg text-[#1A1F2C] truncate">
+                                {subscription.communities?.title || subscription.communities?.name || 'Unknown Community'}
+                              </h5>
+                              <Badge
+                                variant="secondary"
+                                className={subscription.status === 'active' ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}
+                              >
+                                {subscription.status}
+                              </Badge>
+                            </div>
+                            
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm text-[#8E9196]">
+                              <div>
+                                <span className="block font-medium">Joined:</span>
+                                <span>{new Date(subscription.created_at).toLocaleDateString()}</span>
+                              </div>
+                              {subscription.experts?.name && (
+                                <div>
+                                  <span className="block font-medium">Expert:</span>
+                                  <span>{subscription.experts.name}</span>
+                                </div>
+                              )}
+                              <div>
+                                <span className="block font-medium">Amount:</span>
+                                <span className="font-semibold text-[#1A1F2C]">${(subscription.amount || 0).toFixed(2)}</span>
+                              </div>
+                            </div>
+                          </div>
+                          
                           {subscription.status === 'active' && (
                             <Button
                               variant="ghost"
@@ -347,7 +359,7 @@ export default function AdminUserDetails() {
                                 subscription.community_subscription_uuid,
                                 subscription.communities?.title || subscription.communities?.name || 'Unknown Community'
                               )}
-                              className="text-red-600 hover:text-red-800 hover:bg-red-50 p-1 h-auto"
+                              className="text-red-600 hover:text-red-800 hover:bg-red-50 ml-4 flex-shrink-0"
                             >
                               <X className="h-4 w-4" />
                             </Button>
@@ -357,7 +369,7 @@ export default function AdminUserDetails() {
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-4 text-[#8E9196]">
+                  <div className="text-center py-8 text-[#8E9196] border border-gray-200 rounded-lg">
                     No community subscriptions found
                   </div>
                 )}
