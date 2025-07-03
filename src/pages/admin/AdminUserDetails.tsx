@@ -1,3 +1,4 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { toast } from "sonner";
 import { useUserDetails } from "@/hooks/admin/useUserDetails";
 import { useUserTransactions } from "@/hooks/admin/useUserTransactions";
+import { useUserCommunitySubscriptions } from "@/hooks/admin/useUserCommunitySubscriptions";
 import { useState } from "react";
 import { toStartCase } from "@/lib/utils";
 
@@ -17,6 +19,7 @@ export default function AdminUserDetails() {
   const navigate = useNavigate();
   const { user, isLoading, error } = useUserDetails(id || '');
   const { transactions, isLoading: isLoadingTransactions, error: transactionsError } = useUserTransactions(id || '');
+  const { data: communitySubscriptions, isLoading: isLoadingCommunities } = useUserCommunitySubscriptions(id || '');
   const [activeTab, setActiveTab] = useState("all");
 
   const copyToClipboard = (text: string, label: string) => {
@@ -75,34 +78,6 @@ export default function AdminUserDetails() {
   }
 
   const fullName = user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : user.first_name || user.last_name || 'Unnamed User';
-
-  // Mock data for communities joined
-  const communitiesJoined = [
-    {
-      id: "1",
-      name: "AI & Machine Learning Hub",
-      joinedDate: "2024-01-15",
-      status: "active",
-      price: 29.99,
-      type: "monthly"
-    },
-    {
-      id: "2",
-      name: "Web Development Masterclass",
-      joinedDate: "2024-02-20",
-      status: "active",
-      price: 49.99,
-      type: "monthly"
-    },
-    {
-      id: "3",
-      name: "Startup Founders Circle",
-      joinedDate: "2023-12-01",
-      status: "cancelled",
-      price: 99.99,
-      type: "monthly"
-    }
-  ];
 
   // Filter transactions based on active tab
   const getFilteredTransactions = () => {
@@ -316,25 +291,39 @@ export default function AdminUserDetails() {
               {/* Communities Joined */}
               <div>
                 <h4 className="text-md font-medium mb-4">Communities Joined</h4>
-                <div className="space-y-3">
-                  {communitiesJoined.map((community) => (
-                    <div key={community.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <div className="flex flex-col gap-1">
-                        <span className="font-medium">{community.name}</span>
-                        <span className="text-sm text-[#8E9196]">Joined: {new Date(community.joinedDate).toLocaleDateString()}</span>
+                {isLoadingCommunities ? (
+                  <div className="text-center py-4 text-[#8E9196]">
+                    Loading communities...
+                  </div>
+                ) : communitySubscriptions && communitySubscriptions.length > 0 ? (
+                  <div className="space-y-3">
+                    {communitySubscriptions.map((subscription) => (
+                      <div key={subscription.community_subscription_uuid} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div className="flex flex-col gap-1">
+                          <span className="font-medium">
+                            {subscription.communities?.title || subscription.communities?.name || 'Unknown Community'}
+                          </span>
+                          <span className="text-sm text-[#8E9196]">
+                            Joined: {new Date(subscription.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="font-medium">${(subscription.amount || 0).toFixed(2)}</span>
+                          <Badge
+                            variant="secondary"
+                            className={subscription.status === 'active' ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}
+                          >
+                            {subscription.status}
+                          </Badge>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <span className="font-medium">${community.price}/{community.type}</span>
-                        <Badge
-                          variant="secondary"
-                          className={community.status === 'active' ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}
-                        >
-                          {community.status}
-                        </Badge>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-4 text-[#8E9196]">
+                    No community subscriptions found
+                  </div>
+                )}
               </div>
 
               <Separator />
