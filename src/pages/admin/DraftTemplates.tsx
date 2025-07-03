@@ -1,3 +1,4 @@
+
 import { Search, User, DollarSign, Calendar, LayoutGrid, LayoutList, Grid3X3, ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -26,6 +27,7 @@ interface Template {
   templateFiles?: boolean;
   createdAt: string;
   submittedAt?: string;
+  status: string;
 }
 
 type LayoutType = 'gallery' | 'grid' | 'list';
@@ -37,6 +39,7 @@ export default function DraftTemplates() {
   const [layout, setLayout] = useState<LayoutType>('grid');
   const [sortField, setSortField] = useState<SortField>('created_at');
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
+  const [statusFilter, setStatusFilter] = useState("review"); // Default to review status
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
@@ -47,10 +50,10 @@ export default function DraftTemplates() {
     }
   }, [isMobile, layout]);
 
-  const { data: templates = [], isLoading, error } = useQuery({
-    queryKey: ['draftTemplates'],
+  const { data: allTemplates = [], isLoading, error } = useQuery({
+    queryKey: ['allProducts'],
     queryFn: async () => {
-      console.log('Fetching draft templates with status = review');
+      console.log('Fetching all products');
       const { data, error } = await supabase
         .from('products')
         .select(`
@@ -63,19 +66,19 @@ export default function DraftTemplates() {
           price_from,
           created_at,
           submitted_at,
+          status,
           experts!inner(
             name,
             email
           )
-        `)
-        .eq('status', 'review');
+        `);
 
       if (error) {
-        console.error('Error fetching draft templates:', error);
+        console.error('Error fetching products:', error);
         throw error;
       }
 
-      console.log('Fetched draft templates:', data);
+      console.log('Fetched products:', data);
 
       return data?.map(product => ({
         id: product.product_uuid,
@@ -89,13 +92,14 @@ export default function DraftTemplates() {
         price: product.price_from ? `From $${product.price_from}` : 'Free',
         priceValue: product.price_from || 0,
         createdAt: product.created_at,
-        submittedAt: product.submitted_at
+        submittedAt: product.submitted_at,
+        status: product.status || 'draft'
       })) || [];
     }
   });
 
   const handleTemplateClick = (templateId: string) => {
-    navigate(`/admin/product/${templateId}`);
+    navigate(`/admin/products/product/${templateId}`);
   };
 
   const handleSortChange = (value: string) => {
@@ -149,10 +153,16 @@ export default function DraftTemplates() {
   };
 
   const getFilteredAndSortedTemplates = () => {
-    console.log('Filtering templates with query:', searchQuery);
+    console.log('Filtering templates with query:', searchQuery, 'status:', statusFilter);
     
-    // First filter by search query
-    const filtered = templates.filter(template => {
+    // First filter by status
+    const statusFiltered = allTemplates.filter(template => {
+      if (statusFilter === "all") return true;
+      return template.status === statusFilter;
+    });
+
+    // Then filter by search query
+    const filtered = statusFiltered.filter(template => {
       if (!searchQuery.trim()) return true;
       
       const searchLower = searchQuery.toLowerCase();
@@ -174,17 +184,42 @@ export default function DraftTemplates() {
 
   const filteredTemplates = getFilteredAndSortedTemplates();
 
+  // Get counts for each status from the unfiltered templates data
+  const getStatusCounts = () => {
+    if (!allTemplates) return { all: 0, draft: 0, review: 0, active: 0, rejected: 0 };
+    
+    const counts = {
+      all: allTemplates.length,
+      draft: allTemplates.filter(template => template.status === 'draft').length,
+      review: allTemplates.filter(template => template.status === 'review').length,
+      active: allTemplates.filter(template => template.status === 'active').length,
+      rejected: allTemplates.filter(template => template.status === 'rejected').length
+    };
+    
+    return counts;
+  };
+
+  const statusCounts = getStatusCounts();
+
+  const tabs = [
+    { id: "all", label: "All", count: statusCounts.all },
+    { id: "draft", label: "Draft", count: statusCounts.draft },
+    { id: "review", label: "In Review", count: statusCounts.review },
+    { id: "active", label: "Active", count: statusCounts.active },
+    { id: "rejected", label: "Rejected", count: statusCounts.rejected }
+  ];
+
   if (isLoading) {
     return (
       <>
         <MainHeader />
         <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16">
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-[#1A1F2C] mb-2">Draft Templates</h1>
-            <p className="text-[#8E9196]">Manage and review all template drafts</p>
+            <h1 className="text-2xl font-bold text-[#1A1F2C] mb-2">Products</h1>
+            <p className="text-[#8E9196]">Manage and review all products</p>
           </div>
           <div className="text-center py-8">
-            <p className="text-[#8E9196]">Loading draft templates...</p>
+            <p className="text-[#8E9196]">Loading products...</p>
           </div>
         </div>
       </>
@@ -197,11 +232,11 @@ export default function DraftTemplates() {
         <MainHeader />
         <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16">
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-[#1A1F2C] mb-2">Draft Templates</h1>
-            <p className="text-[#8E9196]">Manage and review all template drafts</p>
+            <h1 className="text-2xl font-bold text-[#1A1F2C] mb-2">Products</h1>
+            <p className="text-[#8E9196]">Manage and review all products</p>
           </div>
           <div className="text-center py-8">
-            <p className="text-red-600">Error loading draft templates. Please try again.</p>
+            <p className="text-red-600">Error loading products. Please try again.</p>
           </div>
         </div>
       </>
@@ -377,8 +412,37 @@ export default function DraftTemplates() {
       <MainHeader />
       <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-[#1A1F2C] mb-2">Draft Templates</h1>
-          <p className="text-[#8E9196]">Manage and review all template drafts ({templates.length} found)</p>
+          <h1 className="text-2xl font-bold text-[#1A1F2C] mb-2">Products</h1>
+          <p className="text-[#8E9196]">Manage and review all products ({allTemplates.length} found)</p>
+        </div>
+
+        {/* Custom styled tabs with counts */}
+        <div className="mb-6">
+          <div className="flex items-center gap-8 border-b border-[#E5E7EB] overflow-x-auto scrollbar-hide">
+            {tabs.map((tab) => {
+              const isActive = statusFilter === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setStatusFilter(tab.id)}
+                  className={`px-1 py-4 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                    isActive
+                      ? 'text-[#1A1F2C] border-[#1A1F2C]'
+                      : 'text-[#8E9196] border-transparent hover:text-[#1A1F2C] hover:border-[#8E9196]'
+                  }`}
+                >
+                  <span>{tab.label}</span>
+                  <span className={`ml-2 px-2 py-1 text-xs rounded-full ${
+                    isActive 
+                      ? 'bg-[#1A1F2C] text-white' 
+                      : 'bg-[#F3F4F6] text-[#8E9196]'
+                  }`}>
+                    {tab.count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         <div className="space-y-6">
@@ -442,7 +506,7 @@ export default function DraftTemplates() {
           {filteredTemplates.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-[#8E9196]">
-                {searchQuery ? 'No draft templates found matching your search criteria.' : 'No draft templates found.'}
+                {searchQuery ? 'No products found matching your search criteria.' : 'No products found.'}
               </p>
             </div>
           ) : (
