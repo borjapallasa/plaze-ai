@@ -1,8 +1,9 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, DollarSign, User, Copy, MapPin, ExternalLink, X } from "lucide-react";
+import { Calendar, Clock, DollarSign, User, Copy, MapPin, ExternalLink } from "lucide-react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -10,8 +11,6 @@ import { toast } from "sonner";
 import { useUserDetails } from "@/hooks/admin/useUserDetails";
 import { useUserTransactions } from "@/hooks/admin/useUserTransactions";
 import { useUserCommunitySubscriptions } from "@/hooks/admin/useUserCommunitySubscriptions";
-import { useUpdateCommunitySubscriptionStatus } from "@/hooks/admin/useUpdateCommunitySubscriptionStatus";
-import { UpdateSubscriptionStatusDialog } from "@/components/admin/users/UpdateSubscriptionStatusDialog";
 import { useState } from "react";
 import { toStartCase } from "@/lib/utils";
 
@@ -22,13 +21,6 @@ export default function AdminUserDetails() {
   const { transactions, isLoading: isLoadingTransactions, error: transactionsError } = useUserTransactions(id || '');
   const { data: communitySubscriptions, isLoading: isLoadingCommunities } = useUserCommunitySubscriptions(id || '');
   const [activeTab, setActiveTab] = useState("all");
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedSubscription, setSelectedSubscription] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
-
-  const updateStatusMutation = useUpdateCommunitySubscriptionStatus();
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
@@ -51,22 +43,6 @@ export default function AdminUserDetails() {
     if (user?.admin_uuid) {
       navigate(`/admin/admins/admin/${user.admin_uuid}`);
     }
-  };
-
-  const handleSetInactive = (subscriptionId: string, subscriptionName: string) => {
-    setSelectedSubscription({ id: subscriptionId, name: subscriptionName });
-    setDialogOpen(true);
-  };
-
-  const handleConfirmSetInactive = () => {
-    if (selectedSubscription) {
-      updateStatusMutation.mutate({
-        subscriptionId: selectedSubscription.id,
-        status: 'inactive'
-      });
-    }
-    setDialogOpen(false);
-    setSelectedSubscription(null);
   };
 
   if (isLoading) {
@@ -330,11 +306,6 @@ export default function AdminUserDetails() {
                           <span className="text-sm text-[#8E9196]">
                             Joined: {new Date(subscription.created_at).toLocaleDateString()}
                           </span>
-                          {subscription.expert?.name && (
-                            <span className="text-sm text-[#8E9196]">
-                              Expert: {subscription.expert.name}
-                            </span>
-                          )}
                         </div>
                         <div className="flex items-center gap-3">
                           <span className="font-medium">${(subscription.amount || 0).toFixed(2)}</span>
@@ -344,19 +315,6 @@ export default function AdminUserDetails() {
                           >
                             {subscription.status}
                           </Badge>
-                          {subscription.status === 'active' && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleSetInactive(
-                                subscription.community_subscription_uuid,
-                                subscription.communities?.title || subscription.communities?.name || 'Unknown Community'
-                              )}
-                              className="text-red-600 hover:text-red-800 p-1 h-auto"
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          )}
                         </div>
                       </div>
                     ))}
@@ -494,13 +452,6 @@ export default function AdminUserDetails() {
           </Card>
         </div>
       </div>
-
-      <UpdateSubscriptionStatusDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        onConfirm={handleConfirmSetInactive}
-        subscriptionName={selectedSubscription?.name || ''}
-      />
     </>
   );
 }
