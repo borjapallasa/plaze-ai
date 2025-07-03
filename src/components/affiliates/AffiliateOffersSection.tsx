@@ -135,7 +135,7 @@ export function AffiliateOffersSection() {
         <div 
           className="rounded-lg bg-gray-50/50 py-16 px-8"
           style={{
-            border: '3px dashed #d1d5db',
+            border: '2px dashed #d1d5db',
             borderRadius: '8px'
           }}
         >
