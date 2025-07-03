@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from "react";
 import { AffiliateOffersLayoutSwitcher, LayoutType } from "./AffiliateOffersLayoutSwitcher";
 import { AffiliateOffersSortSelector, SortOption } from "./AffiliateOffersSortSelector";
@@ -6,6 +7,7 @@ import { AffiliateOffersGrid } from "./AffiliateOffersGrid";
 import { AffiliateOffersList } from "./AffiliateOffersList";
 import { useAllAffiliateProducts } from "@/hooks/use-affiliate-products";
 import { useExistingPartnerships } from "@/hooks/use-existing-partnerships";
+import { Star } from "lucide-react";
 
 export function AffiliateOffersSection() {
   const [layout, setLayout] = useState<LayoutType>("grid");
@@ -130,12 +132,18 @@ export function AffiliateOffersSection() {
       </div>
 
       {offers.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">
-            {filterType === "all" 
-              ? "No new affiliate offers available at the moment." 
-              : `No new ${filterType} offers available at the moment.`}
-          </p>
+        <div className="border border-dashed border-gray-200 rounded-lg bg-gray-50/50 py-16 px-8">
+          <div className="text-center">
+            <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+              <Star className="w-8 h-8 text-gray-400" strokeWidth={1.5} />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">No offers available yet</h3>
+            <p className="text-gray-500 max-w-md mx-auto">
+              {filterType === "all" 
+                ? "There are currently no new affiliate offers available. Check back later as experts add new products to the affiliate program." 
+                : `There are currently no new ${filterType} offers available. Try changing your filter or check back later.`}
+            </p>
+          </div>
         </div>
       ) : (
         <>

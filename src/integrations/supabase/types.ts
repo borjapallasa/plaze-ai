@@ -952,21 +952,42 @@ export type Database = {
       }
       events: {
         Row: {
+          community_uuid: string | null
           created_at: string
           event_uuid: string
+          expert_uuid: string | null
           id: number
         }
         Insert: {
+          community_uuid?: string | null
           created_at?: string
           event_uuid?: string
+          expert_uuid?: string | null
           id?: number
         }
         Update: {
+          community_uuid?: string | null
           created_at?: string
           event_uuid?: string
+          expert_uuid?: string | null
           id?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "events_community_uuid_fkey"
+            columns: ["community_uuid"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["community_uuid"]
+          },
+          {
+            foreignKeyName: "events_expert_uuid_fkey"
+            columns: ["expert_uuid"]
+            isOneToOne: false
+            referencedRelation: "experts"
+            referencedColumns: ["expert_uuid"]
+          },
+        ]
       }
       expert_images: {
         Row: {
@@ -1800,6 +1821,7 @@ export type Database = {
       }
       threads_messages: {
         Row: {
+          community_uuid: string | null
           created_at: string
           id: number
           message: string | null
@@ -1809,6 +1831,7 @@ export type Database = {
           user_uuid: string | null
         }
         Insert: {
+          community_uuid?: string | null
           created_at?: string
           id?: number
           message?: string | null
@@ -1818,6 +1841,7 @@ export type Database = {
           user_uuid?: string | null
         }
         Update: {
+          community_uuid?: string | null
           created_at?: string
           id?: number
           message?: string | null
@@ -1840,6 +1864,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["user_uuid"]
+          },
+          {
+            foreignKeyName: "threads_messages_community_uuid_fkey"
+            columns: ["community_uuid"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["community_uuid"]
           },
         ]
       }
@@ -2012,6 +2043,7 @@ export type Database = {
           communities_pending: Json | null
           created_at: string
           email: string
+          expert_uuid: string | null
           fees_amount: number | null
           first_name: string | null
           id: number
@@ -2061,6 +2093,7 @@ export type Database = {
           communities_pending?: Json | null
           created_at?: string
           email: string
+          expert_uuid?: string | null
           fees_amount?: number | null
           first_name?: string | null
           id?: number
@@ -2110,6 +2143,7 @@ export type Database = {
           communities_pending?: Json | null
           created_at?: string
           email?: string
+          expert_uuid?: string | null
           fees_amount?: number | null
           first_name?: string | null
           id?: number
@@ -2146,7 +2180,15 @@ export type Database = {
           utm_term?: string | null
           via?: Database["public"]["Enums"]["signup_via"] | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "users_expert_uuid_fkey"
+            columns: ["expert_uuid"]
+            isOneToOne: false
+            referencedRelation: "experts"
+            referencedColumns: ["expert_uuid"]
+          },
+        ]
       }
       variants: {
         Row: {
