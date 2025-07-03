@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useAdminCheck } from "@/hooks/use-admin-check";
+import { useAuth } from "@/lib/auth";
 
 interface Template {
   id: string;
@@ -41,6 +43,23 @@ export default function DraftTemplates() {
   const [statusFilter, setStatusFilter] = useState("review"); // Default to review status
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { user, loading: authLoading } = useAuth();
+  const { data: adminCheck, isLoading: adminLoading } = useAdminCheck();
+
+  // Redirect if not admin or not authenticated
+  useEffect(() => {
+    if (!authLoading && !adminLoading) {
+      if (!user) {
+        navigate('/sign-in');
+        return;
+      }
+      
+      if (!adminCheck?.isAdmin) {
+        navigate('/');
+        return;
+      }
+    }
+  }, [user, adminCheck, authLoading, adminLoading, navigate]);
 
   // Switch to gallery view if currently on list view and on mobile
   useEffect(() => {
@@ -94,8 +113,28 @@ export default function DraftTemplates() {
         submittedAt: product.submitted_at,
         status: product.status || 'draft'
       })) || [];
-    }
+    },
+    enabled: !!user && !!adminCheck?.isAdmin
   });
+
+  // Show loading state while checking authentication
+  if (authLoading || adminLoading) {
+    return (
+      <>
+        <MainHeader />
+        <div className="container mx-auto px-4 py-8 max-w-[1400px] mt-16">
+          <div className="text-center py-8">
+            <p className="text-[#8E9196]">Loading...</p>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // Don't render anything if redirecting
+  if (!user || !adminCheck?.isAdmin) {
+    return null;
+  }
 
   const handleTemplateClick = (templateId: string) => {
     navigate(`/admin/products/product/${templateId}`);
