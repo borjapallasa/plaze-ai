@@ -8,6 +8,7 @@ export interface CommunitySubscription {
   status: string;
   created_at: string;
   amount: number;
+  total_amount?: number;
   cancelled_at?: string;
   communities?: {
     name: string;
@@ -32,6 +33,7 @@ export function useUserCommunitySubscriptions(userId: string | undefined) {
           status,
           created_at,
           amount,
+          total_amount,
           cancelled_at,
           communities:community_uuid (
             name,
