@@ -117,7 +117,7 @@ export default function AdminTemplateDetails() {
           isMobile 
         />
 
-        {/* Mobile Layout - Reordered for mobile */}
+        {/* Mobile Layout - Removed TemplateOrganization duplicate */}
         <div className="block lg:hidden space-y-6">
           <TemplateHeroImage 
             thumbnail={product.thumbnail} 
@@ -147,13 +147,6 @@ export default function AdminTemplateDetails() {
           <TemplateStatusCard 
             status={product.status || "active"}
             productUuid={product.product_uuid}
-          />
-          
-          <TemplateOrganization 
-            team={product.team}
-            industries={product.industries}
-            platform={product.platform}
-            useCase={product.use_case}
           />
 
           {/* Template Information moved to bottom on mobile/tablet */}
