@@ -134,6 +134,7 @@ export type Database = {
           community_uuid: string | null
           created_at: string
           expert_share: number | null
+          expert_uuid: string | null
           id: number
           product_uuid: string | null
           questions: Json | null
@@ -146,6 +147,7 @@ export type Database = {
           community_uuid?: string | null
           created_at?: string
           expert_share?: number | null
+          expert_uuid?: string | null
           id?: number
           product_uuid?: string | null
           questions?: Json | null
@@ -160,6 +162,7 @@ export type Database = {
           community_uuid?: string | null
           created_at?: string
           expert_share?: number | null
+          expert_uuid?: string | null
           id?: number
           product_uuid?: string | null
           questions?: Json | null
@@ -175,6 +178,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "communities"
             referencedColumns: ["community_uuid"]
+          },
+          {
+            foreignKeyName: "affiliate_products_expert_uuid_fkey"
+            columns: ["expert_uuid"]
+            isOneToOne: false
+            referencedRelation: "experts"
+            referencedColumns: ["expert_uuid"]
           },
           {
             foreignKeyName: "affiliate_products_product_uuid_fkey"
@@ -1113,8 +1123,10 @@ export type Database = {
       lessons: {
         Row: {
           classroom_uuid: string | null
+          community_uuid: string | null
           created_at: string
           description: string | null
+          expert_uuid: string | null
           id: number
           introduction: string | null
           lesson_uuid: string
@@ -1125,8 +1137,10 @@ export type Database = {
         }
         Insert: {
           classroom_uuid?: string | null
+          community_uuid?: string | null
           created_at?: string
           description?: string | null
+          expert_uuid?: string | null
           id?: number
           introduction?: string | null
           lesson_uuid?: string
@@ -1137,8 +1151,10 @@ export type Database = {
         }
         Update: {
           classroom_uuid?: string | null
+          community_uuid?: string | null
           created_at?: string
           description?: string | null
+          expert_uuid?: string | null
           id?: number
           introduction?: string | null
           lesson_uuid?: string
@@ -1154,6 +1170,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "classrooms"
             referencedColumns: ["classroom_uuid"]
+          },
+          {
+            foreignKeyName: "lessons_community_uuid_fkey"
+            columns: ["community_uuid"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["community_uuid"]
+          },
+          {
+            foreignKeyName: "lessons_expert_uuid_fkey"
+            columns: ["expert_uuid"]
+            isOneToOne: false
+            referencedRelation: "experts"
+            referencedColumns: ["expert_uuid"]
           },
           {
             foreignKeyName: "lessons_user_uuid_fkey"
@@ -1401,6 +1431,7 @@ export type Database = {
           tech_stack: string | null
           tech_stack_price: string | null
           thumbnail: string | null
+          type: string | null
           use_case: Json | null
           user_uuid: string | null
           variant_count: number | null
@@ -1441,6 +1472,7 @@ export type Database = {
           tech_stack?: string | null
           tech_stack_price?: string | null
           thumbnail?: string | null
+          type?: string | null
           use_case?: Json | null
           user_uuid?: string | null
           variant_count?: number | null
@@ -1481,6 +1513,7 @@ export type Database = {
           tech_stack?: string | null
           tech_stack_price?: string | null
           thumbnail?: string | null
+          type?: string | null
           use_case?: Json | null
           user_uuid?: string | null
           variant_count?: number | null

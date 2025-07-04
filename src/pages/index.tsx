@@ -82,15 +82,20 @@ const Index = () => {
     enabled: viewMode === 'communities'
   });
 
-  // Use case-insensitive filtering for products
-  const filteredProducts = useMemo(() =>
-    selectedCategory && products
-      ? products.filter(product => 
-          product.type?.toLowerCase() === selectedCategory.toLowerCase()
-        )
-      : products,
-    [selectedCategory, products]
-  );
+  // Use category-based filtering for products instead of type
+  const filteredProducts = useMemo(() => {
+    if (!selectedCategory || !products) return products;
+    
+    return products.filter(product => {
+      // Check if category exists and contains the selected category
+      if (product.category && Array.isArray(product.category)) {
+        return product.category.some((cat: string) => 
+          cat.toLowerCase() === selectedCategory.toLowerCase()
+        );
+      }
+      return false;
+    });
+  }, [selectedCategory, products]);
 
   // Handle community click to redirect to about page
   const handleCommunityClick = (communityId: string) => {
@@ -149,7 +154,7 @@ const Index = () => {
                   seller={product.user_uuid}
                   description={product.description}
                   tags={product.tech_stack ? product.tech_stack.split(',') : []}
-                  category={product.type}
+                  category="Digital Product"
                 />
               ))}
             </div>

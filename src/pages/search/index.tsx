@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,10 +17,10 @@ interface Product {
   thumbnail: string;
   slug: string;
   status: string;
-  type: string;
   expert_uuid: string;
   user_uuid: string;
   created_at: string;
+  category: any;
 }
 
 interface Community {
@@ -29,7 +30,6 @@ interface Community {
   price: number;
   thumbnail: string;
   slug: string;
-  type: string;
   expert_uuid: string;
   created_at: string;
 }
@@ -184,7 +184,7 @@ export function SearchResults() {
                         seller="Seller"
                         description={product.description}
                         tags={[]}
-                        category={product.type || 'product'}
+                        category="product"
                         id={product.product_uuid}
                         slug={product.slug}
                       />
@@ -214,7 +214,7 @@ export function SearchResults() {
                           <p className="text-gray-600 text-sm mb-3 line-clamp-2">{community.description}</p>
                           <div className="flex justify-between items-center">
                             <span className="text-lg font-bold">${community.price}</span>
-                            <span className="text-xs text-gray-500 capitalize">{community.type}</span>
+                            <span className="text-xs text-gray-500 capitalize">Community</span>
                           </div>
                         </div>
                       </div>

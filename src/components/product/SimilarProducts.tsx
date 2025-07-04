@@ -15,10 +15,9 @@ interface Product {
   thumbnail: string;
   description: string;
   tech_stack: string;
-  type: string;
   product_uuid: string;
   slug: string;
-  use_case: string[];
+  category: any;
 }
 
 interface SimilarProductsProps {
@@ -36,10 +35,9 @@ const fetchSimilarProducts = async () => {
       thumbnail,
       description,
       tech_stack,
-      type,
       product_uuid,
       slug,
-      use_case
+      category
     `)
     .order('created_at', { ascending: false })
     .limit(12);
@@ -115,7 +113,7 @@ export function SimilarProducts({
                       {product.name}
                     </h3>
                     <Badge variant="secondary" className="font-medium capitalize bg-blue-50 text-blue-600 hover:bg-blue-50 text-xs mt-1.5">
-                      {product.type || 'Digital Product'}
+                      Digital Product
                     </Badge>
                   </div>
                 </div>

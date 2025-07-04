@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from "react";
 import { AffiliateOffersLayoutSwitcher, LayoutType } from "./AffiliateOffersLayoutSwitcher";
 import { AffiliateOffersSortSelector, SortOption } from "./AffiliateOffersSortSelector";
@@ -31,7 +30,7 @@ export function AffiliateOffersSection() {
         id: product.affiliate_products_uuid,
         title: product.product_name || "Unnamed Product",
         description: product.product_description || "No description available",
-        category: product.type || "General",
+        category: "product", // Default category instead of using type
         // Convert commission from 0-1 range to percentage
         commissionRate: Math.round((product.affiliate_share || 0) * 100),
         commissionType: "percentage" as const,
@@ -41,7 +40,7 @@ export function AffiliateOffersSection() {
         thumbnail: product.product_thumbnail || "",
         status: product.status === "active" ? "active" as const : "pending" as const,
         partnerName: product.expert_name || "Unknown Expert",
-        type: product.type || "product", // Add type for filtering
+        type: "product", // Keep for filtering compatibility
         createdAt: product.created_at // Add created_at for sorting
       }));
 

@@ -44,7 +44,6 @@ export interface Product {
   tech_stack: string;
   tech_stack_price: string;
   thumbnail: string;
-  type: null;
   use_case: null;
   user_uuid: string;
   utm_campaign: null;
@@ -55,6 +54,7 @@ export interface Product {
   utm_term: null;
   variant_count: null;
   product_files: null | string;
+  category: any; // Using category instead of type
 }
 
 // Type for the product data from the API
@@ -86,7 +86,7 @@ export interface ProductReview {
   itemQuality: number;
   shipping: number;
   customerService: number;
-  type: string;
+  reviewType: string; // Changed from 'type' to 'reviewType'
 }
 
 // Define a CommunityProduct interface for classroom and other components
