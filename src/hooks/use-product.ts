@@ -20,7 +20,6 @@ const mapProductData = (data: any): ProductData => {
     price_from: data.price_from || 0,
     created_at: data.created_at || '',
     status: data.status || '',
-    type: data.type || null,
     free_or_paid: data.free_or_paid || null,
     accept_terms: data.accept_terms === null ? null : Boolean(data.accept_terms),
     affiliate_information: data.affiliate_information || null,
@@ -54,6 +53,7 @@ const mapProductData = (data: any): ProductData => {
     expert_uuid: data.expert_uuid || null,
     user_uuid: data.user_uuid || null,
     product_files: data.product_files || null,
+    category: data.category || null,
   };
 };
 

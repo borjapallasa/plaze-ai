@@ -14,7 +14,6 @@ interface Product {
   thumbnail: string;
   description: string;
   tech_stack: string;
-  type: string;
   product_uuid: string;
   slug: string;
   use_case: string[];
@@ -41,7 +40,6 @@ const fetchSellerProducts = async (expert_uuid: string) => {
       thumbnail,
       description,
       tech_stack,
-      type,
       product_uuid,
       slug,
       use_case
@@ -123,7 +121,7 @@ export function MoreFromSeller({
                       {product.name}
                     </h3>
                     <Badge variant="secondary" className="font-medium capitalize bg-blue-50 text-blue-600 hover:bg-blue-50 text-xs mt-1.5">
-                      {product.type}
+                      Digital Product
                     </Badge>
                   </div>
                 </div>
@@ -140,7 +138,7 @@ export function MoreFromSeller({
                   <div className="flex gap-2 flex-wrap">
                     {product.tech_stack?.split(',').slice(0, 2).map((tag, index) => (
                       <span key={index} className="text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full text-xs">
-                        #{tag}
+                        #{tag.trim()}
                       </span>
                     ))}
                   </div>

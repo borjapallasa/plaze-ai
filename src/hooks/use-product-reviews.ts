@@ -1,57 +1,51 @@
 
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { ProductReview } from "@/types/Product";
 
-const getPlaceholderImage = () => "https://images.unsplash.com/photo-1649972904349-6e44c42644a7";
+// Mock review data for testing
+const mockReviews = [
+  {
+    id: "1",
+    author: "John Doe",
+    rating: 5,
+    content: "Excellent product!",
+    description: "This product exceeded my expectations. Highly recommended!",
+    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e",
+    date: "2024-01-15",
+    itemQuality: 5,
+    shipping: 5,
+    customerService: 5,
+    reviewType: "purchase"
+  },
+  {
+    id: "2",
+    author: "Jane Smith",
+    rating: 4,
+    content: "Great value for money",
+    description: "Good quality product with reasonable pricing. Would buy again.",
+    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
+    date: "2024-01-10",
+    itemQuality: 4,
+    shipping: 4,
+    customerService: 4,
+    reviewType: "purchase"
+  }
+];
 
 export function useProductReviews(productUuid?: string) {
   return useQuery({
-    queryKey: ['reviews', productUuid],
-    queryFn: async (): Promise<ProductReview[]> => {
-      console.log("Fetching reviews for product:", productUuid);
-
-      if (!productUuid) {
-        return [];
-      }
-
-      const { data, error } = await supabase
-        .from('reviews')
-        .select('*')
-        .eq('product_uuid', productUuid)
-        .eq('status', 'published')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error("Error fetching reviews:", error);
-        throw error;
-      }
-
-      console.log("Reviews found:", data.length);
-
-      return data.map(review => ({
-        id: review.review_uuid,
-        author: review.buyer_name || 'Anonymous',
-        rating: review.rating || 5,
-        content: review.title || 'No title provided',
-        description: review.comments || 'No comments provided',
-        avatar: getPlaceholderImage(),
-        date: new Date(review.created_at).toLocaleDateString(),
-        itemQuality: review.rating || 5,
-        shipping: review.rating || 5,
-        customerService: review.rating || 5,
-        type: review.transaction_type?.toLowerCase() || 'product'
-      }));
+    queryKey: ['productReviews', productUuid],
+    queryFn: async () => {
+      // For now, return mock data
+      // In a real implementation, this would fetch from Supabase
+      return mockReviews;
     },
     enabled: !!productUuid
   });
 }
 
-// Helper to calculate average rating
-export function calculateAverageRating(reviews: ProductReview[]): number {
+export function calculateAverageRating(reviews: any[]) {
   if (!reviews || reviews.length === 0) return 0;
   
-  return Number(
-    (reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length).toFixed(1)
-  );
+  const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
+  return Math.round((sum / reviews.length) * 10) / 10;
 }

@@ -87,10 +87,10 @@ export function TemplateReviews({ productUuid }: TemplateReviewsProps) {
                 <span>{review.author}</span>
                 <span>•</span>
                 <span>{review.date}</span>
-                {review.type && (
+                {review.reviewType && (
                   <>
                     <span>•</span>
-                    <span className="capitalize">{review.type}</span>
+                    <span className="capitalize">{review.reviewType}</span>
                   </>
                 )}
               </div>

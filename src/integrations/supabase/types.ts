@@ -1431,7 +1431,6 @@ export type Database = {
           tech_stack: string | null
           tech_stack_price: string | null
           thumbnail: string | null
-          type: string | null
           use_case: Json | null
           user_uuid: string | null
           variant_count: number | null
@@ -1472,7 +1471,6 @@ export type Database = {
           tech_stack?: string | null
           tech_stack_price?: string | null
           thumbnail?: string | null
-          type?: string | null
           use_case?: Json | null
           user_uuid?: string | null
           variant_count?: number | null
@@ -1513,7 +1511,6 @@ export type Database = {
           tech_stack?: string | null
           tech_stack_price?: string | null
           thumbnail?: string | null
-          type?: string | null
           use_case?: Json | null
           user_uuid?: string | null
           variant_count?: number | null
