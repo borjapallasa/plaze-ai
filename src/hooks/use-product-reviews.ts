@@ -1,44 +1,39 @@
 
 import { useQuery } from "@tanstack/react-query";
-
-// Mock review data for testing
-const mockReviews = [
-  {
-    id: "1",
-    author: "John Doe",
-    rating: 5,
-    content: "Excellent product!",
-    description: "This product exceeded my expectations. Highly recommended!",
-    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e",
-    date: "2024-01-15",
-    itemQuality: 5,
-    shipping: 5,
-    customerService: 5,
-    reviewType: "purchase"
-  },
-  {
-    id: "2",
-    author: "Jane Smith",
-    rating: 4,
-    content: "Great value for money",
-    description: "Good quality product with reasonable pricing. Would buy again.",
-    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
-    date: "2024-01-10",
-    itemQuality: 4,
-    shipping: 4,
-    customerService: 4,
-    reviewType: "purchase"
-  }
-];
+import { supabase } from "@/integrations/supabase/client";
 
 export function useProductReviews(productUuid?: string) {
   return useQuery({
     queryKey: ['productReviews', productUuid],
     queryFn: async () => {
-      // For now, return mock data to ensure reviews are visible
-      // In a real implementation, this would fetch from Supabase
+      if (!productUuid) return [];
+      
       console.log('Fetching reviews for product:', productUuid);
-      return mockReviews;
+      
+      const { data, error } = await supabase
+        .from('reviews')
+        .select('*')
+        .eq('product_uuid', productUuid)
+        .eq('status', 'published');
+
+      if (error) {
+        console.error('Error fetching reviews:', error);
+        throw error;
+      }
+
+      console.log('Raw reviews data:', data);
+
+      // Transform the data to match our Review interface
+      return data?.map(review => ({
+        id: review.review_uuid || review.id?.toString() || '',
+        author: review.buyer_name || review.author || 'Anonymous',
+        rating: review.rating || 0,
+        content: review.title || review.content || '',
+        description: review.comments || review.description || '',
+        avatar: review.avatar || `https://images.unsplash.com/photo-1472099645785-5658abf4ff4e`,
+        date: review.created_at ? new Date(review.created_at).toLocaleDateString() : '',
+        reviewType: review.type || 'purchase'
+      })) || [];
     },
     enabled: !!productUuid,
     staleTime: 5 * 60 * 1000, // 5 minutes
