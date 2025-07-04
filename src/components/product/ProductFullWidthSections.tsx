@@ -23,6 +23,8 @@ export function ProductFullWidthSections({
   selectedVariant,
   onLeaveReview
 }: ProductFullWidthSectionsProps) {
+  console.log('ProductFullWidthSections received reviews:', reviews);
+  
   return (
     <>
       <ProductDemo embedUrl={embedUrl} />

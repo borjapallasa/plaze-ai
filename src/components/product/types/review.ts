@@ -7,7 +7,7 @@ export interface Review {
   description: string;
   avatar: string;
   date: string;
-  type?: 'product' | 'service' | 'job' | 'community';
+  reviewType?: 'product' | 'service' | 'job' | 'community' | 'purchase';
 }
 
 export interface ProductReviewsProps {

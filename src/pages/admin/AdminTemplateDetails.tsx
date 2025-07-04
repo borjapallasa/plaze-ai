@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { MainHeader } from "@/components/MainHeader";
@@ -93,20 +94,24 @@ export default function AdminTemplateDetails() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Left Column - Main Content */}
             <div className="lg:col-span-2 space-y-8">
-              <TemplateHeroImage product={product} />
+              <TemplateHeroImage thumbnail={product.thumbnail} productName={product.name} />
               <TemplateDescription description={product.description} />
-              <TemplateDemoCard embedUrl={product.demo} />
+              <TemplateDemoCard demo={product.demo} />
               <TemplateReviews productUuid={product.product_uuid} />
             </div>
 
             {/* Right Column - Sidebar */}
             <div className="space-y-6">
               <TemplateHeader 
-                title={product.name}
-                rating={4.5}
-                category={product.category ? 'Digital Product' : 'Product'}
+                productName={product.name}
+                publicLink={product.public_link}
               />
-              <TemplateInfoCard product={product} />
+              <TemplateInfoCard 
+                expertUuid={product.expert_uuid}
+                type={product.category ? 'Digital Product' : 'Product'}
+                createdAt={product.created_at}
+                projectFiles={product.product_files}
+              />
               <TemplateStatusCard 
                 status={product.status}
                 createdAt={product.created_at}

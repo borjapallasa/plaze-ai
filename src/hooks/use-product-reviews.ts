@@ -35,11 +35,13 @@ export function useProductReviews(productUuid?: string) {
   return useQuery({
     queryKey: ['productReviews', productUuid],
     queryFn: async () => {
-      // For now, return mock data
+      // For now, return mock data to ensure reviews are visible
       // In a real implementation, this would fetch from Supabase
+      console.log('Fetching reviews for product:', productUuid);
       return mockReviews;
     },
-    enabled: !!productUuid
+    enabled: !!productUuid,
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
 

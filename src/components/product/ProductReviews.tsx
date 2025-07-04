@@ -16,8 +16,8 @@ interface ProductReviewsProps {
   onLeaveReview?: (variantId: string) => void;
 }
 
-const getTypeText = (type: string) => {
-  switch (type) {
+const getReviewTypeText = (reviewType: string) => {
+  switch (reviewType) {
     case 'product':
       return 'Purchased a product';
     case 'service':
@@ -26,8 +26,10 @@ const getTypeText = (type: string) => {
       return 'Joined a community';
     case 'job':
       return 'Completed a job';
+    case 'purchase':
+      return 'Verified purchase';
     default:
-      return '';
+      return 'Verified review';
   }
 };
 
@@ -38,6 +40,8 @@ export function ProductReviews({
   productUuid, 
   onLeaveReview 
 }: ProductReviewsProps) {
+  console.log('ProductReviews received:', { reviews, productUuid });
+
   const handleLeaveReview = () => {
     if (selectedVariant && onLeaveReview) {
       onLeaveReview(selectedVariant);
@@ -45,7 +49,7 @@ export function ProductReviews({
   };
 
   // If no reviews, show the empty state
-  if (reviews.length === 0) {
+  if (!reviews || reviews.length === 0) {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
@@ -90,7 +94,7 @@ export function ProductReviews({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold tracking-tight">Reviews</h2>
+        <h2 className="text-2xl font-semibold tracking-tight">Reviews ({reviews.length})</h2>
         <div className="flex items-center gap-4">
           {selectedVariant && onLeaveReview && (
             <Button 
@@ -165,11 +169,11 @@ export function ProductReviews({
                   <span className="text-gray-600">
                     {review.date}
                   </span>
-                  {review.type && (
+                  {(review as any).reviewType && (
                     <>
                       <span className="text-gray-400">•</span>
                       <span className="text-gray-600">
-                        {getTypeText(review.type)}
+                        {getReviewTypeText((review as any).reviewType)}
                       </span>
                     </>
                   )}
