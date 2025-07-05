@@ -592,7 +592,6 @@ export type Database = {
           community_product_uuid: string
           community_uuid: string
           created_at: string
-          expert_uuid: string | null
           id: number
           user_uuid: string
         }
@@ -602,7 +601,6 @@ export type Database = {
           community_product_uuid: string
           community_uuid: string
           created_at?: string
-          expert_uuid?: string | null
           id?: number
           user_uuid: string
         }
@@ -612,7 +610,6 @@ export type Database = {
           community_product_uuid?: string
           community_uuid?: string
           created_at?: string
-          expert_uuid?: string | null
           id?: number
           user_uuid?: string
         }
@@ -637,20 +634,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "communities"
             referencedColumns: ["community_uuid"]
-          },
-          {
-            foreignKeyName: "community_product_relationships_expert_uuid_fkey"
-            columns: ["expert_uuid"]
-            isOneToOne: false
-            referencedRelation: "experts"
-            referencedColumns: ["expert_uuid"]
-          },
-          {
-            foreignKeyName: "community_product_relationships_user_uuid_fkey"
-            columns: ["user_uuid"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["user_uuid"]
           },
         ]
       }
@@ -739,7 +722,7 @@ export type Database = {
             | Database["public"]["Enums"]["community_digest"]
             | null
           email: string | null
-          expert_uuid: string | null
+          expert_user_uuid: string | null
           id: number
           status:
             | Database["public"]["Enums"]["community_subscription_status"]
@@ -768,7 +751,7 @@ export type Database = {
             | Database["public"]["Enums"]["community_digest"]
             | null
           email?: string | null
-          expert_uuid?: string | null
+          expert_user_uuid?: string | null
           id?: number
           status?:
             | Database["public"]["Enums"]["community_subscription_status"]
@@ -797,7 +780,7 @@ export type Database = {
             | Database["public"]["Enums"]["community_digest"]
             | null
           email?: string | null
-          expert_uuid?: string | null
+          expert_user_uuid?: string | null
           id?: number
           status?:
             | Database["public"]["Enums"]["community_subscription_status"]
@@ -831,8 +814,8 @@ export type Database = {
             referencedColumns: ["community_uuid"]
           },
           {
-            foreignKeyName: "community_subscriptions_expert_uuid_fkey"
-            columns: ["expert_uuid"]
+            foreignKeyName: "community_subscriptions_expert_user_uuid_fkey"
+            columns: ["expert_user_uuid"]
             isOneToOne: false
             referencedRelation: "experts"
             referencedColumns: ["expert_uuid"]
@@ -1265,7 +1248,6 @@ export type Database = {
           amount: number | null
           created_at: string
           email: string | null
-          expert_uuid: string | null
           id: number
           method: Database["public"]["Enums"]["payout_method"] | null
           payout_uuid: string
@@ -1279,7 +1261,6 @@ export type Database = {
           amount?: number | null
           created_at?: string
           email?: string | null
-          expert_uuid?: string | null
           id?: number
           method?: Database["public"]["Enums"]["payout_method"] | null
           payout_uuid?: string
@@ -1293,7 +1274,6 @@ export type Database = {
           amount?: number | null
           created_at?: string
           email?: string | null
-          expert_uuid?: string | null
           id?: number
           method?: Database["public"]["Enums"]["payout_method"] | null
           payout_uuid?: string
@@ -1309,13 +1289,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "affiliates"
             referencedColumns: ["affiliate_uuid"]
-          },
-          {
-            foreignKeyName: "payouts_expert_uuid_fkey"
-            columns: ["expert_uuid"]
-            isOneToOne: false
-            referencedRelation: "experts"
-            referencedColumns: ["expert_uuid"]
           },
           {
             foreignKeyName: "payouts_user_uuid_fkey"
@@ -1377,41 +1350,34 @@ export type Database = {
         Row: {
           created_at: string
           display_order: number | null
-          expert_uuid: string | null
           id: number
           product_uuid: string
           related_product_uuid: string | null
           relationship_type: string | null
           relationship_uuid: string
+          user_id: string
         }
         Insert: {
           created_at?: string
           display_order?: number | null
-          expert_uuid?: string | null
           id?: number
           product_uuid: string
           related_product_uuid?: string | null
           relationship_type?: string | null
           relationship_uuid?: string
+          user_id?: string
         }
         Update: {
           created_at?: string
           display_order?: number | null
-          expert_uuid?: string | null
           id?: number
           product_uuid?: string
           related_product_uuid?: string | null
           relationship_type?: string | null
           relationship_uuid?: string
+          user_id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "product_relationships_expert_uuid_fkey"
-            columns: ["expert_uuid"]
-            isOneToOne: false
-            referencedRelation: "experts"
-            referencedColumns: ["expert_uuid"]
-          },
           {
             foreignKeyName: "product_relationships_product_uuid_fkey"
             columns: ["product_uuid"]
@@ -1449,7 +1415,6 @@ export type Database = {
           name: string | null
           platform: Json | null
           price_from: number | null
-          product_images: Json | null
           product_includes: string | null
           product_uuid: string
           public_link: string | null
@@ -1490,7 +1455,6 @@ export type Database = {
           name?: string | null
           platform?: Json | null
           price_from?: number | null
-          product_images?: Json | null
           product_includes?: string | null
           product_uuid?: string
           public_link?: string | null
@@ -1531,7 +1495,6 @@ export type Database = {
           name?: string | null
           platform?: Json | null
           price_from?: number | null
-          product_images?: Json | null
           product_includes?: string | null
           product_uuid?: string
           public_link?: string | null
@@ -1648,7 +1611,6 @@ export type Database = {
       }
       products_transactions: {
         Row: {
-          affiliate_uuid: string | null
           created_at: string
           expert_uuid: string | null
           id: number
@@ -1668,7 +1630,6 @@ export type Database = {
           user_uuid: string | null
         }
         Insert: {
-          affiliate_uuid?: string | null
           created_at?: string
           expert_uuid?: string | null
           id?: number
@@ -1688,7 +1649,6 @@ export type Database = {
           user_uuid?: string | null
         }
         Update: {
-          affiliate_uuid?: string | null
           created_at?: string
           expert_uuid?: string | null
           id?: number
@@ -1708,13 +1668,6 @@ export type Database = {
           user_uuid?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "products_transactions_affiliate_uuid_fkey"
-            columns: ["affiliate_uuid"]
-            isOneToOne: false
-            referencedRelation: "affiliates"
-            referencedColumns: ["affiliate_uuid"]
-          },
           {
             foreignKeyName: "products_transactions_expert_uuid_fkey"
             columns: ["expert_uuid"]
@@ -2114,7 +2067,6 @@ export type Database = {
           affiliate_link: string | null
           affiliate_multiplier: number | null
           affiliate_since: string | null
-          affiliate_uuid: string | null
           available_amount: number | null
           average_review: number | null
           communities_joined: Json | null
@@ -2165,7 +2117,6 @@ export type Database = {
           affiliate_link?: string | null
           affiliate_multiplier?: number | null
           affiliate_since?: string | null
-          affiliate_uuid?: string | null
           available_amount?: number | null
           average_review?: number | null
           communities_joined?: Json | null
@@ -2216,7 +2167,6 @@ export type Database = {
           affiliate_link?: string | null
           affiliate_multiplier?: number | null
           affiliate_since?: string | null
-          affiliate_uuid?: string | null
           available_amount?: number | null
           average_review?: number | null
           communities_joined?: Json | null
@@ -2261,13 +2211,6 @@ export type Database = {
           via?: Database["public"]["Enums"]["signup_via"] | null
         }
         Relationships: [
-          {
-            foreignKeyName: "users_affiliate_uuid_fkey"
-            columns: ["affiliate_uuid"]
-            isOneToOne: false
-            referencedRelation: "affiliates"
-            referencedColumns: ["affiliate_uuid"]
-          },
           {
             foreignKeyName: "users_expert_uuid_fkey"
             columns: ["expert_uuid"]
