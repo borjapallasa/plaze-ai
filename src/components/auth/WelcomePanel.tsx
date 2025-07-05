@@ -1,42 +1,52 @@
 
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { CircleCheckBig } from "lucide-react";
+import React from "react";
 
 export function WelcomePanel() {
-  return <div className="space-y-8">
-      <div className="flex items-center gap-3">
-        <img src="/lovable-uploads/84b87a79-21ab-4d4e-b6fe-3af1f7e0464d.png" alt="plaze.ai" className="h-8 w-auto" />
-        
+  return (
+    <div className="text-center space-y-8">
+      {/* Hide logo on mobile since it's already shown in the mobile header */}
+      <div className="hidden lg:flex items-center justify-center gap-3">
+        <img 
+          src="/lovable-uploads/84b87a79-21ab-4d4e-b6fe-3af1f7e0464d.png" 
+          alt="plaze.ai" 
+          className="h-12 w-auto"
+        />
+        <h1 className="text-4xl font-bold text-foreground">plaze.ai</h1>
       </div>
       
-      <p className="text-muted-foreground leading-relaxed">
-        Explore premium content, connect with experts, and join communities built around what you love.
-      </p>
-
-      <div className="space-y-4">
-        <h2 className="font-semibold text-foreground">Join thousands using Plaze to:</h2>
-        <div className="space-y-3">
-          {["Discover expert-made digital products", "Join private communities around your passions", "Access exclusive content and member-only perks", "Learn from creators through workshops and templates"].map((item, index) => <div key={index} className="flex items-start gap-3">
-              <CircleCheckBig className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-              <span className="text-muted-foreground">{item}</span>
-            </div>)}
+      <div className="space-y-6">
+        <div className="space-y-4">
+          <h2 className="text-3xl lg:text-4xl font-bold text-foreground">
+            Welcome to plaze.ai
+          </h2>
+          <p className="text-lg text-muted-foreground max-w-md mx-auto">
+            Discover amazing products, connect with experts, and join thriving communities.
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 gap-6 max-w-sm mx-auto">
+          <div className="text-center">
+            <h3 className="font-semibold text-foreground mb-2">Discover Products</h3>
+            <p className="text-sm text-muted-foreground">
+              Find digital products and services from verified creators
+            </p>
+          </div>
+          
+          <div className="text-center">
+            <h3 className="font-semibold text-foreground mb-2">Connect with Experts</h3>
+            <p className="text-sm text-muted-foreground">
+              Get help from experienced professionals in your field
+            </p>
+          </div>
+          
+          <div className="text-center">
+            <h3 className="font-semibold text-foreground mb-2">Join Communities</h3>
+            <p className="text-sm text-muted-foreground">
+              Be part of communities that share your interests and goals
+            </p>
+          </div>
         </div>
       </div>
-
-      <Card className="border-muted shadow-none" style={{ backgroundColor: '#EEF2FF' }}>
-        <div className="p-6">
-          <div className="space-y-2">
-            <h3 className="font-semibold text-foreground">Are you a creator?</h3>
-            <p className="text-sm text-muted-foreground">The Operative System for Digital Creators.</p>
-          </div>
-          <Link to="/sell">
-            <Button variant="secondary" className="mt-4 bg-white hover:bg-gray-50 text-foreground border border-gray-300">
-              Sell on Plaze →
-            </Button>
-          </Link>
-        </div>
-      </Card>
-    </div>;
+    </div>
+  );
 }
