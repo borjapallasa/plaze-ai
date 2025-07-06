@@ -6,7 +6,7 @@ import type { Json } from "@/integrations/supabase/types";
 
 export type BillingPeriod = "monthly" | "yearly";
 export type CommunityType = "free" | "paid" | "private";
-export type CommunityVisibility = "public" | "private" | "draft";
+export type CommunityVisibility = "draft" | "visible";
 
 interface CommunityData {
   name: string;
@@ -57,7 +57,7 @@ export const useCreateCommunity = () => {
           price: communityData.price,
           type: communityData.type,
           billing_period: communityData.billing_period,
-          visibility: communityData.visibility,
+          status: communityData.visibility === "draft" ? "draft" : "visible",
           links: communityData.links as unknown as Json,
           thumbnail: communityData.thumbnail || null,
         })
