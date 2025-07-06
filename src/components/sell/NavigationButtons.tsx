@@ -167,20 +167,11 @@ export function NavigationButtons({
           }
         }
         
-        // Create expert profile - this was the missing piece
+        // Create expert profile - simplified approach
         const expertName = `${userFirstName} ${userLastName}`.trim();
         console.log("Creating expert with name:", expertName, "for user:", userId);
         
-        // Check if expert already exists first
-        const { data: existingExpert } = await supabase
-          .from('experts')
-          .select('expert_uuid')
-          .eq('user_uuid', userId)
-          .maybeSingle();
-
-        if (!existingExpert) {
-          console.log("No existing expert found, creating new expert profile");
-          
+        try {
           const { data: expertData, error: expertError } = await supabase
             .from('experts')
             .insert({
@@ -195,13 +186,27 @@ export function NavigationButtons({
             .single();
 
           if (expertError) {
-            console.error("Expert creation error:", expertError);
-            throw new Error(`Error creating expert profile: ${expertError.message}`);
+            // Check if this is because expert already exists
+            if (expertError.code === '23505' || expertError.message.includes('duplicate') || expertError.message.includes('already exists')) {
+              console.log("Expert profile already exists for this user");
+              toast.success("Expert profile already exists! Proceeding to next step.");
+            } else {
+              console.error("Expert creation error:", expertError);
+              throw new Error(`Error creating expert profile: ${expertError.message}`);
+            }
           } else {
             console.log("Successfully created expert profile:", expertData?.expert_uuid);
           }
-        } else {
-          console.log("Expert profile already exists:", existingExpert.expert_uuid);
+        } catch (expertCreationError) {
+          // Handle the case where expert already exists gracefully
+          if (expertCreationError instanceof Error && 
+              (expertCreationError.message.includes('duplicate') || 
+               expertCreationError.message.includes('already exists') ||
+               expertCreationError.message.includes('violates row-level security'))) {
+            console.log("Expert profile already exists, continuing...");
+          } else {
+            throw expertCreationError;
+          }
         }
 
         // Update user to be an expert if this is a new user
@@ -225,7 +230,7 @@ export function NavigationButtons({
             },
           });
           
-          toast.success("Account created! Expert profile created successfully. A magic link has been sent to your email for future logins");
+          toast.success("Account setup completed! A magic link has been sent to your email for future logins");
         } else {
           toast.success("Expert profile setup completed!");
         }

@@ -2355,6 +2355,10 @@ export type Database = {
           variant_files_link: string
         }[]
       }
+      user_has_expert_profile: {
+        Args: { user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       affiliate_partnership_status:
