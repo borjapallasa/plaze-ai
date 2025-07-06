@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MainHeader } from "@/components/MainHeader";
@@ -63,6 +62,8 @@ export default function AffiliatesPage() {
       }
 
       toast.success("Affiliate account created successfully!");
+      // Refetch data before redirecting to ensure fresh data
+      await refetch();
       // Redirect to dashboard after successful creation
       navigate('/affiliates/dashboard');
     } catch (error) {
