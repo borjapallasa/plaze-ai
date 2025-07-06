@@ -80,6 +80,18 @@ export function NavigationButtons({
       setIsCreating(true);
       
       try {
+        console.log("🔍 Starting expert creation process...");
+        console.log("📧 Email to use:", emailToUse);
+        console.log("👤 Current user:", user?.id);
+        console.log("🎯 Selected option:", selectedOption);
+        
+        // Check current authentication state
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        console.log("🔐 Current session:", session?.user?.id || 'No session');
+        if (sessionError) {
+          console.error("❌ Session error:", sessionError);
+        }
+
         let userId;
         let isNewUser = false;
         let userFirstName = '';
@@ -87,7 +99,7 @@ export function NavigationButtons({
         
         if (user) {
           userId = user.id;
-          console.log("Using authenticated user:", userId);
+          console.log("✅ Using authenticated user:", userId);
           
           const { data: userData } = await supabase
             .from('users')
@@ -98,6 +110,7 @@ export function NavigationButtons({
           if (userData) {
             userFirstName = userData.first_name || '';
             userLastName = userData.last_name || '';
+            console.log("📝 Retrieved user data:", { userFirstName, userLastName });
           }
         } else {
           const tempPassword = Math.random().toString(36).slice(-12);
@@ -112,7 +125,7 @@ export function NavigationButtons({
             userId = existingUserData.user_uuid;
             userFirstName = existingUserData.first_name || '';
             userLastName = existingUserData.last_name || '';
-            console.log("Found existing user:", userId);
+            console.log("🔍 Found existing user:", userId);
             
             const { error: signInError } = await supabase.auth.signInWithOtp({
               email: emailToUse,
@@ -150,7 +163,7 @@ export function NavigationButtons({
             
             userId = authData.user.id;
             isNewUser = true;
-            console.log("Created new user:", userId);
+            console.log("✨ Created new user:", userId);
             
             const { data: sessionData, error: sessionError } = await supabase.auth.signInWithPassword({
               email: emailToUse,
@@ -164,44 +177,73 @@ export function NavigationButtons({
             if (!sessionData.session) {
               throw new Error("No valid session after sign in");
             }
+            
+            console.log("🔐 Session established:", sessionData.session.user.id);
           }
         }
         
-        // Create expert profile - this was the missing piece
+        // Wait a moment to ensure authentication context is properly set
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Check authentication context again before creating expert
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        console.log("🔍 Pre-expert creation session check:", currentSession?.user?.id || 'No session');
+        
+        // Create expert profile
         const expertName = `${userFirstName} ${userLastName}`.trim();
-        console.log("Creating expert with name:", expertName, "for user:", userId);
+        console.log("👨‍💼 Creating expert with name:", expertName, "for user:", userId);
         
         // Check if expert already exists first
-        const { data: existingExpert } = await supabase
+        const { data: existingExpert, error: existingExpertError } = await supabase
           .from('experts')
           .select('expert_uuid')
           .eq('user_uuid', userId)
           .maybeSingle();
 
+        if (existingExpertError) {
+          console.error("❌ Error checking existing expert:", existingExpertError);
+        }
+
         if (!existingExpert) {
-          console.log("No existing expert found, creating new expert profile");
+          console.log("📝 No existing expert found, creating new expert profile");
           
-          const { data: expertData, error: expertError } = await supabase
+          // Log the exact data being inserted
+          const expertData = {
+            user_uuid: userId,
+            email: emailToUse,
+            name: expertName,
+            description: `Expert specializing in ${selectedOption}`,
+            areas: [selectedOption],
+            status: 'in review' as const
+          };
+          
+          console.log("📊 Expert data to insert:", expertData);
+          
+          const { data: newExpertData, error: expertError } = await supabase
             .from('experts')
-            .insert({
-              user_uuid: userId,
-              email: emailToUse,
-              name: expertName,
-              description: `Expert specializing in ${selectedOption}`,
-              areas: [selectedOption],
-              status: 'in review'
-            })
+            .insert(expertData)
             .select('expert_uuid')
             .single();
 
           if (expertError) {
-            console.error("Expert creation error:", expertError);
+            console.error("❌ Expert creation error:", expertError);
+            console.error("❌ Error details:", JSON.stringify(expertError, null, 2));
+            
+            // Additional debugging: Check if the user_has_expert_profile function works
+            const { data: hasExpertResult, error: hasExpertError } = await supabase
+              .rpc('user_has_expert_profile', { user_id: userId });
+            
+            console.log("🔍 user_has_expert_profile result:", hasExpertResult);
+            if (hasExpertError) {
+              console.error("❌ user_has_expert_profile error:", hasExpertError);
+            }
+            
             throw new Error(`Error creating expert profile: ${expertError.message}`);
           } else {
-            console.log("Successfully created expert profile:", expertData?.expert_uuid);
+            console.log("✅ Successfully created expert profile:", newExpertData?.expert_uuid);
           }
         } else {
-          console.log("Expert profile already exists:", existingExpert.expert_uuid);
+          console.log("ℹ️ Expert profile already exists:", existingExpert.expert_uuid);
         }
 
         // Update user to be an expert if this is a new user
@@ -212,7 +254,9 @@ export function NavigationButtons({
             .eq('user_uuid', userId);
 
           if (updateUserError) {
-            console.error("Error updating user is_expert:", updateUserError);
+            console.error("❌ Error updating user is_expert:", updateUserError);
+          } else {
+            console.log("✅ Updated user is_expert to true");
           }
         }
 
@@ -232,7 +276,7 @@ export function NavigationButtons({
         
         onNext();
       } catch (error) {
-        console.error("Creation error:", error);
+        console.error("💥 Creation error:", error);
         toast.error(error instanceof Error ? error.message : "Failed to create account. Please try again.");
       } finally {
         setIsAuthenticating(false);
