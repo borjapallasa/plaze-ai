@@ -2363,6 +2363,10 @@ export type Database = {
         Args: { user_id: string }
         Returns: boolean
       }
+      user_has_affiliate_record: {
+        Args: { user_id: string }
+        Returns: boolean
+      }
       user_has_expert_profile: {
         Args: { user_id: string }
         Returns: boolean
