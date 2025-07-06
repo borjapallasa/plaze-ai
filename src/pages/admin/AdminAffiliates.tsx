@@ -3,6 +3,10 @@ import { MainHeader } from "@/components/MainHeader";
 import { useAffiliates } from "@/hooks/admin/useAffiliates";
 import { AffiliatesHeader } from "@/components/admin/affiliates/AffiliatesHeader";
 import { AffiliatesTable } from "@/components/admin/affiliates/AffiliatesTable";
+import { AffiliatesGallery } from "@/components/admin/affiliates/AffiliatesGallery";
+import { AffiliatesList } from "@/components/admin/affiliates/AffiliatesList";
+import { AffiliatesLayoutSwitcher, LayoutType } from "@/components/admin/affiliates/AffiliatesLayoutSwitcher";
+import { AffiliatesSortSelector } from "@/components/admin/affiliates/AffiliatesSortSelector";
 import { AffiliatesLoadingState } from "@/components/admin/affiliates/AffiliatesLoadingState";
 import { AffiliatesErrorState } from "@/components/admin/affiliates/AffiliatesErrorState";
 import { useState, useEffect } from "react";
@@ -11,11 +15,14 @@ import { Input } from "@/components/ui/input";
 import { useAdminCheck } from "@/hooks/use-admin-check";
 import { useAuth } from "@/lib/auth";
 import { useNavigate } from "react-router-dom";
+import { useIsMobile, useIsTablet } from "@/hooks/use-mobile";
 
 export default function AdminAffiliates() {
   const { user, loading: authLoading } = useAuth();
   const { data: adminData, isLoading: adminLoading } = useAdminCheck();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
 
   // Redirect if not authenticated or not admin
   useEffect(() => {
@@ -46,12 +53,27 @@ export default function AdminAffiliates() {
     handleSort
   } = useAffiliates();
 
+  const [layout, setLayout] = useState<LayoutType>('gallery');
   const [sortValue, setSortValue] = useState("created_at_desc");
 
   // Set default status filter to "new" on initial load
   useEffect(() => {
     setStatusFilter("new");
   }, [setStatusFilter]);
+
+  // Switch to gallery view if currently on list view and on mobile or tablet
+  useEffect(() => {
+    if ((isMobile || isTablet) && layout === 'list') {
+      setLayout('gallery');
+    }
+  }, [isMobile, isTablet, layout]);
+
+  // Set default layout to gallery for tablet devices
+  useEffect(() => {
+    if (isTablet && layout === 'grid') {
+      setLayout('gallery');
+    }
+  }, [isTablet, layout]);
 
   const handleSortChange = (value: string) => {
     setSortValue(value);
@@ -116,12 +138,34 @@ export default function AdminAffiliates() {
     }
 
     return (
-      <AffiliatesTable
-        affiliates={affiliates}
-        sortField={sortField}
-        sortDirection={sortDirection}
-        onSort={handleSort}
-      />
+      <>
+        {layout === 'gallery' && (
+          <AffiliatesGallery
+            affiliates={affiliates}
+            sortField={sortField}
+            sortDirection={sortDirection}
+            onSort={handleSort}
+          />
+        )}
+        
+        {layout === 'grid' && (
+          <AffiliatesTable
+            affiliates={affiliates}
+            sortField={sortField}
+            sortDirection={sortDirection}
+            onSort={handleSort}
+          />
+        )}
+        
+        {layout === 'list' && (
+          <AffiliatesList
+            affiliates={affiliates}
+            sortField={sortField}
+            sortDirection={sortDirection}
+            onSort={handleSort}
+          />
+        )}
+      </>
     );
   };
 
@@ -163,8 +207,33 @@ export default function AdminAffiliates() {
           </div>
         </div>
 
-        {/* Search bar - full width */}
-        <div className="mb-6">
+        {/* Desktop layout - search and controls */}
+        <div className="hidden lg:flex items-center justify-between gap-4 mb-6">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
+            <Input
+              placeholder="Search by email or affiliate code"
+              className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C]"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          
+          <div className="flex items-center gap-3 flex-shrink-0">
+            <AffiliatesSortSelector 
+              sortValue={sortValue}
+              onSortChange={handleSortChange}
+            />
+            
+            <AffiliatesLayoutSwitcher 
+              layout={layout}
+              onLayoutChange={setLayout}
+            />
+          </div>
+        </div>
+
+        {/* Tablet layout - search bar above, then sort and layout on same line */}
+        <div className="hidden sm:flex lg:hidden flex-col gap-4 mb-6">
           <div className="relative w-full">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
             <Input
@@ -172,6 +241,46 @@ export default function AdminAffiliates() {
               className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C] w-full"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          
+          <div className="flex items-center gap-3 w-full">
+            <div className="flex items-center gap-3 flex-1">
+              <AffiliatesSortSelector 
+                sortValue={sortValue}
+                onSortChange={handleSortChange}
+              />
+              
+              <AffiliatesLayoutSwitcher 
+                layout={layout}
+                onLayoutChange={setLayout}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile layout - search first, then sort and layout on same line */}
+        <div className="sm:hidden mb-6 space-y-4">
+          <div className="relative w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
+            <Input
+              placeholder="Search by email or affiliate code"
+              className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C] w-full"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <div className="flex-1">
+              <AffiliatesSortSelector 
+                sortValue={sortValue}
+                onSortChange={handleSortChange}
+              />
+            </div>
+            <AffiliatesLayoutSwitcher 
+              layout={layout}
+              onLayoutChange={setLayout}
             />
           </div>
         </div>
