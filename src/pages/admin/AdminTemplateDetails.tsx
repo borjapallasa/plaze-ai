@@ -114,6 +114,7 @@ export default function AdminTemplateDetails() {
               />
               <TemplateStatusCard 
                 status={product.status}
+                productUuid={product.product_uuid}
               />
               <TemplateFinancialMetrics 
                 salesAmount={product.sales_amount}

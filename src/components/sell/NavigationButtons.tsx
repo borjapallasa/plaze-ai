@@ -52,7 +52,6 @@ export function NavigationButtons({
     }
 
     if (currentStep === 3) {
-      // If user is authenticated, only check captcha. If not authenticated, check names, email and captcha
       if (user) {
         return !formData.captchaConfirmed;
       } else {
@@ -65,7 +64,6 @@ export function NavigationButtons({
 
   const handleNext = async () => {
     if (currentStep === 3) {
-      // Use authenticated user's email or the provided email
       const emailToUse = user?.email || formData.contactEmail;
       
       if (!emailToUse) {
@@ -88,11 +86,9 @@ export function NavigationButtons({
         let userLastName = '';
         
         if (user) {
-          // User is already authenticated, use their ID
           userId = user.id;
           console.log("Using authenticated user:", userId);
           
-          // Get user's first name and last name from the users table
           const { data: userData } = await supabase
             .from('users')
             .select('first_name, last_name')
@@ -104,10 +100,8 @@ export function NavigationButtons({
             userLastName = userData.last_name || '';
           }
         } else {
-          // User is not authenticated, create new account
           const tempPassword = Math.random().toString(36).slice(-12);
           
-          // Check if user exists - using case insensitive email comparison
           const { data: existingUserData } = await supabase
             .from('users')
             .select('user_uuid, first_name, last_name')
@@ -115,13 +109,11 @@ export function NavigationButtons({
             .maybeSingle();
           
           if (existingUserData) {
-            // User exists, get the UUID and names
             userId = existingUserData.user_uuid;
             userFirstName = existingUserData.first_name || '';
             userLastName = existingUserData.last_name || '';
             console.log("Found existing user:", userId);
             
-            // Send a magic link for authentication
             const { error: signInError } = await supabase.auth.signInWithOtp({
               email: emailToUse,
               options: {
@@ -133,11 +125,9 @@ export function NavigationButtons({
               throw new Error(`Failed to sign in: ${signInError.message}`);
             }
           } else {
-            // Use the form data for names
             userFirstName = formData.firstName;
             userLastName = formData.lastName;
             
-            // Create new user in Auth with first name and last name
             const { data: authData, error: signUpError } = await supabase.auth.signUp({
               email: emailToUse,
               password: tempPassword,
@@ -162,7 +152,6 @@ export function NavigationButtons({
             isNewUser = true;
             console.log("Created new user:", userId);
             
-            // Sign in immediately to get a valid session
             const { data: sessionData, error: sessionError } = await supabase.auth.signInWithPassword({
               email: emailToUse,
               password: tempPassword,
@@ -178,13 +167,20 @@ export function NavigationButtons({
           }
         }
         
-        // Simplified expert creation approach - avoid RLS policy conflicts
-        try {
-          // Create expert name by concatenating first_name and last_name
-          const expertName = `${userFirstName} ${userLastName}`.trim();
-          console.log("Creating expert with name:", expertName, "for user:", userId);
+        // Create expert profile - this was the missing piece
+        const expertName = `${userFirstName} ${userLastName}`.trim();
+        console.log("Creating expert with name:", expertName, "for user:", userId);
+        
+        // Check if expert already exists first
+        const { data: existingExpert } = await supabase
+          .from('experts')
+          .select('expert_uuid')
+          .eq('user_uuid', userId)
+          .maybeSingle();
+
+        if (!existingExpert) {
+          console.log("No existing expert found, creating new expert profile");
           
-          // Direct insert without checking if expert exists to avoid RLS conflicts
           const { data: expertData, error: expertError } = await supabase
             .from('experts')
             .insert({
@@ -192,7 +188,7 @@ export function NavigationButtons({
               email: emailToUse,
               name: expertName,
               description: `Expert specializing in ${selectedOption}`,
-              areas: [],
+              areas: [selectedOption],
               status: 'in review'
             })
             .select('expert_uuid')
@@ -200,20 +196,12 @@ export function NavigationButtons({
 
           if (expertError) {
             console.error("Expert creation error:", expertError);
-            
-            // If expert already exists, that's okay - just log it
-            if (expertError.code === '23505') { // unique constraint violation
-              console.log("Expert profile already exists for this user");
-            } else {
-              throw new Error(`Error creating expert profile: ${expertError.message}`);
-            }
+            throw new Error(`Error creating expert profile: ${expertError.message}`);
           } else {
-            console.log("Created new expert profile:", expertData?.expert_uuid, "with name:", expertName);
+            console.log("Successfully created expert profile:", expertData?.expert_uuid);
           }
-        } catch (expertCreationError) {
-          console.error("Expert creation failed:", expertCreationError);
-          // Don't throw here - user creation was successful, expert creation can be retried later
-          toast.error("Account created but expert profile creation failed. Please contact support.");
+        } else {
+          console.log("Expert profile already exists:", existingExpert.expert_uuid);
         }
 
         // Update user to be an expert if this is a new user
@@ -225,7 +213,6 @@ export function NavigationButtons({
 
           if (updateUserError) {
             console.error("Error updating user is_expert:", updateUserError);
-            // Don't throw error, just log it as this is not critical for the flow
           }
         }
 
@@ -238,12 +225,11 @@ export function NavigationButtons({
             },
           });
           
-          toast.success("Account created! A magic link has been sent to your email for future logins");
+          toast.success("Account created! Expert profile created successfully. A magic link has been sent to your email for future logins");
         } else {
           toast.success("Expert profile setup completed!");
         }
         
-        // Call onNext to trigger navigation to the appropriate creation page
         onNext();
       } catch (error) {
         console.error("Creation error:", error);
