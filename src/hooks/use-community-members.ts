@@ -25,7 +25,7 @@ export const useCommunityMembers = (communityId?: string) => {
           )
         `)
         .eq('community_uuid', communityId)
-        .in('status', ['active', 'inactive', 'pending'])
+        .in('status', ['active', 'inactive', 'pending', 'rejected'])
         .order('created_at', { ascending: false });
 
       if (error) {

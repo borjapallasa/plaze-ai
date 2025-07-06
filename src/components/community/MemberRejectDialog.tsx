@@ -12,7 +12,7 @@ interface Member {
   community_subscription_uuid: string;
   created_at: string;
   user_uuid: string;
-  status: 'pending' | 'active' | 'cancelled' | 'rejected';
+  status: 'pending' | 'active' | 'cancelled' | 'rejected' | 'inactive';
   users: {
     user_uuid: string;
     first_name: string;
@@ -47,9 +47,13 @@ export function MemberRejectDialog({
     try {
       console.log(`${isKick ? 'Kicking' : 'Rejecting'} member:`, member.community_subscription_uuid);
       
+      // For rejecting pending members, set status to 'rejected'
+      // For kicking active members, set status to 'inactive'
+      const newStatus = isKick ? 'inactive' : 'rejected';
+      
       const { error } = await supabase
         .from('community_subscriptions')
-        .delete()
+        .update({ status: newStatus })
         .eq('community_subscription_uuid', member.community_subscription_uuid);
 
       if (error) {
@@ -137,8 +141,8 @@ export function MemberRejectDialog({
               </p>
               <p className="text-sm text-red-700">
                 {isKick 
-                  ? 'This will permanently remove them from the community and delete their membership record.'
-                  : 'This will permanently delete their membership request. This action cannot be undone.'
+                  ? 'This will remove them from the community and set their membership status to inactive.'
+                  : 'This will reject their membership request and set their status to rejected. You can still accept them later if needed.'
                 }
               </p>
             </div>
