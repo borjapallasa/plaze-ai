@@ -46,25 +46,32 @@ export function MemberRejectDialog({
     setIsLoading(true);
     try {
       console.log(`${isKick ? 'Kicking' : 'Rejecting'} member:`, member.community_subscription_uuid);
+      console.log('Current member status:', member.status);
       
       // For rejecting pending members, set status to 'rejected'
       // For kicking active members, set status to 'inactive'
       const newStatus = isKick ? 'inactive' : 'rejected';
+      console.log('Setting status to:', newStatus);
       
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('community_subscriptions')
         .update({ status: newStatus })
-        .eq('community_subscription_uuid', member.community_subscription_uuid);
+        .eq('community_subscription_uuid', member.community_subscription_uuid)
+        .select();
+
+      console.log('Update result:', { data, error });
 
       if (error) {
         console.error(`Error ${isKick ? 'kicking' : 'rejecting'} member:`, error);
         toast({
           variant: "destructive",
           title: "Error",
-          description: `Failed to ${isKick ? 'kick' : 'reject'} member. Please try again.`,
+          description: `Failed to ${isKick ? 'kick' : 'reject'} member: ${error.message}`,
         });
         return;
       }
+
+      console.log('Successfully updated member status');
 
       // Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: ['community-members', communityId] });
