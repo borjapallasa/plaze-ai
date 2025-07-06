@@ -322,7 +322,7 @@ export default function AdminUserDetails() {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-3 mb-2">
                               <h5 className="font-semibold text-lg text-[#1A1F2C] truncate">
-                                {subscription.communities?.title || subscription.communities?.name || 'Unknown Community'}
+                                {subscription.communities?.name || 'Unknown Community'}
                               </h5>
                               <Badge
                                 variant="secondary"
@@ -360,7 +360,7 @@ export default function AdminUserDetails() {
                               size="sm"
                               onClick={() => handleDeactivateSubscription(
                                 subscription.community_subscription_uuid,
-                                subscription.communities?.title || subscription.communities?.name || 'Unknown Community'
+                                subscription.communities?.name || 'Unknown Community'
                               )}
                               className="text-red-600 hover:text-red-800 hover:bg-red-50 ml-4 flex-shrink-0"
                             >

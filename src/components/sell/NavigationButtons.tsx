@@ -88,6 +88,7 @@ export function NavigationButtons({
         // Check current authentication state
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         console.log("🔐 Current session:", session?.user?.id || 'No session');
+        console.log("🔐 Session object:", session);
         if (sessionError) {
           console.error("❌ Session error:", sessionError);
         }
@@ -183,31 +184,32 @@ export function NavigationButtons({
         }
         
         // Wait a moment to ensure authentication context is properly set
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 2000));
         
         // Check authentication context again before creating expert
         const { data: { session: currentSession } } = await supabase.auth.getSession();
         console.log("🔍 Pre-expert creation session check:", currentSession?.user?.id || 'No session');
+        console.log("🔍 Full session object:", currentSession);
         
-        // Create expert profile
+        // Create expert profile using a security definer function approach
         const expertName = `${userFirstName} ${userLastName}`.trim();
         console.log("👨‍💼 Creating expert with name:", expertName, "for user:", userId);
         
-        // Check if expert already exists first
-        const { data: existingExpert, error: existingExpertError } = await supabase
-          .from('experts')
-          .select('expert_uuid')
-          .eq('user_uuid', userId)
-          .maybeSingle();
+        // Use the create_expert_profile RPC function instead of direct insert
+        const { data: expertCreationResult, error: expertCreationError } = await supabase
+          .rpc('create_expert_profile', {
+            p_user_uuid: userId,
+            p_email: emailToUse,
+            p_name: expertName,
+            p_areas: [selectedOption]
+          });
 
-        if (existingExpertError) {
-          console.error("❌ Error checking existing expert:", existingExpertError);
-        }
-
-        if (!existingExpert) {
-          console.log("📝 No existing expert found, creating new expert profile");
+        if (expertCreationError) {
+          console.error("❌ Expert creation error via RPC:", expertCreationError);
           
-          // Log the exact data being inserted
+          // Fallback: Try direct insert with proper session
+          console.log("🔄 Attempting fallback direct insert...");
+          
           const expertData = {
             user_uuid: userId,
             email: emailToUse,
@@ -219,31 +221,21 @@ export function NavigationButtons({
           
           console.log("📊 Expert data to insert:", expertData);
           
-          const { data: newExpertData, error: expertError } = await supabase
+          const { data: newExpertData, error: directInsertError } = await supabase
             .from('experts')
             .insert(expertData)
             .select('expert_uuid')
             .single();
 
-          if (expertError) {
-            console.error("❌ Expert creation error:", expertError);
-            console.error("❌ Error details:", JSON.stringify(expertError, null, 2));
-            
-            // Additional debugging: Check if the user_has_expert_profile function works
-            const { data: hasExpertResult, error: hasExpertError } = await supabase
-              .rpc('user_has_expert_profile', { user_id: userId });
-            
-            console.log("🔍 user_has_expert_profile result:", hasExpertResult);
-            if (hasExpertError) {
-              console.error("❌ user_has_expert_profile error:", hasExpertError);
-            }
-            
-            throw new Error(`Error creating expert profile: ${expertError.message}`);
+          if (directInsertError) {
+            console.error("❌ Direct insert error:", directInsertError);
+            console.error("❌ Error details:", JSON.stringify(directInsertError, null, 2));
+            throw new Error(`Error creating expert profile: ${directInsertError.message}`);
           } else {
-            console.log("✅ Successfully created expert profile:", newExpertData?.expert_uuid);
+            console.log("✅ Successfully created expert profile via direct insert:", newExpertData?.expert_uuid);
           }
         } else {
-          console.log("ℹ️ Expert profile already exists:", existingExpert.expert_uuid);
+          console.log("✅ Successfully created expert profile via RPC:", expertCreationResult);
         }
 
         // Update user to be an expert if this is a new user
