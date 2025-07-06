@@ -53,7 +53,7 @@ export function MemberManagementDialog({
     mutationFn: async (membershipId: string) => {
       const { error } = await supabase
         .from('community_subscriptions')
-        .update({ status: 'rejected' })
+        .update({ status: 'inactive' })
         .eq('community_subscription_uuid', membershipId);
 
       if (error) throw error;
