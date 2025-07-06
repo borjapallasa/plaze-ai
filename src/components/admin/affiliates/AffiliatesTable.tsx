@@ -10,10 +10,11 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { ArrowUpDown, CheckCircle, XCircle, Pause, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, CheckCircle, XCircle, Pause, MoreHorizontal, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 interface Affiliate {
   id: number;
@@ -43,6 +44,7 @@ export function AffiliatesTable({
   onSort 
 }: AffiliatesTableProps) {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const getStatusBadge = (status: string | null) => {
     switch (status) {
@@ -132,7 +134,12 @@ export function AffiliatesTable({
             affiliates.map((affiliate) => (
               <TableRow key={affiliate.id}>
                 <TableCell className="font-medium whitespace-nowrap">
-                  {affiliate.email || 'N/A'}
+                  <button
+                    onClick={() => navigate(`/admin/affiliates/${affiliate.affiliate_uuid}`)}
+                    className="hover:underline text-left"
+                  >
+                    {affiliate.email || 'N/A'}
+                  </button>
                 </TableCell>
                 <TableCell className="whitespace-nowrap">
                   <code className="text-sm bg-muted px-2 py-1 rounded">
@@ -159,6 +166,12 @@ export function AffiliatesTable({
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        onClick={() => navigate(`/admin/affiliates/${affiliate.affiliate_uuid}`)}
+                      >
+                        <Eye className="h-4 w-4 mr-2" />
+                        View Details
+                      </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => handleUpdateStatus(affiliate.affiliate_uuid, 'accepted')}
                         className="text-green-600"

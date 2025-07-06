@@ -1,3 +1,4 @@
+
 import { Route, Routes } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -45,6 +46,7 @@ import ExpertPage from "./pages/Expert";
 import { SearchResults } from "./pages/search";
 import NewCommunityProductPage from "./pages/community/NewCommunityProductPage";
 import AdminAffiliatesPage from "./pages/admin/AdminAffiliates";
+import AdminAffiliateDetailsPage from "./pages/admin/AdminAffiliateDetails";
 
 const queryClient = new QueryClient();
 
@@ -96,6 +98,7 @@ function App() {
           <Route path="/affiliates" element={<AffiliatesPage />} />
           <Route path="/affiliates/dashboard" element={<AffiliatesPage />} />
           <Route path="/admin/affiliates" element={<AdminAffiliatesPage />} />
+          <Route path="/admin/affiliates/:id" element={<AdminAffiliateDetailsPage />} />
           <Route path="/search" element={<SearchResults />} />
           <Route path="/experts" element={<ExpertsPage />} />
           <Route path="/expert/:expert_uuid" element={<ExpertPage />} />

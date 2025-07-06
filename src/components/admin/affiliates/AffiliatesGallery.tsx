@@ -1,12 +1,13 @@
 
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { CheckCircle, XCircle, Pause, User, DollarSign, Calendar, MoreHorizontal } from "lucide-react";
+import { DollarSign, Users, ArrowUpDown, MoreHorizontal, CheckCircle, XCircle, Pause, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 interface Affiliate {
   id: number;
@@ -29,8 +30,14 @@ interface AffiliatesGalleryProps {
   onSort: (field: keyof Affiliate) => void;
 }
 
-export function AffiliatesGallery({ affiliates }: AffiliatesGalleryProps) {
+export function AffiliatesGallery({ 
+  affiliates, 
+  sortField, 
+  sortDirection, 
+  onSort 
+}: AffiliatesGalleryProps) {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const getStatusBadge = (status: string | null) => {
     switch (status) {
@@ -72,35 +79,47 @@ export function AffiliatesGallery({ affiliates }: AffiliatesGalleryProps) {
     }
   };
 
+  const SortButton = ({ field, children }: { field: keyof Affiliate; children: React.ReactNode }) => (
+    <Button
+      variant="ghost"
+      onClick={() => onSort(field)}
+      className="h-auto p-0 text-xs font-medium hover:bg-transparent"
+    >
+      {children}
+      <ArrowUpDown className="ml-1 h-3 w-3" />
+    </Button>
+  );
+
   if (affiliates.length === 0) {
     return (
-      <div className="text-center py-8 text-muted-foreground">
-        No affiliates found
+      <div className="flex items-center justify-center py-12">
+        <p className="text-muted-foreground">No affiliates found</p>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {affiliates.map((affiliate) => (
-        <Card key={affiliate.id} className="hover:shadow-md transition-shadow">
-          <CardHeader className="pb-3">
-            <div className="flex items-start justify-between">
-              <div className="flex items-center gap-3">
-                <div className="bg-gray-100 p-2 rounded-full">
-                  <User className="h-5 w-5 text-gray-600" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-sm">
-                    {affiliate.email || 'N/A'}
-                  </h3>
-                  <code className="text-xs bg-muted px-2 py-1 rounded">
-                    {affiliate.affiliate_code || 'N/A'}
-                  </code>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                {getStatusBadge(affiliate.status)}
+    <div className="space-y-4">
+      {/* Sort Controls */}
+      <div className="flex gap-2 flex-wrap">
+        <SortButton field="email">Email</SortButton>
+        <SortButton field="status">Status</SortButton>
+        <SortButton field="commissions_made">Commissions</SortButton>
+        <SortButton field="created_at">Date</SortButton>
+      </div>
+
+      {/* Gallery Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {affiliates.map((affiliate) => (
+          <Card key={affiliate.id} className="relative">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle 
+                  className="text-lg cursor-pointer hover:underline"
+                  onClick={() => navigate(`/admin/affiliates/${affiliate.affiliate_uuid}`)}
+                >
+                  {affiliate.email || 'Unknown'}
+                </CardTitle>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
@@ -108,6 +127,12 @@ export function AffiliatesGallery({ affiliates }: AffiliatesGalleryProps) {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      onClick={() => navigate(`/admin/affiliates/${affiliate.affiliate_uuid}`)}
+                    >
+                      <Eye className="h-4 w-4 mr-2" />
+                      View Details
+                    </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => handleUpdateStatus(affiliate.affiliate_uuid, 'accepted')}
                       className="text-green-600"
@@ -132,34 +157,39 @@ export function AffiliatesGallery({ affiliates }: AffiliatesGalleryProps) {
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
-            </div>
-          </CardHeader>
-          
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="flex items-center gap-2">
-                <DollarSign className="h-4 w-4 text-green-600" />
-                <div>
-                  <p className="text-muted-foreground text-xs">Made</p>
-                  <p className="font-medium">${affiliate.commissions_made?.toFixed(2) || '0.00'}</p>
+              <div className="space-y-2">
+                {getStatusBadge(affiliate.status)}
+                <p className="text-sm text-muted-foreground">
+                  Code: <code className="text-xs bg-muted px-1 py-0.5 rounded">{affiliate.affiliate_code}</code>
+                </p>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="flex items-center gap-2">
+                  <DollarSign className="h-4 w-4 text-muted-foreground" />
+                  <div>
+                    <p className="font-medium">${affiliate.commissions_made?.toFixed(2) || '0.00'}</p>
+                    <p className="text-xs text-muted-foreground">Total</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                  <div>
+                    <p className="font-medium">${affiliate.commissions_available?.toFixed(2) || '0.00'}</p>
+                    <p className="text-xs text-muted-foreground">Available</p>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <DollarSign className="h-4 w-4 text-blue-600" />
-                <div>
-                  <p className="text-muted-foreground text-xs">Available</p>
-                  <p className="font-medium">${affiliate.commissions_available?.toFixed(2) || '0.00'}</p>
-                </div>
+              <div className="mt-3 pt-3 border-t">
+                <p className="text-xs text-muted-foreground">
+                  Joined {new Date(affiliate.created_at).toLocaleDateString()}
+                </p>
               </div>
-            </div>
-
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Calendar className="h-4 w-4" />
-              <span>Joined {new Date(affiliate.created_at).toLocaleDateString()}</span>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }
