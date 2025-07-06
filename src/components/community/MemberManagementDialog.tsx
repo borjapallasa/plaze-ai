@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -27,8 +26,15 @@ export function MemberManagementDialog({
   const queryClient = useQueryClient();
   const { data: members = [], isLoading } = useCommunityMembers(communityId);
 
+  console.log('All members:', members);
+
   const activeMembers = members.filter(member => member.status === 'active');
   const pendingMembers = members.filter(member => member.status === 'pending');
+  const inactiveMembers = members.filter(member => member.status === 'inactive');
+
+  console.log('Active members:', activeMembers);
+  console.log('Pending members:', pendingMembers);
+  console.log('Inactive members:', inactiveMembers);
 
   const acceptMemberMutation = useMutation({
     mutationFn: async (membershipId: string) => {
@@ -119,14 +125,18 @@ export function MemberManagementDialog({
           </div>
         ) : (
           <Tabs defaultValue="active" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="active" className="flex items-center gap-2">
                 <Users className="h-4 w-4" />
-                Active Members ({activeMembers.length})
+                Active ({activeMembers.length})
               </TabsTrigger>
               <TabsTrigger value="pending" className="flex items-center gap-2">
                 <Clock className="h-4 w-4" />
-                Pending Requests ({pendingMembers.length})
+                Pending ({pendingMembers.length})
+              </TabsTrigger>
+              <TabsTrigger value="inactive" className="flex items-center gap-2">
+                <UserX className="h-4 w-4" />
+                Inactive ({inactiveMembers.length})
               </TabsTrigger>
             </TabsList>
 
@@ -241,6 +251,59 @@ export function MemberManagementDialog({
                             Reject
                           </Button>
                         </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="inactive" className="space-y-4">
+              {inactiveMembers.length === 0 ? (
+                <div className="text-center py-8">
+                  <UserX className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground">No inactive members.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {inactiveMembers.map((member) => (
+                    <div
+                      key={member.community_subscription_uuid}
+                      className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent transition-colors"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage 
+                            src={member.users.user_thumbnail || "https://github.com/shadcn.png"} 
+                            alt={`${member.users.first_name} ${member.users.last_name}`}
+                          />
+                          <AvatarFallback>
+                            {`${member.users.first_name?.charAt(0) || ''}${member.users.last_name?.charAt(0) || ''}`}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-medium">
+                            {member.users.first_name} {member.users.last_name}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            Inactive since {new Date(member.created_at).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="secondary" className="bg-gray-100 text-gray-800">
+                          Inactive
+                        </Badge>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleAcceptMember(member.community_subscription_uuid)}
+                          disabled={acceptMemberMutation.isPending}
+                          className="text-green-600 hover:text-green-700"
+                        >
+                          <UserCheck className="h-4 w-4 mr-1" />
+                          Reactivate
+                        </Button>
                       </div>
                     </div>
                   ))}

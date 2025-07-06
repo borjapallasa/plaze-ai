@@ -25,6 +25,7 @@ export const useCommunityMembers = (communityId?: string) => {
           )
         `)
         .eq('community_uuid', communityId)
+        .in('status', ['active', 'inactive', 'pending'])
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -32,7 +33,7 @@ export const useCommunityMembers = (communityId?: string) => {
         throw error;
       }
 
-      console.log('Community members fetched:', data);
+      console.log('Community members data:', data);
       return data || [];
     },
     enabled: !!communityId
