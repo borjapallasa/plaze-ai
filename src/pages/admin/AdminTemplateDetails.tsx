@@ -114,7 +114,6 @@ export default function AdminTemplateDetails() {
               />
               <TemplateStatusCard 
                 status={product.status}
-                created_at={product.created_at}
               />
               <TemplateFinancialMetrics 
                 salesAmount={product.sales_amount}

@@ -76,7 +76,7 @@ export function CommunityFieldsForm({
       {formData.type === "paid" && (
         <div className="space-y-2">
           <Label htmlFor="price" className="font-medium text-gray-700">
-            Price <span className="text-red-500">*</span>
+            Price
           </Label>
           <Input
             type="number"
@@ -86,15 +86,17 @@ export function CommunityFieldsForm({
             onChange={handleInputChange}
             className="w-full"
             placeholder="0.00"
-            required
           />
         </div>
       )}
 
       <div className="space-y-2">
         <Label className="font-medium text-gray-700">
-          Thumbnail Image
+          Thumbnail Image (Optional)
         </Label>
+        <p className="text-sm text-muted-foreground mb-2">
+          You can add a thumbnail image now or later from your community settings
+        </p>
         <div className="mt-1">
           <CommunityMediaUpload 
             communityUuid="temp" 

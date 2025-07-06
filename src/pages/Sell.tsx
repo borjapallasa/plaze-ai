@@ -31,7 +31,6 @@ const SellPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  // If user is already logged in, pre-fill the email
   useEffect(() => {
     if (user?.email) {
       setFormData(prev => ({ ...prev, contactEmail: user.email }));
@@ -45,13 +44,11 @@ const SellPage = () => {
 
   const handleNext = () => {
     if (currentStep === 3) {
-      // Check captcha confirmation
       if (!formData.captchaConfirmed) {
         toast.error("Please confirm that you are not a robot");
         return;
       }
 
-      // Check required fields for non-authenticated users
       if (!user) {
         if (!formData.firstName.trim()) {
           toast.error("Please enter your first name");
@@ -67,7 +64,6 @@ const SellPage = () => {
         }
       }
 
-      // The authentication is now handled in NavigationButtons
       if (selectedOption === "products") {
         navigate("/seller/products/new", {
           state: {
@@ -78,11 +74,7 @@ const SellPage = () => {
           }
         });
       } else if (selectedOption === "community") {
-        if (!formData.thumbnail && selectedOption === "community") {
-          toast.error("Please upload a thumbnail image for your community");
-          return;
-        }
-        
+        // Removed thumbnail requirement - community can be created without photo
         navigate("/seller/communities/new", {
           state: {
             name: formData.name,
@@ -90,7 +82,7 @@ const SellPage = () => {
             intro: formData.intro,
             type: formData.type,
             price: formData.type === "paid" ? formData.price : "0",
-            thumbnail: formData.thumbnail,
+            thumbnail: formData.thumbnail, // Optional - can be empty
             videoUrl: formData.videoUrl
           }
         });

@@ -5,8 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ImageUploadArea } from "@/components/product/ImageUploadArea";
-import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 
 interface CommunityFormProps {
   formData: {
@@ -58,7 +56,7 @@ export function CommunityForm({ formData, onChange, onImageUpload, isUploading }
       {formData.type === "paid" && (
         <div className="space-y-2">
           <Label htmlFor="price" className="text-base font-medium">
-            Price <span className="text-red-500">*</span>
+            Price
           </Label>
           <Input
             id="price"
@@ -100,8 +98,11 @@ export function CommunityForm({ formData, onChange, onImageUpload, isUploading }
 
       <div className="space-y-2">
         <Label className="text-base font-medium">
-          Thumbnail Image
+          Thumbnail Image (Optional)
         </Label>
+        <p className="text-sm text-muted-foreground mb-2">
+          You can add a thumbnail image now or later from your community settings
+        </p>
         <ImageUploadArea
           onFileSelect={onImageUpload}
           isUploading={isUploading}
