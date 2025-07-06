@@ -2359,6 +2359,10 @@ export type Database = {
           variant_files_link: string
         }[]
       }
+      is_user_admin: {
+        Args: { user_id: string }
+        Returns: boolean
+      }
       user_has_expert_profile: {
         Args: { user_id: string }
         Returns: boolean
