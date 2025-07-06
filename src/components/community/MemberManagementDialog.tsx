@@ -31,6 +31,8 @@ export function MemberManagementDialog({
   const [isKickMode, setIsKickMode] = useState(false);
 
   console.log('All members:', members);
+  console.log('Reject dialog open:', rejectDialogOpen);
+  console.log('Member to reject:', memberToReject);
 
   const activeMembers = members.filter(member => member.status === 'active');
   const pendingMembers = members.filter(member => member.status === 'pending');
@@ -100,6 +102,13 @@ export function MemberManagementDialog({
 
   const handleRemoveMember = (membershipId: string) => {
     removeMemberMutation.mutate(membershipId);
+  };
+
+  const handleRejectDialogClose = () => {
+    console.log('Closing reject dialog');
+    setRejectDialogOpen(false);
+    setMemberToReject(null);
+    setIsKickMode(false);
   };
 
   if (!isOwner) {
@@ -368,13 +377,15 @@ export function MemberManagementDialog({
         </DialogContent>
       </Dialog>
 
-      <MemberRejectDialog
-        open={rejectDialogOpen}
-        onOpenChange={setRejectDialogOpen}
-        member={memberToReject}
-        communityId={communityId}
-        isKick={isKickMode}
-      />
+      {memberToReject && (
+        <MemberRejectDialog
+          open={rejectDialogOpen}
+          onOpenChange={handleRejectDialogClose}
+          member={memberToReject}
+          communityId={communityId}
+          isKick={isKickMode}
+        />
+      )}
     </>
   );
 }
