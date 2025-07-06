@@ -51,13 +51,12 @@ export function MemberRejectDialog({
       
       // For rejecting pending members, set status to 'rejected'
       // For kicking active members, set status to 'inactive'
-      // Let's try 'cancelled' instead of 'rejected' as it might be the correct enum value
-      const newStatus = isKick ? 'inactive' : 'cancelled';
+      const newStatus = isKick ? 'inactive' : 'rejected';
       console.log('Setting status to:', newStatus);
       
       const { data, error } = await supabase
         .from('community_subscriptions')
-        .update({ status: newStatus })
+        .update({ status: newStatus as any })
         .eq('community_subscription_uuid', member.community_subscription_uuid)
         .select();
 
