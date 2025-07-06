@@ -9,7 +9,8 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown, CheckCircle, XCircle } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { ArrowUpDown, CheckCircle, XCircle, Pause, MoreHorizontal } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
@@ -51,12 +52,18 @@ export function AffiliatesTable({
         return <Badge variant="secondary" className="bg-red-100 text-red-800">Inactive</Badge>;
       case 'new':
         return <Badge variant="secondary" className="bg-orange-100 text-orange-800">New</Badge>;
+      case 'accepted':
+        return <Badge variant="secondary" className="bg-green-100 text-green-800">Accepted</Badge>;
+      case 'rejected':
+        return <Badge variant="secondary" className="bg-red-100 text-red-800">Rejected</Badge>;
+      case 'suspended':
+        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">Suspended</Badge>;
       default:
         return <Badge variant="outline">Unknown</Badge>;
     }
   };
 
-  const handleUpdateStatus = async (affiliateUuid: string, newStatus: 'active' | 'inactive') => {
+  const handleUpdateStatus = async (affiliateUuid: string, newStatus: 'accepted' | 'rejected' | 'suspended') => {
     try {
       const { error } = await supabase
         .from('affiliates')
@@ -146,52 +153,36 @@ export function AffiliatesTable({
                   {new Date(affiliate.created_at).toLocaleDateString()}
                 </TableCell>
                 <TableCell>
-                  <div className="flex items-center gap-2">
-                    {affiliate.status === 'new' && (
-                      <>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleUpdateStatus(affiliate.affiliate_uuid, 'active')}
-                          className="text-green-600 border-green-600 hover:bg-green-50"
-                        >
-                          <CheckCircle className="h-4 w-4 mr-1" />
-                          Approve
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleUpdateStatus(affiliate.affiliate_uuid, 'inactive')}
-                          className="text-red-600 border-red-600 hover:bg-red-50"
-                        >
-                          <XCircle className="h-4 w-4 mr-1" />
-                          Reject
-                        </Button>
-                      </>
-                    )}
-                    {affiliate.status === 'active' && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleUpdateStatus(affiliate.affiliate_uuid, 'inactive')}
-                        className="text-red-600 border-red-600 hover:bg-red-50"
-                      >
-                        <XCircle className="h-4 w-4 mr-1" />
-                        Deactivate
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <MoreHorizontal className="h-4 w-4" />
                       </Button>
-                    )}
-                    {affiliate.status === 'inactive' && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleUpdateStatus(affiliate.affiliate_uuid, 'active')}
-                        className="text-green-600 border-green-600 hover:bg-green-50"
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        onClick={() => handleUpdateStatus(affiliate.affiliate_uuid, 'accepted')}
+                        className="text-green-600"
                       >
-                        <CheckCircle className="h-4 w-4 mr-1" />
-                        Activate
-                      </Button>
-                    )}
-                  </div>
+                        <CheckCircle className="h-4 w-4 mr-2" />
+                        Approve
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => handleUpdateStatus(affiliate.affiliate_uuid, 'rejected')}
+                        className="text-red-600"
+                      >
+                        <XCircle className="h-4 w-4 mr-2" />
+                        Reject
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => handleUpdateStatus(affiliate.affiliate_uuid, 'suspended')}
+                        className="text-yellow-600"
+                      >
+                        <Pause className="h-4 w-4 mr-2" />
+                        Suspend
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))

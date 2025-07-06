@@ -2381,7 +2381,7 @@ export type Database = {
       affiliate_partnership_type: "community" | "product"
       affiliate_product_status: "active" | "inactive"
       affiliate_product_type: "product" | "community"
-      affiliate_status: "new" | "accepted" | "needs attention" | "rejected"
+      affiliate_status: "new" | "accepted" | "suspended" | "rejected"
       applications_status:
         | "open"
         | "rejected"
@@ -2605,7 +2605,7 @@ export const Constants = {
       affiliate_partnership_type: ["community", "product"],
       affiliate_product_status: ["active", "inactive"],
       affiliate_product_type: ["product", "community"],
-      affiliate_status: ["new", "accepted", "needs attention", "rejected"],
+      affiliate_status: ["new", "accepted", "suspended", "rejected"],
       applications_status: [
         "open",
         "rejected",
