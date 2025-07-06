@@ -1,5 +1,4 @@
 
-
 import { MainHeader } from "@/components/MainHeader";
 import { useAffiliates } from "@/hooks/admin/useAffiliates";
 import { AffiliatesHeader } from "@/components/admin/affiliates/AffiliatesHeader";
@@ -86,12 +85,13 @@ export default function AdminAffiliates() {
 
   // Get counts for each status from the unfiltered affiliates data
   const getStatusCounts = () => {
-    if (!allAffiliates) return { all: 0, active: 0, inactive: 0, new: 0 };
+    if (!allAffiliates) return { all: 0, accepted: 0, suspended: 0, rejected: 0, new: 0 };
     
     const counts = {
       all: allAffiliates.length,
-      active: allAffiliates.filter(affiliate => affiliate.status === 'active').length,
-      inactive: allAffiliates.filter(affiliate => affiliate.status === 'inactive').length,
+      accepted: allAffiliates.filter(affiliate => affiliate.status === 'accepted').length,
+      suspended: allAffiliates.filter(affiliate => affiliate.status === 'suspended').length,
+      rejected: allAffiliates.filter(affiliate => affiliate.status === 'rejected').length,
       new: allAffiliates.filter(affiliate => affiliate.status === 'new').length
     };
     
@@ -101,10 +101,11 @@ export default function AdminAffiliates() {
   const statusCounts = getStatusCounts();
 
   const tabs = [
-    { id: "all", label: "All", count: statusCounts.all },
+    { id: "accepted", label: "Accepted", count: statusCounts.accepted },
+    { id: "suspended", label: "Suspended", count: statusCounts.suspended },
+    { id: "rejected", label: "Rejected", count: statusCounts.rejected },
     { id: "new", label: "New", count: statusCounts.new },
-    { id: "active", label: "Active", count: statusCounts.active },
-    { id: "inactive", label: "Inactive", count: statusCounts.inactive }
+    { id: "all", label: "All", count: statusCounts.all }
   ];
 
   // Show loading while checking authentication and admin status
@@ -266,4 +267,3 @@ export default function AdminAffiliates() {
     </>
   );
 }
-
