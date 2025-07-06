@@ -135,13 +135,17 @@ export default function CommunityAboutPage() {
 
       if (error) throw error;
       
-      return { status };
+      return { status, communityType: community.type };
     },
-    onSuccess: ({ status }) => {
+    onSuccess: ({ status, communityType }) => {
       if (status === 'pending') {
         toast.success("Join request sent! You'll be notified when approved.");
       } else {
         toast.success("Successfully joined the community!");
+        // Redirect to community main page for free communities
+        if (communityType === 'free') {
+          navigate(`/community/${communityId}`);
+        }
       }
       queryClient.invalidateQueries({ queryKey: ['community-subscription', user?.id, communityId] });
     },
