@@ -56,12 +56,13 @@ export function MemberRejectDialog({
       
       const { data, error } = await supabase
         .from('community_subscriptions')
-        .update({ status: newStatus as any })
+        .update({ 
+          status: newStatus
+        })
         .eq('community_subscription_uuid', member.community_subscription_uuid)
         .select();
 
       console.log('Update result:', { data, error });
-      console.log('Supabase error details:', error);
 
       if (error) {
         console.error(`Error ${isKick ? 'kicking' : 'rejecting'} member:`, error);
@@ -76,7 +77,7 @@ export function MemberRejectDialog({
         return;
       }
 
-      console.log('Successfully updated member status');
+      console.log('Successfully updated member status to:', newStatus);
 
       // Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: ['community-members', communityId] });
