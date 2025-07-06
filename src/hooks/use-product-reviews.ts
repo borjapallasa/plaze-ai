@@ -25,12 +25,12 @@ export function useProductReviews(productUuid?: string) {
 
       // Transform the data to match our Review interface
       return data?.map(review => ({
-        id: review.review_uuid || review.id?.toString() || '',
-        author: review.buyer_name || review.author || 'Anonymous',
+        id: review.review_uuid || review.product_transaction_item_uuid || '',
+        author: review.buyer_name || 'Anonymous',
         rating: review.rating || 0,
-        content: review.title || review.content || '',
-        description: review.comments || review.description || '',
-        avatar: review.avatar || `https://images.unsplash.com/photo-1472099645785-5658abf4ff4e`,
+        content: review.title || review.comments || '',
+        description: review.comments || '',
+        avatar: `https://images.unsplash.com/photo-1472099645785-5658abf4ff4e`,
         date: review.created_at ? new Date(review.created_at).toLocaleDateString() : '',
         reviewType: review.type || 'purchase'
       })) || [];
