@@ -93,6 +93,7 @@ function App() {
           <Route path="/admin/transactions/:id" element={<AdminTransactionDetailsPage />} />
           <Route path="/admin/products" element={<DraftTemplatesPage />} />
           <Route path="/admin/products/:id" element={<AdminTemplateDetailsPage />} />
+          <Route path="/affiliates" element={<AffiliatesPage />} />
           <Route path="/affiliates/dashboard" element={<AffiliatesPage />} />
           <Route path="/search" element={<SearchResults />} />
           <Route path="/experts" element={<ExpertsPage />} />
