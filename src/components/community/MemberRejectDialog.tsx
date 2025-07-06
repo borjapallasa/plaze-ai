@@ -47,10 +47,12 @@ export function MemberRejectDialog({
     try {
       console.log(`${isKick ? 'Kicking' : 'Rejecting'} member:`, member.community_subscription_uuid);
       console.log('Current member status:', member.status);
+      console.log('Community ID:', communityId);
       
       // For rejecting pending members, set status to 'rejected'
       // For kicking active members, set status to 'inactive'
-      const newStatus = isKick ? 'inactive' : 'rejected';
+      // Let's try 'cancelled' instead of 'rejected' as it might be the correct enum value
+      const newStatus = isKick ? 'inactive' : 'cancelled';
       console.log('Setting status to:', newStatus);
       
       const { data, error } = await supabase
@@ -60,9 +62,13 @@ export function MemberRejectDialog({
         .select();
 
       console.log('Update result:', { data, error });
+      console.log('Supabase error details:', error);
 
       if (error) {
         console.error(`Error ${isKick ? 'kicking' : 'rejecting'} member:`, error);
+        console.error('Error code:', error.code);
+        console.error('Error message:', error.message);
+        console.error('Error details:', error.details);
         toast({
           variant: "destructive",
           title: "Error",
