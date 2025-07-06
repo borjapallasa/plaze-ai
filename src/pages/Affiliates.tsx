@@ -1,5 +1,6 @@
 
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,11 +8,13 @@ import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { useAffiliateData } from "@/hooks/use-affiliate-data";
+import { AffiliateDashboard } from "@/components/affiliates/AffiliateDashboard";
 import { toast } from "sonner";
-import { Loader2, UserPlus } from "lucide-react";
+import { Loader2, UserPlus, Clock } from "lucide-react";
 
 export default function AffiliatesPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { data: userProfile, isLoading: profileLoading } = useUserProfile();
   const { data: affiliateData, isLoading: affiliateLoading, refetch } = useAffiliateData();
   const [isCreating, setIsCreating] = useState(false);
@@ -60,7 +63,8 @@ export default function AffiliatesPage() {
       }
 
       toast.success("Affiliate account created successfully!");
-      refetch(); // Refresh the affiliate data
+      // Redirect to dashboard after successful creation
+      navigate('/affiliates/dashboard');
     } catch (error) {
       console.error('Error creating affiliate:', error);
       toast.error("An unexpected error occurred. Please try again.");
@@ -96,6 +100,63 @@ export default function AffiliatesPage() {
             <Loader2 className="h-8 w-8 animate-spin" />
             <span className="ml-2">Loading...</span>
           </div>
+        </div>
+      </>
+    );
+  }
+
+  // Check if we're on the dashboard route and user has affiliate data with status 'new'
+  const isDashboardRoute = window.location.pathname === '/affiliates/dashboard';
+  
+  if (isDashboardRoute && affiliateData?.status === 'new') {
+    return (
+      <>
+        <MainHeader />
+        <div className="container mx-auto px-4 py-8 pt-24">
+          <div className="max-w-2xl mx-auto space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-orange-600">
+                  <Clock className="h-5 w-5" />
+                  Request Pending Review
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-muted-foreground">
+                  Your affiliate application has been submitted and is currently under review. 
+                  You'll receive an email notification once your application has been processed.
+                </p>
+                
+                <div className="p-4 bg-muted/50 rounded-lg">
+                  <h3 className="font-medium mb-2">Application Details:</h3>
+                  <p><strong>Email:</strong> {affiliateData.email}</p>
+                  <p><strong>Affiliate Code:</strong> {affiliateData.affiliate_code}</p>
+                  <p><strong>Status:</strong> <span className="capitalize text-orange-600">{affiliateData.status}</span></p>
+                </div>
+
+                <div className="text-sm text-muted-foreground">
+                  <p><strong>What happens next?</strong></p>
+                  <ul className="list-disc list-inside mt-2 space-y-1">
+                    <li>Our team will review your application</li>
+                    <li>You'll receive an email notification with the decision</li>
+                    <li>Once approved, you can start earning commissions</li>
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // Show dashboard for approved affiliates
+  if (isDashboardRoute && affiliateData && affiliateData.status !== 'new') {
+    return (
+      <>
+        <MainHeader />
+        <div className="container mx-auto px-4 py-8 pt-24">
+          <AffiliateDashboard />
         </div>
       </>
     );
@@ -193,6 +254,13 @@ export default function AffiliatesPage() {
                     <p className="text-lg">${affiliateData.commissions_available || 0}</p>
                   </div>
                 </div>
+
+                <Button 
+                  onClick={() => navigate('/affiliates/dashboard')}
+                  className="w-full"
+                >
+                  Go to Dashboard
+                </Button>
               </CardContent>
             </Card>
           )}
