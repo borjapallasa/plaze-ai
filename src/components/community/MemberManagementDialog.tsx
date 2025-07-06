@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -29,6 +28,7 @@ export function MemberManagementDialog({
   const { data: members = [], isLoading } = useCommunityMembers(communityId);
   const [memberToReject, setMemberToReject] = useState<any>(null);
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
+  const [isKickMode, setIsKickMode] = useState(false);
 
   console.log('All members:', members);
 
@@ -85,7 +85,16 @@ export function MemberManagementDialog({
   };
 
   const handleRejectMember = (member: any) => {
+    console.log('Opening reject dialog for member:', member);
     setMemberToReject(member);
+    setIsKickMode(false); // This is a rejection, not a kick
+    setRejectDialogOpen(true);
+  };
+
+  const handleKickMember = (member: any) => {
+    console.log('Opening kick dialog for member:', member);
+    setMemberToReject(member);
+    setIsKickMode(true); // This is a kick, not a rejection
     setRejectDialogOpen(true);
   };
 
@@ -172,12 +181,11 @@ export function MemberManagementDialog({
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handleRemoveMember(member.community_subscription_uuid)}
-                            disabled={removeMemberMutation.isPending}
+                            onClick={() => handleKickMember(member)}
                             className="text-destructive hover:text-destructive"
                           >
                             <UserX className="h-4 w-4 mr-1" />
-                            Remove
+                            Kick
                           </Button>
                         </div>
                       </div>
@@ -365,7 +373,7 @@ export function MemberManagementDialog({
         onOpenChange={setRejectDialogOpen}
         member={memberToReject}
         communityId={communityId}
-        isKick={false}
+        isKick={isKickMode}
       />
     </>
   );
