@@ -41,7 +41,7 @@ export function CommunityStatusCard({
             disabled={isSaving}
             className="w-full"
           >
-            {isSaving ? "Creating..." : "Create Product"}
+            {isSaving ? "Creating..." : "Create Community"}
           </Button>
         </div>
       </CardContent>
