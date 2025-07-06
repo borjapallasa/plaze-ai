@@ -3,6 +3,7 @@ import React from "react";
 import { CommunityFormHeader } from "@/components/community/form/CommunityFormHeader";
 import { CommunityMainForm } from "@/components/community/form/CommunityMainForm";
 import { CommunitySocialLinks } from "@/components/community/form/CommunitySocialLinks";
+import { CommunityStatusCard } from "@/components/community/form/CommunityStatusCard";
 import type { BillingPeriod, CommunityType, CommunityVisibility } from "@/hooks/use-create-community";
 
 interface CommunityFormProps {
@@ -52,13 +53,11 @@ export function CommunityForm({
 }: CommunityFormProps) {
   return (
     <div className="w-full max-w-[1400px] mx-auto px-2 xs:px-3 sm:px-6 lg:px-8 py-3 sm:py-6 mt-16">
-      <CommunityFormHeader
-        communityName={communityName}
-        visibility={visibility}
-        onVisibilityChange={onVisibilityChange}
-        onSave={onSave}
-        isSaving={isSaving}
-      />
+      {/* Header - now simplified without status controls */}
+      <div className="mb-6">
+        <h1 className="text-xl sm:text-2xl font-semibold">Create New Community</h1>
+        <p className="text-sm text-muted-foreground mt-1">Set up your community and start building your audience</p>
+      </div>
 
       <div className="space-y-3 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-6">
         {/* Left column - Main form content */}
@@ -83,14 +82,23 @@ export function CommunityForm({
           </div>
         </div>
 
-        {/* Right column - Social Links */}
+        {/* Right column - Status Card and Social Links */}
         <div className="lg:col-span-4 self-start">
-          <CommunitySocialLinks
-            links={links}
-            onLinkChange={onLinkChange}
-            onAddLink={onAddLink}
-            onRemoveLink={onRemoveLink}
-          />
+          <div className="space-y-3 sm:space-y-6">
+            <CommunityStatusCard
+              visibility={visibility}
+              onVisibilityChange={onVisibilityChange}
+              onSave={onSave}
+              isSaving={isSaving}
+            />
+            
+            <CommunitySocialLinks
+              links={links}
+              onLinkChange={onLinkChange}
+              onAddLink={onAddLink}
+              onRemoveLink={onRemoveLink}
+            />
+          </div>
         </div>
       </div>
     </div>
