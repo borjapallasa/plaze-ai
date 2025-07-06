@@ -85,23 +85,17 @@ export function NavigationButtons({
         console.log("👤 Current user:", user?.id);
         console.log("🎯 Selected option:", selectedOption);
         
-        // Check current authentication state
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        console.log("🔐 Current session:", session?.user?.id || 'No session');
-        console.log("🔐 Session object:", session);
-        if (sessionError) {
-          console.error("❌ Session error:", sessionError);
-        }
-
         let userId;
         let isNewUser = false;
         let userFirstName = '';
         let userLastName = '';
         
         if (user) {
+          // User is already authenticated
           userId = user.id;
           console.log("✅ Using authenticated user:", userId);
           
+          // Get user data from users table
           const { data: userData } = await supabase
             .from('users')
             .select('first_name, last_name')
@@ -114,6 +108,7 @@ export function NavigationButtons({
             console.log("📝 Retrieved user data:", { userFirstName, userLastName });
           }
         } else {
+          // Handle non-authenticated users
           const tempPassword = Math.random().toString(36).slice(-12);
           
           const { data: existingUserData } = await supabase
@@ -128,6 +123,7 @@ export function NavigationButtons({
             userLastName = existingUserData.last_name || '';
             console.log("🔍 Found existing user:", userId);
             
+            // Send magic link for existing user
             const { error: signInError } = await supabase.auth.signInWithOtp({
               email: emailToUse,
               options: {
@@ -139,6 +135,7 @@ export function NavigationButtons({
               throw new Error(`Failed to sign in: ${signInError.message}`);
             }
           } else {
+            // Create new user
             userFirstName = formData.firstName;
             userLastName = formData.lastName;
             
@@ -165,95 +162,33 @@ export function NavigationButtons({
             userId = authData.user.id;
             isNewUser = true;
             console.log("✨ Created new user:", userId);
-            
-            const { data: sessionData, error: sessionError } = await supabase.auth.signInWithPassword({
-              email: emailToUse,
-              password: tempPassword,
-            });
-            
-            if (sessionError) {
-              throw new Error(`Failed to sign in after account creation: ${sessionError.message}`);
-            }
-            
-            if (!sessionData.session) {
-              throw new Error("No valid session after sign in");
-            }
-            
-            console.log("🔐 Session established:", sessionData.session.user.id);
           }
         }
         
-        // Wait a moment to ensure authentication context is properly set
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
-        // Check authentication context again before creating expert
-        const { data: { session: currentSession } } = await supabase.auth.getSession();
-        console.log("🔍 Pre-expert creation session check:", currentSession?.user?.id || 'No session');
-        console.log("🔍 Full session object:", currentSession);
-        
-        // Create expert profile using a security definer function approach
+        // Create expert profile using direct database call with the RPC function
         const expertName = `${userFirstName} ${userLastName}`.trim();
         console.log("👨‍💼 Creating expert with name:", expertName, "for user:", userId);
         
-        // Use the create_expert_profile RPC function instead of direct insert
+        // Use the RPC function to create expert profile
         const { data: expertCreationResult, error: expertCreationError } = await supabase
           .rpc('create_expert_profile', {
             p_user_uuid: userId,
             p_email: emailToUse,
             p_name: expertName,
             p_areas: [selectedOption]
-          });
+          } as any); // Use 'as any' to bypass TypeScript until types are regenerated
 
         if (expertCreationError) {
           console.error("❌ Expert creation error via RPC:", expertCreationError);
-          
-          // Fallback: Try direct insert with proper session
-          console.log("🔄 Attempting fallback direct insert...");
-          
-          const expertData = {
-            user_uuid: userId,
-            email: emailToUse,
-            name: expertName,
-            description: `Expert specializing in ${selectedOption}`,
-            areas: [selectedOption],
-            status: 'in review' as const
-          };
-          
-          console.log("📊 Expert data to insert:", expertData);
-          
-          const { data: newExpertData, error: directInsertError } = await supabase
-            .from('experts')
-            .insert(expertData)
-            .select('expert_uuid')
-            .single();
+          throw new Error(`Error creating expert profile: ${expertCreationError.message}`);
+        }
 
-          if (directInsertError) {
-            console.error("❌ Direct insert error:", directInsertError);
-            console.error("❌ Error details:", JSON.stringify(directInsertError, null, 2));
-            throw new Error(`Error creating expert profile: ${directInsertError.message}`);
-          } else {
-            console.log("✅ Successfully created expert profile via direct insert:", newExpertData?.expert_uuid);
-          }
+        console.log("✅ Successfully created expert profile:", expertCreationResult);
+
+        // Send appropriate message based on authentication state
+        if (user) {
+          toast.success("Expert profile setup completed!");
         } else {
-          console.log("✅ Successfully created expert profile via RPC:", expertCreationResult);
-        }
-
-        // Update user to be an expert if this is a new user
-        if (isNewUser) {
-          const { error: updateUserError } = await supabase
-            .from('users')
-            .update({ is_expert: true })
-            .eq('user_uuid', userId);
-
-          if (updateUserError) {
-            console.error("❌ Error updating user is_expert:", updateUserError);
-          } else {
-            console.log("✅ Updated user is_expert to true");
-          }
-        }
-
-        // Send magic link for future logins only if user wasn't already authenticated
-        if (!user) {
           await supabase.auth.signInWithOtp({
             email: emailToUse,
             options: {
@@ -262,8 +197,6 @@ export function NavigationButtons({
           });
           
           toast.success("Account created! Expert profile created successfully. A magic link has been sent to your email for future logins");
-        } else {
-          toast.success("Expert profile setup completed!");
         }
         
         onNext();
