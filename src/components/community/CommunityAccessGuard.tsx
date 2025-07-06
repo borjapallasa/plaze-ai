@@ -5,6 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Clock, Lock, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useCommunitySusbcriptionAccess } from "@/hooks/useCommunitySusbcriptionAccess";
+import { useCommunityDetails } from "@/hooks/use-community-details";
+import { useAuth } from "@/lib/auth";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 interface CommunityAccessGuardProps {
   communityId: string;
@@ -13,9 +17,32 @@ interface CommunityAccessGuardProps {
 
 export function CommunityAccessGuard({ communityId, children }: CommunityAccessGuardProps) {
   const { hasAccess, status, loading } = useCommunitySusbcriptionAccess(communityId);
+  const { user } = useAuth();
   const navigate = useNavigate();
 
-  if (loading) {
+  // Check if the authenticated user is the expert/owner of this community
+  const { data: isOwner, isLoading: isOwnerLoading } = useQuery({
+    queryKey: ['community-owner', communityId, user?.id],
+    queryFn: async () => {
+      if (!user?.id || !communityId) return false;
+
+      const { data, error } = await supabase
+        .from('communities')
+        .select('expert_uuid, experts!inner(user_uuid)')
+        .eq('community_uuid', communityId)
+        .single();
+
+      if (error) {
+        console.error('Error checking community ownership:', error);
+        return false;
+      }
+
+      return data?.experts?.user_uuid === user.id;
+    },
+    enabled: !!user?.id && !!communityId,
+  });
+
+  if (loading || isOwnerLoading) {
     return (
       <div className="flex justify-center items-center py-16 mt-16">
         <div className="animate-pulse text-center">
@@ -24,6 +51,11 @@ export function CommunityAccessGuard({ communityId, children }: CommunityAccessG
         </div>
       </div>
     );
+  }
+
+  // If user is the community owner, grant access
+  if (isOwner) {
+    return <>{children}</>;
   }
 
   // If user has no subscription at all
