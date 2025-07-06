@@ -15,7 +15,7 @@ interface AffiliatesSortSelectorProps {
 export function AffiliatesSortSelector({ sortValue, onSortChange }: AffiliatesSortSelectorProps) {
   return (
     <Select value={sortValue} onValueChange={onSortChange}>
-      <SelectTrigger className="w-48">
+      <SelectTrigger className="w-full lg:w-48">
         <SelectValue placeholder="Sort by..." />
       </SelectTrigger>
       <SelectContent>

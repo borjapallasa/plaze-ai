@@ -1,4 +1,5 @@
 
+
 import { MainHeader } from "@/components/MainHeader";
 import { useAffiliates } from "@/hooks/admin/useAffiliates";
 import { AffiliatesHeader } from "@/components/admin/affiliates/AffiliatesHeader";
@@ -233,7 +234,7 @@ export default function AdminAffiliates() {
           </div>
         </div>
 
-        {/* Tablet and Mobile layout - search bar full width, then sort and layout on same line */}
+        {/* Tablet and Mobile layout - search bar full width, then sort taking full width with layout switcher */}
         <div className="lg:hidden mb-6 space-y-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
@@ -245,7 +246,7 @@ export default function AdminAffiliates() {
             />
           </div>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <div className="flex-1">
               <AffiliatesSortSelector 
                 sortValue={sortValue}
@@ -265,3 +266,4 @@ export default function AdminAffiliates() {
     </>
   );
 }
+
