@@ -1,3 +1,4 @@
+
 import { MainHeader } from "@/components/MainHeader";
 import { useAffiliates } from "@/hooks/admin/useAffiliates";
 import { AffiliatesHeader } from "@/components/admin/affiliates/AffiliatesHeader";
@@ -232,9 +233,9 @@ export default function AdminAffiliates() {
           </div>
         </div>
 
-        {/* Tablet and Mobile layout - search bar above, then sort and layout on same line */}
+        {/* Tablet and Mobile layout - search bar full width, then sort and layout on same line */}
         <div className="lg:hidden mb-6 space-y-4">
-          <div className="relative w-full">
+          <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
             <Input
               placeholder="Search by email or affiliate code"
