@@ -80,6 +80,7 @@ export function CommunityMainForm({
               <SelectValue placeholder="Select community type" />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="private">Private</SelectItem>
               <SelectItem value="free">Free</SelectItem>
               <SelectItem value="paid">Paid</SelectItem>
             </SelectContent>

@@ -2391,7 +2391,7 @@ export type Database = {
       community_digest: "Daily" | "Weekly" | "Bi-Weekly" | "Monthly" | "None"
       community_price_status: "active" | "inactive"
       community_product_type: "free" | "paid"
-      community_status: "visible" | "not visible" | "draft"
+      community_status: "visible" | "not visible" | "draft" | "active"
       community_subscription_status: "active" | "inactive" | "pending"
       community_type: "free" | "paid" | "private"
       community_visibility: "draft" | "private" | "public"
@@ -2612,7 +2612,7 @@ export const Constants = {
       community_digest: ["Daily", "Weekly", "Bi-Weekly", "Monthly", "None"],
       community_price_status: ["active", "inactive"],
       community_product_type: ["free", "paid"],
-      community_status: ["visible", "not visible", "draft"],
+      community_status: ["visible", "not visible", "draft", "active"],
       community_subscription_status: ["active", "inactive", "pending"],
       community_type: ["free", "paid", "private"],
       community_visibility: ["draft", "private", "public"],
