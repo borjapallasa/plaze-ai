@@ -2343,12 +2343,14 @@ export type Database = {
     }
     Functions: {
       create_expert_profile: {
-        Args: {
-          p_user_uuid: string
-          p_email: string
-          p_name: string
-          p_areas?: Json
-        }
+        Args:
+          | { p_user_uuid: string; p_email: string; p_name: string }
+          | {
+              p_user_uuid: string
+              p_email: string
+              p_name: string
+              p_areas?: Json
+            }
         Returns: string
       }
       get_related_products_with_variants: {

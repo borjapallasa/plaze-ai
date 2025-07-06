@@ -169,13 +169,12 @@ export function NavigationButtons({
         const expertName = `${userFirstName} ${userLastName}`.trim();
         console.log("👨‍💼 Creating expert with name:", expertName, "for user:", userId);
         
-        // Use the RPC function to create expert profile
+        // Use the simplified RPC function to create expert profile
         const { data: expertCreationResult, error: expertCreationError } = await supabase
           .rpc('create_expert_profile', {
             p_user_uuid: userId,
             p_email: emailToUse,
-            p_name: expertName,
-            p_areas: [selectedOption]
+            p_name: expertName
           } as any); // Use 'as any' to bypass TypeScript until types are regenerated
 
         if (expertCreationError) {
