@@ -1,4 +1,3 @@
-
 import { MainHeader } from "@/components/MainHeader";
 import { useAffiliates } from "@/hooks/admin/useAffiliates";
 import { AffiliatesHeader } from "@/components/admin/affiliates/AffiliatesHeader";
@@ -61,19 +60,19 @@ export default function AdminAffiliates() {
     setStatusFilter("new");
   }, [setStatusFilter]);
 
-  // Switch to gallery view if currently on list view and on mobile or tablet
+  // Switch to gallery view if currently on list view and on mobile
   useEffect(() => {
-    if ((isMobile || isTablet) && layout === 'list') {
+    if (isMobile && layout === 'list') {
       setLayout('gallery');
     }
-  }, [isMobile, isTablet, layout]);
+  }, [isMobile, layout]);
 
-  // Set default layout to gallery for tablet devices
+  // Set default layout to gallery for mobile devices
   useEffect(() => {
-    if (isTablet && layout === 'grid') {
+    if (isMobile && layout !== 'gallery') {
       setLayout('gallery');
     }
-  }, [isTablet, layout]);
+  }, [isMobile, layout]);
 
   const handleSortChange = (value: string) => {
     setSortValue(value);
@@ -157,7 +156,7 @@ export default function AdminAffiliates() {
           />
         )}
         
-        {layout === 'list' && (
+        {layout === 'list' && !isMobile && (
           <AffiliatesList
             affiliates={affiliates}
             sortField={sortField}
@@ -209,11 +208,11 @@ export default function AdminAffiliates() {
 
         {/* Desktop layout - search and controls */}
         <div className="hidden lg:flex items-center justify-between gap-4 mb-6">
-          <div className="relative flex-1">
+          <div className="relative w-full">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
             <Input
               placeholder="Search by email or affiliate code"
-              className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C]"
+              className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C] w-full"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -228,39 +227,13 @@ export default function AdminAffiliates() {
             <AffiliatesLayoutSwitcher 
               layout={layout}
               onLayoutChange={setLayout}
+              isMobile={isMobile}
             />
           </div>
         </div>
 
-        {/* Tablet layout - search bar above, then sort and layout on same line */}
-        <div className="hidden sm:flex lg:hidden flex-col gap-4 mb-6">
-          <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
-            <Input
-              placeholder="Search by email or affiliate code"
-              className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C] w-full"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          
-          <div className="flex items-center gap-3 w-full">
-            <div className="flex items-center gap-3 flex-1">
-              <AffiliatesSortSelector 
-                sortValue={sortValue}
-                onSortChange={handleSortChange}
-              />
-              
-              <AffiliatesLayoutSwitcher 
-                layout={layout}
-                onLayoutChange={setLayout}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile layout - search first, then sort and layout on same line */}
-        <div className="sm:hidden mb-6 space-y-4">
+        {/* Tablet and Mobile layout - search bar above, then sort and layout on same line */}
+        <div className="lg:hidden mb-6 space-y-4">
           <div className="relative w-full">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
             <Input
@@ -281,6 +254,7 @@ export default function AdminAffiliates() {
             <AffiliatesLayoutSwitcher 
               layout={layout}
               onLayoutChange={setLayout}
+              isMobile={isMobile}
             />
           </div>
         </div>

@@ -77,7 +77,6 @@ export function AffiliatesTable({
       }
 
       toast.success(`Affiliate status updated to ${newStatus}`);
-      // Refetch the data
       queryClient.invalidateQueries({ queryKey: ['admin-affiliates'] });
     } catch (error) {
       console.error('Error updating affiliate status:', error);
@@ -97,29 +96,29 @@ export function AffiliatesTable({
   );
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>
+            <TableHead className="whitespace-nowrap">
               <SortButton field="email">Email</SortButton>
             </TableHead>
-            <TableHead>
+            <TableHead className="whitespace-nowrap">
               <SortButton field="affiliate_code">Affiliate Code</SortButton>
             </TableHead>
-            <TableHead>
+            <TableHead className="whitespace-nowrap">
               <SortButton field="status">Status</SortButton>
             </TableHead>
-            <TableHead>
+            <TableHead className="whitespace-nowrap">
               <SortButton field="commissions_made">Commissions Made</SortButton>
             </TableHead>
-            <TableHead>
+            <TableHead className="whitespace-nowrap">
               <SortButton field="commissions_available">Available</SortButton>
             </TableHead>
-            <TableHead>
+            <TableHead className="whitespace-nowrap">
               <SortButton field="created_at">Created At</SortButton>
             </TableHead>
-            <TableHead>Actions</TableHead>
+            <TableHead className="whitespace-nowrap">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -132,27 +131,27 @@ export function AffiliatesTable({
           ) : (
             affiliates.map((affiliate) => (
               <TableRow key={affiliate.id}>
-                <TableCell className="font-medium">
+                <TableCell className="font-medium whitespace-nowrap">
                   {affiliate.email || 'N/A'}
                 </TableCell>
-                <TableCell>
+                <TableCell className="whitespace-nowrap">
                   <code className="text-sm bg-muted px-2 py-1 rounded">
                     {affiliate.affiliate_code || 'N/A'}
                   </code>
                 </TableCell>
-                <TableCell>
+                <TableCell className="whitespace-nowrap">
                   {getStatusBadge(affiliate.status)}
                 </TableCell>
-                <TableCell>
+                <TableCell className="whitespace-nowrap">
                   ${affiliate.commissions_made?.toFixed(2) || '0.00'}
                 </TableCell>
-                <TableCell>
+                <TableCell className="whitespace-nowrap">
                   ${affiliate.commissions_available?.toFixed(2) || '0.00'}
                 </TableCell>
-                <TableCell>
+                <TableCell className="whitespace-nowrap">
                   {new Date(affiliate.created_at).toLocaleDateString()}
                 </TableCell>
-                <TableCell>
+                <TableCell className="whitespace-nowrap">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="sm" className="h-8 w-8 p-0">

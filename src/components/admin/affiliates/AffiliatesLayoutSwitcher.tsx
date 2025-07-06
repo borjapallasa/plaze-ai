@@ -8,9 +8,10 @@ export type LayoutType = "gallery" | "grid" | "list";
 interface AffiliatesLayoutSwitcherProps {
   layout: LayoutType;
   onLayoutChange: (layout: LayoutType) => void;
+  isMobile?: boolean;
 }
 
-export function AffiliatesLayoutSwitcher({ layout, onLayoutChange }: AffiliatesLayoutSwitcherProps) {
+export function AffiliatesLayoutSwitcher({ layout, onLayoutChange, isMobile = false }: AffiliatesLayoutSwitcherProps) {
   return (
     <div className="flex gap-1 border rounded-md p-1">
       <Button
@@ -29,14 +30,16 @@ export function AffiliatesLayoutSwitcher({ layout, onLayoutChange }: AffiliatesL
       >
         <Table className="h-4 w-4" />
       </Button>
-      <Button
-        variant={layout === "list" ? "default" : "ghost"}
-        size="sm"
-        onClick={() => onLayoutChange("list")}
-        className="h-8 px-3"
-      >
-        <List className="h-4 w-4" />
-      </Button>
+      {!isMobile && (
+        <Button
+          variant={layout === "list" ? "default" : "ghost"}
+          size="sm"
+          onClick={() => onLayoutChange("list")}
+          className="h-8 px-3"
+        >
+          <List className="h-4 w-4" />
+        </Button>
+      )}
     </div>
   );
 }
