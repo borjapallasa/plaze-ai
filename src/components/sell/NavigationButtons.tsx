@@ -111,7 +111,7 @@ export function NavigationButtons({
           const { data: existingUserData } = await supabase
             .from('users')
             .select('user_uuid, first_name, last_name')
-            .ilike('email', emailToUse) // Use ilike for case insensitive comparison
+            .ilike('email', emailToUse)
             .maybeSingle();
           
           if (existingUserData) {
@@ -178,42 +178,13 @@ export function NavigationButtons({
           }
         }
         
-        // Check if expert profile exists first
-        let expertExists = false;
-        
-        const { data: existingExpertData } = await supabase
-          .from('experts')
-          .select('expert_uuid')
-          .eq('user_uuid', userId)
-          .maybeSingle();
-          
-        if (existingExpertData) {
-          expertExists = true;
-          console.log("Found existing expert profile:", existingExpertData.expert_uuid);
-        }
-        
-        // If expert doesn't exist, create it with simplified approach
-        if (!expertExists) {
-          console.log("Creating new expert profile for user:", userId);
-          
-          // Update the users table to set is_expert as true if this is a new user
-          if (isNewUser) {
-            const { error: updateUserError } = await supabase
-              .from('users')
-              .update({ is_expert: true })
-              .eq('user_uuid', userId);
-
-            if (updateUserError) {
-              console.error("Error updating user is_expert:", updateUserError);
-              // Don't throw error, just log it as this is not critical for the flow
-            }
-          }
-          
-          // Create expert name by concatenating first_name and last_name from the USER
+        // Simplified expert creation approach - avoid RLS policy conflicts
+        try {
+          // Create expert name by concatenating first_name and last_name
           const expertName = `${userFirstName} ${userLastName}`.trim();
-          console.log("Creating expert with name:", expertName);
+          console.log("Creating expert with name:", expertName, "for user:", userId);
           
-          // Use a more direct approach to create the expert profile
+          // Direct insert without checking if expert exists to avoid RLS conflicts
           const { data: expertData, error: expertError } = await supabase
             .from('experts')
             .insert({
@@ -230,20 +201,32 @@ export function NavigationButtons({
           if (expertError) {
             console.error("Expert creation error:", expertError);
             
-            // If it's the infinite recursion error, try a simpler approach
-            if (expertError.message.includes('infinite recursion')) {
-              toast.error("There's a temporary issue with expert profile creation. Please try again or contact support.");
-              return;
+            // If expert already exists, that's okay - just log it
+            if (expertError.code === '23505') { // unique constraint violation
+              console.log("Expert profile already exists for this user");
+            } else {
+              throw new Error(`Error creating expert profile: ${expertError.message}`);
             }
-            
-            throw new Error(`Error creating expert profile: ${expertError.message}`);
+          } else {
+            console.log("Created new expert profile:", expertData?.expert_uuid, "with name:", expertName);
           }
+        } catch (expertCreationError) {
+          console.error("Expert creation failed:", expertCreationError);
+          // Don't throw here - user creation was successful, expert creation can be retried later
+          toast.error("Account created but expert profile creation failed. Please contact support.");
+        }
 
-          if (!expertData) {
-            throw new Error("Failed to create expert profile - no data returned");
+        // Update user to be an expert if this is a new user
+        if (isNewUser) {
+          const { error: updateUserError } = await supabase
+            .from('users')
+            .update({ is_expert: true })
+            .eq('user_uuid', userId);
+
+          if (updateUserError) {
+            console.error("Error updating user is_expert:", updateUserError);
+            // Don't throw error, just log it as this is not critical for the flow
           }
-          
-          console.log("Created new expert profile:", expertData.expert_uuid, "with name:", expertName);
         }
 
         // Send magic link for future logins only if user wasn't already authenticated
@@ -257,7 +240,7 @@ export function NavigationButtons({
           
           toast.success("Account created! A magic link has been sent to your email for future logins");
         } else {
-          toast.success("Expert profile created successfully!");
+          toast.success("Expert profile setup completed!");
         }
         
         // Call onNext to trigger navigation to the appropriate creation page
