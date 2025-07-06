@@ -163,13 +163,13 @@ export default function AdminAffiliates() {
           </div>
         </div>
 
-        {/* Search bar */}
+        {/* Search bar - full width */}
         <div className="mb-6">
-          <div className="relative max-w-md">
+          <div className="relative w-full">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E9196] h-4 w-4" />
             <Input
               placeholder="Search by email or affiliate code"
-              className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C]"
+              className="pl-10 border-[#E5E7EB] focus-visible:ring-[#1A1F2C] w-full"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />

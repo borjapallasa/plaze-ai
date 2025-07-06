@@ -56,7 +56,7 @@ export function AffiliatesTable({
     }
   };
 
-  const handleUpdateStatus = async (affiliateUuid: string, newStatus: string) => {
+  const handleUpdateStatus = async (affiliateUuid: string, newStatus: 'active' | 'inactive') => {
     try {
       const { error } = await supabase
         .from('affiliates')
