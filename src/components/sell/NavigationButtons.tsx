@@ -178,8 +178,7 @@ export function NavigationButtons({
           }
         }
         
-        // Check if expert profile exists - using case insensitive email comparison
-        let expertId;
+        // Check if expert profile exists first
         let expertExists = false;
         
         const { data: existingExpertData } = await supabase
@@ -189,19 +188,13 @@ export function NavigationButtons({
           .maybeSingle();
           
         if (existingExpertData) {
-          expertId = existingExpertData.expert_uuid;
           expertExists = true;
-          console.log("Found existing expert profile:", expertId);
+          console.log("Found existing expert profile:", existingExpertData.expert_uuid);
         }
         
-        // If expert doesn't exist, create it
+        // If expert doesn't exist, create it with simplified approach
         if (!expertExists) {
           console.log("Creating new expert profile for user:", userId);
-          
-          const { data: session } = await supabase.auth.getSession();
-          if (!session.session && !user) {
-            throw new Error("No active session to create expert profile");
-          }
           
           // Update the users table to set is_expert as true if this is a new user
           if (isNewUser) {
@@ -216,34 +209,41 @@ export function NavigationButtons({
             }
           }
           
-          // Create expert name by concatenating first_name and last_name from the USER, not the product
+          // Create expert name by concatenating first_name and last_name from the USER
           const expertName = `${userFirstName} ${userLastName}`.trim();
-          console.log("Creating expert with name:", expertName, "from user names:", userFirstName, userLastName);
+          console.log("Creating expert with name:", expertName);
           
-          // Now attempt to create the expert with the user's session
+          // Use a more direct approach to create the expert profile
           const { data: expertData, error: expertError } = await supabase
             .from('experts')
             .insert({
               user_uuid: userId,
               email: emailToUse,
-              name: expertName, // This should be the user's full name, NOT the product name
-              description: `Expert specializing in ${selectedOption}`, // Generic expert description, not the product description
-              areas: [] // Initialize with empty areas array
+              name: expertName,
+              description: `Expert specializing in ${selectedOption}`,
+              areas: [],
+              status: 'in review'
             })
             .select('expert_uuid')
             .single();
 
           if (expertError) {
             console.error("Expert creation error:", expertError);
-            throw new Error(`Error creating expert profile. Please contact support: ${expertError.message}`);
+            
+            // If it's the infinite recursion error, try a simpler approach
+            if (expertError.message.includes('infinite recursion')) {
+              toast.error("There's a temporary issue with expert profile creation. Please try again or contact support.");
+              return;
+            }
+            
+            throw new Error(`Error creating expert profile: ${expertError.message}`);
           }
 
           if (!expertData) {
             throw new Error("Failed to create expert profile - no data returned");
           }
           
-          expertId = expertData.expert_uuid;
-          console.log("Created new expert profile:", expertId, "with name:", expertName);
+          console.log("Created new expert profile:", expertData.expert_uuid, "with name:", expertName);
         }
 
         // Send magic link for future logins only if user wasn't already authenticated
@@ -261,7 +261,6 @@ export function NavigationButtons({
         }
         
         // Call onNext to trigger navigation to the appropriate creation page
-        // The actual product/community creation will happen on the next page
         onNext();
       } catch (error) {
         console.error("Creation error:", error);

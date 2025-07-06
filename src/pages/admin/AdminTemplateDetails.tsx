@@ -114,7 +114,7 @@ export default function AdminTemplateDetails() {
               />
               <TemplateStatusCard 
                 status={product.status}
-                created_at={product.created_at}
+                createdAt={product.created_at}
               />
               <TemplateFinancialMetrics 
                 salesAmount={product.sales_amount}
@@ -123,12 +123,8 @@ export default function AdminTemplateDetails() {
               />
               <TemplateVariables 
                 techStack={product.tech_stack}
-                difficultyLevel={product.difficulty_level}
               />
-              <TemplateOrganization 
-                productIncludes={product.product_includes}
-                difficultyLevel={product.difficulty_level}
-              />
+              <TemplateOrganization />
             </div>
           </div>
         </div>
