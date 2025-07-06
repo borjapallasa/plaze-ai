@@ -24,8 +24,11 @@ export function useLeaveCommunity() {
     },
     onSuccess: () => {
       toast.success("Successfully left the community");
-      // Invalidate and refetch community subscriptions
+      // Invalidate and refetch both community subscriptions queries
       queryClient.invalidateQueries({ queryKey: ['community-subscriptions'] });
+      queryClient.invalidateQueries({ queryKey: ['user-community-subscriptions'] });
+      // Force refetch to ensure immediate UI update
+      queryClient.refetchQueries({ queryKey: ['user-community-subscriptions'] });
     },
     onError: (error) => {
       console.error('Failed to leave community:', error);

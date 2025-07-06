@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { MainHeader } from "@/components/MainHeader";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import { LayoutSelector } from "@/components/transactions/LayoutSelector";
 import { CommunitySubscriptionCard } from "@/components/communities/CommunitySubscriptionCard";
 import { CommunitySubscriptionListView } from "@/components/communities/CommunitySubscriptionListView";
 import { CommunitySubscriptionSortSelector } from "@/components/communities/CommunitySubscriptionSortSelector";
+import { useQuery } from "@tanstack/react-query";
 
 interface CommunitySubscription {
   community_subscription_uuid: string;
@@ -26,83 +28,79 @@ interface CommunitySubscription {
 
 export default function MyCommunities() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [subscriptions, setSubscriptions] = useState<CommunitySubscription[]>([]);
-  const [loading, setLoading] = useState(true);
   const [layout, setLayout] = useState<"table" | "list">("table");
   const [sortBy, setSortBy] = useState("date-desc");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchUserSubscriptions = async () => {
-      try {
-        setLoading(true);
-        
-        // Get the current user
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
-        
-        if (userError) {
-          console.error("Error getting user:", userError);
-          toast.error("Authentication error");
-          return;
-        }
-        
-        if (!user) {
-          console.log("No authenticated user found");
-          toast.error("Please log in to view your communities");
-          return;
-        }
-        
-        console.log("Authenticated user:", user.id);
-        
-        // Fetch community subscriptions with community details - both active and pending
-        const { data: subscriptionsData, error: subscriptionsError } = await supabase
-          .from('community_subscriptions')
-          .select(`
-            community_subscription_uuid, 
-            status, 
-            created_at,
-            amount,
-            community_uuid,
-            communities (
-              name,
-              thumbnail,
-              description
-            )
-          `)
-          .eq('user_uuid', user.id)
-          .in('status', ['active', 'pending']);
-          
-        if (subscriptionsError) {
-          console.error("Error fetching community subscriptions:", subscriptionsError);
-          toast.error("Failed to load your subscriptions");
-          return;
-        }
-        
-        console.log("Community subscriptions data:", subscriptionsData);
-        
-        // Transform the data to include community details
-        const transformedData = (subscriptionsData || []).map(sub => ({
-          community_subscription_uuid: sub.community_subscription_uuid,
-          status: sub.status,
-          created_at: sub.created_at,
-          amount: sub.amount,
-          community_uuid: sub.community_uuid,
-          community_name: sub.communities?.name,
-          community_thumbnail: sub.communities?.thumbnail,
-          community_description: sub.communities?.description
-        }));
-        
-        setSubscriptions(transformedData);
-      } catch (error) {
-        console.error("Error in fetchUserSubscriptions:", error);
-        toast.error("An unexpected error occurred");
-      } finally {
-        setLoading(false);
+  // Use React Query for better data management and automatic refetching
+  const { data: subscriptions = [], isLoading: loading, error } = useQuery({
+    queryKey: ['user-community-subscriptions'],
+    queryFn: async () => {
+      // Get the current user
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError) {
+        console.error("Error getting user:", userError);
+        throw new Error("Authentication error");
       }
-    };
+      
+      if (!user) {
+        console.log("No authenticated user found");
+        throw new Error("Please log in to view your communities");
+      }
+      
+      console.log("Authenticated user:", user.id);
+      
+      // Fetch community subscriptions with community details - both active and pending
+      const { data: subscriptionsData, error: subscriptionsError } = await supabase
+        .from('community_subscriptions')
+        .select(`
+          community_subscription_uuid, 
+          status, 
+          created_at,
+          amount,
+          community_uuid,
+          communities (
+            name,
+            thumbnail,
+            description
+          )
+        `)
+        .eq('user_uuid', user.id)
+        .in('status', ['active', 'pending']);
+        
+      if (subscriptionsError) {
+        console.error("Error fetching community subscriptions:", subscriptionsError);
+        throw new Error("Failed to load your subscriptions");
+      }
+      
+      console.log("Community subscriptions data:", subscriptionsData);
+      
+      // Transform the data to include community details
+      const transformedData = (subscriptionsData || []).map(sub => ({
+        community_subscription_uuid: sub.community_subscription_uuid,
+        status: sub.status,
+        created_at: sub.created_at,
+        amount: sub.amount,
+        community_uuid: sub.community_uuid,
+        community_name: sub.communities?.name,
+        community_thumbnail: sub.communities?.thumbnail,
+        community_description: sub.communities?.description
+      }));
+      
+      return transformedData;
+    },
+    retry: 1,
+    staleTime: 0, // Always refetch to ensure fresh data
+  });
 
-    fetchUserSubscriptions();
-  }, []);
+  // Handle query errors
+  useEffect(() => {
+    if (error) {
+      console.error("Error in fetchUserSubscriptions:", error);
+      toast.error(error.message || "An unexpected error occurred");
+    }
+  }, [error]);
 
   // Use case-insensitive filtering
   const filteredSubscriptions = subscriptions.filter(subscription =>
