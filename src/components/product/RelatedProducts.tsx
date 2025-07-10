@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -44,7 +43,7 @@ export function RelatedProducts({
   const [isSaving, setSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Fetch user's products (excluding the current product)
+  // Fetch user's products (excluding the current product) - only active ones
   const { data: userProducts = [], isLoading: isLoadingProducts, error: productsError } = useQuery<Product[]>({
     queryKey: ['userProducts', userUuid, productId],
     queryFn: async () => {
@@ -58,6 +57,7 @@ export function RelatedProducts({
           .from('products')
           .select('product_uuid, name, price_from, slug')
           .eq('user_uuid', userUuid)
+          .eq('status', 'active')
           .neq('product_uuid', productId);
 
         if (error) {
