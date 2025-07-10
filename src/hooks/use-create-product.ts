@@ -176,8 +176,8 @@ export function useCreateProduct(initialData?: ProductInitialData) {
         className: "bg-[#F2FCE2] border-green-100 text-green-800",
       });
 
-      // Finally, navigate to the product page
-      navigate(`/product/${product.product_uuid}`);
+      // Navigate to the edit page instead of the view page
+      navigate(`/product/${product.product_uuid}/edit`);
 
     } catch (error) {
       console.error('Error in handleSave:', error);
