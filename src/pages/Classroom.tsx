@@ -32,11 +32,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ProductEditor } from "@/components/product/ProductEditor";
@@ -791,19 +786,20 @@ export default function Classroom() {
                 <Card className="w-full">
                   <CardContent className="p-6 space-y-6">
                     <div className="space-y-4">
-                      <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
+                      <div>
                         <div className="flex items-center justify-between mb-2">
-                          <CollapsibleTrigger asChild>
-                            <button className="flex items-center text-left text-xl font-semibold py-2">
-                              <span>{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
-                              <ChevronDown
-                                className={cn(
-                                  "h-5 w-5 text-muted-foreground transition-transform duration-200 ml-2",
-                                  isExpanded ? "transform rotate-180" : ""
-                                )}
-                              />
-                            </button>
-                          </CollapsibleTrigger>
+                          <button
+                            onClick={() => setIsExpanded(!isExpanded)}
+                            className="flex items-center text-left text-xl font-semibold py-2"
+                          >
+                            <span>{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
+                            <ChevronDown
+                              className={cn(
+                                "h-5 w-5 text-muted-foreground transition-transform duration-200 ml-2",
+                                isExpanded ? "transform rotate-180" : ""
+                              )}
+                            />
+                          </button>
                           <div className="flex items-center gap-2">
                             {isOwner && (
                               <Tooltip>
@@ -842,10 +838,13 @@ export default function Classroom() {
                           </div>
                         </div>
 
-                        <CollapsibleContent>
+                        <div className={cn(
+                          "space-y-2 overflow-hidden transition-all duration-200",
+                          isExpanded ? "max-h-[500px]" : "max-h-0"
+                        )}>
                           <LessonsList />
-                        </CollapsibleContent>
-                      </Collapsible>
+                        </div>
+                      </div>
                     </div>
 
                     <div className="space-y-4">
@@ -905,19 +904,20 @@ export default function Classroom() {
                 <Card className="w-80 flex-shrink-0 h-fit">
                   <CardContent className="p-4">
                     <div className="space-y-6">
-                      <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
+                      <div>
                         <div className="flex items-center justify-between mb-2">
-                          <CollapsibleTrigger asChild>
-                            <button className="flex items-center text-left text-lg font-semibold">
-                              <span>{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
-                              <ChevronDown
-                                className={cn(
-                                  "h-5 w-5 text-muted-foreground transition-transform duration-200 ml-2",
-                                  isExpanded ? "transform rotate-180" : ""
-                                )}
-                              />
-                            </button>
-                          </CollapsibleTrigger>
+                          <button
+                            onClick={() => setIsExpanded(!isExpanded)}
+                            className="flex items-center text-left text-lg font-semibold"
+                          >
+                            <span>{classroom?.name ? capitalizeFirstLetter(classroom.name) : ''}</span>
+                            <ChevronDown
+                              className={cn(
+                                "h-5 w-5 text-muted-foreground transition-transform duration-200 ml-2",
+                                isExpanded ? "transform rotate-180" : ""
+                              )}
+                            />
+                          </button>
                           <div className="flex items-center gap-1">
                             {isOwner && (
                               <Tooltip>
@@ -956,10 +956,13 @@ export default function Classroom() {
                           </div>
                         </div>
 
-                        <CollapsibleContent>
+                        <div className={cn(
+                          "space-y-2 overflow-hidden transition-all duration-200",
+                          isExpanded ? "max-h-[500px]" : "max-h-0"
+                        )}>
                           <LessonsList />
-                        </CollapsibleContent>
-                      </Collapsible>
+                        </div>
+                      </div>
 
                       <ProductsSection />
                     </div>
