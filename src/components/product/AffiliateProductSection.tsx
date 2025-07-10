@@ -42,7 +42,6 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
     }
   }, [affiliateProducts]);
 
-  // Check if all required fields are filled
   const isFormValid = () => {
     if (!isAffiliateProgram) return false;
     return true;
@@ -86,6 +85,11 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
       return;
     }
 
+    if (!expertUuid) {
+      toast.error("Expert information not available");
+      return;
+    }
+
     try {
       setIsLoading(true);
 
@@ -96,6 +100,7 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
         .from('affiliate_products')
         .insert({
           product_uuid: productUuid,
+          expert_uuid: expertUuid,
           expert_share: expertShare,
           affiliate_share: affiliateShare,
           status: 'active',
