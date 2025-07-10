@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,6 +12,7 @@ import {
 import { Copy } from "lucide-react";
 import { useAffiliatePartnerships } from "@/hooks/use-affiliate-partnerships";
 import { useToast } from "@/hooks/use-toast";
+import { toStartCase } from "@/lib/utils";
 
 export function PartnershipsTab() {
   const { data: partnerships = [], isLoading, error } = useAffiliatePartnerships();
@@ -24,15 +24,18 @@ export function PartnershipsTab() {
   );
 
   const getTypeBadge = (type: string) => {
+    const formattedType = toStartCase(type);
     switch (type.toLowerCase()) {
       case "product":
-        return <Badge variant="default">Product</Badge>;
+        return <Badge variant="default">{formattedType}</Badge>;
+      case "community":
+        return <Badge variant="default">{formattedType}</Badge>;
       case "service":
         return <Badge variant="secondary">Service</Badge>;
       case "expert":
         return <Badge variant="outline">Expert</Badge>;
       default:
-        return <Badge variant="secondary">{type}</Badge>;
+        return <Badge variant="secondary">{formattedType}</Badge>;
     }
   };
 
