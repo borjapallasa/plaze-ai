@@ -135,6 +135,7 @@ export default function Classroom() {
         throw error;
       }
 
+      console.log("Classroom data fetched:", data);
       return data;
     },
     enabled: !!id
@@ -149,7 +150,7 @@ export default function Classroom() {
         .eq('community_uuid', classroom.community_uuid)
         .single();
 
-      console.log('data', data)
+      console.log('Community data fetched:', data);
 
       if (error) {
         console.error("Error fetching community:", error);
@@ -163,25 +164,58 @@ export default function Classroom() {
 
   useEffect(() => {
     const checkOwnership = async () => {
-      if (!user || !classroom || !classroom.expert_uuid) {
+      if (!user || !classroom) {
+        console.log("Missing user or classroom for ownership check", { user: !!user, classroom: !!classroom });
         setIsOwner(false);
         return;
       }
 
       try {
-        const { data, error } = await supabase
-          .from('experts')
-          .select('user_uuid')
-          .eq('expert_uuid', classroom.expert_uuid)
-          .single();
+        // First check if user is the expert who owns the classroom directly
+        if (classroom.expert_uuid) {
+          console.log("Checking classroom expert ownership", { 
+            classroomExpertUuid: classroom.expert_uuid,
+            userId: user.id 
+          });
 
-        if (error) {
-          console.error("Error checking expert ownership:", error);
-          setIsOwner(false);
-          return;
+          const { data: expertData, error: expertError } = await supabase
+            .from('experts')
+            .select('user_uuid')
+            .eq('expert_uuid', classroom.expert_uuid)
+            .single();
+
+          if (!expertError && expertData?.user_uuid === user.id) {
+            console.log("User owns classroom via expert_uuid");
+            setIsOwner(true);
+            return;
+          }
         }
 
-        setIsOwner(data.user_uuid === user.id);
+        // Fallback: check if user is the expert who owns the community
+        if (classroom.community_uuid) {
+          console.log("Checking community expert ownership", { 
+            communityUuid: classroom.community_uuid,
+            userId: user.id 
+          });
+
+          const { data: communityData, error: communityError } = await supabase
+            .from('communities')
+            .select(`
+              expert_uuid,
+              experts!inner(user_uuid)
+            `)
+            .eq('community_uuid', classroom.community_uuid)
+            .single();
+
+          if (!communityError && communityData?.experts?.user_uuid === user.id) {
+            console.log("User owns classroom via community expert");
+            setIsOwner(true);
+            return;
+          }
+        }
+
+        console.log("User does not own this classroom");
+        setIsOwner(false);
       } catch (error) {
         console.error("Error in ownership check:", error);
         setIsOwner(false);
@@ -249,6 +283,8 @@ export default function Classroom() {
 
   const addLessonMutation = useMutation({
     mutationFn: async (newLesson: any) => {
+      console.log("Attempting to insert lesson:", newLesson);
+      
       const { data, error } = await supabase
         .from('lessons')
         .insert([newLesson])
@@ -259,6 +295,7 @@ export default function Classroom() {
         throw error;
       }
 
+      console.log("Lesson inserted successfully:", data);
       return data;
     },
     onSuccess: () => {
@@ -279,7 +316,7 @@ export default function Classroom() {
       console.error("Error adding lesson:", error);
       toast({
         title: "Error",
-        description: "Failed to add lesson. Please try again.",
+        description: `Failed to add lesson: ${error.message}`,
         variant: "destructive"
       });
     }
@@ -416,13 +453,26 @@ export default function Classroom() {
       return;
     }
 
-    const newLesson = {
+    if (!classroom?.classroom_uuid) {
+      toast({
+        title: "Error",
+        description: "Classroom not found",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Ensure we have the necessary relationships for RLS
+    const lessonData = {
       ...newLessonData,
-      classroom_uuid: id,
-      user_uuid: user.id
+      classroom_uuid: classroom.classroom_uuid,
+      user_uuid: user.id,
+      community_uuid: classroom.community_uuid,
+      expert_uuid: classroom.expert_uuid
     };
 
-    addLessonMutation.mutate(newLesson);
+    console.log("Submitting lesson with data:", lessonData);
+    addLessonMutation.mutate(lessonData);
   };
 
   const handleEditLesson = () => {
