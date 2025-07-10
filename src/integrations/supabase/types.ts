@@ -2376,6 +2376,10 @@ export type Database = {
         Args: { user_id: string }
         Returns: boolean
       }
+      user_owns_product: {
+        Args: { product_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       affiliate_partnership_status:
