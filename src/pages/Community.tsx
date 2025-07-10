@@ -177,15 +177,14 @@ export default function CommunityPage() {
           user:user_uuid(*)
         `)
         .eq('community_uuid', communityId)
-        .eq('status', isOwner ? undefined : 'open') // Show all threads to owner, only open to others
         .order('last_message_at', { ascending: false });
 
       if (error) {
         throw error;
       }
 
-      // If user is owner, filter manually to show both open and closed
-      // If not owner, only open threads are already filtered by the query
+      // If user is owner, show all threads (open and closed)
+      // If not owner, only show open threads
       return isOwner ? data : data?.filter(thread => thread.status === 'open') || [];
     },
     enabled: !!communityId
@@ -781,6 +780,21 @@ export default function CommunityPage() {
                   Create New Thread
                 </Button>
               </div>
+
+              {/* Show thread counts for owners */}
+              {isOwner && threads && (
+                <div className="flex gap-4 text-sm text-muted-foreground">
+                  <span>
+                    Total: {threads.length} threads
+                  </span>
+                  <span>
+                    Open: {threads.filter(t => t.status === 'open').length}
+                  </span>
+                  <span>
+                    Archived: {threads.filter(t => t.status === 'closed').length}
+                  </span>
+                </div>
+              )}
 
               {isThreadsLoading ? (
                 <div className="space-y-4">

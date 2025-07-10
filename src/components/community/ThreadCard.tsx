@@ -30,7 +30,7 @@ export function ThreadCard({ thread, isOwner, onThreadClick }: ThreadCardProps) 
   return (
     <Card 
       className={`group hover:bg-accent transition-colors cursor-pointer ${
-        isArchived ? 'border-muted bg-muted/30' : ''
+        isArchived ? 'border-muted bg-muted/30 opacity-75' : ''
       }`}
       onClick={() => onThreadClick(thread)}
     >
@@ -42,14 +42,16 @@ export function ThreadCard({ thread, isOwner, onThreadClick }: ThreadCardProps) 
           </Avatar>
           <div className="flex flex-col gap-1 flex-1">
             <div className="flex items-center justify-between">
-              <h3 className={`font-semibold ${isArchived ? 'text-muted-foreground' : ''}`}>
-                {thread.title}
+              <div className="flex items-center gap-2">
+                <h3 className={`font-semibold ${isArchived ? 'text-muted-foreground' : ''}`}>
+                  {thread.title}
+                </h3>
                 {isArchived && (
-                  <Badge variant="secondary" className="ml-2 text-xs">
+                  <Badge variant="secondary" className="text-xs bg-red-100 text-red-800 border-red-200">
                     Archived
                   </Badge>
                 )}
-              </h3>
+              </div>
               {isOwner && (
                 <Button
                   variant="ghost"
