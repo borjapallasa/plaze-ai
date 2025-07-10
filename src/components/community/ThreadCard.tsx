@@ -25,7 +25,35 @@ export function ThreadCard({ thread, isOwner, onThreadClick }: ThreadCardProps) 
     });
   };
 
+  // Helper function to get display name from user data
+  const getDisplayName = (user: any) => {
+    if (!user) return 'Anonymous';
+    
+    if (user.first_name && user.last_name) {
+      return `${user.first_name} ${user.last_name}`.trim();
+    }
+    
+    if (user.first_name) {
+      return user.first_name;
+    }
+    
+    return 'Anonymous';
+  };
+
+  // Helper function to get display name from user_name field (fallback)
+  const getDisplayNameFromUserName = (userName: string | null | undefined) => {
+    if (!userName) return 'Anonymous';
+    
+    // If it looks like an email, extract the part before @
+    if (userName.includes('@')) {
+      return userName.split('@')[0];
+    }
+    
+    return userName;
+  };
+
   const isArchived = thread.status === 'closed';
+  const displayName = thread.user ? getDisplayName(thread.user) : getDisplayNameFromUserName(thread.user_name);
 
   return (
     <Card 
@@ -38,7 +66,7 @@ export function ThreadCard({ thread, isOwner, onThreadClick }: ThreadCardProps) 
         <div className="flex items-start gap-4">
           <Avatar className="h-12 w-12 flex-shrink-0">
             <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>{thread.user_name?.substring(0, 2).toUpperCase()}</AvatarFallback>
+            <AvatarFallback>{displayName?.substring(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col gap-1 flex-1">
             <div className="flex items-center justify-between">
@@ -75,7 +103,7 @@ export function ThreadCard({ thread, isOwner, onThreadClick }: ThreadCardProps) 
               )}
             </div>
             <div className={`text-sm ${isArchived ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
-              Created by {thread.user_name}
+              Created by {displayName}
             </div>
             <div className="flex gap-2">
               <Badge variant="secondary" className="text-xs w-fit">

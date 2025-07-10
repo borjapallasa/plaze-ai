@@ -183,7 +183,11 @@ export default function CommunityPage() {
         .from('threads')
         .select(`
           *,
-          user:user_uuid(*)
+          user:user_uuid(
+            user_uuid,
+            first_name,
+            last_name
+          )
         `)
         .eq('community_uuid', communityId)
         .order('last_message_at', { ascending: false });
