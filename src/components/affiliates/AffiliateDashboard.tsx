@@ -12,6 +12,7 @@ import { useAuth } from "@/lib/auth";
 import { PaymentSettingsDialog } from "./PaymentSettingsDialog";
 import { useRequestPayout } from "@/hooks/use-request-payout";
 import { AffiliateOffersSection } from "./AffiliateOffersSection";
+import { AffiliateTabsInterface } from "./AffiliateTabsInterface";
 
 export function AffiliateDashboard() {
   const { user } = useAuth();
@@ -219,6 +220,9 @@ export function AffiliateDashboard() {
 
       {/* Affiliate Offers Section */}
       <AffiliateOffersSection />
+
+      {/* Affiliate Tabs Interface */}
+      <AffiliateTabsInterface />
     </div>
   );
 }
