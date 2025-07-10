@@ -1,3 +1,4 @@
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -14,10 +15,9 @@ interface ThreadDialogProps {
   isOpen: boolean;
   onClose: () => void;
   thread?: any;
-  communityUuid?: string;
 }
 
-export function ThreadDialog({ isOpen, onClose, thread, communityUuid }: ThreadDialogProps) {
+export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
   const { user } = useAuth();
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
@@ -88,10 +88,15 @@ export function ThreadDialog({ isOpen, onClose, thread, communityUuid }: ThreadD
   };
 
   const handleSendMessage = async () => {
-    if (!message.trim() || !user || !thread || !communityUuid) return;
+    if (!message.trim() || !user || !thread) return;
 
     setIsSending(true);
     try {
+      // Get user's display name from current user data
+      const displayName = currentUserData?.first_name && currentUserData?.last_name
+        ? `${currentUserData.first_name} ${currentUserData.last_name}`.trim()
+        : currentUserData?.first_name || user.email?.split('@')[0] || 'Anonymous';
+
       const { data, error } = await supabase
         .from('threads_messages')
         .insert([
@@ -99,7 +104,7 @@ export function ThreadDialog({ isOpen, onClose, thread, communityUuid }: ThreadD
             thread_uuid: thread.thread_uuid,
             user_uuid: user.id,
             message: message.trim(),
-            community_uuid: communityUuid
+            user_name: displayName
           }
         ]);
 
