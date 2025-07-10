@@ -1909,7 +1909,6 @@ export type Database = {
           message: string | null
           thread_message_uuid: string
           thread_uuid: string | null
-          user_name: string | null
           user_uuid: string | null
         }
         Insert: {
@@ -1919,7 +1918,6 @@ export type Database = {
           message?: string | null
           thread_message_uuid?: string
           thread_uuid?: string | null
-          user_name?: string | null
           user_uuid?: string | null
         }
         Update: {
@@ -1929,7 +1927,6 @@ export type Database = {
           message?: string | null
           thread_message_uuid?: string
           thread_uuid?: string | null
-          user_name?: string | null
           user_uuid?: string | null
         }
         Relationships: [
