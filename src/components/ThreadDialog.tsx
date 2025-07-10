@@ -1,3 +1,4 @@
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -164,18 +165,6 @@ export function ThreadDialog({ isOpen, onClose, thread, communityUuid }: ThreadD
     return 'Anonymous';
   };
 
-  // Helper function to get display name from user_name field (fallback)
-  const getDisplayNameFromUserName = (userName: string | null | undefined) => {
-    if (!userName) return 'Anonymous';
-    
-    // If it looks like an email, extract the part before @
-    if (userName.includes('@')) {
-      return userName.split('@')[0];
-    }
-    
-    return userName;
-  };
-
   if (!thread) return null;
 
   return (
@@ -194,7 +183,7 @@ export function ThreadDialog({ isOpen, onClose, thread, communityUuid }: ThreadD
               <h2 className="text-xl font-semibold tracking-tight text-black">{thread.title}</h2>
               <p className="text-sm text-gray-500">
                 Posted by <span className="text-black">
-                  {thread.user ? getDisplayName(thread.user) : getDisplayNameFromUserName(thread.user_name)}
+                  {thread.user ? getDisplayName(thread.user) : 'Anonymous'}
                 </span>
               </p>
             </div>
@@ -236,7 +225,7 @@ export function ThreadDialog({ isOpen, onClose, thread, communityUuid }: ThreadD
               <div className="flex-1 flex justify-between items-center">
                 <div>
                   <p className="text-sm font-medium text-black">
-                    {thread.user ? getDisplayName(thread.user) : getDisplayNameFromUserName(thread.user_name)}
+                    {thread.user ? getDisplayName(thread.user) : 'Anonymous'}
                   </p>
                   <p className="text-xs text-gray-500">Author</p>
                 </div>
@@ -279,14 +268,13 @@ export function ThreadDialog({ isOpen, onClose, thread, communityUuid }: ThreadD
                     <Avatar className="h-8 w-8">
                       <AvatarImage src="https://github.com/shadcn.png" />
                       <AvatarFallback>
-                        {message.user ? getDisplayName(message.user).substring(0, 2).toUpperCase() : 
-                         getDisplayNameFromUserName(message.user_name).substring(0, 2).toUpperCase()}
+                        {message.user ? getDisplayName(message.user).substring(0, 2).toUpperCase() : 'AN'}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 space-y-1.5">
                       <div className="flex items-center justify-between">
                         <p className="text-sm font-medium text-black">
-                          {message.user ? getDisplayName(message.user) : getDisplayNameFromUserName(message.user_name)}
+                          {message.user ? getDisplayName(message.user) : 'Anonymous'}
                         </p>
                         <time className="text-xs text-gray-500">
                           {new Date(message.created_at).toLocaleString()}
