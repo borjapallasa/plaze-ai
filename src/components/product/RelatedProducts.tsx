@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -43,6 +42,38 @@ export function RelatedProducts({
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
   const [isSaving, setSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Fetch expert_uuid for the current user
+  const { data: expertData, isLoading: isLoadingExpert } = useQuery({
+    queryKey: ['userExpert', userUuid],
+    queryFn: async () => {
+      if (!userUuid) {
+        console.log('No userUuid provided');
+        return null;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('users')
+          .select('expert_uuid')
+          .eq('user_uuid', userUuid)
+          .maybeSingle();
+
+        if (error) {
+          console.error("Error fetching user expert data:", error);
+          throw error;
+        }
+
+        return data;
+      } catch (error) {
+        console.error("Failed to fetch user expert data:", error);
+        return null;
+      }
+    },
+    enabled: Boolean(userUuid),
+    retry: 3,
+    staleTime: 1000 * 60 * 5 // 5 minutes
+  });
 
   // Fetch user's products (excluding the current product) - only active ones
   const { data: userProducts = [], isLoading: isLoadingProducts, error: productsError } = useQuery<Product[]>({
@@ -137,12 +168,19 @@ export function RelatedProducts({
 
   // Save all relationships to the database
   const saveRelationships = async () => {
-    if (!productId) return;
+    if (!productId || !expertData?.expert_uuid) {
+      if (!expertData?.expert_uuid) {
+        toast.error("Unable to save: Expert profile not found");
+        return;
+      }
+      return;
+    }
 
     setSaving(true);
 
     try {
       console.log("Starting save relationships for product:", productId);
+      console.log("Expert UUID:", expertData.expert_uuid);
       console.log("Selected products to save:", selectedProducts.length);
       
       // First, delete all existing relationships for this product
@@ -161,6 +199,7 @@ export function RelatedProducts({
         const relationshipsToInsert = selectedProducts.map((product, index) => ({
           product_uuid: productId,
           related_product_uuid: product.product_uuid,
+          expert_uuid: expertData.expert_uuid,
           relationship_type: 'upsell',
           display_order: index
         }));
@@ -278,12 +317,24 @@ export function RelatedProducts({
   }
 
   // Loading state
-  if (isLoadingProducts || isLoadingRelationships) {
+  if (isLoadingProducts || isLoadingRelationships || isLoadingExpert) {
     return (
       <div className={className}>
         <Label className="text-base font-medium mb-4 block">Related Products</Label>
         <div className="bg-muted/30 rounded-md p-4 text-center text-muted-foreground">
           Loading product relationships...
+        </div>
+      </div>
+    );
+  }
+
+  // Check if user has expert profile
+  if (!expertData?.expert_uuid) {
+    return (
+      <div className={className}>
+        <Label className="text-base font-medium mb-4 block">Related Products</Label>
+        <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4 text-center text-yellow-800">
+          Expert profile required to manage related products.
         </div>
       </div>
     );
