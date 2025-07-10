@@ -29,6 +29,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { MemberRequestsDialog } from "@/components/community/MemberRequestsDialog";
 import { MemberApprovalDialog } from "@/components/community/MemberApprovalDialog";
 import { MemberRejectDialog } from "@/components/community/MemberRejectDialog";
+import { ThreadCard } from "@/components/community/ThreadCard";
 import { useToast } from "@/hooks/use-toast";
 
 interface Link {
@@ -150,6 +151,22 @@ export default function CommunityPage() {
     enabled: !!communityId && communityId !== ':id'
   });
 
+  // Check if current user is the community owner - enhanced debugging
+  const isOwner = currentUserExpertData && community && (
+    currentUserExpertData.expert_uuid === community.expert_uuid ||
+    currentUserExpertData.user_uuid === community.expert_uuid ||
+    user?.id === community.expert_uuid
+  );
+
+  // Add debugging logs
+  console.log('Ownership debug:', {
+    user: user?.id,
+    userEmail: user?.email,
+    currentUserExpertData,
+    communityExpertUuid: community?.expert_uuid,
+    isOwner
+  });
+
   const { data: threads, isLoading: isThreadsLoading } = useQuery({
     queryKey: ['community-threads', communityId],
     queryFn: async () => {
@@ -160,14 +177,16 @@ export default function CommunityPage() {
           user:user_uuid(*)
         `)
         .eq('community_uuid', communityId)
-        .eq('status', 'open')
+        .eq('status', isOwner ? undefined : 'open') // Show all threads to owner, only open to others
         .order('last_message_at', { ascending: false });
 
       if (error) {
         throw error;
       }
 
-      return data;
+      // If user is owner, filter manually to show both open and closed
+      // If not owner, only open threads are already filtered by the query
+      return isOwner ? data : data?.filter(thread => thread.status === 'open') || [];
     },
     enabled: !!communityId
   });
@@ -287,22 +306,6 @@ export default function CommunityPage() {
     if (!threads || selectedTag === "all") return threads;
     return threads.filter(thread => thread.tag === selectedTag);
   }, [threads, selectedTag]);
-
-  // Check if current user is the community owner - enhanced debugging
-  const isOwner = currentUserExpertData && community && (
-    currentUserExpertData.expert_uuid === community.expert_uuid ||
-    currentUserExpertData.user_uuid === community.expert_uuid ||
-    user?.id === community.expert_uuid
-  );
-
-  // Add debugging logs
-  console.log('Ownership debug:', {
-    user: user?.id,
-    userEmail: user?.email,
-    currentUserExpertData,
-    communityExpertUuid: community?.expert_uuid,
-    isOwner
-  });
 
   // Filter members by status - only show active members in main list
   const activeMembers = communityMembers?.filter(m => m.status === 'active') || [];
@@ -802,46 +805,12 @@ export default function CommunityPage() {
               ) : filteredThreads && filteredThreads.length > 0 ? (
                 <div className="space-y-4">
                   {filteredThreads.map((thread) => (
-                    <Card 
+                    <ThreadCard 
                       key={thread.thread_uuid}
-                      className="group hover:bg-accent transition-colors cursor-pointer"
-                      onClick={() => handleThreadClick(thread)}
-                    >
-                      <CardContent className="p-6 space-y-4">
-                        <div className="flex items-start gap-4">
-                          <Avatar className="h-12 w-12 flex-shrink-0">
-                            <AvatarImage src="https://github.com/shadcn.png" />
-                            <AvatarFallback>{thread.user_name?.substring(0, 2).toUpperCase()}</AvatarFallback>
-                          </Avatar>
-                          <div className="flex flex-col gap-1">
-                            <h3 className="font-semibold">{thread.title}</h3>
-                            <div className="text-sm text-muted-foreground">
-                              Created by {thread.user_name}
-                            </div>
-                            <div className="flex gap-2">
-                              <Badge variant="secondary" className="text-xs w-fit">Messages: {thread.number_messages || 0}</Badge>
-                              {thread.tag && (
-                                <Badge variant="outline" className="text-xs w-fit">{thread.tag}</Badge>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="space-y-4">
-                          <p className="text-muted-foreground line-clamp-3">{thread.initial_message}</p>
-                          
-                          <div className="flex justify-between items-end">
-                            <div className="text-sm text-muted-foreground">
-                              Last Message: {thread.last_message_at ? new Date(thread.last_message_at).toLocaleString() : 'No messages yet'}
-                            </div>
-                            <Badge variant="outline" className="flex items-center gap-1 w-fit">
-                              <ThumbsUp className="w-3 h-3" />
-                              {thread.upvote_count || 0}
-                            </Badge>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+                      thread={thread}
+                      isOwner={isOwner}
+                      onThreadClick={handleThreadClick}
+                    />
                   ))}
                 </div>
               ) : (
