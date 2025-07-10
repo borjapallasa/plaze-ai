@@ -10,40 +10,9 @@ export function useRelatedProducts(productUuid?: string) {
         return [];
       }
       
-      // First, try to get related products with the RPC function
       try {
-        const { data: relatedProductsWithVariants, error } = await supabase
-          .rpc('get_related_products_with_variants', { product_uuid_input: productUuid });
-
-        if (error) {
-          console.error("Error fetching related products from RPC:", error);
-          throw error;
-        }
-        
-        console.log("Found related products from RPC:", relatedProductsWithVariants?.length || 0);
-        
-        // Process the data to ensure each product has at least one variant
-        const processedData = relatedProductsWithVariants?.map(product => {
-          // If the product doesn't have a variant, create a default one
-          if (!product.variant_uuid) {
-            return {
-              ...product,
-              variant_uuid: `default-${product.related_product_uuid}`,
-              variant_name: "Default Option",
-              variant_price: product.related_product_price_from || 0,
-              variant_tags: null,
-              variant_files_link: null
-            };
-          }
-          return product;
-        }) || [];
-        
-        return processedData;
-      } catch (rpcError) {
-        // If RPC fails, fall back to direct query
-        console.warn("RPC failed, falling back to direct query:", rpcError);
-        
-        const { data: relationships, error: relError } = await supabase
+        // Use a direct query with proper joins to avoid RLS recursion issues
+        const { data: relatedProductsData, error } = await supabase
           .from('product_relationships')
           .select(`
             related_product_uuid,
@@ -51,34 +20,67 @@ export function useRelatedProducts(productUuid?: string) {
               product_uuid,
               name,
               price_from
+            ),
+            variants!inner (
+              variant_uuid,
+              name,
+              price,
+              tags,
+              files_link
             )
           `)
           .eq('product_uuid', productUuid);
-          
-        if (relError) {
-          console.error("Error in fallback query:", relError);
-          throw relError;
+
+        if (error) {
+          console.error("Error fetching related products:", error);
+          throw error;
         }
         
-        // Transform the data to match the RPC output format
-        // and create default variants for products without variants
-        const transformedData = relationships?.map(rel => ({
-          related_product_uuid: rel.related_product_uuid,
-          related_product_name: rel.products?.name || '',
-          related_product_price_from: rel.products?.price_from || 0,
-          variant_uuid: `default-${rel.related_product_uuid}`, // Create a default variant ID
-          variant_name: "Default Option",
-          variant_price: rel.products?.price_from || 0,
-          variant_tags: null,
-          variant_files_link: null
-        })) || [];
+        console.log("Found related products:", relatedProductsData?.length || 0);
         
-        console.log("Found related products from fallback:", transformedData.length);
-        return transformedData;
+        // Process the data to ensure each product has at least one variant
+        const processedData = relatedProductsData?.map(rel => {
+          const product = rel.products;
+          const variants = rel.variants;
+          
+          // If the product has variants, use the first one
+          if (variants && variants.length > 0) {
+            const variant = variants[0];
+            return {
+              related_product_uuid: rel.related_product_uuid,
+              related_product_name: product?.name || '',
+              related_product_price_from: product?.price_from || 0,
+              variant_uuid: variant.variant_uuid,
+              variant_name: variant.name || "Default Option",
+              variant_price: variant.price || 0,
+              variant_tags: variant.tags,
+              variant_files_link: variant.files_link
+            };
+          }
+          
+          // If no variants, create a default one
+          return {
+            related_product_uuid: rel.related_product_uuid,
+            related_product_name: product?.name || '',
+            related_product_price_from: product?.price_from || 0,
+            variant_uuid: `default-${rel.related_product_uuid}`,
+            variant_name: "Default Option",
+            variant_price: product?.price_from || 0,
+            variant_tags: null,
+            variant_files_link: null
+          };
+        }) || [];
+        
+        return processedData;
+      } catch (error) {
+        console.error("Error fetching related products:", error);
+        // Return empty array on error instead of throwing
+        return [];
       }
     },
     enabled: !!productUuid,
     staleTime: 1000 * 60 * 5, // 5 minutes
-    refetchOnWindowFocus: true
+    refetchOnWindowFocus: false, // Reduce unnecessary refetches
+    retry: 1 // Reduce retries to avoid spam
   });
 }

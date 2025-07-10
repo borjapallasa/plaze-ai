@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -86,7 +87,14 @@ export function RelatedProducts({
       try {
         const { data, error } = await supabase
           .from('product_relationships')
-          .select('*')
+          .select(`
+            *,
+            related_product:products!product_relationships_related_product_uuid_fkey(
+              product_uuid,
+              name,
+              price_from
+            )
+          `)
           .eq('product_uuid', productId);
 
         if (error) {
@@ -121,8 +129,11 @@ export function RelatedProducts({
       } catch (error) {
         console.error("Error processing relationships:", error);
       }
+    } else if (relationships.length === 0) {
+      // Clear selected products if no relationships exist
+      setSelectedProducts([]);
     }
-  }, [relationships, userProducts]); // Run when either relationships or userProducts changes
+  }, [relationships, userProducts]);
 
   // Save all relationships to the database
   const saveRelationships = async () => {
@@ -131,13 +142,14 @@ export function RelatedProducts({
     setSaving(true);
 
     try {
-      // First, delete all existing relationships
+      // First, delete all existing relationships for this product
       const { error: deleteError } = await supabase
         .from('product_relationships')
         .delete()
         .eq('product_uuid', productId);
 
       if (deleteError) {
+        console.error("Error deleting existing relationships:", deleteError);
         throw deleteError;
       }
 
@@ -155,6 +167,7 @@ export function RelatedProducts({
           .insert(relationshipsToInsert);
 
         if (insertError) {
+          console.error("Error inserting relationships:", insertError);
           throw insertError;
         }
       }
@@ -186,6 +199,7 @@ export function RelatedProducts({
         .eq('related_product_uuid', relatedProductUuid);
 
       if (error) {
+        console.error("Error deleting relationship:", error);
         toast.error("Failed to remove related product");
         return false;
       }
