@@ -1,4 +1,3 @@
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -24,13 +23,19 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Query thread messages
+  // Query thread messages with user names
   const { data: messages, isLoading: isMessagesLoading } = useQuery({
     queryKey: ['thread-messages', thread?.thread_uuid],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('threads_messages')
-        .select('*')
+        .select(`
+          *,
+          users!threads_messages_user_uuid_fkey (
+            first_name,
+            last_name
+          )
+        `)
         .eq('thread_uuid', thread?.thread_uuid)
         .order('created_at', { ascending: true });
 
@@ -148,16 +153,22 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
     }
   };
 
-  // Helper function to get display name from user_name field
-  const getDisplayName = (userName: string | null | undefined) => {
-    if (!userName) return 'Anonymous';
-    
-    // If it looks like an email, extract the part before @
-    if (userName.includes('@')) {
-      return userName.split('@')[0];
+  // Helper function to get display name from users data
+  const getDisplayName = (messageData: any) => {
+    if (messageData.users?.first_name && messageData.users?.last_name) {
+      return `${messageData.users.first_name} ${messageData.users.last_name}`.trim();
     }
-    
-    return userName;
+    if (messageData.users?.first_name) {
+      return messageData.users.first_name;
+    }
+    // Fallback to user_name if users data is not available
+    if (messageData.user_name && !messageData.user_name.includes('@')) {
+      return messageData.user_name;
+    }
+    if (messageData.user_name && messageData.user_name.includes('@')) {
+      return messageData.user_name.split('@')[0];
+    }
+    return 'Anonymous';
   };
 
   if (!thread) return null;
@@ -170,12 +181,12 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
           <div className="flex items-center gap-4">
             <Avatar className="h-12 w-12 ring-2 ring-black/10 shadow-sm">
               <AvatarImage src={thread.user?.avatar_url || "https://github.com/shadcn.png"} />
-              <AvatarFallback>{getDisplayName(thread.user_name)?.substring(0, 2).toUpperCase()}</AvatarFallback>
+              <AvatarFallback>{thread.user_name?.substring(0, 2).toUpperCase()}</AvatarFallback>
             </Avatar>
             <div>
               <h2 className="text-xl font-semibold tracking-tight text-black">{thread.title}</h2>
               <p className="text-sm text-gray-500">
-                Posted by <span className="text-black">{getDisplayName(thread.user_name)}</span>
+                Posted by <span className="text-black">{thread.user_name}</span>
               </p>
             </div>
           </div>
@@ -209,11 +220,11 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
             <div className="flex items-center gap-3 mb-4 pb-3 border-b border-gray-100">
               <Avatar className="h-10 w-10 ring-2 ring-white">
                 <AvatarImage src={thread.user?.avatar_url || "https://github.com/shadcn.png"} />
-                <AvatarFallback>{getDisplayName(thread.user_name)?.substring(0, 2).toUpperCase()}</AvatarFallback>
+                <AvatarFallback>{thread.user_name?.substring(0, 2).toUpperCase()}</AvatarFallback>
               </Avatar>
               <div className="flex-1 flex justify-between items-center">
                 <div>
-                  <p className="text-sm font-medium text-black">{getDisplayName(thread.user_name)}</p>
+                  <p className="text-sm font-medium text-black">{thread.user_name}</p>
                   <p className="text-xs text-gray-500">Author</p>
                 </div>
                 <time className="text-xs text-gray-500">
@@ -254,12 +265,12 @@ export function ThreadDialog({ isOpen, onClose, thread }: ThreadDialogProps) {
                   <div className="flex gap-4">
                     <Avatar className="h-8 w-8">
                       <AvatarImage src="https://github.com/shadcn.png" />
-                      <AvatarFallback>{getDisplayName(message.user_name)?.substring(0, 2).toUpperCase()}</AvatarFallback>
+                      <AvatarFallback>{getDisplayName(message)?.substring(0, 2).toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1 space-y-1.5">
                       <div className="flex items-center justify-between">
                         <p className="text-sm font-medium text-black">
-                          {getDisplayName(message.user_name)}
+                          {getDisplayName(message)}
                         </p>
                         <time className="text-xs text-gray-500">
                           {new Date(message.created_at).toLocaleString()}
