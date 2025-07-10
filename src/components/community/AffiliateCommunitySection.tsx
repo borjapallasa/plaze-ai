@@ -33,13 +33,16 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
 
   const { data: affiliateCommunities = [], refetch: refetchAffiliateCommunities } = useAffiliateCommunities(communityUuid);
 
-  // Check if community is already in affiliate program
-  const isAlreadyAffiliate = affiliateCommunities.length > 0;
+  // Filter to only show active affiliate programs
+  const activeAffiliateCommunities = affiliateCommunities.filter(ac => ac.status === 'active');
+  
+  // Check if community has any active affiliate program
+  const hasActiveAffiliateProgram = activeAffiliateCommunities.length > 0;
 
-  // Load existing split and questions if community is already in affiliate program
+  // Load existing split and questions if community has active affiliate program
   useEffect(() => {
-    if (affiliateCommunities.length > 0) {
-      const existingCommunity = affiliateCommunities[0];
+    if (activeAffiliateCommunities.length > 0) {
+      const existingCommunity = activeAffiliateCommunities[0];
       setSplit([Math.round(existingCommunity.expert_share * 100)]);
       
       // Parse questions from JSONB
@@ -53,7 +56,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
         setQuestions(questionsArray);
       }
     }
-  }, [affiliateCommunities]);
+  }, [activeAffiliateCommunities]);
 
   // Check if all required fields are filled
   const isFormValid = () => {
@@ -284,7 +287,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <Label>Questions for Affiliates</Label>
-        <Button type="button" variant="outline" size="sm" onclick={onAdd}>
+        <Button type="button" variant="outline" size="sm" onClick={onAdd}>
           <Plus className="h-4 w-4 mr-1" />
           Add Question
         </Button>
@@ -322,12 +325,12 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
         <h2 className="text-lg font-medium mb-3 sm:mb-4">Affiliate program</h2>
         
         <div className="space-y-4">
-          {/* Display existing affiliate communities */}
-          {affiliateCommunities.length > 0 && (
+          {/* Display existing active affiliate communities */}
+          {activeAffiliateCommunities.length > 0 && (
             <div className="space-y-2">
               <Label className="text-sm font-medium">Affiliate program enabled:</Label>
               <div className="space-y-2">
-                {affiliateCommunities.map((ac) => (
+                {activeAffiliateCommunities.map((ac) => (
                   <div key={ac.affiliate_products_uuid} className="p-3 border rounded-lg bg-muted/50">
                     <div className="flex justify-between items-start">
                       <div className="space-y-1 flex-1">
@@ -367,8 +370,8 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
             </div>
           )}
 
-          {/* Show toggle only if not already in affiliate program */}
-          {!isAlreadyAffiliate && (
+          {/* Show toggle only if no active affiliate program */}
+          {!hasActiveAffiliateProgram && (
             <>
               <div className="flex items-center justify-between">
                 <Label htmlFor="affiliate-program-toggle" className="text-base font-medium">
@@ -422,8 +425,8 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
             </>
           )}
 
-          {/* Show message if already in affiliate program */}
-          {isAlreadyAffiliate && !isAffiliateProgram && (
+          {/* Show message if has active affiliate program */}
+          {hasActiveAffiliateProgram && !isAffiliateProgram && (
             <div className="text-sm text-muted-foreground p-3 bg-muted/30 rounded-lg">
               This community is already part of the affiliate program. Use the edit button to modify settings.
             </div>
