@@ -38,7 +38,8 @@ export function useAffiliateProducts(productUuid?: string) {
             experts(name)
           )
         `)
-        .eq('product_uuid', productUuid);
+        .eq('product_uuid', productUuid)
+        .eq('status', 'active');
 
       if (error) {
         console.error('Error fetching affiliate products:', error);
@@ -86,7 +87,8 @@ export function useAllAffiliateProducts() {
             expert_uuid,
             experts(name)
           )
-        `);
+        `)
+        .eq('status', 'active');
 
       if (error) {
         console.error('Error fetching all affiliate products:', error);

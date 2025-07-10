@@ -172,11 +172,11 @@ export function AffiliateProductSection({ expertUuid, productUuid }: AffiliatePr
 
       const { error } = await supabase
         .from('affiliate_products')
-        .delete()
+        .update({ status: 'inactive' })
         .eq('affiliate_products_uuid', editingProduct.affiliate_products_uuid);
 
       if (error) {
-        console.error('Error deleting affiliate product:', error);
+        console.error('Error updating affiliate product status:', error);
         toast.error("Failed to disable affiliate program");
         return;
       }
