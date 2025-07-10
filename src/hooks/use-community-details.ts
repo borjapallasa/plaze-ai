@@ -10,13 +10,22 @@ export function useCommunityDetails() {
   console.log('useCommunityDetails called with params:', params);
   console.log('Extracted communityId:', communityId);
   
+  // Validate community ID - check if it's a valid UUID format
+  const isValidUUID = (id: string | undefined): boolean => {
+    if (!id) return false;
+    // UUID regex pattern
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(id);
+  };
+  
+  const isValidCommunityId = isValidUUID(communityId);
+  
   return useQuery({
     queryKey: ['community', communityId],
     queryFn: async () => {
-      // Check if communityId is valid
-      if (!communityId || communityId === ':id' || communityId.includes(':')) {
-        console.error('Invalid community ID:', communityId);
-        throw new Error('Invalid community ID');
+      if (!isValidCommunityId) {
+        console.error('Invalid community ID format:', communityId);
+        throw new Error('Invalid community ID format');
       }
       
       console.log('Fetching community details for UUID:', communityId);
@@ -42,8 +51,11 @@ export function useCommunityDetails() {
       console.log('Community data:', data);
       return data;
     },
-    enabled: !!(communityId && communityId !== ':id' && !communityId.includes(':')),
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    enabled: isValidCommunityId,
+    staleTime: 10 * 60 * 1000, // 10 minutes - longer stale time
+    gcTime: 30 * 60 * 1000, // 30 minutes - longer cache time
+    refetchOnWindowFocus: false, // Prevent refetch on window focus
+    refetchOnMount: false, // Don't refetch on component mount if data exists
+    retry: 1, // Reduce retry attempts
   });
 }

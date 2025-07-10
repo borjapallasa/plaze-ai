@@ -85,7 +85,18 @@ export default function CommunityProductPage() {
     <>
       <MainHeader />
       <div className="container mx-auto px-4 py-8 mt-16 max-w-7xl">
-        <ProductLayout product={productData}>
+        <ProductLayout 
+          product={productData}
+          variants={undefined}
+          selectedVariant={undefined}
+          relatedProductsWithVariants={undefined}
+          averageRating={undefined}
+          onVariantChange={undefined}
+          onAddToCart={undefined}
+          onAdditionalVariantToggle={undefined}
+          reviews={undefined}
+          isLoading={false}
+        >
           <Card className="mt-8">
             <CardContent className="p-6">
               <h3 className="text-lg font-semibold mb-4">Community Product Access</h3>
