@@ -48,9 +48,11 @@ export function RelatedProducts({
     queryKey: ['userExpert', userUuid],
     queryFn: async () => {
       if (!userUuid) {
-        console.log('No userUuid provided');
+        console.log('DEBUG: No userUuid provided');
         return null;
       }
+
+      console.log('DEBUG: Fetching expert data for userUuid:', userUuid);
 
       try {
         const { data, error } = await supabase
@@ -60,13 +62,14 @@ export function RelatedProducts({
           .maybeSingle();
 
         if (error) {
-          console.error("Error fetching user expert data:", error);
+          console.error("DEBUG: Error fetching user expert data:", error);
           throw error;
         }
 
+        console.log('DEBUG: Expert data fetched:', data);
         return data;
       } catch (error) {
-        console.error("Failed to fetch user expert data:", error);
+        console.error("DEBUG: Failed to fetch user expert data:", error);
         return null;
       }
     },
@@ -168,31 +171,41 @@ export function RelatedProducts({
 
   // Save all relationships to the database
   const saveRelationships = async () => {
+    console.log('DEBUG: Starting saveRelationships function');
+    console.log('DEBUG: Current userUuid:', userUuid);
+    console.log('DEBUG: Current productId:', productId);
+    console.log('DEBUG: Expert data:', expertData);
+
     if (!productId || !expertData?.expert_uuid) {
       if (!expertData?.expert_uuid) {
+        console.log('DEBUG: No expert_uuid found, cannot save');
         toast.error("Unable to save: Expert profile not found");
         return;
       }
+      console.log('DEBUG: No productId, cannot save');
       return;
     }
 
     setSaving(true);
 
     try {
-      console.log("Starting save relationships for product:", productId);
-      console.log("Expert UUID:", expertData.expert_uuid);
-      console.log("Selected products to save:", selectedProducts.length);
+      console.log("DEBUG: Starting save relationships for product:", productId);
+      console.log("DEBUG: Expert UUID:", expertData.expert_uuid);
+      console.log("DEBUG: Selected products to save:", selectedProducts.length);
+      console.log("DEBUG: Selected products data:", selectedProducts);
       
       // First, delete all existing relationships for this product
+      console.log('DEBUG: Deleting existing relationships...');
       const { error: deleteError } = await supabase
         .from('product_relationships')
         .delete()
         .eq('product_uuid', productId);
 
       if (deleteError) {
-        console.error("Error deleting existing relationships:", deleteError);
+        console.error("DEBUG: Error deleting existing relationships:", deleteError);
         throw deleteError;
       }
+      console.log('DEBUG: Successfully deleted existing relationships');
 
       // Then, insert all selected products as new relationships
       if (selectedProducts.length > 0) {
@@ -204,24 +217,36 @@ export function RelatedProducts({
           display_order: index
         }));
 
-        console.log("Inserting relationships:", relationshipsToInsert);
+        console.log("DEBUG: Inserting relationships:", relationshipsToInsert);
 
-        const { error: insertError } = await supabase
+        const { data: insertData, error: insertError } = await supabase
           .from('product_relationships')
-          .insert(relationshipsToInsert);
+          .insert(relationshipsToInsert)
+          .select();
 
         if (insertError) {
-          console.error("Error inserting relationships:", insertError);
+          console.error("DEBUG: Error inserting relationships:", insertError);
+          console.error("DEBUG: Insert error details:", {
+            message: insertError.message,
+            details: insertError.details,
+            hint: insertError.hint,
+            code: insertError.code
+          });
           throw insertError;
         }
+
+        console.log("DEBUG: Successfully inserted relationships:", insertData);
+      } else {
+        console.log('DEBUG: No products to insert');
       }
 
       // Refresh data
       queryClient.invalidateQueries({ queryKey: ['productRelationships', productId] });
       queryClient.invalidateQueries({ queryKey: ['relatedProducts', productId] });
       toast.success("Related products have been updated successfully");
+      console.log('DEBUG: Save operation completed successfully');
     } catch (error) {
-      console.error("Error saving relationships:", error);
+      console.error("DEBUG: Error in saveRelationships:", error);
       toast.error("Failed to save related products");
     } finally {
       setSaving(false);
