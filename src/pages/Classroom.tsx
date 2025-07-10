@@ -165,6 +165,7 @@ export default function Classroom() {
   useEffect(() => {
     const checkOwnership = async () => {
       if (!user || !classroom) {
+        console.log("Missing user or classroom for ownership check", { user: !!user, classroom: !!classroom });
         setIsOwner(false);
         return;
       }
@@ -172,47 +173,48 @@ export default function Classroom() {
       try {
         // First check if user is the expert who owns the classroom directly
         if (classroom.expert_uuid) {
+          console.log("Checking classroom expert ownership", { 
+            classroomExpertUuid: classroom.expert_uuid,
+            userId: user.id 
+          });
+
           const { data: expertData, error: expertError } = await supabase
             .from('experts')
-            .select('user_uuid, expert_uuid')
+            .select('user_uuid')
             .eq('expert_uuid', classroom.expert_uuid)
             .single();
 
           if (!expertError && expertData?.user_uuid === user.id) {
+            console.log("User owns classroom via expert_uuid");
             setIsOwner(true);
             return;
           }
-        }
-
-        // Check if user has an expert profile at all
-        const { data: userExpertData, error: userExpertError } = await supabase
-          .from('experts')
-          .select('expert_uuid, user_uuid')
-          .eq('user_uuid', user.id)
-          .maybeSingle();
-
-        if (!userExpertData) {
-          setIsOwner(false);
-          return;
         }
 
         // Fallback: check if user is the expert who owns the community
         if (classroom.community_uuid) {
+          console.log("Checking community expert ownership", { 
+            communityUuid: classroom.community_uuid,
+            userId: user.id 
+          });
+
           const { data: communityData, error: communityError } = await supabase
             .from('communities')
             .select(`
               expert_uuid,
-              community_uuid
+              experts!inner(user_uuid)
             `)
             .eq('community_uuid', classroom.community_uuid)
             .single();
 
-          if (!communityError && communityData?.expert_uuid === userExpertData.expert_uuid) {
+          if (!communityError && communityData?.experts?.user_uuid === user.id) {
+            console.log("User owns classroom via community expert");
             setIsOwner(true);
             return;
           }
         }
 
+        console.log("User does not own this classroom");
         setIsOwner(false);
       } catch (error) {
         console.error("Error in ownership check:", error);
@@ -401,8 +403,6 @@ export default function Classroom() {
 
   const updateClassroomMutation = useMutation({
     mutationFn: async (classroomData: any) => {
-      console.log("Updating classroom with data:", classroomData);
-      
       const { data, error } = await supabase
         .from('classrooms')
         .update(classroomData)
@@ -414,7 +414,6 @@ export default function Classroom() {
         throw error;
       }
 
-      console.log("Classroom updated successfully:", data);
       return data;
     },
     onSuccess: () => {
