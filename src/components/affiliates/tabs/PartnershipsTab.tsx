@@ -18,6 +18,11 @@ export function PartnershipsTab() {
   const { data: partnerships = [], isLoading, error } = useAffiliatePartnerships();
   const { toast } = useToast();
 
+  // Filter out rejected partnerships
+  const filteredPartnerships = partnerships.filter(
+    partnership => partnership.status?.toLowerCase() !== 'rejected'
+  );
+
   const getTypeBadge = (type: string) => {
     switch (type.toLowerCase()) {
       case "product":
@@ -105,14 +110,14 @@ export function PartnershipsTab() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {partnerships.length === 0 ? (
+          {filteredPartnerships.length === 0 ? (
             <TableRow>
               <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
                 No partnerships found
               </TableCell>
             </TableRow>
           ) : (
-            partnerships.map((partnership) => (
+            filteredPartnerships.map((partnership) => (
               <TableRow key={partnership.affiliate_partnership_uuid}>
                 <TableCell className="w-[15%]">
                   <div className="font-medium">{partnership.name}</div>
