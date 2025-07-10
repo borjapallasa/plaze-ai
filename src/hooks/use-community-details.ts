@@ -1,20 +1,33 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useParams } from "react-router-dom";
 
-export function useCommunityDetails(communityUuid?: string) {
+export function useCommunityDetails() {
+  const { id: communityId } = useParams();
+  
   return useQuery({
-    queryKey: ['community', communityUuid],
+    queryKey: ['community', communityId],
     queryFn: async () => {
-      if (!communityUuid) return null;
+      if (!communityId || communityId === ':id') {
+        console.error('Invalid community ID:', communityId);
+        return null;
+      }
       
-      console.log('Fetching community details for UUID:', communityUuid);
+      console.log('Fetching community details for UUID:', communityId);
       
       const { data, error } = await supabase
         .from('communities')
-        .select('name, community_uuid')
-        .eq('community_uuid', communityUuid)
-        .single();
+        .select(`
+          *,
+          expert:expert_uuid(
+            expert_uuid,
+            name,
+            thumbnail
+          )
+        `)
+        .eq('community_uuid', communityId)
+        .maybeSingle();
 
       if (error) {
         console.error('Error fetching community:', error);
@@ -24,6 +37,6 @@ export function useCommunityDetails(communityUuid?: string) {
       console.log('Community data:', data);
       return data;
     },
-    enabled: !!communityUuid
+    enabled: !!communityId && communityId !== ':id'
   });
 }

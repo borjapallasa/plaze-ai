@@ -31,6 +31,7 @@ import { MemberApprovalDialog } from "@/components/community/MemberApprovalDialo
 import { MemberRejectDialog } from "@/components/community/MemberRejectDialog";
 import { ThreadCard } from "@/components/community/ThreadCard";
 import { useToast } from "@/hooks/use-toast";
+import { useCommunityDetails } from "@/hooks/use-community-details";
 
 interface Link {
   name: string;
@@ -87,6 +88,9 @@ export default function CommunityPage() {
   const { user } = useAuth();
   const { images } = useCommunityImages(communityId);
 
+  // Use the updated hook
+  const { data: community, isLoading: isCommunityLoading } = useCommunityDetails();
+
   // Add validation for communityId
   React.useEffect(() => {
     console.log('Community ID from params:', communityId);
@@ -117,40 +121,6 @@ export default function CommunityPage() {
     enabled: !!user?.email,
   });
 
-  const { data: community, isLoading: isCommunityLoading } = useQuery({
-    queryKey: ['community', communityId],
-    queryFn: async () => {
-      if (!communityId || communityId === ':id') {
-        console.error('No valid community ID provided');
-        return null;
-      }
-
-      console.log('Fetching community with ID:', communityId);
-      
-      const { data, error } = await supabase
-        .from('communities')
-        .select(`
-          *,
-          expert:expert_uuid(
-            expert_uuid,
-            name,
-            thumbnail
-          )
-        `)
-        .eq('community_uuid', communityId)
-        .maybeSingle();
-
-      if (error) {
-        console.error('Error fetching community:', error);
-        throw error;
-      }
-
-      console.log('Community data fetched:', data);
-      return data;
-    },
-    enabled: !!communityId && communityId !== ':id'
-  });
-
   // Check if current user is the community owner - simplified and more reliable
   const isOwner = React.useMemo(() => {
     if (!currentUserExpertData || !community || !user) return false;
@@ -177,6 +147,11 @@ export default function CommunityPage() {
   const { data: threads, isLoading: isThreadsLoading } = useQuery({
     queryKey: ['community-threads', communityId, isOwner],
     queryFn: async () => {
+      if (!communityId || communityId === ':id') {
+        console.error('Invalid community ID for threads:', communityId);
+        return [];
+      }
+
       console.log('Fetching threads for community:', communityId, 'isOwner:', isOwner);
       
       const { data, error } = await supabase
@@ -207,12 +182,17 @@ export default function CommunityPage() {
       console.log('Filtered threads:', filteredThreads);
       return filteredThreads;
     },
-    enabled: !!communityId
+    enabled: !!communityId && communityId !== ':id'
   });
 
   const { data: classrooms, isLoading: isClassroomsLoading } = useQuery({
     queryKey: ['community-classrooms', communityId],
     queryFn: async () => {
+      if (!communityId || communityId === ':id') {
+        console.error('Invalid community ID for classrooms:', communityId);
+        return [];
+      }
+
       const { data, error } = await supabase
         .from('classrooms')
         .select('*')
@@ -226,14 +206,14 @@ export default function CommunityPage() {
 
       return data;
     },
-    enabled: !!communityId
+    enabled: !!communityId && communityId !== ':id'
   });
 
   const { data: communityProducts, isLoading: isProductsLoading } = useQuery({
     queryKey: ['communityProducts', communityId],
     queryFn: async () => {
-      if (!communityId) {
-        console.error('No community ID provided for products query');
+      if (!communityId || communityId === ':id') {
+        console.error('Invalid community ID for products:', communityId);
         return [];
       }
 
@@ -260,14 +240,14 @@ export default function CommunityPage() {
       console.log('Community products fetched:', data);
       return data || [];
     },
-    enabled: !!communityId
+    enabled: !!communityId && communityId !== ':id'
   });
 
   const { data: communityMembers, isLoading: isMembersLoading } = useQuery({
     queryKey: ['community-members', communityId],
     queryFn: async () => {
       if (!communityId || communityId === ':id') {
-        console.error('No valid community ID provided for members query');
+        console.error('Invalid community ID for members:', communityId);
         return [];
       }
 
