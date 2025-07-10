@@ -781,21 +781,6 @@ export default function CommunityPage() {
                 </Button>
               </div>
 
-              {/* Show thread counts for owners */}
-              {isOwner && threads && (
-                <div className="flex gap-4 text-sm text-muted-foreground">
-                  <span>
-                    Total: {threads.length} threads
-                  </span>
-                  <span>
-                    Open: {threads.filter(t => t.status === 'open').length}
-                  </span>
-                  <span>
-                    Archived: {threads.filter(t => t.status === 'closed').length}
-                  </span>
-                </div>
-              )}
-
               {isThreadsLoading ? (
                 <div className="space-y-4">
                   {[...Array(3)].map((_, i) => (
