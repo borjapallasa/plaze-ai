@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ThumbsUp, Archive, ArchiveRestore } from "lucide-react";
+import { ThumbsUp, Archive, ArchiveRestore, MessageSquare, Clock } from "lucide-react";
 import { useUpdateThread } from "@/hooks/use-update-thread";
 
 interface ThreadCardProps {
@@ -57,75 +57,106 @@ export function ThreadCard({ thread, isOwner, onThreadClick }: ThreadCardProps) 
 
   return (
     <Card 
-      className={`group hover:bg-accent transition-colors cursor-pointer ${
-        isArchived ? 'border-muted bg-muted/30 opacity-75' : ''
+      className={`group hover:shadow-md transition-all duration-200 cursor-pointer border-l-4 ${
+        isArchived ? 'border-l-red-300 bg-muted/30 opacity-75' : 'border-l-primary hover:border-l-primary/80'
       }`}
       onClick={() => onThreadClick(thread)}
     >
-      <CardContent className="p-6 space-y-4">
-        <div className="flex items-start gap-4">
-          <Avatar className="h-12 w-12 flex-shrink-0">
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>{displayName?.substring(0, 2).toUpperCase()}</AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col gap-1 flex-1">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <h3 className={`font-semibold ${isArchived ? 'text-muted-foreground' : ''}`}>
-                  {thread.title}
-                </h3>
-                {isArchived && (
-                  <Badge variant="secondary" className="text-xs bg-red-100 text-red-800 border-red-200">
-                    Archived
-                  </Badge>
-                )}
-              </div>
-              {isOwner && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleArchiveClick}
-                  disabled={updateThread.isPending}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  {isArchived ? (
-                    <>
-                      <ArchiveRestore className="w-4 h-4 mr-1" />
-                      Restore
-                    </>
-                  ) : (
-                    <>
-                      <Archive className="w-4 h-4 mr-1" />
-                      Archive
-                    </>
-                  )}
-                </Button>
-              )}
-            </div>
-            <div className={`text-sm ${isArchived ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
-              Created by {displayName}
-            </div>
-            <div className="flex gap-2">
-              <Badge variant="secondary" className="text-xs w-fit">
-                Messages: {thread.number_messages || 0}
-              </Badge>
-              {thread.tag && (
-                <Badge variant="outline" className="text-xs w-fit">{thread.tag}</Badge>
-              )}
-            </div>
-          </div>
-        </div>
-
+      <CardContent className="p-6">
         <div className="space-y-4">
-          <p className={`line-clamp-3 ${isArchived ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
-            {thread.initial_message}
-          </p>
-          
-          <div className="flex justify-between items-end">
-            <div className={`text-sm ${isArchived ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
-              Last Message: {thread.last_message_at ? new Date(thread.last_message_at).toLocaleString() : 'No messages yet'}
+          {/* Header Section */}
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start gap-3 flex-1 min-w-0">
+              <Avatar className="h-10 w-10 flex-shrink-0">
+                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarFallback className="bg-primary/10 text-primary font-medium">
+                  {displayName?.substring(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className={`font-semibold text-lg leading-tight ${
+                    isArchived ? 'text-muted-foreground' : 'text-foreground'
+                  } truncate`}>
+                    {thread.title}
+                  </h3>
+                  {isArchived && (
+                    <Badge variant="warning" className="text-xs flex-shrink-0">
+                      Archived
+                    </Badge>
+                  )}
+                </div>
+                
+                <p className={`text-sm ${isArchived ? 'text-muted-foreground' : 'text-muted-foreground'} mb-2`}>
+                  Created by {displayName}
+                </p>
+                
+                {/* Tags and Message Count */}
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Badge variant="secondary" className="text-xs flex items-center gap-1">
+                    <MessageSquare className="w-3 h-3" />
+                    {thread.number_messages || 0}
+                  </Badge>
+                  {thread.tag && (
+                    <Badge variant="outline" className="text-xs">{thread.tag}</Badge>
+                  )}
+                </div>
+              </div>
             </div>
-            <Badge variant="outline" className="flex items-center gap-1 w-fit">
+
+            {isOwner && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleArchiveClick}
+                disabled={updateThread.isPending}
+                className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+              >
+                {isArchived ? (
+                  <>
+                    <ArchiveRestore className="w-4 h-4 mr-1" />
+                    Restore
+                  </>
+                ) : (
+                  <>
+                    <Archive className="w-4 h-4 mr-1" />
+                    Archive
+                  </>
+                )}
+              </Button>
+            )}
+          </div>
+
+          {/* Content Preview */}
+          {thread.initial_message && (
+            <div className={`pl-13 ${isArchived ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
+              <p className="text-sm line-clamp-2 leading-relaxed">
+                {thread.initial_message}
+              </p>
+            </div>
+          )}
+          
+          {/* Footer Section */}
+          <div className="flex items-center justify-between pl-13">
+            <div className={`flex items-center gap-1 text-xs ${
+              isArchived ? 'text-muted-foreground' : 'text-muted-foreground'
+            }`}>
+              <Clock className="w-3 h-3" />
+              <span>
+                {thread.last_message_at 
+                  ? new Date(thread.last_message_at).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })
+                  : 'No messages yet'
+                }
+              </span>
+            </div>
+            
+            <Badge variant="outline" className="flex items-center gap-1 text-xs">
               <ThumbsUp className="w-3 h-3" />
               {thread.upvote_count || 0}
             </Badge>
