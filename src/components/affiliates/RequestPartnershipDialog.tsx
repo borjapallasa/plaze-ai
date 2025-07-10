@@ -122,24 +122,68 @@ export function RequestPartnershipDialog({ offer, children }: RequestPartnership
         return;
       }
 
-      // Get the expert_uuid from the affiliate product
-      const { data: productData, error: productError } = await supabase
-        .from('affiliate_products')
-        .select('expert_share, affiliate_share, products!inner(expert_uuid)')
-        .eq('affiliate_products_uuid', offer.id)
-        .maybeSingle();
+      // Get the expert_uuid and shares from the affiliate product
+      // Handle both product and community types
+      let expertUuid: string;
+      let expertShare: number;
+      let affiliateShare: number;
 
-      if (productError) {
-        throw productError;
-      }
+      if (offer.type === 'community') {
+        // For community-based affiliate products
+        const { data: productData, error: productError } = await supabase
+          .from('affiliate_products')
+          .select(`
+            expert_share, 
+            affiliate_share, 
+            communities!inner(expert_uuid)
+          `)
+          .eq('affiliate_products_uuid', offer.id)
+          .maybeSingle();
 
-      if (!productData) {
-        toast({
-          title: "Product Not Found",
-          description: "The affiliate product could not be found.",
-          variant: "destructive",
-        });
-        return;
+        if (productError) {
+          throw productError;
+        }
+
+        if (!productData) {
+          toast({
+            title: "Product Not Found",
+            description: "The affiliate product could not be found.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        expertUuid = productData.communities.expert_uuid;
+        expertShare = productData.expert_share;
+        affiliateShare = productData.affiliate_share;
+      } else {
+        // For product-based affiliate products
+        const { data: productData, error: productError } = await supabase
+          .from('affiliate_products')
+          .select(`
+            expert_share, 
+            affiliate_share, 
+            products!inner(expert_uuid)
+          `)
+          .eq('affiliate_products_uuid', offer.id)
+          .maybeSingle();
+
+        if (productError) {
+          throw productError;
+        }
+
+        if (!productData) {
+          toast({
+            title: "Product Not Found",
+            description: "The affiliate product could not be found.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        expertUuid = productData.products.expert_uuid;
+        expertShare = productData.expert_share;
+        affiliateShare = productData.affiliate_share;
       }
 
       // Prepare questions and answers for storage
@@ -155,13 +199,13 @@ export function RequestPartnershipDialog({ offer, children }: RequestPartnership
         .insert({
           affiliate_uuid: affiliateData.affiliate_uuid,
           affiliate_product_uuid: offer.id,
-          expert_uuid: productData.products.expert_uuid,
+          expert_uuid: expertUuid,
           name: offer.title,
           type: (offer.type || 'product') as 'product' | 'community',
           status: 'pending',
           message: message.trim() || null,
-          affiliate_split: productData.affiliate_share,
-          expert_split: productData.expert_share,
+          affiliate_split: affiliateShare,
+          expert_split: expertShare,
           questions_answered: questionsAnswered
         });
 
@@ -201,7 +245,7 @@ export function RequestPartnershipDialog({ offer, children }: RequestPartnership
             Request Partnership
           </DialogTitle>
           <DialogDescription>
-            Send a partnership request to promote this product and earn commissions.
+            Send a partnership request to promote this {offer.type === 'community' ? 'community' : 'product'} and earn commissions.
           </DialogDescription>
         </DialogHeader>
 
@@ -277,7 +321,7 @@ export function RequestPartnershipDialog({ offer, children }: RequestPartnership
             </Label>
             <Textarea
               id="message"
-              placeholder="Tell the product owner why you'd like to partner with them and how you plan to promote their product..."
+              placeholder={`Tell the ${offer.type === 'community' ? 'community' : 'product'} owner why you'd like to partner with them and how you plan to promote their ${offer.type === 'community' ? 'community' : 'product'}...`}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               rows={4}
