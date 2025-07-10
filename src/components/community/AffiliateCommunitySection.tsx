@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -148,7 +149,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
         .from('affiliate_products')
         .insert({
           community_uuid: communityUuid,
-          expert_uuid: communityData.expert_uuid, // Include the expert_uuid
+          expert_uuid: communityData.expert_uuid,
           expert_share: expertShare,
           affiliate_share: affiliateShare,
           status: 'active',
@@ -233,14 +234,14 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
     try {
       setIsLoading(true);
 
-      // Delete from affiliate_products
+      // Set affiliate product status to inactive instead of deleting
       const { error: affiliateError } = await supabase
         .from('affiliate_products')
-        .delete()
+        .update({ status: 'inactive' })
         .eq('affiliate_products_uuid', editingCommunity.affiliate_products_uuid);
 
       if (affiliateError) {
-        console.error('Error deleting affiliate community:', affiliateError);
+        console.error('Error deactivating affiliate community:', affiliateError);
         toast.error("Failed to disable affiliate program");
         return;
       }
@@ -283,7 +284,7 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <Label>Questions for Affiliates</Label>
-        <Button type="button" variant="outline" size="sm" onClick={onAdd}>
+        <Button type="button" variant="outline" size="sm" onclick={onAdd}>
           <Plus className="h-4 w-4 mr-1" />
           Add Question
         </Button>
