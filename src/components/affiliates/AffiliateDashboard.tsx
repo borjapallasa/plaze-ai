@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { PaymentSettingsDialog } from "./PaymentSettingsDialog";
 import { useRequestPayout } from "@/hooks/use-request-payout";
+import { AffiliateOffersSection } from "./AffiliateOffersSection";
 
 export function AffiliateDashboard() {
   const { user } = useAuth();
@@ -71,7 +73,7 @@ export function AffiliateDashboard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2">
         <div>
@@ -214,6 +216,9 @@ export function AffiliateDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Affiliate Offers Section */}
+      <AffiliateOffersSection />
     </div>
   );
 }
