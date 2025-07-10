@@ -24,6 +24,7 @@ export function ThreadDialog({ isOpen, onClose, thread, communityUuid }: ThreadD
   const [isSending, setIsSending] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Query thread messages with user info
   const { data: messages, isLoading: isMessagesLoading } = useQuery({
@@ -73,6 +74,28 @@ export function ThreadDialog({ isOpen, onClose, thread, communityUuid }: ThreadD
     enabled: !!user?.id
   });
 
+  // Scroll to bottom function
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // Scroll to bottom when messages load or change
+  useEffect(() => {
+    if (messages && messages.length > 0) {
+      scrollToBottom();
+    }
+  }, [messages]);
+
+  // Scroll to bottom when thread dialog opens
+  useEffect(() => {
+    if (isOpen && thread) {
+      // Small delay to ensure the dialog is fully rendered
+      setTimeout(() => {
+        scrollToBottom();
+      }, 100);
+    }
+  }, [isOpen, thread]);
+
   const handleUpvote = async () => {
     if (!thread) return;
     
@@ -120,6 +143,11 @@ export function ThreadDialog({ isOpen, onClose, thread, communityUuid }: ThreadD
       queryClient.invalidateQueries({
         queryKey: ['thread-messages', thread.thread_uuid]
       });
+
+      // Scroll to bottom after sending message
+      setTimeout(() => {
+        scrollToBottom();
+      }, 100);
 
       toast({
         description: "Message sent successfully!",
@@ -292,6 +320,9 @@ export function ThreadDialog({ isOpen, onClose, thread, communityUuid }: ThreadD
                 <p className="text-sm text-gray-500">No replies yet</p>
               </div>
             )}
+            
+            {/* Invisible div to scroll to */}
+            <div ref={messagesEndRef} />
           </div>
         </div>
 
