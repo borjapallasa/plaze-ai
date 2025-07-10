@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from "react";
 import { AffiliateOffersLayoutSwitcher, LayoutType } from "./AffiliateOffersLayoutSwitcher";
 import { AffiliateOffersSortSelector, SortOption } from "./AffiliateOffersSortSelector";
@@ -26,23 +27,37 @@ export function AffiliateOffersSection() {
       .filter(product => product.status === "active")
       // Filter out products where partnerships already exist
       .filter(product => !existingPartnerships.includes(product.affiliate_products_uuid))
-      .map(product => ({
-        id: product.affiliate_products_uuid,
-        title: product.product_name || "Unnamed Product",
-        description: product.product_description || "No description available",
-        category: "product", // Default category instead of using type
-        // Convert commission from 0-1 range to percentage
-        commissionRate: Math.round((product.affiliate_share || 0) * 100),
-        commissionType: "percentage" as const,
-        rating: 4.5, // Default rating since we don't have this data
-        totalAffiliates: 100, // Default value since we don't have this data
-        monthlyEarnings: 100, // Default as requested
-        thumbnail: product.product_thumbnail || "",
-        status: product.status === "active" ? "active" as const : "pending" as const,
-        partnerName: product.expert_name || "Unknown Expert",
-        type: "product", // Keep for filtering compatibility
-        createdAt: product.created_at // Add created_at for sorting
-      }));
+      .map(product => {
+        // Determine if this is a product or community based affiliate product
+        const isProduct = !!product.product_uuid;
+        const isCommunity = !!product.community_uuid;
+        
+        return {
+          id: product.affiliate_products_uuid,
+          title: isProduct 
+            ? (product.product_name || "Unnamed Product")
+            : (product.community_name || "Unnamed Community"),
+          description: isProduct 
+            ? (product.product_description || "No description available")
+            : (product.community_description || "No description available"),
+          category: isProduct ? "product" : "community",
+          // Convert commission from 0-1 range to percentage
+          commissionRate: Math.round((product.affiliate_share || 0) * 100),
+          commissionType: "percentage" as const,
+          rating: 4.5, // Default rating since we don't have this data
+          totalAffiliates: 100, // Default value since we don't have this data
+          monthlyEarnings: isProduct 
+            ? (product.product_price_from || 100) 
+            : (product.community_price || 100), // Use actual price data
+          thumbnail: isProduct 
+            ? (product.product_thumbnail || "")
+            : (product.community_thumbnail || ""),
+          status: product.status === "active" ? "active" as const : "pending" as const,
+          partnerName: product.expert_name || "Unknown Expert",
+          type: isProduct ? "product" : "community",
+          createdAt: product.created_at // Add created_at for sorting
+        };
+      });
 
     // Filter by type
     const filteredOffers = filterType === "all" 
