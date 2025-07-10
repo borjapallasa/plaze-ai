@@ -99,8 +99,7 @@ export function ThreadDialog({ isOpen, onClose, thread, communityUuid }: ThreadD
           {
             thread_uuid: thread.thread_uuid,
             user_uuid: user.id,
-            message: message.trim(),
-            community_uuid: communityUuid
+            message: message.trim()
           }
         ]);
 

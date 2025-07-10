@@ -1903,7 +1903,6 @@ export type Database = {
       }
       threads_messages: {
         Row: {
-          community_uuid: string | null
           created_at: string
           id: number
           message: string | null
@@ -1912,7 +1911,6 @@ export type Database = {
           user_uuid: string | null
         }
         Insert: {
-          community_uuid?: string | null
           created_at?: string
           id?: number
           message?: string | null
@@ -1921,7 +1919,6 @@ export type Database = {
           user_uuid?: string | null
         }
         Update: {
-          community_uuid?: string | null
           created_at?: string
           id?: number
           message?: string | null
@@ -1943,13 +1940,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["user_uuid"]
-          },
-          {
-            foreignKeyName: "threads_messages_community_uuid_fkey"
-            columns: ["community_uuid"]
-            isOneToOne: false
-            referencedRelation: "communities"
-            referencedColumns: ["community_uuid"]
           },
         ]
       }
