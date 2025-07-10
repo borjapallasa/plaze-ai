@@ -35,9 +35,16 @@ export function useUpdateThread() {
       return data;
     },
     onSuccess: (data, variables) => {
-      // Invalidate the threads query to refresh the list
+      // Invalidate all thread-related queries to ensure consistency
       queryClient.invalidateQueries({
         queryKey: ['community-threads']
+      });
+      
+      // Also invalidate specific community threads
+      queryClient.invalidateQueries({
+        predicate: (query) => 
+          Array.isArray(query.queryKey) && 
+          query.queryKey[0] === 'community-threads'
       });
       
       // Show appropriate success message based on the action

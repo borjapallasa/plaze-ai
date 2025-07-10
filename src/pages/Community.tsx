@@ -151,12 +151,18 @@ export default function CommunityPage() {
     enabled: !!communityId && communityId !== ':id'
   });
 
-  // Check if current user is the community owner - enhanced debugging
-  const isOwner = currentUserExpertData && community && (
-    currentUserExpertData.expert_uuid === community.expert_uuid ||
-    currentUserExpertData.user_uuid === community.expert_uuid ||
-    user?.id === community.expert_uuid
-  );
+  // Check if current user is the community owner - simplified and more reliable
+  const isOwner = React.useMemo(() => {
+    if (!currentUserExpertData || !community || !user) return false;
+    
+    // Check multiple possible ownership patterns
+    return (
+      currentUserExpertData.expert_uuid === community.expert_uuid ||
+      currentUserExpertData.user_uuid === community.expert_uuid ||
+      user.id === community.expert_uuid ||
+      user.id === community.user_uuid
+    );
+  }, [currentUserExpertData, community, user]);
 
   // Add debugging logs
   console.log('Ownership debug:', {
@@ -164,12 +170,15 @@ export default function CommunityPage() {
     userEmail: user?.email,
     currentUserExpertData,
     communityExpertUuid: community?.expert_uuid,
+    communityUserUuid: community?.user_uuid,
     isOwner
   });
 
   const { data: threads, isLoading: isThreadsLoading } = useQuery({
-    queryKey: ['community-threads', communityId],
+    queryKey: ['community-threads', communityId, isOwner],
     queryFn: async () => {
+      console.log('Fetching threads for community:', communityId, 'isOwner:', isOwner);
+      
       const { data, error } = await supabase
         .from('threads')
         .select(`
@@ -180,12 +189,19 @@ export default function CommunityPage() {
         .order('last_message_at', { ascending: false });
 
       if (error) {
+        console.error('Error fetching threads:', error);
         throw error;
       }
 
-      // If user is owner, show all threads (open and closed)
-      // If not owner, only show open threads
-      return isOwner ? data : data?.filter(thread => thread.status === 'open') || [];
+      console.log('Raw threads data:', data);
+
+      // Filter threads based on ownership and status
+      const filteredThreads = isOwner 
+        ? data || [] // Owners see all threads (open and closed)
+        : (data || []).filter(thread => thread.status === 'open'); // Non-owners only see open threads
+
+      console.log('Filtered threads:', filteredThreads);
+      return filteredThreads;
     },
     enabled: !!communityId
   });
