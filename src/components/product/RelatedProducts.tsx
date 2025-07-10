@@ -142,6 +142,9 @@ export function RelatedProducts({
     setSaving(true);
 
     try {
+      console.log("Starting save relationships for product:", productId);
+      console.log("Selected products to save:", selectedProducts.length);
+      
       // First, delete all existing relationships for this product
       const { error: deleteError } = await supabase
         .from('product_relationships')
@@ -161,6 +164,8 @@ export function RelatedProducts({
           relationship_type: 'upsell',
           display_order: index
         }));
+
+        console.log("Inserting relationships:", relationshipsToInsert);
 
         const { error: insertError } = await supabase
           .from('product_relationships')

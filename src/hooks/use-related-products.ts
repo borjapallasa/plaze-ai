@@ -11,7 +11,7 @@ export function useRelatedProducts(productUuid?: string) {
       }
       
       try {
-        // Use a direct query with proper joins to avoid RLS recursion issues
+        // Simplified query without joins to avoid RLS recursion issues
         const { data: relatedProductsData, error } = await supabase
           .from('product_relationships')
           .select(`
@@ -20,13 +20,6 @@ export function useRelatedProducts(productUuid?: string) {
               product_uuid,
               name,
               price_from
-            ),
-            variants!inner (
-              variant_uuid,
-              name,
-              price,
-              tags,
-              files_link
             )
           `)
           .eq('product_uuid', productUuid);
@@ -38,38 +31,54 @@ export function useRelatedProducts(productUuid?: string) {
         
         console.log("Found related products:", relatedProductsData?.length || 0);
         
-        // Process the data to ensure each product has at least one variant
-        const processedData = relatedProductsData?.map(rel => {
-          const product = rel.products;
-          const variants = rel.variants;
-          
-          // If the product has variants, use the first one
-          if (variants && variants.length > 0) {
-            const variant = variants[0];
-            return {
-              related_product_uuid: rel.related_product_uuid,
-              related_product_name: product?.name || '',
-              related_product_price_from: product?.price_from || 0,
-              variant_uuid: variant.variant_uuid,
-              variant_name: variant.name || "Default Option",
-              variant_price: variant.price || 0,
-              variant_tags: variant.tags,
-              variant_files_link: variant.files_link
-            };
+        // Get variants for each related product separately
+        const processedData = [];
+        
+        if (relatedProductsData && relatedProductsData.length > 0) {
+          for (const rel of relatedProductsData) {
+            const product = rel.products;
+            
+            if (product) {
+              // Fetch variants for this product
+              const { data: variants, error: variantsError } = await supabase
+                .from('variants')
+                .select('variant_uuid, name, price, tags, files_link')
+                .eq('product_uuid', rel.related_product_uuid)
+                .limit(1);
+
+              if (variantsError) {
+                console.error("Error fetching variants:", variantsError);
+              }
+
+              // Use first variant if available, otherwise create default
+              if (variants && variants.length > 0) {
+                const variant = variants[0];
+                processedData.push({
+                  related_product_uuid: rel.related_product_uuid,
+                  related_product_name: product.name || '',
+                  related_product_price_from: product.price_from || 0,
+                  variant_uuid: variant.variant_uuid,
+                  variant_name: variant.name || "Default Option",
+                  variant_price: variant.price || 0,
+                  variant_tags: variant.tags,
+                  variant_files_link: variant.files_link
+                });
+              } else {
+                // Create default variant data
+                processedData.push({
+                  related_product_uuid: rel.related_product_uuid,
+                  related_product_name: product.name || '',
+                  related_product_price_from: product.price_from || 0,
+                  variant_uuid: `default-${rel.related_product_uuid}`,
+                  variant_name: "Default Option",
+                  variant_price: product.price_from || 0,
+                  variant_tags: null,
+                  variant_files_link: null
+                });
+              }
+            }
           }
-          
-          // If no variants, create a default one
-          return {
-            related_product_uuid: rel.related_product_uuid,
-            related_product_name: product?.name || '',
-            related_product_price_from: product?.price_from || 0,
-            variant_uuid: `default-${rel.related_product_uuid}`,
-            variant_name: "Default Option",
-            variant_price: product?.price_from || 0,
-            variant_tags: null,
-            variant_files_link: null
-          };
-        }) || [];
+        }
         
         return processedData;
       } catch (error) {
