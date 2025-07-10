@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 
 interface ClassroomDialogProps {
   open: boolean;
@@ -40,6 +40,26 @@ export function ClassroomDialog({ open, onOpenChange, communityUuid, expertUuid 
   const [isCreating, setIsCreating] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Fetch community data to get expert_uuid if not provided
+  const { data: community } = useQuery({
+    queryKey: ['community', communityUuid],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('communities')
+        .select('expert_uuid')
+        .eq('community_uuid', communityUuid)
+        .single();
+
+      if (error) {
+        console.error("Error fetching community:", error);
+        throw error;
+      }
+
+      return data;
+    },
+    enabled: !!communityUuid && !expertUuid
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,6 +82,18 @@ export function ClassroomDialog({ open, onOpenChange, communityUuid, expertUuid 
       return;
     }
 
+    // Use provided expertUuid or get it from community data
+    const finalExpertUuid = expertUuid || community?.expert_uuid;
+    
+    if (!finalExpertUuid) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Expert information is required to create a classroom",
+      });
+      return;
+    }
+
     setIsCreating(true);
     
     try {
@@ -71,7 +103,7 @@ export function ClassroomDialog({ open, onOpenChange, communityUuid, expertUuid 
         summary: summary.trim() || null,
         description: description.trim() || null,
         community_uuid: communityUuid,
-        expert_uuid: expertUuid || null,
+        expert_uuid: finalExpertUuid,
         status: status,
         notify: notify
       });
@@ -84,7 +116,7 @@ export function ClassroomDialog({ open, onOpenChange, communityUuid, expertUuid 
           summary: summary.trim() || null,
           description: description.trim() || null,
           community_uuid: communityUuid,
-          expert_uuid: expertUuid || null,
+          expert_uuid: finalExpertUuid,
           status: status,
           notify: notify
         })
