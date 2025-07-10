@@ -125,11 +125,30 @@ export function AffiliateCommunitySection({ communityUuid }: AffiliateCommunityP
       const affiliateShare = (100 - split[0]) / 100;
       const formattedQuestions = formatQuestionsForStorage(questions);
 
-      // Insert into affiliate_products table with community_uuid
+      // First, get the community data to extract the expert_uuid
+      const { data: communityData, error: communityFetchError } = await supabase
+        .from('communities')
+        .select('expert_uuid')
+        .eq('community_uuid', communityUuid)
+        .single();
+
+      if (communityFetchError) {
+        console.error('Error fetching community data:', communityFetchError);
+        toast.error("Failed to fetch community information");
+        return;
+      }
+
+      if (!communityData?.expert_uuid) {
+        toast.error("Community expert information not found");
+        return;
+      }
+
+      // Insert into affiliate_products table with community_uuid and expert_uuid
       const { error: affiliateError } = await supabase
         .from('affiliate_products')
         .insert({
-          community_uuid: communityUuid, // Use community_uuid instead of product_uuid
+          community_uuid: communityUuid,
+          expert_uuid: communityData.expert_uuid, // Include the expert_uuid
           expert_share: expertShare,
           affiliate_share: affiliateShare,
           status: 'active',
