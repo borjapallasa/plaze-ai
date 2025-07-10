@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
@@ -403,10 +404,13 @@ export default function Classroom() {
 
   const updateClassroomMutation = useMutation({
     mutationFn: async (classroomData: any) => {
+      console.log("Updating classroom with UUID:", id);
+      console.log("Classroom data:", classroomData);
+      
       const { data, error } = await supabase
         .from('classrooms')
         .update(classroomData)
-        .eq('classroom_uuid', id)
+        .eq('classroom_uuid', id) // Use classroom_uuid instead of id
         .select();
 
       if (error) {
@@ -414,6 +418,7 @@ export default function Classroom() {
         throw error;
       }
 
+      console.log("Classroom updated successfully:", data);
       return data;
     },
     onSuccess: () => {
