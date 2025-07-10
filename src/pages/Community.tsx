@@ -88,16 +88,21 @@ export default function CommunityPage() {
   const { user } = useAuth();
   const { images } = useCommunityImages(communityId);
 
-  // Use the updated hook
-  const { data: community, isLoading: isCommunityLoading } = useCommunityDetails();
+  // Use the updated hook - no arguments needed
+  const { data: community, isLoading: isCommunityLoading, error: communityError } = useCommunityDetails();
 
-  // Add validation for communityId
-  React.useEffect(() => {
-    console.log('Community ID from params:', communityId);
-    if (communityId === ':id' || !communityId) {
-      console.error('Invalid community ID detected:', communityId);
-    }
+  // Add validation for communityId but don't interfere with data fetching
+  const isValidCommunityId = React.useMemo(() => {
+    return communityId && communityId !== ':id' && !communityId.includes(':');
   }, [communityId]);
+
+  console.log('Community page state:', {
+    communityId,
+    isValidCommunityId,
+    community: !!community,
+    isLoading: isCommunityLoading,
+    error: communityError
+  });
 
   // Get current user's expert data
   const { data: currentUserExpertData } = useQuery({
@@ -134,20 +139,10 @@ export default function CommunityPage() {
     );
   }, [currentUserExpertData, community, user]);
 
-  // Add debugging logs
-  console.log('Ownership debug:', {
-    user: user?.id,
-    userEmail: user?.email,
-    currentUserExpertData,
-    communityExpertUuid: community?.expert_uuid,
-    communityUserUuid: community?.user_uuid,
-    isOwner
-  });
-
   const { data: threads, isLoading: isThreadsLoading } = useQuery({
     queryKey: ['community-threads', communityId, isOwner],
     queryFn: async () => {
-      if (!communityId || communityId === ':id') {
+      if (!isValidCommunityId) {
         console.error('Invalid community ID for threads:', communityId);
         return [];
       }
@@ -182,13 +177,13 @@ export default function CommunityPage() {
       console.log('Filtered threads:', filteredThreads);
       return filteredThreads;
     },
-    enabled: !!communityId && communityId !== ':id'
+    enabled: isValidCommunityId
   });
 
   const { data: classrooms, isLoading: isClassroomsLoading } = useQuery({
     queryKey: ['community-classrooms', communityId],
     queryFn: async () => {
-      if (!communityId || communityId === ':id') {
+      if (!isValidCommunityId) {
         console.error('Invalid community ID for classrooms:', communityId);
         return [];
       }
@@ -206,13 +201,13 @@ export default function CommunityPage() {
 
       return data;
     },
-    enabled: !!communityId && communityId !== ':id'
+    enabled: isValidCommunityId
   });
 
   const { data: communityProducts, isLoading: isProductsLoading } = useQuery({
     queryKey: ['communityProducts', communityId],
     queryFn: async () => {
-      if (!communityId || communityId === ':id') {
+      if (!isValidCommunityId) {
         console.error('Invalid community ID for products:', communityId);
         return [];
       }
@@ -240,13 +235,13 @@ export default function CommunityPage() {
       console.log('Community products fetched:', data);
       return data || [];
     },
-    enabled: !!communityId && communityId !== ':id'
+    enabled: isValidCommunityId
   });
 
   const { data: communityMembers, isLoading: isMembersLoading } = useQuery({
     queryKey: ['community-members', communityId],
     queryFn: async () => {
-      if (!communityId || communityId === ':id') {
+      if (!isValidCommunityId) {
         console.error('Invalid community ID for members:', communityId);
         return [];
       }
@@ -279,7 +274,7 @@ export default function CommunityPage() {
       console.log('Community members fetched:', data);
       return data;
     },
-    enabled: !!communityId && communityId !== ':id'
+    enabled: isValidCommunityId
   });
 
   const videoEmbedUrl = getVideoEmbedUrl(community?.intro);
@@ -325,7 +320,7 @@ export default function CommunityPage() {
   };
 
   // Early return for invalid community ID
-  if (communityId === ':id' || !communityId) {
+  if (!isValidCommunityId) {
     return (
       <>
         <MainHeader />
@@ -356,7 +351,7 @@ export default function CommunityPage() {
     );
   }
 
-  if (!community) {
+  if (communityError || !community) {
     return (
       <>
         <MainHeader />
