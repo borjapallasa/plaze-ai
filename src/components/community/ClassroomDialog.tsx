@@ -62,6 +62,15 @@ export function ClassroomDialog({ open, onOpenChange, communityUuid, expertUuid 
       return;
     }
 
+    if (!expertUuid) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Expert ID is required",
+      });
+      return;
+    }
+
     setIsCreating(true);
     
     try {
@@ -71,7 +80,7 @@ export function ClassroomDialog({ open, onOpenChange, communityUuid, expertUuid 
         summary: summary.trim() || null,
         description: description.trim() || null,
         community_uuid: communityUuid,
-        expert_uuid: expertUuid || null,
+        expert_uuid: expertUuid,
         status: status,
         notify: notify
       });
@@ -84,7 +93,7 @@ export function ClassroomDialog({ open, onOpenChange, communityUuid, expertUuid 
           summary: summary.trim() || null,
           description: description.trim() || null,
           community_uuid: communityUuid,
-          expert_uuid: expertUuid || null,
+          expert_uuid: expertUuid,
           status: status,
           notify: notify
         })
