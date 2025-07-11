@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Edit, Trash2 } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth, addMonths, subMonths } from 'date-fns';
@@ -24,6 +23,7 @@ interface CommunityCalendarProps {
   isOwner?: boolean;
   onEditEvent?: (event: Event) => void;
   onDeleteEvent?: (eventId: string) => void;
+  communityId?: string;
 }
 
 export function CommunityCalendar({ 
@@ -34,7 +34,8 @@ export function CommunityCalendar({
   showAddEventButton = false,
   isOwner = false,
   onEditEvent,
-  onDeleteEvent
+  onDeleteEvent,
+  communityId = ""
 }: CommunityCalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [eventDialogOpen, setEventDialogOpen] = useState(false);
@@ -224,6 +225,7 @@ export function CommunityCalendar({
         isOwner={isOwner}
         onEditEvent={onEditEvent}
         onDeleteEvent={onDeleteEvent}
+        communityId={communityId}
       />
     </>
   );
