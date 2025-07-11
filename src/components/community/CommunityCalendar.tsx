@@ -18,9 +18,17 @@ interface CommunityCalendarProps {
   events?: Event[];
   selectedDate?: Date;
   onDateSelect?: (date: Date) => void;
+  onAddEvent?: () => void;
+  showAddEventButton?: boolean;
 }
 
-export function CommunityCalendar({ events = [], selectedDate, onDateSelect }: CommunityCalendarProps) {
+export function CommunityCalendar({ 
+  events = [], 
+  selectedDate, 
+  onDateSelect,
+  onAddEvent,
+  showAddEventButton = false
+}: CommunityCalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [eventDialogOpen, setEventDialogOpen] = useState(false);
   const [selectedEventDate, setSelectedEventDate] = useState<Date | null>(null);
@@ -84,23 +92,34 @@ export function CommunityCalendar({ events = [], selectedDate, onDateSelect }: C
           <h3 className="text-lg font-semibold">
             {format(currentMonth, 'MMMM yyyy')}
           </h3>
-          <div className="flex items-center gap-1">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={goToPreviousMonth}
-              className="h-8 w-8 p-0"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={goToNextMonth}
-              className="h-8 w-8 p-0"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={goToPreviousMonth}
+                className="h-8 w-8 p-0"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={goToNextMonth}
+                className="h-8 w-8 p-0"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+            {showAddEventButton && (
+              <Button
+                onClick={onAddEvent}
+                size="sm"
+                className="ml-2"
+              >
+                Add Event
+              </Button>
+            )}
           </div>
         </div>
 

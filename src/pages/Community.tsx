@@ -1125,15 +1125,14 @@ export default function CommunityPage() {
             </TabsContent>
 
             <TabsContent value="calendar" className="space-y-6">
-              <div className="flex items-center justify-between">
-                {renderAddEventButton()}
-              </div>
               <Card>
                 <CardContent className="p-6">
                   <CommunityCalendar
                     events={formattedEvents}
                     selectedDate={date}
                     onDateSelect={setDate}
+                    onAddEvent={() => setIsAddEventDialogOpen(true)}
+                    showAddEventButton={isOwner}
                   />
                 </CardContent>
               </Card>
