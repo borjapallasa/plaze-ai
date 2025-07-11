@@ -38,6 +38,7 @@ export function DeleteClassroomProductDialog({
 
       console.log("Attempting to delete relationship:", relationshipUuid);
 
+      // Delete from community_product_relationships table using the correct UUID field
       const { error } = await supabase
         .from('community_product_relationships')
         .delete()
