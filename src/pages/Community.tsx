@@ -31,7 +31,6 @@ import { MemberApprovalDialog } from "@/components/community/MemberApprovalDialo
 import { MemberRejectDialog } from "@/components/community/MemberRejectDialog";
 import { ThreadCard } from "@/components/community/ThreadCard";
 import { useToast } from "@/hooks/use-toast";
-import { useCommunityDetails } from "@/hooks/use-community-details";
 
 interface Link {
   name: string;
@@ -67,13 +66,7 @@ function parseLinks(data: unknown): Link[] {
 }
 
 export default function CommunityPage() {
-  const params = useParams();
-  const communityId = params.id;
-  
-  console.log('CommunityPage mounted with params:', params);
-  console.log('Community ID from params:', communityId);
-  console.log('Current pathname:', window.location.pathname);
-  
+  const { id: communityId } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -94,33 +87,13 @@ export default function CommunityPage() {
   const { user } = useAuth();
   const { images } = useCommunityImages(communityId);
 
-  // Use the updated hook
-  const { data: community, isLoading: isCommunityLoading, error: communityError } = useCommunityDetails();
-
-  // Add more detailed validation for communityId
-  const isValidCommunityId = React.useMemo(() => {
-    const isValid = communityId && 
-      communityId !== ':id' && 
-      !communityId.includes(':') &&
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(communityId);
-    
-    console.log('Community ID validation in component:', {
-      communityId,
-      isValid,
-      hasColons: communityId?.includes(':'),
-      isPlaceholder: communityId === ':id'
-    });
-    
-    return isValid;
+  // Add validation for communityId
+  React.useEffect(() => {
+    console.log('Community ID from params:', communityId);
+    if (communityId === ':id' || !communityId) {
+      console.error('Invalid community ID detected:', communityId);
+    }
   }, [communityId]);
-
-  console.log('Community page state:', {
-    communityId,
-    isValidCommunityId,
-    community: !!community,
-    isLoading: isCommunityLoading,
-    error: communityError
-  });
 
   // Get current user's expert data
   const { data: currentUserExpertData } = useQuery({
@@ -144,6 +117,40 @@ export default function CommunityPage() {
     enabled: !!user?.email,
   });
 
+  const { data: community, isLoading: isCommunityLoading } = useQuery({
+    queryKey: ['community', communityId],
+    queryFn: async () => {
+      if (!communityId || communityId === ':id') {
+        console.error('No valid community ID provided');
+        return null;
+      }
+
+      console.log('Fetching community with ID:', communityId);
+      
+      const { data, error } = await supabase
+        .from('communities')
+        .select(`
+          *,
+          expert:expert_uuid(
+            expert_uuid,
+            name,
+            thumbnail
+          )
+        `)
+        .eq('community_uuid', communityId)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Error fetching community:', error);
+        throw error;
+      }
+
+      console.log('Community data fetched:', data);
+      return data;
+    },
+    enabled: !!communityId && communityId !== ':id'
+  });
+
   // Check if current user is the community owner - simplified and more reliable
   const isOwner = React.useMemo(() => {
     if (!currentUserExpertData || !community || !user) return false;
@@ -157,14 +164,19 @@ export default function CommunityPage() {
     );
   }, [currentUserExpertData, community, user]);
 
+  // Add debugging logs
+  console.log('Ownership debug:', {
+    user: user?.id,
+    userEmail: user?.email,
+    currentUserExpertData,
+    communityExpertUuid: community?.expert_uuid,
+    communityUserUuid: community?.user_uuid,
+    isOwner
+  });
+
   const { data: threads, isLoading: isThreadsLoading } = useQuery({
     queryKey: ['community-threads', communityId, isOwner],
     queryFn: async () => {
-      if (!isValidCommunityId) {
-        console.error('Invalid community ID for threads:', communityId);
-        return [];
-      }
-
       console.log('Fetching threads for community:', communityId, 'isOwner:', isOwner);
       
       const { data, error } = await supabase
@@ -195,17 +207,12 @@ export default function CommunityPage() {
       console.log('Filtered threads:', filteredThreads);
       return filteredThreads;
     },
-    enabled: isValidCommunityId
+    enabled: !!communityId
   });
 
   const { data: classrooms, isLoading: isClassroomsLoading } = useQuery({
     queryKey: ['community-classrooms', communityId],
     queryFn: async () => {
-      if (!isValidCommunityId) {
-        console.error('Invalid community ID for classrooms:', communityId);
-        return [];
-      }
-
       const { data, error } = await supabase
         .from('classrooms')
         .select('*')
@@ -219,14 +226,14 @@ export default function CommunityPage() {
 
       return data;
     },
-    enabled: isValidCommunityId
+    enabled: !!communityId
   });
 
   const { data: communityProducts, isLoading: isProductsLoading } = useQuery({
     queryKey: ['communityProducts', communityId],
     queryFn: async () => {
-      if (!isValidCommunityId) {
-        console.error('Invalid community ID for products:', communityId);
+      if (!communityId) {
+        console.error('No community ID provided for products query');
         return [];
       }
 
@@ -253,14 +260,14 @@ export default function CommunityPage() {
       console.log('Community products fetched:', data);
       return data || [];
     },
-    enabled: isValidCommunityId
+    enabled: !!communityId
   });
 
   const { data: communityMembers, isLoading: isMembersLoading } = useQuery({
     queryKey: ['community-members', communityId],
     queryFn: async () => {
-      if (!isValidCommunityId) {
-        console.error('Invalid community ID for members:', communityId);
+      if (!communityId || communityId === ':id') {
+        console.error('No valid community ID provided for members query');
         return [];
       }
 
@@ -292,40 +299,26 @@ export default function CommunityPage() {
       console.log('Community members fetched:', data);
       return data;
     },
-    enabled: isValidCommunityId
+    enabled: !!communityId && communityId !== ':id'
   });
 
-  // Use community data with fallback values to prevent flickering
-  const displayCommunity = useMemo(() => {
-    if (!community) return null;
-    
-    return {
-      ...community,
-      member_count: community.member_count || 0,
-      post_count: community.post_count || 0,
-      product_count: community.product_count || 0,
-      classroom_count: community.classroom_count || 0,
-      expert: community.expert || { name: 'Expert', thumbnail: null }
-    };
-  }, [community]);
-
-  const videoEmbedUrl = getVideoEmbedUrl(displayCommunity?.intro);
-  const links = parseLinks(displayCommunity?.links);
+  const videoEmbedUrl = getVideoEmbedUrl(community?.intro);
+  const links = parseLinks(community?.links);
 
   // Parse threads_tags from community data
   const threadsTags = React.useMemo(() => {
-    if (!displayCommunity?.threads_tags) return [];
-    if (Array.isArray(displayCommunity.threads_tags)) return displayCommunity.threads_tags;
-    if (typeof displayCommunity.threads_tags === 'string') {
+    if (!community?.threads_tags) return [];
+    if (Array.isArray(community.threads_tags)) return community.threads_tags;
+    if (typeof community.threads_tags === 'string') {
       try {
-        const parsed = JSON.parse(displayCommunity.threads_tags);
+        const parsed = JSON.parse(community.threads_tags);
         return Array.isArray(parsed) ? parsed : [];
       } catch {
         return [];
       }
     }
     return [];
-  }, [displayCommunity?.threads_tags]);
+  }, [community?.threads_tags]);
 
   // Filter threads by selected tag
   const filteredThreads = React.useMemo(() => {
@@ -351,8 +344,8 @@ export default function CommunityPage() {
     setIsRejectDialogOpen(true);
   };
 
-  // Early return for invalid community ID - show more specific error
-  if (!isValidCommunityId) {
+  // Early return for invalid community ID
+  if (communityId === ':id' || !communityId) {
     return (
       <>
         <MainHeader />
@@ -362,11 +355,6 @@ export default function CommunityPage() {
             <p className="text-muted-foreground mt-2">
               The community URL appears to be invalid. Please check the link and try again.
             </p>
-            <div className="mt-4 text-sm text-muted-foreground">
-              <p>Current URL: {window.location.pathname}</p>
-              <p>Extracted ID: {communityId}</p>
-              <p>Expected format: /community/[uuid]</p>
-            </div>
           </Card>
         </div>
       </>
@@ -388,7 +376,7 @@ export default function CommunityPage() {
     );
   }
 
-  if (communityError || !displayCommunity) {
+  if (!community) {
     return (
       <>
         <MainHeader />
@@ -424,14 +412,14 @@ export default function CommunityPage() {
     const galleryImages: ProductImage[] = [];
     
     // Add community thumbnail as primary if it exists
-    if (displayCommunity?.thumbnail) {
+    if (community?.thumbnail) {
       galleryImages.push({
         id: 1,
-        url: displayCommunity.thumbnail,
+        url: community.thumbnail,
         storage_path: 'community-thumbnail',
         is_primary: true,
         file_name: 'Community thumbnail',
-        alt_text: `${displayCommunity.name} thumbnail`
+        alt_text: `${community.name} thumbnail`
       });
     }
 
@@ -468,7 +456,7 @@ export default function CommunityPage() {
     galleryImages.push(...placeholderImages.slice(0, remainingSlots));
 
     // If no community thumbnail, make first placeholder primary
-    if (!displayCommunity?.thumbnail && galleryImages.length > 0) {
+    if (!community?.thumbnail && galleryImages.length > 0) {
       galleryImages[0].is_primary = true;
     }
 
@@ -657,7 +645,7 @@ export default function CommunityPage() {
             <div className="lg:col-span-8">
               <Card className="p-6 space-y-6">
                 <div className="flex items-center justify-between gap-4">
-                  <h1 className="text-3xl font-bold">{displayCommunity?.name}</h1>
+                  <h1 className="text-3xl font-bold">{community?.name}</h1>
                   {isOwner && (
                     <Link to={`/community/${communityId}/edit`}>
                       <Button variant="ghost" size="sm" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
@@ -676,7 +664,7 @@ export default function CommunityPage() {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: displayCommunity?.description || '' }} />
+                  <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: community?.description || '' }} />
                 </div>
               </Card>
             </div>
@@ -697,9 +685,9 @@ export default function CommunityPage() {
                   )}
 
                   <div>
-                    <h2 className="text-2xl font-bold mb-2">{displayCommunity?.name}</h2>
+                    <h2 className="text-2xl font-bold mb-2">{community?.name}</h2>
                     <p className="text-muted-foreground text-sm mb-4">
-                      {displayCommunity?.description?.substring(0, 150)}...
+                      {community?.description?.substring(0, 150)}...
                     </p>
                   </div>
 
@@ -722,19 +710,19 @@ export default function CommunityPage() {
 
                   <div className="grid grid-cols-4 gap-4 py-4 border-y">
                     <div className="text-center">
-                      <p className="text-2xl font-bold">{formatNumber(displayCommunity?.member_count)}</p>
+                      <p className="text-2xl font-bold">{formatNumber(community?.member_count)}</p>
                       <p className="text-sm text-muted-foreground">Members</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-2xl font-bold">{formatNumber(displayCommunity?.post_count)}</p>
+                      <p className="text-2xl font-bold">{formatNumber(community?.post_count)}</p>
                       <p className="text-sm text-muted-foreground">Posts</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-2xl font-bold">{formatNumber(displayCommunity?.product_count)}</p>
+                      <p className="text-2xl font-bold">{formatNumber(community?.product_count)}</p>
                       <p className="text-sm text-muted-foreground">Products</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-2xl font-bold">{formatNumber(displayCommunity?.classroom_count)}</p>
+                      <p className="text-2xl font-bold">{formatNumber(community?.classroom_count)}</p>
                       <p className="text-sm text-muted-foreground">Classrooms</p>
                     </div>
                   </div>
@@ -742,17 +730,17 @@ export default function CommunityPage() {
                   <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10 flex-shrink-0">
                       <AvatarImage 
-                        src={displayCommunity?.expert?.name ? displayCommunity.expert.thumbnail || "https://github.com/shadcn.png" : "https://github.com/shadcn.png"} 
-                        alt={`${displayCommunity?.expert?.name || "Expert"} avatar`}
+                        src={community?.expert?.name ? community.expert.thumbnail || "https://github.com/shadcn.png" : "https://github.com/shadcn.png"} 
+                        alt={`${community?.expert?.name || "Expert"} avatar`}
                         className="object-cover"
                       />
                       <AvatarFallback className="text-sm font-medium">
-                        {displayCommunity?.expert?.name?.substring(0, 2)?.toUpperCase() || "EX"}
+                        {community?.expert?.name?.substring(0, 2)?.toUpperCase() || "EX"}
                       </AvatarFallback>
                     </Avatar>
                     <div className="min-w-0">
                       <span className="text-sm text-muted-foreground">
-                        Hosted by <span className="font-medium">{displayCommunity?.expert?.name || "Expert"}</span>
+                        Hosted by <span className="font-medium">{community?.expert?.name || "Expert"}</span>
                       </span>
                     </div>
                   </div>
@@ -1018,8 +1006,8 @@ export default function CommunityPage() {
                         title={product.name}
                         price={product.price ? `$${product.price}` : "Free"}
                         image="/placeholder.svg"
-                        seller={displayCommunity?.name || "Community"}
-                        description={`A product by ${displayCommunity?.name}`}
+                        seller={community?.name || "Community"}
+                        description={`A product by ${community?.name}`}
                         tags={[product.product_type || "product"]}
                         category="community"
                         href={`/community/product/${product.community_product_uuid}`}
@@ -1216,7 +1204,7 @@ export default function CommunityPage() {
             open={isCreateThreadDialogOpen}
             onOpenChange={setIsCreateThreadDialogOpen}
             communityId={communityId || ''}
-            expertUuid={displayCommunity?.expert_uuid}
+            expertUuid={community?.expert_uuid}
             threadsTags={threadsTags}
           />
 
@@ -1231,7 +1219,7 @@ export default function CommunityPage() {
             open={isProductDialogOpen}
             onOpenChange={setIsProductDialogOpen}
             communityUuid={communityId || ''}
-            expertUuid={displayCommunity?.expert_uuid}
+            expertUuid={community?.expert_uuid}
             showTemplateSelector={showProductTemplateSelector}
           />
 
