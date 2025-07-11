@@ -9,23 +9,31 @@ export function useCommunityDetails() {
   
   console.log('useCommunityDetails called with params:', params);
   console.log('Extracted communityId:', communityId);
+  console.log('URL pathname:', window.location.pathname);
   
-  // Validate community ID - check if it's a valid UUID format
+  // Validate community ID - check if it's a valid UUID format and not a placeholder
   const isValidUUID = (id: string | undefined): boolean => {
     if (!id) return false;
-    // UUID regex pattern - more permissive to handle edge cases
+    if (id === ':id' || id.includes(':')) return false;
+    // UUID regex pattern
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     return uuidRegex.test(id);
   };
   
   const isValidCommunityId = isValidUUID(communityId);
   
+  console.log('Community ID validation:', {
+    communityId,
+    isValidCommunityId,
+    isPlaceholder: communityId === ':id' || (communityId && communityId.includes(':'))
+  });
+  
   return useQuery({
     queryKey: ['community', communityId],
     queryFn: async () => {
       if (!isValidCommunityId) {
         console.error('Invalid community ID format:', communityId);
-        throw new Error('Invalid community ID format');
+        throw new Error(`Invalid community ID format: ${communityId}`);
       }
       
       console.log('Fetching community details for UUID:', communityId);
@@ -52,11 +60,11 @@ export function useCommunityDetails() {
       return data;
     },
     enabled: isValidCommunityId,
-    staleTime: 15 * 60 * 1000, // 15 minutes - even longer stale time
-    gcTime: 60 * 60 * 1000, // 1 hour - longer cache time
-    refetchOnWindowFocus: false, // Prevent refetch on window focus
-    refetchOnMount: false, // Don't refetch on component mount if data exists
-    refetchOnReconnect: false, // Don't refetch on reconnect
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 30 * 60 * 1000, // 30 minutes
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
     retry: (failureCount, error) => {
       // Only retry on network errors, not on validation errors
       if (error.message.includes('Invalid community ID')) {
@@ -64,6 +72,6 @@ export function useCommunityDetails() {
       }
       return failureCount < 2;
     },
-    retryDelay: 1000, // 1 second delay between retries
+    retryDelay: 1000,
   });
 }

@@ -67,7 +67,13 @@ function parseLinks(data: unknown): Link[] {
 }
 
 export default function CommunityPage() {
-  const { id: communityId } = useParams();
+  const params = useParams();
+  const communityId = params.id;
+  
+  console.log('CommunityPage mounted with params:', params);
+  console.log('Community ID from params:', communityId);
+  console.log('Current pathname:', window.location.pathname);
+  
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -91,9 +97,21 @@ export default function CommunityPage() {
   // Use the updated hook
   const { data: community, isLoading: isCommunityLoading, error: communityError } = useCommunityDetails();
 
-  // Add validation for communityId but don't interfere with data fetching
+  // Add more detailed validation for communityId
   const isValidCommunityId = React.useMemo(() => {
-    return communityId && communityId !== ':id' && !communityId.includes(':');
+    const isValid = communityId && 
+      communityId !== ':id' && 
+      !communityId.includes(':') &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(communityId);
+    
+    console.log('Community ID validation in component:', {
+      communityId,
+      isValid,
+      hasColons: communityId?.includes(':'),
+      isPlaceholder: communityId === ':id'
+    });
+    
+    return isValid;
   }, [communityId]);
 
   console.log('Community page state:', {
@@ -333,7 +351,7 @@ export default function CommunityPage() {
     setIsRejectDialogOpen(true);
   };
 
-  // Early return for invalid community ID
+  // Early return for invalid community ID - show more specific error
   if (!isValidCommunityId) {
     return (
       <>
@@ -344,6 +362,11 @@ export default function CommunityPage() {
             <p className="text-muted-foreground mt-2">
               The community URL appears to be invalid. Please check the link and try again.
             </p>
+            <div className="mt-4 text-sm text-muted-foreground">
+              <p>Current URL: {window.location.pathname}</p>
+              <p>Extracted ID: {communityId}</p>
+              <p>Expected format: /community/[uuid]</p>
+            </div>
           </Card>
         </div>
       </>
