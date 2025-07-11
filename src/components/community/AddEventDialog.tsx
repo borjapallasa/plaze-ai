@@ -24,6 +24,7 @@ const eventSchema = z.object({
   date: z.date({
     required_error: "Event date is required",
   }),
+  time: z.string().min(1, "Event time is required"),
   type: z.enum(["meeting", "workshop", "webinar", "conference", "other"]).default("meeting"),
   location: z.string().optional(),
 });
@@ -48,15 +49,21 @@ export function AddEventDialog({ open, onOpenChange, communityId, expertUuid }: 
       description: "",
       type: "meeting",
       location: "",
+      time: "09:00",
     }
   });
 
   const createEventMutation = useMutation({
     mutationFn: async (data: EventFormData) => {
+      // Combine date and time
+      const [hours, minutes] = data.time.split(':').map(Number);
+      const eventDateTime = new Date(data.date);
+      eventDateTime.setHours(hours, minutes, 0, 0);
+
       const eventData = {
         name: data.name,
         description: data.description,
-        date: data.date.toISOString(),
+        date: eventDateTime.toISOString(),
         type: data.type,
         location: data.location,
         community_uuid: communityId,
@@ -161,6 +168,19 @@ export function AddEventDialog({ open, onOpenChange, communityId, expertUuid }: 
             </Popover>
             {form.formState.errors.date && (
               <p className="text-sm text-red-500">{form.formState.errors.date.message}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="time">Event Time</Label>
+            <Input
+              id="time"
+              type="time"
+              {...form.register("time")}
+              className="h-11"
+            />
+            {form.formState.errors.time && (
+              <p className="text-sm text-red-500">{form.formState.errors.time.message}</p>
             )}
           </div>
 
