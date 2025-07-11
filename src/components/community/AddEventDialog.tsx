@@ -104,12 +104,12 @@ export function AddEventDialog({ open, onOpenChange, communityId, expertUuid }: 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Add New Event</DialogTitle>
         </DialogHeader>
         
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="title">Event Title</Label>
             <Input
@@ -128,10 +128,11 @@ export function AddEventDialog({ open, onOpenChange, communityId, expertUuid }: 
               id="description"
               {...form.register("description")}
               placeholder="Enter event description (optional)"
+              rows={3}
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label>Event Date</Label>
               <Popover>
@@ -139,7 +140,7 @@ export function AddEventDialog({ open, onOpenChange, communityId, expertUuid }: 
                   <Button
                     variant="outline"
                     className={cn(
-                      "w-full justify-start text-left font-normal",
+                      "w-full justify-start text-left font-normal h-11",
                       !form.watch("event_date") && "text-muted-foreground"
                     )}
                   >
@@ -158,7 +159,7 @@ export function AddEventDialog({ open, onOpenChange, communityId, expertUuid }: 
                     onSelect={(date) => form.setValue("event_date", date!)}
                     disabled={(date) => date < new Date()}
                     initialFocus
-                    className="pointer-events-auto"
+                    className="rounded-md border shadow-md"
                   />
                 </PopoverContent>
               </Popover>
@@ -173,6 +174,7 @@ export function AddEventDialog({ open, onOpenChange, communityId, expertUuid }: 
                 id="event_time"
                 type="time"
                 {...form.register("event_time")}
+                className="h-11"
               />
             </div>
           </div>
@@ -183,7 +185,7 @@ export function AddEventDialog({ open, onOpenChange, communityId, expertUuid }: 
               value={form.watch("event_type")}
               onValueChange={(value) => form.setValue("event_type", value as any)}
             >
-              <SelectTrigger>
+              <SelectTrigger className="h-11">
                 <SelectValue placeholder="Select event type" />
               </SelectTrigger>
               <SelectContent>
@@ -202,10 +204,11 @@ export function AddEventDialog({ open, onOpenChange, communityId, expertUuid }: 
               id="location"
               {...form.register("location")}
               placeholder="Enter event location or URL"
+              className="h-11"
             />
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="gap-2 pt-4">
             <Button
               type="button"
               variant="outline"
