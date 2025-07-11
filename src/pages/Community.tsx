@@ -669,7 +669,6 @@ export default function CommunityPage() {
           className="flex items-center gap-2"
           onClick={() => setIsAddEventDialogOpen(true)}
         >
-          <Plus className="w-4 h-4" />
           <span>Add Event</span>
         </Button>
       );
@@ -1127,7 +1126,6 @@ export default function CommunityPage() {
 
             <TabsContent value="calendar" className="space-y-6">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">Community Calendar</h3>
                 {renderAddEventButton()}
               </div>
               <Card>
@@ -1143,7 +1141,6 @@ export default function CommunityPage() {
 
             <TabsContent value="members" className="space-y-6">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">Community Members</h3>
                 {renderMemberRequestsButton()}
               </div>
               
