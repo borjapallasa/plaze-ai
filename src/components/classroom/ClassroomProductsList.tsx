@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -33,15 +32,15 @@ export function ClassroomProductsList({
   const handleDeleteClick = (variant: Variant, e: React.MouseEvent) => {
     e.stopPropagation();
     console.log("Delete clicked for variant:", variant);
-    console.log("Relationship UUID from variant:", variant.relationshipUuid);
+    console.log("Community product relationship UUID from variant:", variant.community_product_relationship_uuid);
     
-    if (!variant.relationshipUuid) {
-      console.error("No relationship UUID found for variant:", variant);
+    if (!variant.community_product_relationship_uuid) {
+      console.error("No community_product_relationship_uuid found for variant:", variant);
       console.error("Full variant object:", JSON.stringify(variant, null, 2));
       return;
     }
     
-    setDeleteRelationshipUuid(variant.relationshipUuid);
+    setDeleteRelationshipUuid(variant.community_product_relationship_uuid);
   };
 
   const excludedProductIds = variants.map(variant => variant.id);
