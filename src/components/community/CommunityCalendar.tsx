@@ -38,7 +38,7 @@ export function CommunityCalendar({ events = [], selectedDate, onDateSelect }: C
   };
 
   const getDayClasses = (date: Date) => {
-    const baseClasses = "h-10 w-full flex items-center justify-center text-sm cursor-pointer rounded-md transition-colors";
+    const baseClasses = "h-20 w-full flex items-center justify-center text-sm cursor-pointer rounded-md transition-colors";
     const isSelected = selectedDate && isSameDay(date, selectedDate);
     const isToday = isSameDay(date, new Date());
     const eventExists = hasEvent(date);
@@ -98,7 +98,7 @@ export function CommunityCalendar({ events = [], selectedDate, onDateSelect }: C
       <div className="grid grid-cols-7 gap-1">
         {/* Empty cells for days before month start */}
         {Array.from({ length: monthStart.getDay() }).map((_, index) => (
-          <div key={`empty-${index}`} className="h-10" />
+          <div key={`empty-${index}`} className="h-20" />
         ))}
         
         {/* Month days */}
@@ -112,28 +112,6 @@ export function CommunityCalendar({ events = [], selectedDate, onDateSelect }: C
           </div>
         ))}
       </div>
-
-      {/* Events Legend */}
-      {events.length > 0 && (
-        <div className="mt-4 pt-4 border-t">
-          <h4 className="text-sm font-medium mb-2">Events this month:</h4>
-          <div className="space-y-1">
-            {events
-              .filter(event => isSameMonth(event.date, currentMonth))
-              .slice(0, 3)
-              .map((event, index) => (
-                <div key={index} className="text-xs text-muted-foreground">
-                  {format(event.date, 'MMM d')} - {event.title}
-                </div>
-              ))}
-            {events.filter(event => isSameMonth(event.date, currentMonth)).length > 3 && (
-              <div className="text-xs text-muted-foreground">
-                +{events.filter(event => isSameMonth(event.date, currentMonth)).length - 3} more events
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
