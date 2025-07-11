@@ -96,46 +96,46 @@ export default function CommunityProductPage() {
           onAdditionalVariantToggle={undefined}
           reviews={undefined}
           isLoading={false}
-        >
-          <Card className="mt-8">
-            <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Community Product Access</h3>
-              <p className="text-muted-foreground mb-6">
-                This product is available through the {communityProduct.communities?.name} community.
-              </p>
+        />
+        
+        <Card className="mt-8">
+          <CardContent className="p-6">
+            <h3 className="text-lg font-semibold mb-4">Community Product Access</h3>
+            <p className="text-muted-foreground mb-6">
+              This product is available through the {communityProduct.communities?.name} community.
+            </p>
+            
+            <div className="flex gap-4">
+              {communityProduct.payment_link && (
+                <Button asChild>
+                  <a 
+                    href={communityProduct.payment_link} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    Purchase Access
+                  </a>
+                </Button>
+              )}
               
-              <div className="flex gap-4">
-                {communityProduct.payment_link && (
-                  <Button asChild>
-                    <a 
-                      href={communityProduct.payment_link} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                      Purchase Access
-                    </a>
-                  </Button>
-                )}
-                
-                {communityProduct.files_link && (
-                  <Button variant="outline" asChild>
-                    <a 
-                      href={communityProduct.files_link} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2"
-                    >
-                      <Download className="w-4 h-4" />
-                      Download Files
-                    </a>
-                  </Button>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </ProductLayout>
+              {communityProduct.files_link && (
+                <Button variant="outline" asChild>
+                  <a 
+                    href={communityProduct.files_link} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    Download Files
+                  </a>
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </>
   );

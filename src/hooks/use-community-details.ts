@@ -13,8 +13,8 @@ export function useCommunityDetails() {
   // Validate community ID - check if it's a valid UUID format
   const isValidUUID = (id: string | undefined): boolean => {
     if (!id) return false;
-    // UUID regex pattern
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    // UUID regex pattern - more permissive to handle edge cases
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     return uuidRegex.test(id);
   };
   
@@ -52,10 +52,18 @@ export function useCommunityDetails() {
       return data;
     },
     enabled: isValidCommunityId,
-    staleTime: 10 * 60 * 1000, // 10 minutes - longer stale time
-    gcTime: 30 * 60 * 1000, // 30 minutes - longer cache time
+    staleTime: 15 * 60 * 1000, // 15 minutes - even longer stale time
+    gcTime: 60 * 60 * 1000, // 1 hour - longer cache time
     refetchOnWindowFocus: false, // Prevent refetch on window focus
     refetchOnMount: false, // Don't refetch on component mount if data exists
-    retry: 1, // Reduce retry attempts
+    refetchOnReconnect: false, // Don't refetch on reconnect
+    retry: (failureCount, error) => {
+      // Only retry on network errors, not on validation errors
+      if (error.message.includes('Invalid community ID')) {
+        return false;
+      }
+      return failureCount < 2;
+    },
+    retryDelay: 1000, // 1 second delay between retries
   });
 }

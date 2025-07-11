@@ -88,7 +88,7 @@ export default function CommunityPage() {
   const { user } = useAuth();
   const { images } = useCommunityImages(communityId);
 
-  // Use the updated hook - no arguments needed
+  // Use the updated hook
   const { data: community, isLoading: isCommunityLoading, error: communityError } = useCommunityDetails();
 
   // Add validation for communityId but don't interfere with data fetching
@@ -277,23 +277,37 @@ export default function CommunityPage() {
     enabled: isValidCommunityId
   });
 
-  const videoEmbedUrl = getVideoEmbedUrl(community?.intro);
-  const links = parseLinks(community?.links);
+  // Use community data with fallback values to prevent flickering
+  const displayCommunity = useMemo(() => {
+    if (!community) return null;
+    
+    return {
+      ...community,
+      member_count: community.member_count || 0,
+      post_count: community.post_count || 0,
+      product_count: community.product_count || 0,
+      classroom_count: community.classroom_count || 0,
+      expert: community.expert || { name: 'Expert', thumbnail: null }
+    };
+  }, [community]);
+
+  const videoEmbedUrl = getVideoEmbedUrl(displayCommunity?.intro);
+  const links = parseLinks(displayCommunity?.links);
 
   // Parse threads_tags from community data
   const threadsTags = React.useMemo(() => {
-    if (!community?.threads_tags) return [];
-    if (Array.isArray(community.threads_tags)) return community.threads_tags;
-    if (typeof community.threads_tags === 'string') {
+    if (!displayCommunity?.threads_tags) return [];
+    if (Array.isArray(displayCommunity.threads_tags)) return displayCommunity.threads_tags;
+    if (typeof displayCommunity.threads_tags === 'string') {
       try {
-        const parsed = JSON.parse(community.threads_tags);
+        const parsed = JSON.parse(displayCommunity.threads_tags);
         return Array.isArray(parsed) ? parsed : [];
       } catch {
         return [];
       }
     }
     return [];
-  }, [community?.threads_tags]);
+  }, [displayCommunity?.threads_tags]);
 
   // Filter threads by selected tag
   const filteredThreads = React.useMemo(() => {
@@ -351,7 +365,7 @@ export default function CommunityPage() {
     );
   }
 
-  if (communityError || !community) {
+  if (communityError || !displayCommunity) {
     return (
       <>
         <MainHeader />
@@ -387,14 +401,14 @@ export default function CommunityPage() {
     const galleryImages: ProductImage[] = [];
     
     // Add community thumbnail as primary if it exists
-    if (community?.thumbnail) {
+    if (displayCommunity?.thumbnail) {
       galleryImages.push({
         id: 1,
-        url: community.thumbnail,
+        url: displayCommunity.thumbnail,
         storage_path: 'community-thumbnail',
         is_primary: true,
         file_name: 'Community thumbnail',
-        alt_text: `${community.name} thumbnail`
+        alt_text: `${displayCommunity.name} thumbnail`
       });
     }
 
@@ -431,7 +445,7 @@ export default function CommunityPage() {
     galleryImages.push(...placeholderImages.slice(0, remainingSlots));
 
     // If no community thumbnail, make first placeholder primary
-    if (!community?.thumbnail && galleryImages.length > 0) {
+    if (!displayCommunity?.thumbnail && galleryImages.length > 0) {
       galleryImages[0].is_primary = true;
     }
 
@@ -620,7 +634,7 @@ export default function CommunityPage() {
             <div className="lg:col-span-8">
               <Card className="p-6 space-y-6">
                 <div className="flex items-center justify-between gap-4">
-                  <h1 className="text-3xl font-bold">{community?.name}</h1>
+                  <h1 className="text-3xl font-bold">{displayCommunity?.name}</h1>
                   {isOwner && (
                     <Link to={`/community/${communityId}/edit`}>
                       <Button variant="ghost" size="sm" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
@@ -639,7 +653,7 @@ export default function CommunityPage() {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: community?.description || '' }} />
+                  <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: displayCommunity?.description || '' }} />
                 </div>
               </Card>
             </div>
@@ -660,9 +674,9 @@ export default function CommunityPage() {
                   )}
 
                   <div>
-                    <h2 className="text-2xl font-bold mb-2">{community?.name}</h2>
+                    <h2 className="text-2xl font-bold mb-2">{displayCommunity?.name}</h2>
                     <p className="text-muted-foreground text-sm mb-4">
-                      {community?.description?.substring(0, 150)}...
+                      {displayCommunity?.description?.substring(0, 150)}...
                     </p>
                   </div>
 
@@ -685,19 +699,19 @@ export default function CommunityPage() {
 
                   <div className="grid grid-cols-4 gap-4 py-4 border-y">
                     <div className="text-center">
-                      <p className="text-2xl font-bold">{formatNumber(community?.member_count)}</p>
+                      <p className="text-2xl font-bold">{formatNumber(displayCommunity?.member_count)}</p>
                       <p className="text-sm text-muted-foreground">Members</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-2xl font-bold">{formatNumber(community?.post_count)}</p>
+                      <p className="text-2xl font-bold">{formatNumber(displayCommunity?.post_count)}</p>
                       <p className="text-sm text-muted-foreground">Posts</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-2xl font-bold">{formatNumber(community?.product_count)}</p>
+                      <p className="text-2xl font-bold">{formatNumber(displayCommunity?.product_count)}</p>
                       <p className="text-sm text-muted-foreground">Products</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-2xl font-bold">{formatNumber(community?.classroom_count)}</p>
+                      <p className="text-2xl font-bold">{formatNumber(displayCommunity?.classroom_count)}</p>
                       <p className="text-sm text-muted-foreground">Classrooms</p>
                     </div>
                   </div>
@@ -705,17 +719,17 @@ export default function CommunityPage() {
                   <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10 flex-shrink-0">
                       <AvatarImage 
-                        src={community?.expert?.name ? community.expert.thumbnail || "https://github.com/shadcn.png" : "https://github.com/shadcn.png"} 
-                        alt={`${community?.expert?.name || "Expert"} avatar`}
+                        src={displayCommunity?.expert?.name ? displayCommunity.expert.thumbnail || "https://github.com/shadcn.png" : "https://github.com/shadcn.png"} 
+                        alt={`${displayCommunity?.expert?.name || "Expert"} avatar`}
                         className="object-cover"
                       />
                       <AvatarFallback className="text-sm font-medium">
-                        {community?.expert?.name?.substring(0, 2)?.toUpperCase() || "EX"}
+                        {displayCommunity?.expert?.name?.substring(0, 2)?.toUpperCase() || "EX"}
                       </AvatarFallback>
                     </Avatar>
                     <div className="min-w-0">
                       <span className="text-sm text-muted-foreground">
-                        Hosted by <span className="font-medium">{community?.expert?.name || "Expert"}</span>
+                        Hosted by <span className="font-medium">{displayCommunity?.expert?.name || "Expert"}</span>
                       </span>
                     </div>
                   </div>
@@ -981,8 +995,8 @@ export default function CommunityPage() {
                         title={product.name}
                         price={product.price ? `$${product.price}` : "Free"}
                         image="/placeholder.svg"
-                        seller={community?.name || "Community"}
-                        description={`A product by ${community?.name}`}
+                        seller={displayCommunity?.name || "Community"}
+                        description={`A product by ${displayCommunity?.name}`}
                         tags={[product.product_type || "product"]}
                         category="community"
                         href={`/community/product/${product.community_product_uuid}`}
@@ -1179,7 +1193,7 @@ export default function CommunityPage() {
             open={isCreateThreadDialogOpen}
             onOpenChange={setIsCreateThreadDialogOpen}
             communityId={communityId || ''}
-            expertUuid={community?.expert_uuid}
+            expertUuid={displayCommunity?.expert_uuid}
             threadsTags={threadsTags}
           />
 
@@ -1194,7 +1208,7 @@ export default function CommunityPage() {
             open={isProductDialogOpen}
             onOpenChange={setIsProductDialogOpen}
             communityUuid={communityId || ''}
-            expertUuid={community?.expert_uuid}
+            expertUuid={displayCommunity?.expert_uuid}
             showTemplateSelector={showProductTemplateSelector}
           />
 
