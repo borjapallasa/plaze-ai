@@ -68,39 +68,41 @@ export function EventDetailsDialog({
         </DialogHeader>
         <div className="space-y-4">
           {dayEvents.map((event, index) => (
-            <div key={index} className="border rounded-lg p-4 space-y-3">
+            <div key={index} className="border rounded-lg p-4 space-y-3 relative group hover:bg-gray-50 transition-colors">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-lg">{event.title}</h3>
                 <div className="flex items-center gap-2">
                   <Badge variant="secondary" className="capitalize">
                     {event.type}
                   </Badge>
-                  {isOwner && (
-                    <div className="flex gap-1">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-8 w-8 p-0 hover:bg-blue-50"
-                        onClick={() => handleEditEvent(event)}
-                        title="Edit event"
-                      >
-                        <Edit className="h-4 w-4 text-blue-600" />
-                      </Button>
-                      {event.event_uuid && (
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-8 w-8 p-0 hover:bg-red-50"
-                          onClick={() => handleDeleteEvent(event.event_uuid!)}
-                          title="Delete event"
-                        >
-                          <Trash2 className="h-4 w-4 text-red-600" />
-                        </Button>
-                      )}
-                    </div>
-                  )}
                 </div>
               </div>
+              
+              {/* Owner Actions - visible on hover */}
+              {isOwner && (
+                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-1 bg-white rounded-md shadow-md p-1 border">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-8 w-8 p-0 hover:bg-blue-50"
+                    onClick={() => handleEditEvent(event)}
+                    title="Edit event"
+                  >
+                    <Edit className="h-4 w-4 text-blue-600" />
+                  </Button>
+                  {event.event_uuid && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-8 w-8 p-0 hover:bg-red-50"
+                      onClick={() => handleDeleteEvent(event.event_uuid!)}
+                      title="Delete event"
+                    >
+                      <Trash2 className="h-4 w-4 text-red-600" />
+                    </Button>
+                  )}
+                </div>
+              )}
               
               {event.description && (
                 <p className="text-muted-foreground text-sm">
