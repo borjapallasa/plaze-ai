@@ -305,6 +305,41 @@ export default function CommunityPage() {
     enabled: !!communityId && communityId !== ':id'
   });
 
+  // Add events query
+  const { data: events, isLoading: isEventsLoading } = useQuery({
+    queryKey: ['community-events', communityId],
+    queryFn: async () => {
+      if (!communityId || communityId === ':id') {
+        console.log('Invalid community ID for events query:', communityId);
+        return [];
+      }
+
+      console.log('Fetching events for community:', communityId);
+      
+      const { data, error } = await supabase
+        .from('events')
+        .select(`
+          event_uuid,
+          name,
+          date,
+          type,
+          description,
+          location
+        `)
+        .eq('community_uuid', communityId)
+        .order('date', { ascending: true });
+
+      if (error) {
+        console.error('Error fetching events:', error);
+        return [];
+      }
+
+      console.log('Events fetched:', data);
+      return data || [];
+    },
+    enabled: !!communityId && communityId !== ':id'
+  });
+
   const videoEmbedUrl = getVideoEmbedUrl(community?.intro);
   const links = parseLinks(community?.links);
 
@@ -335,6 +370,23 @@ export default function CommunityPage() {
     ...member,
     status: member.status as 'pending' | 'active' | 'cancelled' | 'rejected'
   })) || [];
+
+  // Format events for calendar - using useMemo with stable dependencies
+  const formattedEvents = useMemo(() => {
+    if (!events || !Array.isArray(events)) {
+      return [];
+    }
+
+    return events
+      .filter(event => event && event.date && event.name)
+      .map(event => ({
+        title: event.name,
+        date: new Date(event.date),
+        type: event.type || 'event',
+        description: event.description || '',
+        location: event.location || ''
+      }));
+  }, [events]);
 
   // New handler functions for the dialogs
   const handleOpenApprovalDialog = (member: any) => {
@@ -522,27 +574,6 @@ export default function CommunityPage() {
       description: "Streamline your customer support process.",
       tags: ["support", "workflow"],
       category: "service"
-    }
-  ];
-
-  const events = [
-    {
-      title: "Community Meetup",
-      date: new Date(2024, 3, 15), // April 15, 2024
-      type: "meetup",
-      description: "Monthly community gathering to discuss automation trends"
-    },
-    {
-      title: "Workshop: No-Code Automation",
-      date: new Date(2024, 3, 20), // April 20, 2024
-      type: "workshop",
-      description: "Learn how to build powerful automation without coding"
-    },
-    {
-      title: "Q&A Session",
-      date: new Date(2024, 3, 25), // April 25, 2024
-      type: "qa",
-      description: "Open Q&A session with automation experts"
     }
   ];
 
@@ -1102,7 +1133,7 @@ export default function CommunityPage() {
               <Card>
                 <CardContent className="p-6">
                   <CommunityCalendar
-                    events={events}
+                    events={formattedEvents}
                     selectedDate={date}
                     onDateSelect={setDate}
                   />
