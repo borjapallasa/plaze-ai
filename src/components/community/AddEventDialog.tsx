@@ -136,52 +136,54 @@ export function AddEventDialog({ open, onOpenChange, communityId, expertUuid }: 
             />
           </div>
 
-          <div className="space-y-2">
-            <Label>Event Date</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal h-11",
-                    !form.watch("date") && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {form.watch("date") ? (
-                    format(form.watch("date"), "PPP")
-                  ) : (
-                    <span>Pick a date</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={form.watch("date")}
-                  onSelect={(date) => form.setValue("date", date!)}
-                  disabled={(date) => date < new Date()}
-                  initialFocus
-                  className="pointer-events-auto"
-                />
-              </PopoverContent>
-            </Popover>
-            {form.formState.errors.date && (
-              <p className="text-sm text-red-500">{form.formState.errors.date.message}</p>
-            )}
-          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Event Date</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal h-11",
+                      !form.watch("date") && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {form.watch("date") ? (
+                      format(form.watch("date"), "PPP")
+                    ) : (
+                      <span>Pick a date</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={form.watch("date")}
+                    onSelect={(date) => form.setValue("date", date!)}
+                    disabled={(date) => date < new Date()}
+                    initialFocus
+                    className="pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+              {form.formState.errors.date && (
+                <p className="text-sm text-red-500">{form.formState.errors.date.message}</p>
+              )}
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="time">Event Time</Label>
-            <Input
-              id="time"
-              type="time"
-              {...form.register("time")}
-              className="h-11"
-            />
-            {form.formState.errors.time && (
-              <p className="text-sm text-red-500">{form.formState.errors.time.message}</p>
-            )}
+            <div className="space-y-2">
+              <Label htmlFor="time">Event Time</Label>
+              <Input
+                id="time"
+                type="time"
+                {...form.register("time")}
+                className="h-11"
+              />
+              {form.formState.errors.time && (
+                <p className="text-sm text-red-500">{form.formState.errors.time.message}</p>
+              )}
+            </div>
           </div>
 
           <div className="space-y-2">
