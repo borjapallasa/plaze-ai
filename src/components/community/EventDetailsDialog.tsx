@@ -18,7 +18,7 @@ interface Event {
   type: string;
   description: string;
   location: string;
-  event_uuid: string; // Make this required since we fetch it
+  event_uuid?: string; // Make optional to handle both database and mock events
   // Add other database fields we might receive
   name?: string;
 }
@@ -110,26 +110,30 @@ export function EventDetailsDialog({
                           >
                             <Edit className="h-4 w-4 text-blue-600" />
                           </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="h-8 w-8 p-0 hover:bg-red-50"
-                            onClick={() => handleDeleteEvent(event.event_uuid)}
-                            title="Delete event"
-                          >
-                            <Trash2 className="h-4 w-4 text-red-600" />
-                          </Button>
+                          {event.event_uuid && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-8 w-8 p-0 hover:bg-red-50"
+                              onClick={() => handleDeleteEvent(event.event_uuid!)}
+                              title="Delete event"
+                            >
+                              <Trash2 className="h-4 w-4 text-red-600" />
+                            </Button>
+                          )}
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
                 
-                {/* Show event_uuid as visible field */}
+                {/* Show event_uuid as visible field only if it exists */}
                 <div className="space-y-2">
-                  <div className="text-xs text-gray-600">
-                    <span className="font-medium">Event ID:</span> {event.event_uuid}
-                  </div>
+                  {event.event_uuid && (
+                    <div className="text-xs text-gray-600">
+                      <span className="font-medium">Event ID:</span> {event.event_uuid}
+                    </div>
+                  )}
                   
                   {event.description && (
                     <p className="text-muted-foreground text-sm">

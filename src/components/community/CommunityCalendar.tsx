@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Edit, Trash2 } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth, addMonths, subMonths } from 'date-fns';
@@ -12,7 +13,7 @@ interface Event {
   type: string;
   description: string;
   location: string;
-  event_uuid: string;
+  event_uuid?: string;
   name?: string;
 }
 
@@ -47,12 +48,12 @@ export function CommunityCalendar({
   const { data: fetchedEvents, isLoading } = useCommunityEvents(communityId);
   
   // Use fetched events if available, otherwise use prop events
-  // Make sure to normalize the events to have consistent field names and ensure event_uuid is present
+  // Make sure to normalize the events to have consistent field names
   const events = (fetchedEvents || propEvents || []).map(event => ({
     ...event,
     title: event.title || event.name || '',
-    event_uuid: event.event_uuid || '' // Ensure event_uuid is always present
-  })).filter(event => event.event_uuid); // Filter out events without event_uuid
+    event_uuid: event.event_uuid // Keep the original event_uuid (can be undefined)
+  }));
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
@@ -231,7 +232,7 @@ export function CommunityCalendar({
                                   size="sm"
                                   variant="ghost"
                                   className="h-6 w-6 p-0 hover:bg-red-50"
-                                  onClick={(e) => handleDeleteEvent(event.event_uuid, e)}
+                                  onClick={(e) => handleDeleteEvent(event.event_uuid!, e)}
                                   title="Delete event"
                                 >
                                   <Trash2 className="h-3 w-3 text-red-600" />
