@@ -45,6 +45,7 @@ import { CartDrawer } from "@/components/cart/CartDrawer";
 import { useCart } from "@/context/CartContext";
 import { CommunityProductDialog } from "@/components/community/CommunityProductDialog";
 import { ClassroomProductsList } from "@/components/classroom/ClassroomProductsList";
+import { DeleteClassroomDialog } from "@/components/classroom/DeleteClassroomDialog";
 
 function transformToVariant(data: any[]): Variant[] {
   console.log("Transform function received data:", data);
@@ -93,6 +94,7 @@ export default function Classroom() {
   const [isEditLessonOpen, setIsEditLessonOpen] = useState(false);
   const [isDeleteLessonOpen, setIsDeleteLessonOpen] = useState(false);
   const [isEditClassroomOpen, setIsEditClassroomOpen] = useState(false);
+  const [isDeleteClassroomOpen, setIsDeleteClassroomOpen] = useState(false);
   const [isProcessingPurchase, setIsProcessingPurchase] = useState(false);
   const navigate = useNavigate();
   const [newLessonData, setNewLessonData] = useState({
@@ -774,21 +776,38 @@ export default function Classroom() {
                           </button>
                           <div className="flex items-center gap-2">
                             {isOwner && (
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={handleOpenEditClassroom}
-                                    className="text-muted-foreground"
-                                  >
-                                    <Pencil className="h-4 w-4" />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Edit classroom</p>
-                                </TooltipContent>
-                              </Tooltip>
+                              <>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={handleOpenEditClassroom}
+                                      className="text-muted-foreground"
+                                    >
+                                      <Pencil className="h-4 w-4" />
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Edit classroom</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => setIsDeleteClassroomOpen(true)}
+                                      className="text-muted-foreground hover:text-destructive"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Delete classroom</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </>
                             )}
                             {!isExpanded && lessons && lessons.length > 0 && (
                               <Tooltip>
@@ -892,21 +911,38 @@ export default function Classroom() {
                           </button>
                           <div className="flex items-center gap-1">
                             {isOwner && (
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={handleOpenEditClassroom}
-                                    className="text-muted-foreground"
-                                  >
-                                    <Pencil className="h-4 w-4" />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Edit classroom</p>
-                                </TooltipContent>
-                              </Tooltip>
+                              <>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={handleOpenEditClassroom}
+                                      className="text-muted-foreground"
+                                    >
+                                      <Pencil className="h-4 w-4" />
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Edit classroom</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => setIsDeleteClassroomOpen(true)}
+                                      className="text-muted-foreground hover:text-destructive"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Delete classroom</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </>
                             )}
                             {!isExpanded && lessons && lessons.length > 0 && (
                               <Tooltip>
@@ -1164,6 +1200,14 @@ export default function Classroom() {
                 </DialogFooter>
               </DialogContent>
             </Dialog>
+
+            {/* Delete Classroom Dialog */}
+            <DeleteClassroomDialog
+              open={isDeleteClassroomOpen}
+              onOpenChange={setIsDeleteClassroomOpen}
+              classroomId={id || ""}
+              classroomName={classroom?.name || ""}
+            />
 
             {/* Product Creation Dialog */}
             <CommunityProductDialog
