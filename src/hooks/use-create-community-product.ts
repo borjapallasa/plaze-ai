@@ -35,10 +35,22 @@ export const useCreateCommunityProduct = () => {
     setIsCreating(true);
     
     try {
+      // Get user's expert UUID
+      const { data: expertData, error: expertError } = await supabase
+        .from("experts")
+        .select("expert_uuid")
+        .eq("user_uuid", user.id)
+        .single();
+
+      if (expertError || !expertData) {
+        console.error("Error getting expert UUID:", expertError);
+        throw new Error("User must be an expert to create community products");
+      }
+
       // Verify user has permission to add products to this community
       const { data: communityData, error: communityError } = await supabase
         .from("communities")
-        .select("user_uuid")
+        .select("user_uuid, expert_uuid")
         .eq("community_uuid", productData.communityUuid)
         .single();
 
@@ -61,6 +73,7 @@ export const useCreateCommunityProduct = () => {
           price: productData.productType === "paid" ? productData.price : null,
           payment_link: productData.productType === "paid" ? productData.paymentLink : null,
           files_link: productData.filesLink || null,
+          expert_uuid: expertData.expert_uuid,
         })
         .select()
         .single();
@@ -77,6 +90,7 @@ export const useCreateCommunityProduct = () => {
           community_uuid: productData.communityUuid,
           community_product_uuid: data.community_product_uuid,
           user_uuid: user.id,
+          expert_uuid: expertData.expert_uuid,
         });
 
       if (relationshipError) {

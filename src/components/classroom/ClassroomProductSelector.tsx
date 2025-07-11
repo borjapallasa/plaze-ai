@@ -37,6 +37,28 @@ export function ClassroomProductSelector({
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Get user's expert UUID
+  const { data: userExpert } = useQuery({
+    queryKey: ['userExpert', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      
+      const { data, error } = await supabase
+        .from('experts')
+        .select('expert_uuid')
+        .eq('user_uuid', user.id)
+        .single();
+
+      if (error) {
+        console.error("Error fetching user expert:", error);
+        return null;
+      }
+
+      return data;
+    },
+    enabled: !!user?.id
+  });
+
   const { data: availableProducts, isLoading } = useQuery({
     queryKey: ['availableCommunityProducts', communityUuid, excludedProductIds],
     queryFn: async () => {
@@ -68,11 +90,16 @@ export function ClassroomProductSelector({
         throw new Error("User not authenticated");
       }
 
+      if (!userExpert?.expert_uuid) {
+        throw new Error("User must be an expert to add products to classroom");
+      }
+
       const relationships = productIds.map(productId => ({
         community_uuid: communityUuid,
         community_product_uuid: productId,
         user_uuid: user.id,
-        classroom_uuid: classroomId
+        classroom_uuid: classroomId,
+        expert_uuid: userExpert.expert_uuid
       }));
 
       const { error } = await supabase
@@ -117,6 +144,15 @@ export function ClassroomProductSelector({
       toast({
         title: "No products selected",
         description: "Please select at least one product to add.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!userExpert?.expert_uuid) {
+      toast({
+        title: "Permission denied",
+        description: "You must be an expert to add products to classrooms.",
         variant: "destructive"
       });
       return;
@@ -210,7 +246,7 @@ export function ClassroomProductSelector({
             </Button>
             <Button
               onClick={handleAddSelected}
-              disabled={selectedProducts.length === 0 || addProductsMutation.isPending}
+              disabled={selectedProducts.length === 0 || addProductsMutation.isPending || !userExpert?.expert_uuid}
             >
               {addProductsMutation.isPending ? (
                 <>
