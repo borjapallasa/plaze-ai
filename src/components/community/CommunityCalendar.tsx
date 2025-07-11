@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Edit, Trash2 } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth, addMonths, subMonths } from 'date-fns';
@@ -13,7 +12,8 @@ interface Event {
   type: string;
   description: string;
   location: string;
-  event_uuid?: string;
+  event_uuid: string;
+  name?: string;
 }
 
 interface CommunityCalendarProps {
@@ -47,7 +47,12 @@ export function CommunityCalendar({
   const { data: fetchedEvents, isLoading } = useCommunityEvents(communityId);
   
   // Use fetched events if available, otherwise use prop events
-  const events = fetchedEvents || propEvents || [];
+  // Make sure to normalize the events to have consistent field names
+  const events = (fetchedEvents || propEvents || []).map(event => ({
+    ...event,
+    title: event.title || event.name || '',
+    event_uuid: event.event_uuid
+  }));
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
@@ -80,7 +85,7 @@ export function CommunityCalendar({
 
   const handleEditEvent = (event: Event, e: React.MouseEvent) => {
     e.stopPropagation();
-    console.log('Editing event:', event);
+    console.log('Calendar - Editing event:', event);
     onEditEvent?.(event);
   };
 
@@ -173,11 +178,27 @@ export function CommunityCalendar({
           {days.map((date) => {
             const dayEvents = getEventsForDate(date);
             const eventsCount = dayEvents.length;
+            const isSelected = selectedDate && isSameDay(date, selectedDate);
+            const isToday = isSameDay(date, new Date());
+            const eventExists = hasEvent(date);
+            
+            const baseClasses = "h-20 w-full flex flex-col items-center justify-center text-sm cursor-pointer rounded-md transition-colors relative";
+            
+            let dayClasses = baseClasses;
+            if (isSelected) {
+              dayClasses = cn(baseClasses, "bg-gray-100 text-gray-800 border border-gray-300");
+            } else if (isToday) {
+              dayClasses = cn(baseClasses, "bg-accent text-accent-foreground font-medium");
+            } else if (eventExists) {
+              dayClasses = cn(baseClasses, "bg-gray-50 text-gray-700 font-medium hover:bg-gray-100 border border-gray-200");
+            } else {
+              dayClasses = cn(baseClasses, "hover:bg-accent hover:text-accent-foreground");
+            }
             
             return (
               <div
                 key={date.toISOString()}
-                className={getDayClasses(date)}
+                className={dayClasses}
                 onClick={() => handleDateClick(date)}
               >
                 <span className="mb-1">{format(date, 'd')}</span>
@@ -195,7 +216,7 @@ export function CommunityCalendar({
                       <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                         <div className="flex gap-1 bg-white border rounded-md shadow-lg p-1">
                           {dayEvents.map((event, index) => (
-                            <div key={index} className="flex gap-1">
+                            <div key={event.event_uuid || index} className="flex gap-1">
                               <Button
                                 size="sm"
                                 variant="ghost"
@@ -210,7 +231,7 @@ export function CommunityCalendar({
                                   size="sm"
                                   variant="ghost"
                                   className="h-6 w-6 p-0 hover:bg-red-50"
-                                  onClick={(e) => handleDeleteEvent(event.event_uuid!, e)}
+                                  onClick={(e) => handleDeleteEvent(event.event_uuid, e)}
                                   title="Delete event"
                                 >
                                   <Trash2 className="h-3 w-3 text-red-600" />

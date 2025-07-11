@@ -18,7 +18,9 @@ interface Event {
   type: string;
   description: string;
   location: string;
-  event_uuid?: string;
+  event_uuid: string; // Make this required, not optional
+  // Add other database fields we might receive
+  name?: string;
 }
 
 interface EventDetailsDialogProps {
@@ -56,11 +58,21 @@ export function EventDetailsDialog({
   const handleEditEvent = (event: Event) => {
     console.log('EventDetailsDialog - handling edit for event:', event);
     console.log('Event has event_uuid:', event.event_uuid);
-    setEventToEdit(event);
+    
+    // Normalize the event object to ensure consistent field names
+    const normalizedEvent = {
+      ...event,
+      title: event.title || event.name || '',
+      event_uuid: event.event_uuid
+    };
+    
+    console.log('Normalized event:', normalizedEvent);
+    setEventToEdit(normalizedEvent);
     setEditDialogOpen(true);
   };
 
   const handleDeleteEvent = (eventId: string) => {
+    console.log('Attempting to delete event with ID:', eventId);
     onDeleteEvent?.(eventId);
     onOpenChange(false);
   };
@@ -77,11 +89,11 @@ export function EventDetailsDialog({
           </DialogHeader>
           <div className="space-y-4">
             {dayEvents.map((event, index) => (
-              <div key={index} className="border rounded-lg p-4 space-y-3 relative">
+              <div key={event.event_uuid || index} className="border rounded-lg p-4 space-y-3 relative">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-semibold text-lg">{event.title}</h3>
+                      <h3 className="font-semibold text-lg">{event.title || event.name}</h3>
                       <div className="flex items-center gap-2">
                         <Badge variant="secondary" className="capitalize">
                           {event.type}
