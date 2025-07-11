@@ -154,6 +154,34 @@ export default function CommunityPage() {
     enabled: !!communityId && communityId !== ':id'
   });
 
+  // Add query to fetch events for the community
+  const { data: events, isLoading: isEventsLoading } = useQuery({
+    queryKey: ['community-events', communityId],
+    queryFn: async () => {
+      if (!communityId || communityId === ':id') {
+        console.error('No valid community ID provided for events query');
+        return [];
+      }
+
+      console.log('Fetching community events for ID:', communityId);
+
+      const { data, error } = await supabase
+        .from('events')
+        .select('*')
+        .eq('community_uuid', communityId)
+        .order('date', { ascending: true });
+
+      if (error) {
+        console.error("Error fetching community events:", error);
+        throw error;
+      }
+
+      console.log('Community events fetched:', data);
+      return data || [];
+    },
+    enabled: !!communityId && communityId !== ':id'
+  });
+
   // Check if current user is the community owner - simplified and more reliable
   const isOwner = React.useMemo(() => {
     if (!currentUserExpertData || !community || !user) return false;
@@ -525,46 +553,12 @@ export default function CommunityPage() {
     }
   ];
 
-  const events = [
-    {
-      title: "Community Meetup",
-      date: new Date(2024, 3, 15), // April 15, 2024
-      type: "meetup",
-      description: "Monthly community gathering to discuss automation trends"
-    },
-    {
-      title: "Workshop: No-Code Automation",
-      date: new Date(2024, 3, 20), // April 20, 2024
-      type: "workshop",
-      description: "Learn how to build powerful automation without coding"
-    },
-    {
-      title: "Q&A Session",
-      date: new Date(2024, 3, 25), // April 25, 2024
-      type: "qa",
-      description: "Open Q&A session with automation experts"
-    }
-  ];
-
-  const formatDescription = (description: string | null | undefined, maxLines: number = 4) => {
-    if (!description) return '';
-    
-    // Strip HTML tags
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = description;
-    const plainText = tempDiv.textContent || tempDiv.innerText || '';
-    
-    // Split into words and approximate line limit
-    const words = plainText.split(' ');
-    const wordsPerLine = 12; // Approximate words per line
-    const maxWords = maxLines * wordsPerLine;
-    
-    if (words.length <= maxWords) {
-      return plainText;
-    }
-    
-    return words.slice(0, maxWords).join(' ') + '...';
-  };
+  const formattedEvents = events?.map(event => ({
+    title: event.name || 'Untitled Event',
+    date: new Date(event.date || Date.now()),
+    type: event.type || 'event',
+    description: event.description || ''
+  })) || [];
 
   const handleThreadClick = (thread: any) => {
     setSelectedThread(thread);
@@ -1101,11 +1095,17 @@ export default function CommunityPage() {
               </div>
               <Card>
                 <CardContent className="p-6">
-                  <CommunityCalendar
-                    events={events}
-                    selectedDate={date}
-                    onDateSelect={setDate}
-                  />
+                  {isEventsLoading ? (
+                    <div className="flex items-center justify-center h-96">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    </div>
+                  ) : (
+                    <CommunityCalendar
+                      events={formattedEvents}
+                      selectedDate={date}
+                      onDateSelect={setDate}
+                    />
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
