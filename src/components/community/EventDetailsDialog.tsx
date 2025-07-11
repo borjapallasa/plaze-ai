@@ -54,6 +54,8 @@ export function EventDetailsDialog({
   if (dayEvents.length === 0) return null;
 
   const handleEditEvent = (event: Event) => {
+    console.log('EventDetailsDialog - handling edit for event:', event);
+    console.log('Event has event_uuid:', event.event_uuid);
     setEventToEdit(event);
     setEditDialogOpen(true);
   };
