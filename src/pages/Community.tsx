@@ -1138,7 +1138,7 @@ export default function CommunityPage() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="members" className="space-y-6">
+            <TabsContent value="members" className="space-y-4">
               <div className="flex items-center justify-between">
                 {renderMemberRequestsButton()}
               </div>
