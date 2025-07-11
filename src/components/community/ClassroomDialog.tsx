@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,6 +22,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/lib/auth";
 
 interface ClassroomDialogProps {
   open: boolean;
@@ -38,8 +39,39 @@ export function ClassroomDialog({ open, onOpenChange, communityUuid, expertUuid 
   const [status, setStatus] = useState<"visible" | "not visible">("not visible");
   const [notify, setNotify] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+  const [currentUserExpertUuid, setCurrentUserExpertUuid] = useState<string | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  // Fetch the expert_uuid for the current logged-in user
+  useEffect(() => {
+    const fetchUserExpertUuid = async () => {
+      if (!user?.id) return;
+
+      try {
+        const { data, error } = await supabase
+          .from('users')
+          .select('expert_uuid')
+          .eq('user_uuid', user.id)
+          .single();
+
+        if (error) {
+          console.error('Error fetching user expert_uuid:', error);
+          return;
+        }
+
+        console.log('Fetched user expert_uuid:', data?.expert_uuid);
+        setCurrentUserExpertUuid(data?.expert_uuid || null);
+      } catch (error) {
+        console.error('Error in fetchUserExpertUuid:', error);
+      }
+    };
+
+    if (open && user?.id) {
+      fetchUserExpertUuid();
+    }
+  }, [open, user?.id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,11 +94,14 @@ export function ClassroomDialog({ open, onOpenChange, communityUuid, expertUuid 
       return;
     }
 
-    if (!expertUuid) {
+    // Use the fetched expert_uuid from the current user, fallback to prop if not available
+    const expertUuidToUse = currentUserExpertUuid || expertUuid;
+
+    if (!expertUuidToUse) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Expert ID is required",
+        description: "Expert ID is required. Please ensure you have an expert profile.",
       });
       return;
     }
@@ -80,7 +115,7 @@ export function ClassroomDialog({ open, onOpenChange, communityUuid, expertUuid 
         summary: summary.trim() || null,
         description: description.trim() || null,
         community_uuid: communityUuid,
-        expert_uuid: expertUuid,
+        expert_uuid: expertUuidToUse,
         status: status,
         notify: notify
       });
@@ -93,7 +128,7 @@ export function ClassroomDialog({ open, onOpenChange, communityUuid, expertUuid 
           summary: summary.trim() || null,
           description: description.trim() || null,
           community_uuid: communityUuid,
-          expert_uuid: expertUuid,
+          expert_uuid: expertUuidToUse,
           status: status,
           notify: notify
         })
