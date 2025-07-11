@@ -174,7 +174,7 @@ export default function CommunityPage() {
     enabled: !!communityId && communityId !== ':id'
   });
 
-  // Fixed events query with proper validation
+  // Events query - properly fetch from events table
   const { data: events, isLoading: isEventsLoading } = useQuery({
     queryKey: ['community-events', communityId],
     queryFn: async () => {
@@ -187,7 +187,7 @@ export default function CommunityPage() {
 
       const { data, error } = await supabase
         .from('events')
-        .select('*')
+        .select('event_uuid, name, date, type, description, location, community_uuid, expert_uuid')
         .eq('community_uuid', communityId)
         .order('date', { ascending: true });
 
@@ -573,16 +573,25 @@ export default function CommunityPage() {
     }
   ];
 
-  // Format events for the calendar component
+  // Format events for the calendar component with proper field mapping
   const formattedEvents = React.useMemo(() => {
-    if (!events || events.length === 0) return [];
+    console.log('Formatting events for calendar:', events);
     
-    return events.map(event => ({
+    if (!events || events.length === 0) {
+      console.log('No events to format');
+      return [];
+    }
+    
+    const formatted = events.map(event => ({
       title: event.name || 'Untitled Event',
       date: new Date(event.date || Date.now()),
       type: event.type || 'event',
-      description: event.description || ''
+      description: event.description || '',
+      location: event.location || ''
     }));
+    
+    console.log('Formatted events:', formatted);
+    return formatted;
   }, [events]);
 
   const handleThreadClick = (thread: any) => {
@@ -1115,11 +1124,16 @@ export default function CommunityPage() {
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                     </div>
                   ) : (
-                    <CommunityCalendar
-                      events={formattedEvents}
-                      selectedDate={date}
-                      onDateSelect={setDate}
-                    />
+                    <div>
+                      <div className="mb-4 text-sm text-muted-foreground">
+                        {events?.length ? `Found ${events.length} events` : 'No events found'}
+                      </div>
+                      <CommunityCalendar
+                        events={formattedEvents}
+                        selectedDate={date}
+                        onDateSelect={setDate}
+                      />
+                    </div>
                   )}
                 </CardContent>
               </Card>
