@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Edit, Trash2 } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth, addMonths, subMonths } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,7 @@ interface Event {
   type: string;
   description: string;
   location: string;
+  event_uuid?: string;
 }
 
 interface CommunityCalendarProps {
@@ -20,6 +21,9 @@ interface CommunityCalendarProps {
   onDateSelect?: (date: Date) => void;
   onAddEvent?: () => void;
   showAddEventButton?: boolean;
+  isOwner?: boolean;
+  onEditEvent?: (event: Event) => void;
+  onDeleteEvent?: (eventId: string) => void;
 }
 
 export function CommunityCalendar({ 
@@ -27,11 +31,15 @@ export function CommunityCalendar({
   selectedDate, 
   onDateSelect,
   onAddEvent,
-  showAddEventButton = false
+  showAddEventButton = false,
+  isOwner = false,
+  onEditEvent,
+  onDeleteEvent
 }: CommunityCalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [eventDialogOpen, setEventDialogOpen] = useState(false);
   const [selectedEventDate, setSelectedEventDate] = useState<Date | null>(null);
+  const [hoveredEvent, setHoveredEvent] = useState<string | null>(null);
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
@@ -62,12 +70,21 @@ export function CommunityCalendar({
     }
   };
 
+  const handleEditEvent = (event: Event, e: React.MouseEvent) => {
+    e.stopPropagation();
+    onEditEvent?.(event);
+  };
+
+  const handleDeleteEvent = (eventId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDeleteEvent?.(eventId);
+  };
+
   const getDayClasses = (date: Date) => {
     const baseClasses = "h-20 w-full flex flex-col items-center justify-center text-sm cursor-pointer rounded-md transition-colors relative";
     const isSelected = selectedDate && isSameDay(date, selectedDate);
     const isToday = isSameDay(date, new Date());
     const eventExists = hasEvent(date);
-    const eventsCount = getEventsForDate(date).length;
     
     if (isSelected) {
       return cn(baseClasses, "bg-gray-100 text-gray-800 border border-gray-300");
@@ -152,12 +169,44 @@ export function CommunityCalendar({
               >
                 <span className="mb-1">{format(date, 'd')}</span>
                 {eventsCount > 0 && (
-                  <div className="flex items-center justify-center">
+                  <div className="flex items-center justify-center relative group">
                     <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
                     {eventsCount > 1 && (
                       <span className="ml-1 text-xs font-medium text-gray-600">
                         +{eventsCount - 1}
                       </span>
+                    )}
+                    
+                    {/* Event Actions for Owner */}
+                    {isOwner && dayEvents.length > 0 && (
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                        <div className="flex gap-1 bg-white border rounded-md shadow-lg p-1">
+                          {dayEvents.map((event, index) => (
+                            <div key={index} className="flex gap-1">
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-6 w-6 p-0 hover:bg-blue-50"
+                                onClick={(e) => handleEditEvent(event, e)}
+                                title="Edit event"
+                              >
+                                <Edit className="h-3 w-3 text-blue-600" />
+                              </Button>
+                              {event.event_uuid && (
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-6 w-6 p-0 hover:bg-red-50"
+                                  onClick={(e) => handleDeleteEvent(event.event_uuid!, e)}
+                                  title="Delete event"
+                                >
+                                  <Trash2 className="h-3 w-3 text-red-600" />
+                                </Button>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     )}
                   </div>
                 )}
@@ -172,6 +221,9 @@ export function CommunityCalendar({
         onOpenChange={setEventDialogOpen}
         events={events}
         selectedDate={selectedEventDate}
+        isOwner={isOwner}
+        onEditEvent={onEditEvent}
+        onDeleteEvent={onDeleteEvent}
       />
     </>
   );
