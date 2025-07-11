@@ -31,6 +31,7 @@ import { MemberApprovalDialog } from "@/components/community/MemberApprovalDialo
 import { MemberRejectDialog } from "@/components/community/MemberRejectDialog";
 import { ThreadCard } from "@/components/community/ThreadCard";
 import { useToast } from "@/hooks/use-toast";
+import { AddEventDialog } from "@/components/community/AddEventDialog";
 
 interface Link {
   name: string;
@@ -84,6 +85,7 @@ export default function CommunityPage() {
   const [showProductTemplateSelector, setShowProductTemplateSelector] = useState(false);
   const [activeTab, setActiveTab] = useState("threads");
   const [selectedTag, setSelectedTag] = useState<string>("all");
+  const [isAddEventDialogOpen, setIsAddEventDialogOpen] = useState(false);
   const { user } = useAuth();
   const { images } = useCommunityImages(communityId);
 
@@ -628,6 +630,21 @@ export default function CommunityPage() {
     return null;
   };
 
+  const renderAddEventButton = () => {
+    if (isOwner) {
+      return (
+        <Button
+          className="flex items-center gap-2"
+          onClick={() => setIsAddEventDialogOpen(true)}
+        >
+          <Plus className="w-4 h-4" />
+          <span>Add Event</span>
+        </Button>
+      );
+    }
+    return null;
+  };
+
   const tabs = [
     { id: "threads", label: "Threads", icon: MessageSquare },
     { id: "classrooms", label: "Classrooms", icon: BookOpen },
@@ -1077,6 +1094,10 @@ export default function CommunityPage() {
             </TabsContent>
 
             <TabsContent value="calendar" className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold">Community Calendar</h3>
+                {renderAddEventButton()}
+              </div>
               <Card>
                 <CardContent className="p-6">
                   <CalendarComponent
@@ -1250,6 +1271,13 @@ export default function CommunityPage() {
             member={selectedMemberForAction}
             communityId={communityId || ''}
             isKick={selectedMemberForAction?.isKick || false}
+          />
+
+          <AddEventDialog
+            open={isAddEventDialogOpen}
+            onOpenChange={setIsAddEventDialogOpen}
+            communityId={communityId || ''}
+            expertUuid={community?.expert_uuid}
           />
         </div>
       </CommunityAccessGuard>
