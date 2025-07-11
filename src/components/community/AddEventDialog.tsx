@@ -159,7 +159,7 @@ export function AddEventDialog({ open, onOpenChange, communityId, expertUuid }: 
                     onSelect={(date) => form.setValue("event_date", date!)}
                     disabled={(date) => date < new Date()}
                     initialFocus
-                    className="rounded-md border shadow-md"
+                    className="pointer-events-auto"
                   />
                 </PopoverContent>
               </Popover>
