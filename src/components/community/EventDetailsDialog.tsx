@@ -68,42 +68,44 @@ export function EventDetailsDialog({
         </DialogHeader>
         <div className="space-y-4">
           {dayEvents.map((event, index) => (
-            <div key={index} className="border rounded-lg p-4 space-y-3 relative group hover:bg-gray-50 transition-colors">
+            <div key={index} className="border rounded-lg p-4 space-y-3 relative">
               <div className="flex items-start justify-between">
-                <div className="flex-1 pr-4">
+                <div className="flex-1">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="font-semibold text-lg">{event.title}</h3>
-                    <Badge variant="secondary" className="capitalize">
-                      {event.type}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary" className="capitalize">
+                        {event.type}
+                      </Badge>
+                      
+                      {/* Owner Actions - make them always visible for now */}
+                      {isOwner && (
+                        <div className="flex gap-1">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 w-8 p-0 hover:bg-blue-50"
+                            onClick={() => handleEditEvent(event)}
+                            title="Edit event"
+                          >
+                            <Edit className="h-4 w-4 text-blue-600" />
+                          </Button>
+                          {event.event_uuid && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-8 w-8 p-0 hover:bg-red-50"
+                              onClick={() => handleDeleteEvent(event.event_uuid!)}
+                              title="Delete event"
+                            >
+                              <Trash2 className="h-4 w-4 text-red-600" />
+                            </Button>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-                
-                {/* Owner Actions - always visible for debugging, but styled to be visible on hover */}
-                {isOwner && (
-                  <div className="flex gap-1 ml-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="h-8 w-8 p-0 hover:bg-blue-50 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => handleEditEvent(event)}
-                      title="Edit event"
-                    >
-                      <Edit className="h-4 w-4 text-blue-600" />
-                    </Button>
-                    {event.event_uuid && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-8 w-8 p-0 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={() => handleDeleteEvent(event.event_uuid!)}
-                        title="Delete event"
-                      >
-                        <Trash2 className="h-4 w-4 text-red-600" />
-                      </Button>
-                    )}
-                  </div>
-                )}
               </div>
               
               {event.description && (
