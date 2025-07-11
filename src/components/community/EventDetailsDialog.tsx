@@ -18,7 +18,7 @@ interface Event {
   type: string;
   description: string;
   location: string;
-  event_uuid: string; // Make this required, not optional
+  event_uuid?: string; // Make this optional to fix the type error
   // Add other database fields we might receive
   name?: string;
 }
@@ -125,6 +125,13 @@ export function EventDetailsDialog({
                     </div>
                   </div>
                 </div>
+                
+                {/* DEBUG: Show event_uuid */}
+                {event.event_uuid && (
+                  <div className="text-xs text-gray-500 font-mono bg-gray-50 p-2 rounded">
+                    Event UUID: {event.event_uuid}
+                  </div>
+                )}
                 
                 {event.description && (
                   <p className="text-muted-foreground text-sm">
