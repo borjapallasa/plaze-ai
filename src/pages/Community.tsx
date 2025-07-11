@@ -174,7 +174,7 @@ export default function CommunityPage() {
     enabled: !!communityId && communityId !== ':id'
   });
 
-  // Add query to fetch events for the community
+  // Fixed events query with proper validation
   const { data: events, isLoading: isEventsLoading } = useQuery({
     queryKey: ['community-events', communityId],
     queryFn: async () => {
@@ -573,12 +573,17 @@ export default function CommunityPage() {
     }
   ];
 
-  const formattedEvents = events?.map(event => ({
-    title: event.name || 'Untitled Event',
-    date: new Date(event.date || Date.now()),
-    type: event.type || 'event',
-    description: event.description || ''
-  })) || [];
+  // Format events for the calendar component
+  const formattedEvents = React.useMemo(() => {
+    if (!events || events.length === 0) return [];
+    
+    return events.map(event => ({
+      title: event.name || 'Untitled Event',
+      date: new Date(event.date || Date.now()),
+      type: event.type || 'event',
+      description: event.description || ''
+    }));
+  }, [events]);
 
   const handleThreadClick = (thread: any) => {
     setSelectedThread(thread);
