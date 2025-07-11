@@ -573,26 +573,40 @@ export default function CommunityPage() {
     }
   ];
 
-  // Format events for the calendar component with proper field mapping
+  // Format events for the calendar component with proper field mapping and stable dependencies
   const formattedEvents = React.useMemo(() => {
     console.log('Formatting events for calendar:', events);
     
-    if (!events || events.length === 0) {
+    // Return empty array immediately if no events to prevent infinite loop
+    if (!events || !Array.isArray(events) || events.length === 0) {
       console.log('No events to format');
       return [];
     }
     
-    const formatted = events.map(event => ({
-      title: event.name || 'Untitled Event',
-      date: new Date(event.date || Date.now()),
-      type: event.type || 'event',
-      description: event.description || '',
-      location: event.location || ''
-    }));
-    
-    console.log('Formatted events:', formatted);
-    return formatted;
-  }, [events]);
+    try {
+      const formatted = events.map(event => {
+        // Ensure we have a valid event object
+        if (!event || typeof event !== 'object') {
+          console.warn('Invalid event object:', event);
+          return null;
+        }
+        
+        return {
+          title: event.name || 'Untitled Event',
+          date: event.date ? new Date(event.date) : new Date(),
+          type: event.type || 'event',
+          description: event.description || '',
+          location: event.location || ''
+        };
+      }).filter(Boolean); // Remove any null entries
+      
+      console.log('Formatted events:', formatted);
+      return formatted;
+    } catch (error) {
+      console.error('Error formatting events:', error);
+      return [];
+    }
+  }, [events?.length, events?.map(e => e?.event_uuid).join(',')]); // Use stable dependencies
 
   const handleThreadClick = (thread: any) => {
     setSelectedThread(thread);
