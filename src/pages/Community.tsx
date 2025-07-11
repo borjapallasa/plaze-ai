@@ -67,6 +67,26 @@ function parseLinks(data: unknown): Link[] {
   return validLinks;
 }
 
+const formatDescription = (description: string | null | undefined, maxLines: number = 4) => {
+  if (!description) return '';
+  
+  // Strip HTML tags
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = description;
+  const plainText = tempDiv.textContent || tempDiv.innerText || '';
+  
+  // Split into words and approximate line limit
+  const words = plainText.split(' ');
+  const wordsPerLine = 12; // Approximate words per line
+  const maxWords = maxLines * wordsPerLine;
+  
+  if (words.length <= maxWords) {
+    return plainText;
+  }
+  
+  return words.slice(0, maxWords).join(' ') + '...';
+};
+
 export default function CommunityPage() {
   const { id: communityId } = useParams();
   const navigate = useNavigate();
@@ -947,17 +967,14 @@ export default function CommunityPage() {
                   <div className="col-span-full">
                     <Card className="border-2 border-dashed border-muted-foreground/25 bg-muted/10">
                       <CardContent className="flex flex-col items-center justify-center py-16 px-8 text-center">
-                        {/* Icon Container */}
                         <div className="mb-6 p-6 rounded-full bg-gradient-to-br from-primary/10 to-primary/20 border border-primary/20">
                           <BookOpen className="h-12 w-12 text-primary" />
                         </div>
                         
-                        {/* Main Message */}
                         <h3 className="text-xl font-semibold text-foreground mb-3">
                           No classrooms yet
                         </h3>
                         
-                        {/* Description */}
                         <p className="text-muted-foreground max-w-md mb-8 leading-relaxed">
                           This community doesn't have any classrooms available yet. 
                           {isOwner 
@@ -966,7 +983,6 @@ export default function CommunityPage() {
                           }
                         </p>
                         
-                        {/* Action Button */}
                         {isOwner && (
                           <Button 
                             onClick={() => setIsClassroomDialogOpen(true)}
@@ -978,7 +994,6 @@ export default function CommunityPage() {
                           </Button>
                         )}
                         
-                        {/* Decorative Elements */}
                         <div className="absolute inset-0 -z-10 opacity-5">
                           <div className="absolute top-4 left-4 w-8 h-8 border border-primary rounded-full"></div>
                           <div className="absolute top-8 right-8 w-4 h-4 bg-primary/20 rounded-full"></div>
@@ -1043,17 +1058,14 @@ export default function CommunityPage() {
                   <div className="col-span-full">
                     <Card className="border-2 border-dashed border-muted-foreground/25 bg-muted/10">
                       <CardContent className="flex flex-col items-center justify-center py-16 px-8 text-center">
-                        {/* Icon Container */}
                         <div className="mb-6 p-6 rounded-full bg-gradient-to-br from-primary/10 to-primary/20 border border-primary/20">
                           <Package className="h-12 w-12 text-primary" />
                         </div>
                         
-                        {/* Main Message */}
                         <h3 className="text-xl font-semibold text-foreground mb-3">
                           No products yet
                         </h3>
                         
-                        {/* Description */}
                         <p className="text-muted-foreground max-w-md mb-8 leading-relaxed">
                           This community doesn't have any products available yet. 
                           {isOwner 
@@ -1062,7 +1074,6 @@ export default function CommunityPage() {
                           }
                         </p>
                         
-                        {/* Action Button */}
                         {isOwner && (
                           <Button 
                             onClick={() => handleOpenProductDialog(false)}
@@ -1074,7 +1085,6 @@ export default function CommunityPage() {
                           </Button>
                         )}
                         
-                        {/* Decorative Elements */}
                         <div className="absolute inset-0 -z-10 opacity-5">
                           <div className="absolute top-4 left-4 w-8 h-8 border border-primary rounded-full"></div>
                           <div className="absolute top-8 right-8 w-4 h-4 bg-primary/20 rounded-full"></div>
@@ -1130,7 +1140,6 @@ export default function CommunityPage() {
                 </div>
               ) : activeMembers.length > 0 ? (
                 <div className="space-y-4">
-                  {/* Only Active Members - Pending members are hidden from main list */}
                   {activeMembers.map((member) => (
                     <div key={member.community_subscription_uuid} className="flex items-center justify-between p-6 rounded-xl border bg-card hover:bg-accent/20 transition-colors">
                       <div className="flex items-center space-x-4 flex-1">
@@ -1178,22 +1187,18 @@ export default function CommunityPage() {
                 <div className="space-y-4">
                   <Card className="border-2 border-dashed border-muted-foreground/25 bg-muted/10">
                     <CardContent className="flex flex-col items-center justify-center py-16 px-8 text-center">
-                      {/* Icon Container */}
                       <div className="mb-6 p-6 rounded-full bg-gradient-to-br from-primary/10 to-primary/20 border border-primary/20">
                         <Users className="h-12 w-12 text-primary" />
                       </div>
                       
-                      {/* Main Message */}
                       <h3 className="text-xl font-semibold text-foreground mb-3">
                         No members yet
                       </h3>
                       
-                      {/* Description */}
                       <p className="text-muted-foreground max-w-md mb-8 leading-relaxed">
                         This community doesn't have any active members yet. Once people join your community, they'll appear here and you can see who's part of your growing community.
                       </p>
                       
-                      {/* Decorative Elements */}
                       <div className="absolute inset-0 -z-10 opacity-5">
                         <div className="absolute top-4 left-4 w-8 h-8 border border-primary rounded-full"></div>
                         <div className="absolute top-8 right-8 w-4 h-4 bg-primary/20 rounded-full"></div>
