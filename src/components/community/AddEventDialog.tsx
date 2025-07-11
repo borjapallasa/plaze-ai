@@ -19,13 +19,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 const eventSchema = z.object({
-  title: z.string().min(1, "Title is required"),
+  name: z.string().min(1, "Event name is required"),
   description: z.string().optional(),
-  event_date: z.date({
+  date: z.date({
     required_error: "Event date is required",
   }),
-  event_time: z.string().optional(),
-  event_type: z.enum(["meeting", "workshop", "webinar", "conference", "other"]).default("meeting"),
+  type: z.enum(["meeting", "workshop", "webinar", "conference", "other"]).default("meeting"),
   location: z.string().optional(),
 });
 
@@ -45,22 +44,20 @@ export function AddEventDialog({ open, onOpenChange, communityId, expertUuid }: 
   const form = useForm<EventFormData>({
     resolver: zodResolver(eventSchema),
     defaultValues: {
-      title: "",
+      name: "",
       description: "",
-      event_type: "meeting",
+      type: "meeting",
       location: "",
-      event_time: "",
     }
   });
 
   const createEventMutation = useMutation({
     mutationFn: async (data: EventFormData) => {
       const eventData = {
-        title: data.title,
+        name: data.name,
         description: data.description,
-        event_date: data.event_date.toISOString(),
-        event_time: data.event_time,
-        event_type: data.event_type,
+        date: data.date.toISOString(),
+        type: data.type,
         location: data.location,
         community_uuid: communityId,
         expert_uuid: expertUuid,
@@ -111,14 +108,14 @@ export function AddEventDialog({ open, onOpenChange, communityId, expertUuid }: 
         
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="title">Event Title</Label>
+            <Label htmlFor="name">Event Name</Label>
             <Input
-              id="title"
-              {...form.register("title")}
-              placeholder="Enter event title"
+              id="name"
+              {...form.register("name")}
+              placeholder="Enter event name"
             />
-            {form.formState.errors.title && (
-              <p className="text-sm text-red-500">{form.formState.errors.title.message}</p>
+            {form.formState.errors.name && (
+              <p className="text-sm text-red-500">{form.formState.errors.name.message}</p>
             )}
           </div>
 
@@ -132,58 +129,46 @@ export function AddEventDialog({ open, onOpenChange, communityId, expertUuid }: 
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label>Event Date</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal h-11",
-                      !form.watch("event_date") && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {form.watch("event_date") ? (
-                      format(form.watch("event_date"), "PPP")
-                    ) : (
-                      <span>Pick a date</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={form.watch("event_date")}
-                    onSelect={(date) => form.setValue("event_date", date!)}
-                    disabled={(date) => date < new Date()}
-                    initialFocus
-                    className="pointer-events-auto"
-                  />
-                </PopoverContent>
-              </Popover>
-              {form.formState.errors.event_date && (
-                <p className="text-sm text-red-500">{form.formState.errors.event_date.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="event_time">Time (optional)</Label>
-              <Input
-                id="event_time"
-                type="time"
-                {...form.register("event_time")}
-                className="h-11"
-              />
-            </div>
+          <div className="space-y-2">
+            <Label>Event Date</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full justify-start text-left font-normal h-11",
+                    !form.watch("date") && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {form.watch("date") ? (
+                    format(form.watch("date"), "PPP")
+                  ) : (
+                    <span>Pick a date</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={form.watch("date")}
+                  onSelect={(date) => form.setValue("date", date!)}
+                  disabled={(date) => date < new Date()}
+                  initialFocus
+                  className="pointer-events-auto"
+                />
+              </PopoverContent>
+            </Popover>
+            {form.formState.errors.date && (
+              <p className="text-sm text-red-500">{form.formState.errors.date.message}</p>
+            )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="event_type">Event Type</Label>
+            <Label htmlFor="type">Event Type</Label>
             <Select
-              value={form.watch("event_type")}
-              onValueChange={(value) => form.setValue("event_type", value as any)}
+              value={form.watch("type")}
+              onValueChange={(value) => form.setValue("type", value as any)}
             >
               <SelectTrigger className="h-11">
                 <SelectValue placeholder="Select event type" />
