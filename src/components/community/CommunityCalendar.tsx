@@ -1,9 +1,11 @@
+
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Edit, Trash2 } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth, addMonths, subMonths } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { EventDetailsDialog } from './EventDetailsDialog';
+import { useCommunityEvents } from '@/hooks/use-community-events';
 
 interface Event {
   title: string;
@@ -27,7 +29,7 @@ interface CommunityCalendarProps {
 }
 
 export function CommunityCalendar({ 
-  events = [], 
+  events: propEvents, 
   selectedDate, 
   onDateSelect,
   onAddEvent,
@@ -40,7 +42,12 @@ export function CommunityCalendar({
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [eventDialogOpen, setEventDialogOpen] = useState(false);
   const [selectedEventDate, setSelectedEventDate] = useState<Date | null>(null);
-  const [hoveredEvent, setHoveredEvent] = useState<string | null>(null);
+
+  // Fetch events from database if communityId is provided
+  const { data: fetchedEvents, isLoading } = useCommunityEvents(communityId);
+  
+  // Use fetched events if available, otherwise use prop events
+  const events = fetchedEvents || propEvents || [];
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
@@ -73,6 +80,7 @@ export function CommunityCalendar({
 
   const handleEditEvent = (event: Event, e: React.MouseEvent) => {
     e.stopPropagation();
+    console.log('Editing event:', event);
     onEditEvent?.(event);
   };
 
@@ -101,6 +109,10 @@ export function CommunityCalendar({
     
     return cn(baseClasses, "hover:bg-accent hover:text-accent-foreground");
   };
+
+  if (isLoading) {
+    return <div className="flex justify-center p-4">Loading events...</div>;
+  }
 
   return (
     <>
