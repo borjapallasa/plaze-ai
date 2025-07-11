@@ -416,11 +416,33 @@ export default function Classroom() {
       return;
     }
 
+    if (!classroom?.community_uuid) {
+      toast({
+        title: "Error",
+        description: "Classroom community information is missing",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!classroom?.expert_uuid) {
+      toast({
+        title: "Error",
+        description: "Classroom expert information is missing",
+        variant: "destructive"
+      });
+      return;
+    }
+
     const newLesson = {
       ...newLessonData,
       classroom_uuid: id,
-      user_uuid: user.id
+      user_uuid: user.id,
+      community_uuid: classroom.community_uuid,
+      expert_uuid: classroom.expert_uuid
     };
+
+    console.log('Creating lesson with data:', newLesson);
 
     addLessonMutation.mutate(newLesson);
   };
