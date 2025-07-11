@@ -16,7 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 const eventSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -47,7 +47,6 @@ interface EditEventDialogProps {
 }
 
 export function EditEventDialog({ open, onOpenChange, event, communityId }: EditEventDialogProps) {
-  const { toast } = useToast();
   const queryClient = useQueryClient();
   
   const form = useForm<EventFormData>({
@@ -102,24 +101,18 @@ export function EditEventDialog({ open, onOpenChange, event, communityId }: Edit
       return result;
     },
     onSuccess: () => {
-      toast({
-        title: "Success",
-        description: "Event updated successfully",
-      });
+      toast.success("Event updated successfully");
       queryClient.invalidateQueries({ queryKey: ['community-events', communityId] });
       onOpenChange(false);
     },
     onError: (error) => {
       console.error('Error updating event:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update event. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to update event. Please try again.");
     },
   });
 
-  const onSubmit = (data: EventFormData) => {
+  const handleSubmit = (data: EventFormData) => {
+    console.log('Form submitted with data:', data);
     updateEventMutation.mutate(data);
   };
 
@@ -132,7 +125,7 @@ export function EditEventDialog({ open, onOpenChange, event, communityId }: Edit
           <DialogTitle>Edit Event</DialogTitle>
         </DialogHeader>
         
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="name">Event Name</Label>
             <Input
