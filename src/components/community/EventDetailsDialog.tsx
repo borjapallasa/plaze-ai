@@ -78,31 +78,29 @@ export function EventDetailsDialog({
                         {event.type}
                       </Badge>
                       
-                      {/* Owner Actions - make them always visible for now */}
-                      {isOwner && (
-                        <div className="flex gap-1">
+                      {/* Show buttons to everyone */}
+                      <div className="flex gap-1">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-8 w-8 p-0 hover:bg-blue-50"
+                          onClick={() => handleEditEvent(event)}
+                          title="Edit event"
+                        >
+                          <Edit className="h-4 w-4 text-blue-600" />
+                        </Button>
+                        {event.event_uuid && (
                           <Button
                             size="sm"
                             variant="outline"
-                            className="h-8 w-8 p-0 hover:bg-blue-50"
-                            onClick={() => handleEditEvent(event)}
-                            title="Edit event"
+                            className="h-8 w-8 p-0 hover:bg-red-50"
+                            onClick={() => handleDeleteEvent(event.event_uuid!)}
+                            title="Delete event"
                           >
-                            <Edit className="h-4 w-4 text-blue-600" />
+                            <Trash2 className="h-4 w-4 text-red-600" />
                           </Button>
-                          {event.event_uuid && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="h-8 w-8 p-0 hover:bg-red-50"
-                              onClick={() => handleDeleteEvent(event.event_uuid!)}
-                              title="Delete event"
-                            >
-                              <Trash2 className="h-4 w-4 text-red-600" />
-                            </Button>
-                          )}
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
