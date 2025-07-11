@@ -47,12 +47,12 @@ export function CommunityCalendar({
   const { data: fetchedEvents, isLoading } = useCommunityEvents(communityId);
   
   // Use fetched events if available, otherwise use prop events
-  // Make sure to normalize the events to have consistent field names
+  // Make sure to normalize the events to have consistent field names and ensure event_uuid is present
   const events = (fetchedEvents || propEvents || []).map(event => ({
     ...event,
     title: event.title || event.name || '',
-    event_uuid: event.event_uuid
-  }));
+    event_uuid: event.event_uuid || '' // Ensure event_uuid is always present
+  })).filter(event => event.event_uuid); // Filter out events without event_uuid
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);

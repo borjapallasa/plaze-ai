@@ -18,7 +18,7 @@ interface Event {
   type: string;
   description: string;
   location: string;
-  event_uuid?: string; // Make this optional to fix the type error
+  event_uuid: string; // Make this required since we fetch it
   // Add other database fields we might receive
   name?: string;
 }
@@ -114,9 +114,8 @@ export function EventDetailsDialog({
                             size="sm"
                             variant="outline"
                             className="h-8 w-8 p-0 hover:bg-red-50"
-                            onClick={() => event.event_uuid ? handleDeleteEvent(event.event_uuid) : console.log('No event UUID available')}
+                            onClick={() => handleDeleteEvent(event.event_uuid)}
                             title="Delete event"
-                            disabled={!event.event_uuid}
                           >
                             <Trash2 className="h-4 w-4 text-red-600" />
                           </Button>
@@ -126,30 +125,30 @@ export function EventDetailsDialog({
                   </div>
                 </div>
                 
-                {/* DEBUG: Show event_uuid */}
-                {event.event_uuid && (
-                  <div className="text-xs text-gray-500 font-mono bg-gray-50 p-2 rounded">
-                    Event UUID: {event.event_uuid}
+                {/* Show event_uuid as visible field */}
+                <div className="space-y-2">
+                  <div className="text-xs text-gray-600">
+                    <span className="font-medium">Event ID:</span> {event.event_uuid}
                   </div>
-                )}
-                
-                {event.description && (
-                  <p className="text-muted-foreground text-sm">
-                    {event.description}
-                  </p>
-                )}
-                
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <Clock className="h-4 w-4" />
-                    {format(event.date, 'h:mm a')}
-                  </div>
-                  {event.location && (
-                    <div className="flex items-center gap-1">
-                      <MapPin className="h-4 w-4" />
-                      {event.location}
-                    </div>
+                  
+                  {event.description && (
+                    <p className="text-muted-foreground text-sm">
+                      {event.description}
+                    </p>
                   )}
+                  
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <Clock className="h-4 w-4" />
+                      {format(event.date, 'h:mm a')}
+                    </div>
+                    {event.location && (
+                      <div className="flex items-center gap-1">
+                        <MapPin className="h-4 w-4" />
+                        {event.location}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
