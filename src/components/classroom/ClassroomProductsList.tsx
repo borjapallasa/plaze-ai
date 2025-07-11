@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -40,7 +41,7 @@ export function ClassroomProductsList({
       return;
     }
     
-    // Use the community_product_relationship_uuid instead of the variant id
+    // Use the community_product_relationship_uuid for deletion
     setDeleteRelationshipUuid(variant.community_product_relationship_uuid);
   };
 
