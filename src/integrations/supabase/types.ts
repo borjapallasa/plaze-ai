@@ -986,38 +986,23 @@ export type Database = {
         Row: {
           community_uuid: string | null
           created_at: string
-          date: string | null
-          description: string | null
           event_uuid: string
           expert_uuid: string | null
           id: number
-          location: string | null
-          name: string | null
-          type: string | null
         }
         Insert: {
           community_uuid?: string | null
           created_at?: string
-          date?: string | null
-          description?: string | null
           event_uuid?: string
           expert_uuid?: string | null
           id?: number
-          location?: string | null
-          name?: string | null
-          type?: string | null
         }
         Update: {
           community_uuid?: string | null
           created_at?: string
-          date?: string | null
-          description?: string | null
           event_uuid?: string
           expert_uuid?: string | null
           id?: number
-          location?: string | null
-          name?: string | null
-          type?: string | null
         }
         Relationships: [
           {

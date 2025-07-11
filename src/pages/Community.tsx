@@ -67,26 +67,6 @@ function parseLinks(data: unknown): Link[] {
   return validLinks;
 }
 
-const formatDescription = (description: string | null | undefined, maxLines: number = 4) => {
-  if (!description) return '';
-  
-  // Strip HTML tags
-  const tempDiv = document.createElement('div');
-  tempDiv.innerHTML = description;
-  const plainText = tempDiv.textContent || tempDiv.innerText || '';
-  
-  // Split into words and approximate line limit
-  const words = plainText.split(' ');
-  const wordsPerLine = 12; // Approximate words per line
-  const maxWords = maxLines * wordsPerLine;
-  
-  if (words.length <= maxWords) {
-    return plainText;
-  }
-  
-  return words.slice(0, maxWords).join(' ') + '...';
-};
-
 export default function CommunityPage() {
   const { id: communityId } = useParams();
   const navigate = useNavigate();
@@ -170,34 +150,6 @@ export default function CommunityPage() {
 
       console.log('Community data fetched:', data);
       return data;
-    },
-    enabled: !!communityId && communityId !== ':id'
-  });
-
-  // Events query - properly fetch from events table
-  const { data: events, isLoading: isEventsLoading } = useQuery({
-    queryKey: ['community-events', communityId],
-    queryFn: async () => {
-      if (!communityId || communityId === ':id') {
-        console.error('No valid community ID provided for events query');
-        return [];
-      }
-
-      console.log('Fetching community events for ID:', communityId);
-
-      const { data, error } = await supabase
-        .from('events')
-        .select('event_uuid, name, date, type, description, location, community_uuid, expert_uuid')
-        .eq('community_uuid', communityId)
-        .order('date', { ascending: true });
-
-      if (error) {
-        console.error("Error fetching community events:", error);
-        throw error;
-      }
-
-      console.log('Community events fetched:', data);
-      return data || [];
     },
     enabled: !!communityId && communityId !== ':id'
   });
@@ -573,40 +525,46 @@ export default function CommunityPage() {
     }
   ];
 
-  // Format events for the calendar component with proper field mapping and stable dependencies
-  const formattedEvents = React.useMemo(() => {
-    console.log('Formatting events for calendar:', events);
+  const events = [
+    {
+      title: "Community Meetup",
+      date: new Date(2024, 3, 15), // April 15, 2024
+      type: "meetup",
+      description: "Monthly community gathering to discuss automation trends"
+    },
+    {
+      title: "Workshop: No-Code Automation",
+      date: new Date(2024, 3, 20), // April 20, 2024
+      type: "workshop",
+      description: "Learn how to build powerful automation without coding"
+    },
+    {
+      title: "Q&A Session",
+      date: new Date(2024, 3, 25), // April 25, 2024
+      type: "qa",
+      description: "Open Q&A session with automation experts"
+    }
+  ];
+
+  const formatDescription = (description: string | null | undefined, maxLines: number = 4) => {
+    if (!description) return '';
     
-    // Return empty array immediately if no events to prevent infinite loop
-    if (!events || !Array.isArray(events) || events.length === 0) {
-      console.log('No events to format');
-      return [];
+    // Strip HTML tags
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = description;
+    const plainText = tempDiv.textContent || tempDiv.innerText || '';
+    
+    // Split into words and approximate line limit
+    const words = plainText.split(' ');
+    const wordsPerLine = 12; // Approximate words per line
+    const maxWords = maxLines * wordsPerLine;
+    
+    if (words.length <= maxWords) {
+      return plainText;
     }
     
-    try {
-      const formatted = events.map(event => {
-        // Ensure we have a valid event object
-        if (!event || typeof event !== 'object') {
-          console.warn('Invalid event object:', event);
-          return null;
-        }
-        
-        return {
-          title: event.name || 'Untitled Event',
-          date: event.date ? new Date(event.date) : new Date(),
-          type: event.type || 'event',
-          description: event.description || '',
-          location: event.location || ''
-        };
-      }).filter(Boolean); // Remove any null entries
-      
-      console.log('Formatted events:', formatted);
-      return formatted;
-    } catch (error) {
-      console.error('Error formatting events:', error);
-      return [];
-    }
-  }, [events?.length, events?.map(e => e?.event_uuid).join(',')]); // Use stable dependencies
+    return words.slice(0, maxWords).join(' ') + '...';
+  };
 
   const handleThreadClick = (thread: any) => {
     setSelectedThread(thread);
@@ -995,14 +953,17 @@ export default function CommunityPage() {
                   <div className="col-span-full">
                     <Card className="border-2 border-dashed border-muted-foreground/25 bg-muted/10">
                       <CardContent className="flex flex-col items-center justify-center py-16 px-8 text-center">
+                        {/* Icon Container */}
                         <div className="mb-6 p-6 rounded-full bg-gradient-to-br from-primary/10 to-primary/20 border border-primary/20">
                           <BookOpen className="h-12 w-12 text-primary" />
                         </div>
                         
+                        {/* Main Message */}
                         <h3 className="text-xl font-semibold text-foreground mb-3">
                           No classrooms yet
                         </h3>
                         
+                        {/* Description */}
                         <p className="text-muted-foreground max-w-md mb-8 leading-relaxed">
                           This community doesn't have any classrooms available yet. 
                           {isOwner 
@@ -1011,6 +972,7 @@ export default function CommunityPage() {
                           }
                         </p>
                         
+                        {/* Action Button */}
                         {isOwner && (
                           <Button 
                             onClick={() => setIsClassroomDialogOpen(true)}
@@ -1022,6 +984,7 @@ export default function CommunityPage() {
                           </Button>
                         )}
                         
+                        {/* Decorative Elements */}
                         <div className="absolute inset-0 -z-10 opacity-5">
                           <div className="absolute top-4 left-4 w-8 h-8 border border-primary rounded-full"></div>
                           <div className="absolute top-8 right-8 w-4 h-4 bg-primary/20 rounded-full"></div>
@@ -1086,14 +1049,17 @@ export default function CommunityPage() {
                   <div className="col-span-full">
                     <Card className="border-2 border-dashed border-muted-foreground/25 bg-muted/10">
                       <CardContent className="flex flex-col items-center justify-center py-16 px-8 text-center">
+                        {/* Icon Container */}
                         <div className="mb-6 p-6 rounded-full bg-gradient-to-br from-primary/10 to-primary/20 border border-primary/20">
                           <Package className="h-12 w-12 text-primary" />
                         </div>
                         
+                        {/* Main Message */}
                         <h3 className="text-xl font-semibold text-foreground mb-3">
                           No products yet
                         </h3>
                         
+                        {/* Description */}
                         <p className="text-muted-foreground max-w-md mb-8 leading-relaxed">
                           This community doesn't have any products available yet. 
                           {isOwner 
@@ -1102,6 +1068,7 @@ export default function CommunityPage() {
                           }
                         </p>
                         
+                        {/* Action Button */}
                         {isOwner && (
                           <Button 
                             onClick={() => handleOpenProductDialog(false)}
@@ -1113,6 +1080,7 @@ export default function CommunityPage() {
                           </Button>
                         )}
                         
+                        {/* Decorative Elements */}
                         <div className="absolute inset-0 -z-10 opacity-5">
                           <div className="absolute top-4 left-4 w-8 h-8 border border-primary rounded-full"></div>
                           <div className="absolute top-8 right-8 w-4 h-4 bg-primary/20 rounded-full"></div>
@@ -1133,22 +1101,11 @@ export default function CommunityPage() {
               </div>
               <Card>
                 <CardContent className="p-6">
-                  {isEventsLoading ? (
-                    <div className="flex items-center justify-center h-96">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                    </div>
-                  ) : (
-                    <div>
-                      <div className="mb-4 text-sm text-muted-foreground">
-                        {events?.length ? `Found ${events.length} events` : 'No events found'}
-                      </div>
-                      <CommunityCalendar
-                        events={formattedEvents}
-                        selectedDate={date}
-                        onDateSelect={setDate}
-                      />
-                    </div>
-                  )}
+                  <CommunityCalendar
+                    events={events}
+                    selectedDate={date}
+                    onDateSelect={setDate}
+                  />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -1173,6 +1130,7 @@ export default function CommunityPage() {
                 </div>
               ) : activeMembers.length > 0 ? (
                 <div className="space-y-4">
+                  {/* Only Active Members - Pending members are hidden from main list */}
                   {activeMembers.map((member) => (
                     <div key={member.community_subscription_uuid} className="flex items-center justify-between p-6 rounded-xl border bg-card hover:bg-accent/20 transition-colors">
                       <div className="flex items-center space-x-4 flex-1">
@@ -1220,18 +1178,22 @@ export default function CommunityPage() {
                 <div className="space-y-4">
                   <Card className="border-2 border-dashed border-muted-foreground/25 bg-muted/10">
                     <CardContent className="flex flex-col items-center justify-center py-16 px-8 text-center">
+                      {/* Icon Container */}
                       <div className="mb-6 p-6 rounded-full bg-gradient-to-br from-primary/10 to-primary/20 border border-primary/20">
                         <Users className="h-12 w-12 text-primary" />
                       </div>
                       
+                      {/* Main Message */}
                       <h3 className="text-xl font-semibold text-foreground mb-3">
                         No members yet
                       </h3>
                       
+                      {/* Description */}
                       <p className="text-muted-foreground max-w-md mb-8 leading-relaxed">
                         This community doesn't have any active members yet. Once people join your community, they'll appear here and you can see who's part of your growing community.
                       </p>
                       
+                      {/* Decorative Elements */}
                       <div className="absolute inset-0 -z-10 opacity-5">
                         <div className="absolute top-4 left-4 w-8 h-8 border border-primary rounded-full"></div>
                         <div className="absolute top-8 right-8 w-4 h-4 bg-primary/20 rounded-full"></div>
