@@ -70,7 +70,7 @@ export function CommunityCalendar({ events = [], selectedDate, onDateSelect }: C
     }
     
     if (eventExists) {
-      return cn(baseClasses, "bg-blue-50 text-blue-900 font-medium hover:bg-blue-100 border border-blue-200");
+      return cn(baseClasses, "bg-gray-50 text-gray-700 font-medium hover:bg-gray-100 border border-gray-200");
     }
     
     return cn(baseClasses, "hover:bg-accent hover:text-accent-foreground");
@@ -134,9 +134,9 @@ export function CommunityCalendar({ events = [], selectedDate, onDateSelect }: C
                 <span className="mb-1">{format(date, 'd')}</span>
                 {eventsCount > 0 && (
                   <div className="flex items-center justify-center">
-                    <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                    <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
                     {eventsCount > 1 && (
-                      <span className="ml-1 text-xs font-medium text-blue-600">
+                      <span className="ml-1 text-xs font-medium text-gray-600">
                         +{eventsCount - 1}
                       </span>
                     )}
