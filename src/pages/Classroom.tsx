@@ -1207,6 +1207,7 @@ export default function Classroom() {
               onOpenChange={setIsDeleteClassroomOpen}
               classroomId={id || ""}
               classroomName={classroom?.name || ""}
+              communityId={classroom?.community_uuid}
             />
 
             {/* Product Creation Dialog */}

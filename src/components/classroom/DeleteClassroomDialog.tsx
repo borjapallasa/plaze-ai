@@ -20,13 +20,15 @@ interface DeleteClassroomDialogProps {
   onOpenChange: (open: boolean) => void;
   classroomId: string;
   classroomName: string;
+  communityId?: string;
 }
 
 export function DeleteClassroomDialog({
   open,
   onOpenChange,
   classroomId,
-  classroomName
+  classroomName,
+  communityId
 }: DeleteClassroomDialogProps) {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -84,8 +86,12 @@ export function DeleteClassroomDialog({
       
       onOpenChange(false);
       
-      // Navigate back to communities or dashboard
-      navigate("/communities");
+      // Navigate to community page if communityId is provided, otherwise to communities list
+      if (communityId) {
+        navigate(`/community/${communityId}`);
+      } else {
+        navigate("/communities");
+      }
     },
     onError: (error) => {
       console.error("Error deleting classroom:", error);
