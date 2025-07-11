@@ -32,6 +32,7 @@ import { MemberRejectDialog } from "@/components/community/MemberRejectDialog";
 import { ThreadCard } from "@/components/community/ThreadCard";
 import { useToast } from "@/hooks/use-toast";
 import { AddEventDialog } from "@/components/community/AddEventDialog";
+import { CommunityCalendar } from "@/components/community/CommunityCalendar";
 
 interface Link {
   name: string;
@@ -1100,16 +1101,10 @@ export default function CommunityPage() {
               </div>
               <Card>
                 <CardContent className="p-6">
-                  <CalendarComponent
-                    mode="single"
-                    selected={date}
-                    onSelect={setDate}
-                    modifiers={{
-                      event: events.map(event => event.date)
-                    }}
-                    modifiersClassNames={{
-                      event: "text-primary font-bold underline"
-                    }}
+                  <CommunityCalendar
+                    events={events}
+                    selectedDate={date}
+                    onDateSelect={setDate}
                   />
                 </CardContent>
               </Card>
