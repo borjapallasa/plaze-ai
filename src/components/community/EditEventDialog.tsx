@@ -62,6 +62,7 @@ export function EditEventDialog({ open, onOpenChange, event, communityId }: Edit
   // Pre-fill form when event changes
   useEffect(() => {
     if (event && open) {
+      console.log('Setting form data with event:', event);
       form.reset({
         name: event.title || "",
         description: event.description || "",
@@ -74,7 +75,11 @@ export function EditEventDialog({ open, onOpenChange, event, communityId }: Edit
 
   const updateEventMutation = useMutation({
     mutationFn: async (data: EventFormData) => {
+      console.log('Attempting to update event with data:', data);
+      console.log('Event object:', event);
+      
       if (!event?.event_uuid) {
+        console.error('Event UUID missing:', event);
         throw new Error("Event UUID is required for updating");
       }
 
@@ -85,6 +90,9 @@ export function EditEventDialog({ open, onOpenChange, event, communityId }: Edit
         type: data.type,
         location: data.location,
       };
+
+      console.log('Updating event with UUID:', event.event_uuid);
+      console.log('Event data to be sent:', eventData);
 
       const { data: result, error } = await supabase
         .from('events')
@@ -98,6 +106,7 @@ export function EditEventDialog({ open, onOpenChange, event, communityId }: Edit
         throw error;
       }
 
+      console.log('Event update successful:', result);
       return result;
     },
     onSuccess: () => {
@@ -113,10 +122,19 @@ export function EditEventDialog({ open, onOpenChange, event, communityId }: Edit
 
   const handleSubmit = (data: EventFormData) => {
     console.log('Form submitted with data:', data);
+    console.log('Current event in handleSubmit:', event);
     updateEventMutation.mutate(data);
   };
 
-  if (!event) return null;
+  if (!event) {
+    console.log('No event provided to EditEventDialog');
+    return null;
+  }
+
+  // Show a warning if event_uuid is missing
+  if (!event.event_uuid) {
+    console.warn('Event is missing event_uuid:', event);
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -222,7 +240,7 @@ export function EditEventDialog({ open, onOpenChange, event, communityId }: Edit
             </Button>
             <Button 
               type="submit" 
-              disabled={updateEventMutation.isPending}
+              disabled={updateEventMutation.isPending || !event.event_uuid}
             >
               {updateEventMutation.isPending ? "Updating..." : "Update Event"}
             </Button>
