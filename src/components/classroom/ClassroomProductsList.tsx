@@ -7,9 +7,9 @@ import { Package, ArrowRight, ExternalLink, Plus, Trash2 } from "lucide-react";
 import { Variant } from "@/components/product/types/variants";
 import { ClassroomProductSelector } from "./ClassroomProductSelector";
 import { DeleteClassroomProductDialog } from "./DeleteClassroomProductDialog";
-import { useClassroomProducts } from "@/hooks/use-classroom-products";
 
 interface ClassroomProductsListProps {
+  variants?: Variant[];
   className?: string;
   isOwner?: boolean;
   classroomId?: string;
@@ -17,6 +17,7 @@ interface ClassroomProductsListProps {
 }
 
 export function ClassroomProductsList({ 
+  variants = [], 
   className = "",
   isOwner = false,
   classroomId,
@@ -24,9 +25,6 @@ export function ClassroomProductsList({
 }: ClassroomProductsListProps) {
   const [isSelectorOpen, setIsSelectorOpen] = useState(false);
   const [deleteRelationshipUuid, setDeleteRelationshipUuid] = useState<string | null>(null);
-
-  // Use the custom hook to fetch classroom products
-  const { data: variants = [], isLoading } = useClassroomProducts(classroomId || '');
 
   const handleProductClick = (productId: string) => {
     window.open(`/community/product/${productId}`, '_blank');
@@ -52,17 +50,6 @@ export function ClassroomProductsList({
   if (!classroomId) {
     console.error("ClassroomId is missing");
     return null;
-  }
-
-  if (isLoading) {
-    return (
-      <div className={`${className}`}>
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="font-semibold text-lg">Products in this class</h3>
-        </div>
-        <div className="text-center py-8">Loading products...</div>
-      </div>
-    );
   }
 
   return (
@@ -190,7 +177,7 @@ export function ClassroomProductsList({
         relationshipUuid={deleteRelationshipUuid}
         onSuccess={() => {
           setDeleteRelationshipUuid(null);
-          // The query will automatically refetch via React Query
+          // The parent component will handle the refresh via query invalidation
         }}
       />
     </div>

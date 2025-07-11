@@ -3,13 +3,42 @@ export interface Variant {
   id: string;
   name: string;
   price: number;
+  comparePrice: number;
+  label: string;
+  highlight: boolean;
+  tags: string[];
   features: string[];
-  filesLink?: string;
-  paymentLink?: string;
-  relationshipUuid?: string; // Added for classroom product relationships
+  hidden: boolean;
+  createdAt: Date | null;
+  filesLink: string | null;
+  additionalDetails?: string; // Add this back for compatibility
+  relationshipUuid?: string;
 }
 
-export interface VariantWithReviews extends Variant {
-  reviews: any[];
+export interface ProductVariantsEditorProps {
+  variants?: Variant[];
+  onVariantsChange?: (variants: Variant[]) => void;
+  className?: string;
+}
+
+export interface VariantPickerProps {
+  variants: Variant[];
+  selectedVariant?: string;
+  onVariantChange?: (variantId: string) => void;
+  onAddToCart?: () => void;
+  className?: string;
+  isLoading?: boolean;
+}
+
+export interface ProductLayoutProps {
+  product: any;
+  variants: Variant[];
+  relatedProductsWithVariants: any[];
+  selectedVariant?: string;
   averageRating: number;
+  onVariantChange: (variantId: string) => void;
+  onAddToCart: () => void;
+  onAdditionalVariantToggle?: (variantId: string, selected: boolean) => void;
+  reviews: any[];
+  isLoading?: boolean;
 }
