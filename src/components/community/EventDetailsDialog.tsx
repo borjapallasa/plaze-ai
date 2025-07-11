@@ -49,7 +49,7 @@ export function EventDetailsDialog({
 
   const handleEditEvent = (event: Event) => {
     onEditEvent?.(event);
-    onOpenChange(false);
+    // Don't close the dialog - let the parent handle the edit dialog
   };
 
   const handleDeleteEvent = (eventId: string) => {
@@ -89,17 +89,16 @@ export function EventDetailsDialog({
                         >
                           <Edit className="h-4 w-4 text-blue-600" />
                         </Button>
-                        {event.event_uuid && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="h-8 w-8 p-0 hover:bg-red-50"
-                            onClick={() => handleDeleteEvent(event.event_uuid!)}
-                            title="Delete event"
-                          >
-                            <Trash2 className="h-4 w-4 text-red-600" />
-                          </Button>
-                        )}
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-8 w-8 p-0 hover:bg-red-50"
+                          onClick={() => event.event_uuid ? handleDeleteEvent(event.event_uuid) : console.log('No event UUID available')}
+                          title="Delete event"
+                          disabled={!event.event_uuid}
+                        >
+                          <Trash2 className="h-4 w-4 text-red-600" />
+                        </Button>
                       </div>
                     </div>
                   </div>
