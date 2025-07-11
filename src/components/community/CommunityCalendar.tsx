@@ -62,7 +62,7 @@ export function CommunityCalendar({ events = [], selectedDate, onDateSelect }: C
     const eventsCount = getEventsForDate(date).length;
     
     if (isSelected) {
-      return cn(baseClasses, "bg-primary text-primary-foreground");
+      return cn(baseClasses, "bg-gray-100 text-gray-800 border border-gray-300");
     }
     
     if (isToday) {
