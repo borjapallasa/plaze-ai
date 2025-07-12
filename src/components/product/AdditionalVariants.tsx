@@ -123,7 +123,7 @@ export function AdditionalVariants({
       </Badge>
 
       <Card className="p-4 pt-3 bg-gray-50/50">
-        <div className="space-y-1">
+        <div className="space-y-3">
           {Object.entries(productGroups).map(([productUuid, { productName, variants }]) => {
             // Initialize and get the selected variant
             if (!selectedVariants[productUuid]) {
@@ -144,8 +144,9 @@ export function AdditionalVariants({
             const hasMultipleVariants = variants.length > 1;
 
             return (
-              <div key={productName} className="flex items-center gap-3 py-2 px-2 rounded hover:bg-muted/50 transition-colors">
-                <div className="flex items-start pt-0.5">
+              <div key={productName} className="grid grid-cols-[auto_1fr_auto_auto] gap-4 items-start py-2 px-2 rounded hover:bg-muted/50 transition-colors">
+                {/* Checkbox */}
+                <div className="pt-0.5">
                   <Checkbox
                     id={`product-${productUuid}`}
                     checked={isSelected}
@@ -154,40 +155,55 @@ export function AdditionalVariants({
                   />
                 </div>
 
-                <div className="flex items-center justify-between min-w-0 flex-1 gap-3">
-                  <label
-                    htmlFor={`product-${productUuid}`}
-                    className="text-sm cursor-pointer truncate flex items-center gap-1.5"
-                  >
-                    <span className="font-medium">{productName}</span>
-                    <span className="mx-1 text-muted-foreground">-</span>
-                    <span className="font-medium">${formatPrice(selectedVariant?.variant_price || 0)}</span>
-                  </label>
-
-                  {hasMultipleVariants && !isDefaultVariant && (
-                    <Select
-                      value={selectedVariantId}
-                      onValueChange={(value) => handleVariantChange(productUuid, value)}
+                {/* Bundle Info - Two Line Layout */}
+                <div className="flex flex-col min-w-0">
+                  {/* Line 1: Product Title */}
+                  <div className="bundle-primary">
+                    <label
+                      htmlFor={`product-${productUuid}`}
+                      className="text-base font-semibold cursor-pointer text-foreground"
                     >
-                      <SelectTrigger 
-                        className={cn(
-                          "w-[180px] h-8 text-xs bg-white border border-gray-200 hover:bg-gray-50",
-                          !isSelected && "opacity-50"
-                        )}
-                      >
-                        <SelectValue placeholder="Select option" />
-                        <ChevronDown className="h-3 w-3 opacity-50 ml-auto" />
-                      </SelectTrigger>
-                      <SelectContent className="min-w-[220px] bg-white border border-gray-200 shadow-lg z-50">
-                        {variants.map((variant) => (
-                          <SelectItem key={variant.variant_uuid} value={variant.variant_uuid} className="text-xs hover:bg-gray-50">
-                            {variant.variant_name || "Option"} - ${formatPrice(variant.variant_price)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
+                      {productName}
+                    </label>
+                  </div>
+                  
+                  {/* Line 2: Variant Info */}
+                  <div className="bundle-secondary flex items-center gap-1 mt-1">
+                    <span className="text-sm text-muted-foreground">Variant:</span>
+                    <span className="text-sm text-muted-foreground">
+                      {selectedVariant?.variant_name || "Option"}
+                    </span>
+                  </div>
                 </div>
+
+                {/* Price */}
+                <div className="bundle-price text-base font-medium text-foreground ml-4">
+                  ${formatPrice(selectedVariant?.variant_price || 0)}
+                </div>
+
+                {/* Variant Picker */}
+                {hasMultipleVariants && !isDefaultVariant && (
+                  <Select
+                    value={selectedVariantId}
+                    onValueChange={(value) => handleVariantChange(productUuid, value)}
+                  >
+                    <SelectTrigger 
+                      className={cn(
+                        "bundle-variant-picker w-[200px] h-8 text-xs bg-white border border-gray-200 hover:bg-gray-50",
+                        !isSelected && "opacity-50"
+                      )}
+                    >
+                      <ChevronDown className="h-3 w-3 opacity-50" />
+                    </SelectTrigger>
+                    <SelectContent className="min-w-[220px] bg-white border border-gray-200 shadow-lg z-50">
+                      {variants.map((variant) => (
+                        <SelectItem key={variant.variant_uuid} value={variant.variant_uuid} className="text-xs hover:bg-gray-50">
+                          {variant.variant_name || "Option"} — ${formatPrice(variant.variant_price)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
             );
           })}
