@@ -10,7 +10,6 @@ const mapProductData = (data: any): ProductData => {
   if (!data) return null;
 
   return {
-    id: data.id,
     product_uuid: data.product_uuid,
     name: data.name || '',
     description: data.description || '',
