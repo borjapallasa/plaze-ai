@@ -123,7 +123,7 @@ export function AdditionalVariants({
       </Badge>
 
       <Card className="p-4 pt-3 bg-gray-50/50">
-        <div className="space-y-1">
+        <div className="space-y-3">
           {Object.entries(productGroups).map(([productUuid, { productName, variants }]) => {
             // Initialize and get the selected variant
             if (!selectedVariants[productUuid]) {
@@ -144,8 +144,8 @@ export function AdditionalVariants({
             const hasMultipleVariants = variants.length > 1;
 
             return (
-              <div key={productName} className="flex items-center gap-3 py-2 px-2 rounded hover:bg-muted/50 transition-colors">
-                <div className="flex items-start pt-0.5">
+              <div key={productName} className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/30 transition-colors">
+                <div className="flex items-start pt-1">
                   <Checkbox
                     id={`product-${productUuid}`}
                     checked={isSelected}
@@ -154,39 +154,45 @@ export function AdditionalVariants({
                   />
                 </div>
 
-                <div className="flex items-center justify-between min-w-0 flex-1 gap-3">
+                <div className="flex-1 min-w-0 space-y-1">
+                  {/* Product Name - Line 1 */}
                   <label
                     htmlFor={`product-${productUuid}`}
-                    className="text-sm cursor-pointer truncate flex items-center gap-1.5"
+                    className="block text-sm font-semibold cursor-pointer text-foreground leading-tight"
                   >
-                    <span className="font-medium">{productName}</span>
-                    <span className="mx-1 text-muted-foreground">-</span>
-                    <span className="font-medium">${formatPrice(selectedVariant?.variant_price || 0)}</span>
+                    {productName}
                   </label>
 
-                  {hasMultipleVariants && !isDefaultVariant && (
-                    <Select
-                      value={selectedVariantId}
-                      onValueChange={(value) => handleVariantChange(productUuid, value)}
-                    >
-                      <SelectTrigger 
-                        className={cn(
-                          "w-[180px] h-8 text-xs bg-white border border-gray-200 hover:bg-gray-50",
-                          !isSelected && "opacity-50"
-                        )}
+                  {/* Variant Name and Price - Line 2 */}
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="text-sm text-muted-foreground">
+                      {selectedVariant?.variant_name || "Default Option"} - <span className="font-medium text-foreground">${formatPrice(selectedVariant?.variant_price || 0)}</span>
+                    </div>
+
+                    {hasMultipleVariants && !isDefaultVariant && (
+                      <Select
+                        value={selectedVariantId}
+                        onValueChange={(value) => handleVariantChange(productUuid, value)}
                       >
-                        <SelectValue placeholder="Select option" />
-                        <ChevronDown className="h-3 w-3 opacity-50 ml-auto" />
-                      </SelectTrigger>
-                      <SelectContent className="min-w-[220px] bg-white border border-gray-200 shadow-lg z-50">
-                        {variants.map((variant) => (
-                          <SelectItem key={variant.variant_uuid} value={variant.variant_uuid} className="text-xs hover:bg-gray-50">
-                            {variant.variant_name || "Option"} - ${formatPrice(variant.variant_price)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
+                        <SelectTrigger 
+                          className={cn(
+                            "w-[160px] h-7 text-xs bg-white border border-gray-200 hover:bg-gray-50 shrink-0",
+                            !isSelected && "opacity-50"
+                          )}
+                        >
+                          <SelectValue placeholder="Select variant" />
+                          <ChevronDown className="h-3 w-3 opacity-50 ml-auto" />
+                        </SelectTrigger>
+                        <SelectContent className="min-w-[200px] bg-white border border-gray-200 shadow-lg z-50">
+                          {variants.map((variant) => (
+                            <SelectItem key={variant.variant_uuid} value={variant.variant_uuid} className="text-xs hover:bg-gray-50">
+                              {variant.variant_name || "Option"} - ${formatPrice(variant.variant_price)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </div>
                 </div>
               </div>
             );
