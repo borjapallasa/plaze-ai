@@ -164,27 +164,29 @@ export function AdditionalVariants({
                     <span className="font-medium">${formatPrice(selectedVariant?.variant_price || 0)}</span>
                   </label>
 
-                  <Select
-                    value={selectedVariantId}
-                    onValueChange={(value) => handleVariantChange(productUuid, value)}
-                    disabled={!isSelected || isDefaultVariant || !hasMultipleVariants}
-                  >
-                    <SelectTrigger 
-                      className={cn(
-                        "w-[180px] h-8 text-xs",
-                        (isDefaultVariant || !hasMultipleVariants) && "opacity-50 cursor-not-allowed"
-                      )}
+                  {hasMultipleVariants && !isDefaultVariant && (
+                    <Select
+                      value={selectedVariantId}
+                      onValueChange={(value) => handleVariantChange(productUuid, value)}
+                      disabled={!isSelected}
                     >
-                      <SelectValue placeholder="Options" />
-                    </SelectTrigger>
-                    <SelectContent className="min-w-[220px]">
-                      {variants.map((variant) => (
-                        <SelectItem key={variant.variant_uuid} value={variant.variant_uuid} className="text-xs">
-                          {variant.variant_name || "Option"} - ${formatPrice(variant.variant_price)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                      <SelectTrigger 
+                        className={cn(
+                          "w-[180px] h-8 text-xs",
+                          !isSelected && "opacity-50 cursor-not-allowed"
+                        )}
+                      >
+                        <SelectValue placeholder="Options" />
+                      </SelectTrigger>
+                      <SelectContent className="min-w-[220px]">
+                        {variants.map((variant) => (
+                          <SelectItem key={variant.variant_uuid} value={variant.variant_uuid} className="text-xs">
+                            {variant.variant_name || "Option"} - ${formatPrice(variant.variant_price)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
                 </div>
               </div>
             );
