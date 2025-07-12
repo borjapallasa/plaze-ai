@@ -1,57 +1,22 @@
 
 import { Variant } from "@/components/product/types/variants";
-import { ProductVariant, CommunityProduct } from "@/types/Product";
+import { ProductVariant } from "@/types/Product";
 
-/**
- * Converts a CommunityProduct to a Variant
- */
-export function communityProductToVariant(product: CommunityProduct): Variant {
-  return {
-    id: product.community_product_uuid || product.variant_uuid || '',
-    name: product.name || 'Product',
-    price: Number(product.price) || 0,
-    comparePrice: Number(product.price ? product.price * 1.25 : 0),
-    label: product.product_type || 'Package',
-    highlight: false,
-    tags: [],
-    features: [],
-    hidden: false,
-    createdAt: null,
-    filesLink: null,
-  };
-}
-
-/**
- * Converts an array of CommunityProducts to Variants
- */
-export function communityProductsToVariants(products: CommunityProduct[]): Variant[] {
-  if (!products || !Array.isArray(products)) return [];
-  return products.map(communityProductToVariant);
-}
-
-/**
- * Converts a ProductVariant to Variant type
- */
-export function productVariantToVariant(variant: ProductVariant): Variant {
-  return {
+export function productVariantsToVariants(productVariants: ProductVariant[]): Variant[] {
+  return productVariants.map((variant) => ({
     id: variant.id,
-    name: variant.name || 'Package',
-    price: Number(variant.price) || 0,
-    comparePrice: Number(variant.comparePrice) || 0,
-    label: variant.label || 'Package',
+    name: variant.name,
+    price: variant.price,
+    comparePrice: variant.comparePrice || 0, // Ensure comparePrice is always a number
+    label: variant.label,
     highlight: variant.highlight,
-    tags: [],
-    features: Array.isArray(variant.features) ? variant.features : [],
-    hidden: false,
-    createdAt: null,
-    filesLink: null,
-  };
-}
-
-/**
- * Converts ProductVariant array to Variant array
- */
-export function productVariantsToVariants(variants: ProductVariant[]): Variant[] {
-  if (!variants || !Array.isArray(variants)) return [];
-  return variants.map(productVariantToVariant);
+    tags: variant.tags,
+    features: variant.features,
+    hidden: variant.hidden,
+    createdAt: variant.createdAt,
+    filesLink: variant.filesLink,
+    paymentLink: variant.paymentLink,
+    additionalDetails: variant.additionalDetails,
+    community_product_relationship_uuid: variant.community_product_relationship_uuid
+  }));
 }

@@ -60,18 +60,22 @@ export interface Product {
 // Type for the product data from the API
 export interface ProductData extends Product { }
 
-// Type for the product variant
+// Type for the product variant - ensure comparePrice is required to match Variant interface
 export interface ProductVariant {
   id: string;
   name: string;
   price: number;
-  comparePrice: number;
+  comparePrice: number; // Make this required to match Variant interface
   label?: string;
   highlight?: boolean;
   features?: string[];
   tags?: string[];
   filesLink?: string;
   additionalDetails?: string;
+  hidden?: boolean;
+  createdAt?: Date | null;
+  paymentLink?: string;
+  community_product_relationship_uuid?: string;
 }
 
 // Type for the product review

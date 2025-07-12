@@ -43,11 +43,11 @@ export function useProductVariants(productUuid?: string) {
           }
         }
 
-        const mappedVariant = {
+        const mappedVariant: ProductVariant = {
           id: variant.variant_uuid,
           name: variant.name || "Lorem Ipsum Package",
           price: variant.price || 99.99,
-          comparePrice: variant.compare_price || 0, // Ensure compare_price is properly mapped
+          comparePrice: variant.compare_price || 0, // Ensure comparePrice is always a number
           label: "Package",
           highlight: variant.highlighted || index === 1,
           features: parsedTags.length > 0 
@@ -56,11 +56,6 @@ export function useProductVariants(productUuid?: string) {
           tags: parsedTags,
           filesLink: variant.files_link || "",
           additionalDetails: variant.additional_details || "",
-          // Include database fields for debugging
-          variant_uuid: variant.variant_uuid,
-          compare_price: variant.compare_price,
-          files_link: variant.files_link,
-          additional_details: variant.additional_details
         };
 
         console.log("Mapped variant:", mappedVariant);
