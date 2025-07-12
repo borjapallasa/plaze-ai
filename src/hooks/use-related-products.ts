@@ -39,29 +39,29 @@ export function useRelatedProducts(productUuid?: string) {
             const product = rel.products;
             
             if (product) {
-              // Fetch variants for this product
+              // Fetch ALL variants for this product instead of limiting to 1
               const { data: variants, error: variantsError } = await supabase
                 .from('variants')
                 .select('variant_uuid, name, price, tags, files_link')
-                .eq('product_uuid', rel.related_product_uuid)
-                .limit(1);
+                .eq('product_uuid', rel.related_product_uuid);
 
               if (variantsError) {
                 console.error("Error fetching variants:", variantsError);
               }
 
-              // Use first variant if available, otherwise create default
+              // Process all variants if available, otherwise create default
               if (variants && variants.length > 0) {
-                const variant = variants[0];
-                processedData.push({
-                  related_product_uuid: rel.related_product_uuid,
-                  related_product_name: product.name || '',
-                  related_product_price_from: product.price_from || 0,
-                  variant_uuid: variant.variant_uuid,
-                  variant_name: variant.name || "Default Option",
-                  variant_price: variant.price || 0,
-                  variant_tags: variant.tags,
-                  variant_files_link: variant.files_link
+                variants.forEach(variant => {
+                  processedData.push({
+                    related_product_uuid: rel.related_product_uuid,
+                    related_product_name: product.name || '',
+                    related_product_price_from: product.price_from || 0,
+                    variant_uuid: variant.variant_uuid,
+                    variant_name: variant.name || "Default Option",
+                    variant_price: variant.price || 0,
+                    variant_tags: variant.tags,
+                    variant_files_link: variant.files_link
+                  });
                 });
               } else {
                 // Create default variant data

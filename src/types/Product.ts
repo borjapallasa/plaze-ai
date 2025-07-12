@@ -52,3 +52,42 @@ export interface Product {
   tech_stack_price?: string;
   community_product_uuid?: string;
 }
+
+export interface CommunityProduct {
+  community_product_uuid: string;
+  community_uuid: string | null;
+  compare_price: number | null;
+  created_at: string;
+  expert_uuid: string | null;
+  files_link: string | null;
+  id: number;
+  name: string;
+  payment_link: string | null;
+  price: number | null;
+  product_type: string | null;
+  product_uuid: string | null;
+}
+
+export interface RelatedProduct {
+  related_product_uuid: string;
+  related_product_name: string;
+  related_product_price_from: number;
+  variant_uuid: string;
+  variant_name: string;
+  variant_price: number;
+  variant_tags: any;
+  variant_files_link: string;
+}
+
+export interface ProductData {
+  product_uuid: string;
+  name: string;
+  description?: string;
+  price_from?: number;
+  expert_uuid?: string;
+  user_uuid?: string;
+  thumbnail?: string;
+  slug?: string;
+  status?: string;
+  created_at?: string;
+}
