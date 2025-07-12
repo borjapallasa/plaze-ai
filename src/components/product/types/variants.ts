@@ -3,7 +3,7 @@ export interface Variant {
   id: string;
   name: string;
   price: number;
-  comparePrice?: number;
+  comparePrice?: number; // Make this optional to match actual usage
   label?: string;
   highlight?: boolean;
   tags?: string[];
