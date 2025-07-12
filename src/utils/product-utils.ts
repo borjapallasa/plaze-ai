@@ -7,7 +7,7 @@ export function productVariantsToVariants(productVariants: ProductVariant[]): Va
     id: variant.id,
     name: variant.name,
     price: variant.price,
-    comparePrice: variant.comparePrice || 0,
+    comparePrice: variant.comparePrice || 0, // Ensure comparePrice is always provided
     label: variant.label,
     highlight: variant.highlight,
     tags: variant.tags,
