@@ -11,7 +11,7 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { Package } from "lucide-react";
+import { Package, ChevronDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface AdditionalVariantsProps {
@@ -168,19 +168,19 @@ export function AdditionalVariants({
                     <Select
                       value={selectedVariantId}
                       onValueChange={(value) => handleVariantChange(productUuid, value)}
-                      disabled={!isSelected}
                     >
                       <SelectTrigger 
                         className={cn(
-                          "w-[180px] h-8 text-xs",
-                          !isSelected && "opacity-50 cursor-not-allowed"
+                          "w-[180px] h-8 text-xs bg-white border border-gray-200 hover:bg-gray-50",
+                          !isSelected && "opacity-50"
                         )}
                       >
-                        <SelectValue placeholder="Options" />
+                        <SelectValue placeholder="Select option" />
+                        <ChevronDown className="h-3 w-3 opacity-50 ml-auto" />
                       </SelectTrigger>
-                      <SelectContent className="min-w-[220px]">
+                      <SelectContent className="min-w-[220px] bg-white border border-gray-200 shadow-lg z-50">
                         {variants.map((variant) => (
-                          <SelectItem key={variant.variant_uuid} value={variant.variant_uuid} className="text-xs">
+                          <SelectItem key={variant.variant_uuid} value={variant.variant_uuid} className="text-xs hover:bg-gray-50">
                             {variant.variant_name || "Option"} - ${formatPrice(variant.variant_price)}
                           </SelectItem>
                         ))}
