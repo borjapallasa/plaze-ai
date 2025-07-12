@@ -1,25 +1,22 @@
 
-import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useState, useEffect } from "react";
+import { Card } from "@/components/ui/card";
+import { Variant } from "./types/variants";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import { Package } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Check, Plus } from "lucide-react";
-
-interface AdditionalVariant {
-  related_product_uuid: string;
-  related_product_name: string;
-  related_product_price_from: number;
-  variant_uuid: string;
-  variant_name: string;
-  variant_price: number;
-  variant_tags?: string[];
-  variant_files_link?: string;
-}
 
 interface AdditionalVariantsProps {
-  relatedProductsWithVariants: AdditionalVariant[];
-  onAdditionalSelect: (variantId: string, selected: boolean) => void;
+  relatedProductsWithVariants: any[]
+  onAdditionalSelect?: (variantId: string, selected: boolean) => void;
   className?: string;
 }
 
@@ -28,135 +25,172 @@ export function AdditionalVariants({
   onAdditionalSelect,
   className = ""
 }: AdditionalVariantsProps) {
+  const [selectedAdditional, setSelectedAdditional] = useState<string[]>([]);
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
-  const [addedVariants, setAddedVariants] = useState<Set<string>>(new Set());
 
-  if (!relatedProductsWithVariants || relatedProductsWithVariants.length === 0) {
-    return null;
-  }
+  // Group related products by UUID to create product groups
+  const productGroups = relatedProductsWithVariants.reduce<Record<string, { productName: string; variants: any[] }>>((groups, product) => {
+    const productUuid = product.related_product_uuid;
 
-  // Group variants by product
-  const productGroups = relatedProductsWithVariants.reduce((acc, variant) => {
-    if (!acc[variant.related_product_uuid]) {
-      acc[variant.related_product_uuid] = {
-        productName: variant.related_product_name,
-        productPrice: variant.related_product_price_from,
+    if (!groups[productUuid]) {
+      groups[productUuid] = {
+        productName: product.related_product_name,
         variants: []
       };
     }
-    acc[variant.related_product_uuid].variants.push(variant);
-    return acc;
-  }, {} as Record<string, { productName: string; productPrice: number; variants: AdditionalVariant[] }>);
 
-  const handleVariantSelect = (productUuid: string, variantUuid: string) => {
-    setSelectedVariants(prev => ({
-      ...prev,
-      [productUuid]: variantUuid
-    }));
-  };
+    groups[productUuid].variants.push(product);
+    return groups;
+  }, {} as Record<string, { productName: string; variants: any[] }>);
 
-  const handleAddVariant = (productUuid: string) => {
+  // Log product groups for debugging
+  useEffect(() => {
+    console.log("Product groups:", productGroups);
+  }, [productGroups]);
+
+  if (Object.keys(productGroups).length === 0) {
+    return null;
+  }
+
+  const handleCheckboxChange = (productUuid: string, checked: boolean) => {
     const variants = productGroups[productUuid].variants;
-    const selectedVariantUuid = selectedVariants[productUuid] || variants[0]?.variant_uuid;
+    const variantId = selectedVariants[productUuid] || variants[0].variant_uuid;
+
+    console.log("Toggle variant:", variantId, checked);
     
-    if (selectedVariantUuid) {
-      const isAdding = !addedVariants.has(selectedVariantUuid);
-      
-      if (isAdding) {
-        setAddedVariants(prev => new Set([...prev, selectedVariantUuid]));
-      } else {
-        setAddedVariants(prev => {
-          const newSet = new Set(prev);
-          newSet.delete(selectedVariantUuid);
-          return newSet;
-        });
+    if (checked) {
+      // Select this variant
+      if (!selectedAdditional.includes(variantId)) {
+        setSelectedAdditional(prev => [...prev, variantId]);
+
+        if (onAdditionalSelect) {
+          onAdditionalSelect(variantId, true);
+        }
       }
-      
-      onAdditionalSelect(selectedVariantUuid, isAdding);
+    } else {
+      // Deselect this variant
+      if (selectedAdditional.includes(variantId)) {
+        setSelectedAdditional(prev => prev.filter(id => id !== variantId));
+
+        if (onAdditionalSelect) {
+          onAdditionalSelect(variantId, false);
+        }
+      }
     }
   };
 
-  return (
-    <div className={`space-y-4 ${className}`}>
-      <h3 className="text-lg font-semibold">Bundle & Save</h3>
-      <div className="space-y-3">
-        {Object.entries(productGroups).map(([productUuid, group]) => {
-          const hasMultipleVariants = group.variants.length > 1;
-          const selectedVariantUuid = selectedVariants[productUuid] || group.variants[0]?.variant_uuid;
-          const selectedVariant = group.variants.find(v => v.variant_uuid === selectedVariantUuid);
-          const isAdded = selectedVariantUuid && addedVariants.has(selectedVariantUuid);
+  const handleVariantChange = (productUuid: string, variantId: string) => {
+    // Deselect old variant if it was selected
+    const oldVariantId = selectedVariants[productUuid];
+    if (oldVariantId && selectedAdditional.includes(oldVariantId)) {
+      if (onAdditionalSelect) {
+        onAdditionalSelect(oldVariantId, false);
+      }
+      setSelectedAdditional(prev => prev.filter(id => id !== oldVariantId));
+    }
 
-          return (
-            <Card key={productUuid} className="relative">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <CardTitle className="text-base">{group.productName}</CardTitle>
-                    {selectedVariant && (
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-lg font-bold">${selectedVariant.variant_price}</span>
-                        {selectedVariant.variant_tags && selectedVariant.variant_tags.length > 0 && (
-                          <div className="flex gap-1">
-                            {selectedVariant.variant_tags.map((tag, idx) => (
-                              <Badge key={idx} variant="secondary" className="text-xs">
-                                {tag}
-                              </Badge>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
+    // Update the selected variant for this product
+    setSelectedVariants(prev => ({
+      ...prev,
+      [productUuid]: variantId
+    }));
+
+    // If the product is checked, also select the new variant
+    if (oldVariantId && selectedAdditional.includes(oldVariantId)) {
+      setSelectedAdditional(prev => [...prev, variantId]);
+
+      if (onAdditionalSelect) {
+        onAdditionalSelect(variantId, true);
+      }
+    }
+  };
+
+  const formatPrice = (price: string | number) => {
+    if (typeof price === 'number') {
+      return price.toFixed(2);
+    }
+    return price;
+  };
+
+  return (
+    <div className={cn("relative", className)}>
+      <Badge
+        variant="outline"
+        className="absolute -top-2 left-4 z-10 bg-primary text-primary-foreground px-2 py-0.5 text-xs font-medium flex items-center gap-1.5"
+      >
+        <Package className="h-3 w-3" />
+        Bundle & Save
+      </Badge>
+
+      <Card className="p-4 pt-3 bg-gray-50/50">
+        <div className="space-y-1">
+          {Object.entries(productGroups).map(([productUuid, { productName, variants }]) => {
+            // Initialize and get the selected variant
+            if (!selectedVariants[productUuid]) {
+              setTimeout(() => {
+                setSelectedVariants(prev => ({
+                  ...prev,
+                  [productUuid]: variants[0].variant_uuid
+                }));
+              }, 0);
+            }
+            
+            const selectedVariantId = selectedVariants[productUuid] || variants[0].variant_uuid;
+            const selectedVariant = variants.find(v => v.variant_uuid === selectedVariantId);
+            const isSelected = selectedAdditional.includes(selectedVariantId);
+            
+            // Check if this is a default variant (product with no variants)
+            const isDefaultVariant = selectedVariantId.startsWith('default-');
+            const hasMultipleVariants = variants.length > 1;
+
+            return (
+              <div key={productName} className="flex items-center gap-3 py-2 px-2 rounded hover:bg-muted/50 transition-colors">
+                <div className="flex items-start pt-0.5">
+                  <Checkbox
+                    id={`product-${productUuid}`}
+                    checked={isSelected}
+                    onCheckedChange={(checked) => handleCheckboxChange(productUuid, checked === true)}
+                    className="h-4 w-4"
+                  />
                 </div>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <div className="flex items-center gap-3">
-                  {hasMultipleVariants && (
-                    <div className="flex-1">
-                      <Select 
-                        value={selectedVariantUuid || ""} 
-                        onValueChange={(value) => handleVariantSelect(productUuid, value)}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select variant" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {group.variants.map((variant) => (
-                            <SelectItem key={variant.variant_uuid} value={variant.variant_uuid}>
-                              <div className="flex items-center justify-between w-full">
-                                <span>{variant.variant_name}</span>
-                                <span className="ml-2 font-medium">${variant.variant_price}</span>
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
-                  <Button
-                    variant={isAdded ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => handleAddVariant(productUuid)}
-                    className="whitespace-nowrap"
+
+                <div className="flex items-center justify-between min-w-0 flex-1 gap-3">
+                  <label
+                    htmlFor={`product-${productUuid}`}
+                    className="text-sm cursor-pointer truncate flex items-center gap-1.5"
                   >
-                    {isAdded ? (
-                      <>
-                        <Check className="h-4 w-4 mr-1" />
-                        Added
-                      </>
-                    ) : (
-                      <>
-                        <Plus className="h-4 w-4 mr-1" />
-                        Add
-                      </>
-                    )}
-                  </Button>
+                    <span className="font-medium">{productName}</span>
+                    <span className="mx-1 text-muted-foreground">-</span>
+                    <span className="font-medium">${formatPrice(selectedVariant?.variant_price || 0)}</span>
+                  </label>
+
+                  <Select
+                    value={selectedVariantId}
+                    onValueChange={(value) => handleVariantChange(productUuid, value)}
+                    disabled={!isSelected || isDefaultVariant || !hasMultipleVariants}
+                  >
+                    <SelectTrigger 
+                      className={cn(
+                        "w-[180px] h-8 text-xs",
+                        (isDefaultVariant || !hasMultipleVariants) && "opacity-50 cursor-not-allowed"
+                      )}
+                    >
+                      <SelectValue placeholder="Options" />
+                    </SelectTrigger>
+                    <SelectContent className="min-w-[220px]">
+                      {variants.map((variant) => (
+                        <SelectItem key={variant.variant_uuid} value={variant.variant_uuid} className="text-xs">
+                          {variant.variant_name || "Option"} - ${formatPrice(variant.variant_price)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
+              </div>
+            );
+          })}
+        </div>
+      </Card>
     </div>
   );
 }

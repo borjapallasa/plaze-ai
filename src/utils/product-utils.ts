@@ -1,21 +1,22 @@
 
 import { Variant } from "@/components/product/types/variants";
+import { ProductVariant } from "@/types/Product";
 
-export function productVariantsToVariants(productVariants: any[]): Variant[] {
-  return productVariants.map(variant => ({
-    id: variant.variant_uuid || variant.id,
-    name: variant.name || "Default Option",
-    price: variant.price || 0,
-    comparePrice: variant.compare_price || undefined, // Make it optional
+export function productVariantsToVariants(productVariants: ProductVariant[]): Variant[] {
+  return productVariants.map((variant) => ({
+    id: variant.id,
+    name: variant.name,
+    price: variant.price,
+    comparePrice: variant.comparePrice || 0, // Ensure comparePrice is always a number
     label: variant.label,
-    highlight: variant.highlight || false,
+    highlight: variant.highlight,
     tags: variant.tags,
     features: variant.features,
-    hidden: variant.hidden || false,
-    createdAt: variant.created_at,
-    filesLink: variant.files_link,
-    paymentLink: variant.payment_link,
-    additionalDetails: variant.additional_details,
+    hidden: variant.hidden,
+    createdAt: variant.createdAt,
+    filesLink: variant.filesLink,
+    paymentLink: variant.paymentLink,
+    additionalDetails: variant.additionalDetails,
     community_product_relationship_uuid: variant.community_product_relationship_uuid
   }));
 }
