@@ -47,7 +47,7 @@ export function useProductVariants(productUuid?: string) {
           id: variant.variant_uuid,
           name: variant.name || "Lorem Ipsum Package",
           price: variant.price || 99.99,
-          comparePrice: variant.compare_price || 0, // Fix: properly map compare_price from database
+          comparePrice: variant.compare_price || 0, // Properly fetch compare_price from database
           label: "Package",
           highlight: variant.highlighted || index === 1,
           features: parsedTags.length > 0 
@@ -58,7 +58,7 @@ export function useProductVariants(productUuid?: string) {
           additionalDetails: variant.additional_details || "",
         };
 
-        console.log("Mapped variant:", mappedVariant);
+        console.log("Mapped variant with compare_price:", mappedVariant);
         return mappedVariant;
       });
     },

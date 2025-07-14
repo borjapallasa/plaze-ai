@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { X, Info } from "lucide-react";
@@ -185,7 +184,7 @@ export default function EditProduct() {
         id: v.variant_uuid,
         name: v.name || "",
         price: v.price?.toString() || "0",
-        comparePrice: v.compare_price?.toString() || "", // Keep compare_price separate and independent
+        comparePrice: v.compare_price?.toString() || "0", // Properly map compare_price from database
         highlight: v.highlighted || false,
         tags: Array.isArray(v.tags) ? v.tags : [],
         filesLink: v.files_link || "",
@@ -216,7 +215,7 @@ export default function EditProduct() {
       id: `temp_${Date.now()}`,
       name: "New Variant",
       price: "0",
-      comparePrice: "", // Keep comparePrice independent of price
+      comparePrice: "0", // Initialize as separate field
       highlight: false,
       tags: [],
       filesLink: "",
@@ -257,14 +256,13 @@ export default function EditProduct() {
       });
     }
 
-    // Update local variants - ensure price and comparePrice remain independent
+    // Update local variants - ensure price and comparePrice are handled independently
     const processedVariants = updatedVariants.map(variant => {
       console.log('Processing variant:', variant);
       return {
         ...variant,
-        // Ensure price and comparePrice are handled separately
         price: variant.price || "0",
-        comparePrice: variant.comparePrice || "", // Don't default to price value
+        comparePrice: variant.comparePrice || "0", // Keep comparePrice independent
       };
     });
 
@@ -329,7 +327,7 @@ export default function EditProduct() {
         const variantData = {
           name: variant.name,
           price: parseFloat(variant.price) || 0,
-          compare_price: parseFloat(variant.comparePrice) || null, // Save compare_price separately
+          compare_price: parseFloat(variant.comparePrice) || null, // Save compare_price independently
           highlighted: variant.highlight,
           tags: Array.isArray(variant.tags) ? variant.tags : [],
           files_link: variant.filesLink,
