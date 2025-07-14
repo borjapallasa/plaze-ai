@@ -25,7 +25,6 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
   const [productType, setProductType] = useState<"free" | "paid">("free");
   const [selectedVariant, setSelectedVariant] = useState("");
   const [price, setPrice] = useState("");
-  const [filesLink, setFilesLink] = useState("");
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -66,7 +65,6 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
     setSelectedCommunity(communityProduct.community_uuid);
     setProductType(communityProduct.product_type);
     setPrice(communityProduct.price?.toString() || "");
-    setFilesLink(communityProduct.files_link || "");
     setShowEditDialog(true);
   };
 
@@ -109,7 +107,7 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
           expert_uuid: expertUuid,
           product_type: productType,
           name: variantToUse.name,
-          files_link: filesLink || variantToUse.filesLink,
+          files_link: variantToUse.filesLink,
           product_uuid: productUuid,
           price: productType === "paid" ? parseFloat(price) : 0
         })
@@ -144,7 +142,6 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
       setProductType("free");
       setSelectedVariant("");
       setPrice("");
-      setFilesLink("");
 
       // Refetch community products to show the new one
       refetchCommunityProducts();
@@ -168,8 +165,7 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
         .update({
           community_uuid: selectedCommunity,
           product_type: productType,
-          price: productType === "paid" ? parseFloat(price) : 0,
-          files_link: filesLink
+          price: productType === "paid" ? parseFloat(price) : 0
         })
         .eq('community_product_uuid', editingProduct.community_product_uuid);
 
@@ -255,11 +251,6 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
                         <p className="text-sm text-muted-foreground">
                           {cp.name} - {cp.product_type === "paid" ? `$${cp.price}` : "Free"}
                         </p>
-                        {cp.files_link && (
-                          <p className="text-xs text-muted-foreground">
-                            Files: {cp.files_link}
-                          </p>
-                        )}
                       </div>
                       <div className="flex gap-2 ml-4">
                         <Button
@@ -374,19 +365,6 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
                     </div>
                   )}
 
-                  <div className="space-y-2">
-                    <Label htmlFor="community-files-link">Files Link</Label>
-                    <Input
-                      id="community-files-link"
-                      value={filesLink}
-                      onChange={(e) => setFilesLink(e.target.value)}
-                      placeholder="https://example.com/files"
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Link to downloadable files for this community product
-                    </p>
-                  </div>
-
                   <div className="pt-4 border-t">
                     <Button 
                       onClick={handleConfirm} 
@@ -405,6 +383,17 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
           {isAlreadyLinked && !isCommunityProduct && (
             <div className="text-sm text-muted-foreground p-3 bg-muted/30 rounded-lg">
               This product is already linked to a community. Products can only be linked to one community at a time.
+            </div>
+          )}
+
+          {/* Debug information - remove in production */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="mt-4 p-2 bg-gray-100 rounded text-xs">
+              <p>Debug Info:</p>
+              <p>Product UUID: {productUuid}</p>
+              <p>Expert UUID: {expertUuid}</p>
+              <p>Community Products Count: {communityProducts.length}</p>
+              <p>Community Products: {JSON.stringify(communityProducts, null, 2)}</p>
             </div>
           )}
         </div>
@@ -469,19 +458,6 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
                 />
               </div>
             )}
-
-            <div className="space-y-2">
-              <Label htmlFor="edit-files-link">Files Link</Label>
-              <Input
-                id="edit-files-link"
-                value={filesLink}
-                onChange={(e) => setFilesLink(e.target.value)}
-                placeholder="https://example.com/files"
-              />
-              <p className="text-xs text-muted-foreground">
-                Link to downloadable files for this community product
-              </p>
-            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowEditDialog(false)}>

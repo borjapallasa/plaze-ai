@@ -1,84 +1,146 @@
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { VariantCard } from "./VariantCard";
-import { EditVariantDialog } from "../admin/template/EditVariantDialog";
 import { Variant, ProductVariantsEditorProps } from "./types/variants";
+import { VariantPicker } from "./VariantPicker";
 
-export function ProductVariants({
-  variants,
+export function ProductVariantsEditor({ 
+  variants: externalVariants,
   onVariantsChange,
-  onAddVariant,
+  className = ""
 }: ProductVariantsEditorProps) {
-  const [editingVariant, setEditingVariant] = useState<Variant | null>(null);
-  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [internalVariants, setInternalVariants] = React.useState<Variant[]>([
+    {
+      id: "1",
+      name: "Default Variant",
+      price: 0,
+      comparePrice: 0,
+      highlight: false,
+      tags: [],
+      label: "Package",
+      features: [],
+      hidden: false,
+      createdAt: new Date(),
+      filesLink: "",
+      additionalDetails: "",
+    },
+  ]);
 
-  const handleEditVariant = (variant: Variant) => {
-    setEditingVariant(variant);
-    setShowEditDialog(true);
+  const variants = externalVariants || internalVariants;
+  const setVariants = (newVariants: Variant[]) => {
+    if (onVariantsChange) {
+      onVariantsChange(newVariants);
+    } else {
+      setInternalVariants(newVariants);
+    }
   };
 
-  const handleSaveVariant = (variantId: string, updatedData: Partial<Variant>) => {
-    const updatedVariants = variants.map(variant => 
-      variant.id === variantId 
-        ? { 
-            ...variant, 
-            ...updatedData,
-            // Remove the 'hidden' property if it exists
-            hidden: undefined
-          } 
-        : variant
+  const addVariant = () => {
+    setVariants([
+      ...variants,
+      {
+        id: `temp_${Date.now()}`,
+        name: "New Variant",
+        price: 0,
+        comparePrice: 0,
+        highlight: false,
+        tags: [],
+        label: "Package",
+        features: [],
+        hidden: false,
+        createdAt: new Date(),
+        filesLink: "",
+        additionalDetails: "",
+      },
+    ]);
+  };
+
+  const removeVariant = (id: string) => {
+    if (variants.length <= 1) {
+      return;
+    }
+    
+    console.log('Removing variant with ID:', id);
+    console.log('Current variants before removal:', variants);
+    
+    // Simply filter out the variant with the matching ID
+    const updatedVariants = variants.filter(v => v.id !== id);
+    
+    console.log('Updated variants after removal:', updatedVariants);
+    
+    setVariants(updatedVariants);
+  };
+
+  const updateVariant = (id: string, field: keyof Variant, value: any) => {
+    if (field === 'highlight' && value === true) {
+      setVariants(
+        variants.map((v) =>
+          v.id === id ? { ...v, highlight: true } : { ...v, highlight: false }
+        )
+      );
+    } else if (field === 'price' || field === 'comparePrice') {
+      setVariants(
+        variants.map((v) =>
+          v.id === id ? { ...v, [field]: Number(value) || 0 } : v
+        )
+      );
+    } else {
+      setVariants(
+        variants.map((v) =>
+          v.id === id ? { ...v, [field]: value } : v
+        )
+      );
+    }
+  };
+
+  const addTag = (variantId: string, tag: string) => {
+    setVariants(
+      variants.map((v) =>
+        v.id === variantId
+          ? { ...v, tags: [...(v.tags || []), tag].slice(0, 2) }
+          : v
+      )
     );
-    onVariantsChange(updatedVariants);
-    setShowEditDialog(false);
-    setEditingVariant(null);
   };
 
-  const handleDeleteVariant = (variantId: string) => {
-    const updatedVariants = variants.filter(variant => variant.id !== variantId);
-    onVariantsChange(updatedVariants);
+  const removeTag = (variantId: string, tagToRemove: string) => {
+    setVariants(
+      variants.map((v) =>
+        v.id === variantId
+          ? { ...v, tags: (v.tags || []).filter((tag) => tag !== tagToRemove) }
+          : v
+      )
+    );
   };
 
   return (
-    <>
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-lg">Product Variants</CardTitle>
-          <Button onClick={onAddVariant} size="sm">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Variant
-          </Button>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {variants.map((variant) => (
-              <VariantCard
-                key={variant.id}
-                variant={variant}
-                onEdit={() => handleEditVariant(variant)}
-                onDelete={() => handleDeleteVariant(variant.id)}
-              />
-            ))}
-            {variants.length === 0 && (
-              <div className="text-center py-8 text-muted-foreground">
-                <p>No variants yet. Add your first variant to get started.</p>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+    <div className={`space-y-4 ${className}`}>
+      <div className="space-y-3">
+        {variants.map((variant) => (
+          <VariantCard
+            key={variant.id}
+            variant={variant}
+            showRemove={variants.length > 1}
+            onRemove={removeVariant}
+            onUpdate={updateVariant}
+            onAddTag={addTag}
+            onRemoveTag={removeTag}
+          />
+        ))}
+      </div>
 
-      <EditVariantDialog
-        variant={editingVariant}
-        isOpen={showEditDialog}
-        onClose={() => {
-          setShowEditDialog(false);
-          setEditingVariant(null);
-        }}
-        onSave={handleSaveVariant}
-      />
-    </>
+      <Button
+        onClick={addVariant}
+        variant="outline"
+        className="w-full"
+      >
+        <Plus className="h-4 w-4 mr-2" />
+        Add Variant
+      </Button>
+    </div>
   );
 }
+
+export const ProductVariants = VariantPicker;
