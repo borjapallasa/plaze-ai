@@ -9,10 +9,7 @@ export function useProductData() {
   const params = useParams();
   
   // Pass the URL parameters to the useProduct hook
-  const { product, isLoading: isLoadingProduct, error: productError } = useProduct({
-    productId: params.id,
-    productSlug: params.slug
-  });
+  const { data: product, isLoading: isLoadingProduct, error: productError } = useProduct(params.id);
 
   // Log the parameters and product data for debugging
   console.log("useProductData params:", params);
