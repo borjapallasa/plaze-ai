@@ -98,6 +98,7 @@ export default function Product() {
         onOpenChange={setReviewDialogOpen}
         productUuid={product.product_uuid}
         variantId={selectedVariant || ''}
+        expertUuid={product.expert_uuid} // Pass the expert_uuid from the product
       />
     </div>
   );

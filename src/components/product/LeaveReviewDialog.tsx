@@ -19,13 +19,15 @@ interface LeaveReviewDialogProps {
   onOpenChange: (open: boolean) => void;
   productUuid: string;
   variantId: string;
+  expertUuid?: string; // Add expert_uuid as optional prop
 }
 
 export function LeaveReviewDialog({ 
   open, 
   onOpenChange, 
   productUuid, 
-  variantId 
+  variantId,
+  expertUuid 
 }: LeaveReviewDialogProps) {
   const { user } = useAuth();
   const [rating, setRating] = useState(0);
@@ -60,7 +62,26 @@ export function LeaveReviewDialog({
       const lastName = user.user_metadata?.last_name || '';
       const buyerName = `${firstName} ${lastName}`.trim() || user.email;
 
-      // Insert review with all required fields
+      // If expertUuid is not provided, fetch it from the product
+      let productExpertUuid = expertUuid;
+      if (!productExpertUuid) {
+        console.log('Fetching expert_uuid for product:', productUuid);
+        const { data: productData, error: productError } = await supabase
+          .from('products')
+          .select('expert_uuid')
+          .eq('product_uuid', productUuid)
+          .single();
+
+        if (productError) {
+          console.error('Error fetching product expert_uuid:', productError);
+          toast.error("Failed to submit review. Product not found.");
+          return;
+        }
+
+        productExpertUuid = productData?.expert_uuid;
+      }
+
+      // Insert review with all required fields including expert_uuid
       const reviewData = {
         rating,
         title: title.trim() || null,
@@ -69,7 +90,8 @@ export function LeaveReviewDialog({
         buyer_name: buyerName,
         email: user.email,
         type: 'product' as const,
-        status: 'pending' as const // Set to 'pending' instead of 'published'
+        status: 'pending' as const,
+        expert_uuid: productExpertUuid // Include the expert_uuid from the product
       };
 
       console.log('Submitting review data:', reviewData);
