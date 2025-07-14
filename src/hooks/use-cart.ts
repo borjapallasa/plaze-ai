@@ -1,156 +1,154 @@
 
-import { useState, useCallback, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/components/ui/use-toast';
-
-export interface CartItem {
-  id: string;
-  product_uuid: string;
-  variant_uuid: string;
-  product_name: string;
-  variant_name: string;
-}
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 export interface CartData {
-  transaction_uuid: string;
-  items: CartItem[];
-  item_count: number;
+  items: any[];
+  totalItems: number;
+  transaction?: any;
 }
 
 export function useCart() {
-  const [cartData, setCartData] = useState<CartData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
-  const fetchCart = useCallback(async () => {
-    try {
+  const { data: cartData = { items: [], totalItems: 0 }, isLoading, refetch } = useQuery({
+    queryKey: ['cart'],
+    queryFn: async (): Promise<CartData> => {
       const { data: { user } } = await supabase.auth.getUser();
+      
       if (!user) {
-        setCartData(null);
-        return;
+        return { items: [], totalItems: 0 };
       }
 
-      const { data: transaction, error: transactionError } = await supabase
+      // Get the user's active cart (products_transactions)
+      const { data: transactions, error: transactionError } = await supabase
         .from('products_transactions')
         .select('*')
         .eq('user_uuid', user.id)
         .eq('status', 'pending')
-        .maybeSingle();
+        .order('created_at', { ascending: false })
+        .limit(1);
 
-      if (transactionError) throw transactionError;
-
-      if (!transaction) {
-        setCartData(null);
-        return;
+      if (transactionError) {
+        console.error('Error fetching cart:', transactionError);
+        throw transactionError;
       }
 
+      if (!transactions || transactions.length === 0) {
+        return { items: [], totalItems: 0 };
+      }
+
+      const transaction = transactions[0];
+
+      // Get cart items
       const { data: items, error: itemsError } = await supabase
         .from('products_transaction_items')
         .select(`
           *,
-          products!inner(name),
-          variants!inner(name)
+          products:product_uuid (
+            name,
+            thumbnail
+          ),
+          variants:variant_uuid (
+            name,
+            price,
+            compare_price
+          )
         `)
-        .eq('transaction_uuid', transaction.transaction_uuid);
+        .eq('product_transaction_uuid', transaction.product_transaction_uuid);
 
-      if (itemsError) throw itemsError;
-
-      const cartItems: CartItem[] = items?.map(item => ({
-        id: item.id.toString(),
-        product_uuid: item.product_uuid,
-        variant_uuid: item.variant_uuid,
-        product_name: item.products?.name || 'Unknown Product',
-        variant_name: item.variants?.name || 'Unknown Variant'
-      })) || [];
-
-      setCartData({
-        transaction_uuid: transaction.transaction_uuid,
-        items: cartItems,
-        item_count: cartItems.length
-      });
-
-    } catch (error) {
-      console.error('Error fetching cart:', error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch cart data",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  }, [toast]);
-
-  const addToCart = useCallback(async (productUuid: string, variantUuid: string) => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast({
-          title: "Authentication Required",
-          description: "Please sign in to add items to cart",
-          variant: "destructive"
-        });
-        return;
+      if (itemsError) {
+        console.error('Error fetching cart items:', itemsError);
+        throw itemsError;
       }
 
-      // Get or create pending transaction
-      let { data: transaction, error: transactionError } = await supabase
+      return {
+        items: items || [],
+        totalItems: transaction.item_count || 0,
+        transaction
+      };
+    },
+    enabled: true
+  });
+
+  const addToCartMutation = useMutation({
+    mutationFn: async ({ productUuid, variantUuid }: { productUuid: string, variantUuid: string }) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
+      // Get or create cart transaction
+      let { data: transactions, error: transactionError } = await supabase
         .from('products_transactions')
         .select('*')
         .eq('user_uuid', user.id)
         .eq('status', 'pending')
-        .maybeSingle();
+        .limit(1);
 
-      if (transactionError) throw transactionError;
+      if (transactionError) {
+        throw transactionError;
+      }
+
+      let transaction = transactions?.[0];
 
       if (!transaction) {
+        // Create new cart transaction
         const { data: newTransaction, error: createError } = await supabase
           .from('products_transactions')
           .insert({
             user_uuid: user.id,
-            item_count: 0
+            item_count: 0,
+            status: 'pending'
           })
           .select()
           .single();
 
-        if (createError) throw createError;
+        if (createError) {
+          throw createError;
+        }
+
         transaction = newTransaction;
       }
 
       // Add item to cart
-      const { error: insertError } = await supabase
+      const { error: itemError } = await supabase
         .from('products_transaction_items')
         .insert({
-          transaction_uuid: transaction.transaction_uuid,
+          product_transaction_uuid: transaction.product_transaction_uuid,
           product_uuid: productUuid,
           variant_uuid: variantUuid
         });
 
-      if (insertError) throw insertError;
+      if (itemError) {
+        throw itemError;
+      }
 
       // Update item count
-      const { data: items } = await supabase
-        .from('products_transaction_items')
-        .select('id')
-        .eq('transaction_uuid', transaction.transaction_uuid);
-
-      const itemCount = items?.length || 0;
-
-      await supabase
+      const { error: updateError } = await supabase
         .from('products_transactions')
-        .update({ item_count: itemCount })
-        .eq('transaction_uuid', transaction.transaction_uuid);
+        .update({
+          item_count: (transaction.item_count || 0) + 1
+        })
+        .eq('product_transaction_uuid', transaction.product_transaction_uuid);
 
+      if (updateError) {
+        throw updateError;
+      }
+
+      return transaction;
+    },
+    onSuccess: () => {
       toast({
         title: "Success",
-        description: "Item added to cart",
-        className: "bg-[#F2FCE2] border-green-100 text-green-800",
+        description: "Item added to cart successfully"
       });
-
-      // Refresh cart data
-      fetchCart();
-
-    } catch (error) {
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
+    },
+    onError: (error) => {
       console.error('Error adding to cart:', error);
       toast({
         title: "Error",
@@ -158,27 +156,57 @@ export function useCart() {
         variant: "destructive"
       });
     }
-  }, [toast, fetchCart]);
+  });
 
-  const removeFromCart = useCallback(async (itemId: string) => {
-    try {
-      const { error } = await supabase
+  const removeFromCartMutation = useMutation({
+    mutationFn: async (itemId: string) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
+      // Remove the item
+      const { error: removeError } = await supabase
         .from('products_transaction_items')
         .delete()
-        .eq('id', itemId);
+        .eq('product_transaction_item_uuid', itemId);
 
-      if (error) throw error;
+      if (removeError) {
+        throw removeError;
+      }
 
+      // Update item count in transaction
+      const { data: transaction, error: transactionError } = await supabase
+        .from('products_transactions')
+        .select('*')
+        .eq('user_uuid', user.id)
+        .eq('status', 'pending')
+        .single();
+
+      if (transactionError) {
+        throw transactionError;
+      }
+
+      const { error: updateError } = await supabase
+        .from('products_transactions')
+        .update({
+          item_count: Math.max(0, (transaction.item_count || 0) - 1)
+        })
+        .eq('product_transaction_uuid', transaction.product_transaction_uuid);
+
+      if (updateError) {
+        throw updateError;
+      }
+    },
+    onSuccess: () => {
       toast({
         title: "Success",
-        description: "Item removed from cart",
-        className: "bg-[#F2FCE2] border-green-100 text-green-800",
+        description: "Item removed from cart"
       });
-
-      // Refresh cart data
-      fetchCart();
-
-    } catch (error) {
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
+    },
+    onError: (error) => {
       console.error('Error removing from cart:', error);
       toast({
         title: "Error",
@@ -186,17 +214,21 @@ export function useCart() {
         variant: "destructive"
       });
     }
-  }, [toast, fetchCart]);
+  });
 
-  useEffect(() => {
-    fetchCart();
-  }, [fetchCart]);
+  const addToCart = async (productUuid: string, variantUuid: string) => {
+    await addToCartMutation.mutateAsync({ productUuid, variantUuid });
+  };
+
+  const removeFromCart = async (itemId: string) => {
+    await removeFromCartMutation.mutateAsync(itemId);
+  };
 
   return {
     cartData,
     isLoading,
     addToCart,
     removeFromCart,
-    refetch: fetchCart
+    refetch
   };
 }

@@ -23,7 +23,6 @@ const mapProductData = (data: any): ProductData => {
     affiliate_information: data.affiliate_information || null,
     affiliate_program: data.affiliate_program === null ? null : Boolean(data.affiliate_program),
     affiliation_amount: data.affiliation_amount || null,
-    change_reasons: data.change_reasons || null,
     changes_neeeded: data.changes_neeeded || null,
     demo: data.demo || '',
     fees_amount: data.fees_amount || null,
