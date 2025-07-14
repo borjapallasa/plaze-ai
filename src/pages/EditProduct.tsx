@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { X, Info } from "lucide-react";
@@ -179,11 +180,12 @@ export default function EditProduct() {
 
   useEffect(() => {
     if (variants.length > 0) {
+      console.log('Setting localVariants from database variants:', variants);
       setLocalVariants(variants.map(v => ({
         id: v.variant_uuid,
         name: v.name || "",
         price: v.price?.toString() || "0",
-        comparePrice: v.compare_price?.toString() || "",
+        comparePrice: v.compare_price?.toString() || "", // Keep compare_price separate and independent
         highlight: v.highlighted || false,
         tags: Array.isArray(v.tags) ? v.tags : [],
         filesLink: v.files_link || "",
@@ -214,7 +216,7 @@ export default function EditProduct() {
       id: `temp_${Date.now()}`,
       name: "New Variant",
       price: "0",
-      comparePrice: "",
+      comparePrice: "", // Keep comparePrice independent of price
       highlight: false,
       tags: [],
       filesLink: "",
@@ -255,8 +257,19 @@ export default function EditProduct() {
       });
     }
 
-    // Update local variants
-    setLocalVariants(updatedVariants);
+    // Update local variants - ensure price and comparePrice remain independent
+    const processedVariants = updatedVariants.map(variant => {
+      console.log('Processing variant:', variant);
+      return {
+        ...variant,
+        // Ensure price and comparePrice are handled separately
+        price: variant.price || "0",
+        comparePrice: variant.comparePrice || "", // Don't default to price value
+      };
+    });
+
+    console.log('Processed variants:', processedVariants);
+    setLocalVariants(processedVariants);
   };
 
   const handleSave = async () => {
@@ -264,6 +277,7 @@ export default function EditProduct() {
       setIsSaving(true);
       console.log('Saving product with ID:', id);
       console.log('Deleted variant IDs to remove from database:', deletedVariantIds);
+      console.log('Local variants to save:', localVariants);
 
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       if (userError) throw userError;
@@ -312,6 +326,18 @@ export default function EditProduct() {
           continue;
         }
 
+        const variantData = {
+          name: variant.name,
+          price: parseFloat(variant.price) || 0,
+          compare_price: parseFloat(variant.comparePrice) || null, // Save compare_price separately
+          highlighted: variant.highlight,
+          tags: Array.isArray(variant.tags) ? variant.tags : [],
+          files_link: variant.filesLink,
+          additional_details: variant.additionalDetails
+        };
+
+        console.log('Saving variant with data:', variantData);
+
         if (variant.id.toString().includes('temp_')) {
           // Insert new variant
           console.log('Inserting new variant:', variant);
@@ -320,13 +346,7 @@ export default function EditProduct() {
             .insert({
               user_uuid: user.id,
               product_uuid: id,
-              name: variant.name,
-              price: parseFloat(variant.price) || 0,
-              compare_price: parseFloat(variant.comparePrice) || 0,
-              highlighted: variant.highlight,
-              tags: Array.isArray(variant.tags) ? variant.tags : [],
-              files_link: variant.filesLink,
-              additional_details: variant.additionalDetails
+              ...variantData
             });
 
           if (insertError) {
@@ -338,15 +358,7 @@ export default function EditProduct() {
           console.log('Updating existing variant:', variant);
           const { error: updateError } = await supabase
             .from('variants')
-            .update({
-              name: variant.name,
-              price: parseFloat(variant.price) || 0,
-              compare_price: parseFloat(variant.comparePrice) || 0,
-              highlighted: variant.highlight,
-              tags: Array.isArray(variant.tags) ? variant.tags : [],
-              files_link: variant.filesLink,
-              additional_details: variant.additionalDetails
-            })
+            .update(variantData)
             .eq('variant_uuid', variant.id);
 
           if (updateError) {
