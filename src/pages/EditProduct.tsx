@@ -31,7 +31,7 @@ type ProductStatus = 'draft' | 'active' | 'inactive';
 
 const USE_CASES = [
   "E-commerce",
-  "Blog", 
+  "Blog",
   "Portfolio",
   "Dashboard",
   "Social Network",
@@ -53,7 +53,7 @@ const PLATFORMS = [
 
 const TEAM_ROLES = [
   "Frontend Developer",
-  "Backend Developer", 
+  "Backend Developer",
   "Full Stack Developer",
   "UI/UX Designer",
   "Product Manager",
@@ -183,7 +183,7 @@ export default function EditProduct() {
         id: v.variant_uuid,
         name: v.name || "",
         price: v.price?.toString() || "0",
-        comparePrice: v.compare_price?.toString() || "",
+        comparePrice: v.compare_price?.toString() || "0", // Fixed: properly map compare_price
         highlight: v.highlighted || false,
         tags: Array.isArray(v.tags) ? v.tags : [],
         filesLink: v.files_link || "",

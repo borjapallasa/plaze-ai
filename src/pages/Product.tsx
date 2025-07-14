@@ -58,11 +58,8 @@ export default function Product() {
     return <ProductNotFound />;
   }
 
-  // Convert variants to ensure they match the required type, making comparePrice optional
-  const convertedVariants = productVariantsToVariants(variants).map(variant => ({
-    ...variant,
-    comparePrice: variant.comparePrice || 0
-  }));
+  // Convert variants to ensure they match the required type
+  const convertedVariants = productVariantsToVariants(variants);
 
   return (
     <div ref={variantsRef}>

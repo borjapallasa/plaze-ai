@@ -1,20 +1,22 @@
 
 import { Variant } from "@/components/product/types/variants";
+import { ProductVariant } from "@/types/Product";
 
-export const productVariantsToVariants = (productVariants: any[]): Variant[] => {
+export function productVariantsToVariants(productVariants: ProductVariant[]): Variant[] {
   return productVariants.map((variant) => ({
     id: variant.id,
     name: variant.name,
     price: variant.price,
-    comparePrice: variant.comparePrice || 0, // Ensure comparePrice is always a number, defaulting to 0
-    label: variant.label || "Package",
-    highlight: variant.highlight || false,
-    tags: variant.tags || [],
-    features: variant.features || [],
-    hidden: variant.hidden || false,
-    createdAt: variant.createdAt || new Date(),
-    filesLink: variant.filesLink || "",
-    additionalDetails: variant.additionalDetails || "",
-    community_product_relationship_uuid: variant.community_product_relationship_uuid || undefined,
+    comparePrice: variant.comparePrice || 0, // Ensure comparePrice is always a number
+    label: variant.label,
+    highlight: variant.highlight,
+    tags: variant.tags,
+    features: variant.features,
+    hidden: variant.hidden,
+    createdAt: variant.createdAt,
+    filesLink: variant.filesLink,
+    paymentLink: variant.paymentLink,
+    additionalDetails: variant.additionalDetails,
+    community_product_relationship_uuid: variant.community_product_relationship_uuid
   }));
-};
+}

@@ -1599,7 +1599,6 @@ export type Database = {
       products_transaction_items: {
         Row: {
           created_at: string
-          expert_uuid: string | null
           id: number
           price: number | null
           product_transaction_item_uuid: string
@@ -1615,7 +1614,6 @@ export type Database = {
         }
         Insert: {
           created_at?: string
-          expert_uuid?: string | null
           id?: number
           price?: number | null
           product_transaction_item_uuid?: string
@@ -1631,7 +1629,6 @@ export type Database = {
         }
         Update: {
           created_at?: string
-          expert_uuid?: string | null
           id?: number
           price?: number | null
           product_transaction_item_uuid?: string
@@ -1646,13 +1643,6 @@ export type Database = {
           variant_uuid?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "products_transaction_items_expert_uuid_fkey"
-            columns: ["expert_uuid"]
-            isOneToOne: false
-            referencedRelation: "experts"
-            referencedColumns: ["expert_uuid"]
-          },
           {
             foreignKeyName: "products_transaction_items_product_transaction_uuid_fkey"
             columns: ["product_transaction_uuid"]

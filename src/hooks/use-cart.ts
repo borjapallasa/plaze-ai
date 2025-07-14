@@ -1,234 +1,286 @@
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
-
-export interface CartData {
-  items: any[];
-  totalItems: number;
-  transaction?: any;
-}
+import { useState, useEffect, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { v4 as uuidv4 } from 'uuid';
+import { useToast } from '@/components/ui/use-toast';
+import { CartTransaction } from '@/types/cart';
+import { fetchCartData, addItemToCart, removeItemFromCart, cleanupUnavailableCartItems } from '@/services/cart-service';
 
 export function useCart() {
+  const [cart, setCart] = useState<CartTransaction | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [guestSessionId, setGuestSessionId] = useState<string>('');
   const { toast } = useToast();
-  const queryClient = useQueryClient();
+  const [lastFetchTime, setLastFetchTime] = useState<number>(0);
 
-  const { data: cartData = { items: [], totalItems: 0 }, isLoading, refetch } = useQuery({
-    queryKey: ['cart'],
-    queryFn: async (): Promise<CartData> => {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        return { items: [], totalItems: 0 };
+  useEffect(() => {
+    const initializeCart = async () => {
+      setIsLoading(true);
+
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (!session) {
+        let sessionId = localStorage.getItem('guest_session_id');
+        if (!sessionId) {
+          sessionId = uuidv4();
+          localStorage.setItem('guest_session_id', sessionId);
+        }
+        setGuestSessionId(sessionId);
       }
 
-      // Get the user's active cart (products_transactions)
-      const { data: transactions, error: transactionError } = await supabase
-        .from('products_transactions')
-        .select('*')
-        .eq('user_uuid', user.id)
-        .eq('status', 'pending')
-        .order('created_at', { ascending: false })
-        .limit(1);
+      await fetchCart(session?.user?.id);
 
-      if (transactionError) {
-        console.error('Error fetching cart:', transactionError);
-        throw transactionError;
-      }
+      setIsLoading(false);
+    };
 
-      if (!transactions || transactions.length === 0) {
-        return { items: [], totalItems: 0 };
-      }
+    initializeCart();
+  }, [guestSessionId]);
 
-      const transaction = transactions[0];
+  const fetchCart = useCallback(async (userId?: string) => {
+    console.log('useCart: fetchCart called with', { userId });
 
-      // Get cart items
-      const { data: items, error: itemsError } = await supabase
-        .from('products_transaction_items')
-        .select(`
-          *,
-          products:product_uuid (
-            name,
-            thumbnail
-          ),
-          variants:variant_uuid (
-            name,
-            price,
-            compare_price
-          )
-        `)
-        .eq('product_transaction_uuid', transaction.product_transaction_uuid);
+    const now = Date.now();
+    if (now - lastFetchTime < 1000) { // Less than one second, just return null
+      console.log('Skipping fetch, too soon after last fetch');
+      return cart;
+    }
 
-      if (itemsError) {
-        console.error('Error fetching cart items:', itemsError);
-        throw itemsError;
-      }
+    try {
+      setIsLoading(true);
+      setLastFetchTime(now);
 
-      return {
-        items: items || [],
-        totalItems: transaction.item_count || 0,
-        transaction
-      };
-    },
-    enabled: true
-  });
+      const cartData = await fetchCartData(userId);
 
-  const addToCartMutation = useMutation({
-    mutationFn: async ({ productUuid, variantUuid }: { productUuid: string, variantUuid: string }) => {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        throw new Error('User not authenticated');
-      }
-
-      // Get or create cart transaction
-      let { data: transactions, error: transactionError } = await supabase
-        .from('products_transactions')
-        .select('*')
-        .eq('user_uuid', user.id)
-        .eq('status', 'pending')
-        .limit(1);
-
-      if (transactionError) {
-        throw transactionError;
-      }
-
-      let transaction = transactions?.[0];
-
-      if (!transaction) {
-        // Create new cart transaction
-        const { data: newTransaction, error: createError } = await supabase
-          .from('products_transactions')
-          .insert({
-            user_uuid: user.id,
-            item_count: 0,
-            status: 'pending'
-          })
-          .select()
-          .single();
-
-        if (createError) {
-          throw createError;
+      if (cartData && cartData.transaction_uuid) {
+        if (cartData) {
+          cartData.last_fetched = Date.now();
         }
 
-        transaction = newTransaction;
+        setCart(cartData);
+        setIsLoading(false);
+        return cartData;
       }
 
-      // Add item to cart
-      const { error: itemError } = await supabase
-        .from('products_transaction_items')
-        .insert({
-          product_transaction_uuid: transaction.product_transaction_uuid,
-          product_uuid: productUuid,
-          variant_uuid: variantUuid
+      setCart(cartData);
+      setIsLoading(false);
+      return cartData;
+    } catch (error) {
+      console.error('Failed to fetch cart:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load your cart. Please try again.",
+        variant: "destructive"
+      });
+      setIsLoading(false);
+      return null;
+    }
+  }, [cart, lastFetchTime, toast]);
+
+  const addToCart = async (
+    product: any,
+    selectedVariant: string,
+    additionalVariants: Array<{ 
+      variantId: string, 
+      productUuid: string | null, 
+      variantName?: string,
+      productName?: string,
+      price?: number,
+      isDefaultVariant?: boolean
+    }> = [],
+    isClassroomProduct: boolean = false
+  ) => {
+    console.log('useCart: addToCart called with', { product, selectedVariant, additionalVariants, isClassroomProduct });
+    setIsLoading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session?.user?.id;
+
+      const result = await addItemToCart(
+        cart,
+        product,
+        selectedVariant,
+        userId,
+        !userId ? guestSessionId : undefined,
+        undefined,
+        isClassroomProduct
+      );
+
+      if (!result.success) {
+        toast({
+          title: "Error",
+          description: result.message || "Failed to add item to cart",
+          variant: "destructive"
         });
-
-      if (itemError) {
-        throw itemError;
+        setIsLoading(false);
+        return null;
       }
 
-      // Update item count
-      const { error: updateError } = await supabase
-        .from('products_transactions')
-        .update({
-          item_count: (transaction.item_count || 0) + 1
-        })
-        .eq('product_transaction_uuid', transaction.product_transaction_uuid);
+      let updatedCart = result.updatedCart;
+      const cartTransactionId = updatedCart?.transaction_uuid;
 
-      if (updateError) {
-        throw updateError;
+      if (additionalVariants.length > 0 && updatedCart) {
+        for (const variantInfo of additionalVariants) {
+          console.log('Adding additional variant:', variantInfo);
+          
+          const additionalResult = await addItemToCart(
+            updatedCart,
+            { 
+              product_uuid: variantInfo.productUuid || null, 
+              name: variantInfo.productName || product.name 
+            },
+            variantInfo.variantId,
+            userId,
+            !userId ? guestSessionId : undefined,
+            cartTransactionId,
+            isClassroomProduct,
+            true,
+            variantInfo.price,
+            variantInfo.isDefaultVariant
+          );
+
+          if (additionalResult.success && additionalResult.updatedCart) {
+            updatedCart = additionalResult.updatedCart;
+          } else {
+            console.error('Failed to add additional variant:', additionalResult.message);
+          }
+        }
       }
 
-      return transaction;
-    },
-    onSuccess: () => {
+      if (updatedCart) {
+        if (updatedCart) {
+          updatedCart.last_fetched = Date.now();
+          if (updatedCart.items) {
+            updatedCart.items.forEach(item => {
+              item.last_updated = Date.now();
+            });
+          }
+        }
+        console.log('SET CART UPDATED CART', updatedCart)
+        setCart(updatedCart);
+      } else {
+        await fetchCart(userId);
+      }
+
       toast({
-        title: "Success",
-        description: "Item added to cart successfully"
+        title: "Added to cart",
+        description: `${product.name} has been added to your cart.`
       });
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
-    },
-    onError: (error) => {
-      console.error('Error adding to cart:', error);
-      toast({
-        title: "Error",
-        description: "Failed to add item to cart",
-        variant: "destructive"
-      });
-    }
-  });
 
-  const removeFromCartMutation = useMutation({
-    mutationFn: async (itemId: string) => {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        throw new Error('User not authenticated');
-      }
-
-      // Remove the item
-      const { error: removeError } = await supabase
-        .from('products_transaction_items')
-        .delete()
-        .eq('product_transaction_item_uuid', itemId);
-
-      if (removeError) {
-        throw removeError;
-      }
-
-      // Update item count in transaction
-      const { data: transaction, error: transactionError } = await supabase
-        .from('products_transactions')
-        .select('*')
-        .eq('user_uuid', user.id)
-        .eq('status', 'pending')
-        .single();
-
-      if (transactionError) {
-        throw transactionError;
-      }
-
-      const { error: updateError } = await supabase
-        .from('products_transactions')
-        .update({
-          item_count: Math.max(0, (transaction.item_count || 0) - 1)
-        })
-        .eq('product_transaction_uuid', transaction.product_transaction_uuid);
-
-      if (updateError) {
-        throw updateError;
-      }
-    },
-    onSuccess: () => {
-      toast({
-        title: "Success",
-        description: "Item removed from cart"
-      });
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
-    },
-    onError: (error) => {
-      console.error('Error removing from cart:', error);
+      setIsLoading(false);
+      return {
+        ...result,
+        updatedCart
+      };
+    } catch (error) {
+      console.error('Failed to add to cart:', error);
       toast({
         title: "Error",
-        description: "Failed to remove item from cart",
+        description: "Failed to add item to cart. Please try again.",
         variant: "destructive"
       });
+      setIsLoading(false);
+      return null;
     }
-  });
-
-  const addToCart = async (productUuid: string, variantUuid: string) => {
-    await addToCartMutation.mutateAsync({ productUuid, variantUuid });
   };
 
-  const removeFromCart = async (itemId: string) => {
-    await removeFromCartMutation.mutateAsync(itemId);
+  const removeFromCart = async (variantUuid: string) => {
+    console.log('useCart: removeFromCart called for variant', variantUuid);
+    console.log('THE CART', cart)
+    if (!cart || !cart.transaction_uuid) {
+      toast({
+        title: "Error",
+        description: "No active cart found",
+        variant: "destructive"
+      });
+      return false;
+    }
+
+    setIsLoading(true);
+    try {
+      const result = await removeItemFromCart(cart.transaction_uuid, variantUuid);
+
+      if (result.success) {
+        if (cart) {
+          const updatedItems = cart.items.filter(item => item.variant_uuid !== variantUuid);
+          const updatedItemCount = cart.item_count - 1;
+          const removedItem = cart.items.find(item => item.variant_uuid === variantUuid);
+          const updatedTotalAmount = removedItem
+            ? cart.total_amount - (removedItem.price * removedItem.quantity)
+            : cart.total_amount;
+
+          const optimisticCart = {
+            ...cart,
+            items: updatedItems,
+            item_count: updatedItemCount,
+            total_amount: updatedTotalAmount,
+            last_fetched: Date.now()
+          };
+
+          setCart(optimisticCart);
+        }
+
+        const { data: { session } } = await supabase.auth.getSession();
+        const userId = session?.user?.id;
+
+        await fetchCart(userId);
+
+        toast({
+          title: "Success",
+          description: "Item removed from cart"
+        });
+
+        setIsLoading(false);
+        return true;
+      } else {
+        toast({
+          title: "Error",
+          description: result.message || "Failed to remove item from cart",
+          variant: "destructive"
+        });
+        setIsLoading(false);
+        return false;
+      }
+    } catch (error) {
+      console.error('Failed to remove from cart:', error);
+      toast({
+        title: "Error",
+        description: "Failed to remove item from cart. Please try again.",
+        variant: "destructive"
+      });
+      setIsLoading(false);
+      return false;
+    }
+  };
+
+  const cleanupCart = async () => {
+    if (!cart || !cart.transaction_uuid) {
+      return false;
+    }
+
+    setIsLoading(true);
+    try {
+      const success = await cleanupUnavailableCartItems(cart.transaction_uuid);
+
+      if (success) {
+        setLastFetchTime(Date.now());
+        setIsLoading(false);
+        return true;
+      }
+      setIsLoading(false);
+      return false;
+    } catch (error) {
+      console.error('Failed to clean up cart:', error);
+      setIsLoading(false);
+      return false;
+    }
   };
 
   return {
-    cartData,
+    cart,
     isLoading,
     addToCart,
+    fetchCart,
     removeFromCart,
-    refetch
+    cleanupCart
   };
 }
