@@ -163,6 +163,7 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
     try {
       setIsLoading(true);
 
+      // Use the specific community_product_uuid to avoid subquery issues
       const { error } = await supabase
         .from('community_products')
         .update({
@@ -198,7 +199,7 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
     try {
       setIsLoading(true);
 
-      // Delete the community product
+      // Delete the community product using the specific UUID
       const { error } = await supabase
         .from('community_products')
         .delete()

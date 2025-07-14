@@ -2,54 +2,56 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import { uploadPendingImages } from "@/hooks/use-pending-images";
 import { Variant } from "@/components/product/types/variants";
+
+export type ProductStatus = "draft" | "active" | "inactive";
 
 export interface CreateProductData {
   name: string;
   description: string;
-  status: string;
+  techStack: string;
+  techStackPrice: string;
+  productIncludes: string;
+  difficultyLevel: string;
+  demo: string;
+  status: ProductStatus;
+  industries: string[];
+  useCases: string[];
+  platform: string[];
+  team: string[];
   variants: Variant[];
-  images?: File[];
-  thumbnailFile?: File;
-  demo?: string;
-  productIncludes?: string;
-  techStack?: string;
-  techStackPrice?: string;
-  difficultyLevel?: string;
-  industries?: string[];
-  useCases?: string[];
-  platform?: string[];
-  team?: string[];
+  pendingImages: Array<{ file: File; previewUrl: string }>;
 }
 
 export function useCreateProduct() {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: async (data: CreateProductData) => {
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       if (userError) throw userError;
       if (!user) throw new Error('No authenticated user found');
 
-      // Create the product
-      const { data: product, error: productError } = await supabase
+      // Create product
+      const { data: productData, error: productError } = await supabase
         .from('products')
         .insert({
           user_uuid: user.id,
           name: data.name,
           description: data.description,
-          status: data.status,
-          demo: data.demo,
-          product_includes: data.productIncludes,
           tech_stack: data.techStack,
           tech_stack_price: data.techStackPrice,
+          product_includes: data.productIncludes,
           difficulty_level: data.difficultyLevel,
+          demo: data.demo,
+          status: data.status,
           industries: data.industries,
           use_case: data.useCases,
           platform: data.platform,
-          team: data.team,
-          price_from: data.variants.length > 0 ? Math.min(...data.variants.map(v => v.price)) : 0,
-          price_to: data.variants.length > 0 ? Math.max(...data.variants.map(v => v.price)) : 0
+          team: data.team
         })
         .select()
         .single();
@@ -62,81 +64,40 @@ export function useCreateProduct() {
           .from('variants')
           .insert({
             user_uuid: user.id,
-            product_uuid: product.product_uuid,
+            product_uuid: productData.product_uuid,
             name: variant.name,
             price: variant.price,
-            compare_price: variant.comparePrice || null,
-            highlighted: variant.highlight || false,
-            tags: variant.tags || [],
-            files_link: variant.filesLink || '',
-            additional_details: variant.additionalDetails || ''
+            compare_price: variant.comparePrice,
+            highlighted: variant.highlight,
+            tags: variant.tags,
+            files_link: variant.filesLink,
+            additional_details: variant.additionalDetails
           });
 
         if (variantError) throw variantError;
       }
 
-      // Handle thumbnail upload
-      if (data.thumbnailFile) {
-        const fileName = `${product.product_uuid}/thumbnail-${Date.now()}.${data.thumbnailFile.name.split('.').pop()}`;
-        
-        const { error: uploadError } = await supabase.storage
-          .from('product_images')
-          .upload(fileName, data.thumbnailFile);
-
-        if (uploadError) {
-          console.error('Thumbnail upload error:', uploadError);
-        } else {
-          const { data: { publicUrl } } = supabase.storage
-            .from('product_images')
-            .getPublicUrl(fileName);
-
-          // Update product with thumbnail URL
-          const { error: updateError } = await supabase
-            .from('products')
-            .update({ thumbnail: publicUrl })
-            .eq('product_uuid', product.product_uuid);
-
-          if (updateError) console.error('Error updating product with thumbnail:', updateError);
-        }
+      // Upload images
+      if (data.pendingImages.length > 0) {
+        await uploadPendingImages(data.pendingImages, productData.product_uuid);
       }
 
-      // Handle additional image uploads
-      if (data.images && data.images.length > 0) {
-        for (const image of data.images) {
-          const fileName = `${product.product_uuid}/image-${Date.now()}-${image.name}`;
-          
-          const { error: uploadError } = await supabase.storage
-            .from('product_images')
-            .upload(fileName, image);
-
-          if (uploadError) {
-            console.error('Image upload error:', uploadError);
-          } else {
-            // Create product image record
-            const { error: imageRecordError } = await supabase
-              .from('product_images')
-              .insert({
-                product_uuid: product.product_uuid,
-                storage_path: fileName,
-                file_name: image.name,
-                content_type: image.type,
-                size: image.size
-              });
-
-            if (imageRecordError) console.error('Error creating image record:', imageRecordError);
-          }
-        }
-      }
-
-      return product;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-      toast.success('Product created successfully!');
+      toast.success("Product created successfully!");
+      navigate(`/product/${productData.product_uuid}/edit`);
+      
+      return productData;
     },
     onError: (error) => {
       console.error('Error creating product:', error);
-      toast.error('Failed to create product');
+      toast.error("Failed to create product");
     }
   });
+
+  return {
+    mutate: mutation.mutate,
+    isLoading: mutation.isPending,
+    error: mutation.error,
+    handleSave: mutation.mutate,
+    isSaving: mutation.isPending
+  };
 }

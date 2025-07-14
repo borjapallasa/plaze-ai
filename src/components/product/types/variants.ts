@@ -11,6 +11,8 @@ export interface Variant {
   additionalDetails?: string;
   description?: string;
   features?: string[];
+  hidden?: boolean;
+  createdAt?: Date;
 }
 
 export interface ProductVariant extends Variant {
