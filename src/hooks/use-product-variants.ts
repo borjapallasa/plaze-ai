@@ -47,7 +47,7 @@ export function useProductVariants(productUuid?: string) {
           id: variant.variant_uuid,
           name: variant.name || "Lorem Ipsum Package",
           price: variant.price || 99.99,
-          comparePrice: variant.compare_price || 0, // Ensure comparePrice is always a number
+          comparePrice: variant.compare_price || 0, // Fix: properly map compare_price from database
           label: "Package",
           highlight: variant.highlighted || index === 1,
           features: parsedTags.length > 0 

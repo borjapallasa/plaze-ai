@@ -10,7 +10,6 @@ const mapProductData = (data: any): ProductData => {
   if (!data) return null;
 
   return {
-    id: data.id,
     product_uuid: data.product_uuid,
     name: data.name || '',
     description: data.description || '',
@@ -20,7 +19,6 @@ const mapProductData = (data: any): ProductData => {
     price_from: data.price_from || 0,
     created_at: data.created_at || '',
     status: data.status || '',
-    free_or_paid: data.free_or_paid || null,
     accept_terms: data.accept_terms === null ? null : Boolean(data.accept_terms),
     affiliate_information: data.affiliate_information || null,
     affiliate_program: data.affiliate_program === null ? null : Boolean(data.affiliate_program),
