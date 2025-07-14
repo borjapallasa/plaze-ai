@@ -1,201 +1,130 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
-import { Variant } from "@/components/product/types/variants";
-import { PendingImage, usePendingImages } from "@/hooks/use-pending-images";
+import { toast } from "sonner";
 
-export type ProductStatus = 'draft' | 'active' | 'inactive';
-
-export interface ProductData {
+export interface CreateProductData {
   name: string;
-  description: string;
-  techStack: string;
-  techStackPrice: string;
-  productIncludes: string;
-  difficultyLevel: string;
-  demo: string;
-  status: ProductStatus;
-  industries: string[];
-  useCases: string[];
-  platform: string[];
-  team: string[];
-  variants: Variant[];
-  pendingImages?: PendingImage[]
-}
-
-export interface ProductInitialData {
-  name?: string;
   description?: string;
-  price?: string;
+  price?: number;
+  comparePrice?: number;
+  additionalDetails?: string;
+  tags?: string[];
   filesLink?: string;
+  demoUrl?: string;
+  thumbnail?: string;
+  type: "product" | "community" | "service";
+  // Community-specific fields
+  communityDescription?: string;
+  communityName?: string;
+  communityType?: "free" | "paid";
+  communityPrice?: number;
+  // Service-specific fields
+  serviceCategory?: string;
+  serviceFeatures?: string[];
+  serviceDeliveryTime?: string;
+  serviceRevisions?: number;
 }
 
-export function useCreateProduct(initialData?: ProductInitialData) {
+export function useCreateProduct() {
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const [isSaving, setIsSaving] = useState(false);
-  const { uploadPendingImages } = usePendingImages();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const { data: currentUser } = useQuery({
-    queryKey: ['currentUser'],
-    queryFn: async () => {
-      const { data: { user }, error } = await supabase.auth.getUser();
-      if (error) throw error;
-      return user;
-    }
-  });
-
-  const { data: expertData } = useQuery({
-    queryKey: ['expertUuid', currentUser?.id],
-    queryFn: async () => {
-      if (!currentUser?.id) throw new Error('No user logged in');
-
-      const { data, error } = await supabase
-        .from('experts')
-        .select('expert_uuid')
-        .eq('user_uuid', currentUser.id)
-        .single();
-      console.log(data, error, currentUser)
-
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!currentUser?.id
-  });
-
-  const handleSave = async (productData: ProductData) => {
-    if (!currentUser?.id) {
-      toast({
-        title: "Error",
-        description: "You must be logged in to create a product",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!expertData?.expert_uuid) {
-      toast({
-        title: "Error",
-        description: "Expert profile not found",
-        variant: "destructive",
-      });
-      return;
-    }
-
+  const createProduct = async (productData: CreateProductData) => {
     try {
-      setIsSaving(true);
-      console.log('Starting product creation...');
+      setIsLoading(true);
 
-      // Step 1: Create the product first and wait for the response
+      // Get the current user
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+      if (!user) throw new Error('No authenticated user found');
+
+      // Create the product record
       const { data: product, error: productError } = await supabase
         .from('products')
         .insert({
-          status: productData.status,
           name: productData.name,
-          description: productData.description,
-          tech_stack: productData.techStack,
-          tech_stack_price: productData.techStackPrice,
-          product_includes: productData.productIncludes,
-          difficulty_level: productData.difficultyLevel,
-          demo: productData.demo,
-          industries: productData.industries,
-          use_case: productData.useCases,
-          platform: productData.platform,
-          team: productData.team,
-          user_uuid: currentUser.id,
-          expert_uuid: expertData.expert_uuid,
+          description: productData.description || "",
+          user_uuid: user.id,
+          status: 'draft',
+          thumbnail: productData.thumbnail || null,
+          demo: productData.demoUrl || null,
+          price_from: productData.price || 0,
         })
         .select()
         .single();
 
-      if (productError) {
-        console.error('Product creation error:', productError);
-        throw productError;
-      }
+      if (productError) throw productError;
 
-      console.log('Product created successfully:', product);
-
-      // Step 2: Double-check that we have a valid product UUID
-      if (!product?.product_uuid) {
-        throw new Error('Product created but no UUID was returned');
-      }
-
-      // Step 3: Create variants if any
-      if (productData.variants.length > 0) {
-        console.log('Creating variants...');
-        const variantsToInsert = productData.variants.map(variant => ({
-          name: variant.name,
-          price: Number(variant.price) || 0,
-          compare_price: Number(variant.comparePrice) || 0,
-          highlighted: variant.highlight,
-          tags: variant.tags,
+      // Create the variant record
+      const { error: variantError } = await supabase
+        .from('variants')
+        .insert({
+          user_uuid: user.id,
           product_uuid: product.product_uuid,
-          user_uuid: currentUser.id,
-          created_at: variant.createdAt ? variant.createdAt.toISOString() : new Date().toISOString(),
-          files_link: variant.filesLink,
-          additional_details: variant.additionalDetails || null,
-        }));
+          name: productData.name,
+          price: productData.price || 0,
+          compare_price: productData.comparePrice || 0,
+          files_link: productData.filesLink || null,
+          additional_details: productData.additionalDetails || null,
+          tags: productData.tags || [],
+          highlighted: false,
+        });
 
-        const { error: variantsError } = await supabase
-          .from('variants')
-          .insert(variantsToInsert);
+      if (variantError) throw variantError;
 
-        if (variantsError) {
-          console.error('Variants creation error:', variantsError);
-          throw variantsError;
-        }
-        console.log('Variants created successfully');
+      // Handle different product types
+      if (productData.type === "community") {
+        // Create community record
+        const { error: communityError } = await supabase
+          .from('communities')
+          .insert({
+            name: productData.communityName || productData.name,
+            description: productData.communityDescription || productData.description,
+            user_uuid: user.id,
+            expert_uuid: user.id,
+            type: productData.communityType || 'free',
+            price: productData.communityPrice || 0,
+            status: 'draft',
+          });
+
+        if (communityError) throw communityError;
+      } else if (productData.type === "service") {
+        // Create service record
+        const { error: serviceError } = await supabase
+          .from('services')
+          .insert({
+            name: productData.name,
+            description: productData.description || "",
+            user_uuid: user.id,
+            expert_uuid: user.id,
+            category: productData.serviceCategory || 'other',
+            features: productData.serviceFeatures || [],
+            delivery_time: productData.serviceDeliveryTime || '1 week',
+            revisions: productData.serviceRevisions || 1,
+            price: productData.price || 0,
+            status: 'draft',
+          });
+
+        if (serviceError) throw serviceError;
       }
 
-      // Step 4: Upload images and wait for completion
-      console.log('Starting image upload...');
-      await uploadPendingImages(product.product_uuid, productData?.pendingImages);
-      console.log('Images uploaded successfully');
-
-      // Step 5: Verify the product and its images
-      console.log('Verifying product creation...');
-      const { data: verifyProduct, error: verifyError } = await supabase
-        .from('products')
-        .select('*, product_images(*)')
-        .eq('product_uuid', product.product_uuid)
-        .single();
-
-      if (verifyError) {
-        console.error('Product verification error:', verifyError);
-        throw verifyError;
-      }
-
-      console.log('Product verified with images:', verifyProduct);
-
-      toast({
-        title: "Success",
-        description: "Product created successfully",
-        className: "bg-[#F2FCE2] border-green-100 text-green-800",
-      });
-
-      // Navigate to the edit page instead of the view page
-      navigate(`/product/${product.product_uuid}/edit`);
-
+      toast.success("Product created successfully!");
+      navigate(`/products/${product.product_uuid}/edit`);
+      
+      return product;
     } catch (error) {
-      console.error('Error in handleSave:', error);
-      toast({
-        title: "Error",
-        description: "Failed to create product",
-        variant: "destructive",
-      });
+      console.error('Error creating product:', error);
+      toast.error("Failed to create product");
+      throw error;
     } finally {
-      setIsSaving(false);
+      setIsLoading(false);
     }
   };
 
   return {
-    handleSave,
-    isSaving,
-    currentUser,
-    expertData,
-    initialData
+    createProduct,
+    isLoading,
   };
 }

@@ -4,15 +4,29 @@ export interface Variant {
   name: string;
   price: number;
   comparePrice: number;
+  highlight: boolean;
+  tags: string[];
+  filesLink: string;
+  additionalDetails: string;
   label?: string;
-  highlight?: boolean;
-  tags?: string[];
-  filesLink?: string;
-  additionalDetails?: string;
-  description?: string;
-  features?: string[];
 }
 
-export interface ProductVariant extends Variant {
-  // Add any additional properties specific to product variants
+export interface ProductVariantsEditorProps {
+  variants: Variant[];
+  onVariantsChange: (variants: Variant[]) => void;
+  onAddVariant: () => void;
+}
+
+export interface ProductLayoutProps {
+  product: any;
+  variants: Variant[];
+  relatedProductsWithVariants: any[];
+  selectedVariant: string | null;
+  averageRating: number;
+  onVariantChange: (variantId: string) => void;
+  onAddToCart: () => void;
+  onAdditionalVariantToggle: (variantId: string) => void;
+  reviews: any[];
+  isLoading: boolean;
+  onLeaveReview: (variantId: string) => void;
 }
