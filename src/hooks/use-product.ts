@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { ProductData } from '@/types/Product';
@@ -10,7 +9,6 @@ const mapProductData = (data: any): ProductData => {
   if (!data) return null;
 
   return {
-    id: data.id,
     product_uuid: data.product_uuid,
     name: data.name || '',
     description: data.description || '',
