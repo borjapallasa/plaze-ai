@@ -163,6 +163,7 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
     try {
       setIsLoading(true);
 
+      // Use the specific community_product_uuid to update only this record
       const { error } = await supabase
         .from('community_products')
         .update({
@@ -198,7 +199,7 @@ export function CommunityProductSection({ expertUuid, productUuid }: CommunityPr
     try {
       setIsLoading(true);
 
-      // Delete the community product
+      // Use the specific community_product_uuid to delete only this record
       const { error } = await supabase
         .from('community_products')
         .delete()

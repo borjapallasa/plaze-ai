@@ -4,10 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Variant } from "@/components/product/types/variants";
 
+export type ProductStatus = "draft" | "active" | "inactive" | "review";
+
 export interface CreateProductData {
   name: string;
   description: string;
-  status: string;
+  status: ProductStatus;
   variants: Variant[];
   images?: File[];
   thumbnailFile?: File;
