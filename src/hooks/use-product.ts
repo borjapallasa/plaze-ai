@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { ProductData } from '@/types/Product';
@@ -18,7 +19,6 @@ const mapProductData = (data: any): ProductData => {
     price_from: data.price_from || 0,
     created_at: data.created_at || '',
     status: data.status || '',
-    free_or_paid: data.free_or_paid || null,
     accept_terms: data.accept_terms === null ? null : Boolean(data.accept_terms),
     affiliate_information: data.affiliate_information || null,
     affiliate_program: data.affiliate_program === null ? null : Boolean(data.affiliate_program),
