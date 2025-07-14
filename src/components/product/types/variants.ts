@@ -11,6 +11,7 @@ export interface Variant {
   additionalDetails?: string;
   description?: string;
   features?: string[];
+  community_product_relationship_uuid?: string;
 }
 
 export interface ProductVariant extends Variant {
