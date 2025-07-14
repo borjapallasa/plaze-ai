@@ -61,7 +61,7 @@ export function CommunityProductDialog({
     setPrice(product.price_from ? product.price_from.toString() : "");
     setProductType(product.price_from && product.price_from > 0 ? "paid" : "free");
     setFilesLink("");
-    setSelectedVariant(null); // Reset variant selection when product changes
+    setSelectedVariant(null);
   };
 
   const handleVariantSelect = (variant: ProductVariant) => {
@@ -95,53 +95,52 @@ export function CommunityProductDialog({
 
     try {
       setIsSaving(true);
-
-      // Step 1: Create the community product
-      const { data, error } = await supabase
-        .from("community_products")
-        .insert({
-          name: showTemplateSelector ? selectedProduct?.name : name,
-          community_uuid: communityUuid,
-          product_type: productType,
-          price: productType === "paid" ? parseFloat(price) : null,
-          payment_link: null,
-          files_link: showTemplateSelector ? (selectedVariant?.files_link || null) : (filesLink || null),
-          expert_uuid: expertUuid,
-          product_uuid: selectedProduct?.product_uuid || null,
-        })
-        .select()
-        .single();
-
-      if (error) {
-        console.error("Error creating community product:", error);
-        toast.error("Failed to create product");
-        throw error;
-      }
+      let productUuid = selectedProduct?.product_uuid;
 
       if (showTemplateSelector && selectedProduct) {
-        // Step 2: If creating from template, update the original product with community_product_uuid
+        // Step 1: Create the community product with existing product UUID
+        const { data: communityProductData, error } = await supabase
+          .from("community_products")
+          .insert({
+            name: selectedProduct.name,
+            community_uuid: communityUuid,
+            product_type: productType,
+            price: productType === "paid" ? parseFloat(price) : null,
+            payment_link: null,
+            files_link: selectedVariant?.files_link || null,
+            expert_uuid: expertUuid,
+            product_uuid: selectedProduct.product_uuid,
+          })
+          .select()
+          .single();
+
+        if (error) {
+          console.error("Error creating community product:", error);
+          toast.error("Failed to create product");
+          throw error;
+        }
+
+        // Step 2: Update the original product with community_product_uuid
         const { error: updateError } = await supabase
           .from("products")
           .update({
-            community_product_uuid: data.community_product_uuid
+            community_product_uuid: communityProductData.community_product_uuid
           })
           .eq("product_uuid", selectedProduct.product_uuid);
 
         if (updateError) {
           console.error("Error updating original product:", updateError);
-          // Don't throw here as the community product was already created successfully
           toast.error("Product created but failed to link to original template");
         }
       } else {
-        // Step 2: If creating from scratch, create a new product record
+        // Step 1: Create a new product record first
         const { data: productData, error: productError } = await supabase
           .from("products")
           .insert({
             name: name,
             user_uuid: user.id,
             expert_uuid: expertUuid,
-            status: 'draft',
-            community_product_uuid: data.community_product_uuid
+            status: 'draft'
           })
           .select()
           .single();
@@ -152,57 +151,78 @@ export function CommunityProductDialog({
           throw productError;
         }
 
-        // Step 2.5: Update the community product with the new product_uuid
-        const { error: updateCommunityProductError } = await supabase
-          .from("community_products")
-          .update({
-            product_uuid: productData.product_uuid
-          })
-          .eq("community_product_uuid", data.community_product_uuid);
+        productUuid = productData.product_uuid;
 
-        if (updateCommunityProductError) {
-          console.error("Error updating community product with product_uuid:", updateCommunityProductError);
-          toast.error("Product created but failed to link community product");
-          throw updateCommunityProductError;
+        // Step 2: Create the community product with the new product UUID
+        const { data: communityProductData, error: communityProductError } = await supabase
+          .from("community_products")
+          .insert({
+            name: name,
+            community_uuid: communityUuid,
+            product_type: productType,
+            price: productType === "paid" ? parseFloat(price) : null,
+            payment_link: null,
+            files_link: filesLink || null,
+            expert_uuid: expertUuid,
+            product_uuid: productUuid,
+          })
+          .select()
+          .single();
+
+        if (communityProductError) {
+          console.error("Error creating community product:", communityProductError);
+          toast.error("Failed to create community product");
+          throw communityProductError;
         }
 
-        // Step 3: Create a variant for the new product
+        // Step 3: Update the product with the community_product_uuid
+        const { error: updateProductError } = await supabase
+          .from("products")
+          .update({
+            community_product_uuid: communityProductData.community_product_uuid
+          })
+          .eq("product_uuid", productUuid);
+
+        if (updateProductError) {
+          console.error("Error updating product with community_product_uuid:", updateProductError);
+          toast.error("Product created but failed to link community product");
+        }
+
+        // Step 4: Create a variant for the new product
         const { error: variantError } = await supabase
           .from("variants")
           .insert({
             user_uuid: user.id,
             name: name,
             price: productType === "paid" ? parseFloat(price) : 0,
-            product_uuid: productData.product_uuid,
+            product_uuid: productUuid,
             files_link: filesLink || null
           });
 
         if (variantError) {
           console.error("Error creating variant:", variantError);
           toast.error("Product created but failed to create variant");
-          // Don't throw here as the main records were created
         }
       }
 
-      // Step 4: Create the product relationship
+      // Step 5: Create the product relationship
       const { error: relationshipError } = await supabase
         .from("community_product_relationships")
         .insert({
           community_uuid: communityUuid,
-          community_product_uuid: data.community_product_uuid,
+          community_product_uuid: productUuid, // This should be the community_product_uuid, not product_uuid
           user_uuid: user.id,
         });
 
       if (relationshipError) {
         console.error("Error creating product relationship:", relationshipError);
         toast.error("Product created but not linked to community");
-        throw relationshipError;
       }
 
       // Invalidate related queries to refresh the UI
       queryClient.invalidateQueries({ queryKey: ['communityProducts', communityUuid] });
       queryClient.invalidateQueries({ queryKey: ['communityProductRelationships'] });
-      queryClient.invalidateQueries({ queryKey: ['userProducts', user.id] }); // Refresh user products list
+      queryClient.invalidateQueries({ queryKey: ['userProducts', user.id] });
       
       toast.success("Product added successfully");
       onOpenChange(false);

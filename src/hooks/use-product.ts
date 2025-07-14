@@ -1,146 +1,73 @@
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
-import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { ProductData } from '@/types/Product';
-import { useToast } from '@/components/ui/use-toast';
-import { useParams } from 'react-router-dom';
+export interface ProductData {
+  id: number;
+  product_uuid: string;
+  user_uuid: string;
+  name: string;
+  description: string;
+  price_from: number;
+  price_to: number;
+  thumbnail: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+  demo_url: string;
+  additional_details: string;
+  expert_uuid: string;
+  community_product_uuid: string;
+  product_includes: string;
+  public_link: string;
+  related_products: any[];
+  review_count: number;
+  sales_amount: number;
+  sales_count: number;
+  slug: string;
+  video_url: string;
+}
 
-// Maps the raw data from Supabase to our ProductData type
-const mapProductData = (data: any): ProductData => {
-  if (!data) return null;
+const mapProductData = (data: any): ProductData => ({
+  id: data.id,
+  product_uuid: data.product_uuid,
+  user_uuid: data.user_uuid,
+  name: data.name || '',
+  description: data.description || '',
+  price_from: data.price_from || 0,
+  price_to: data.price_to || 0,
+  thumbnail: data.thumbnail || '',
+  status: data.status || 'draft',
+  created_at: data.created_at || '',
+  updated_at: data.updated_at || '',
+  demo_url: data.demo_url || '',
+  additional_details: data.additional_details || '',
+  expert_uuid: data.expert_uuid || '',
+  community_product_uuid: data.community_product_uuid || '',
+  product_includes: data.product_includes || '',
+  public_link: data.public_link || null,
+  related_products: data.related_products || [],
+  review_count: data.review_count || null,
+  sales_amount: data.sales_amount || null,
+  sales_count: data.sales_count || null,
+  slug: data.slug || '',
+  video_url: data.video_url || '',
+});
 
-  return {
-    product_uuid: data.product_uuid,
-    name: data.name || '',
-    description: data.description || '',
-    thumbnail: data.thumbnail || '',
-    slug: data.slug || '',
-    variant_count: data.variant_count || 0,
-    price_from: data.price_from || 0,
-    created_at: data.created_at || '',
-    status: data.status || '',
-    accept_terms: data.accept_terms === null ? null : Boolean(data.accept_terms),
-    affiliate_information: data.affiliate_information || null,
-    affiliate_program: data.affiliate_program === null ? null : Boolean(data.affiliate_program),
-    affiliation_amount: data.affiliation_amount || null,
-    demo: data.demo || '',
-    fees_amount: data.fees_amount || null,
-    product_includes: data.product_includes || '',
-    public_link: data.public_link || null,
-    related_products: data.related_products || [],
-    review_count: data.review_count || null,
-    sales_amount: data.sales_amount || null,
-    sales_count: data.sales_count || null,
-    short_description: data.short_description || null,
-    tech_stack: data.tech_stack || '',
-    tech_stack_price: data.tech_stack_price || '',
-    difficulty_level: data.difficulty_level || null,
-    use_case: data.use_case || null,
-    utm_campaign: data.utm_campaign || null,
-    utm_content: data.utm_content || null,
-    utm_id: data.utm_id || null,
-    utm_medium: data.utm_medium || null,
-    utm_source: data.utm_source || null,
-    utm_term: data.utm_term || null,
-    platform: data.platform || null,
-    team: data.team || null,
-    industries: data.industries || null,
-    expert_uuid: data.expert_uuid || null,
-    user_uuid: data.user_uuid || null,
-    product_files: data.product_files || null,
-    category: data.category || null,
-  };
+export const useProduct = (productId: string | undefined) => {
+  return useQuery({
+    queryKey: ['product', productId],
+    queryFn: async () => {
+      if (!productId) return null;
+      
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('product_uuid', productId)
+        .single();
+
+      if (error) throw error;
+      return mapProductData(data);
+    },
+    enabled: !!productId,
+  });
 };
-
-interface UseProductDataProps {
-  productId?: string;
-  productSlug?: string;
-}
-
-export function useProduct({ productId, productSlug }: UseProductDataProps = {}) {
-  const params = useParams();
-  const [product, setProduct] = useState<ProductData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-  const { toast } = useToast();
-  
-  // Use URL params if direct props aren't provided
-  const effectiveProductId = productId || params.id;
-  const effectiveProductSlug = productSlug || params.slug;
-
-  useEffect(() => {
-    const fetchProductData = async () => {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        console.log("Fetching product with ID:", effectiveProductId, "or slug:", effectiveProductSlug);
-        
-        let productQuery = supabase
-          .from('products')
-          .select('*');
-
-        // For admin pages, don't filter by status to show all products including drafts
-        const isAdminPage = window.location.pathname.includes('/admin/');
-        if (!isAdminPage) {
-          productQuery = productQuery.eq('status', 'active');
-        }
-
-        if (effectiveProductId) {
-          productQuery = productQuery.eq('product_uuid', effectiveProductId);
-        } else if (effectiveProductSlug) {
-          productQuery = productQuery.eq('slug', effectiveProductSlug);
-        } else {
-          throw new Error("Either productId or productSlug must be provided.");
-        }
-
-        const { data: productData, error: productError } = await productQuery.maybeSingle();
-
-        if (productError) {
-          console.error("Error fetching product:", productError);
-          setError(productError);
-          toast({
-            title: "Error",
-            description: "Failed to load product data.",
-            variant: "destructive"
-          });
-          return;
-        }
-
-        if (!productData) {
-          console.log("No product found");
-          setError(new Error("Product not found"));
-          return;
-        }
-
-        console.log("Product data retrieved:", productData);
-        const mappedProduct = mapProductData(productData);
-        setProduct(mappedProduct);
-
-      } catch (err: any) {
-        console.error("Error in useProduct hook:", err);
-        setError(err);
-        toast({
-          title: "Error",
-          description: "An unexpected error occurred.",
-          variant: "destructive"
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (effectiveProductId || effectiveProductSlug) {
-      fetchProductData();
-    } else {
-      setIsLoading(false);
-      setError(new Error("No product ID or slug provided"));
-    }
-  }, [effectiveProductId, effectiveProductSlug, toast]);
-
-  return {
-    product,
-    isLoading,
-    error
-  };
-}
