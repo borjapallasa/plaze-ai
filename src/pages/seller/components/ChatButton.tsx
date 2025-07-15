@@ -26,7 +26,7 @@ export function ChatButton({ expertUuid, expertName }: ChatButtonProps) {
         .from('conversations')
         .select('conversation_uuid')
         .or(`and(user_starter_uuid.eq.${user.id},user_recipient_uuid.eq.${expertUuid}),and(user_starter_uuid.eq.${expertUuid},user_recipient_uuid.eq.${user.id})`)
-        .single();
+        .maybeSingle();
 
       if (existingConversation) {
         // Open existing conversation
