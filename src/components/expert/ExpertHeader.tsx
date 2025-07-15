@@ -2,9 +2,10 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Share2, Save, MapPin, Calendar } from "lucide-react";
+import { Share2, Save, MapPin, Calendar, MessageCircle } from "lucide-react";
 import type { ExpertComponentProps } from "./types";
 import { lazy, Suspense } from "react";
+import { ChatDialog } from "@/components/chat/ChatDialog";
 
 // Lazy load secondary content
 const SecondaryContent = lazy(() => import("./header/SecondaryContent"));
@@ -23,9 +24,14 @@ export const ExpertHeader = ({ expert }: ExpertComponentProps) => {
             <div className="h-16 w-16 bg-muted rounded-full" /> {/* Avatar placeholder */}
             <div className="flex-1">
               <div className="flex justify-between items-start">
-                <h1 className="text-2xl font-bold" style={{ contentVisibility: 'auto' }}>
-                  {expert.title || "Expert in UX Design"}
-                </h1>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-2xl font-bold" style={{ contentVisibility: 'auto' }}>
+                    {expert.title || "Expert in UX Design"}
+                  </h1>
+                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <MessageCircle className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -44,12 +50,15 @@ export const ExpertHeader = ({ expert }: ExpertComponentProps) => {
             </div>
             <div className="flex-1">
               <div className="flex justify-between items-start">
-                <h1 
-                  className="text-3xl font-bold"
-                  style={{ contentVisibility: 'auto' }}
-                >
-                  {expert.title || "Expert in UX Design"}
-                </h1>
+                <div className="flex items-center gap-3">
+                  <h1 
+                    className="text-3xl font-bold"
+                    style={{ contentVisibility: 'auto' }}
+                  >
+                    {expert.title || "Expert in UX Design"}
+                  </h1>
+                  <ChatDialog />
+                </div>
                 <div className="flex gap-1.5">
                   <Button variant="ghost" size="icon" className="h-6 w-6">
                     <Share2 className="h-3.5 w-3.5" />
