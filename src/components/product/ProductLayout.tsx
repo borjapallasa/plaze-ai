@@ -40,6 +40,19 @@ export function ProductLayout({
     }
   };
 
+  const handleVariantChange = (variantId: string) => {
+    const variant = variants.find(v => v.id === variantId);
+    if (variant && onVariantChange) {
+      onVariantChange(variant);
+    }
+  };
+
+  const handleAddToCart = () => {
+    if (selectedVariant && onAddToCart) {
+      onAddToCart(selectedVariant);
+    }
+  };
+
   return (
     <div className="min-h-screen">
       <MainHeader />
@@ -52,8 +65,8 @@ export function ProductLayout({
             relatedProductsWithVariants={relatedProductsWithVariants}
             selectedVariant={selectedVariant}
             averageRating={averageRating}
-            onVariantChange={onVariantChange}
-            onAddToCart={onAddToCart}
+            onVariantChange={handleVariantChange}
+            onAddToCart={handleAddToCart}
             onAdditionalVariantToggle={handleAdditionalVariantSelect}
             handleContactSeller={handleContactSeller}
             reviews={reviews}
@@ -69,8 +82,8 @@ export function ProductLayout({
             relatedProductsWithVariants={relatedProductsWithVariants}
             selectedVariant={selectedVariant}
             averageRating={averageRating}
-            onVariantChange={onVariantChange}
-            onAddToCart={onAddToCart}
+            onVariantChange={handleVariantChange}
+            onAddToCart={handleAddToCart}
             onAdditionalVariantToggle={handleAdditionalVariantSelect}
             handleContactSeller={handleContactSeller}
             isMobile={isMobile}

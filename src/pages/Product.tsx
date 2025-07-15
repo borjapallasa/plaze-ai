@@ -1,54 +1,62 @@
 
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { ProductLayout } from "@/components/product/ProductLayout";
+import { useProduct } from "@/hooks/use-product";
+import { useProductVariants } from "@/hooks/use-product-variants";
+import { useProductReviews } from "@/hooks/use-product-reviews";
+import { useRelatedProducts } from "@/hooks/use-related-products";
+import { useCart } from "@/hooks/use-cart";
 import { ProductSkeleton } from "@/components/product/ProductSkeleton";
 import { ProductNotFound } from "@/components/product/ProductNotFound";
-import { StickyATC } from "@/components/product/StickyATC";
-import { useProductData } from "@/hooks/use-product-data";
-import { useProductState } from "@/components/product/ProductState";
-import { Sheet } from "@/components/ui/sheet";
-import { CartDrawer } from "@/components/cart/CartDrawer";
-import { LeaveReviewDialog } from "@/components/product/LeaveReviewDialog";
-import { productVariantsToVariants } from "@/utils/product-utils";
+import { Variant } from "@/components/product/types/variants";
+import { toast } from "sonner";
 
 export default function Product() {
-  const params = useParams();
-  const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
-  
+  const { id } = useParams();
+  const { data: product, isLoading, error } = useProduct(id);
+  const { data: variants = [] } = useProductVariants(id);
+  const { data: reviews = [] } = useProductReviews(id);
+  const { data: relatedProductsWithVariants = [] } = useRelatedProducts(id);
+  const { addToCart } = useCart();
+
+  const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
+
   useEffect(() => {
-    console.log("Product page params:", params);
-  }, [params]);
+    if (variants.length > 0 && !selectedVariant) {
+      setSelectedVariant(variants[0]);
+    }
+  }, [variants, selectedVariant]);
 
-  const {
-    product,
-    variants,
-    relatedProductsWithVariants,
-    reviews,
-    averageRating,
-    isLoading,
-    error
-  } = useProductData();
-
-  const {
-    selectedVariant,
-    setSelectedVariant,
-    showStickyATC,
-    variantsRef,
-    handleAddToCart,
-    handleAdditionalVariantToggle,
-    isLoading: isCartLoading,
-    cartDrawerOpen,
-    setCartDrawerOpen,
-    lastAddedItem,
-    lastAddedAdditionalItems,
-    closeCartDrawer
-  } = useProductState(variants);
-
-  const handleLeaveReview = (variantId: string) => {
-    console.log("Leave review for variant:", variantId);
-    setReviewDialogOpen(true);
+  const handleVariantChange = (variant: Variant) => {
+    setSelectedVariant(variant);
   };
+
+  const handleAddToCart = (variant: Variant) => {
+    if (!variant) {
+      toast.error("Please select a variant");
+      return;
+    }
+
+    addToCart({
+      variantId: variant.id,
+      productId: product?.product_uuid || "",
+      productName: product?.name || "",
+      variantName: variant.name,
+      price: variant.price,
+      image: variant.image || product?.thumbnail || "",
+    });
+
+    toast.success("Added to cart!");
+  };
+
+  const handleAdditionalVariantToggle = (variantId: string, selected: boolean) => {
+    console.log(`Toggle variant ${variantId}: ${selected}`);
+  };
+
+  const averageRating = reviews.length > 0 
+    ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length 
+    : 0;
 
   if (isLoading) {
     return <ProductSkeleton />;
@@ -58,48 +66,18 @@ export default function Product() {
     return <ProductNotFound />;
   }
 
-  // Convert variants to ensure they match the required type
-  const convertedVariants = productVariantsToVariants(variants);
-
   return (
-    <div ref={variantsRef}>
-      <ProductLayout
-        product={product}
-        variants={convertedVariants}
-        relatedProductsWithVariants={relatedProductsWithVariants}
-        selectedVariant={selectedVariant}
-        averageRating={averageRating}
-        onVariantChange={setSelectedVariant}
-        onAddToCart={() => handleAddToCart(product)}
-        onAdditionalVariantToggle={handleAdditionalVariantToggle}
-        reviews={reviews}
-        isLoading={isCartLoading}
-        onLeaveReview={handleLeaveReview}
-      />
-      <StickyATC
-        variants={convertedVariants}
-        selectedVariant={selectedVariant}
-        onVariantChange={setSelectedVariant}
-        visible={showStickyATC}
-        onAddToCart={() => handleAddToCart(product)}
-        isLoading={isCartLoading}
-      />
-
-      <Sheet open={cartDrawerOpen} onOpenChange={setCartDrawerOpen}>
-        <CartDrawer 
-          cartItem={lastAddedItem} 
-          additionalItems={lastAddedAdditionalItems}
-          onClose={closeCartDrawer} 
-        />
-      </Sheet>
-
-      <LeaveReviewDialog
-        open={reviewDialogOpen}
-        onOpenChange={setReviewDialogOpen}
-        productUuid={product.product_uuid}
-        variantId={selectedVariant || ''}
-        expertUuid={product.expert_uuid} // Pass the expert_uuid from the product
-      />
-    </div>
+    <ProductLayout
+      product={product}
+      variants={variants}
+      selectedVariant={selectedVariant}
+      relatedProductsWithVariants={relatedProductsWithVariants}
+      averageRating={averageRating}
+      onVariantChange={handleVariantChange}
+      onAddToCart={handleAddToCart}
+      onAdditionalVariantToggle={handleAdditionalVariantToggle}
+      reviews={reviews}
+      isLoading={isLoading}
+    />
   );
 }

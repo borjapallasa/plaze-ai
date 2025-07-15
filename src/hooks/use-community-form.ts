@@ -1,5 +1,6 @@
+
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
@@ -38,6 +39,7 @@ function parseLinks(data: unknown): Link[] {
 export function useCommunityForm(id: string | undefined) {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -56,15 +58,23 @@ export function useCommunityForm(id: string | undefined) {
   const { data: community, isLoading } = useQuery({
     queryKey: ['community', id],
     queryFn: async () => {
+      if (!id) return null;
+      
+      console.log('Fetching community details for UUID:', id);
+      
       const { data, error } = await supabase
         .from('communities')
         .select('*')
         .eq('community_uuid', id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching community:', error);
+        throw error;
+      }
       
       if (data) {
+        console.log('Setting community data:', data);
         setCommunityName(data.name || "");
         setCommunityDescription(data.description || "");
         setCommunityIntro(data.intro || "");
@@ -89,10 +99,32 @@ export function useCommunityForm(id: string | undefined) {
   });
 
   const handleSave = async () => {
+    if (!id) {
+      console.error('No community ID provided');
+      toast({
+        title: "Error",
+        description: "No community ID found",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       setIsSaving(true);
       
-      const { error } = await supabase
+      console.log('Saving community data:', {
+        name: communityName,
+        description: communityDescription,
+        intro: communityIntro,
+        type: communityType,
+        price: parseFloat(price) || 0,
+        billing_period: pricePeriod,
+        status: communityStatus,
+        webhook: webhook,
+        links: JSON.stringify(links.filter(link => link.name && link.url))
+      });
+
+      const { data, error } = await supabase
         .from('communities')
         .update({
           name: communityName,
@@ -105,9 +137,19 @@ export function useCommunityForm(id: string | undefined) {
           webhook: webhook,
           links: JSON.stringify(links.filter(link => link.name && link.url))
         })
-        .eq('community_uuid', id);
+        .eq('community_uuid', id)
+        .select()
+        .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Database update error:', error);
+        throw error;
+      }
+
+      console.log('Update successful, data returned:', data);
+
+      // Invalidate and refetch the community data
+      await queryClient.invalidateQueries({ queryKey: ['community', id] });
 
       toast({
         title: "Changes saved",
@@ -118,7 +160,7 @@ export function useCommunityForm(id: string | undefined) {
       console.error('Error updating community:', error);
       toast({
         title: "Error",
-        description: "Failed to update community",
+        description: "Failed to update community. Please try again.",
         variant: "destructive",
       });
     } finally {
