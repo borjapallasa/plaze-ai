@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { useExpertReviews } from "@/hooks/expert/useExpertReviews";
 import { useParams } from "react-router-dom";
 import { ReviewActions } from "@/components/reviews/ReviewActions";
+import { toStartCase } from "@/lib/utils";
 
 interface ReviewsTabProps {
   expertUuid?: string;
@@ -40,6 +41,20 @@ export function ReviewsTab({
       percentage
     };
   });
+
+  // Get status badge color
+  const getStatusBadgeVariant = (status: string) => {
+    switch (status) {
+      case 'published':
+        return 'default';
+      case 'pending':
+        return 'secondary';
+      case 'not published':
+        return 'destructive';
+      default:
+        return 'outline';
+    }
+  };
 
   if (isLoading) {
     return <div className="flex items-center justify-center py-8">
@@ -173,9 +188,18 @@ export function ReviewsTab({
                           <span className="text-xs text-muted-foreground">{review.date}</span>
                         </div>
                       </div>
-                      {review.type && <Badge variant="outline" className="text-xs capitalize flex-shrink-0 self-start">
-                          {review.type}
-                        </Badge>}
+                      <div className="flex items-center gap-2 flex-shrink-0 self-start">
+                        {/* Review Status Badge */}
+                        <Badge 
+                          variant={getStatusBadgeVariant(review.status)} 
+                          className="text-xs capitalize"
+                        >
+                          {toStartCase(review.status)}
+                        </Badge>
+                        {review.type && <Badge variant="outline" className="text-xs capitalize">
+                            {review.type}
+                          </Badge>}
+                      </div>
                     </div>
                     
                     {/* Product info with icon */}
