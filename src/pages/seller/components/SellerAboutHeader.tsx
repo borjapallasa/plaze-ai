@@ -4,8 +4,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 import { MapPin, Star, Users, Package } from "lucide-react";
 import { useExpertReviews } from "@/hooks/expert/useExpertReviews";
+import { ChatButton } from "./ChatButton";
 import type { Expert } from "@/types/expert";
 
 interface SellerAboutHeaderProps {
@@ -21,6 +23,19 @@ export function SellerAboutHeader({
 }: SellerAboutHeaderProps) {
   // Fetch actual reviews to calculate average rating
   const { data: reviews = [] } = useExpertReviews(seller.expert_uuid);
+
+  const getBadgeVariant = (status: string) => {
+    switch (status) {
+      case 'active':
+        return 'default';
+      case 'in review':
+        return 'secondary';
+      case 'suspended':
+        return 'destructive';
+      default:
+        return 'outline';
+    }
+  };
 
   // Calculate actual average rating from reviews
   const averageRating = reviews.length > 0 
@@ -72,25 +87,41 @@ export function SellerAboutHeader({
               
               {/* Name, Title, Location, Description */}
               <div className="flex-1 min-w-0 space-y-2">
-                <div className="space-y-1">
-                  <h1 className="text-xl font-bold text-gray-900 leading-tight tracking-tight">
-                    {seller.name}
-                  </h1>
-                  
-                  {/* Category and Location */}
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    {seller.title && (
-                      <span className="font-medium text-gray-700">{seller.title}</span>
-                    )}
-                    {seller.title && seller.location && (
-                      <span className="text-gray-400">•</span>
-                    )}
-                    {seller.location && (
-                      <div className="flex items-center gap-1">
-                        <MapPin className="h-3 w-3 text-gray-400" />
-                        <span>{seller.location}</span>
-                      </div>
-                    )}
+                <div className="flex items-start justify-between">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <h1 className="text-xl font-bold text-gray-900 leading-tight tracking-tight">
+                        {seller.name}
+                      </h1>
+                      <ChatButton 
+                        expertUuid={seller.expert_uuid} 
+                        expertName={seller.name || "Expert"} 
+                      />
+                      {seller.status && (
+                        <Badge 
+                          variant={getBadgeVariant(seller.status)}
+                          className="text-xs px-2 py-0.5 capitalize font-medium"
+                        >
+                          {seller.status}
+                        </Badge>
+                      )}
+                    </div>
+                    
+                    {/* Category and Location */}
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      {seller.title && (
+                        <span className="font-medium text-gray-700">{seller.title}</span>
+                      )}
+                      {seller.title && seller.location && (
+                        <span className="text-gray-400">•</span>
+                      )}
+                      {seller.location && (
+                        <div className="flex items-center gap-1">
+                          <MapPin className="h-3 w-3 text-gray-400" />
+                          <span>{seller.location}</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
                 
@@ -155,9 +186,23 @@ export function SellerAboutHeader({
               </div>
               
               <div className="flex-1 min-w-0 space-y-1">
-                <h1 className="text-lg font-bold text-gray-900 leading-tight tracking-tight">
-                  {seller.name}
-                </h1>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h1 className="text-lg font-bold text-gray-900 leading-tight tracking-tight">
+                    {seller.name}
+                  </h1>
+                  <ChatButton 
+                    expertUuid={seller.expert_uuid} 
+                    expertName={seller.name || "Expert"} 
+                  />
+                  {seller.status && (
+                    <Badge 
+                      variant={getBadgeVariant(seller.status)}
+                      className="text-xs px-2 py-0.5 capitalize"
+                    >
+                      {seller.status}
+                    </Badge>
+                  )}
+                </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600 flex-wrap">
                   {seller.title && <span className="font-medium text-gray-700">{seller.title}</span>}
                   {seller.title && seller.location && <span className="text-gray-400">•</span>}
