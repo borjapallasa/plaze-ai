@@ -89,21 +89,21 @@ export default function SignUpCommunityPage() {
 
       console.log("User created successfully:", authData.user.id);
 
-      // Determine status based on community type and price
+      // Determine status based on community type
       let subscriptionStatus: 'active' | 'inactive' | 'pending';
       
-      if (community.type !== 'private') {
-        // If community is not private, set as active regardless of price
-        subscriptionStatus = 'active';
+      if (community.type === 'private') {
+        // Private communities always require approval regardless of price
+        subscriptionStatus = 'pending';
       } else {
-        // If community is private, use the existing logic
+        // Public communities: free = active, paid = pending
         subscriptionStatus = (community.price && community.price > 0 ? 'pending' : 'active') as 'active' | 'inactive' | 'pending';
       }
 
       const subscriptionData = {
         user_uuid: authData.user.id,
         community_uuid: id,
-        expert_user_uuid: community.expert_uuid,
+        expert_uuid: community.expert_uuid, // Fixed: changed from expert_user_uuid
         email: email,
         status: subscriptionStatus,
         type: (community.price && community.price > 0 ? 'paid' : 'free') as 'free' | 'paid',
@@ -126,7 +126,9 @@ export default function SignUpCommunityPage() {
 
       console.log("Community subscription created:", subscriptionResult);
 
-      if (community.type === 'private' && community.price && community.price > 0) {
+      if (community.type === 'private') {
+        toast.success("Account created! Your join request has been submitted and is awaiting approval.");
+      } else if (community.price && community.price > 0) {
         toast.success("Account created! Please complete payment to access the community.");
       } else {
         toast.success("Welcome! You've successfully joined the community.");
@@ -142,7 +144,8 @@ export default function SignUpCommunityPage() {
     }
   };
 
-  const formatButtonText = (price?: number) => {
+  const formatButtonText = (price?: number, type?: string) => {
+    if (type === 'private') return "Request to Join";
     if (!price || price === 0) return "Join for Free";
     return `Join for $${price}`;
   };
@@ -280,7 +283,7 @@ export default function SignUpCommunityPage() {
                         Creating Account...
                       </>
                     ) : (
-                      formatButtonText(community.price)
+                      formatButtonText(community.price, community.type)
                     )}
                   </Button>
 
