@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { MainHeader } from "@/components/MainHeader";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,9 @@ import { useAuth } from "@/lib/auth";
 import { useUpdateConversation } from "@/hooks/use-update-conversation";
 
 export default function Chats() {
+  const [searchParams] = useSearchParams();
+  const conversationParam = searchParams.get('conversation');
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedChat, setSelectedChat] = useState<Conversation | null>(null);
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
@@ -45,6 +49,16 @@ export default function Chats() {
   const sendMessage = useSendMessage();
   const updateConversation = useUpdateConversation();
   const filteredChats = conversations?.filter(chat => chat.otherParticipantName.toLowerCase().includes(searchQuery.toLowerCase()) || chat.subject.toLowerCase().includes(searchQuery.toLowerCase())) || [];
+
+  // Auto-select conversation from URL parameter
+  useEffect(() => {
+    if (conversationParam && conversations && conversations.length > 0) {
+      const targetConversation = conversations.find(conv => conv.conversation_uuid === conversationParam);
+      if (targetConversation) {
+        setSelectedChat(targetConversation);
+      }
+    }
+  }, [conversationParam, conversations]);
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
