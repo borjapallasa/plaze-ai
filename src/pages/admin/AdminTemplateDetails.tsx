@@ -11,12 +11,18 @@ import { TemplateOrganization } from "@/components/admin/template/TemplateOrgani
 import { TemplateVariables } from "@/components/admin/template/TemplateVariables";
 import { TemplateReviews } from "@/components/admin/template/TemplateReviews";
 import { TemplateDemoCard } from "@/components/admin/template/TemplateDemoCard";
-import { useProductData } from "@/hooks/use-product-data";
+import { useProduct } from "@/hooks/use-product";
+import { useProductVariants } from "@/hooks/use-product-variants";
+import { useProductReviews } from "@/hooks/use-product-reviews";
+import { useProductImages } from "@/hooks/use-product-images";
 
 export default function AdminTemplateDetails() {
   const { id } = useParams<{ id: string }>();
   
-  const { data: productData, isLoading, error } = useProductData(id || "");
+  const { data: product, isLoading, error } = useProduct(id || "");
+  const { data: variants = [] } = useProductVariants(id || "");
+  const { data: reviews = [] } = useProductReviews(id || "");
+  const { images } = useProductImages(id || "");
 
   if (isLoading) {
     return (
@@ -34,7 +40,7 @@ export default function AdminTemplateDetails() {
     );
   }
 
-  if (error || !productData) {
+  if (error || !product) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
@@ -45,26 +51,39 @@ export default function AdminTemplateDetails() {
     );
   }
 
-  const { product, variants, images, reviews } = productData;
-
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
-      <TemplateHeader product={product} />
+      <TemplateHeader productName={product.name} publicLink={product.public_link} />
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
-          <TemplateHeroImage images={images} productName={product.name} />
-          <TemplateDescription product={product} />
-          <TemplateFinancialMetrics product={product} />
-          <TemplateOrganization product={product} />
+          <TemplateHeroImage thumbnail={product.thumbnail} productName={product.name} />
+          <TemplateDescription description={product.description} />
+          <TemplateFinancialMetrics 
+            priceFrom={product.price_from}
+            priceTo={product.price_to}
+            salesCount={product.sales_count}
+            salesAmount={product.sales_amount}
+          />
+          <TemplateOrganization 
+            techStack={product.additional_details}
+            category={product.slug}
+          />
           <TemplateVariables variants={variants} />
           <TemplateReviews reviews={reviews} />
         </div>
         
         <div className="space-y-6">
-          <TemplateInfoCard product={product} />
-          <TemplateStatusCard product={product} />
-          <TemplateDemoCard product={product} />
+          <TemplateInfoCard 
+            createdAt={product.created_at}
+            updatedAt={product.updated_at}
+            expertUuid={product.expert_uuid}
+          />
+          <TemplateStatusCard 
+            status={product.status}
+            productUuid={product.product_uuid}
+          />
+          <TemplateDemoCard demoUrl={product.demo_url} />
         </div>
       </div>
     </div>

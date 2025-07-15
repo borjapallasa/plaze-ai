@@ -6,14 +6,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { CommunityHeader } from "@/components/community/CommunityHeader";
 import { CommunityBasicInfo } from "@/components/community/CommunityBasicInfo";
 import { CommunityStats } from "@/components/community/CommunityStats";
-import { useCommunityImages } from "@/hooks/use-community-images";
 import { useCommunityForm } from "@/hooks/use-community-form";
 import { CommunityMediaUpload } from "@/components/community/CommunityMediaUpload";
 import { AffiliateCommunitySection } from "@/components/community/AffiliateCommunitySection";
 
 export default function EditCommunity() {
   const { id } = useParams();
-  const { images: communityImages } = useCommunityImages(id);
   const {
     communityName,
     setCommunityName,
@@ -47,6 +45,9 @@ export default function EditCommunity() {
     handleLinkChange,
     handleRemoveLink
   } = useCommunityForm(id);
+
+  console.log('EditCommunity: Community ID =', id);
+  console.log('EditCommunity: Community data =', community);
 
   if (isLoading) {
     return (
@@ -92,7 +93,6 @@ export default function EditCommunity() {
                 <h2 className="text-lg font-semibold mb-4">Community Media</h2>
                 <CommunityMediaUpload
                   communityUuid={id || ''}
-                  initialImages={communityImages}
                 />
               </div>
             </div>

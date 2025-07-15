@@ -8,19 +8,11 @@ import { useCommunityImages } from "@/hooks/use-community-images";
 interface CommunityMediaUploadProps {
   communityUuid: string;
   onFileSelect?: (file: File) => void;
-  initialImages?: Array<{
-    id: number;
-    url: string;
-    storage_path: string;
-    is_primary: boolean;
-    file_name: string;
-  }>;
 }
 
 export function CommunityMediaUpload({ 
   communityUuid, 
-  onFileSelect,
-  initialImages = []
+  onFileSelect
 }: CommunityMediaUploadProps) {
   const [selectedImage, setSelectedImage] = useState<null | any>(null);
   const [tempImage, setTempImage] = useState<{url: string, storage_path: string} | null>(null);
@@ -32,13 +24,17 @@ export function CommunityMediaUpload({
     updateImage,
     removeImage,
     reorderImages
-  } = useCommunityImages(communityUuid, initialImages);
+  } = useCommunityImages(communityUuid);
+
+  console.log('CommunityMediaUpload: communityUuid =', communityUuid);
+  console.log('CommunityMediaUpload: images =', images);
+  console.log('CommunityMediaUpload: isUploading =', isUploading);
 
   const handleFileSelect = async (file: File) => {
-    console.log("File selected in CommunityMediaUpload:", file.name);
+    console.log("CommunityMediaUpload: File selected:", file.name, "Size:", file.size);
     
     if (onFileSelect) {
-      console.log("Calling parent onFileSelect handler");
+      console.log("CommunityMediaUpload: Calling parent onFileSelect handler");
       onFileSelect(file);
       
       // For temp mode, we won't actually upload to Supabase, just pass the file up
@@ -51,15 +47,15 @@ export function CommunityMediaUpload({
     }
     
     try {
-      console.log("Uploading image to Supabase");
+      console.log("CommunityMediaUpload: Uploading image to Supabase for community:", communityUuid);
       const result = await uploadImage(file);
-      console.log("Upload result:", result);
+      console.log("CommunityMediaUpload: Upload result:", result);
       
       if (result && communityUuid === 'temp') {
         setTempImage(result as {url: string, storage_path: string});
       }
     } catch (error) {
-      console.error("Error uploading image:", error);
+      console.error("CommunityMediaUpload: Error uploading image:", error);
     }
   };
 
@@ -68,6 +64,8 @@ export function CommunityMediaUpload({
   const displayImages = communityUuid === 'temp' && tempImage 
     ? [{ id: 0, url: tempImage.url, storage_path: tempImage.storage_path, is_primary: true, file_name: 'Temporary image' }] 
     : images;
+
+  console.log('CommunityMediaUpload: displayImages =', displayImages);
 
   return (
     <div className="space-y-4">

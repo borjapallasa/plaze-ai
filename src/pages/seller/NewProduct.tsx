@@ -12,7 +12,7 @@ import { useCreateProduct } from "@/hooks/use-create-product";
 import { Variant } from "@/components/product/types/variants";
 import { toast } from "sonner";
 
-type ProductStatus = "visible" | "not visible" | "draft";
+type ProductStatusType = "visible" | "not visible" | "draft";
 
 export default function NewProduct() {
   const navigate = useNavigate();
@@ -27,12 +27,12 @@ export default function NewProduct() {
   const [salesPage, setSalesPage] = useState("");
   const [demoVideo, setDemoVideo] = useState("");
   const [team, setTeam] = useState("");
-  const [status, setStatus] = useState<ProductStatus>("draft");
+  const [status, setStatus] = useState<ProductStatusType>("draft");
   const [variants, setVariants] = useState<Variant[]>([]);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [productImages, setProductImages] = useState<File[]>([]);
 
-  const { createProduct, isCreating } = useCreateProduct();
+  const createProductMutation = useCreateProduct();
 
   const handleSubmit = async () => {
     if (!productName.trim()) {
@@ -51,7 +51,7 @@ export default function NewProduct() {
     }
 
     try {
-      const result = await createProduct({
+      const result = await createProductMutation.mutateAsync({
         name: productName,
         description: productDescription,
         includes: productIncludes,
@@ -78,29 +78,39 @@ export default function NewProduct() {
     }
   };
 
+  const handleVariantChange = (newVariants: Variant[]) => {
+    setVariants(newVariants);
+  };
+
+  const isValid = productName.trim() && productDescription.trim() && variants.length > 0;
+
   return (
     <div className="min-h-screen bg-background">
       <MainHeader />
       <div className="container mx-auto px-4 pt-24 pb-8">
         <div className="max-w-4xl mx-auto space-y-8">
-          <ProductCreateHeader />
+          <ProductCreateHeader 
+            productStatus={status}
+            onStatusChange={setStatus}
+            onSave={handleSubmit}
+            isSaving={createProductMutation.isPending}
+            isValid={isValid}
+          />
           
           <ProductBasicDetailsForm
             productName={productName}
             setProductName={setProductName}
             productDescription={productDescription}
             setProductDescription={setProductDescription}
-            productIncludes={productIncludes}
-            setProductIncludes={setProductIncludes}
+            productSummary={productIncludes}
+            setProductSummary={setProductIncludes}
           />
 
           <ProductDetailsForm
             techStack={techStack}
             setTechStack={setTechStack}
-            techStackPrice={techStackPrice}
-            setTechStackPrice={setTechStackPrice}
-            targetAudience={targetAudience}
-            setTargetAudience={setTargetAudience}
+            difficulty={techStackPrice}
+            setDifficulty={setTechStackPrice}
             useCase={useCase}
             setUseCase={setUseCase}
             businessModel={businessModel}
@@ -115,20 +125,26 @@ export default function NewProduct() {
 
           <VariantPicker
             variants={variants}
-            onVariantChange={setVariants}
+            onVariantChange={handleVariantChange}
           />
 
           <ProductMediaUpload
-            thumbnailFile={thumbnailFile}
             onThumbnailChange={setThumbnailFile}
-            productImages={productImages}
             onProductImagesChange={setProductImages}
           />
 
-          <ProductStatus
-            status={status}
-            onStatusChange={setStatus}
-          />
+          <div className="border rounded-lg p-6">
+            <h2 className="text-lg font-semibold mb-4">Product Status</h2>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value as ProductStatusType)}
+              className="w-full border rounded-md p-2"
+            >
+              <option value="draft">Draft</option>
+              <option value="visible">Visible</option>
+              <option value="not visible">Not Visible</option>
+            </select>
+          </div>
 
           <div className="flex justify-end gap-4 pt-6">
             <button
@@ -139,10 +155,10 @@ export default function NewProduct() {
             </button>
             <button
               onClick={handleSubmit}
-              disabled={isCreating}
+              disabled={createProductMutation.isPending || !isValid}
               className="px-6 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50"
             >
-              {isCreating ? "Creating..." : "Create Product"}
+              {createProductMutation.isPending ? "Creating..." : "Create Product"}
             </button>
           </div>
         </div>

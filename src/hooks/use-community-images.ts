@@ -1,88 +1,150 @@
 
 import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
 import type { CommunityImage } from "@/types/community-images";
-import {
-  fetchCommunityImages,
-  uploadCommunityImage,
-  updateCommunityImage,
-  removeCommunityImage,
-  setPrimaryImage
-} from "@/services/community-images-service";
 
-export function useCommunityImages(
-  communityUuid: string, 
-  initialImages: Array<{
-    id: number;
-    url: string;
-    storage_path: string;
-    is_primary: boolean;
-    file_name: string;
-  }> = []
-) {
-  const [images, setImages] = useState<CommunityImage[]>(initialImages as CommunityImage[]);
+export function useCommunityImages(communityUuid: string, initialImages: CommunityImage[] = []) {
+  const [images, setImages] = useState<CommunityImage[]>(initialImages);
   const [isUploading, setIsUploading] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const { user } = useAuth();
 
-  // Fetch images when communityUuid changes
+  console.log('useCommunityImages: hook called with communityUuid =', communityUuid);
+  console.log('useCommunityImages: user =', user?.id);
+
+  // Fetch images from database
   useEffect(() => {
-    if (communityUuid && communityUuid !== 'temp') {
-      loadImages();
-    } else {
-      // For 'temp' mode, we'll use the initialImages if available or an empty array
-      setImages(initialImages as CommunityImage[]);
-      setIsLoading(false);
-    }
+    const fetchImages = async () => {
+      if (!communityUuid || communityUuid === 'temp') {
+        console.log('useCommunityImages: Skipping fetch for temp or empty UUID');
+        return;
+      }
+
+      console.log('useCommunityImages: Fetching images for community:', communityUuid);
+      
+      try {
+        const { data, error } = await supabase
+          .from("community_images")
+          .select("*")
+          .eq("community_uuid", communityUuid)
+          .order("is_primary", { ascending: false });
+
+        console.log('useCommunityImages: Raw fetch result:', { data, error });
+
+        if (error) {
+          console.error('useCommunityImages: Error fetching images:', error);
+          toast.error("Failed to load community images");
+          return;
+        }
+        
+        // Add public URL to each image before setting state
+        const imagesWithUrls = data?.map(image => {
+          const { data: urlData } = supabase.storage
+            .from('community-images')
+            .getPublicUrl(image.storage_path);
+            
+          console.log('useCommunityImages: URL for image', image.id, ':', urlData?.publicUrl);
+            
+          return {
+            ...image,
+            url: urlData?.publicUrl
+          };
+        }) || [];
+        
+        console.log('useCommunityImages: Setting images:', imagesWithUrls);
+        setImages(imagesWithUrls);
+      } catch (error) {
+        console.error("useCommunityImages: Unexpected error fetching images:", error);
+        toast.error("Failed to load community images");
+      }
+    };
+
+    fetchImages();
   }, [communityUuid]);
 
-  const loadImages = async () => {
-    if (!communityUuid || communityUuid === 'temp') {
-      setImages(initialImages as CommunityImage[]);
-      setIsLoading(false);
-      return;
-    }
-    
-    setIsLoading(true);
-    try {
-      const fetchedImages = await fetchCommunityImages(communityUuid);
-      setImages(fetchedImages);
-    } catch (error) {
-      console.error("Error loading community images:", error);
-      toast.error("Failed to load community images");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const uploadImage = async (file: File) => {
-    setIsUploading(true);
-    console.log("Uploading image for community:", communityUuid);
-    
-    try {
-      const result = await uploadCommunityImage(file, communityUuid);
-      
-      if (result) {
-        console.log("Upload successful:", result);
-        
-        if (communityUuid === 'temp') {
-          return result;
-        }
-        
-        // Update local state
-        const newImage = { ...result, url: result.url } as CommunityImage;
-        
-        // If this is the first image, make it primary
-        if (images.length === 0) {
-          await setPrimaryImage(newImage.id, 0);
-          newImage.is_primary = true;
-        }
-        
-        setImages(prev => [...prev, newImage]);
-        return newImage;
-      }
+    if (!user) {
+      console.error('useCommunityImages: No authenticated user');
+      toast.error("You must be logged in to upload images");
       return null;
+    }
+
+    if (!communityUuid) {
+      console.error('useCommunityImages: No community UUID provided');
+      toast.error("No community UUID provided");
+      return null;
+    }
+
+    console.log('useCommunityImages: Starting upload for file:', file.name, 'to community:', communityUuid);
+    setIsUploading(true);
+
+    try {
+      // Generate a unique file path
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${communityUuid}/${Date.now()}.${fileExt}`;
+      
+      console.log('useCommunityImages: Uploading to storage path:', filePath);
+      
+      // Upload file to storage
+      const { error: uploadError } = await supabase.storage
+        .from('community-images')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        console.error('useCommunityImages: Storage upload error:', uploadError);
+        throw uploadError;
+      }
+      
+      console.log('useCommunityImages: File uploaded successfully to storage');
+      
+      // Get public URL
+      const { data: publicURLData } = supabase.storage
+        .from('community-images')
+        .getPublicUrl(filePath);
+        
+      if (!publicURLData.publicUrl) {
+        console.error('useCommunityImages: Failed to get public URL');
+        throw new Error("Failed to get public URL");
+      }
+
+      console.log('useCommunityImages: Got public URL:', publicURLData.publicUrl);
+
+      // For temporary community, just return the URL without creating a database entry
+      if (communityUuid === 'temp') {
+        console.log('useCommunityImages: Returning temp result');
+        return { url: publicURLData.publicUrl, storage_path: filePath };
+      }
+
+      // Create database entry for real communities
+      console.log('useCommunityImages: Creating database entry');
+      const { data, error: dbError } = await supabase
+        .from("community_images")
+        .insert({
+          community_uuid: communityUuid,
+          storage_path: filePath,
+          file_name: file.name,
+          content_type: file.type,
+          size: file.size,
+          is_primary: images.length === 0 // First image becomes primary
+        })
+        .select()
+        .single();
+
+      if (dbError) {
+        console.error('useCommunityImages: Database insert error:', dbError);
+        throw dbError;
+      }
+
+      console.log('useCommunityImages: Database entry created:', data);
+
+      const newImage = { ...data, url: publicURLData.publicUrl };
+      setImages(prev => [...prev, newImage]);
+      
+      toast.success("Image uploaded successfully");
+      return newImage;
     } catch (error) {
-      console.error("Error uploading image:", error);
+      console.error("useCommunityImages: Upload error:", error);
       toast.error("Failed to upload image");
       return null;
     } finally {
@@ -92,52 +154,91 @@ export function useCommunityImages(
 
   const updateImage = async (id: number, updates: { file_name: string; alt_text: string }) => {
     try {
-      await updateCommunityImage(id, updates);
-      // Update local state
-      setImages(prev => 
-        prev.map(img => 
-          img.id === id ? { ...img, ...updates } : img
-        )
-      );
+      console.log('useCommunityImages: Updating image', id, 'with:', updates);
+      
+      const { error } = await supabase
+        .from("community_images")
+        .update(updates)
+        .eq("id", id);
+
+      if (error) throw error;
+      
+      setImages(prev => prev.map(img => 
+        img.id === id ? { ...img, ...updates } : img
+      ));
+      
+      toast.success("Image details updated");
     } catch (error) {
-      console.error("Error updating image:", error);
+      console.error("useCommunityImages: Error updating image:", error);
       toast.error("Failed to update image details");
     }
   };
 
   const removeImage = async (id: number, storagePath: string) => {
     try {
-      await removeCommunityImage(id, storagePath);
-      // Update local state
+      console.log('useCommunityImages: Removing image', id, 'at path:', storagePath);
+      
+      // Delete from storage
+      const { error: storageError } = await supabase.storage
+        .from('community-images')
+        .remove([storagePath]);
+
+      if (storageError) throw storageError;
+
+      // Delete from database
+      const { error: dbError } = await supabase
+        .from("community_images")
+        .delete()
+        .eq("id", id);
+
+      if (dbError) throw dbError;
+
       setImages(prev => prev.filter(img => img.id !== id));
+      toast.success("Image removed successfully");
     } catch (error) {
-      console.error("Error removing image:", error);
+      console.error("useCommunityImages: Error removing image:", error);
       toast.error("Failed to remove image");
     }
   };
 
   const reorderImages = async (primaryId: number, currentPrimaryId: number) => {
     try {
-      await setPrimaryImage(primaryId, currentPrimaryId);
-      // Update local state
+      console.log('useCommunityImages: Reordering images, new primary:', primaryId, 'current:', currentPrimaryId);
+      
+      // Update the current primary image to not be primary
+      if (currentPrimaryId) {
+        await supabase
+          .from("community_images")
+          .update({ is_primary: false })
+          .eq("id", currentPrimaryId);
+      }
+
+      // Set the new primary image
+      const { error } = await supabase
+        .from("community_images")
+        .update({ is_primary: true })
+        .eq("id", primaryId);
+
+      if (error) throw error;
+
       setImages(prev => prev.map(img => ({
         ...img,
         is_primary: img.id === primaryId
       })));
+
+      toast.success("Primary image updated");
     } catch (error) {
-      console.error("Error setting primary image:", error);
+      console.error("useCommunityImages: Error reordering images:", error);
       toast.error("Failed to update primary image");
     }
   };
 
   return {
     images,
-    isLoading,
     isUploading,
     uploadImage,
     updateImage,
     removeImage,
-    reorderImages,
-    fetchImages: loadImages
+    reorderImages
   };
 }

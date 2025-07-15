@@ -44,7 +44,7 @@ export default function Product() {
       productName: product?.name || "",
       variantName: variant.name,
       price: variant.price,
-      image: variant.thumbnail || product?.thumbnail || "",
+      image: variant.files_link || product?.thumbnail || "",
     });
 
     toast.success("Added to cart!");

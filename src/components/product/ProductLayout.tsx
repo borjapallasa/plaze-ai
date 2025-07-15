@@ -63,7 +63,7 @@ export function ProductLayout({
             images={images}
             variants={variants}
             relatedProductsWithVariants={relatedProductsWithVariants}
-            selectedVariant={selectedVariant}
+            selectedVariant={selectedVariant?.id}
             averageRating={averageRating}
             onVariantChange={handleVariantChange}
             onAddToCart={handleAddToCart}
@@ -80,7 +80,7 @@ export function ProductLayout({
             images={images}
             variants={variants}
             relatedProductsWithVariants={relatedProductsWithVariants}
-            selectedVariant={selectedVariant}
+            selectedVariant={selectedVariant?.id}
             averageRating={averageRating}
             onVariantChange={handleVariantChange}
             onAddToCart={handleAddToCart}
