@@ -9,6 +9,7 @@ import { useRelatedProducts } from "@/hooks/use-related-products";
 import { useCart } from "@/hooks/use-cart";
 import { ProductSkeleton } from "@/components/product/ProductSkeleton";
 import { ProductNotFound } from "@/components/product/ProductNotFound";
+import { LeaveReviewDialog } from "@/components/product/LeaveReviewDialog";
 import { Variant } from "@/components/product/types/variants";
 import { toast } from "sonner";
 
@@ -16,11 +17,12 @@ export default function Product() {
   const { id } = useParams();
   const { data: product, isLoading, error } = useProduct(id);
   const { data: variants = [] } = useProductVariants(id);
-  const { data: reviews = [] } = useProductReviews(id);
+  const { data: reviews = [], refetch: refetchReviews } = useProductReviews(id);
   const { data: relatedProductsWithVariants = [] } = useRelatedProducts(id);
   const { addToCart } = useCart();
 
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
+  const [isReviewDialogOpen, setIsReviewDialogOpen] = useState(false);
 
   useEffect(() => {
     if (variants.length > 0 && !selectedVariant) {
@@ -44,7 +46,7 @@ export default function Product() {
       productName: product?.name || "",
       variantName: variant.name,
       price: variant.price,
-      image: variant.files_link || product?.thumbnail || "",
+      image: variant.filesLink || product?.thumbnail || "",
     });
 
     toast.success("Added to cart!");
@@ -52,6 +54,17 @@ export default function Product() {
 
   const handleAdditionalVariantToggle = (variantId: string, selected: boolean) => {
     console.log(`Toggle variant ${variantId}: ${selected}`);
+  };
+
+  const handleLeaveReview = (variantId: string) => {
+    console.log('Opening review dialog for variant:', variantId);
+    setIsReviewDialogOpen(true);
+  };
+
+  const handleReviewDialogClose = () => {
+    setIsReviewDialogOpen(false);
+    // Refetch reviews after closing dialog to show new review
+    refetchReviews();
   };
 
   const averageRating = reviews.length > 0 
@@ -67,17 +80,30 @@ export default function Product() {
   }
 
   return (
-    <ProductLayout
-      product={product}
-      variants={variants}
-      selectedVariant={selectedVariant}
-      relatedProductsWithVariants={relatedProductsWithVariants}
-      averageRating={averageRating}
-      onVariantChange={handleVariantChange}
-      onAddToCart={handleAddToCart}
-      onAdditionalVariantToggle={handleAdditionalVariantToggle}
-      reviews={reviews}
-      isLoading={isLoading}
-    />
+    <>
+      <ProductLayout
+        product={product}
+        variants={variants}
+        selectedVariant={selectedVariant}
+        relatedProductsWithVariants={relatedProductsWithVariants}
+        averageRating={averageRating}
+        onVariantChange={handleVariantChange}
+        onAddToCart={handleAddToCart}
+        onAdditionalVariantToggle={handleAdditionalVariantToggle}
+        reviews={reviews}
+        isLoading={isLoading}
+        onLeaveReview={handleLeaveReview}
+      />
+      
+      {selectedVariant && (
+        <LeaveReviewDialog
+          open={isReviewDialogOpen}
+          onOpenChange={setIsReviewDialogOpen}
+          productUuid={product.product_uuid}
+          variantId={selectedVariant.id}
+          expertUuid={product.expert_uuid}
+        />
+      )}
+    </>
   );
 }

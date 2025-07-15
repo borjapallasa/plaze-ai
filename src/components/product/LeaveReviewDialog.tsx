@@ -19,7 +19,7 @@ interface LeaveReviewDialogProps {
   onOpenChange: (open: boolean) => void;
   productUuid: string;
   variantId: string;
-  expertUuid?: string; // Add expert_uuid as optional prop
+  expertUuid?: string;
 }
 
 export function LeaveReviewDialog({ 

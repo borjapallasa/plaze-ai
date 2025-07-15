@@ -1,80 +1,85 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { MainHeader } from "@/components/MainHeader";
+import { useAuth } from "@/lib/auth";
+import { SellLayout } from "@/components/sell/SellLayout";
 import { ProductCreateHeader } from "@/components/product/ProductCreateHeader";
 import { ProductBasicDetailsForm } from "@/components/product/ProductBasicDetailsForm";
 import { ProductDetailsForm } from "@/components/product/ProductDetailsForm";
-import { VariantPicker } from "@/components/product/VariantPicker";
-import { ProductStatus } from "@/components/product/ProductStatus";
+import { ProductVariants } from "@/components/product/ProductVariants";
 import { ProductMediaUpload } from "@/components/product/ProductMediaUpload";
+import { ProductStatus } from "@/components/product/ProductStatus";
 import { useCreateProduct } from "@/hooks/use-create-product";
 import { Variant } from "@/components/product/types/variants";
 import { toast } from "sonner";
 
-type ProductStatusType = "visible" | "not visible" | "draft";
-
 export default function NewProduct() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { createProduct, isLoading } = useCreateProduct();
+
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
-  const [productIncludes, setProductIncludes] = useState("");
+  const [shortDescription, setShortDescription] = useState("");
   const [techStack, setTechStack] = useState("");
-  const [techStackPrice, setTechStackPrice] = useState("");
-  const [targetAudience, setTargetAudience] = useState("");
-  const [useCase, setUseCase] = useState("");
-  const [businessModel, setBusinessModel] = useState("");
-  const [salesPage, setSalesPage] = useState("");
-  const [demoVideo, setDemoVideo] = useState("");
+  const [difficultyLevel, setDifficultyLevel] = useState("");
+  const [category, setCategory] = useState("");
+  const [productIncludes, setProductIncludes] = useState("");
+  const [demoUrl, setDemoUrl] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
+  const [additionalDetails, setAdditionalDetails] = useState("");
   const [team, setTeam] = useState("");
-  const [status, setStatus] = useState<ProductStatusType>("draft");
   const [variants, setVariants] = useState<Variant[]>([]);
-  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+  const [thumbnail, setThumbnail] = useState<File | null>(null);
   const [productImages, setProductImages] = useState<File[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
+  const [status, setStatus] = useState<"draft" | "active" | "inactive">("draft");
 
-  const createProductMutation = useCreateProduct();
-
-  const handleSubmit = async () => {
-    if (!productName.trim()) {
-      toast.error("Product name is required");
-      return;
+  useEffect(() => {
+    if (!user) {
+      navigate("/sign-in");
     }
+  }, [user, navigate]);
 
-    if (!productDescription.trim()) {
-      toast.error("Product description is required");
-      return;
-    }
-
-    if (variants.length === 0) {
-      toast.error("At least one variant is required");
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!productName || !productDescription) {
+      toast.error("Please fill in all required fields");
       return;
     }
 
     try {
-      const result = await createProductMutation.mutateAsync({
+      const productData = {
         name: productName,
         description: productDescription,
-        includes: productIncludes,
+        short_description: shortDescription,
         tech_stack: techStack,
-        target_audience: targetAudience,
-        use_case: useCase,
-        business_model: businessModel,
-        sales_page: salesPage,
-        demo_video: demoVideo,
-        team: team,
-        status: status,
-        variants: variants,
-        thumbnailFile: thumbnailFile,
-        productImages: productImages,
-      });
+        difficulty_level: difficultyLevel,
+        category,
+        product_includes: productIncludes,
+        demo_url: demoUrl,
+        video_url: videoUrl,
+        additional_details: additionalDetails,
+        team,
+        variants,
+        thumbnail,
+        product_images: productImages,
+        tags,
+        status,
+      };
 
-      if (result?.product_uuid) {
+      const result = await createProduct(productData);
+      
+      if (result.success) {
         toast.success("Product created successfully!");
-        navigate(`/product/${result.product_uuid}/edit`);
+        navigate(`/seller`);
+      } else {
+        toast.error(result.error || "Failed to create product");
       }
     } catch (error) {
       console.error("Error creating product:", error);
-      toast.error("Failed to create product. Please try again.");
+      toast.error("An error occurred while creating the product");
     }
   };
 
@@ -82,87 +87,75 @@ export default function NewProduct() {
     setVariants(newVariants);
   };
 
-  const isValid = productName.trim() && productDescription.trim() && variants.length > 0;
-
   return (
-    <div className="min-h-screen bg-background">
-      <MainHeader />
-      <div className="container mx-auto px-4 pt-24 pb-8">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <ProductCreateHeader 
-            productStatus={status}
-            onStatusChange={setStatus}
-            onSave={handleSubmit}
-            isSaving={createProductMutation.isPending}
-            isValid={isValid}
-          />
-          
+    <SellLayout>
+      <div className="max-w-4xl mx-auto">
+        <ProductCreateHeader />
+        
+        <form onSubmit={handleSubmit} className="space-y-8">
           <ProductBasicDetailsForm
             productName={productName}
             setProductName={setProductName}
             productDescription={productDescription}
             setProductDescription={setProductDescription}
-            productSummary={productIncludes}
-            setProductSummary={setProductIncludes}
+            shortDescription={shortDescription}
+            setShortDescription={setShortDescription}
           />
 
           <ProductDetailsForm
             techStack={techStack}
             setTechStack={setTechStack}
-            difficulty={techStackPrice}
-            setDifficulty={setTechStackPrice}
-            useCase={useCase}
-            setUseCase={setUseCase}
-            businessModel={businessModel}
-            setBusinessModel={setBusinessModel}
-            salesPage={salesPage}
-            setSalesPage={setSalesPage}
-            demoVideo={demoVideo}
-            setDemoVideo={setDemoVideo}
+            difficultyLevel={difficultyLevel}
+            setDifficultyLevel={setDifficultyLevel}
+            category={category}
+            setCategory={setCategory}
+            productIncludes={productIncludes}
+            setProductIncludes={setProductIncludes}
+            demoUrl={demoUrl}
+            setDemoUrl={setDemoUrl}
+            videoUrl={videoUrl}
+            setVideoUrl={setVideoUrl}
+            additionalDetails={additionalDetails}
+            setAdditionalDetails={setAdditionalDetails}
             team={team}
             setTeam={setTeam}
           />
 
-          <VariantPicker
+          <ProductVariants
             variants={variants}
-            onVariantChange={handleVariantChange}
+            onVariantsChange={handleVariantChange}
           />
 
           <ProductMediaUpload
-            onThumbnailChange={setThumbnailFile}
-            onProductImagesChange={setProductImages}
+            thumbnail={thumbnail}
+            setThumbnail={setThumbnail}
+            productImages={productImages}
+            setProductImages={setProductImages}
           />
 
-          <div className="border rounded-lg p-6">
-            <h2 className="text-lg font-semibold mb-4">Product Status</h2>
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value as ProductStatusType)}
-              className="w-full border rounded-md p-2"
-            >
-              <option value="draft">Draft</option>
-              <option value="visible">Visible</option>
-              <option value="not visible">Not Visible</option>
-            </select>
-          </div>
+          <ProductStatus
+            status={status}
+            onStatusChange={setStatus}
+          />
 
-          <div className="flex justify-end gap-4 pt-6">
+          <div className="flex justify-end space-x-4">
             <button
-              onClick={() => navigate(-1)}
+              type="button"
+              onClick={() => navigate("/seller")}
               className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
             >
               Cancel
             </button>
             <button
-              onClick={handleSubmit}
-              disabled={createProductMutation.isPending || !isValid}
-              className="px-6 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50"
+              type="submit"
+              disabled={isLoading}
+              className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
             >
-              {createProductMutation.isPending ? "Creating..." : "Create Product"}
+              {isLoading ? "Creating..." : "Create Product"}
             </button>
           </div>
-        </div>
+        </form>
       </div>
-    </div>
+    </SellLayout>
   );
 }

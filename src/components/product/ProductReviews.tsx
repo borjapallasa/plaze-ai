@@ -40,11 +40,14 @@ export function ProductReviews({
   productUuid, 
   onLeaveReview 
 }: ProductReviewsProps) {
-  console.log('ProductReviews received:', { reviews, productUuid });
+  console.log('ProductReviews received:', { reviews, productUuid, selectedVariant, onLeaveReview });
 
   const handleLeaveReview = () => {
     if (selectedVariant && onLeaveReview) {
+      console.log('Calling onLeaveReview with variant:', selectedVariant);
       onLeaveReview(selectedVariant);
+    } else {
+      console.log('Cannot leave review - missing:', { selectedVariant, onLeaveReview });
     }
   };
 
@@ -54,6 +57,15 @@ export function ProductReviews({
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-semibold tracking-tight">Reviews</h2>
+          {selectedVariant && onLeaveReview && (
+            <Button 
+              onClick={handleLeaveReview}
+              variant="outline"
+              size="sm"
+            >
+              Leave a Review
+            </Button>
+          )}
         </div>
         
         <Card className={cn("p-12 text-center", className)}>
