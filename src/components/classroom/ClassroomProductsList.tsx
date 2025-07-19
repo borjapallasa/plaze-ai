@@ -30,19 +30,19 @@ export function ClassroomProductsList({
     window.open(`/community/product/${productId}`, '_blank');
   };
 
-  const handleDeleteClick = (variant: Variant, e: React.MouseEvent) => {
+  const handleDeleteClick = (variant: Variant & { relationshipUuid?: string }, e: React.MouseEvent) => {
     e.stopPropagation();
     console.log("Delete clicked for variant:", variant);
-    console.log("Community product relationship UUID from variant:", variant.community_product_relationship_uuid);
+    console.log("Community product relationship UUID from variant:", variant.relationshipUuid);
     
-    if (!variant.community_product_relationship_uuid) {
+    if (!variant.relationshipUuid) {
       console.error("No community_product_relationship_uuid found for variant:", variant);
       console.error("Full variant object:", JSON.stringify(variant, null, 2));
       return;
     }
     
     // Use the community_product_relationship_uuid for deletion
-    setDeleteRelationshipUuid(variant.community_product_relationship_uuid);
+    setDeleteRelationshipUuid(variant.relationshipUuid);
   };
 
   const excludedProductIds = variants.map(variant => variant.id);

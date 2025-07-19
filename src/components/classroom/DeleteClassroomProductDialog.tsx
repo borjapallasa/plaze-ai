@@ -31,17 +31,13 @@ export function DeleteClassroomProductDialog({
   const queryClient = useQueryClient();
 
   const deleteMutation = useMutation({
-    mutationFn: async () => {
-      if (!relationshipUuid) {
-        throw new Error("Relationship UUID is required");
-      }
-
-      console.log("Attempting to delete relationship:", relationshipUuid);
+    mutationFn: async (uuid: string) => {
+      console.log("Attempting to delete relationship:", uuid);
 
       const { error } = await supabase
         .from('community_product_relationships')
         .delete()
-        .eq('community_product_relationship_uuid', relationshipUuid);
+        .eq('community_product_relationship_uuid', uuid);
 
       if (error) {
         console.error("Error deleting classroom product relationship:", error);
@@ -82,7 +78,7 @@ export function DeleteClassroomProductDialog({
       return;
     }
     
-    deleteMutation.mutate();
+    deleteMutation.mutate(relationshipUuid);
   };
 
   return (

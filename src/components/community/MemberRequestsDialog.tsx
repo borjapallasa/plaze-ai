@@ -41,20 +41,44 @@ export function MemberRequestsDialog({
 
   const handleAcceptMember = async (memberUuid: string) => {
     try {
-      const { error } = await supabase
+      console.log('Attempting to accept member with UUID:', memberUuid);
+      
+      const { data, error, count } = await supabase
         .from('community_subscriptions')
-        .update({ status: 'active' })
-        .eq('community_subscription_uuid', memberUuid);
+        .update({ 
+          status: 'active' as const
+        })
+        .eq('community_subscription_uuid', memberUuid)
+        .select();
 
       if (error) {
         console.error('Error accepting member:', error);
+        console.error('Error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
         toast({
           variant: "destructive",
           title: "Error",
-          description: "Failed to accept member. Please try again.",
+          description: `Failed to accept member: ${error.message}`,
         });
         return;
       }
+
+      // Check if any rows were actually updated
+      if (!data || data.length === 0) {
+        console.error('No rows updated - this usually means RLS policy blocked the update');
+        toast({
+          variant: "destructive",
+          title: "Permission Denied",
+          description: "You don't have permission to accept this member. Make sure you're the community owner.",
+        });
+        return;
+      }
+
+      console.log('Member successfully accepted:', data[0]);
 
       // Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: ['community-members', communityId] });
@@ -75,20 +99,42 @@ export function MemberRequestsDialog({
 
   const handleRejectMember = async (memberUuid: string) => {
     try {
-      const { error } = await supabase
+      console.log('Attempting to reject member with UUID:', memberUuid);
+      
+      const { data, error } = await supabase
         .from('community_subscriptions')
         .delete()
-        .eq('community_subscription_uuid', memberUuid);
+        .eq('community_subscription_uuid', memberUuid)
+        .select();
 
       if (error) {
         console.error('Error rejecting member:', error);
+        console.error('Error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
         toast({
           variant: "destructive",
           title: "Error",
-          description: "Failed to reject member. Please try again.",
+          description: `Failed to reject member: ${error.message}`,
         });
         return;
       }
+
+      // Check if any rows were actually deleted
+      if (!data || data.length === 0) {
+        console.error('No rows deleted - this usually means RLS policy blocked the delete');
+        toast({
+          variant: "destructive",
+          title: "Permission Denied",
+          description: "You don't have permission to reject this member. Make sure you're the community owner.",
+        });
+        return;
+      }
+
+      console.log('Member successfully rejected:', data[0]);
 
       // Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: ['community-members', communityId] });
