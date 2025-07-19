@@ -34,6 +34,8 @@ import {
 } from "@/components/ui/tooltip";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { ProductEditor } from "@/components/product/ProductEditor";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/auth";
@@ -110,7 +112,10 @@ export default function Classroom() {
   const [editClassroomData, setEditClassroomData] = useState({
     name: '',
     description: '',
-    video_url: ''
+    video_url: '',
+    summary: '',
+    status: 'visible' as 'visible' | 'not visible',
+    notify: false
   });
   const isMobile = useIsMobile();
   const { id } = useParams();
@@ -491,7 +496,10 @@ export default function Classroom() {
     setEditClassroomData({
       name: classroom?.name || '',
       description: classroom?.description || '',
-      video_url: classroom?.video_url || ''
+      video_url: classroom?.video_url || '',
+      summary: classroom?.summary || '',
+      status: classroom?.status || 'visible',
+      notify: classroom?.notify || false
     });
     setIsEditClassroomOpen(true);
   };
@@ -1153,7 +1161,7 @@ export default function Classroom() {
 
             {/* Edit Classroom Dialog */}
             <Dialog open={isEditClassroomOpen} onOpenChange={setIsEditClassroomOpen}>
-              <DialogContent className="sm:max-w-[500px]">
+              <DialogContent className="sm:max-w-[500px] max-h-[80vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>Edit Classroom</DialogTitle>
                 </DialogHeader>
@@ -1168,13 +1176,22 @@ export default function Classroom() {
                     />
                   </div>
                   <div className="space-y-2">
+                    <Label htmlFor="classroom-summary">Summary</Label>
+                    <Input
+                      id="classroom-summary"
+                      placeholder="Enter classroom summary"
+                      value={editClassroomData.summary}
+                      onChange={(e) => setEditClassroomData({ ...editClassroomData, summary: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
                     <Label htmlFor="classroom-description">Description</Label>
                     <ProductEditor
                       value={editClassroomData.description}
                       onChange={(value) => setEditClassroomData({ ...editClassroomData, description: value })}
                       placeholder="Enter classroom description"
                       minHeight="150px"
-                      maxHeight="250px"
+                      maxHeight="200px"
                     />
                   </div>
                   <div className="space-y-2">
@@ -1184,6 +1201,35 @@ export default function Classroom() {
                       placeholder="Enter video URL"
                       value={editClassroomData.video_url}
                       onChange={(e) => setEditClassroomData({ ...editClassroomData, video_url: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="classroom-status">Status</Label>
+                    <Select
+                      value={editClassroomData.status}
+                      onValueChange={(value: 'visible' | 'not visible') => 
+                        setEditClassroomData({ ...editClassroomData, status: value })
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="visible">Visible</SelectItem>
+                        <SelectItem value="not visible">Not Visible</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex items-center justify-between space-x-2">
+                    <Label htmlFor="classroom-notify" className="text-sm font-medium">
+                      Notify members
+                    </Label>
+                    <Switch
+                      id="classroom-notify"
+                      checked={editClassroomData.notify}
+                      onCheckedChange={(checked) => 
+                        setEditClassroomData({ ...editClassroomData, notify: checked })
+                      }
                     />
                   </div>
                 </div>

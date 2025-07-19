@@ -49,9 +49,10 @@ export function EventDetailsDialog({
 
   if (!selectedDate) return null;
 
-  const dayEvents = events.filter(event => 
-    event.date.toDateString() === selectedDate.toDateString()
-  );
+  const dayEvents = events.filter(event => {
+    const eventDate = new Date(event.date);
+    return eventDate.toDateString() === selectedDate.toDateString();
+  });
 
   if (dayEvents.length === 0) return null;
 
@@ -59,11 +60,14 @@ export function EventDetailsDialog({
     console.log('EventDetailsDialog - handling edit for event:', event);
     console.log('Event has event_uuid:', event.event_uuid);
     
+    // Find the latest version of this event from the events list
+    const latestEvent = events.find(e => e.event_uuid === event.event_uuid) || event;
+    
     // Normalize the event object to ensure consistent field names
     const normalizedEvent = {
-      ...event,
-      title: event.title || event.name || '',
-      event_uuid: event.event_uuid
+      ...latestEvent,
+      title: latestEvent.title || latestEvent.name || '',
+      event_uuid: latestEvent.event_uuid
     };
     
     console.log('Normalized event:', normalizedEvent);
@@ -162,7 +166,13 @@ export function EventDetailsDialog({
 
       <EditEventDialog
         open={editDialogOpen}
-        onOpenChange={setEditDialogOpen}
+        onOpenChange={(open) => {
+          setEditDialogOpen(open);
+          // Clear eventToEdit when dialog closes to ensure fresh data on next edit
+          if (!open) {
+            setEventToEdit(null);
+          }
+        }}
         event={eventToEdit}
         communityId={communityId}
       />

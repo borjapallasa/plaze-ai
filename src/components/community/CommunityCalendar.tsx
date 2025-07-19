@@ -68,11 +68,11 @@ export function CommunityCalendar({
   };
 
   const hasEvent = (date: Date) => {
-    return events.some(event => isSameDay(event.date, date));
+    return events.some(event => isSameDay(new Date(event.date), date));
   };
 
   const getEventsForDate = (date: Date) => {
-    return events.filter(event => isSameDay(event.date, date));
+    return events.filter(event => isSameDay(new Date(event.date), date));
   };
 
   const handleDateClick = (date: Date) => {

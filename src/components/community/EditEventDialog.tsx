@@ -109,9 +109,19 @@ export function EditEventDialog({ open, onOpenChange, event, communityId }: Edit
       console.log('Event update successful:', result);
       return result;
     },
-    onSuccess: () => {
+    onSuccess: (updatedEvent) => {
       toast.success("Event updated successfully");
       queryClient.invalidateQueries({ queryKey: ['community-events', communityId] });
+      // Reset the form to reflect the updated data
+      if (updatedEvent) {
+        form.reset({
+          name: updatedEvent.name || "",
+          description: updatedEvent.description || "",
+          date: new Date(updatedEvent.date),
+          type: updatedEvent.type || "meeting",
+          location: updatedEvent.location || "",
+        });
+      }
       onOpenChange(false);
     },
     onError: (error) => {

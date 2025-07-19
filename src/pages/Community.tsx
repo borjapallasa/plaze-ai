@@ -340,6 +340,35 @@ export default function CommunityPage() {
     enabled: !!communityId && communityId !== ':id'
   });
 
+  // Event handlers
+  const handleEditEvent = (event: any) => {
+    console.log('Community - Edit event requested:', event);
+    // The EditEventDialog will handle the actual editing
+  };
+
+  const handleDeleteEvent = async (eventId: string) => {
+    console.log('Community - Delete event requested:', eventId);
+    try {
+      const { error } = await supabase
+        .from('events')
+        .delete()
+        .eq('event_uuid', eventId);
+
+      if (error) {
+        console.error('Error deleting event:', error);
+        toast.error("Failed to delete event. Please try again.");
+        return;
+      }
+
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['community-events', communityId] });
+      toast.success("Event deleted successfully");
+    } catch (error) {
+      console.error('Error deleting event:', error);
+      toast.error("Failed to delete event. Please try again.");
+    }
+  };
+
   const videoEmbedUrl = getVideoEmbedUrl(community?.intro);
   const links = parseLinks(community?.links);
 
@@ -384,7 +413,8 @@ export default function CommunityPage() {
         date: new Date(event.date),
         type: event.type || 'event',
         description: event.description || '',
-        location: event.location || ''
+        location: event.location || '',
+        event_uuid: event.event_uuid || ''
       }));
   }, [events]);
 
@@ -1133,6 +1163,10 @@ export default function CommunityPage() {
                     onDateSelect={setDate}
                     onAddEvent={() => setIsAddEventDialogOpen(true)}
                     showAddEventButton={isOwner}
+                    isOwner={isOwner}
+                    onEditEvent={handleEditEvent}
+                    onDeleteEvent={handleDeleteEvent}
+                    communityId={communityId || ''}
                   />
                 </CardContent>
               </Card>
