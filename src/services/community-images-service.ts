@@ -23,7 +23,7 @@ export const fetchCommunityImages = async (communityUuid: string): Promise<Commu
     // Add public URL to each image before returning
     const imagesWithUrls = data?.map(image => {
       const { data: urlData } = supabase.storage
-        .from('community-images')
+        .from('community_images')
         .getPublicUrl(image.storage_path);
         
       return {
@@ -59,14 +59,14 @@ export const uploadCommunityImage = async (
     
     // Upload file to storage
     const { error: uploadError } = await supabase.storage
-      .from('community-images')
+      .from('community_images')
       .upload(filePath, file);
 
     if (uploadError) throw uploadError;
     
     // Get public URL
     const { data: publicURLData } = supabase.storage
-      .from('community-images')
+      .from('community_images')
       .getPublicUrl(filePath);
       
     if (!publicURLData.publicUrl) throw new Error("Failed to get public URL");
@@ -133,7 +133,7 @@ export const removeCommunityImage = async (
   try {
     // Delete from storage
     const { error: storageError } = await supabase.storage
-      .from('community-images')
+      .from('community_images')
       .remove([storagePath]);
 
     if (storageError) throw storageError;
