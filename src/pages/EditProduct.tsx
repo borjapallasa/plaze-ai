@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { X, Info } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -81,6 +81,7 @@ export default function EditProduct() {
   const [team, setTeam] = useState<string[]>([]);
   const [localVariants, setLocalVariants] = useState<any[]>([]);
   const [deletedVariantIds, setDeletedVariantIds] = useState<string[]>([]);
+  const localVariantsRef = useRef<any[]>([]);
 
   const handleBackClick = () => {
     navigate(-1);
@@ -177,21 +178,37 @@ export default function EditProduct() {
     enabled: !!id
   });
 
-  useEffect(() => {
-    if (variants.length > 0) {
-      console.log('Setting localVariants from database variants:', variants);
-      setLocalVariants(variants.map(v => ({
+  // Memoize variant transformation to prevent unnecessary re-processing
+  const processedVariants = useMemo(() => {
+    if (!variants || variants.length === 0) {
+      return [];
+    }
+    
+    // Check if this is database format (has variant_uuid) vs local format (has string/temp id)
+    const firstVariant = variants[0];
+    const isDatabaseFormat = firstVariant.variant_uuid && typeof firstVariant.variant_uuid === 'string';
+    
+    if (isDatabaseFormat) {
+      return variants.map(v => ({
         id: v.variant_uuid,
         name: v.name || "",
         price: v.price?.toString() || "0",
-        comparePrice: v.compare_price?.toString() || "0", // Properly map compare_price from database
+        comparePrice: v.compare_price?.toString() || "0",
         highlight: v.highlighted || false,
         tags: Array.isArray(v.tags) ? v.tags : [],
         filesLink: v.files_link || "",
         additionalDetails: v.additional_details || ""
-      })));
+      }));
+    } else {
+      return variants;
     }
   }, [variants]);
+
+  useEffect(() => {
+    if (processedVariants.length > 0) {
+      setLocalVariants(processedVariants);
+    }
+  }, [processedVariants]);
 
   useEffect(() => {
     if (product) {
@@ -226,60 +243,48 @@ export default function EditProduct() {
   };
 
   const handleVariantsChange = (updatedVariants: any[]) => {
-    console.log('handleVariantsChange called with:', updatedVariants);
-    console.log('Current localVariants:', localVariants);
-
     // Get current variant IDs for comparison
     const currentIds = localVariants.map(v => v?.id).filter(Boolean);
     const updatedIds = updatedVariants.map(v => v?.id).filter(Boolean);
 
-    console.log('Current variant IDs:', currentIds);
-    console.log('Updated variant IDs:', updatedIds);
-
     // Find variants that were removed
     const removedIds = currentIds.filter(id => !updatedIds.includes(id));
-    console.log('Removed variant IDs:', removedIds);
 
     // Only track database variants for deletion (not temp ones)
     const databaseVariantsToDelete = removedIds.filter(id => 
       id && !id.toString().startsWith('temp_')
     );
 
-    console.log('Database variants to delete:', databaseVariantsToDelete);
-
     // Update deletedVariantIds if we have variants to delete
     if (databaseVariantsToDelete.length > 0) {
       setDeletedVariantIds(prev => {
         const updated = [...new Set([...prev, ...databaseVariantsToDelete])];
-        console.log('Updated deletedVariantIds:', updated);
         return updated;
       });
     }
 
-    // Update local variants - ensure price and comparePrice are handled independently
-    const processedVariants = updatedVariants.map(variant => {
-      console.log('Processing variant:', variant);
-      return {
-        ...variant,
-        price: variant.price || "0",
-        comparePrice: variant.comparePrice || "0", // Keep comparePrice independent
-      };
-    });
+    // Update local variants - ensure price and comparePrice are handled as strings
+    const processedVariants = updatedVariants.map(variant => ({
+      ...variant,
+      price: typeof variant.price === 'string' ? variant.price : (variant.price?.toString() || "0"),
+      comparePrice: typeof variant.comparePrice === 'string' ? variant.comparePrice : (variant.comparePrice?.toString() || "0"),
+    }));
 
-    console.log('Processed variants:', processedVariants);
     setLocalVariants(processedVariants);
   };
 
   const handleSave = async () => {
     try {
       setIsSaving(true);
-      console.log('Saving product with ID:', id);
-      console.log('Deleted variant IDs to remove from database:', deletedVariantIds);
-      console.log('Local variants to save:', localVariants);
 
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       if (userError) throw userError;
       if (!user) throw new Error('No authenticated user found');
+
+      // Check if user owns this product
+      if (product?.user_uuid !== user.id) {
+        throw new Error('Permission denied: You do not own this product');
+      }
 
       // Update product information
       const { error: productError } = await supabase
@@ -304,41 +309,41 @@ export default function EditProduct() {
 
       // Delete removed variants from database
       if (deletedVariantIds.length > 0) {
-        console.log('Deleting variants from database:', deletedVariantIds);
-        const { error: deleteError } = await supabase
+        const { error: deleteError, data: deletedData } = await supabase
           .from('variants')
           .delete()
-          .in('variant_uuid', deletedVariantIds);
-
+          .in('variant_uuid', deletedVariantIds)
+          .eq('user_uuid', user.id)
+          .select();
+        
         if (deleteError) {
           console.error('Error deleting variants:', deleteError);
           throw deleteError;
         }
-        console.log('Successfully deleted variants from database');
+        
+        if (!deletedData || deletedData.length === 0) {
+          throw new Error(`Failed to delete variants - no rows affected (possible permission issue)`);
+        }
       }
 
       // Process remaining variants (insert new ones, update existing ones)
       for (const variant of localVariants) {
         if (!variant || !variant.id) {
-          console.warn('Skipping variant without ID:', variant);
           continue;
         }
 
         const variantData = {
           name: variant.name,
           price: parseFloat(variant.price) || 0,
-          compare_price: parseFloat(variant.comparePrice) || null, // Save compare_price independently
+          compare_price: parseFloat(variant.comparePrice) || 0, // Ensure compare_price is saved as number, not null
           highlighted: variant.highlight,
           tags: Array.isArray(variant.tags) ? variant.tags : [],
           files_link: variant.filesLink,
           additional_details: variant.additionalDetails
         };
 
-        console.log('Saving variant with data:', variantData);
-
         if (variant.id.toString().includes('temp_')) {
           // Insert new variant
-          console.log('Inserting new variant:', variant);
           const { error: insertError } = await supabase
             .from('variants')
             .insert({
@@ -353,15 +358,20 @@ export default function EditProduct() {
           }
         } else {
           // Update existing variant
-          console.log('Updating existing variant:', variant);
-          const { error: updateError } = await supabase
+          const { error: updateError, data: updateData } = await supabase
             .from('variants')
             .update(variantData)
-            .eq('variant_uuid', variant.id);
+            .eq('variant_uuid', variant.id)
+            .eq('user_uuid', user.id)
+            .select();
 
           if (updateError) {
             console.error('Error updating variant:', updateError);
             throw updateError;
+          }
+          
+          if (!updateData || updateData.length === 0) {
+            throw new Error(`Failed to update variant ${variant.id} - no rows affected (RLS policy blocked)`);
           }
         }
       }
@@ -371,8 +381,8 @@ export default function EditProduct() {
       // Clear deleted variant IDs after successful save
       setDeletedVariantIds([]);
 
-      // Refetch variants to get updated data
-      refetchVariants();
+      // Refetch variants to get updated data from database
+      await refetchVariants();
 
     } catch (error) {
       console.error('Error updating product:', error);

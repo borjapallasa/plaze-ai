@@ -2,8 +2,8 @@
 export interface Variant {
   id: string;
   name: string;
-  price: number;
-  comparePrice?: number;
+  price: string | number; // Support both string (UI) and number (DB) formats
+  comparePrice?: string | number; // Support both string (UI) and number (DB) formats
   label?: string;
   highlight?: boolean;
   tags?: string[];

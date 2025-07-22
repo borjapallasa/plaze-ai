@@ -11,22 +11,29 @@ export function ProductVariantsEditor({
   onVariantsChange,
   className = ""
 }: ProductVariantsEditorProps) {
-  const [internalVariants, setInternalVariants] = React.useState<Variant[]>([
-    {
-      id: "1",
-      name: "Default Variant",
-      price: 0,
-      comparePrice: 0,
-      highlight: false,
-      tags: [],
-      label: "Package",
-      features: [],
-      filesLink: "",
-      additionalDetails: "",
-    },
-  ]);
+  const [internalVariants, setInternalVariants] = React.useState<Variant[]>([]);
 
-  const variants = externalVariants || internalVariants;
+  // Always prefer external variants if provided and has a callback
+  const variants = onVariantsChange && externalVariants ? externalVariants : internalVariants;
+  
+  // Initialize internal variants only if we don't have external variants and no variants exist
+  React.useEffect(() => {
+    if (!onVariantsChange && internalVariants.length === 0) {
+      setInternalVariants([{
+        id: "1",
+        name: "Default Variant",
+        price: 0,
+        comparePrice: 0,
+        highlight: false,
+        tags: [],
+        label: "Package",
+        features: [],
+        filesLink: "",
+        additionalDetails: "",
+      }]);
+    }
+  }, [onVariantsChange, internalVariants.length]);
+  
   const setVariants = (newVariants: Variant[]) => {
     if (onVariantsChange) {
       onVariantsChange(newVariants);
@@ -58,14 +65,7 @@ export function ProductVariantsEditor({
       return;
     }
     
-    console.log('Removing variant with ID:', id);
-    console.log('Current variants before removal:', variants);
-    
-    // Simply filter out the variant with the matching ID
     const updatedVariants = variants.filter(v => v.id !== id);
-    
-    console.log('Updated variants after removal:', updatedVariants);
-    
     setVariants(updatedVariants);
   };
 
@@ -79,7 +79,7 @@ export function ProductVariantsEditor({
     } else if (field === 'price' || field === 'comparePrice') {
       setVariants(
         variants.map((v) =>
-          v.id === id ? { ...v, [field]: Number(value) || 0 } : v
+          v.id === id ? { ...v, [field]: value } : v
         )
       );
     } else {

@@ -149,23 +149,36 @@ export function RelatedProducts({
 
   // Update selected products based on relationships
   useEffect(() => {
-    console.log("Relationships changed:", relationships.length);
-
     if (relationships.length > 0 && userProducts.length > 0) {
       try {
         const relatedProductIds = relationships.map(rel => rel.related_product_uuid);
         const relatedProducts = userProducts.filter(product =>
           relatedProductIds.includes(product.product_uuid)
         );
-
-        console.log("Setting selected products:", relatedProducts.length);
-        setSelectedProducts(relatedProducts);
+        
+        // Only update if the selected products actually changed
+        setSelectedProducts(prev => {
+          const prevIds = prev.map(p => p.product_uuid).sort();
+          const newIds = relatedProducts.map(p => p.product_uuid).sort();
+          
+          // Compare arrays to prevent unnecessary updates
+          if (JSON.stringify(prevIds) === JSON.stringify(newIds)) {
+            return prev;
+          }
+          
+          return relatedProducts;
+        });
       } catch (error) {
         console.error("Error processing relationships:", error);
       }
     } else if (relationships.length === 0) {
-      // Clear selected products if no relationships exist
-      setSelectedProducts([]);
+      // Clear selected products if no relationships exist - but only if we currently have selected products
+      setSelectedProducts(prev => {
+        if (prev.length === 0) {
+          return prev;
+        }
+        return [];
+      });
     }
   }, [relationships, userProducts]);
 
