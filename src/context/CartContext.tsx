@@ -46,6 +46,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
       const { data: { session } } = await supabase.auth.getSession();
 
+      let currentGuestSessionId = '';
       if (!session) {
         let sessionId = localStorage.getItem('guest_session_id');
         if (!sessionId) {
@@ -53,9 +54,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           localStorage.setItem('guest_session_id', sessionId);
         }
         setGuestSessionId(sessionId);
+        currentGuestSessionId = sessionId;
       }
 
-      await fetchCart(session?.user?.id);
+      await fetchCart(session?.user?.id, currentGuestSessionId);
 
       setIsLoading(false);
     };
@@ -63,8 +65,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     initializeCart();
   }, []);
 
-  const fetchCart = useCallback(async (userId?: string) => {
-    console.log('CartContext: fetchCart called with', { userId });
+  const fetchCart = useCallback(async (userId?: string, overrideSessionId?: string) => {
+    // If no userId provided, get current auth state
+    if (userId === undefined) {
+      const { data: { session } } = await supabase.auth.getSession();
+      userId = session?.user?.id || undefined;
+    }
+
+    const currentSessionId = overrideSessionId || guestSessionId;
+    console.log('CartContext: fetchCart called with', { userId, guestSessionId, overrideSessionId, currentSessionId });
 
     const now = Date.now();
     if (now - lastFetchTime < 1000) { // Less than one second, just return null
@@ -77,7 +86,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       setLastFetchTime(now);
 
       // Only fetch regular products for the cart display (exclude classroom products)
-      const cartData = await fetchCartData(userId, undefined, false);
+      const cartData = await fetchCartData(userId, userId ? undefined : currentSessionId, true);
       console.log('CartContext: fetchCart received data', cartData);
 
       if (cartData && cartData.transaction_uuid) {
@@ -99,7 +108,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(false);
       return null;
     }
-  }, [cart, lastFetchTime]);
+  }, [cart, lastFetchTime, guestSessionId]);
 
   const addToCart = async (
     product: any,
@@ -213,6 +222,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         updatedCart.total_amount = updatedCart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         
         console.log('CartContext: Setting updated cart', updatedCart);
+        
+        // Store transaction UUID for guest users
+        if (!userId && updatedCart.transaction_uuid) {
+          localStorage.setItem('guest_cart_transaction_uuid', updatedCart.transaction_uuid);
+        }
+        
         setCart(updatedCart);
       } else {
         await fetchCart(userId);

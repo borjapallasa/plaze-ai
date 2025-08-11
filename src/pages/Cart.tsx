@@ -1,16 +1,18 @@
 
-import { MainHeader } from "@/components/MainHeader";
+import { MainHeader } from "@/components/MainHeader"; 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Trash2, ShoppingCart, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useCart } from "@/context/CartContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Cart() {
   const { cart, isLoading, fetchCart, removeFromCart, cleanupCart } = useCart();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [removingItems, setRemovingItems] = useState<string[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const refreshCart = async () => {
@@ -19,7 +21,7 @@ export default function Cart() {
       setIsRefreshing(true);
       try {
         await fetchCart();
-        await cleanupCart();
+        // await cleanupCart();
       } catch (error) {
         console.error('Error refreshing cart:', error);
         toast.error("Failed to load your cart. Please try again.");
@@ -175,13 +177,9 @@ export default function Cart() {
                     <Button
                       size="lg"
                       className="w-full bg-primary hover:bg-primary/90 transition-colors"
-                      onClick={() => {
-                        toast.success("Payment processing", {
-                          description: "This is where the payment processing would begin."
-                        });
-                      }}
+                      onClick={() => navigate('/checkout')}
                     >
-                      Pay Now
+                      Proceed to Checkout
                     </Button>
                   </div>
                 </CardContent>

@@ -47,6 +47,9 @@ import { SearchResults } from "./pages/search";
 import NewCommunityProductPage from "./pages/community/NewCommunityProductPage";
 import AdminAffiliatesPage from "./pages/admin/AdminAffiliates";
 import AdminAffiliateDetailsPage from "./pages/admin/AdminAffiliateDetails";
+import CheckoutPage from "./pages/Checkout";
+import PaymentSuccessPage from "./pages/PaymentSuccess";
+import PaymentFailurePage from "./pages/PaymentFailure";
 
 const queryClient = new QueryClient();
 
@@ -102,6 +105,9 @@ function App() {
           <Route path="/search" element={<SearchResults />} />
           <Route path="/experts" element={<ExpertsPage />} />
           <Route path="/expert/:expert_uuid" element={<ExpertPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/payment-success" element={<PaymentSuccessPage />} />
+          <Route path="/payment-failure" element={<PaymentFailurePage />} />
         </Routes>
         <Toaster />
       </AuthProvider>

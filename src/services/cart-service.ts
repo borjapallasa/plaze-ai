@@ -4,12 +4,13 @@ import { CartItem, CartTransaction } from '@/types/cart';
 // Fetch cart data by user or guest session ID
 export async function fetchCartData(userId?: string, sessionId?: string, includeClassroomProducts: boolean = false): Promise<CartTransaction | null> {
   try {
-    if (!userId) {
-      // No way to identify the cart
+    console.log('fetchCartData called with:', { userId, sessionId, includeClassroomProducts });
+
+    if (!userId && !sessionId) {
+      console.log('No userId or sessionId provided');
       return null;
     }
 
-    // Apply the correct filter based on available ID
     if (userId) {
       const { data: transactionData, error: transactionError } = await supabase
         .from('products_transactions')
@@ -62,10 +63,10 @@ export async function fetchCartData(userId?: string, sessionId?: string, include
         .map(item => item.variant_uuid);
 
       // Prepare result maps
-      let productNames: Record<string, string> = {};
-      let variantNames: Record<string, string> = {};
-      let availableProducts = new Set<string>();
-      let availableVariants = new Set<string>();
+      const productNames: Record<string, string> = {};
+      const variantNames: Record<string, string> = {};
+      const availableProducts = new Set<string>();
+      const availableVariants = new Set<string>();
 
       // Only fetch product names if we have product UUIDs
       if (productUuids.length > 0) {
@@ -119,8 +120,8 @@ export async function fetchCartData(userId?: string, sessionId?: string, include
         const isDefaultVariant = item.product_type === 'default';
 
         // For default variants, we use the product name as variant name
-        let productName = item.product_uuid ? (productNames[item.product_uuid] || 'Unknown Product') : 'Classroom Product';
-        let variantName = isDefaultVariant
+        const productName = item.product_uuid ? (productNames[item.product_uuid] || 'Unknown Product') : 'Classroom Product';
+        const variantName = isDefaultVariant
           ? 'Default Option'
           : (variantNames[item.variant_uuid] || 'Unknown Variant');
 
@@ -159,12 +160,166 @@ export async function fetchCartData(userId?: string, sessionId?: string, include
       console.log('Returning cart data: ', cartData)
       return cartData;
     } else if (sessionId) {
-      // Handle guest cart (this would be implemented in a similar way)
-      console.log('Guest cart not fully implemented yet');
-      return null;
+      // Handle guest cart - look up by stored transaction UUID
+      const storedTransactionUuid = localStorage.getItem('guest_cart_transaction_uuid');
+      
+      if (!storedTransactionUuid) {
+        console.log('No stored guest cart transaction UUID found');
+        return null;
+      }
+
+      console.log('Fetching guest cart for transaction:', storedTransactionUuid);
+
+      // Fetch the specific transaction for guest users
+      const { data: transactionData, error: transactionError } = await supabase
+        .from('products_transactions')
+        .select('product_transaction_uuid, item_count, total_amount, status, payment_link, user_uuid')
+        .eq('product_transaction_uuid', storedTransactionUuid)
+        .is('user_uuid', null) // Ensure it's an anonymous transaction
+        .eq('status', 'pending')
+        .single();
+
+      if (transactionError) {
+        console.error('Error fetching guest cart transaction:', transactionError);
+        // Clear invalid stored UUID
+        localStorage.removeItem('guest_cart_transaction_uuid');
+        return null;
+      }
+
+      if (!transactionData) {
+        console.log('No guest transaction found for UUID:', storedTransactionUuid);
+        localStorage.removeItem('guest_cart_transaction_uuid');
+        return null;
+      }
+
+      // Get the items for this guest transaction (reuse the same logic as authenticated users)
+      let itemsQuery = supabase
+        .from('products_transaction_items')
+        .select('product_transaction_item_uuid, product_uuid, variant_uuid, price, quantity, total_price, product_type')
+        .eq('product_transaction_uuid', transactionData.product_transaction_uuid);
+      
+      // If we don't want to include classroom products, filter them out
+      if (!includeClassroomProducts) {
+        itemsQuery = itemsQuery.not('product_type', 'eq', 'community');
+      }
+      
+      const { data: itemsData, error: itemsError } = await itemsQuery;
+
+      if (itemsError) {
+        console.error('Error fetching guest cart items:', itemsError);
+        return null;
+      }
+
+      if (!itemsData || !Array.isArray(itemsData)) {
+        console.error('No items data or invalid format for guest cart');
+        return null;
+      }
+
+      // Extract product UUIDs and variant UUIDs (same logic as authenticated users)
+      const productUuids = itemsData
+        .filter(item => item.product_uuid)
+        .map(item => item.product_uuid);
+
+      const variantUuids = itemsData
+        .filter(item => item.variant_uuid)
+        .map(item => item.variant_uuid);
+
+      // Prepare result maps
+      const productNames: Record<string, string> = {};
+      const variantNames: Record<string, string> = {};
+      const availableProducts = new Set<string>();
+      const availableVariants = new Set<string>();
+
+      // Fetch product names (same logic as authenticated users)
+      if (productUuids.length > 0) {
+        const { data: productsData } = await supabase
+          .from('products')
+          .select('product_uuid, name')
+          .in('product_uuid', productUuids);
+
+        if (productsData) {
+          productsData.forEach((product: any) => {
+            productNames[product.product_uuid] = product.name;
+            availableProducts.add(product.product_uuid);
+          });
+        }
+      }
+
+      // Check if variants exist in standard variants table
+      if (variantUuids.length > 0) {
+        const { data: variantsData } = await supabase
+          .from('variants')
+          .select('variant_uuid, name')
+          .in('variant_uuid', variantUuids);
+
+        if (variantsData) {
+          variantsData.forEach((variant: any) => {
+            variantNames[variant.variant_uuid] = variant.name;
+            availableVariants.add(variant.variant_uuid);
+          });
+        }
+      }
+
+      // Check if any variants are community products
+      if (variantUuids.length > 0) {
+        const { data: communityProductsData } = await supabase
+          .from('community_products')
+          .select('community_product_uuid, name')
+          .in('community_product_uuid', variantUuids);
+
+        if (communityProductsData) {
+          communityProductsData.forEach((product: any) => {
+            variantNames[product.community_product_uuid] = product.name;
+            availableVariants.add(product.community_product_uuid);
+          });
+        }
+      }
+
+      // Map the items with their names and availability status (same logic as authenticated users)
+      const items: CartItem[] = itemsData.map((item: any) => {
+        const isClassroomProduct = item.product_type === 'community';
+        const isDefaultVariant = item.product_type === 'default';
+
+        const productName = item.product_uuid ? (productNames[item.product_uuid] || 'Unknown Product') : 'Classroom Product';
+        const variantName = isDefaultVariant
+          ? 'Default Option'
+          : (variantNames[item.variant_uuid] || 'Unknown Variant');
+
+        const isAvailable = true;
+
+        return {
+          product_uuid: item.product_uuid,
+          variant_uuid: item.variant_uuid,
+          price: item.price,
+          quantity: item.quantity,
+          product_name: isClassroomProduct ? 'Classroom Product' : productName,
+          variant_name: variantName,
+          is_available: isAvailable,
+          product_type: item.product_type
+        };
+      });
+
+      // Calculate totals based on filtered items
+      let filteredItemCount = transactionData.item_count;
+      let filteredTotalAmount = transactionData.total_amount;
+      
+      if (!includeClassroomProducts) {
+        filteredItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+        filteredTotalAmount = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      }
+
+      const cartData = {
+        transaction_uuid: transactionData.product_transaction_uuid,
+        item_count: filteredItemCount,
+        total_amount: filteredTotalAmount,
+        items
+      };
+
+      console.log('Returning guest cart data:', cartData);
+      return cartData;
     } else {
-      console.error('No user ID or session ID found')
-      throw new Error('No user ID')
+      console.error('No user ID or session ID provided - cannot identify cart')
+      return null;
     }
   } catch (error) {
     console.error('Failed to fetch cart:', error);

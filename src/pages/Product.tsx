@@ -6,7 +6,7 @@ import { useProduct } from "@/hooks/use-product";
 import { useProductVariants } from "@/hooks/use-product-variants";
 import { useProductReviews } from "@/hooks/use-product-reviews";
 import { useRelatedProducts } from "@/hooks/use-related-products";
-import { useCart } from "@/hooks/use-cart";
+import { useCart } from "@/context/CartContext";
 import { ProductSkeleton } from "@/components/product/ProductSkeleton";
 import { ProductNotFound } from "@/components/product/ProductNotFound";
 import { LeaveReviewDialog } from "@/components/product/LeaveReviewDialog";
@@ -34,22 +34,23 @@ export default function Product() {
     setSelectedVariant(variant);
   };
 
-  const handleAddToCart = (variant: Variant) => {
+  const handleAddToCart = async (variant: Variant) => {
     if (!variant) {
       toast.error("Please select a variant");
       return;
     }
 
-    addToCart({
-      variantId: variant.id,
-      productId: product?.product_uuid || "",
-      productName: product?.name || "",
-      variantName: variant.name,
-      price: variant.price,
-      image: variant.filesLink || product?.thumbnail || "",
-    });
+    if (!variant.id) {
+      toast.error("Variant ID is missing");
+      return;
+    }
 
-    toast.success("Added to cart!");
+    await addToCart(
+      product,
+      variant.id,
+      [],
+      false
+    );
   };
 
   const handleAdditionalVariantToggle = (variantId: string, selected: boolean) => {
