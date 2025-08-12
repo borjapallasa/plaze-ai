@@ -9,8 +9,9 @@ import { useAuth } from '@/lib/auth';
 import { StripeElementsProvider } from '@/components/payments/StripeElementsProvider';
 import { PaymentForm } from '@/components/payments/PaymentForm';
 import { toast } from 'sonner';
-import { handlePaymentSuccess, handlePaymentFailure } from '@/services/payment-service';
+import { handleSubscriptionPaymentSuccess, handleSubscriptionPaymentFailure } from '@/services/payment-service';
 import { createPaymentIntent } from '@/services/payment-service';
+import { supabase } from '@/integrations/supabase/client';
 
 interface CommunitySubscriptionCheckoutProps {
   community: {
@@ -44,6 +45,7 @@ export const CommunitySubscriptionCheckout: React.FC<CommunitySubscriptionChecko
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [paymentClientSecret, setPaymentClientSecret] = useState('');
+  const [currentTransactionId, setCurrentTransactionId] = useState('');
   const [customerInfo, setCustomerInfo] = useState({
     email: user?.email || '',
     name: user?.user_metadata?.full_name || `${user?.user_metadata?.first_name || ''} ${user?.user_metadata?.last_name || ''}`.trim() || '',
@@ -74,14 +76,33 @@ export const CommunitySubscriptionCheckout: React.FC<CommunitySubscriptionChecko
 
   const createSubscriptionTransaction = async () => {
     try {
-      // Create community subscription transaction
-      // This would integrate with your existing community subscription system
       console.log('Creating community subscription transaction');
       
-      // Mock transaction UUID for now - replace with actual transaction creation
-      const mockTransactionId = `cs_${Date.now()}_${community.community_uuid}`;
+      if (!user?.id) {
+        throw new Error('User not authenticated');
+      }
+
+      // Create community subscription transaction in the database
+      const { data, error } = await supabase
+        .from('community_subscriptions_transactions')
+        .insert({
+          user_uuid: user.id,
+          community_uuid: community.community_uuid,
+          amount: pricing.amount,
+          // Note: community_price_uuid is optional since we're using fallback pricing
+          community_price_uuid: pricing.community_price_uuid.startsWith('fallback_') ? null : pricing.community_price_uuid,
+        })
+        .select('community_subscription_transaction_uuid')
+        .single();
+
+      if (error) {
+        console.error('Error creating subscription transaction:', error);
+        throw error;
+      }
+
+      console.log('Created subscription transaction:', data);
+      return data.community_subscription_transaction_uuid;
       
-      return mockTransactionId;
     } catch (error) {
       console.error('Error creating subscription transaction:', error);
       throw error;
@@ -108,6 +129,9 @@ export const CommunitySubscriptionCheckout: React.FC<CommunitySubscriptionChecko
 
       // Create subscription transaction first
       const transactionId = await createSubscriptionTransaction();
+      
+      // Store the transaction ID for later use
+      setCurrentTransactionId(transactionId);
 
       // Create Stripe subscription payment intent
       console.log('Creating subscription payment intent');
@@ -120,6 +144,7 @@ export const CommunitySubscriptionCheckout: React.FC<CommunitySubscriptionChecko
         customerName: isAuthenticated ? customerInfo.name : `${formData.firstName} ${formData.lastName}`.trim(),
         isSubscription: true,
         subscriptionPriceId: pricing.stripe_price_id,
+        communityUuid: community.community_uuid,
       });
 
       if (!paymentResult.success) {
@@ -143,12 +168,21 @@ export const CommunitySubscriptionCheckout: React.FC<CommunitySubscriptionChecko
 
   const handlePaymentComplete = async (paymentIntent: any) => {
     try {
-      console.log('Processing subscription payment success:', paymentIntent);
+      console.log('🔄 Processing subscription payment success:', paymentIntent);
+      console.log('🆔 Current transaction ID:', currentTransactionId);
+      console.log('💳 Payment Intent ID:', paymentIntent.id);
 
-      // Handle payment success (this will update database via webhooks)
-      const result = await handlePaymentSuccess('subscription_transaction_id', paymentIntent);
+      if (!currentTransactionId) {
+        throw new Error('No transaction ID available for payment success processing');
+      }
+
+      // Handle subscription payment success (this will update database via webhooks)
+      const result = await handleSubscriptionPaymentSuccess(currentTransactionId, paymentIntent);
+      
+      console.log('🎯 Payment success result:', result);
       
       if (result.success) {
+        console.log('✅ Subscription payment processed successfully');
         toast.success('Subscription activated successfully!');
         
         // Call success callback
@@ -158,11 +192,12 @@ export const CommunitySubscriptionCheckout: React.FC<CommunitySubscriptionChecko
           customerEmail: isAuthenticated ? customerInfo.email : formData.email,
         });
       } else {
+        console.error('❌ Payment success processing failed:', result.error);
         throw new Error(result.error || 'Failed to process subscription success');
       }
 
     } catch (error) {
-      console.error('Error handling subscription success:', error);
+      console.error('💥 Error handling subscription success:', error);
       toast.error('Subscription completed but there was an error processing. Please contact support.');
     }
   };
@@ -171,7 +206,7 @@ export const CommunitySubscriptionCheckout: React.FC<CommunitySubscriptionChecko
     try {
       console.error('Subscription payment failed:', error);
       
-      await handlePaymentFailure('subscription_transaction_id', error);
+      await handleSubscriptionPaymentFailure(currentTransactionId, error);
       toast.error(`Subscription payment failed: ${error}`);
       
       // Reset payment form
@@ -194,26 +229,30 @@ export const CommunitySubscriptionCheckout: React.FC<CommunitySubscriptionChecko
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="mb-6 p-4 bg-muted/50 rounded-lg">
-              <div className="flex items-center gap-3 mb-2">
+            <div className="mb-6 p-4 bg-muted/50 rounded-lg text-center">
+              <div className="flex items-center justify-center gap-3 mb-2">
                 <Users className="w-4 h-4 text-muted-foreground" />
                 <span className="font-medium">{community.name}</span>
               </div>
-              <div className="flex items-center gap-3 text-sm text-muted-foreground">
+              <div className="flex items-center justify-center gap-3 text-sm text-muted-foreground">
                 <Calendar className="w-4 h-4" />
                 <span>{formatPrice(pricing.amount, pricing.currency)} / {pricing.billing_period}</span>
               </div>
             </div>
             
-            <StripeElementsProvider clientSecret={paymentClientSecret}>
-              <PaymentForm
-                onPaymentSuccess={handlePaymentComplete}
-                onPaymentError={handlePaymentError}
-                isProcessing={isProcessingPayment}
-                amount={pricing.amount}
-                currency={pricing.currency}
-              />
-            </StripeElementsProvider>
+            <div className="flex justify-center">
+              <div className="w-full max-w-md">
+                <StripeElementsProvider clientSecret={paymentClientSecret}>
+                  <PaymentForm
+                    onPaymentSuccess={handlePaymentComplete}
+                    onPaymentError={handlePaymentError}
+                    isProcessing={isProcessingPayment}
+                    amount={pricing.amount}
+                    currency={pricing.currency}
+                  />
+                </StripeElementsProvider>
+              </div>
+            </div>
 
             <div className="flex gap-2 mt-6">
               <Button 

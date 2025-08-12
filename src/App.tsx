@@ -50,6 +50,7 @@ import AdminAffiliateDetailsPage from "./pages/admin/AdminAffiliateDetails";
 import CheckoutPage from "./pages/Checkout";
 import PaymentSuccessPage from "./pages/PaymentSuccess";
 import PaymentFailurePage from "./pages/PaymentFailure";
+import CommunitySubscriptionTest from "./pages/CommunitySubscriptionTest";
 
 const queryClient = new QueryClient();
 
@@ -108,6 +109,7 @@ function App() {
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/payment-success" element={<PaymentSuccessPage />} />
           <Route path="/payment-failure" element={<PaymentFailurePage />} />
+          <Route path="/test/community-subscription" element={<CommunitySubscriptionTest />} />
         </Routes>
         <Toaster />
       </AuthProvider>

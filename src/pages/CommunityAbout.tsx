@@ -15,6 +15,7 @@ import type { ProductImage } from "@/types/product-images";
 import { formatNumber } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
+import { CommunitySubscriptionCheckout } from "@/components/checkout/CommunitySubscriptionCheckout";
 
 interface Link {
   name: string;
@@ -55,6 +56,7 @@ export default function CommunityAboutPage() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const [showSubscriptionCheckout, setShowSubscriptionCheckout] = useState(false);
 
   console.log('Community ID from params:', communityId);
 
@@ -88,6 +90,8 @@ export default function CommunityAboutPage() {
       }
 
       console.log('Community data fetched:', data);
+      console.log('Community type:', data?.type);
+      console.log('Community price:', data?.price);
       return data;
     },
     enabled: !!communityId
@@ -110,6 +114,45 @@ export default function CommunityAboutPage() {
       return data;
     },
     enabled: !!user?.id && !!communityId
+  });
+
+  // Fetch community pricing for paid communities
+  const { data: communityPricing } = useQuery({
+    queryKey: ['community-pricing', communityId],
+    queryFn: async () => {
+      if (!communityId || community?.type !== 'paid') return null;
+      
+      // First try to get from community_prices table
+      const { data, error } = await supabase
+        .from('community_prices')
+        .select('*')
+        .eq('community_uuid', communityId)
+        .eq('active', true)
+        .order('amount', { ascending: true })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Error fetching community pricing:', error);
+      }
+      
+      // If no pricing found in community_prices, create fallback from community data
+      if (!data && community?.price) {
+        console.log('No pricing found in community_prices, using community.price as fallback');
+        return {
+          community_price_uuid: `fallback_${communityId}`,
+          community_uuid: communityId,
+          amount: community.price,
+          currency: 'usd',
+          billing_period: 'monthly',
+          active: true,
+          stripe_price_id: null, // Will need to be created in Stripe
+        };
+      }
+      
+      return data;
+    },
+    enabled: !!communityId && community?.type === 'paid'
   });
 
   // Join community mutation
@@ -222,6 +265,48 @@ export default function CommunityAboutPage() {
 
   const handleOpenCommunity = () => {
     navigate(`/community/${communityId}`);
+  };
+
+  const handleJoinCommunity = () => {
+    console.log('handleJoinCommunity called');
+    console.log('Community type:', community?.type);
+    console.log('Community pricing:', communityPricing);
+    
+    if (community?.type === 'paid') {
+      if (!communityPricing) {
+        console.error('No pricing found for paid community');
+        toast.error('Community pricing not available. Please try again later.');
+        return;
+      }
+      
+      // Show subscription checkout for paid communities
+      console.log('Showing subscription checkout');
+      setShowSubscriptionCheckout(true);
+    } else {
+      // Use existing mutation for free/private communities
+      console.log('Using free/private community join');
+      joinCommunityMutation.mutate();
+    }
+  };
+
+  const handleSubscriptionSuccess = (data: {
+    subscriptionId: string;
+    communityId: string;
+    customerEmail: string;
+  }) => {
+    console.log('Subscription successful:', data);
+    toast.success(`Successfully subscribed to ${community?.name}!`);
+    
+    // Hide checkout and invalidate queries to update UI
+    setShowSubscriptionCheckout(false);
+    queryClient.invalidateQueries({ queryKey: ['community-subscription', user?.id, communityId] });
+    
+    // Redirect to community page
+    navigate(`/community/${communityId}`);
+  };
+
+  const handleSubscriptionCancel = () => {
+    setShowSubscriptionCheckout(false);
   };
 
   if (isCommunityLoading) {
@@ -442,7 +527,7 @@ export default function CommunityAboutPage() {
                     <Separator />
                     <Button 
                       className="w-full h-10"
-                      onClick={() => joinCommunityMutation.mutate()}
+                      onClick={handleJoinCommunity}
                       disabled={joinCommunityMutation.isPending}
                     >
                       {getJoinButtonText()}
@@ -477,6 +562,31 @@ export default function CommunityAboutPage() {
           </div>
         </div>
       </div>
+
+      {/* Community Subscription Checkout Modal/Overlay */}
+      {showSubscriptionCheckout && community && communityPricing && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <CommunitySubscriptionCheckout
+              community={{
+                community_uuid: community.community_uuid,
+                name: community.name,
+                description: community.description || undefined,
+                thumbnail: community.thumbnail || undefined,
+              }}
+              pricing={{
+                community_price_uuid: communityPricing.community_price_uuid,
+                amount: communityPricing.amount || 0,
+                currency: communityPricing.currency || 'usd',
+                billing_period: communityPricing.billing_period || 'monthly',
+                stripe_price_id: communityPricing.stripe_price_id || undefined,
+              }}
+              onSuccess={handleSubscriptionSuccess}
+              onCancel={handleSubscriptionCancel}
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 }

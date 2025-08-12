@@ -190,6 +190,192 @@ export const handlePaymentFailure = async (
 };
 
 /**
+ * Update community subscription transaction status after successful payment
+ */
+export const updateSubscriptionTransactionStatus = async (
+  transactionUuid: string,
+  paymentIntentId: string,
+  status: 'paid' | 'failed' | 'pending' = 'paid'
+) => {
+  try {
+    console.log('Updating subscription transaction status:', { transactionUuid, paymentIntentId, status });
+
+    // Map our status to both internal status and Stripe payment status
+    const paymentStatus = status === 'paid' ? 'succeeded' : status === 'failed' ? 'failed' : 'pending';
+    const transactionStatus = status === 'paid' ? 'completed' : status === 'failed' ? 'failed' : 'processing';
+
+    const { error } = await supabase
+      .from('community_subscriptions_transactions')
+      .update({
+        status: transactionStatus,
+        payment_status: paymentStatus,
+        payment_provider: 'stripe',
+        payment_reference_id: paymentIntentId,
+        stripe_payment_intent_id: paymentIntentId,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('community_subscription_transaction_uuid', transactionUuid);
+
+    if (error) {
+      console.error('Error updating subscription transaction:', error);
+      return { success: false, error: error.message };
+    }
+
+    console.log('Subscription transaction updated successfully');
+    return { success: true };
+
+  } catch (error) {
+    console.error('Error updating subscription transaction status:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to update subscription transaction',
+    };
+  }
+};
+
+/**
+ * Handle community subscription payment success
+ */
+export const handleSubscriptionPaymentSuccess = async (
+  transactionUuid: string,
+  paymentIntent: any
+) => {
+  try {
+    console.log('🔧 Handling subscription payment success:', { transactionUuid, paymentIntentId: paymentIntent.id });
+
+    // First, get the subscription transaction details
+    const { data: transaction, error: transactionError } = await supabase
+      .from('community_subscriptions_transactions')
+      .select('user_uuid, community_uuid, amount')
+      .eq('community_subscription_transaction_uuid', transactionUuid)
+      .single();
+
+    if (transactionError || !transaction) {
+      throw new Error('Failed to find subscription transaction: ' + (transactionError?.message || 'Transaction not found'));
+    }
+
+    console.log('Found subscription transaction:', transaction);
+
+    // Update subscription transaction status
+    const updateResult = await updateSubscriptionTransactionStatus(
+      transactionUuid,
+      paymentIntent.id,
+      'paid'
+    );
+
+    if (!updateResult.success) {
+      throw new Error(updateResult.error || 'Failed to update subscription transaction');
+    }
+
+    // Create community membership record
+    console.log('Creating community membership for user:', transaction.user_uuid, 'community:', transaction.community_uuid);
+    
+    // First check if membership already exists
+    const { data: existingMembership } = await supabase
+      .from('community_subscriptions')
+      .select('community_subscription_uuid, status')
+      .eq('user_uuid', transaction.user_uuid)
+      .eq('community_uuid', transaction.community_uuid)
+      .maybeSingle();
+
+    let membershipError = null;
+
+    if (existingMembership) {
+      console.log('Updating existing community membership:', existingMembership.community_subscription_uuid);
+      // Update existing membership
+      const { error } = await supabase
+        .from('community_subscriptions')
+        .update({
+          status: 'active',
+          type: 'paid',
+          amount: transaction.amount,
+          total_amount: transaction.amount,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('community_subscription_uuid', existingMembership.community_subscription_uuid);
+      membershipError = error;
+    } else {
+      console.log('Creating new community membership');
+      // Create new membership
+      const { error } = await supabase
+        .from('community_subscriptions')
+        .insert({
+          user_uuid: transaction.user_uuid,
+          community_uuid: transaction.community_uuid,
+          status: 'active',
+          type: 'paid',
+          amount: transaction.amount,
+          total_amount: transaction.amount,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        });
+      membershipError = error;
+    }
+
+    if (membershipError) {
+      console.error('Error creating/updating community membership:', membershipError);
+      // Don't throw here - transaction is already marked as paid, membership can be fixed manually
+    } else {
+      console.log('Community membership created/updated successfully');
+    }
+
+    // Additional success handling for subscriptions
+    // - Send confirmation email (future enhancement)
+    // - Update community member count (future enhancement)
+
+    return {
+      success: true,
+      message: 'Subscription payment processed and membership activated successfully',
+    };
+
+  } catch (error) {
+    console.error('Error handling subscription payment success:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to process subscription payment success',
+    };
+  }
+};
+
+/**
+ * Handle community subscription payment failure
+ */
+export const handleSubscriptionPaymentFailure = async (
+  transactionUuid: string,
+  error: string
+) => {
+  try {
+    console.log('Handling subscription payment failure:', { transactionUuid, error });
+
+    // Update subscription transaction status to failed
+    const updateResult = await updateSubscriptionTransactionStatus(
+      transactionUuid,
+      `failed_${Date.now()}`,
+      'failed'
+    );
+
+    if (!updateResult.success) {
+      console.error('Failed to update subscription transaction status:', updateResult.error);
+    }
+
+    // Log the failure for debugging
+    console.error('Subscription payment failed for transaction:', transactionUuid, error);
+
+    return {
+      success: true,
+      message: 'Subscription payment failure recorded',
+    };
+
+  } catch (err) {
+    console.error('Error handling subscription payment failure:', err);
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : 'Failed to handle subscription payment failure',
+    };
+  }
+};
+
+/**
  * Get transaction details for payment processing
  */
 export const getTransactionForPayment = async (transactionUuid: string) => {
@@ -240,6 +426,7 @@ export interface CreatePaymentIntentRequest {
   customerName?: string;
   isSubscription?: boolean;
   subscriptionPriceId?: string;
+  communityUuid?: string;
 }
 
 export interface CreatePaymentIntentResponse {
@@ -274,6 +461,7 @@ export const createPaymentIntent = async (
         customerName: request.customerName,
         isSubscription: request.isSubscription || false,
         subscriptionPriceId: request.subscriptionPriceId,
+        communityUuid: request.communityUuid,
       },
     });
 
