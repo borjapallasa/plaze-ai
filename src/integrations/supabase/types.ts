@@ -859,8 +859,16 @@ export type Database = {
           community_uuid: string | null
           created_at: string
           id: number
+          metadata: string | null
+          payment_provider: string | null
+          payment_reference_id: string | null
+          payment_status: string | null
+          status: string | null
+          stripe_customer_id: string | null
+          stripe_payment_intent_id: string | null
           stripe_reference_id: string | null
           transaction_uuid: string | null
+          updated_at: string | null
           user_uuid: string | null
         }
         Insert: {
@@ -870,8 +878,16 @@ export type Database = {
           community_uuid?: string | null
           created_at?: string
           id?: number
+          metadata?: string | null
+          payment_provider?: string | null
+          payment_reference_id?: string | null
+          payment_status?: string | null
+          status?: string | null
+          stripe_customer_id?: string | null
+          stripe_payment_intent_id?: string | null
           stripe_reference_id?: string | null
           transaction_uuid?: string | null
+          updated_at?: string | null
           user_uuid?: string | null
         }
         Update: {
@@ -881,8 +897,16 @@ export type Database = {
           community_uuid?: string | null
           created_at?: string
           id?: number
+          metadata?: string | null
+          payment_provider?: string | null
+          payment_reference_id?: string | null
+          payment_status?: string | null
+          status?: string | null
+          stripe_customer_id?: string | null
+          stripe_payment_intent_id?: string | null
           stripe_reference_id?: string | null
           transaction_uuid?: string | null
+          updated_at?: string | null
           user_uuid?: string | null
         }
         Relationships: [

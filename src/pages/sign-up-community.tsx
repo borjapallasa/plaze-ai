@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { CommunityInfoPanel } from "@/components/community/signin/CommunityInfoPanel";
 import { LoadingState } from "@/components/community/signin/LoadingState";
 import { NotFoundState } from "@/components/community/signin/NotFoundState";
+import { CommunitySubscriptionCheckout } from "@/components/checkout/CommunitySubscriptionCheckout";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -39,6 +40,8 @@ export default function SignUpCommunityPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPaymentCheckout, setShowPaymentCheckout] = useState(false);
+  const [userCreated, setUserCreated] = useState<{id: string; email: string} | null>(null);
 
   const { data: community, isLoading, error } = useQuery({
     queryKey: ['community', id],
@@ -78,8 +81,100 @@ export default function SignUpCommunityPage() {
 
       if (authError) {
         console.error("Auth error:", authError);
-        toast.error(authError.message);
-        return;
+        
+        // Handle case where user already exists
+        if (authError.message?.includes('already registered') || 
+            authError.message?.includes('already been registered') ||
+            authError.message?.includes('User already registered')) {
+          
+          // Try to sign in the existing user instead
+          console.log("User already exists, attempting to sign in...");
+          const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+
+          if (signInError) {
+            toast.error(
+              <div>
+                <p>An account with this email already exists.</p>
+                <p>Please <a href="/sign-in" className="underline text-blue-600">log in</a> and try joining the community again.</p>
+              </div>,
+              { duration: 8000 }
+            );
+            return;
+          }
+
+          // If sign in successful, continue with subscription creation
+          if (signInData.user) {
+            console.log("Successfully signed in existing user:", signInData.user.id);
+            
+            // Check if user is already a member of this community
+            const { data: existingSubscription } = await supabase
+              .from('community_subscriptions')
+              .select('status')
+              .eq('user_uuid', signInData.user.id)
+              .eq('community_uuid', id)
+              .maybeSingle();
+
+            if (existingSubscription) {
+              toast.success("You're already a member of this community!");
+              navigate(`/community/${id}`);
+              return;
+            }
+
+            // Continue with the rest of the flow using signInData instead of authData
+            const authData = signInData;
+            
+            // Create subscription for existing user (copy the logic from below)
+            let subscriptionStatus: 'active' | 'inactive' | 'pending';
+            
+            if (community.type === 'private') {
+              subscriptionStatus = 'pending';
+            } else {
+              subscriptionStatus = (community.price && community.price > 0 ? 'pending' : 'active') as 'active' | 'inactive' | 'pending';
+            }
+
+            const subscriptionData = {
+              user_uuid: authData.user.id,
+              community_uuid: id,
+              expert_uuid: community.expert_uuid,
+              email: email,
+              status: subscriptionStatus,
+              type: (community.price && community.price > 0 ? 'paid' : 'free') as 'free' | 'paid',
+              amount: community.price || 0,
+            };
+
+            const { data: subscriptionResult, error: subscriptionError } = await supabase
+              .from('community_subscriptions')
+              .insert(subscriptionData)
+              .select()
+              .single();
+
+            if (subscriptionError) {
+              console.error("Subscription error:", subscriptionError);
+              toast.error("Failed to create community subscription. Please contact support.");
+              return;
+            }
+
+            setUserCreated({ id: authData.user.id, email: email });
+
+            if (community.type === 'private') {
+              toast.success("Your join request has been submitted and is awaiting approval.");
+              navigate(`/community/${id}`);
+            } else if (community.price && community.price > 0) {
+              toast.success("Please complete payment to access the community.");
+              setShowPaymentCheckout(true);
+            } else {
+              toast.success("Welcome! You've successfully joined the community.");
+              navigate(`/community/${id}`);
+            }
+            return;
+          }
+        } else {
+          toast.error(authError.message);
+          return;
+        }
       }
 
       if (!authData.user) {
@@ -88,6 +183,23 @@ export default function SignUpCommunityPage() {
       }
 
       console.log("User created successfully:", authData.user.id);
+      
+      // If the user was created but not immediately logged in, sign them in
+      if (!authData.session) {
+        console.log("User created but not logged in, attempting to sign in...");
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        
+        if (signInError) {
+          console.error("Auto sign-in failed:", signInError);
+          toast.error("Account created but failed to sign in. Please try signing in manually.");
+          return;
+        }
+        
+        console.log("Auto sign-in successful:", signInData);
+      }
 
       // Determine status based on community type
       let subscriptionStatus: 'active' | 'inactive' | 'pending';
@@ -126,15 +238,20 @@ export default function SignUpCommunityPage() {
 
       console.log("Community subscription created:", subscriptionResult);
 
+      // Store user info for payment flow
+      setUserCreated({ id: authData.user.id, email: email });
+
       if (community.type === 'private') {
         toast.success("Account created! Your join request has been submitted and is awaiting approval.");
+        navigate(`/community/${id}`);
       } else if (community.price && community.price > 0) {
+        // For paid communities, show payment checkout instead of redirecting
         toast.success("Account created! Please complete payment to access the community.");
+        setShowPaymentCheckout(true);
       } else {
         toast.success("Welcome! You've successfully joined the community.");
+        navigate(`/community/${id}`);
       }
-      
-      navigate(`/community/${id}`);
 
     } catch (error) {
       console.error("Unexpected error during sign up:", error);
@@ -150,12 +267,56 @@ export default function SignUpCommunityPage() {
     return `Join for $${price}`;
   };
 
+  const handlePaymentSuccess = (data: { subscriptionId: string; communityId: string; customerEmail: string }) => {
+    console.log('Community subscription payment successful:', data);
+    toast.success("Welcome! Your subscription is now active.");
+    navigate(`/community/${id}`);
+  };
+
+  const handlePaymentCancel = () => {
+    setShowPaymentCheckout(false);
+    toast.error("Payment was cancelled. You can try again or contact support.");
+  };
+
   if (isLoading) {
     return <LoadingState />;
   }
 
   if (error || !community) {
     return <NotFoundState />;
+  }
+
+  // Show payment checkout for paid communities after account creation
+  if (showPaymentCheckout && community && userCreated) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="text-center mb-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Complete Your Payment</h1>
+            <p className="text-gray-600">
+              Your account has been created. Complete payment to access <strong>{community.name}</strong>
+            </p>
+          </div>
+          
+          <CommunitySubscriptionCheckout
+            community={{
+              community_uuid: community.community_uuid,
+              name: community.name,
+              description: community.description,
+              thumbnail: community.thumbnail,
+            }}
+            pricing={{
+              community_price_uuid: `fallback_${community.community_uuid}`,
+              amount: community.price || 0,
+              currency: 'usd',
+              billing_period: 'monthly' as const,
+            }}
+            onSuccess={handlePaymentSuccess}
+            onCancel={handlePaymentCancel}
+          />
+        </div>
+      </div>
+    );
   }
 
   return (

@@ -521,6 +521,23 @@ export default function CommunityAboutPage() {
                   </div>
                 </div>
 
+                {/* Guest User - Link to Signup Page */}
+                {!user && (
+                  <>
+                    <Separator />
+                    <Link to={`/sign-up/community/${communityId}`}>
+                      <Button className="w-full h-10">
+                        {community?.type === 'paid' 
+                          ? `Join for $${community.price}` 
+                          : community?.type === 'private'
+                          ? "Request to Join"
+                          : "Join Community"
+                        }
+                      </Button>
+                    </Link>
+                  </>
+                )}
+
                 {/* Join Community Button or Open Community Button */}
                 {user && membershipStatus === 'not_member' && (
                   <>

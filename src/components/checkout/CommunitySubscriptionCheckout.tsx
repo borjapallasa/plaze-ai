@@ -83,15 +83,19 @@ export const CommunitySubscriptionCheckout: React.FC<CommunitySubscriptionChecko
       }
 
       // Create community subscription transaction in the database
+      const transactionData = {
+        user_uuid: user.id,
+        community_uuid: community.community_uuid,
+        amount: pricing.amount,
+        // Set community_price_uuid to null - not being used and causes FK constraint issues
+        community_price_uuid: null,
+      };
+
+      console.log('Creating community subscription transaction:', transactionData);
+
       const { data, error } = await supabase
         .from('community_subscriptions_transactions')
-        .insert({
-          user_uuid: user.id,
-          community_uuid: community.community_uuid,
-          amount: pricing.amount,
-          // Note: community_price_uuid is optional since we're using fallback pricing
-          community_price_uuid: pricing.community_price_uuid.startsWith('fallback_') ? null : pricing.community_price_uuid,
-        })
+        .insert(transactionData)
         .select('community_subscription_transaction_uuid')
         .single();
 
