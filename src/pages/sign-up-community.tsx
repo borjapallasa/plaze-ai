@@ -331,7 +331,7 @@ export default function SignUpCommunityPage() {
   const formatButtonText = (price?: number, type?: string) => {
     if (type === 'private') return "Request to Join";
     if (!price || price === 0) return "Join for Free";
-    return `Join for $${price}`;
+    return `Join for $${price} / monthly`;
   };
 
   const handlePaymentSuccess = (data: { subscriptionId: string; communityId: string; customerEmail: string }) => {

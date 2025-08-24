@@ -246,7 +246,7 @@ export default function CommunityAboutPage() {
       case 'private':
         return "Request to Join";
       case 'paid':
-        return `Join for $${community.price}`;
+        return `Join for $${community.price} / monthly`;
       default:
         return "Join Community";
     }
@@ -560,7 +560,7 @@ export default function CommunityAboutPage() {
                     <Link to={`/sign-up/community/${communityId}`}>
                       <Button className="w-full h-10">
                         {community?.type === 'paid' 
-                          ? `Join for $${community.price}` 
+                          ? `Join for $${community.price} / monthly` 
                           : community?.type === 'private'
                           ? "Request to Join"
                           : "Join Community"
