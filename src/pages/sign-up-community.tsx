@@ -95,13 +95,33 @@ export default function SignUpCommunityPage() {
           });
 
           if (signInError) {
-            toast.error(
-              <div>
-                <p>An account with this email already exists.</p>
-                <p>Please <a href="/sign-in" className="underline text-blue-600">log in</a> and try joining the community again.</p>
-              </div>,
-              { duration: 8000 }
-            );
+            // Check if it's an email confirmation error
+            if (signInError.message?.includes('email_not_confirmed') || 
+                signInError.message?.includes('Email not confirmed') ||
+                signInError.message?.includes('confirm your email')) {
+              toast.error(
+                <div>
+                  <p className="font-medium mb-2">Please confirm your email address</p>
+                  <p className="text-sm mb-3">We've sent a confirmation link to <strong>{email}</strong></p>
+                  <p className="text-sm mb-3">Check your email and click the confirmation link to activate your account.</p>
+                  <button 
+                    onClick={() => resendConfirmationEmail(email)} 
+                    className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors"
+                  >
+                    Resend confirmation email
+                  </button>
+                </div>,
+                { duration: 15000 }
+              );
+            } else {
+              toast.error(
+                <div>
+                  <p>An account with this email already exists.</p>
+                  <p>Please <a href="/sign-in" className="underline text-blue-600">log in</a> and try joining the community again.</p>
+                </div>,
+                { duration: 8000 }
+              );
+            }
             return;
           }
 
@@ -171,6 +191,25 @@ export default function SignUpCommunityPage() {
             }
             return;
           }
+        } else if (authError.message?.includes('email_not_confirmed') || 
+                   authError.message?.includes('Email not confirmed') ||
+                   authError.message?.includes('confirm your email')) {
+          // Handle email not confirmed error
+          toast.error(
+            <div>
+              <p className="font-medium mb-2">Please confirm your email address</p>
+              <p className="text-sm mb-3">We've sent a confirmation link to <strong>{email}</strong></p>
+              <p className="text-sm mb-3">Check your email and click the confirmation link to activate your account.</p>
+              <button 
+                onClick={() => resendConfirmationEmail(email)} 
+                className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors"
+              >
+                Resend confirmation email
+              </button>
+            </div>,
+            { duration: 15000 }
+          );
+          return;
         } else {
           toast.error(authError.message);
           return;
@@ -194,12 +233,40 @@ export default function SignUpCommunityPage() {
         
         if (signInError) {
           console.error("Auto sign-in failed:", signInError);
-          toast.error("Account created but failed to sign in. Please try signing in manually.");
+          
+          // Check if it's an email confirmation error
+          if (signInError.message?.includes('email_not_confirmed') || 
+              signInError.message?.includes('Email not confirmed') ||
+              signInError.message?.includes('confirm your email')) {
+            toast.success(
+              <div>
+                <p className="font-medium mb-2">Account created successfully!</p>
+                <p className="text-sm mb-3">Please check your email at <strong>{email}</strong> and click the confirmation link to activate your account.</p>
+                <button 
+                  onClick={() => resendConfirmationEmail(email)} 
+                  className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors"
+                >
+                  Resend confirmation email
+                </button>
+              </div>,
+              { duration: 15000 }
+            );
+          } else {
+            toast.error("Account created but failed to sign in. Please try signing in manually.");
+          }
           return;
         }
         
         console.log("Auto sign-in successful:", signInData);
       }
+
+      // Get the current authenticated user (in case of email confirmation flow)
+      const { data: currentUser } = await supabase.auth.getUser();
+      const actualUserId = currentUser.user?.id || authData.user.id;
+      
+      console.log("Using user ID for subscription:", actualUserId);
+      console.log("Original authData user ID:", authData.user.id);
+      console.log("Current session user ID:", currentUser.user?.id);
 
       // Determine status based on community type
       let subscriptionStatus: 'active' | 'inactive' | 'pending';
@@ -213,7 +280,7 @@ export default function SignUpCommunityPage() {
       }
 
       const subscriptionData = {
-        user_uuid: authData.user.id,
+        user_uuid: actualUserId,
         community_uuid: id,
         expert_uuid: community.expert_uuid, // Fixed: changed from expert_user_uuid
         email: email,
@@ -239,7 +306,7 @@ export default function SignUpCommunityPage() {
       console.log("Community subscription created:", subscriptionResult);
 
       // Store user info for payment flow
-      setUserCreated({ id: authData.user.id, email: email });
+      setUserCreated({ id: actualUserId, email: email });
 
       if (community.type === 'private') {
         toast.success("Account created! Your join request has been submitted and is awaiting approval.");
@@ -275,7 +342,26 @@ export default function SignUpCommunityPage() {
 
   const handlePaymentCancel = () => {
     setShowPaymentCheckout(false);
-    toast.error("Payment was cancelled. You can try again or contact support.");
+    toast.info("Payment cancelled. You can try again anytime.", { duration: 5000 });
+  };
+
+  const resendConfirmationEmail = async (email: string) => {
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: email
+      });
+      
+      if (error) {
+        toast.error("Failed to resend confirmation email. Please try again.");
+        console.error("Resend email error:", error);
+      } else {
+        toast.success("Confirmation email resent! Please check your inbox.");
+      }
+    } catch (error) {
+      console.error("Resend email error:", error);
+      toast.error("Failed to resend confirmation email. Please try again.");
+    }
   };
 
   if (isLoading) {
@@ -286,38 +372,6 @@ export default function SignUpCommunityPage() {
     return <NotFoundState />;
   }
 
-  // Show payment checkout for paid communities after account creation
-  if (showPaymentCheckout && community && userCreated) {
-    return (
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="text-center mb-6">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Complete Your Payment</h1>
-            <p className="text-gray-600">
-              Your account has been created. Complete payment to access <strong>{community.name}</strong>
-            </p>
-          </div>
-          
-          <CommunitySubscriptionCheckout
-            community={{
-              community_uuid: community.community_uuid,
-              name: community.name,
-              description: community.description,
-              thumbnail: community.thumbnail,
-            }}
-            pricing={{
-              community_price_uuid: `fallback_${community.community_uuid}`,
-              amount: community.price || 0,
-              currency: 'usd',
-              billing_period: 'monthly' as const,
-            }}
-            onSuccess={handlePaymentSuccess}
-            onCancel={handlePaymentCancel}
-          />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -329,134 +383,166 @@ export default function SignUpCommunityPage() {
           </div>
         </div>
 
-        {/* Right Panel - Sign Up Form */}
+        {/* Right Panel - Sign Up Form or Payment */}
         <div className="bg-gray-50 flex items-center justify-center p-6 lg:p-8">
           <div className="w-full max-w-md">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <div className="space-y-6">
-                <div className="text-center">
-                  <h2 className="text-lg font-semibold text-gray-900 mb-1">
-                    Create your account
-                  </h2>
-                  <p className="text-xs text-gray-500">
-                    Join the community and unlock exclusive content
-                  </p>
-                </div>
+            {!showPaymentCheckout ? (
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div className="space-y-6">
+                  <div className="text-center">
+                    <h2 className="text-lg font-semibold text-gray-900 mb-1">
+                      Create your account
+                    </h2>
+                    <p className="text-xs text-gray-500">
+                      Join the community and unlock exclusive content
+                    </p>
+                  </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="relative">
+                        <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <Input
+                          placeholder="First Name"
+                          type="text"
+                          value={firstName}
+                          onChange={(e) => setFirstName(e.target.value)}
+                          className="pl-9 h-10 text-sm border-gray-200 focus:border-primary"
+                          required
+                          disabled={isSubmitting}
+                        />
+                      </div>
+                      <div className="relative">
+                        <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <Input
+                          placeholder="Last Name"
+                          type="text"
+                          value={lastName}
+                          onChange={(e) => setLastName(e.target.value)}
+                          className="pl-9 h-10 text-sm border-gray-200 focus:border-primary"
+                          required
+                          disabled={isSubmitting}
+                        />
+                      </div>
+                    </div>
+
                     <div className="relative">
-                      <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                       <Input
-                        placeholder="First Name"
-                        type="text"
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
+                        placeholder="Email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         className="pl-9 h-10 text-sm border-gray-200 focus:border-primary"
                         required
                         disabled={isSubmitting}
                       />
                     </div>
+
                     <div className="relative">
-                      <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                       <Input
-                        placeholder="Last Name"
-                        type="text"
-                        value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
-                        className="pl-9 h-10 text-sm border-gray-200 focus:border-primary"
+                        placeholder="Password"
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="pl-9 pr-9 h-10 text-sm border-gray-200 focus:border-primary"
                         required
                         disabled={isSubmitting}
+                        minLength={6}
                       />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-3"
+                        disabled={isSubmitting}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4 text-gray-400" />
+                        ) : (
+                          <Eye className="h-4 w-4 text-gray-400" />
+                        )}
+                      </button>
                     </div>
-                  </div>
 
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      placeholder="Email"
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="pl-9 h-10 text-sm border-gray-200 focus:border-primary"
-                      required
-                      disabled={isSubmitting}
-                    />
-                  </div>
+                    <div className="flex items-start space-x-2">
+                      <Checkbox
+                        id="terms"
+                        checked={agreeToTerms}
+                        onCheckedChange={(checked) => setAgreeToTerms(checked as boolean)}
+                        className="mt-0.5"
+                        disabled={isSubmitting}
+                      />
+                      <label
+                        htmlFor="terms"
+                        className="text-xs text-gray-600 leading-relaxed"
+                      >
+                        I agree to the{" "}
+                        <Link to="#" className="text-primary hover:underline font-medium">
+                          Terms of Service
+                        </Link>{" "}
+                        and{" "}
+                        <Link to="#" className="text-primary hover:underline font-medium">
+                          Privacy Policy
+                        </Link>
+                      </label>
+                    </div>
 
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      placeholder="Password"
-                      type={showPassword ? "text" : "password"}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="pl-9 pr-9 h-10 text-sm border-gray-200 focus:border-primary"
-                      required
-                      disabled={isSubmitting}
-                      minLength={6}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-3"
-                      disabled={isSubmitting}
+                    <Button
+                      type="submit"
+                      className="w-full h-10 text-sm font-medium"
+                      disabled={!agreeToTerms || isSubmitting}
                     >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4 text-gray-400" />
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                          Creating Account...
+                        </>
                       ) : (
-                        <Eye className="h-4 w-4 text-gray-400" />
+                        formatButtonText(community.price, community.type)
                       )}
-                    </button>
-                  </div>
+                    </Button>
 
-                  <div className="flex items-start space-x-2">
-                    <Checkbox
-                      id="terms"
-                      checked={agreeToTerms}
-                      onCheckedChange={(checked) => setAgreeToTerms(checked as boolean)}
-                      className="mt-0.5"
-                      disabled={isSubmitting}
-                    />
-                    <label
-                      htmlFor="terms"
-                      className="text-xs text-gray-600 leading-relaxed"
-                    >
-                      I agree to the{" "}
-                      <Link to="#" className="text-primary hover:underline font-medium">
-                        Terms of Service
-                      </Link>{" "}
-                      and{" "}
-                      <Link to="#" className="text-primary hover:underline font-medium">
-                        Privacy Policy
+                    <div className="text-center text-xs border-t pt-4">
+                      <span className="text-gray-600">Already have an account? </span>
+                      <Link to={`/sign-in/community/${id}`} className="text-primary hover:underline font-medium">
+                        Sign In
                       </Link>
-                    </label>
-                  </div>
-
-                  <Button
-                    type="submit"
-                    className="w-full h-10 text-sm font-medium"
-                    disabled={!agreeToTerms || isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                        Creating Account...
-                      </>
-                    ) : (
-                      formatButtonText(community.price, community.type)
-                    )}
-                  </Button>
-
-                  <div className="text-center text-xs border-t pt-4">
-                    <span className="text-gray-600">Already have an account? </span>
-                    <Link to={`/sign-in/community/${id}`} className="text-primary hover:underline font-medium">
-                      Sign In
-                    </Link>
-                  </div>
-                </form>
+                    </div>
+                  </form>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div className="space-y-6">
+                  <div className="text-center">
+                    <h2 className="text-lg font-semibold text-gray-900 mb-1">
+                      Complete Payment
+                    </h2>
+                    <p className="text-xs text-gray-500">
+                      Secure payment to join {community.title}
+                    </p>
+                  </div>
+                  
+                  <CommunitySubscriptionCheckout
+                    community={{
+                      community_uuid: community.community_uuid,
+                      name: community.title,
+                      description: community.description,
+                      thumbnail: community.expert?.thumbnail || community.thumbnail
+                    }}
+                    pricing={{
+                      community_price_uuid: '', // This will be set to null in the component
+                      amount: community.price || 0,
+                      currency: 'usd',
+                      billing_period: 'monthly'
+                    }}
+                    onSuccess={handlePaymentSuccess}
+                    onCancel={handlePaymentCancel}
+                  />
+                </div>
+              </div>
+            )}
 
             {/* Powered by Plaze.ai branding */}
             <div className="flex items-center justify-center pt-4">

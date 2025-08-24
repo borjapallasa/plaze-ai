@@ -307,6 +307,7 @@ export default function CommunityAboutPage() {
 
   const handleSubscriptionCancel = () => {
     setShowSubscriptionCheckout(false);
+    toast.info("Payment cancelled. You can try again anytime.", { duration: 5000 });
   };
 
   if (isCommunityLoading) {
@@ -447,7 +448,38 @@ export default function CommunityAboutPage() {
 
           <div className="lg:col-span-4 space-y-6">
             <Card className="overflow-hidden bg-white">
-              <div className="p-6 space-y-6">
+              {/* Show payment form inline when showSubscriptionCheckout is true */}
+              {showSubscriptionCheckout && community && communityPricing ? (
+                <div className="p-6 space-y-6">
+                  <div className="text-center">
+                    <h2 className="text-lg font-semibold text-gray-900 mb-1">
+                      Complete Payment
+                    </h2>
+                    <p className="text-sm text-gray-500">
+                      Secure payment to join {community.name}
+                    </p>
+                  </div>
+                  
+                  <CommunitySubscriptionCheckout
+                    community={{
+                      community_uuid: community.community_uuid,
+                      name: community.name,
+                      description: community.description || undefined,
+                      thumbnail: community.thumbnail || undefined,
+                    }}
+                    pricing={{
+                      community_price_uuid: communityPricing.community_price_uuid,
+                      amount: communityPricing.amount || 0,
+                      currency: communityPricing.currency || 'usd',
+                      billing_period: communityPricing.billing_period || 'monthly',
+                      stripe_price_id: communityPricing.stripe_price_id || undefined,
+                    }}
+                    onSuccess={handleSubscriptionSuccess}
+                    onCancel={handleSubscriptionCancel}
+                  />
+                </div>
+              ) : (
+                <div className="p-6 space-y-6">
                 {videoEmbedUrl && (
                   <div className="aspect-video w-full bg-muted rounded-lg overflow-hidden">
                     <iframe
@@ -574,36 +606,13 @@ export default function CommunityAboutPage() {
                     </div>
                   </>
                 )}
-              </div>
+                </div>
+              )}
             </Card>
           </div>
         </div>
       </div>
 
-      {/* Community Subscription Checkout Modal/Overlay */}
-      {showSubscriptionCheckout && community && communityPricing && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <CommunitySubscriptionCheckout
-              community={{
-                community_uuid: community.community_uuid,
-                name: community.name,
-                description: community.description || undefined,
-                thumbnail: community.thumbnail || undefined,
-              }}
-              pricing={{
-                community_price_uuid: communityPricing.community_price_uuid,
-                amount: communityPricing.amount || 0,
-                currency: communityPricing.currency || 'usd',
-                billing_period: communityPricing.billing_period || 'monthly',
-                stripe_price_id: communityPricing.stripe_price_id || undefined,
-              }}
-              onSuccess={handleSubscriptionSuccess}
-              onCancel={handleSubscriptionCancel}
-            />
-          </div>
-        </div>
-      )}
     </>
   );
 }
